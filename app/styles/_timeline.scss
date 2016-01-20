@@ -8,15 +8,28 @@
 }
 
 .timeline {
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba($silver, 0.9);
     transition:.3s;
-    width: $width19;
+    margin-bottom: 15px;
+
+    &.timeline-map {
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+
+    &.timeline-dashboard {
+        right: 0;
+        margin-right: 10px;
+        margin-left: $omnibox-width;
+        float: left;
+    }
 }
 
 .timeline-svg-wrapper {
     margin-top: 2px;
     svg {
         position: relative;
+        left: 60px;
     }
 }
 
@@ -32,28 +45,22 @@
 }
 
 .time-controls-right {
-    float: right;
     position: absolute;
     right: 0;
-    bottom: 2px;
-    z-index: 999;
+    bottom: 0;
 
-    .btn-group-horizontal {
+    .btn-group-vertical {
+    }
 
-        margin: 0px 8px 0 0;
+    .btn-xss {
+        color: $midnightBlue;
+        background-color: transparent;
+        font-size: 14px;
 
-        .btn-xss {
-            @include material-shadow();
-            color: #2c3e50;
-            background-color: #fff;
-            &:hover {
-                @include material-shadow-hover();
-                color: rgba(127, 140, 141,1.0);
-                text-decoration: none;
-                background-color: #fff;
-            }
+        &:hover {
+            color: $asbestos;
+            text-decoration: none;
         }
-
     }
 }
 
@@ -67,7 +74,7 @@
 }
 
 .timeline-button {
-    color: rgba(44, 62, 80,1.0);
+    color: $midnightBlue;
     cursor: pointer;
     float: none;
     font-size: 35px;
@@ -82,7 +89,7 @@
     }
 
     &:hover {
-        color: rgba(127, 140, 141,1.0);
+        color: $asbestos;
         text-decoration: none;
     }
 
@@ -90,7 +97,7 @@
 
 .timeline-button-active {
     &:active {
-        color: rgba(231, 76, 60,1.0);
+        color: $alizarin;
         text-decoration: none;
     }
 
@@ -124,7 +131,6 @@
 
 .indicator {
     border-color: $darkgray2 transparent transparent transparent;
-    border-color: rgba(130, 130, 130, 1) transparent transparent transparent;
     border-style: solid;
     border-width: 10px;
     content: "";
@@ -137,20 +143,18 @@
 
 .plot-temporal {
     fill: $white;
-    fill: rgba(255, 255, 255, 0.0);
+    fill-opacity: 0;
     stroke: none;
 }
 
 .hover-line {
-    stroke: #aaaaaa;
+    stroke: $darkgray5;
 }
 
 .reference-line {
     fill: $darkgray2;
-    fill: rgba(130, 130, 130, 1);
     stroke-width: $width23;
     stroke: $darkgray2;
-    stroke: rgba(130, 130, 130, 1);
 }
 
 .selected {
@@ -169,17 +173,15 @@
 }
 
 .extent {
-    fill: rgba(30,30,30,0.1);
+    fill: $darkgray4;
+    fill-opacity: 0.1;
 }
 
 .resize {
     path {
         fill-opacity: .8;
-        fill-opacity: .8;
-        fill: $darkgray3;
         fill: $darkgray3;
         stroke-width: $width23;
-        stroke: $black;
         stroke: $black;
     }
 
@@ -189,7 +191,8 @@
     circle {
         fill-opacity: 0.8;
         stroke-width: 10px;
-        stroke: rgba(240, 50, 60, 0.6);
+        stroke: $alizarin;
+        stroke-opacity: 0.6;
     }
 
 }
@@ -211,7 +214,7 @@
         -moz-user-select: none;
         -ms-user-select: none;
         -webkit-user-select: none;
-        font-family: 'Roboto', Helvetica, Arial, sans-serif;
+        font-family: $font-family;
         font-size: 13px;
         shape-rendering: crispEdges;
         text-shadow: none;
@@ -225,7 +228,7 @@
     position: absolute;
     top: -23px;
     left: 16px;
-    background: white;
+    background: $white;
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
     opacity: 0.7;
@@ -236,12 +239,10 @@
     width: 100%;
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
-    cursor: pointer;
     padding: 3px;
     -webkit-transition: .3s;
 
     div {
-        cursor: pointer;
         float: left;
         padding-left: 9px;
 
@@ -257,16 +258,16 @@
 
 /* d3 timeline graph elements*/
 .bar-timeline {
-  fill: #95a5a6;
+  fill: $concrete;
   stroke-width: 1;
   fill-opacity: 1;
-  stroke: white;
+  stroke: $white;
 }
 
 .timeline .tick {
   stroke-width: 1;
   fill-opacity: 0.8;
-  stroke: $bargrey;
+  stroke: $concrete;
 
   > text {
     fill: $midnightblue;
@@ -286,7 +287,7 @@
 }
 
 .aggwindow-rect {
-  fill: #c0392b;
+  fill: $pomegranate;
   opacity: 0.6;
 }
 

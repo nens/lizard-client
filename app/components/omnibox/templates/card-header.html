@@ -1,7 +1,7 @@
 <header class="card-header">
 
-  <div class="card-header-center">
-    <full-details class="pull-right"></full-details>
+  <div ng-if="asset" class="card-header-center">
+    <close-card entity="asset.entity_name" id="asset.id"></close-card>
 
       <span class="icons fa-stack fa-lg">
         <i class="fa fa-circle fa-stack-2x"></i>
@@ -20,4 +20,21 @@
       <em><% asset.code %></em>
 
   </div>
+
+  <div ng-if="geom" class="card-header-center">
+    <close-card geometry="geom"></close-card>
+
+    <span ng-if="geom.geometry.type === 'Point'" class="asset-title" translate>
+      <% geom.geometry.coordinates[1] | number : 2 %>, <% geom.geometry.coordinates[0] | number : 2 %>
+    </span>
+    <span ng-if="geom.geometry.type === 'LineString'">
+      <% geom.geometry.coordinates[0][1] | number : 2 %>, <% geom.geometry.coordinates[0][0] | number : 2 %> - <% geom.geometry.coordinates[1][1] | number : 2 %>, <% geom.geometry.coordinates[0][1] | number : 2 %></span>
+    <span ng-if="geom.name">
+      <% geom.name %>: <% geom.area / 10000 | number : 0 %> ha.
+    </span>
+    <span ng-if="geom.geometry.type === 'Polygon' && !geom.name" translate>
+      Screen view
+    </span>
+  </div>
+
 </header>

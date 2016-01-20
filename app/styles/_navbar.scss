@@ -41,7 +41,7 @@
         width: 30px;
         height: 30px;
         cursor: pointer;
-        background-color: rgba(255, 255, 255, 0.7);
+        background-color: rgba($white, 0.7);
         display: inline-block;
         border-radius: 35px;
         text-align: center;
@@ -50,7 +50,7 @@
         @include cross-browser(transition, .3s);
 
         i {
-            color: #2c3e50;
+            color: $midnightBlue;
             top: 7px;
             left: 10px;
         }

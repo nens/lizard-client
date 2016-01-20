@@ -1,8 +1,30 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (2.4.1) (XXXX-XX-XX)
+Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
+
+- Restyle & resize timeline.
+
+
+Release 2.6.2 (2016-1-18)
+---------------------
+
+- Bump MAX_TIME (future) from 1 to 20 days.
+
+
+Release 2.6.1 (2016-1-18)
+---------------------
+
+- Added close-card directive to remove assets from selection.
+
+- Added state.assets.selection and state.geometries.selection to store ids of
+  selected assets or geometry.
+
+- Migrate data-fetch logic from box to data-service. DataService.assets and
+  DataService.geometries contains data of the selection.
+
+- Added ng-animate to omnibox.
 
 - Created specific omnibox dashboard card for dashboard.
 
@@ -31,10 +53,6 @@ Unreleased (2.4.1) (XXXX-XX-XX)
 - Fixed a bug with geometry not drawn in multipolygon.
 
 - Sped up the context switch since we no longer need the map to create a dashboard on init.
-
-
-Release 2.5.2 (2015-12-24)
----------------------
 
 
 Release 2.5.1 (2015-12-11)

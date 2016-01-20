@@ -37,6 +37,19 @@ angular.module('lizard-nxt')
         });
 
         var self = this;
+        this.drawPointsAsCircleMarker(self);
+
+        // Hack to make click on the clicklayer bubble down to the map it is
+        // part of.
+        this.clickLayer.on('click', function (e) {
+            this._map.fire('click', e);
+          }
+        );
+
+        mapState.addLeafletLayer(this.clickLayer);
+      };
+
+      this.drawPointsAsCircleMarker = function (self) {
         // Explain leaflet to draw points as circlemarkers.
         this.clickLayer.options.pointToLayer = function (feature, latlng) {
           var circleMarker = L.circleMarker(latlng, {
@@ -49,15 +62,6 @@ angular.module('lizard-nxt')
           self._circleMarker = circleMarker;
           return circleMarker;
         };
-
-        // Hack to make click on the clicklayer bubble down to the map it is
-        // part of.
-        this.clickLayer.on('click', function (e) {
-            this._map.fire('click', e);
-          }
-        );
-
-        mapState.addLeafletLayer(this.clickLayer);
       };
 
       /**
@@ -92,7 +96,7 @@ angular.module('lizard-nxt')
 
         // actually add the data
         this.clickLayer.addData(geojson);
-        
+
         // check id.
         var newIds = Object.keys(this.clickLayer._layers);
         var newId;
@@ -122,6 +126,8 @@ angular.module('lizard-nxt')
           return;
         }
 
+        var oldIds = Object.keys(this.clickLayer._layers);
+
         this.strokeWidth = 2;
 
         var geojsonFeature = { "type": "Feature" };
@@ -139,6 +145,18 @@ angular.module('lizard-nxt')
           this.clickLayer.options.style.dashArray = "5, 5";
         }
         this.clickLayer.addData(geojsonFeature);
+
+        // check id.
+        var newIds = Object.keys(this.clickLayer._layers);
+        var newId;
+        angular.forEach(newIds, function (item) {
+          if (oldIds.indexOf(item) < 0) {
+            newId = item;
+          }
+        });
+        var sel = this._selection = this._getSelection(this.clickLayer, newId);
+        this.vibrate(sel);
+        return newId;
       };
 
       /**
@@ -293,7 +311,11 @@ angular.module('lizard-nxt')
     };
 
     drawGeometry = function (mapState, geometry, entityName) {
-      clickLayer.drawFeature(geometry);
+      if (!clickLayer.clickLayer) {
+        clickLayer.emptyClickLayer(mapState);
+      }
+      clickLayer.drawPointsAsCircleMarker(clickLayer);
+      return clickLayer.drawFeature(geometry);
     };
 
     /**
@@ -312,17 +334,22 @@ angular.module('lizard-nxt')
         return;
       }
 
-      clickLayer.emptyClickLayer(mapState);
+      if (!clickLayer.clickLayer) {
+        clickLayer.emptyClickLayer(mapState);
+      }
       var geometry = {
         "type": "Point",
         "coordinates": [latLng.lng, latLng.lat]
       };
       clickLayer.addLocationMarker(mapState, latLng);
-      clickLayer.drawFeature(geometry);
+      return clickLayer.drawFeature(geometry);
     };
 
-    drawLine = function (first, second, dashed) {
-      clickLayer.drawLineElement(first, second, dashed);
+    drawLine = function (mapState, first, second, dashed) {
+      if (!clickLayer.clickLayer) {
+        clickLayer.emptyClickLayer(mapState);
+      }
+      return clickLayer.drawLineElement(first, second, dashed);
     };
 
     startVibration = function (id) {
