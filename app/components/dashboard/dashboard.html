@@ -1,7 +1,7 @@
 <div class="dashboard-wrapper" ng-controller="DashboardCtrl as dashboard">
   <div class="container-fluid">
 
-    <div class="row" ng-repeat="item in dashboard.content">
+    <div class="row" ng-repeat="item in dashboard.graphs">
       <div class="dashboard-inner">
         <graph
          line
@@ -10,7 +10,7 @@
          dimensions="dashboard.dims"
          >
          <graph/>
-
+<!--
         <graph
           ng-if="item.type === 'timeseries'"
           line
@@ -53,6 +53,7 @@
           name="<% item.quantity %>">
         </graph>
 
+      </div> -->
       </div>
 
     </div>

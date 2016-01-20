@@ -126,9 +126,9 @@ angular.module('lizard-nxt')
      * NOTE: Controller data is set on precompile.
      */
     scope.$watch('content', function (n, o) {
-      if (n === graphCtrl.content) { return true; }
+      if (n === o) { return true; }
       graphUpdateHelper();
-    });
+    }, true);
 
     scope.$watch('temporal.at', function (n, o) {
       if (n === o) { return true; }
@@ -170,7 +170,6 @@ angular.module('lizard-nxt')
   graphCtrl = function ($scope, Graph) {
 
     this.setData = function (scope) {
-
       // Provide defaults for backwards compatability
       this.content = scope.content || [];
       this.temporal = scope.temporal;
@@ -264,7 +263,6 @@ angular.module('lizard-nxt')
         temporal = graphCtrl.type === 'temporal',
         drawSubset = false;
 
-    console.log(content);
     graph.drawLine(content, temporal, drawSubset);
 
     // scope.line is the scope defined by the line controller. Preferably it is

@@ -39,7 +39,7 @@ angular.module('dashboard')
 
     var resize = function (tlDimensions) {
       tlDims = tlDimensions;
-      nGraphs = Object.keys(scope.dashboard.content).length;
+      nGraphs = Object.keys(scope.dashboard.graphs).length;
       scope.dashboard.dims.height =
         (getHeight() - tlDimensions.height - TL_TOP_MARGIN) / nGraphs - GRAPH_PADDING;
 

@@ -10,7 +10,7 @@ angular.module('timeseries')
     this._getTimeseries = function (id, timeState, minPoints, aggWindow) {
       // Cancel consecutive calls for the same ts.
       if (localPromises[id]) {
-        localPromises[id].resolve();
+        localPromises[id].reject('consecutive');
       }
       localPromises[id] = $q.defer();
       var params = {
@@ -22,7 +22,9 @@ angular.module('timeseries')
 
       minPoints ? params.min_points = minPoints : params.window = aggWindow;
 
-      return CabinetService.timeseries.get(params);
+      return CabinetService.timeseries.get(params, {
+        timeout: localPromises[id].promise
+      });
     };
 
     /**
@@ -121,4 +123,3 @@ angular.module('timeseries')
   }
 
 ]);
-

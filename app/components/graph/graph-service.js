@@ -16,7 +16,8 @@
  * Everything in the graphs is animated according to NxtD3.transTime.
  */
 angular.module('lizard-nxt')
-  .factory("Graph", ["$timeout", "NxtD3", function ($timeout, NxtD3) {
+  .factory("Graph", ["$timeout", "NxtD3", "ChartContainer",
+  function ($timeout, NxtD3, ChartContainer) {
 
   var MIN_WIDTH_INTERACTIVE_GRAPHS = 400; // Only graphs bigger get mouseover
                                           // and click interaction.
@@ -40,19 +41,18 @@ angular.module('lizard-nxt')
       NxtD3.call(this, element, dimensions);
     }
     this._svg = this._createDrawingArea();
+    this._containers = {};
   }
 
   Graph.prototype = Object.create(NxtD3.prototype, {
-
-    constructor: Graph,
+    constructor: Graph
   });
 
   Graph.prototype.resize = function (newDim) {
       NxtD3.prototype.resize.call(this, newDim);
       this._svg = this._createDrawingArea();
       this._svg.selectAll('.axis').remove();
-      this._x = null;
-      this._xys = null;
+
       // reposition labels
       drawLabel(this._svg, this.dimensions, undefined, true);
       drawLabel(this._svg, this.dimensions, undefined, false);
@@ -106,99 +106,117 @@ angular.module('lizard-nxt')
    *                        supported.
    */
   Graph.prototype.drawLine = function (content, temporal, transitioning) {
-    var data, labels, keys;
-    angular.forEach(content, function (item) {
-      data = item.data;
-      keys = {
-        x: 'timestamp',
-        y: { 'y0': 'min', 'y1': 'max' }
-      };
-      labels = item.labels || {x: '', y:''};
-    });
-      if (!this._xy) {
-        var options = {
-          x: {
-            scale: 'time',
-            orientation: 'bottom'
-          },
-          y: {
-            scale: 'linear',
-            orientation: 'left'
-          }
-        };
-        // pass options for time graph or use defaults
-        this._xy = this._createXYGraph(
-          data,
-          keys,
-          labels,
-          temporal ? options : undefined,
-          this._xDomainInfo
-        );
+    var graph = this;
+    graph.rescale = rescale;
+    angular.forEach(content, function (item, index) {
+      var chartContainer;
+
+      var charts = Object.keys(content);
+      var colors = [
+        '#16a085',
+        '#3498db',
+        '#c0392b',
+        '#2980b9',
+        '#1abc9c',
+        '#7f8c8d',
+        '#e74c3c',
+      ];
+
+      // only update things, don't instantiate new ones
+      if (graph._containers[index]) {
+        if (graph._containers[index].constructor === ChartContainer) {
+          chartContainer = graph._containers[index];
+          chartContainer.updateXY(item);
+          drawLabel(graph._svg, graph.dimensions, chartContainer.labels.y, true);
+        }
       } else {
-        this._xy = rescale(
-          this._svg,
-          this.dimensions,
-          this._xy,
+        graph._containers[index] = new ChartContainer(item, graph, temporal);
+        chartContainer = graph._containers[index];
+      }
+      chartContainer.color = colors[charts.indexOf(index)];
+
+      var data = chartContainer.data,
+          keys = chartContainer.keys,
+          labels = chartContainer.labels;
+
+      var lineAsArea = chartContainer.keys.y.hasOwnProperty('y0')
+        && chartContainer.keys.y.hasOwnProperty('y1');
+
+      chartContainer.pathFn = lineAsArea
+        ? graph._createArea(chartContainer._xy, keys)
+        : graph._createLine(chartContainer._xy, keys);
+
+        var MIN_POINTS_FOR_SUBSET = 15,
+            DELAY = 10, // ms
+            DATA_REDUCTION_FACTOR = 5;
+        if (transitioning && data.length > MIN_POINTS_FOR_SUBSET) {
+          graph._registerTimeout(
+            function () {
+              chartContainer.path = drawPath(
+                graph._svg,
+                chartContainer.pathFn,
+                data,
+                0, // transition 0 ms when drawing while zooming.
+                chartContainer.path,
+                lineAsArea ? chartContainer.color : 'none',
+                chartContainer.color
+              );
+            },
+            DELAY // delay with 30 ms
+          );
+
+          data = getDataSubset(data, DATA_REDUCTION_FACTOR);
+        }
+
+        chartContainer.path = drawPath(
+          graph._svg,
+          chartContainer.pathFn,
           data,
-          keys,
-          null,
-          this._xDomainInfo
-        );
-        drawLabel(this._svg, this.dimensions, labels.y, true);
-      }
-
-      var lineAsArea = keys.y.hasOwnProperty('y0')
-        && keys.y.hasOwnProperty('y1');
-
-      var pathFn = lineAsArea
-        ? this._createArea(this._xy, keys)
-        : this._createLine(this._xy, keys);
-
-      var MIN_POINTS_FOR_SUBSET = 15,
-          DELAY = 10, // ms
-          DATA_REDUCTION_FACTOR = 5;
-
-      if (transitioning && data.length > MIN_POINTS_FOR_SUBSET) {
-        this._registerTimeout(
-          function () {
-            this._path = drawPath(
-              this._svg,
-              pathFn,
-              data,
-              0, // transition 0 ms when drawing while zooming.
-              this._path,
-              lineAsArea ? null : 'none'
-            );
-          },
-          DELAY // delay with 30 ms
+          temporal ? 0 : graph.transTime, // Do not transition line graphs
+                                         // when temporal.
+          chartContainer.path,
+          lineAsArea ? chartContainer.color : 'none', // Set fill to 'none' for normal
+                                     // lines.
+          chartContainer.color
         );
 
-        data = getDataSubset(data, DATA_REDUCTION_FACTOR);
-      }
+        if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+          addInteractionToPath(
+            graph._svg,
+            graph.dimensions,
+            data,
+            keys,
+            labels,
+            chartContainer.path,
+            chartContainer._xy,
+            graph.transTime
+          );
+        }
+        graph._xy = chartContainer._xy;
+    });
 
-      this._path = drawPath(
-        this._svg,
-        pathFn,
-        data,
-        temporal ? 0 : this.transTime, // Do not transition line graphs
-                                       // when temporal.
-        this._path,
-        lineAsArea ? null : 'none' // Set fill to 'none' for normal
-                                   // lines.
-      );
+/*            path.enter()
+                .append("path")
+                .classed('graph-lines', true)
+                .transition()
+                .duration('30')
+                .attr("d", function (d) {
+                  // Prevent returning invalid values for d
+                  var p = pathFn(d.values) || "M0, 0";
+                  return p;
+                })
+                .attr('style', function (d, i) {
+                  return 'stroke: ' + colors[i] + '; fill:none;';
+                });
 
-      if (this.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
-        addInteractionToPath(
-          this._svg,
-          this.dimensions,
-          data,
-          keys,
-          labels,
-          this._path,
-          this._xy,
-          this.transTime
-        );
-      }
+            path.exit().remove();
+            //.style('fill', fill)
+            //.attr('style', 'stroke: #000');
+
+            this._path = path;*/
+
+
+
   };
 
   /**
@@ -758,12 +776,12 @@ angular.module('lizard-nxt')
     return x;
   };
 
-  drawPath = function (svg, pathFn, data, duration, path, fill) {
+  drawPath = function (svg, pathFn, data, duration, path, fill, color) {
     if (!path) {
       var fg = svg.select('g').select('#feature-group');
       // bring to front
       fg.node().parentNode.appendChild(fg.node());
-      path = fg.append("svg:path")
+      path = fg.append("path")
         .attr("class", "line");
     }
     path.datum(data)
@@ -774,7 +792,8 @@ angular.module('lizard-nxt')
         var p = pathFn(d) || "M0, 0";
         return p;
       })
-      .style('fill', fill);
+      .style('fill', fill)
+      .style('stroke', color);
     return path;
   };
 
