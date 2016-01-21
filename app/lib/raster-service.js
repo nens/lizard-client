@@ -2,19 +2,17 @@
  * Service to handle raster requests.
  */
 angular.module('lizard-nxt')
-  .service("RasterService", ["UtilService",
+  .service("RasterService", ["State",
+                             "UtilService",
                              "CabinetService",
                              "LeafletService",
                              "$q",
-  function (UtilService, CabinetService, LeafletService, $q) {
+  function (State, UtilService, CabinetService, LeafletService, $q) {
 
   var intensityData,
       cancelers = {};
 
   var getData = function (callee, layer, options) {
-
-    // TODO: get this from somewhere
-    var GRAPH_WIDTH = UtilService.getCurrentWidth();
 
     var srs = 'EPSG:4326',
         agg = options.agg || '',
@@ -27,8 +25,7 @@ angular.module('lizard-nxt')
       endString = new Date(options.end).toISOString().split('.')[0];
     }
 
-    aggWindow = options.aggWindow || UtilService.getAggWindow(options.start,
-      options.end, GRAPH_WIDTH);
+    aggWindow = options.aggWindow || State.temporal.aggWindow;
 
     var canceler;
     // getData can have own deferrer to prevent conflicts
