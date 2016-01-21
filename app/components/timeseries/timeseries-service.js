@@ -17,7 +17,6 @@ angular.module('timeseries')
         object: id,
         start: timeState.start ? parseInt(timeState.start, 10): undefined,
         end: timeState.end ? parseInt(timeState.end, 10): undefined,
-        timeout: localPromises[id].promise
       };
 
       minPoints ? params.min_points = minPoints : params.window = aggWindow;
@@ -63,6 +62,8 @@ angular.module('timeseries')
         minPoints,
         aggWindow
       ).then(function (response) {
+
+        if (!response) { return; }
 
          // Filter out the timeseries with too little measurements. And ts
          // without parameter unit info.

@@ -118,6 +118,17 @@ angular.module('dashboard')
               State.temporal.end,
               graphWidth // last arg was defer... is that important?
               ).then(function (response) {
+          // already on dashboard scope
+          var ids = Object.keys(scope.dashboard.content);
+          if (ids.length > 0 && response.results.length === 0) {
+            ids.map(function (id) {
+              scope.dashboard.content[id].data = [];
+              scope.dashboard.content[id].events = [];
+              putDataOnScope(scope.dashboard.content[id]);
+            });
+            return;
+          }
+
           angular.forEach(response.results, function (ts) {
             ts.layerSlug = ts.uuid;
             ts.name = ts.location.name

@@ -111,7 +111,13 @@ angular.module('lizard-nxt')
     angular.forEach(content, function (item, index) {
       var chartContainer;
 
-      var charts = Object.keys(content);
+      var colorIndex = 0; // unless proven otherwise
+      if (content.constructor === Object) {
+        colorIndex = Object.keys(content).indexOf(index);
+      } else {
+        colorIndex = index;
+      }
+
       var colors = [
         '#16a085',
         '#3498db',
@@ -133,7 +139,8 @@ angular.module('lizard-nxt')
         graph._containers[index] = new ChartContainer(item, graph, temporal);
         chartContainer = graph._containers[index];
       }
-      chartContainer.color = colors[charts.indexOf(index)];
+
+      chartContainer.color = colors[colorIndex];
 
       var data = chartContainer.data,
           keys = chartContainer.keys,
@@ -195,28 +202,6 @@ angular.module('lizard-nxt')
         graph._xy = chartContainer._xy;
     });
 
-/*            path.enter()
-                .append("path")
-                .classed('graph-lines', true)
-                .transition()
-                .duration('30')
-                .attr("d", function (d) {
-                  // Prevent returning invalid values for d
-                  var p = pathFn(d.values) || "M0, 0";
-                  return p;
-                })
-                .attr('style', function (d, i) {
-                  return 'stroke: ' + colors[i] + '; fill:none;';
-                });
-
-            path.exit().remove();
-            //.style('fill', fill)
-            //.attr('style', 'stroke: #000');
-
-            this._path = path;*/
-
-
-
   };
 
   /**
@@ -242,63 +227,70 @@ angular.module('lizard-nxt')
    *                        supported. It assumes that every segment has a
    *                        data element.
    */
-  Graph.prototype.drawBars = function (data, keys, labels, scale) {
-      var originalKey = keys.y;
-      if (keys.category) {
-        // Create data for stacked bars.
-        data = createYValuesForCumulativeData(data, keys);
-        keys.y = 'y1';
-      }
-      if (!this._xy) {
-        var options = {
-          x: {
-            scale: scale,
-            orientation: 'bottom'
-          },
-          y: {
-            scale: 'linear',
-            orientation: 'left'
-          }
-        };
-        this._xy = this._createXYGraph(data, keys, labels, options);
-        this._xy.y.scale.domain([0, this._xy.y.maxMin.max]);
-      }
+  Graph.prototype.drawBars = function (incoming, scale) {
+    var graph = this;
 
-      this._xy = rescale(
-        this._svg,
-        this.dimensions,
-        this._xy,
-        data,
+    var content = incoming[0];
+    var data, keys, labels;
+    data = content.data;
+    keys = content.keys;
+    labels = content.labels;
+    var originalKey = keys.y;
+    if (keys.category) {
+      // Create data for stacked bars.
+      data = createYValuesForCumulativeData(data, keys);
+      keys.y = 'y1';
+    }
+    if (!graph._xy) {
+      var options = {
+        x: {
+          scale: scale,
+          orientation: 'bottom'
+        },
+        y: {
+          scale: 'linear',
+          orientation: 'left'
+        }
+      };
+      graph._xy = graph._createXYGraph(data, keys, labels, options);
+      graph._xy.y.scale.domain([0, graph._xy.y.maxMin.max]);
+    }
+
+    graph._xy = rescale(
+      graph._svg,
+      graph.dimensions,
+      graph._xy,
+      data,
+      keys,
+      {y: 0},
+      graph._xDomainInfo
+    );
+
+    drawLabel(graph._svg, graph.dimensions, labels.y, true);
+
+    drawVerticalRects(
+      graph._svg,
+      graph.dimensions,
+      graph._xy,
+      keys,
+      data,
+      graph.transTime,
+      graph._xDomainInfo
+    );
+
+    if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+      addInteractionToRects(
+        graph._svg,
+        graph.dimensions,
+        graph._xy,
         keys,
-        {y: 0},
-        this._xDomainInfo
+        labels,
+        graph.transTime
       );
+    }
 
-      drawLabel(this._svg, this.dimensions, labels.y, true);
-
-      drawVerticalRects(
-        this._svg,
-        this.dimensions,
-        this._xy,
-        keys,
-        data,
-        this.transTime,
-        this._xDomainInfo
-      );
-
-      if (this.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
-        addInteractionToRects(
-          this._svg,
-          this.dimensions,
-          this._xy,
-          keys,
-          labels,
-          this.transTime
-        );
-      }
-
-      // Object reference, put it back.
-      keys.y = originalKey;
+    // Object reference, put it back.
+    keys.y = originalKey;
   };
 
   /**

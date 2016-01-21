@@ -181,6 +181,7 @@ angular.module('lizard-nxt')
     this.yfilter = '';
     this.now = $scope.temporal ? $scope.temporal.at : undefined;
     this.type = '';
+    this.quantity = $scope.quantity || 'time';
 
     // Define data update function in attribute directives
     this.updateData = function () {};
@@ -308,7 +309,8 @@ angular.module('lizard-nxt')
 
     var content = graphCtrl.content,
         filter = graphCtrl.yfilter,
-        graph = graphCtrl.graph;
+        graph = graphCtrl.graph,
+        quantity = graphCtrl.quantity;
 
     // Apply the filter on the ylabel to go from aggWindow
     // in ms to a nice 'mm/dag' label. This could be migrated
@@ -319,16 +321,16 @@ angular.module('lizard-nxt')
       // TODO: labels.y = $filter(filter)(labels.y);
     }
 
-    graph.drawBars(content);
+    graph.drawBars(content, quantity);
     graph.drawNow(graphCtrl.now);
 
     // Function to call when data changes
-    graphCtrl.updateData = function (graph, content) {
+    graphCtrl.updateData = function (content, temporal) {
       if (filter) {
         console.log('TODO: filter label on bar chart');
         // TODO: labels.y = $filter(filter)(labels.y);
       }
-      this.drawBars(content);
+      this.drawBars(content, quantity);
     };
 
     // Function to call when timeState.at changes
