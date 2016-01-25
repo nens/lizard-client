@@ -19,30 +19,8 @@
         <span translate>Map</span>
       </a>
     </li>
-    <li>
-      <a ng-if="user.authenticated"
-         title="<% tooltips.profile %>"
-         class="user"
-         href="http://sso.lizard.net/edit_profile/">
-        <div ng-cloak id="username">
-          <i id="" class="fa fa-user"></i>
-          <span ng-bind="user.firstName"></span>
-        </div>
-      </a>
-    </li>
-    <li>
-      <a ng-if="user.authenticated"
-         class="logout user"
-         href="/accounts/logout/?next=/"
-         title="<% tooltips.logout %>"
-         onclick="return logOut()">
-         <i id="" class="fa fa-power-off"></i>
-         <span translate>Log out</span>
-      </a>
-    </li>
-    <li>
-      <a ng-if="!user.authenticated"
-         onclick="logIn()"
+    <li ng-if="!user.authenticated">
+      <a onclick="logIn()"
          title="<% tooltips.login %>"
          class="clickable">
         <div ng-cloak id="username">
@@ -50,6 +28,41 @@
           <span translate>Log in</span>
         </div>
       </a>
+    </li>
+    <li class="dropdown" ng-if="user.authenticated">
+      <a title="<% tooltips.profile %>"
+         class="dropdown-toggle"
+         data-toggle="dropdown"
+         role="button"
+         aria-haspopup="true"
+         aria-expanded="false"
+         href="#">
+        <span ng-cloak id="username">
+          <i class="fa fa-user"></i>
+          <span ng-bind="user.firstName"></span>
+          <span class="caret"></span>
+        </span>
+      </a>
+      <ul class="dropdown-menu">
+        <li>
+          <a href="http://sso.lizard.net/edit_profile/"
+             title="<% 'Edit profile' | translate %>">
+            <i class="fa fa-pencil"></i>
+            <span translate>Edit profile</span>
+          </a>
+        </li>
+        <li role="separator" class="divider"></li>
+        <li>
+          <a ng-if="user.authenticated"
+             class="logout user"
+             href="/accounts/logout/?next=/"
+             title="<% tooltips.logout %>"
+             onclick="return logOut()">
+             <i id="" class="fa fa-power-off"></i>
+             <span translate>Log out</span>
+          </a>
+        </li>
+      </ul>
     </li>
   </ul>
 </nav>

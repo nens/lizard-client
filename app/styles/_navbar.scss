@@ -18,8 +18,15 @@ nav.navbar {
                 background-color: $turquoise;
             }
         }
+        > li.open > a {
+            color: $white;
+            background-color: $turquoise;
+        }
     }
     i {
         margin-right: 0.25em;
+    }
+    ul.dropdown-menu {
+        border-radius: 0;
     }
 }
