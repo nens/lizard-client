@@ -3,17 +3,18 @@
   <div class="card active">
     <div class="card-content">
      <full-details></full-details>
+
      <span class="card-title-text" ng-class="{hidden: fullDetails}" translate>Rain</span>
      <div ng-class="{ hidden: !fullDetails }">
+
        <graph
-         bar-chart
-         class="xyGraph"
-         data="rain.data"
-         ylabel="rain.aggWindow"
-         yfilter="aggWinToYLabel"
-         keys="{x: 0, y: 1}"
-         temporal="state.temporal">
-       </graph>
+          bar-chart
+          type="temporal"
+          yfilter="aggWinToYLabel"
+          temporal="state.temporal"
+          content="rain"
+          now="state.temporal.at">
+        </graph>
        <div class="card-tools"
         ng-class="{hidden: !fullDetails}">
          <a ng-click="recurrenceTimeToggle()"

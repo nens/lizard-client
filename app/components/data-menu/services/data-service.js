@@ -532,7 +532,11 @@ angular.module('data-menu')
             layerGroup.getData('DataService', options).then(null, null, function (response) {
               // async so remove anything obsolete.
               geo.properties = geo.properties || {};
+              response.data = (response.data.length) ? response.data : [];
               geo.properties[response.layerGroupSlug] = response;
+              geo.properties[response.layerGroupSlug].content = [{
+                data: response.data
+              }];
               if (
                 (!instance.layerGroups[response.layerGroupSlug].isActive()
                 && layerGroup.slug in Object.keys(geo.properties))
