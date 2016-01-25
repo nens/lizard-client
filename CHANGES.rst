@@ -4,17 +4,9 @@ Changelog of lizard-nxt client
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
 
+- Improve the dashboard/map toggle.
+
 - Restyle & resize timeline.
-
-
-Release 2.6.2 (2016-1-18)
----------------------
-
-- Bump MAX_TIME (future) from 1 to 20 days.
-
-
-Release 2.6.1 (2016-1-18)
----------------------
 
 - Added close-card directive to remove assets from selection.
 
@@ -25,6 +17,16 @@ Release 2.6.1 (2016-1-18)
   DataService.geometries contains data of the selection.
 
 - Added ng-animate to omnibox.
+
+
+Release 2.6.2 (2016-1-18)
+---------------------
+
+- Bump MAX_TIME (future) from 1 to 20 days.
+
+
+Release 2.6.1 (2016-1-18)
+---------------------
 
 - Created specific omnibox dashboard card for dashboard.
 
