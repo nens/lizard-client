@@ -3,16 +3,13 @@
  */
 
 nav.navbar {
-    // @include material-shadow();
+    @include material-shadow();
     float: right;
     margin: 10px;
     border: none;
     border-radius: 0;
     background-color: $greenSea;
     color: $white;
-
-    transition: all 200ms cubic-bezier(0.52,0,0.48,1);
-    @include material-shadow();
 
     &:hover {
         @include material-shadow-hover();
@@ -23,6 +20,7 @@ nav.navbar {
             color: $white;
             &:hover {
                 background-color: $turquoise;
+                @include material-shadow-hover();
             }
         }
         > li.open > a {
