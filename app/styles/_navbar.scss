@@ -35,3 +35,16 @@ nav.navbar {
         border-radius: 0;
     }
 }
+
+// Apparently Bootstrap expects a navbar-header on the left side
+.navbar-nav.navbar-left:first-child {
+    margin-left: -15px;
+}
+
+// This can be changed in Bootstrap variables
+$grid-float-breakpoint-max: 768px;
+@media (max-width: $grid-float-breakpoint-max) {
+    .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+        color: $white;
+    }
+}
