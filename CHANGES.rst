@@ -18,6 +18,8 @@ Unreleased (2.6.2) (XXXX-XX-XX)
 
 - Added ng-animate to omnibox.
 
+- Restyle the user menu.
+
 
 Release 2.6.2 (2016-1-18)
 ---------------------
