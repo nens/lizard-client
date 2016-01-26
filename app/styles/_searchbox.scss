@@ -15,10 +15,24 @@
         @include material-shadow-hover();
     }
 
-}
+    input {
+        vertical-align: middle;
+        background-color: transparent;
+        border: 0;
+        font-size: 14px;
+        font-weight: 300;
+        margin: 0;
+        outline: 0;
+        padding: 0;
+        width: 100%;
+        box-shadow: none;
+        height: 30px;
+        color: $asbestos;
 
-.cards-minimized .searchbox-shadow {
-    box-shadow: 0 2px 6px rgba($black, 0.3),0 4px 15px -5px rgba($black, 0.3);
+        &::-webkit-input-speech-button {
+            opacity: 0.5;
+        }
+    }
 }
 
 .searchboxinput {
@@ -36,21 +50,6 @@
     vertical-align: top;
 }
 
-.searchbox input {
-    vertical-align: middle;
-    background-color: transparent;
-    border: 0;
-    font-size: 14px;
-    font-weight: 300;
-    margin: 0;
-    outline: 0;
-    padding: 0;
-    width: 100%;
-    box-shadow: none;
-    height: 30px;
-    color: $asbestos;
-}
-
 .searchbutton {
     position: relative;
     float: left;
@@ -62,46 +61,45 @@
     -moz-user-select: none;     /* Firefox all */
     -ms-user-select: none;
     user-select: none;
+
     &:hover {
         color: $white;
         background-color: $turquoise;
         @include material-shadow-hover();
     }
+
+    &::before {
+        display: block;
+        height: 17px;
+        margin: 0 auto;
+        width: 17px;
+    }
 }
 
+.search-results {
+    > h3 {
+        background-color: $turquoise;
+        font-size: 14px;
+        padding: 10px;
+        color: $white;
+        margin: 0;
+    }
+    > ul {
+        padding: 0;
+        margin: 0;
 
-.searchbutton::before {
-    display: block;
-    height: 17px;
-    margin: 0 auto;
-    width: 17px;
+        > li {
+            &:hover {
+                background-color: $clouds;
+            }
+
+            &:last {
+                margin-bottom: 5px;
+            }
+        }
+    }
 }
 
-.searchbox input::-webkit-input-speech-button {
-    opacity: 0.5;
-}
-
-
-.search-results > ul {
-    padding: 0;
-    margin: 0;
-}
-
-.search-results > ul > li:hover {
-    background-color: $clouds;
-}
-
-.search-results > ul > li:last {
-    margin-bottom: 5px;
-}
-
-.search-results > h3 {
-    background-color: $turquoise;
-    font-size: 14px;
-    padding: 10px;
-    color: $white;
-    margin: 0;
-}
 
 .results-shadow {
     box-shadow: 0 2px 6px rgba($black, 0.3),0 4px 15px -5px rgba($black, 0.0);
