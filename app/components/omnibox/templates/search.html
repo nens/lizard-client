@@ -1,35 +1,39 @@
 <div class="searchbox" id="searchbox" tabindex="-1" role="search">
-
-  <div class="searchboxinput">
-    <input id="searchboxinput"
-      ng-change="search()"
-      tabindex="-1"
-      placeholder="<% 'Search for places, or dates (i.e. 23-10-2013)' | translate %>"
-      autocomplete="off"
-      dir="ltr"
-      ng-model="query"
-      ng-keydown="searchKeyPress($event)"
-      spellcheck="false">
-    <div
-      title="<% tooltips.resetQuery %>"
-      ng-click="cleanInput()"
-      id="clear" class="clickable"></div>
-    <div class="search-button-collection">
-      <a
-        class="searchbutton clickable"
-        ng-click="zoomIn()"
-        aria-label="Zoom in"
-        title="<% tooltips.zoomInMap %>">
-        <i class="fa fa-plus"></i>
-      </a>
-      <a
-        class="searchbutton clickable"
-        ng-click="zoomOut()"
-        aria-label="Zoom uit"
-        title="<% tooltips.zoomOutMap %>">
-        <i class="fa fa-minus"></i>
-      </a>
-    </div>
+  <div class="zoom-buttons material-shadow">
+    <button class="btn btn-primary"
+            ng-click="zoomIn()"
+            aria-label="<% tooltips.zoomInMap %>">
+      <i class="fa fa-plus"></i>
+    </button>
+    <button class="btn btn-primary"
+            ng-click="zoomOut()"
+            aria-label="<% tooltips.zoomOutMap %>">
+      <i class="fa fa-minus"></i>
+    </button>
   </div>
 
+  <div class="resize-wrapper material-shadow">
+    <div class="search-and-close">
+      <button class="btn btn-default btn-lg clear-search"
+              type="button"
+              aria-label="<% tooltips.resetQuery %>"
+              ng-click="cleanInput()"
+              id="clear">
+        <i class="fa fa-close"></i>
+      </button>
+      <div class="resize-wrapper">
+        <input
+          id="searchboxinput"
+          ng-change="search()"
+          tabindex="-1"
+          placeholder="<% 'Search for places, or dates (i.e. 23-10-2013)' | translate %>"
+          autocomplete="off"
+          dir="ltr"
+          ng-model="query"
+          ng-keydown="searchKeyPress($event)"
+          spellcheck="false"
+          type="search">
+      </div>
+    </div>
+  </div>
 </div>
