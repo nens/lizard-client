@@ -322,13 +322,14 @@ describe('Testing graph', function () {
       labels: labels
     }]);
     expect(graph._xy.y.maxMin.max).toBe(3);
+    graph._containers = {};
     data[1][1] = 0.2;
     data[2][1] = 0.2;
-    graph.drawLine({
+    graph.drawLine([{
       data: data,
       keys: keys,
       labels: labels
-    });
+    }]);
     expect(graph._xy.y.maxMin.max).toBe(0.2);
   });
 

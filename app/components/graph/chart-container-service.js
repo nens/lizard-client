@@ -6,16 +6,21 @@ angular.module('lizard-nxt')
   .factory('ChartContainer', ['NxtD3', function (NxtD3) {
 
 
+  /**
+   *  Instantiate a small object that holds some extra info
+   *  for the graphs
+   */
   function ChartContainer (content, graph, temporal) {
     this._x = null;
 
     this._graph = graph;
 
     this.data = content.data;
-    this.keys = {
+    var defaultKeys = {
       x: 'timestamp',
       y: { 'y0': 'min', 'y1': 'max' }
     };
+    this.keys = content.keys || defaultKeys;
     this.labels = content.labels || {x: '', y:''};
 
     var options = {
