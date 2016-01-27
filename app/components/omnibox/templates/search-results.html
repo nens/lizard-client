@@ -9,6 +9,7 @@
     <ul>
       <li ng-cloak
         ng-repeat="result in omnibox.searchResults.spatial"
+        tabindex="2"
         class="cluster location">
         <a ng-click="zoomToSpatialResult(result)"
           class="pointer clickable">
@@ -24,6 +25,7 @@
     <ul>
       <li ng-cloak
         ng-repeat="result in omnibox.searchResults.timeseries"
+        tabindex="2"
         class="cluster location">
         <a ng-click="zoomToSearchResult(result, 'timeseries')"
           class="pointer clickable">
@@ -38,6 +40,7 @@
     </h3>
     <ul>
       <li ng-cloak
+        tabindex="2"
         ng-repeat="result in omnibox.searchResults.layergroups"
         class="cluster location">
         <a ng-click="openLayerGroup(result)"
