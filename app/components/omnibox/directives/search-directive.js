@@ -57,7 +57,7 @@ angular.module('omnibox')
      */
     scope.cleanInput = function () {
       State.selected.reset();
-      scope.omnibox.query = "";
+      scope.query = "";
       scope.omnibox.searchResults = {};
     };
 
@@ -69,7 +69,7 @@ angular.module('omnibox')
      * simple pointer to SearchService functio
      */
     scope.openLayerGroup = function () {
-      scope.omnibox.query = "";
+      scope.query = "";
       scope.omnibox.searchResults = {};
       SearchService.openLayerGroup
     };
@@ -87,7 +87,7 @@ angular.module('omnibox')
         zoom: ZOOM_FOR_OBJECT
       });
       scope.omnibox.searchResults = {};
-      scope.omnibox.query = "";
+      scope.query = "";
     };
 
     /**
@@ -96,7 +96,7 @@ angular.module('omnibox')
      */
     scope.zoomToSpatialResult = function (result, origin) {
       scope.omnibox.searchResults = {};
-      scope.omnibox.query = "";
+      scope.query = "";
       State = SearchService.zoomToGoogleGeocoderResult(result, State);
     };
 
@@ -108,7 +108,7 @@ angular.module('omnibox')
      */
     scope.zoomToTemporalResult = function(m) {
       scope.omnibox.searchResults = {};
-      scope.omnibox.query = "";
+      scope.query = "";
       State.temporal.start = m.valueOf();
       State.temporal.end = m.valueOf() + m.nxtInterval.valueOf();
       UtilService.announceMovedTimeline(State);
