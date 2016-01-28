@@ -20,6 +20,10 @@ Unreleased (2.6.2) (XXXX-XX-XX)
 
 - Restyle the user menu.
 
+- Restyle the search box.
+
+- Fix bugs in zoom buttons, openLayerGroups and clearing of the search query.
+
 
 Release 2.6.2 (2016-1-18)
 ---------------------
