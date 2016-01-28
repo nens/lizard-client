@@ -1,21 +1,25 @@
+$searchbox-height: 50px;
+$searchbox-margins: 10px;
+$zoombutton-width: 30px;
+
 .searchbox {
-    height: 50px;
-    margin-bottom: 10px;
+    height: $searchbox-height;
+    margin-bottom: $searchbox-margins;
 
     .resize-wrapper {
         overflow: hidden;
     }
 
     .search-and-close {
-        height: 50px;
+        height: $searchbox-height;
         width: 100%;
         background: $white;
         background: rgba($white, 0.95);
 
         input {
-            height: 30px;
+            height: $searchbox-height - (2 * $searchbox-margins);
             width: 100%;
-            margin-top: 10px;
+            margin-top: $searchbox-margins;
             padding: 0 15px;
             background: transparent;
             color: $asbestos;
@@ -32,8 +36,8 @@
 
         .clear-search {
             float: right;
-            height: 50px;
-            width: 50px;
+            height: $searchbox-height;
+            width: $searchbox-height;
             background: transparent;
             color: $silver;
             border-radius: 0;
@@ -45,11 +49,14 @@
 
             &:after {
                 content: '';
-                height: 30px;
+                height: $searchbox-height - (2 * $searchbox-margins);
                 border-left: 1px solid $silver;
                 position: absolute;
-                top: 10px;
-                right: 90px;
+                // Position absolute sets the the border on the right of the
+                // zoom buttons if right=0 (or left of the search bar if
+                // left=0). Move it to left of the close button.
+                right: $zoombutton-width + $searchbox-margins + $searchbox-height;
+                top: $searchbox-margins;
             }
         }
     }
@@ -57,14 +64,14 @@
 
 .zoom-buttons {
     float: right;
-    height: 50px;
-    margin-left: 10px;
+    height: $searchbox-height;
+    margin-left: $searchbox-margins;
     text-align: center;
 
     button {
         display: block;
-        height: 25px;
-        width: 30px;
+        height: $searchbox-height / 2;
+        width: $zoombutton-width;
         padding: 0;
         background-color: $greenSea;
         color: $white;
@@ -83,7 +90,7 @@
     > h3 {
         background-color: $turquoise;
         font-size: 14px;
-        padding: 10px;
+        padding: $searchbox-margins;
         color: $white;
         margin: 0;
     }
