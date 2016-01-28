@@ -68,10 +68,10 @@ angular.module('omnibox')
      * @param {object} search result with layergroup.
      * simple pointer to SearchService functio
      */
-    scope.openLayerGroup = function () {
+    scope.openLayerGroup = function (lg) {
       scope.query = "";
       scope.omnibox.searchResults = {};
-      SearchService.openLayerGroup
+      SearchService.openLayerGroup(lg);
     };
 
     /**
