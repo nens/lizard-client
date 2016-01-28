@@ -331,24 +331,10 @@ angular.module('data-menu')
         }
 
         var promises = [];
-        var waitForTimeseriesAndEvents = false;
         var instance = this;
         angular.forEach(this.layerGroups, function (layerGroup) {
           promises.push(
             layerGroup.getData(callee, options).then(null, null, function (response) {
-
-              // TS and events are dependent on the waterchain response. So the
-              // waterchain response is checked for signs of timeseries. If
-              // neccessary we will wait for the timeseries request to finish.
-              // Else we keep checking every response.
-              if (!waitForTimeseriesAndEvents) {
-                waitForTimeseriesAndEvents = instance.getTimeseriesAndEvents(
-                  response,
-                  options,
-                  defer,
-                  callee
-                );
-              }
 
               if (recursiveDefer) {
                 recursiveDefer.notify(response);
@@ -361,13 +347,7 @@ angular.module('data-menu')
         });
 
         $q.all(promises).then(function () {
-          if (waitForTimeseriesAndEvents) {
-            waitForTimeseriesAndEvents.then(function () {
-              finishDefers();
-            });
-          } else {
-            finishDefers();
-          }
+          finishDefers();
         });
 
         /**
