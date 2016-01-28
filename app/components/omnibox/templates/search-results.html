@@ -12,7 +12,7 @@
         class="cluster location">
         <a ng-click="zoomToSpatialResult(result)"
           tabindex="2"
-          href="#">
+          href="">
           <span><% result.formatted_address %></span>
         </a>
       </li>
@@ -28,7 +28,7 @@
         class="cluster location">
         <a ng-click="zoomToSearchResult(result, 'timeseries')"
           tabindex="2"
-          href="#">
+          href="">
           <span><% result.location.name %> - <% result.name %></span>
         </a>
       </li>
@@ -44,7 +44,7 @@
         class="cluster location">
         <a ng-click="openLayerGroup(result)"
           tabindex="2"
-          href="#">
+          href="">
           <span><% result.name %></span>
         </a>
       </li>
