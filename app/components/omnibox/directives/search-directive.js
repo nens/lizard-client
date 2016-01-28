@@ -22,6 +22,10 @@ angular.module('omnibox')
     // Set focus on search input field.
     element.children()[0].focus();
 
+    // Bind mapservice functions for zoom buttons;
+    scope.zoomIn = MapService.zoomIn;
+    scope.zoomOut = MapService.zoomOut;
+
     /**
      * Uses scope.query to search for results through SearchService. Response
      * from SearchService.search is an object with various results and promises.
