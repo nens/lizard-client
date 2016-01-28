@@ -78,10 +78,13 @@ $zoombutton-width: 30px;
         border: none;
         border-radius: 0;
 
-        &:hover {
+        &:hover, &:active {
             color: $white;
             background-color: $turquoise;
             @include material-shadow-hover();
+        }
+        &:focus {
+            background-color: $greenSea;
         }
     }
 }
