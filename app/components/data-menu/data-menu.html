@@ -1,13 +1,8 @@
 <div ng-controller="DatamenuController as menu">
-  <div class="layer-menu-container">
     <div class="layer-switcher-wrapper"
       ng-class="{'slide-left': menu.enabled}">
 
       <div class="layer-switcher">
-
-        <ul class="nav">
-
-          <li class="nav-header">
             <ul class="list-group">
               <li>
                 <baselayer-chooser></baselayer-chooser>
@@ -24,8 +19,6 @@
                 </eventlayer-chooser>
               </li>
             </ul>
-          </li>
-        </ul>
       </div>
 
       <div id="ribbon"
@@ -45,7 +38,7 @@
             title="<% menu.enabled ? tooltips.closeMenu : tooltips.openMenu %>">
       </span>
 
-      <div class="button-list-container" id="">
+      <div class="button-list-container">
 
         <div ng-if="context === 'map' || context === 'scenarios'">
 
@@ -72,5 +65,4 @@
 
       </div>
     </div>
-  </div>
 </div>
