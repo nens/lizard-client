@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 2.7.1 (2016-1-29)
+---------------------
 
 - Add geometry to annotation and add annotation to geometry. Enabling annotation
   on latlngs.
