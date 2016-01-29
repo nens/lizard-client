@@ -341,7 +341,7 @@ angular.module('lizard-nxt')
       .then(
         function (response) {
           if (response && response !== 'null' && response.data !== null) {
-            timeline.drawBars(response.data);
+            timeline.drawBars([{data: response.data, keys: {x:0, y:1}}]);
           }
         }
       );
@@ -510,4 +510,3 @@ angular.module('lizard-nxt')
     templateUrl: 'timeline/timeline.html'
   };
 }]);
-

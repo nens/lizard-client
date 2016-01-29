@@ -86,8 +86,9 @@ describe('Testing line graph attribute directive', function() {
     var stringDim = '{width: ' + String(dimensions.width) + ', height: ' + String(dimensions.height)
     + ', padding: ' + '{top: ' + String(dimensions.padding.top) + ', left: ' + String(dimensions.padding.left)
     + ', right: ' + String(dimensions.padding.right) + ', bottom: ' + String(dimensions.padding.bottom) + '}}';
+    var dataString = '[{ data: [[3, 4], [2,3], [5,6]] }]';
     element = angular.element('<div>' +
-      '<graph line data="[[3, 4], [2,3], [5,6]]" dimensions="' + stringDim + '"></graph></div>');
+      '<graph line content="' + dataString +'" dimensions="' + stringDim + '"></graph></div>');
     element = $compile(element)($rootScope);
     scope = element.scope();
     scope.$digest();
@@ -110,8 +111,10 @@ describe('Testing barChart attribute directive', function() {
   }));
 
   beforeEach(function () {
+    var dataString = '[ {data: [[3, 4], [2,3], [5,6]], keys: {x: 0, y: 1}, labels: {x: 0, y: 1} } ]';
+
     element = angular.element('<div>' +
-      '<graph bar-chart data="[[1, 4], [2,3], [5,6]]"></graph></div>');
+      '<graph bar-chart content="' + dataString + '"></graph></div>');
     element = $compile(element)($rootScope);
     scope = element.scope();
     scope.$digest();
@@ -135,8 +138,9 @@ describe('Testing horizontalStackChart attribute directive', function() {
   }));
 
   beforeEach(function () {
+    var dataString = '[ {data: [[3, 4], [2,3], [5,6]], keys: {x: 0, y: 1}, labels: {x: 0, y: 1} } ]';
     element = angular.element('<div>' +
-      '<graph bar-chart data="[[1, 4], [2,3], [5,6]]"></graph></div>');
+      '<graph bar-chart content="' + dataString + '"></graph></div>');
     element = $compile(element)($rootScope);
     scope = element.scope();
     scope.$digest();
@@ -201,7 +205,11 @@ describe('Testing graph', function () {
         labels = {x: 'afstand', y: 'elevation'};
 
     expect(graph._xy).toBe(undefined);
-    graph.drawLine(data, keys, labels);
+    graph.drawLine([{
+      data: data,
+      keys: keys,
+      labels: labels
+    }]);
     expect(graph._xy).not.toBe(undefined);
   });
 
@@ -213,7 +221,11 @@ describe('Testing graph', function () {
         height = dimensions.height - dimensions.padding.bottom,
         width = dimensions.width - dimensions.padding.left - dimensions.padding.right;
 
-    graph.drawLine(data, keys, labels);
+    graph.drawLine([{
+      data: data,
+      keys: keys,
+      labels: labels
+    }]);
     // expect(graph._xy.x.scale(graph._xy.x.maxMin.max)).toBe(width);
 
     expect(graph._xy.x.scale(0)).toBe(0);
@@ -225,7 +237,11 @@ describe('Testing graph', function () {
     var data = [[0, 0], [1, 3], [2, 1]];
     keys = {x: 0, y: 1},
     labels = {x: 'afstand', y: 'elevation'},
-    graph.drawLine(data, keys, labels);
+    graph.drawLine([{
+      data: data,
+      keys: keys,
+      labels: labels
+    }]);
     expect(graph._xy.y.axis.name).toBe('axis');
     expect(graph._xy.x.axis.name).toBe('axis');
   });
@@ -234,12 +250,20 @@ describe('Testing graph', function () {
     var data = [[0, 0], [1, 3], [2, 1]];
     keys = {x: 0, y: 1},
     labels = {x: 'afstand', y: 'elevation'},
-    graph.drawLine(data, keys, labels);
+    graph.drawLine([{
+      data: data,
+      keys: keys,
+      labels: labels
+    }]);
     expect(graph._xy.x.maxMin.min).toBe(0);
     expect(graph._xy.x.maxMin.max).toBe(2);
     data[0][0] = -1;
     data[2][0] = 3;
-    graph.drawLine(data, keys, labels);
+    graph.drawLine([{
+      data: data,
+      keys: keys,
+      labels: labels
+    }]);
     expect(graph._xy.x.maxMin.min).toBe(-1);
     expect(graph._xy.x.maxMin.max).toBe(3);
   });
@@ -250,10 +274,18 @@ describe('Testing graph', function () {
         keys = {x: 0, y: 1},
         labels = {x: 'afstand', y: 'elevation'};
 
-    graph.drawLine(data, keys, labels);
+    graph.drawLine([{
+      data: data,
+      keys: keys,
+      labels: labels
+    }]);
     expect(graph._xy.y.maxMin.max).toBe(3);
     data[0][1] = 4;
-    graph.drawLine(data, keys, labels);
+    graph.drawLine([{
+      data: data,
+      keys: keys,
+      labels: labels
+    }]);
     expect(graph._xy.y.maxMin.max).toBe(4);
   });
 
@@ -263,11 +295,19 @@ describe('Testing graph', function () {
         keys = {x: 0, y: 1},
         labels = {x: 'afstand', y: 'elevation'};
 
-    graph.drawLine(data, keys, labels);
+    graph.drawLine([{
+      data: data,
+      keys: keys,
+      labels: labels
+    }]);
     expect(graph._xy.y.maxMin.max).toBe(3);
     data[1][1] = 1.5;
 
-    graph.drawLine(data, keys, labels);
+    graph.drawLine([{
+      data: data,
+      keys: keys,
+      labels: labels
+    }]);
 
     expect(graph._xy.y.maxMin.max).toBe(3);
   });
@@ -276,11 +316,20 @@ describe('Testing graph', function () {
     var data = [[0, 0], [1, 3], [2, 1]];
     keys = {x: 0, y: 1},
     labels = {x: 'afstand', y: 'elevation'},
-    graph.drawLine(data, keys, labels);
+    graph.drawLine([{
+      data: data,
+      keys: keys,
+      labels: labels
+    }]);
     expect(graph._xy.y.maxMin.max).toBe(3);
+    graph._containers = {};
     data[1][1] = 0.2;
     data[2][1] = 0.2;
-    graph.drawLine(data, keys, labels);
+    graph.drawLine([{
+      data: data,
+      keys: keys,
+      labels: labels
+    }]);
     expect(graph._xy.y.maxMin.max).toBe(0.2);
   });
 
@@ -289,7 +338,11 @@ describe('Testing graph', function () {
         keys = {x: 0, y: 1},
         labels = {x: 'afstand', y: 'elevation'},
         quantity = 'time';
-    graph.drawBars(data, keys, labels, quantity);
+    graph.drawBars([{
+      data: data,
+      keys: keys,
+      labels: labels
+    }], quantity);
     expect(graph._xy.x.scale.domain()[0] instanceof Date).toBe(true);
   });
 
@@ -302,7 +355,11 @@ describe('Testing graph', function () {
       keys = {x: 'timestamp', y: 'count', category: 'category'},
       labels = {x: 'afstand', y: 'elevation'},
       quantity = 'time';
-    graph.drawBars(data, keys, labels, quantity);
+    graph.drawBars([{
+      data: data,
+      keys: keys,
+      labels: labels
+    }], quantity);
     var bars = graph._svg.select('g').select('#feature-group').selectAll(".bar");
     expect(bars[0][0].getAttribute('x')).toEqual(bars[0][2].getAttribute('x'));
   });
@@ -316,7 +373,11 @@ describe('Testing graph', function () {
       keys = {x: 'timestamp', y: 'count', category: 'category'},
       labels = {x: 'afstand', y: 'elevation'},
       quantity = 'time';
-    graph.drawBars(data, keys, labels, quantity);
+    graph.drawBars([{
+      data: data,
+      keys: keys,
+      labels: labels
+    }], quantity);
     var bars = graph._svg.select('g').select('#feature-group').selectAll(".bar");
     var yValue = Number(bars[0][0].getAttribute('y'));
     var yValue2 = Number(bars[0][1].getAttribute('y')) - Number(bars[0][1].getAttribute('height'));
@@ -328,7 +389,11 @@ describe('Testing graph', function () {
       keys = {x: 0, y: 1},
       labels = {x: 'afstand', y: 'elevation'},
       quantity = 'time';
-    graph.drawBars(data, keys, labels, quantity);
+    graph.drawBars([{
+      data: data,
+      keys: keys,
+      labels: labels
+    }], quantity);
     graph.drawNow(data[1][0]);
     var indicator = graph._svg.select('g').select('#feature-group').select('.now-indicator');
     expect(indicator.attr('x1')).toEqual(String(graph._xy.x.scale(data[1][0])));
@@ -342,7 +407,11 @@ describe('Testing graph', function () {
         labels = {x: 'afstand', y: 'elevation'},
         temporal = false,
         useSubset = true;
-    graph.drawLine(data, keys, labels, temporal, useSubset);
+    graph.drawLine([{
+      data: data,
+      keys: keys,
+      labels: labels
+    }], temporal, useSubset);
     var path = graph._svg.select('#feature-group').select('path');
     expect(path.data()[0].length).toBe(5);
   });
@@ -356,7 +425,11 @@ describe('Testing graph', function () {
           labels = {x: 'afstand', y: 'elevation'},
           temporal = false,
           useSubset = false;
-      graph.drawLine(data, keys, labels, temporal, useSubset);
+      graph.drawLine([{
+        data: data,
+        keys: keys,
+        labels: labels
+      }], temporal, useSubset);
       var path = graph._svg.select('#feature-group').select('path');
       expect(path.data()[0].length).toBe(data.length);
     }

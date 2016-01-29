@@ -67,8 +67,33 @@ angular.module('timeseries')
           }
 
           prom.then(function (response) {
-            scope.timeseries.data =
+            var nonZeroResults =
               $filter('rmZeroDatumTimeseries')(response.results);
+            scope.timeseries.data = [];
+            angular.forEach(nonZeroResults, function (ts) {
+              var entity_data = scope.asset;
+              var keys = {
+                x: 'timestamp',
+                y: { 'y0': 'min', 'y1': 'max' }
+              };
+              if (entity_data.entity_name === 'measuringstation' &&
+              entity_data.station_type === 1) {
+                ts.type = 'bar-chart';
+                keys = {
+                  x: 'timestamp',
+                  y: 'max',
+                };
+              }
+              ts.content = [{
+                data: ts.events,
+                labels: {
+                  y: ts.parameter_referenced_unit.referenced_unit_short_display_name,
+                  x: ''
+                },
+                keys: keys
+              }];
+              scope.timeseries.data.push(ts);
+            });
 
             scope.timeseries.selectedTimeseries = getSelectedTS(
               scope.timeseries.data,

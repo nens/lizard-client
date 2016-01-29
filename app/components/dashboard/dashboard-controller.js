@@ -8,6 +8,7 @@ angular.module('dashboard')
   this.dims = {};
 
   this.content = {};
+  this.graphs = [{ this: 'is the first one'}];
 
   // statistics (maybe get dynamically from event aggregation service?)
   this.stats = ['max', 'min', 'mean', 'sum', 'median', 'count'];

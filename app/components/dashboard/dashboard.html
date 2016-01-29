@@ -1,64 +1,117 @@
 <div class="dashboard-wrapper" ng-controller="DashboardCtrl as dashboard">
 
-  <div class="row" ng-repeat="item in dashboard.content">
+    <div class="row" ng-repeat="item in dashboard.graphs">
+      <div class="dashboard-inner">
+        <graph
+         line
+         content="dashboard.content"
+         temporal="dashboard.state.temporal"
+         dimensions="dashboard.dims"
+         >
+         <graph/>
+<!--
+        <graph
+          ng-if="item.type === 'timeseries'"
+          line
+          data="item.data"
+          dimensions="dashboard.dims"
+          type="temporal"
+          temporal="dashboard.state.temporal"
+          ylabel="item.unit"
+          keys="{
+            x: 'timestamp',
+            y: { 'y0': 'min', 'y1': 'max' }
+          }"
+          name="<% item.name %>">
+        </graph>
 
-    <div class="dashboard-inner">
+        <graph
+          ng-if="item.type === 'Event'"
+          bar-chart
+          data="item.data"
+          ylabel="item.unit"
+          keys="{x: 'timestamp',
+                 y: 'count',
+                 color: 'color',
+                 category: 'category'}"
+          dimensions="dashboard.dims"
+          temporal="dashboard.state.temporal"
+          name="<% item.quantity %>">
+        </graph>
 
-      <graph
-        ng-if="item.type === 'timeseries'"
-        line
-        data="item.data"
-        dimensions="dashboard.dims"
-        type="temporal"
-        temporal="dashboard.state.temporal"
-        ylabel="item.unit"
-        keys="{
-          x: 'timestamp',
-          y: { 'y0': 'min', 'y1': 'max' }
-        }"
-        name="<% item.name %>">
-      </graph>
+        <graph
+          ng-if="item.scale === 'ratio'"
+          bar-chart
+          data="item.data"
+          dimensions="dashboard.dims"
+          type="temporal"
+          temporal="dashboard.state.temporal"
+          ylabel="item.aggWindow"
+          yfilter="aggWinToYLabel"
+          keys="{x: 0, y: 1}"
+          name="<% item.quantity %>">
+        </graph>
 
-      <graph
-        ng-if="item.type !== 'timeseries'
-          && item.scale !== 'ratio'
-          && item.type !== 'Event'"
-        line
-        data="item.data"
-        dimensions="dashboard.dims"
-        type="temporal"
-        temporal="dashboard.state.temporal"
-        ylabel="item.unit"
-        keys="{x: 0, y: 1}"
-        name="<% item.quantity %>">
-      </graph>
+      </div> -->
+<!--  <div class="row" ng-repeat="item in dashboard.content">-->
 
-      <graph
-        ng-if="item.type === 'Event'"
-        bar-chart
-        data="item.data"
-        ylabel="item.unit"
-        keys="{x: 'timestamp',
-               y: 'count',
-               color: 'color',
-               category: 'category'}"
-        dimensions="dashboard.dims"
-        temporal="dashboard.state.temporal"
-        name="<% item.quantity %>">
-      </graph>
+    <!--<div class="dashboard-inner">-->
 
-      <graph
-        ng-if="item.scale === 'ratio'"
-        bar-chart
-        data="item.data"
-        dimensions="dashboard.dims"
-        type="temporal"
-        temporal="dashboard.state.temporal"
-        ylabel="item.aggWindow"
-        yfilter="aggWinToYLabel"
-        keys="{x: 0, y: 1}"
-        name="<% item.quantity %>">
-      </graph>
+      <!--<graph-->
+        <!--ng-if="item.type === 'timeseries'"-->
+        <!--line-->
+        <!--data="item.data"-->
+        <!--dimensions="dashboard.dims"-->
+        <!--type="temporal"-->
+        <!--temporal="dashboard.state.temporal"-->
+        <!--ylabel="item.unit"-->
+        <!--keys="{-->
+          <!--x: 'timestamp',-->
+          <!--y: { 'y0': 'min', 'y1': 'max' }-->
+        <!--}"-->
+        <!--name="<% item.name %>">-->
+      <!--</graph>-->
+
+      <!--<graph-->
+        <!--ng-if="item.type !== 'timeseries'-->
+          <!--&& item.scale !== 'ratio'-->
+          <!--&& item.type !== 'Event'"-->
+        <!--line-->
+        <!--data="item.data"-->
+        <!--dimensions="dashboard.dims"-->
+        <!--type="temporal"-->
+        <!--temporal="dashboard.state.temporal"-->
+        <!--ylabel="item.unit"-->
+        <!--keys="{x: 0, y: 1}"-->
+        <!--name="<% item.quantity %>">-->
+      <!--</graph>-->
+
+      <!--<graph-->
+        <!--ng-if="item.type === 'Event'"-->
+        <!--bar-chart-->
+        <!--data="item.data"-->
+        <!--ylabel="item.unit"-->
+        <!--keys="{x: 'timestamp',-->
+               <!--y: 'count',-->
+               <!--color: 'color',-->
+               <!--category: 'category'}"-->
+        <!--dimensions="dashboard.dims"-->
+        <!--temporal="dashboard.state.temporal"-->
+        <!--name="<% item.quantity %>">-->
+      <!--</graph>-->
+
+      <!--<graph-->
+        <!--ng-if="item.scale === 'ratio'"-->
+        <!--bar-chart-->
+        <!--data="item.data"-->
+        <!--dimensions="dashboard.dims"-->
+        <!--type="temporal"-->
+        <!--temporal="dashboard.state.temporal"-->
+        <!--ylabel="item.aggWindow"-->
+        <!--yfilter="aggWinToYLabel"-->
+        <!--keys="{x: 0, y: 1}"-->
+        <!--name="<% item.quantity %>">-->
+      <!--</graph>-->
 
     </div>
 

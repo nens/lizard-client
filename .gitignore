@@ -26,3 +26,6 @@ app/translations.js
 
 # pycharm
 .idea/
+
+#ctags
+.tags*
