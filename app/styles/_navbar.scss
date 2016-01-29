@@ -3,7 +3,6 @@
  */
 
 nav.navbar {
-    @include material-shadow();
     float: right;
     margin: 10px;
     border: none;
@@ -11,8 +10,11 @@ nav.navbar {
     background-color: $greenSea;
     color: $white;
 
-    &:hover {
+    > .container-fluid {
+      @include material-shadow();
+      &:hover {
         @include material-shadow-hover();
+      }
     }
 
     &.navbar-default .navbar-nav {
@@ -51,6 +53,88 @@ $grid-float-breakpoint-max: 768px;
 
 // lizard apps stuff
 .lizard-apps-button {
-  width: 20px;
-  fill: white;
+  user-select: none;
+  cursor: pointer;
+  padding: 15px 10px;
+  float: right;
+  border: none;
+  border-radius: 0;
+  background-color: $greenSea;
+  color: $white;
+
+  &:hover {
+      @include material-shadow-hover();
+  }
+  ul.dropdown-menu {
+      border-radius: 0;
+  }
+  svg {
+    margin-right: 0.25em;
+    margin-top: 0.1em;
+    width: 11px;
+    fill: white;
+  }
+}
+
+.lizard-apps-container {
+  @include material-shadow-hover();
+  position: absolute;
+  top: 62px;
+  max-width: 300px;
+  color: black;
+  background: rgba(255, 255, 255, 1);
+}
+
+.lizard-apps {
+  width: 100%;
+  position: relative;
+  background: rgba(255, 255, 255, 1);
+  border: 0px solid rgba(255, 255, 255, 1);
+
+  &:after, &:before {
+    bottom: 100%;
+    left: 40px;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+  }
+
+  &:after {
+    border-color: rgba(255, 255, 255, 0.0);
+    border-bottom-color: rgba(255, 255, 255, 1);
+    border-width: 10px;
+    margin-left: -10px;
+  }
+  &:before {
+    border-color: rgba(255, 255, 255, 0.0);
+    border-bottom-color: rgba(255, 255, 255, 1);
+    border-width: 12px;
+    margin-left: -12px;
+  }
+
+  .lizard-apps-icon {
+    float: left;
+    > a {
+      padding: 10px;
+      @include center-block();
+      width: 100px;
+      height: 120px;
+      text-align: center;
+      &:hover {
+        @include material-shadow-hover();
+      }
+
+      img {
+        border: solid transparent;
+        border-radius: 10px;
+        max-width: 100%;
+        max-height: 80%;
+      }
+      span {
+      }
+    }
+  }
 }
