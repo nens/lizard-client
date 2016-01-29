@@ -16,6 +16,8 @@ annotation
 
 - Set full-details to false when more than two selected elements.
 
+- Added notification bar with notie
+
 - Add plugin dom elements and js file
 
 - Adjusted the styling of the plugins.

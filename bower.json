@@ -22,21 +22,22 @@
   ],
   "dependencies": {
     "angular": "1.4.7",
+    "angular-animate": "~1.4.8",
+    "angular-gettext": "~2.1.0",
     "angular-mocks": "1.4.7",
     "angular-resource": "1.4.7",
     "bootstrap": "~3.1.1",
-    "d3": "~3.4.11",
-    "leaflet": "0.7.7",
-    "lizard-iconfont": "0.1",
-    "raven-js": "~1.1.16",
     "components-font-awesome": "~4.2.0",
+    "d3": "~3.4.11",
     "d3-comparator": "~0.1.0",
-    "lodash": "~2.4.1",
-    "ng-csv": "~0.3.1",
+    "leaflet": "0.7.7",
     "leaflet.markercluster": "~0.4.0",
+    "lizard-iconfont": "0.1",
+    "lodash": "~2.4.1",
     "moment": "~2.10.2",
-    "angular-gettext": "~2.1.0",
-    "angular-animate": "~1.4.8"
+    "ng-csv": "~0.3.1",
+    "notie": "*",
+    "raven-js": "~1.1.16"
   },
   "resolutions": {
     "angular": "1.4.7"

@@ -88,6 +88,14 @@ angular.module('lizard-nxt')
   .constant('user', window.user);
 
 /**
+ * @name notie
+ * @memberOf app
+ * @description Notification service
+ */
+angular.module('lizard-nxt')
+  .constant('notie', window.notie);
+
+/**
  * @name versioning
  * @memberOf app
  * @description User and auth stuff

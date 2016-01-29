@@ -26,8 +26,8 @@ angular.module('annotations')
  */
 angular.module('annotations')
   .directive('annotationsView',
-             ['AnnotationsService', '$window', 'gettext',
-              function (AnnotationsService, $window, gettext) {
+             ['AnnotationsService', '$window', 'gettext', 'notie',
+              function (AnnotationsService, $window, gettext, notie) {
 
     var link = function (scope, element, attrs) {
 
@@ -116,7 +116,7 @@ angular.module('annotations')
        */
       var deleteAnnotationError = function(httpResponse) {
         console.log(httpResponse);
-        $window.alert(
+        notie.alert(3,
           gettext(
             "Oops! Something went wrong while deleting the annotation."));
         throw new Error(
@@ -216,8 +216,8 @@ angular.module('annotations')
  */
 angular.module('annotations')
   .directive('annotationsMake',
-             ['AnnotationsService', '$window', 'gettext',
-              function (AnnotationsService, $window, gettext) {
+             ['AnnotationsService', '$window', 'gettext', 'notie',
+              function (AnnotationsService, $window, gettext, notie) {
 
     var link = function (scope, element, attrs) {
 
@@ -263,7 +263,7 @@ angular.module('annotations')
        *                              POST.
        */
       var createAnnotationError = function(httpResponse){
-        $window.alert(
+        notie.alert(3,
           gettext(
             "Oops! Something went wrong while creating the annotation."));
         throw new Error(
