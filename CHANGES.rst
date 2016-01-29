@@ -24,6 +24,8 @@ Unreleased (2.6.2) (XXXX-XX-XX)
 
 - Fix bugs in zoom buttons, openLayerGroups and clearing of the search query.
 
+- Initial restyle of the data menu.
+
 
 Release 2.6.2 (2016-1-18)
 ---------------------
