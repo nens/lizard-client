@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
 
+- Empty vector cache when closing layergroup.
+
+- Use map-service spatialSelect when clicking on events.
+
 - Set full-details to false when more than two selected elements.
 
 - Improve the dashboard/map toggle.

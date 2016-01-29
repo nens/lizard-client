@@ -355,14 +355,7 @@ angular.module('map')
 
       _toggleLayers: function (lg) {
         if (lg.isActive() && lg.mapLayers.length > 0) {
-          if (lg.temporal) {
-            // copy timeState to layers so when added they will respect the
-            // current timestate and can make independent descisions about when
-            // to sync to new timestate.
-            angular.forEach(lg.mapLayers, function (layer) {
-              layer.timeState = angular.copy(State.temporal);
-            });
-          }
+          service.syncTime(State.temporal);
           addLayersRecursively(service._map, lg.mapLayers, 0);
         }
         else {
@@ -672,8 +665,8 @@ angular.module('map')
       },
 
       Vector: function (nonLeafLayer) {
-        var leafletLayer = new LeafletVectorService({
-          slug: nonLeafLayer.slug,
+        var options = {
+          layer: nonLeafLayer,
           color: nonLeafLayer.color,
           showCoverageOnHover: false,  // When you mouse over a cluster it shows
                                        // the bounds of its markers.
@@ -729,10 +722,13 @@ angular.module('map')
                     + size + '</text>'
                     + '</svg>'
             });
+          },
+          callbackClick: function (e, features) {
+            service.spatialSelect(e.latlng);
           }
+        };
 
-        });
-        return leafletLayer;
+        return new LeafletVectorService(options);
       }
 
     };
