@@ -130,6 +130,25 @@ angular.module('lizard-nxt')
       graphUpdateHelper();
     }, true);
 
+    /**
+     * Support legacy single line graph api. Restructure data, and follow normal
+     * flow throug content watch ^.
+     */
+    var dataWatch = scope.$watch('data', function (n, o) {
+      if (scope.content) {
+        dataWatch();
+        return;
+      }
+
+      scope.content = [{
+        data: scope.data, labels: {
+          x: scope.xlabel,
+          y: scope.ylabel
+        },
+        keys: { x: 0, y: 1 }
+      }];
+    });
+
     scope.$watch('temporal.at', function (n, o) {
       if (n === o) { return true; }
       if (scope.temporal && scope.temporal.at) {
@@ -199,11 +218,18 @@ angular.module('lizard-nxt')
       };
     },
     scope: {
-      content: '=',
+      content: '=?',
+
       mouseLoc: '=',
       yfilter: '=',
       dimensions: '=',
       temporal: '=',
+
+      // Legacy, use list of graph datasets in content. This is for line and
+      // other old graphs.
+      data: '=?',
+      xlabel: '=?',
+      ylabel: '=?',
     },
     restrict: 'E',
     replace: true,
