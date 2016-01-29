@@ -16,6 +16,10 @@ annotation
 
 - Set full-details to false when more than two selected elements.
 
+- Add plugin dom elements and js file
+
+- Adjusted the styling of the plugins.
+
 - Improve the dashboard/map toggle.
 
 - Restyle & resize timeline.

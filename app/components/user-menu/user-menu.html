@@ -1,13 +1,9 @@
 <nav class="navbar navbar-default">
+  <div id="lizard-apps-container" class="lizard-apps-container"></div>
   <div class="container-fluid">
     <ul class="nav navbar-nav navbar-left">
       <li>
-        <a title="<% 'Apps' | translate %>"
-           target="_blank"
-           href="">
-          <i class="fa fa-th"></i>
-          <span translate>Apps</span>
-        </a>
+        <div id="lizard-apps-button" class="lizard-apps-button" title="Apps"></div>
       </li>
       <li ng-if="context == 'map'">
         <a ng-click="toggleDashboard()"
@@ -38,6 +34,8 @@
           <span translate>Favorite</span>
         </a>
       </li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
       <li ng-if="!user.authenticated">
         <a onclick="logIn()"
            title="<% tooltips.login %>"
@@ -48,8 +46,6 @@
           </div>
         </a>
       </li>
-    </ul>
-    <ul class="nav navbar-nav navbar-right">
       <li class="dropdown" ng-if="user.authenticated">
         <a title="<% tooltips.profile %>"
            class="dropdown-toggle"

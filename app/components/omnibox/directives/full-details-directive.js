@@ -22,7 +22,7 @@ angular.module('lizard-nxt')
       var toggledByUser = false;
 
       // does the actual toggling.
-      var toggledByUseretails = function () {
+      var toggleDetails = function () {
         if (scope.$$phase) {
           scope.fullDetails = !scope.fullDetails;
         } else {
@@ -33,7 +33,7 @@ angular.module('lizard-nxt')
         toggledByUser = true;
       };
 
-      element.bind('click', toggledByUseretails);
+      element.bind('click', toggleDetails);
 
       /**
        * Minimize boxes when lots of cards.
