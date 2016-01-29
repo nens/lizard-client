@@ -4,6 +4,22 @@ Changelog of lizard-nxt client
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
 
+- Add geometry to annotation and add annotation to geometry. Enabling annotation
+  on latlngs.
+
+- Empty vector cache when closing layergroup.
+
+- Use map-service spatialSelect when clicking on events.
+
+- Use specified url when getting 'vector' data. Convert to events when
+annotation
+
+- Set full-details to false when more than two selected elements.
+
+- Add plugin dom elements and js file
+
+- Adjusted the styling of the plugins.
+
 - Improve the dashboard/map toggle.
 
 - Restyle & resize timeline.
