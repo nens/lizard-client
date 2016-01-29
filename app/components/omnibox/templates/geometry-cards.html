@@ -14,6 +14,13 @@
     state="omnibox.state">
   </rain>
 
+  <annotations
+    ng-if="header && geom.geometry.type === 'Point'"
+    data="geom"
+    time-state="timeState">
+  </annotations>
+
+
   <defaultpoint
     ng-if="geom.geometry.type === 'Point' && !geom.properties.rain "
     ng-repeat="(slug, content) in geom.properties"

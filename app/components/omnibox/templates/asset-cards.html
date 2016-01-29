@@ -10,7 +10,7 @@
       time-state="timeState">
     </timeseries>
 
-    <annotations ng-if="longFormat" asset="asset" time-state="timeState"></annotations>
+    <annotations data="asset" time-state="timeState"></annotations>
 
   <div ng-if="longFormat && (asset.filters
     || asset.pumps)">

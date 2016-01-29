@@ -94,14 +94,41 @@ angular.module('annotations')
        */
       this.addAnnotationToObject = function (
           asset, text, file, timelineat, success, error) {
+
         var fd = new FormData();
-        fd.append('attachment', file);
-        fd.append('object_type', asset.entity_name);
-        fd.append('object_id', asset.id);
+        if (file) { fd.append('attachment', file); }
+        if (asset.entity_name) {
+          fd.append('object_type', asset.entity_name);
+        }
+        if (asset.id) {
+          fd.append('object_id', asset.id);
+        }
         fd.append('text', text);
         fd.append('timestamp_start', timelineat);
         fd.append('timestamp_end', timelineat);
+        fd.append('location', JSON.stringify(asset.geometry));
+
         return Annotations.save(fd, success, error);
+      };
+
+
+      /**
+       * Refresh the annotationlayer if present. Event layer clear data when
+       * turned off. So turn off and on.
+       */
+      this.refreshAnnotationLayer = function () {
+        var annotationLgIndex = State.layerGroups.active.indexOf('annotations');
+        if (annotationLgIndex) {
+          var oldLgs = angular.copy(State.layerGroups.active);
+          var newLgs = State.layerGroups.active.filter(function (lgslug) {
+            if (lgslug !== 'annotation') {
+              return true;
+            } else { return false ;}
+          });
+
+          State.layerGroups.active = newLgs;
+          State.layerGroups.active = oldLgs;
+        }
       };
 
       return this;

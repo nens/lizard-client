@@ -28,10 +28,31 @@ angular.module('lizard-nxt')
       this.hasMarker = this.hasLayer;
       this.markers = [];
 
+      this.addData();
+
+      var layer = this;
+
+      this.on('clusterclick', function (e) {
+        var features = [];
+        e.layer.getAllChildMarkers().forEach(function (marker) {
+          features.push(marker.options.feature);
+        });
+        layer.options.callbackClick(e, features);
+      });
+
+      this.on('click', function (e) {
+        var features = [e.layer.options.feature];
+        layer.options.callbackClick(e, features);
+      });
+
+    },
+
+    addData: function () {
+
       var color = this.options.color,
           layer = this;
 
-      VectorService.getData('leaflet', this.options.slug, {})
+      VectorService.getData('leaflet', this.options.layer, {})
       .then(function (response) {
         layer.markers = [];
 
@@ -41,17 +62,17 @@ angular.module('lizard-nxt')
         var icon = L.divIcon({
           iconAnchor: [pxSize, pxSize],
           html: '<svg height="' + (pxSize * 2) + '" width="' + (pxSize * 2)
-                + '">'
-                + '<circle cx="' + pxSize + '" cy="' + pxSize
-                + '" r="' + pxSize + '" fill-opacity="0.4" fill="'
-                + color + '" />'
-                + '<circle cx="' + pxSize + '" cy="' + pxSize + '" r="'
-                + (pxSize - 2) + '" fill-opacity="1" fill="'
-                + color + '" />'
-                + '<text x="' + pxSize + '" y="' + (pxSize + 5)
-                + '" style="text-anchor: middle; fill: white;">'
-                + 1 + '</text>'
-                + '</svg>'
+            + '">'
+            + '<circle cx="' + pxSize + '" cy="' + pxSize
+            + '" r="' + pxSize + '" fill-opacity="0.4" fill="'
+            + color + '" />'
+            + '<circle cx="' + pxSize + '" cy="' + pxSize + '" r="'
+            + (pxSize - 2) + '" fill-opacity="1" fill="'
+            + color + '" />'
+            + '<text x="' + pxSize + '" y="' + (pxSize + 5)
+            + '" style="text-anchor: middle; fill: white;">'
+            + 1 + '</text>'
+            + '</svg>'
         });
 
 
@@ -61,7 +82,8 @@ angular.module('lizard-nxt')
             {
               icon: icon,
               timestamp_start: f.properties.timestamp_start,
-              timestamp_end: f.properties.timestamp_end
+              timestamp_end: f.properties.timestamp_end,
+              feature: f
             });
           layer.addMarker(marker);
           layer.markers.push(marker);
@@ -70,23 +92,7 @@ angular.module('lizard-nxt')
         layer.syncTime();
       });
 
-      // simulate click on map instead of this event;
-      var fireMapClick = function (e) {
-        layer._map.fire('click', {
-          latlng: e.latlng,
-        });
-      };
-
-      this.on('clusterclick', function (e) {
-        fireMapClick(e);
-      });
-
-      this.on('click', function (e) {
-        fireMapClick(e);
-      });
-
     },
-
 
     /**
      * @function
@@ -98,6 +104,7 @@ angular.module('lizard-nxt')
       LeafletService.MarkerClusterGroup.prototype.onRemove.call(this, map);
       this.markers.forEach(function (marker) { this.removeMarker(marker); }, this);
       this.markers = [];
+      VectorService.invalidateData(this.options.layer);
     },
 
     /**

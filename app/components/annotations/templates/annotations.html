@@ -16,14 +16,13 @@
 
     <annotations-view
       ng-class="{ hidden: !fullDetails }"
-      asset="asset"
+      data="data"
       time-state="timeState"
       annotations="annotations">
     </annotations-view>
     <annotations-make
       ng-class="{ hidden: !fullDetails }"
-      ng-if="asset"
-      asset="asset"
+      data="data"
       timelineat="timeState.at"
       annotations="annotations">
     </annotations-make>
