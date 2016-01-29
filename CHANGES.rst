@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
 
+- Graphs are refactored to display multiple lines.
+
 - Improve the dashboard/map toggle.
 
 - Restyle & resize timeline.

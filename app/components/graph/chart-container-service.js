@@ -7,8 +7,17 @@ angular.module('lizard-nxt')
 
 
   /**
-   *  Instantiate a small object that holds some extra info
-   *  for the graphs
+   * Charts are are small objects that are drawn on the graph canvas
+   * They are a way to keep track of all of the lines or that are being drawn.
+   *
+   * NOTE: this might have to change because the api of graphs is crappy
+   *
+   * It should be something like this:
+   * <graph>
+   *  <line data="data" etc.. </line>
+   * </graph>
+   *
+   * For now this is a way to keep track of the scales, domains and xy's of the graph
    */
   function ChartContainer (content, graph, temporal) {
     this._x = null;
@@ -38,7 +47,7 @@ angular.module('lizard-nxt')
       this.keys,
       this.labels,
       temporal ? options : undefined,
-      this._xDomainInfo
+      this._graph._xDomainInfo
     );
     return;
   }
@@ -52,7 +61,7 @@ angular.module('lizard-nxt')
       this.data,
       this.keys,
       null,
-      this._xDomainInfo
+      this._graph._xDomainInfo
     );
   };
 
