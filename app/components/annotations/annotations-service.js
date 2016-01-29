@@ -115,7 +115,7 @@ angular.module('annotations')
       /**
        * Refresh the annotationlayer if present. Event layer clear data when
        * turned off. So turn off and on.
-qq       */
+       */
       this.refreshAnnotationLayer = function () {
         var annotationLgIndex = State.layerGroups.active.indexOf('annotations');
         if (annotationLgIndex) {
