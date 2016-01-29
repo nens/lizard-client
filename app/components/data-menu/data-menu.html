@@ -21,25 +21,16 @@
             </ul>
       </div>
 
-      <div id="ribbon"
-           class="ribbon"
-           title="<% menu.enabled ? tooltips.closeMenu : tooltips.openMenu %>">
-        <div class="arrow arrow-up" ng-click="menu.enabled = !menu.enabled">
-        </div>
-        <div class="arrow arrow-down" ng-click="menu.enabled = !menu.enabled">
-        </div>
-      </div>
-
-      <span class="fa ribbon-icon clickable" ng-class="{
-              'fa-spinner fa-spin': menu.state.gettingData,
-              'fa-compass': !menu.state.gettingData
-            }"
-            ng-click="menu.enabled = !menu.enabled"
-            title="<% menu.enabled ? tooltips.closeMenu : tooltips.openMenu %>">
-      </span>
-
       <div class="button-list-container">
-
+        <div class="button-list-item">
+          <span class="fa clickable" ng-class="{
+                  'fa-spinner fa-spin': menu.state.gettingData,
+                  'fa-compass': !menu.state.gettingData
+                }"
+                ng-click="menu.enabled = !menu.enabled"
+                title="<% menu.enabled ? tooltips.closeMenu : tooltips.openMenu %>">
+          </span>
+        </div>
         <div ng-if="context === 'map' || context === 'scenarios'">
 
           <datamenu-item

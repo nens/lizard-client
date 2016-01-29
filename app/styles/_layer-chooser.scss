@@ -142,28 +142,6 @@ label.layer-chooser > div.layer-img {
 
 }
 
-.ribbon {
-    overflow: hidden;
-    position: absolute;
-}
-
-#ribbon {
-    float: right;
-    height: $height12;
-    left: -60px;
-    top: 0;
-}
-
-.ribbon-icon {
-    color: $pomegranate;
-    font-size: 22px;
-    left: -35px;
-    margin: auto;
-    position: absolute;
-    top: 9px;
-    cursor: pointer;
-}
-
 .arrow {
     cursor: pointer;
     position: relative;
