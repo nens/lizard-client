@@ -118,7 +118,7 @@ angular.module('dashboard')
               State.temporal.end,
               graphWidth // last arg was defer... is that important?
               ).then(function (response) {
-          // already on dashboard scope
+          // check if the object is already on dashboard scope
           var ids = Object.keys(scope.dashboard.content);
           if (ids.length > 0 && response.results.length === 0) {
             ids.map(function (id) {

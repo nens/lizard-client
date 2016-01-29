@@ -83,14 +83,15 @@ angular.module('lizard-nxt')
   /**
    * @function
    * @memberOf Graph
-   * @param {object} data   Currently supports the format:
+   * @param {object} content - Object or Array with data, keys and labels
+   *        data   Currently supports the format:
    *                        [
    *                          [value, value],
    *                          ...,
    *                        ]
-   * @param {object} keys   Mapping between x and y values of data object:
+   *        keys   Mapping between x and y values of data object:
    *                        example: {x: 0, y: 1}
-   * @param {object} labels Object {x: 'x label', y: 'y label'} will be
+   *        labels Object {x: 'x label', y: 'y label'} will be
    *                        mapped to axis labels of the graph
    * @param {boolean} temporal to draw an time axis or not.
    * @param {boolean} transitioning to draw a subset of data now, and the full
@@ -207,15 +208,17 @@ angular.module('lizard-nxt')
   /**
    * @function
    * @memberOf Graph
-   * @param {object} data   Currently supports arrays of arrays or objects
+   * @param {object} barData - Object or Array with data, keys and labels
+   *
+   *         data   Currently supports arrays of arrays or objects
    *                        with x value, y value, <optional> color and
    *                        <optional> category.
-   * @param {object} keys   Mapping between x, y and optional color, and
+   *         keys   Mapping between x, y and optional color, and
    *                        category values of data object: example:
    *                        {x: 0, y: 1} or:
    *                        {x: 'xValue', y: 'yValue', color: 'eventColor',
    *                        categoy: 'cat'};
-   * @param {object} labels Object {x: 'x label', y: 'y label'} will be
+   *         labels Object {x: 'x label', y: 'y label'} will be
    *                        mapped to axis labels of the graph
    * @param {string} scale  Whether the graph has a scale other than temporal.
    *                        If it is of a temporal nature the x-axis will by
@@ -227,10 +230,10 @@ angular.module('lizard-nxt')
    *                        supported. It assumes that every segment has a
    *                        data element.
    */
-  Graph.prototype.drawBars = function (incoming, scale) {
+  Graph.prototype.drawBars = function (barData, scale) {
     var graph = this;
 
-    var content = incoming[0];
+    var content = barData[0];
     var data, keys, labels;
     data = content.data;
     keys = content.keys;

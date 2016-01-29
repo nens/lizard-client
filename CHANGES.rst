@@ -20,6 +20,8 @@ annotation
 
 - Adjusted the styling of the plugins.
 
+- Graphs are refactored to display multiple lines.
+
 - Improve the dashboard/map toggle.
 
 - Restyle & resize timeline.
