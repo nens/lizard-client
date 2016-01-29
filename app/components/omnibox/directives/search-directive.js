@@ -22,6 +22,10 @@ angular.module('omnibox')
     // Set focus on search input field.
     element.children()[0].focus();
 
+    // Bind mapservice functions for zoom buttons;
+    scope.zoomIn = MapService.zoomIn;
+    scope.zoomOut = MapService.zoomOut;
+
     /**
      * Uses scope.query to search for results through SearchService. Response
      * from SearchService.search is an object with various results and promises.
@@ -53,7 +57,7 @@ angular.module('omnibox')
      */
     scope.cleanInput = function () {
       State.selected.reset();
-      scope.omnibox.query = "";
+      scope.query = "";
       scope.omnibox.searchResults = {};
     };
 
@@ -64,10 +68,10 @@ angular.module('omnibox')
      * @param {object} search result with layergroup.
      * simple pointer to SearchService functio
      */
-    scope.openLayerGroup = function () {
-      scope.omnibox.query = "";
+    scope.openLayerGroup = function (lg) {
+      scope.query = "";
       scope.omnibox.searchResults = {};
-      SearchService.openLayerGroup
+      SearchService.openLayerGroup(lg);
     };
 
     /**
@@ -83,7 +87,7 @@ angular.module('omnibox')
         zoom: ZOOM_FOR_OBJECT
       });
       scope.omnibox.searchResults = {};
-      scope.omnibox.query = "";
+      scope.query = "";
     };
 
     /**
@@ -92,7 +96,7 @@ angular.module('omnibox')
      */
     scope.zoomToSpatialResult = function (result, origin) {
       scope.omnibox.searchResults = {};
-      scope.omnibox.query = "";
+      scope.query = "";
       State = SearchService.zoomToGoogleGeocoderResult(result, State);
     };
 
@@ -104,7 +108,7 @@ angular.module('omnibox')
      */
     scope.zoomToTemporalResult = function(m) {
       scope.omnibox.searchResults = {};
-      scope.omnibox.query = "";
+      scope.query = "";
       State.temporal.start = m.valueOf();
       State.temporal.end = m.valueOf() + m.nxtInterval.valueOf();
       UtilService.announceMovedTimeline(State);

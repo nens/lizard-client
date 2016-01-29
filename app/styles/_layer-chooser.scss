@@ -7,6 +7,7 @@
     right: -200px;
     transition: .3s ease;
     width: $width6;
+    top: 80px;
 }
 
 .slide-left {
@@ -150,7 +151,7 @@ label.layer-chooser > div.layer-img {
     float: right;
     height: $height12;
     left: -60px;
-    top: 66px
+    top: 0;
 }
 
 .ribbon-icon {
@@ -159,7 +160,7 @@ label.layer-chooser > div.layer-img {
     left: -35px;
     margin: auto;
     position: absolute;
-    top: 75px;
+    top: 9px;
     cursor: pointer;
 }
 

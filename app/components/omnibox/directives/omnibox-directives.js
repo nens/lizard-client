@@ -64,6 +64,7 @@ angular.module("omnibox")
     return {
       restrict: 'E',
       link: linker,
+      replace: true,
       templateUrl: 'omnibox/templates/omnibox.html'
     };
   }]);
