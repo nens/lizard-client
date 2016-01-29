@@ -38,7 +38,7 @@ angular.module('lizard-nxt')
       this.keys,
       this.labels,
       temporal ? options : undefined,
-      this._xDomainInfo
+      this._graph._xDomainInfo
     );
     return;
   }
@@ -52,7 +52,7 @@ angular.module('lizard-nxt')
       this.data,
       this.keys,
       null,
-      this._xDomainInfo
+      this._graph._xDomainInfo
     );
   };
 
