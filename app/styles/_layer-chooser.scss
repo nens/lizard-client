@@ -3,21 +3,18 @@
  */
 
 .layer-switcher-wrapper {
+    background-color: rgba($white, 0.9);
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
     position: absolute;
     right: -200px;
     transition: .3s ease;
-    width: $width6;
-    top: 80px;
+    width: $width6 + 50px;
+    top: 150px;
 }
 
 .slide-left {
     right: 0;
-}
-
-
-.breakout-menu {
-    height: $height11;
-    background: $turquoise;
 }
 
 label.layer-chooser {
@@ -89,13 +86,17 @@ label.layer-chooser > div.layer-img {
 }
 
 .layer-switcher {
-    background: $white;
-    background: rgba($white, 0.9);
-    border-bottom-left-radius: 2px;
+    float: right;
+    width: $width6;
+    background: $silver;
+    border-top-left-radius: 5px;
+    min-height: 300px;
+    max-height: 600px;
+    margin-top: 10px;
     list-style-type: none;
-    overflow: hidden;
+    overflow-y: auto;
     padding: 15px 15px 0 15px;
-    top: 0;
+
     label {
         color: $asbestos;
         font-size: 14px;
@@ -140,47 +141,6 @@ label.layer-chooser > div.layer-img {
 
     }
 
-}
-
-.arrow {
-    cursor: pointer;
-    position: relative;
-}
-
-.arrow-up {
-    border-bottom: 30px solid $alizarin;
-    border-left: 20px solid transparent;
-    border-right: 0 solid transparent;
-    height: $height20;
-    top: 10px;
-    width: $width17;
-}
-
-.arrow-down {
-    border-left: 20px solid rgba($alizarin, 0);
-    border-right: 0 solid transparent;
-    border-top: 30px solid $alizarin;
-    height: $height7;
-    top: -30px;
-    width: $width17;
-}
-
-.arrow-left {
-    border-bottom: 0px solid transparent;
-    border-right:30px solid $alizarin;
-    border-top: 20px solid transparent;
-    height: $height7;
-    left: -10px;
-    opacity: 1;
-    top: 60px;
-}
-
-.arrow-right {
-    border-bottom: 0px solid transparent;
-    border-left: 30px solid $alizarin;
-    border-top: 20px solid transparent;
-    height: $height7;
-    top: 0px;
 }
 
 .eventLGIndicator {
