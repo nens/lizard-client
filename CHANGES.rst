@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
 
+- Add plugin dom elements and js file
+
+- Adjusted the styling of the plugins.
+
 - Improve the dashboard/map toggle.
 
 - Restyle & resize timeline.
