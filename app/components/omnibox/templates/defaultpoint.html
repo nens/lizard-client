@@ -38,38 +38,6 @@
       </graph>
     </div>
 
-    <div ng-switch-when="Vector">
-      <full-details class="table-details-toggler"></full-details>
-      <table class="table table-hover table-condensed" >
-        <thead>
-            <th><i class="fa fa-circle" ng-style="{'color': content.color }"></i></th>
-            <th><% content.layerGroupName %></th>
-            <th><% content.data.length %></th>
-        </thead>
-        <tbody ng-if="fullDetails">
-          <tr ng-repeat="event in content.data">
-              <td rel="tooltip"
-                  data-placement="left"
-                  title="<% event.properties.category %>">
-                  <i class="fa fa-circle" ng-style="{'color': content.color }">
-                </i>
-              </td>
-              <td rel="tooltip"
-                  data-placement="left"
-                  title="<% 'Start' | translate %>: <% event.properties.timestamp_start | date:'dd/MM/yyyy' %>
-                         <% 'End' | translate %>: <% event.properties.timestamp_end | date:'dd/MM/yyyy' %>">
-                  <% event.properties.timestamp_start | date:'dd/MM/yyyy' %>
-              </td>
-              <td rel="tooltip"
-                  data-placement="left"
-                  title="<% event.properties.value %>">
-                <% event.properties.value | truncate:17 %>
-              </td>
-            </tr>
-        </tbody>
-      </table>
-    </div>
-
     <div ng-switch-when="WMS" ng-if="content.data.features">
       <div class="card-content">
 
