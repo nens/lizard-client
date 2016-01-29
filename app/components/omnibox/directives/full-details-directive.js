@@ -9,7 +9,7 @@
  * manually.
  */
 angular.module('lizard-nxt')
-  .directive('fullDetails', [function () {
+  .directive('fullDetails', ['State', function (State) {
 
     var link = function (scope, element, attrs) {
 
@@ -17,8 +17,12 @@ angular.module('lizard-nxt')
         scope.fullDetails = true;
       }
 
+      // FullDetails is set programmatically and by users. Do not set
+      // programmatically when a user set it manually.
+      var toggledByUser = false;
+
       // does the actual toggling.
-      var toggleDetails = function () {
+      var toggledByUseretails = function () {
         if (scope.$$phase) {
           scope.fullDetails = !scope.fullDetails;
         } else {
@@ -26,10 +30,25 @@ angular.module('lizard-nxt')
             scope.fullDetails = !scope.fullDetails;
           });
         }
+        toggledByUser = true;
       };
 
-      element.bind('click', toggleDetails);
+      element.bind('click', toggledByUseretails);
 
+      /**
+       * Minimize boxes when lots of cards.
+       */
+      scope.$watch(State.toString('selected'), function () {
+        var boxLength = State.selected.assets.length
+         + State.selected.geometries.length;
+
+        if (!toggledByUser && boxLength > 2) {
+          scope.fullDetails = false;
+        }
+        else if (!toggledByUser) {
+          scope.fullDetails = true;
+        }
+      });
 
     };
 
@@ -40,6 +59,7 @@ angular.module('lizard-nxt')
       replace: true,
       scope: false,
       templateUrl: 'omnibox/templates/full-details.html'
-    }
+    };
+
   }]);
 

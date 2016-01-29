@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
 
+- Set full-details to false when more than two selected elements.
+
 - Improve the dashboard/map toggle.
 
 - Restyle & resize timeline.
