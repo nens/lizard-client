@@ -2,8 +2,21 @@
  * Service to handle timeseries retrieval.
  */
 angular.module('timeseries')
-  .service("TimeseriesService", ['CabinetService', '$q',
-    function (CabinetService, $q) {
+  .service("TimeseriesService", ['CabinetService', '$q', 'State',
+    function (CabinetService, $q, State) {
+
+    // Contains timeseries metadata and data as comes from api. It mirrors
+    // State.seletected.timeseries.
+    this.timeseries = [];
+
+    var _timeseries = [];
+    Object.defineProperty(State.selected, 'timeseries', {
+      get: function () { return _timeseries; },
+      set: function (timeseries) {
+        // TODO get timeseries data for selected timeseries.
+      }
+    });
+
 
     var localPromises = {};
 

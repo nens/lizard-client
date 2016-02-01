@@ -119,6 +119,9 @@ angular.module('data-menu')
         });
         _assets = assets;
         console.log('State.selected.assets:', State.selected.assets);
+
+        // Rebind add and remove because selected.assets might have been
+        // redefined when calling state.selected.assets = []
         State.selected.assets.addAsset = addAsset;
         State.selected.assets.removeAsset = removeAsset;
       };
