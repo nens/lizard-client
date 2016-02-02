@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
 
+- Refactored timeseries. State.selected.timeseries keeps track of selected ts
+  TimeseriesService synchronizes the data with the selection. Draw graphs for
+  TimeseriesService.timeseries.
+
 - Only startPlugins if Lizard plugins is loaded.
 
 
