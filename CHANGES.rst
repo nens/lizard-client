@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
--
+
+- Only startPlugins if Lizard plugins is loaded.
 
 
 Release 2.7.1 (2016-1-29)
