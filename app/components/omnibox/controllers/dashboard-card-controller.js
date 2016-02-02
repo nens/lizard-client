@@ -1,6 +1,6 @@
 angular.module('omnibox')
-  .controller("DashboardCardCtrl", ["State", function (State) {
+  .controller("DashboardCardCtrl", ["DataService", function (DataService) {
 
-  this.selected = State.selected;
+  this.assets = DataService.assets;
 
 }]);
