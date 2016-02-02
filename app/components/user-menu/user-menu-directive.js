@@ -6,7 +6,7 @@ angular.module('user-menu')
   .directive('userMenu', function () {
 
   var link = function () {
-    Lizard.startPlugins(); // jshint ignore:line
+    if (window.Lizard) { window.Lizard.startPlugins() }; // jshint ignore:line
   };
 
   return {
