@@ -1,0 +1,29 @@
+# For provisioning of a local vagrant box and run:
+#
+# $ git submodule add git@github.com:nens/inframan.git provision
+# $ ansible-playbook -i local provision/ansible/provision.yml
+#
+# This will install a nxt development server.
+#
+# vm=true makes sure ufw firewall rules are not set.
+#
+# Local, integration and staging servers.
+
+[default]
+vagrant vm=true ansible_ssh_user=vagrant ansible_ssh_host=10.0.3.10 postgres_version=9.3
+
+[localhost]
+localhost ansible_connection=local
+
+[local]
+vagrant
+
+[webservers]
+d-web-ws-d1.external-nens.local
+s-web-ws-d2.external-nens.local
+
+[integration]
+d-web-ws-d3.external-nens.local
+
+[staging]
+s-web-ws-d2.external-nens.local
