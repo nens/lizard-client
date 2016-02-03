@@ -1,22 +1,20 @@
-<li class="noselect">
+<div class="noselect">
   <label
+    single-click="menu.toggleLayerGroup(layergroup)"
+    ng-dblclick="layergroup.dblClick()"
     class="ng-class: {active: layergroup.isActive()}; layer-chooser"
+    class="layer-img"
     for="<% layergroup.id %>-layer"
-    title="<% layergroup.name %>">
-      <div class="layer-img" class="layer-chooser" ng-style="layergroup.imageStyle"></div>
-      <span
-        single-click="menu.toggleLayerGroup(layergroup)"
-        ng-dblclick="layergroup.dblClick()"
-        class="layer-text" ng-bind="layergroup.name">
-      </span>
-      <span
+    title="<% layergroup.name %>"
+    ng-style="layergroup.imageStyle">
+      <span ng-bind="layergroup.name"></span>
+      <i
         ng-if="((layergroup.spatialBounds.north - layergroup.spatialBounds.east) !== 0)
                && layergroup.isActive()"
-        class="layer-icon"
-        single-click="menu.zoomToBounds(layergroup.spatialBounds, layergroup.temporalBounds)">
-          <i class="fa fa-crosshairs"></i>
-      </span>
+        single-click="menu.zoomToBounds(layergroup.spatialBounds, layergroup.temporalBounds)"
+        class="fa fa-crosshairs">
+      </i>
   </label>
-</li>
+</div>
 
 <opacity-slider title="<% tooltips.transparency %>"></opacity-slider>

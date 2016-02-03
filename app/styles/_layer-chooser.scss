@@ -17,130 +17,64 @@
     right: 0;
 }
 
-label.layer-chooser {
-    border: solid 2px rgba($black, 0);
-    height: $height15;
-    margin-bottom: 0;
-    position: relative;
-    transition: .3s ease;
-    width: $width19;
-    &:hover {
-        border: 2px solid $asbestos;
-    }
-}
-
-label.layer-chooser > span.layer-text {
-    background: $deprecated-gray3;
-    background: rgba($deprecated-gray3, 0.9);
-    color: $asbestos;
-    height: 24px;
-    padding: 4px 5px;
-    position: absolute;
-    transition: .3s ease;
-    width: 60%;
-    cursor: pointer;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-label.layer-chooser > span.layer-icon {
-    color: $asbestos;
-    height: 24px;
-    padding: 4px 5px;
-    position: absolute;
-    left: $width19 - 14;
-    transition: .3s ease;
-    width: 60%;
-    cursor: pointer;
-    background: $white;
-    background: rgba($white, 0.6);
-}
-
-label.layer-chooser > span.layer-icon:hover {
-    color: $pomegranate;
-}
-
-label.layer-chooser.active {
-    border: solid 2px $midnightblue;
-    &:hover > span.layer-text {
-        color: $midnightblue;
-    }
-    &:hover {
-        border: solid 2px $midnightblue;
-    }
-}
-
-label.layer-chooser.active > span.layer-text {
-    color: $midnightblue;
-}
-
-label.layer-chooser > div.layer-img {
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: $height9;
-    position: absolute;
-    right: 0;
-    width: $width19;
-}
-
 .layer-switcher {
     float: right;
     width: $width6;
-    background: $silver;
-    border-top-left-radius: 5px;
     min-height: 300px;
     max-height: 600px;
-    margin-top: 10px;
-    list-style-type: none;
     overflow-y: auto;
-    padding: 15px 15px 0 15px;
+    padding: 15px 0 15px 15px;
+    background: $clouds;
+    color: $asbestos;
+    list-style-type: none;
 
     label {
-        color: $asbestos;
-        font-size: 14px;
-        font-style: normal;
+        width: $width19;
+        position: relative;
+        margin-bottom: 0;
+        padding: 8px;
+        border: 2px solid transparent;
+        border-right: 0;
         line-height: 1;
-        margin-left: 0;
-        text-shadow: none;
-        transition:.6s;
-        &:hover {
+        transition: .3s ease;
+        cursor: pointer;
+
+        span {
+            // To improve text on background color readability.
+            // Note that this won't work in IE!
+            mix-blend-mode: difference;
+        }
+
+        i {
+            position: absolute;
+            right: 0;
+            top: 0;
+            padding: 8px;
+            background: $white;
+            background: rgba($white, 0.6);
+            transition: .3s ease;
+
+            &:hover {
+                color: $pomegranate;
+            }
+        }
+
+        &:hover, &.active {
+            border-color: $asbestos;
+        }
+
+        &.count {
             color: $pomegranate;
-            font-size: 14px;
-            margin-left: 0;
-            text-shadow: none;
         }
-
     }
-    label.active {
-        color: $pomegranate;
-        font-size: 14px;
-        margin-left: 0;
-        text-shadow: none;
+    ul li {
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: none;
+        -webkit-user-select: none;
+        list-style-type: none;
+        user-select: none;
     }
-
-    label.count {
-        color: $pomegranate;
-        font-size: 14px;
-        margin-left: 0;
-        text-shadow: none;
-    }
-
-    ul {
-        li {
-            -moz-user-select: none;
-            -ms-user-select: none;
-            -o-user-select: none;
-            -webkit-user-select: none;
-            line-height: $height20;
-            list-style-type: none;
-            user-select:
-            none;
-        }
-
-    }
-
 }
 
 .eventLGIndicator {
