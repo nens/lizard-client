@@ -2,8 +2,8 @@
   <label
     single-click="menu.toggleLayerGroup(layergroup)"
     ng-dblclick="layergroup.dblClick()"
-    class="ng-class: {active: layergroup.isActive()}; layer-chooser"
-    class="layer-img"
+    ng-class ="{active: layergroup.isActive()}"
+    class="layer-item layer-img"
     for="<% layergroup.id %>-layer"
     title="<% layergroup.name %>"
     ng-style="layergroup.imageStyle">
