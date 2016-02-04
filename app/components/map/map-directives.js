@@ -13,14 +13,12 @@
  */
 angular.module('map')
   .directive('map', [
-  '$controller',
   'MapService',
   'DataService',
   'ClickFeedbackService',
   'UtilService',
   'State',
   function (
-    $controller,
     MapService,
     DataService,
     ClickFeedbackService,
@@ -219,7 +217,7 @@ angular.module('map')
 
 
       });
-
+      console.log('map');
       init();
 
     };
