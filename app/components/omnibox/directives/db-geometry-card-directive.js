@@ -13,8 +13,8 @@ angular.module('omnibox')
         scope.$watch('geom.properties', function (n, o) {
 
           _.forEach(scope.geom.properties, function (property) {
-            scope.noData = !(property.data && property.data.length > 1);
-            return scope.noData; // exit early.
+            scope.noRasterData = !(property.data && property.data.length > 1);
+            return scope.noRasterData; // exit early.
           });
 
         });
