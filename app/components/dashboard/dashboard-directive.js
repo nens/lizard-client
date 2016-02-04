@@ -2,202 +2,146 @@
 angular.module('dashboard')
   .directive('dashboard',
              [
-              'EventAggregateService',
               'State',
               'DataService',
-              'UtilService',
-              'Timeline',
               'TimeseriesService',
               function (
-                EventAggregateService,
                 State,
                 DataService,
-                UtilService,
-                Timeline,
                 TimeseriesService) {
 
   var link = function (scope, element, attrs) {
 
-    var TL_TOP_MARGIN = 25, // margin plus the temporal.at label
-        GRAPH_PADDING = 8,
-        GRAPH_5_6th_PADDING_RATIO = 0.83, // The other 6th is used in the css.
-        tlDims = {},
-        nGraphs = 1;
+    var GRAPH_PADDING = 13;
+    var ROW_BOTTOM_MARGIN = 10;
 
+    var colors = [
+      '#16a085',
+      '#3498db',
+      '#c0392b',
+      '#2980b9',
+      '#1abc9c',
+      '#7f8c8d',
+      '#e74c3c',
+    ];
 
-    var getWidth = function () {
-      return element.find('.dashboard-inner').width();
+    scope.dashboard = {
+      state: State
     };
 
+    var buildGraphs = function (timeseries, assets, geometries) {
 
-    var getHeight = function () {
-      return element.height();
-                                    // min-height from top row, we need to make
-                                    // this dynamic or bigger when we are going
-                                    // to use the top row for maps etc.
-    };
+      // Graphs are an array of graph-directive objects representing timeseries
+      // and raster data.
+      // {
+      //   'type': 'type',
+      //   content: [{
+      //     data: [],
+      //     keys: {},
+      //     labels: {},
+      //     color: ''
+      //   }]
+      // }
+      var graphs = [];
 
-    var resize = function (tlDimensions) {
-      tlDims = tlDimensions;
-      nGraphs = Object.keys(scope.dashboard.graphs).length;
-      scope.dashboard.dims.height =
-        (getHeight() - tlDimensions.height - TL_TOP_MARGIN) / nGraphs - GRAPH_PADDING;
+      var addPropertyData = function (properties) {
+        _.forEach(properties, function (property, slug) {
+          if (property.data.length > 1) {
+            var item = {
+              data: property.data,
+              keys: {x: 0, y: {y0: 1, y1: 1}},
+              labels: {x: 'm', y: property.unit }
+            };
+            graphs.push({ type: 'distance', content: [item] });
+          }
+        });
+      };
 
-      scope.dashboard.dims.width = UtilService.getCurrentWidth(element)
-        + GRAPH_5_6th_PADDING_RATIO * UtilService.TIMELINE_LEFT_MARGIN;
-    };
-
-    scope.dashboard.dims = {
-      width: UtilService.getCurrentWidth(element) - UtilService.OMNIBOX_WIDTH
-        + GRAPH_5_6th_PADDING_RATIO * UtilService.TIMELINE_LEFT_MARGIN,
-      height: getHeight() / nGraphs,
-      padding: {
-        top: GRAPH_PADDING,
-        right: 0,
-        bottom: 2 * GRAPH_PADDING, // Enough for the line of the axis.
-        left: GRAPH_5_6th_PADDING_RATIO * UtilService.TIMELINE_LEFT_MARGIN
+      if (timeseries.length) {
+        var content = [];
+        timeseries.forEach(function (ts) {
+          ts.color = colors[0];
+          content.push(ts);
+        });
+        graphs.push({ 'type': 'temporalLine', 'content': content });
       }
+
+      assets.forEach(function (asset) {
+        addPropertyData(asset.properties);
+      });
+
+      geometries.forEach(function (geometry) {
+        addPropertyData(geometry.properties);
+      });
+
+      console.log('Dashboard:', graphs);
+
+      return graphs;
     };
 
+    var buildDashboard = function () {
 
-    var putDataOnScope = function (response) {
+      TimeseriesService.minPoints = element.width() - GRAPH_PADDING;
 
-      var item = {};
+      scope.dashboard.graphs = buildGraphs(
+        TimeseriesService.timeseries,
+        DataService.assets,
+        DataService.geometries
+      );
 
-      item = response;
-
-      item.data = response.data || response.events;
-
-      item.aggWindow = State.temporal.aggWindow;
-      scope.dashboard.content[response.layerSlug] = item;
-
-      resize(tlDims);
+      _.forEach(scope.dashboard.graphs, function (graph) {
+        graph.dimensions = getDimensions(
+          element,
+          scope.dashboard.graphs.length,
+          graph.type === 'distance'
+        );
+      });
 
     };
 
-    var putEventDataOnScope = function (response) {
+    var getGraphHeight = function (element, nGraphs) {
+      return (element.height() - ROW_BOTTOM_MARGIN * nGraphs) / nGraphs;
+    };
 
-      if (response.data) {
-        var lg = DataService.layerGroups[response.layerGroupSlug];
-        // aggregate response
-        var eventAgg = {
-          data: EventAggregateService.aggregate(
-            response.data,
-            State.temporal.aggWindow,
-            lg.mapLayers[0].color
-          ),
-          unit: lg.name,
-        };
+    var getDimensions = function (element, nGraphs, showXAxis) {
 
-        // TODO: remove this ifje and do something with the graph to accomadate
-        // datasets smaller than 2.
-        if (eventAgg.data.length > 1) {
-          putDataOnScope(angular.extend(response, eventAgg));
+      return {
+        width: element.width() - GRAPH_PADDING,
+        height: getGraphHeight(element, nGraphs),
+        padding: {
+          top: 10,
+          right: 10,
+          bottom: showXAxis ? 40 : 15,
+          left: 10
         }
-
-      }
+      };
 
     };
 
-
-    var geom = State.box.type === 'area'
-      ? State.spatial.bounds
-      : State.box.type === 'line'
-        ? State.spatial.points
-        : State.spatial.here;
-
-    var getTimeData = function () {
-      var graphWidth = scope.dashboard.dims.width -
-        scope.dashboard.dims.padding.left -
-        scope.dashboard.dims.padding.right;
-
-      State.selected.assets.forEach(function (item) {
-        TimeseriesService.getTimeSeriesForObject(
-              item,
-              State.temporal.start,
-              State.temporal.end,
-              graphWidth // last arg was defer... is that important?
-              ).then(function (response) {
-          // check if the object is already on dashboard scope
-          var ids = Object.keys(scope.dashboard.content);
-          if (ids.length > 0 && response.results.length === 0) {
-            ids.map(function (id) {
-              scope.dashboard.content[id].data = [];
-              scope.dashboard.content[id].events = [];
-              putDataOnScope(scope.dashboard.content[id]);
-            });
-            return;
-          }
-
-          angular.forEach(response.results, function (ts) {
-            ts.layerSlug = ts.uuid;
-            ts.name = ts.location.name
-              + ', '
-              + ts.parameter_referenced_unit.parameter_short_display_name;
-            ts.unit = ts
-              .parameter_referenced_unit
-              .referenced_unit_short_display_name;
-            ts.type = 'timeseries';
-            putDataOnScope(ts);
-          });
-        });
-      });
-
-      State.selected.geometries.forEach(function (geom) {
-        DataService.getData('dashboard', {
-          geom: geom,
-          start: State.temporal.start,
-          end: State.temporal.end,
-          minPoints: graphWidth,
-          temporalOnly: true // TODO: actually implement this in data-service.
-        }).then(null, null, function (response) {
-
-          // TODO 1: prune this tree.. We need to request waterchain in order
-          // to get timeseries from dataservice. This needs to change.
-          //
-          // TODO 2: We want to be able to use a filter to request only the
-          // temporal data.
-          //
-          // TODO 3: Remove box filtering, always show all the data
-          //
-          if (response.layerSlug === 'waterchain_grid') {
-            return;
-
-            // Currently events for point and area and timeseries for point are
-            // supported.
-          } else {
-            if (response.type === 'Event') {
-              putEventDataOnScope(response);
-            } else if (State.box.type === 'point' && response.type !== 'Event') {
-              putDataOnScope(response);
-            }
-          }
-
-        });
-      });
-    };
-
-    getTimeData();
+    DataService.onAssetsChange = buildDashboard;
+    DataService.onGeometriesChange = buildDashboard;
+    TimeseriesService.onTimeseriesChange = buildDashboard;
 
     /**
-     * Updates dashboard when time zoom changes.
+     * Update dashboard when timeline has moved.
      */
-    scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
-      if (n === o || State.temporal.timelineMoving) { return true; }
-      getTimeData();
+    scope.$watch(State.toString('temporal.timelineMoving'), function (off) {
+      if (!State.temporal.timelineMoving) {
+        TimeseriesService.syncTime();
+      }
     });
 
     var applyResize = function () {
-      scope.$apply(resize(tlDims));
-      getTimeData();
+      scope.$apply(buildDashboard);
     };
-
-    Timeline.onresize = resize;
 
     window.addEventListener('resize', applyResize);
 
     scope.$on('$destroy', function () {
       window.removeEventListener('resize', applyResize);
+      DataService.onAssetsChange = null;
+      DataService.onGeometriesChange = null;
+      TimeseriesService.onTimeseriesChange = null;
     });
 
   };

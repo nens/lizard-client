@@ -217,7 +217,7 @@ angular.module('map')
 
 
       });
-      console.log('map');
+
       init();
 
     };

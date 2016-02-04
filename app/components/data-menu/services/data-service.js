@@ -115,6 +115,11 @@ angular.module('data-menu')
             return _assets.indexOf(assetId) !== -1;
           });
           instance.getGeomDataForAssets(oldAssets, instance.assets);
+
+          if (instance.onAssetsChange) {
+            instance.onAssetsChange();
+          }
+
           console.log('DataService.assets:', instance.assets);
         });
         _assets = assets;
@@ -154,6 +159,10 @@ angular.module('data-menu')
         .then(function (geometries) {
           instance.geometries = geometries;
           console.log('DataService.geometries:', instance.geometries);
+
+          if (instance.onGeometriesChange) {
+            instance.onGeometriesChange();
+          }
 
         });
         _geometries = geometries;
