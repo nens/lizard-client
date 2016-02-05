@@ -3,7 +3,7 @@
   sudo: yes
 
   tasks:
-  # DEPLOY CLIENT TO INTEGRATION
+  # DEPLOY TO INTEGRATION
 
   - name: git checkout client
     sudo_user: "{{ build_user }}"
@@ -32,15 +32,9 @@
     command: grunt chdir={{ project_path }}/src/lizard-client
     when: deploy_type == 'integration'
 
-#  - name: run profiler
-#    sudo: yes
-#    sudo_user: "{{ build_user }}"
-#    command: grunt phantomas chdir={{ project_path }}/src/lizard-client
-#    when: deploy_type == 'integration'
+  # // DEPLOY TO INTEGRATION
 
-  # // DEPLOY CLIENT TO INTEGRATION
-
-  # DEPLOY CLIENT TO STAGING AND PRODUCTION
+  # DEPLOY TO STAGING AND PRODUCTION
 
   # checkout new version of client
   - name: git checkout client
@@ -50,10 +44,4 @@
          version={{ version }}
     when: deploy_type != 'integration'
 
-  # // DEPLOY CLIENT TO STAGING AND PRODUCTION
-
-  # collectstatic
-  - name: bin/django collectstatic.
-    sudo: yes
-    sudo_user: "{{ build_user }}"
-    command: bin/django collectstatic --noinput chdir={{ project_path }}
+  # // DEPLOY TO STAGING AND PRODUCTION

@@ -20,10 +20,10 @@ vagrant
 
 [webservers]
 d-web-ws-d1.external-nens.local
-s-web-ws-d2.external-nens.local
+s-web-ws-d8.external-nens.local
 
 [integration]
 d-web-ws-d3.external-nens.local
 
 [staging]
-s-web-ws-d2.external-nens.local
+s-web-ws-d8.external-nens.local
