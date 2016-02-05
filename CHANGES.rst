@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.2.11) (XXXX-XX-XX)
 ---------------------
--
+
+- Fix not rendering filter attributes in omnibox.
 
 
 Release 2.2.11 (2016-1-18)

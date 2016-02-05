@@ -154,7 +154,7 @@ angular.module('omnibox')
         /// Bovenkant filter
         keyName: gettext("Filter top level"),
         attrName: "filter_top_level",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.filter_top_level",
+        ngBindValue: "asset.selectedAsset.filter_top_level | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
         defaultValue: ""
       },
@@ -162,14 +162,14 @@ angular.module('omnibox')
         /// Onderkant filter
         keyName: gettext("Filter bottom level"),
         attrName: "filter_bottom_level",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.filter_bottom_level",
+        ngBindValue: "asset.selectedAsset.filter_bottom_level | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
         defaultValue: ""
       },
       {
         keyName: gettext("Aquifer confinement"),
         attrName: "aquifer_confiment",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.aquifer_confiment",
+        ngBindValue: "asset.selectedAsset.aquifer_confiment",
         valueSuffix: " (m)",
         defaultValue: ""
       },
@@ -177,7 +177,7 @@ angular.module('omnibox')
         /// bodemsoort
         keyName: gettext("Litology"),
         attrName: "litology",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.litology",
+        ngBindValue: "asset.selectedAsset.litology",
         valueSuffix: " (m)",
         defaultValue: ""
       },
