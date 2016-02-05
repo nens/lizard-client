@@ -1,13 +1,11 @@
-<li class="noselect need-bottom-margin">
+<div class="noselect need-bottom-margin">
     <!-- style="margin-bottom: 10px;"> -->
 
   <!-- special, "baselayer" menu-item (singular): -->
   <label class="layer-chooser"
          ng-click="menu.toggleLayerGroup(getNextInactiveBLG())"
          title="<% 'Baselayer' | translate %>">
-    <span class="layer-text">
-      <% getNextInactiveBLG().name %>
-    </span>
+    <span><% getNextInactiveBLG().name %></span>
   </label>
 
-</li>
+</div>

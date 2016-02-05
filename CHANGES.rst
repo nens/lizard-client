@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
--
+
+- Refine the data-menu restyle.
 
 
 Release 2.7.1 (2016-1-29)

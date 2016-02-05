@@ -22,7 +22,7 @@
       </div>
 
       <div class="button-list-container" ng-if="context === 'map' || context === 'scenarios'">
-        <div class="button-list-item" ng-click="menu.enabled = !menu.enabled">
+        <div class="button-list-item compass" ng-click="menu.enabled = !menu.enabled">
           <span class="fa" ng-class="{
                   'fa-spinner fa-spin': menu.state.gettingData,
                   'fa-compass': !menu.state.gettingData
