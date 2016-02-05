@@ -14,6 +14,8 @@ Unreleased (2.6.2) (XXXX-XX-XX)
 
 - Only startPlugins if Lizard plugins is loaded.
 
+- Added ansible deployment.
+
 - Refine the data-menu restyle.
 
 
