@@ -2,9 +2,9 @@
 
   <cardheader ng-if="header" geom="geom"></cardheader>
 
-  <div class="card-content">
+  <div ng-if="!noRasterData" class="card-content">
 
-    <em ng-if="noRasterData" translate>No data available for this asset</em>
+    <em ng-if="noData" translate>No data available for this geometry</em>
 
 		<div ng-if="prop.data.length > 1" ng-repeat="prop in geom.properties">
 		  <div class="card-content-list">

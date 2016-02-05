@@ -16,15 +16,14 @@ angular.module('omnibox')
           var selectedTS = [];
           scope.asset.timeseries.forEach(function (ts) {
             selectedTS.push(ts.uuid);
+            scope.noTimeseries = false;
           });
 
           State.selected.timeseries = _.union(State.selected.timeseries, selectedTS);
 
           watchTimeseries(); // rm watch
+
         }
-
-        scope.noData = false;
-
       });
 
 
