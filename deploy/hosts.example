@@ -1,0 +1,20 @@
+# Local, integration and staging servers.
+
+[default]
+vagrant vm=true ansible_ssh_user=vagrant ansible_ssh_host=10.0.3.10
+
+[localhost]
+localhost ansible_connection=local
+
+[local]
+vagrant
+
+[webservers]
+integration-server.subnet.ext
+staging-server.subnet.ext
+
+[integration]
+integration-server.subnet.ext
+
+[staging]
+staging-server.subnet.ext

@@ -1,4 +1,3 @@
 build_user: buildout
-build_user_password: buildout
 
 version: master
