@@ -113,6 +113,11 @@ Deployment is done with `ansible`. Make sure to install ansible with eg:
 
     pip install ansible
 
+Copy `hosts.example` to `hosts` and `production_hosts.example` to `production_hosts` and edit to match your server layout.
+
+    cp hosts.example hosts
+    cp production_hosts.example production_hosts
+
 Deploy to integration:
 
     ansible-playbook -i deploy/hosts --limit=integration -K deploy/deploy.yml

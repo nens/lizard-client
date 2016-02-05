@@ -10,11 +10,11 @@ localhost ansible_connection=local
 vagrant
 
 [webservers]
-d-web-ws-d1.external-nens.local
-s-web-ws-d8.external-nens.local
+integration-server.subnet.ext
+staging-server.subnet.ext
 
 [integration]
-d-web-ws-d3.external-nens.local
+integration-server.subnet.ext
 
 [staging]
-s-web-ws-d8.external-nens.local
+staging-server.subnet.ext

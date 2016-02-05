@@ -29,3 +29,7 @@ app/translations.js
 
 #ctags
 .tags*
+
+# ansible host files
+deploy/hosts
+deploy/production_hosts
