@@ -16,7 +16,6 @@ angular.module('lizard-nxt')
   .controller('MasterCtrl',
 
   ['$scope',
-   '$controller',
    '$timeout',
    'CabinetService',
    'UtilService',
@@ -27,7 +26,6 @@ angular.module('lizard-nxt')
    'MapService',
 
   function ($scope,
-            $controller,
             $timeout,
             CabinetService,
             UtilService,
@@ -55,6 +53,7 @@ angular.module('lizard-nxt')
    */
   $scope.transitionToContext = function (context) {
     if (context !== State.context) {
+      State.context = context;
       var overlay = angular.element('#context-transition-overlay')[0];
       overlay.style.transition = null;
       overlay.style.minHeight = window.innerHeight + 'px';
@@ -63,7 +62,6 @@ angular.module('lizard-nxt')
         overlay.style.opacity = 1;
       }, 10);
       $timeout(function () {
-        State.context = context;
         $scope.context = State.context;
         overlay.style.opacity = 0;
       }, 300);
@@ -73,9 +71,6 @@ angular.module('lizard-nxt')
       }, 600, true);
     }
   };
-
-  // initialise context.
-  $scope.context = State.context;
 
   $scope.toggleDashboard = function () {
     $scope.transitionToContext(($scope.context === 'map') ? 'dashboard' : 'map');
@@ -92,9 +87,6 @@ angular.module('lizard-nxt')
   // catch window.load event
   window.addEventListener("load", function () {
     window.loaded = true;
-    $scope.$apply(function () {
-      $controller('UrlController', {$scope: $scope});
-    });
   });
 
 
