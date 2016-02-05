@@ -30,17 +30,10 @@ angular.module('timeseries')
           fetchTS(scope.asset);
         });
 
-
       },
-      restrict: 'AE', // Timeseries can be an element with single-select or
-                      // multi select as as an attribute or it can be an
-                      // attribute in which case it only collects the ts
-                      // metadata.
-      scope: {
-        asset: '=',
-        fullDetails: '=',
-        timeState: '='
-      }
+      restrict: 'E', // Timeseries can be an element with single-select or
+                      // multi select as as an attribute or without in which
+                      // case it only collects the ts metadata.
     };
 }]);
 

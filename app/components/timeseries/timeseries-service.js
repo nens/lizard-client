@@ -19,19 +19,37 @@ angular.module('timeseries')
     Object.defineProperty(State.selected, 'timeseries', {
       get: function () { return _timeseries; },
       set: function (timeseries) {
-        if (timeseries.length) {
-          service.syncTime(timeseries);
-          _timeseries = timeseries;
-        }
-        else { _timeseries = []; }
+        console.log('State.selected.timeseries:', timeseries);
+        service.syncTime(timeseries);
+        _timeseries = timeseries;
       }
     });
 
     this.syncTime = function (timeseries) {
-      this._getTimeseries(timeseries || State.selected.timeseries, State.temporal, service.minPoints)
-      .then(function (ts) {
+      var promise = {};
+
+      // Return empty timeseries when empty selection
+      if (timeseries && timeseries.length === 0) {
+        var defer = $q.defer();
+        defer.resolve([]);
+        promise = defer.promise;
+      }
+
+      else {
+        promise = this._getTimeseries(timeseries || State.selected.timeseries, State.temporal, service.minPoints);
+      }
+
+      promise.then(function (ts) {
         service.timeseries = ts;
         console.log('TimeseriesService.timeseries:', service.timeseries);
+      })
+
+      .then(function () {
+
+          if (service.onTimeseriesChange) {
+            service.onTimeseriesChange();
+          }
+
       });
     };
 
@@ -74,31 +92,27 @@ angular.module('timeseries')
         params: params
       })
 
-      .then(function (response) { return response.data; }, errorFn)
+      .then(function (response) {
+
+        return response.data;
+
+      }, errorFn)
+
       .then(filterTimeseries, null)
       .then(formatTimeseriesForGraph, null);
     };
 
     var errorFn = function (err) {
       if (err.status === 420) {
-        notie.confirm(
-          'Lizard is crunching on your timeseries data and can not keep up.',
-          'Ok, sorry.',
-          'Hurry!',
-          function () {
-            notie.alert(4, 'No worries!', 1);
-
-            // Refetch data
-            service.syncTime();
-          });
-
-        // Cancel normal operations
-        return $q.reject(err);
-      } else if (err.status >= 500 && err.status < 600) {
-        notie.alert(3, 'Lizard is temporarily broken, we will be back!', 3);
         // Cancel normal operations
         return $q.reject(err);
       }
+      else if (err.status >= 500 && err.status < 600) {
+        notie.alert(3, 'Lizard encountered a problem retrieving your timeseries.', 3);
+        // Cancel normal operations
+        return $q.reject(err);
+      }
+      window.Raven.captureException(err);
       return err; // continue anyway
     };
 
@@ -127,9 +141,10 @@ angular.module('timeseries')
 
     };
 
-    var formatTimeseriesForGraph = function (ts) {
+    var formatTimeseriesForGraph = function (timeseries) {
 
-      var graphTimeseries = {
+      var graphTimeseriesTemplate = {
+        id: '', //uuid
         data: [],
         labels: {
           x: '',
@@ -139,8 +154,10 @@ angular.module('timeseries')
       };
 
       var result = [];
-      ts.forEach(function (ts) {
+      timeseries.forEach(function (ts) {
+        var graphTimeseries = angular.copy(graphTimeseriesTemplate);
         graphTimeseries.data = ts.events;
+        graphTimeseries.id = ts.uuid;
         result.push(graphTimeseries);
       });
       return result;

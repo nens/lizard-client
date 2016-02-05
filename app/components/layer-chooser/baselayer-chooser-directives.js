@@ -6,7 +6,7 @@ angular.module('data-menu')
   var link = function (scope) {
 
     var _allBLGs = DataService.baselayerGroups,
-        _allBLGSlugs = _.pluck(_allBLGs, "slug"),
+        _allBLGSlugs = _.map(_allBLGs, "slug"),
         _getActiveBLG = function () {
           return _.filter(_allBLGs, function (blg) {
             return blg.isActive();

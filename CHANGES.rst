@@ -4,11 +4,17 @@ Changelog of lizard-nxt client
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
 
+- Draw selected timeseries and raster data in dashboard.
+
+- No longer load map before dashboard. Dashboard no longer needs map.
+
 - Refactored timeseries. State.selected.timeseries keeps track of selected ts
   TimeseriesService synchronizes the data with the selection. Draw graphs for
   TimeseriesService.timeseries.
 
 - Only startPlugins if Lizard plugins is loaded.
+
+- Refine the data-menu restyle.
 
 
 Release 2.7.1 (2016-1-29)
