@@ -3,7 +3,20 @@ Changelog of lizard-nxt client
 
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
--
+
+- Add chalk to npm dependencies.
+
+
+Release 2.2.12 (2016-2-5)
+---------------------
+
+- Fix not rendering filter attributes in omnibox.
+
+
+Release 2.2.11 (2016-1-18)
+---------------------
+
+- Bump MAX_TIME (future) from 1 to 20 days.
 
 
 Release 2.7.1 (2016-1-29)
