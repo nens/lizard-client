@@ -16,6 +16,7 @@ angular.module('omnibox')
           var selectedTS = [];
           scope.asset.timeseries.forEach(function (ts) {
             selectedTS.push(ts.uuid);
+            ts.active = true;
             scope.noTimeseries = false;
           });
 
@@ -44,6 +45,25 @@ angular.module('omnibox')
           }
         );
       });
+
+      scope.toggleTimeseries = function (timeseries) {
+        var add = true;
+
+        State.selected.timeseries = _.filter(State.selected.timeseries, function (ts) {
+          var keep = ts !== timeseries.uuid;
+          if (!keep) {
+            add = false;
+            timeseries.active = false;
+          }
+          return keep;
+        });
+
+        if (add) {
+          timeseries.active = true;
+          State.selected.timeseries = _.union(State.selected.timeseries, [timeseries.uuid]);
+        }
+
+      };
 
     },
     restrict: 'E',

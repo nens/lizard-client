@@ -6,7 +6,7 @@ angular.module('dashboard')
   this.GRAPH_PADDING = 13; // Padding around the graph svg. Not to be confused
                           // with the padding inside the svg which is used for
                           // axis and labels.
-  var ROW_BOTTOM_MARGIN = 10; // Pixels between graph rows.
+  var ROW_BOTTOM_MARGIN = 20; // Pixels between graph rows.
 
 
   /**
@@ -61,15 +61,17 @@ angular.module('dashboard')
    * @return {object}          dimension object per graph.
    */
   this.getDimensions = function (element, nGraphs, showXAxis) {
-
+    var AXIS_LABEL_SPACE = 60;
+    var AXIS_DEFAULT_SPACE = 15;
+    var PAD = 10;
     return {
       width: element.width() - this.GRAPH_PADDING,
       height: getGraphHeight(element, nGraphs),
       padding: {
-        top: 10,
-        right: 10,
-        bottom: showXAxis ? 40 : 15,
-        left: 10
+        top: PAD,
+        right: PAD,
+        bottom: showXAxis ? AXIS_LABEL_SPACE : AXIS_DEFAULT_SPACE,
+        left: AXIS_LABEL_SPACE
       }
     };
   };
@@ -82,7 +84,7 @@ angular.module('dashboard')
    */
   var addPropertyData = function (graphs, properties) {
     _.forEach(properties, function (property, slug) {
-      if (property.data.length > 1) {
+      if (property.active && property.data.length > 1) {
         var item = {
           data: property.data,
           keys: {x: 0, y: {y0: 1, y1: 1}},
