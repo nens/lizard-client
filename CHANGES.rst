@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
 
+- Added ansible deployment.
+
 - Refine the data-menu restyle.
 
 

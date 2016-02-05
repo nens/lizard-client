@@ -1,0 +1,47 @@
+- hosts: all
+  gather_facts: no
+  sudo: yes
+
+  tasks:
+  # DEPLOY TO INTEGRATION
+
+  - name: git checkout client
+    sudo_user: "{{ build_user }}"
+    git: repo=ssh://git@github.com/nens/lizard-client.git
+         dest={{ project_path }}/src/lizard-client
+         version={{ version }}
+    when: deploy_type == 'integration'
+
+  # npm
+  - name: npm install --force client
+    sudo: yes
+    sudo_user: "{{ build_user }}"
+    command: npm install --force chdir={{ project_path }}/src/lizard-client
+    when: deploy_type == 'integration'
+
+  # bower
+  - name: bower install
+    sudo: yes
+    sudo_user: "{{ build_user }}"
+    command: bower install chdir={{ project_path }}/src/lizard-client
+    when: deploy_type == 'integration'
+
+  - name: build javascript dist
+    sudo: yes
+    sudo_user: "{{ build_user }}"
+    command: grunt chdir={{ project_path }}/src/lizard-client
+    when: deploy_type == 'integration'
+
+  # // DEPLOY TO INTEGRATION
+
+  # DEPLOY TO STAGING AND PRODUCTION
+
+  # checkout new version of client
+  - name: git checkout client
+    sudo_user: "{{ build_user }}"
+    git: repo=ssh://git@github.com/nens/lizard-client.git
+         dest={{ project_path }}/src/lizard-client/dist
+         version={{ version }}
+    when: deploy_type != 'integration'
+
+  # // DEPLOY TO STAGING AND PRODUCTION

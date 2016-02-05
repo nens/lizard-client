@@ -30,7 +30,7 @@ module.exports = function(config) {
       'vendor/d3-comparator/d3-comparator.js',
       'vendor/leaflet/dist/leaflet-src.js',
       'vendor/leaflet.markercluster/dist/leaflet.markercluster.js',
-      'vendor/lodash/dist/lodash.compat.js',
+      'vendor/lodash/lodash.js',
       'vendor/moment/moment.js',
       'vendor/angular-sanitize/angular-sanitize.js',
       'vendor/ng-csv/build/ng-csv.min.js',
