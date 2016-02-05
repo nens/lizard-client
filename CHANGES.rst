@@ -20,6 +20,10 @@ Unreleased (2.6.2) (XXXX-XX-XX)
 
 - Added ansible deployment.
 
+- Add 'add extra layers to the portal' functionality to the data menu.
+
+- Update font-awesome from 4.2.0 to 4.5.0.
+
 
 Release 2.7.1 (2016-1-29)
 ---------------------
