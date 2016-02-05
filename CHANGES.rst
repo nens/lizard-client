@@ -18,6 +18,8 @@ Release 2.2.11 (2016-1-18)
 
 - Bump MAX_TIME (future) from 1 to 20 days.
 
+- Refine the data-menu restyle.
+
 
 Release 2.7.1 (2016-1-29)
 ---------------------
