@@ -115,10 +115,18 @@ angular.module('data-menu')
             return _assets.indexOf(assetId) !== -1;
           });
           instance.getGeomDataForAssets(oldAssets, instance.assets);
+
+          if (instance.onAssetsChange) {
+            instance.onAssetsChange();
+          }
+
           console.log('DataService.assets:', instance.assets);
         });
         _assets = assets;
         console.log('State.selected.assets:', State.selected.assets);
+
+        // Rebind add and remove because selected.assets might have been
+        // redefined when calling state.selected.assets = []
         State.selected.assets.addAsset = addAsset;
         State.selected.assets.removeAsset = removeAsset;
       };
@@ -151,6 +159,10 @@ angular.module('data-menu')
         .then(function (geometries) {
           instance.geometries = geometries;
           console.log('DataService.geometries:', instance.geometries);
+
+          if (instance.onGeometriesChange) {
+            instance.onGeometriesChange();
+          }
 
         });
         _geometries = geometries;
@@ -189,26 +201,6 @@ angular.module('data-menu')
 
       State.selected.geometries.addGeometry = addGeometry;
       State.selected.geometries.removeGeometry = removeGeometry;
-
-      // Define timeseries on State and update DataService.timeseries.
-      var _timeseries = [];
-      Object.defineProperty(State.selected, 'timeseries', {
-        get: function () { return _timeseries; },
-        set: function (timeseries) {
-          instance._updateTimeseries(_timeseries, timeseries);
-          _timeseries = timeseries;
-        }
-      });
-
-      // Define events on State and update DataService.events.
-      var _events = [];
-      Object.defineProperty(State.selected, 'events', {
-        get: function () { return _events; },
-        set: function (events) {
-          instance._updateEvents(_events, events);
-          _events = events;
-        }
-      });
 
       // Immutable representation of all layergroups set on State.layerGroups
       Object.defineProperty(State.layerGroups, 'all', {

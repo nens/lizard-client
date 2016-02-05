@@ -102,14 +102,22 @@ angular.module('global-state')
     };
 
     state.selected = {
-      assets: [], // hydra-core asset id <entity>$<id>
-      geometries: [], // points, lines, polygons
-      timeseries: [], // <uuid>
-      events: [], // <id>
+      assets: [], // hydra-core asset id <entity>$<id>,
+                  // is defined in DataService use state.selected.asset.addAsset
+                  // to add and state.selected.assetremoveAsset to remove
+                  // asset, or reset by calling state.selected.reset()
+      geometries: [], // geojson with points, lines, polygons. Same as asset,
+                      // is redefined in dataservice. use addGeometry and
+                      // removegeometry on state.selected.geometries to ass or
+                      // remove individual geometries or use reset function.
+      timeseries: [], // <uuid> Redefined in timeseriesService. mirrored
+                      // asynchronously by timeseriesService.timeseries. Array
+                      // only contains selected timeseries.
       reset: function () {
         // Selected items
         state.selected.assets = [];
         state.selected.geometries = [];
+        state.selected.timeseries = [];
       }
     };
 

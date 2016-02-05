@@ -4,11 +4,11 @@
 
 .dashboard-wrapper {
   position: absolute;
-  top: $navbarheight;
-  left: $omnibox-width;
+  top: 70px;
+  left: 420px;
   right: 0px;
   margin-right: 10px;
-  bottom: 0;
+  bottom: 65px;
   overflow: hidden;
   transition: .3s ease;
 }

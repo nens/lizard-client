@@ -1,69 +1,75 @@
-<div class="card active" ng-if="timeseries.data.length > 0">
-  <div class="card-content"
-       ng-class="{timeseries: fullDetails}">
+<div class="card active" ng-if="asset.timeseries">
+  <div class="card-content">
 
     <div class="timeseries-header-container">
       <i class="fa fa-clock-o" ng-class="{'fa-spin': fetching}"></i>
       <select
         class="timeseries"
-        ng-if="timeseries.data.length > 1"
+        ng-if="asset.timeseries.length > 1"
         ng-class="{hidden: !fullDetails}"
-        ng-model="timeseries.selectedTimeseries"
+        ng-model="timeseries.selected"
+        ng-change="timeseries.change()"
         ng-options="ts.location.name
           + ', '
           + ts.parameter_referenced_unit.parameter_short_display_name
-          for ts in timeseries.data
+          for ts in asset.timeseries track by ts.uuid
         ">
       </select>
       <span
         class="card-title-text placeholder"
-        ng-if="timeseries.data.length === 1 && fullDetails">
-        <% timeseries.selectedTimeseries.location.name
+        ng-if="asset.timeseries.length === 1 && fullDetails">
+        <% asset.timeseries[0].location.name
           + ', '
-          + timeseries.selectedTimeseries.parameter_referenced_unit.parameter_short_display_name %>
+          + asset.timeseries[0].parameter_referenced_unit.parameter_short_display_name %>
       </span>
       <span class="card-title-text placeholder" ng-class="{hidden: fullDetails}" translate>Timeseries</span>
       <full-details></full-details>
     </div>
 
-    <br>
 
-    <div class="timeseries-graph-container"
+    <div ng-if="content.timeseries.length">
+
+      <br>
+
+      <div class="timeseries-graph-container"
+          ng-class="{hidden: !fullDetails}"
+          ng-if="content.timeseries[0].type === 'bar-chart'">
+         <graph
+            bar-chart
+            type="temporal"
+            temporal="timeState"
+            content="content.timeseries"
+            now="timeState.at">
+          </graph>
+      </div>
+
+      <div class="timeseries-graph-container"
         ng-class="{hidden: !fullDetails}"
-        ng-if="timeseries.selectedTimeseries.type === 'bar-chart'">
-       <graph
-          bar-chart
+          ng-if="content.timeseries[0].type !== 'bar-chart'">
+        <graph
+          line
           type="temporal"
           temporal="timeState"
-          content="timeseries.selectedTimeseries.content"
+          content="content.timeseries"
           now="timeState.at">
         </graph>
+      </div>
+
+      <div class="card-tools"
+        ng-class="{hidden: !fullDetails}">
+        <a
+          target="_blank"
+          href="<% timeseries[0].url
+          + 'data/?format=csv&start=' + timeState.start + '&end=' + timeState.end %>"
+          class="btn btn-default btn-xs"
+          title="<% 'Export info card data' | translate %>">
+          <i class="fa fa-share-square-o"></i>
+          Exporteer
+        </a>
+      </div>
+
     </div>
 
-    <div class="timeseries-graph-container"
-      ng-class="{hidden: !fullDetails}"
-        ng-if="timeseries.selectedTimeseries.type !== 'bar-chart'">
-      <graph
-        line
-        type="temporal"
-        temporal="timeState"
-        content="timeseries.selectedTimeseries.content"
-        now="timeState.at">
-      </graph>
-    </div>
-
-     <div class="card-tools"
-      ng-class="{hidden: !fullDetails}">
-       <a
-         target="_blank"
-         href="<% timeseries.selectedTimeseries.url
-         + 'data/?format=csv&start=' + timeState.start + '&end=' + timeState.end %>"
-         class="btn btn-default btn-xs"
-         title="<% 'Export info card data' | translate %>">
-         <i class="fa fa-share-square-o"></i>
-         Exporteer
-       </a>
-     </div>
 
   </div>
 </div>

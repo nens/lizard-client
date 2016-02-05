@@ -1,13 +1,15 @@
-<div>
+<div class="card active">
+
+  <timeseries asset="asset" timeState="timeState"></timeseries>
 
   <cardheader asset="asset"></cardheader>
 
   <div class="card-content">
 
-    <em ng-if="ts.length === 0" translate>No data available for this asset</em>
+    <em ng-if="noTimeseries" translate>No timeseries available for this asset</em>
 
-    <div ng-repeat="s in ts">
-      <div class="card-content-list">
+    <div ng-repeat="s in asset.timeseries">
+      <div draggable="true" class="card-content-list">
         <i class="fa fa-clock-o"></i>
         <span><% s.location.name %>, <% s.parameter_referenced_unit.parameter_short_display_name %></span>
       </div>
@@ -15,5 +17,11 @@
     </div>
 
   </div>
+
+    <db-geometry-cards
+      time-state="omnibox.state.temporal"
+      geom="asset"
+      header="false">
+    </db-geometry-cards>
 
 </div>

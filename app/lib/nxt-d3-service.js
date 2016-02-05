@@ -226,7 +226,10 @@ angular.module('lizard-nxt')
 
       var min, max;
 
-      if (key.hasOwnProperty('y0') && key.hasOwnProperty('y1')) {
+      // Key can be a string or integer, or an object containing two y keys.
+      if (key.hasOwnProperty
+        && key.hasOwnProperty('y0')
+        && key.hasOwnProperty('y1')) {
         var minComparator = function (d) { return d[key.y0]; };
         min = d3.min(data, minComparator);
 
