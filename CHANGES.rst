@@ -6,6 +6,8 @@ Unreleased (2.6.2) (XXXX-XX-XX)
 
 - Added ansible deployment.
 
+- Refine the data-menu restyle.
+
 
 Release 2.7.1 (2016-1-29)
 ---------------------
