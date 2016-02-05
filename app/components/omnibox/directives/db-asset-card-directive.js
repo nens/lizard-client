@@ -1,23 +1,55 @@
 
 angular.module('omnibox')
-  .directive('dbAssetCard', [ '$http', 'WantedAttributes', 'TimeseriesService',
-    function ($http, WantedAttributes, TimeseriesService) {
+  .directive('dbAssetCard', [ 'State',
+    function (State) {
   return {
     link: function (scope) {
-      scope.wanted = WantedAttributes;
 
-      var assetId = scope.asset.entity_name + '$' + scope.asset.id;
+      scope.noTimeseries = true;
 
-      TimeseriesService.getTimeSeriesForObject(assetId)
+      /**
+       * Timeseries are asynchronous so add them to selection when added.
+       */
+      var watchTimeseries = scope.$watch('asset.timeseries', function (n, o) {
+        if (n) {
 
-      .then(function(response) {
-        scope.ts = response.results;
+          var selectedTS = [];
+          scope.asset.timeseries.forEach(function (ts) {
+            selectedTS.push(ts.uuid);
+            scope.noTimeseries = false;
+          });
+
+          State.selected.timeseries = _.union(State.selected.timeseries, selectedTS);
+
+          watchTimeseries(); // rm watch
+
+        }
+      });
+
+
+      scope.$on('$destroy', function () {
+        // Remove all the selected timeseries of this asset.
+        State.selected.timeseries = _.filter(State.selected.timeseries,
+          function (uuid) {
+            var keep = true;
+            _.forEach(scope.asset.timeseries, function (ts) {
+              if (ts.uuid === uuid) {
+                // This selected timeseries is one of the asset that is removed.
+                // cancel loop and return false to remove ts from selection.
+                keep = false;
+                return false;
+              }
+            });
+            return keep;
+          }
+        );
       });
 
     },
     restrict: 'E',
     scope: {
-      asset: '='
+      asset: '=',
+      timeState: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/db-asset-card.html'

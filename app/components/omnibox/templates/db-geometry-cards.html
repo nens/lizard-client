@@ -1,0 +1,20 @@
+<div class="animate-repeat">
+
+  <cardheader ng-if="header" geom="geom"></cardheader>
+
+  <div ng-if="!noRasterData" class="card-content">
+
+    <em ng-if="noData" translate>No data available for this geometry</em>
+
+		<div ng-if="prop.data.length > 1" ng-repeat="prop in geom.properties">
+		  <div class="card-content-list">
+		    <i class="fa fa-line-chart"></i>
+		    <span><% prop.quantity %>, (<% prop.unit %>)</span>
+		  </div>
+		  <div class="circle pull-right"></div>
+		</div>
+
+
+  </div>
+
+</div>

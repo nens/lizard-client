@@ -3,9 +3,9 @@
     <div class="card active">
       <cardattributes waterchain="asset"></cardattributes>
     </div>
-    <timeseries ng-if="longFormat"
-      ng-if="asset.num_timeseries &&
-             context !== 'dashboard'"
+    <timeseries
+      timeseries-single-select
+      ng-if="longFormat"
       asset="asset"
       time-state="timeState">
     </timeseries>

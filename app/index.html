@@ -31,7 +31,7 @@
 
   </head>
 
-  <body>
+  <body ng-controller="UrlController">
 
     <div ng-if="context === 'map' || context === 'scenarios'">
       <map></map>
@@ -88,7 +88,7 @@
     <script src="/vendor/d3-comparator/d3-comparator.js"></script>
     <script src="/vendor/leaflet/dist/leaflet-src.js"></script>
     <script src="/vendor/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
-    <script src="/vendor/lodash/dist/lodash.compat.js"></script>
+    <script src="/vendor/lodash/lodash.js"></script>
     <script src="/vendor/moment/moment.js"></script>
     <script src="/vendor/angular-sanitize/angular-sanitize.js"></script>
     <script src="/vendor/ng-csv/build/ng-csv.min.js"></script>
@@ -171,6 +171,7 @@
     <script src="/components/omnibox/directives/search-directive.js"></script>
     <script src="/components/omnibox/directives/omnibox-directives.js"></script>
     <script src="/components/omnibox/directives/db-asset-card-directive.js"></script>
+    <script src="/components/omnibox/directives/db-geometry-card-directive.js"></script>
     <script src="/components/omnibox/directives/close-card-directive.js"></script>
     <script src="/components/omnibox/directives/full-details-directive.js"></script>
 
@@ -183,7 +184,7 @@
     <script src="/components/graph/graph-directives.js"></script>
 
     <script src="/components/dashboard/dashboard.js"></script>
-    <script src="/components/dashboard/dashboard-controller.js"></script>
+    <script src="/components/dashboard/dashboard-service.js"></script>
     <script src="/components/dashboard/dashboard-directive.js"></script>
 
     <script src="/components/scenarios/scenarios.js"></script>
