@@ -780,15 +780,15 @@ angular.module('lizard-nxt')
         .attr("class", "line");
     }
     path.datum(data)
+      .style('fill', fill)
+      .style('stroke', color)
       .transition()
       .duration(duration)
       .attr("d", function (d) {
         // Prevent returning invalid values for d
         var p = pathFn(d) || "M0, 0";
         return p;
-      })
-      .style('fill', fill)
-      .style('stroke', color);
+      });
     return path;
   };
 
