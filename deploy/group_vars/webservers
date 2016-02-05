@@ -1,0 +1,4 @@
+deploy_type: production
+
+sitename: "nxt.lizard.net"
+project_path: "/srv/{{ sitename }}"

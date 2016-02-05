@@ -6,19 +6,9 @@ Unreleased (2.6.2) (XXXX-XX-XX)
 
 - Add chalk to npm dependencies.
 
-
-Release 2.2.12 (2016-2-5)
----------------------
-
-- Fix not rendering filter attributes in omnibox.
-
-
-Release 2.2.11 (2016-1-18)
----------------------
-
-- Bump MAX_TIME (future) from 1 to 20 days.
-
 - Refine the data-menu restyle.
+
+- Added ansible deployment.
 
 
 Release 2.7.1 (2016-1-29)
@@ -65,12 +55,6 @@ annotation
 - Fix bugs in zoom buttons, openLayerGroups and clearing of the search query.
 
 - Initial restyle of the data menu.
-
-
-Release 2.6.2 (2016-1-18)
----------------------
-
-- Bump MAX_TIME (future) from 1 to 20 days.
 
 
 Release 2.6.1 (2016-1-18)
@@ -171,6 +155,18 @@ Release 2.3.1 (2015-11-5)
 
 - Fix clip path not clipping. Use absolute url to refer to clippath and keep
   track of the url for nxt-d3 instances.
+
+
+Release 2.2.12 (2016-2-5)
+---------------------
+
+- Fix not rendering filter attributes in omnibox.
+
+
+Release 2.2.11 (2016-1-18)
+---------------------
+
+- Bump MAX_TIME (future) from 1 to 20 days.
 
 
 Release 2.2.10 (2016-1-8)
