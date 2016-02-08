@@ -54,8 +54,12 @@ angular.module('data-menu')
  * @description Add more layers to the data menu.
  */
 angular.module('data-menu')
-  .directive('layerAdder', ['LayerAdderService', 'DataService', 'notie',
-                            function (LayerAdderService, DataService, notie) {
+  .directive('layerAdder',
+             ['LayerAdderService', 'DataService', 'notie', 'gettextCatalog',
+              function (LayerAdderService,
+                        DataService,
+                        notie,
+                        gettextCatalog) {
 
     var link = function (scope, element, attrs) {
 
@@ -67,13 +71,12 @@ angular.module('data-menu')
        */
       var fetchLayerGroupsError = function(httpResponse) {
         console.log(httpResponse);
-        notie.alert(3,
-          gettext(
+        notie.alert(
+          3, gettextCatalog.getString(
             "Oops! Something went wrong while fetching the layers."));
         throw new Error(
           httpResponse.status + " - "
-          + gettext(
-            "Could not retrieve layers:")
+          + "Could not retrieve layers:"
           + " " + httpResponse.config.url
           + ".");
       };
