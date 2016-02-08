@@ -208,24 +208,19 @@ angular.module('omnibox')
 
       var setGraphContent = function () {
         scope.graphContent = [{
-          data: scope.rain.data,
+          data: scope.rain.properties.rain.data,
           keys: {x: 0, y: 1},
           labels: {y: 'mm'}
         }];
       };
 
       scope.recurrenceTimeToggle = function () {
-        if (!scope.$$phase) {
-          scope.$apply(function () {
-            scope.rrc.active = !scope.rrc.active;
-          });
-        } else {
-          scope.rrc.active = !scope.rrc.active;
-        }
+        scope.rrc.active = !scope.rrc.active;
+        if (scope.rrc.active) { getRecurrenceTime(); }
       };
 
 
-      scope.$watchCollection("rain.data", function (n, o) {
+      scope.$watchCollection("rain.properties.rain.data", function (n, o) {
         setGraphContent();
         if (scope.rrc.active) {
           getRecurrenceTime();
@@ -241,7 +236,7 @@ angular.module('omnibox')
           {slug: 'rain'},
           {
             agg: 'rrc',
-            geom: L.Latlng(scope.geom.geomtry.coordinates[1], scope.geom.geomtry.coordinates[0]),
+            geom: L.latLng(scope.rain.geometry.coordinates[1], scope.rain.geometry.coordinates[0]),
             start: State.temporal.start,
             end: State.temporal.end
           }
