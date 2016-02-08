@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
 
+- Up angular and everything related to 1.5.0.
+
 - Draw selected timeseries and raster data in dashboard.
 
 - No longer load map before dashboard. Dashboard no longer needs map.
