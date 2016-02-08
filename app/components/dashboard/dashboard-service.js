@@ -87,10 +87,11 @@ angular.module('dashboard')
       if (property.active && property.data.length > 1) {
         var item = {
           data: property.data,
-          keys: {x: 0, y: {y0: 1, y1: 1}},
+          keys: {x: 0, y: 1},
           labels: {x: 'm', y: property.unit }
         };
-        graphs.push({ type: 'distance', content: [item] });
+        var type = slug === 'rain' ? 'rain' : 'distance';
+        graphs.push({ type: type, content: [item] });
       }
     });
     return graphs;
