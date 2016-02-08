@@ -813,8 +813,9 @@ angular.module('lizard-nxt')
    * @param {object} latLng - latlng object with location of data.
    * @returns list of formatted data objects.
    */
-  this.formatCSVColumns = function (data, latLng) {
+  this.formatCSVColumns = function (data, coords) {
     var i,
+        latLng = L.latLng(coords[1], coords[0]),
         formattedDateTime,
         formattedData = [];
 

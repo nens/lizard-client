@@ -198,9 +198,11 @@ angular.module('omnibox')
 }]);
 
 angular.module('omnibox')
-  .directive('rain', ['State', 'RasterService', function (State, RasterService) {
+  .directive('rain', ['State', 'RasterService', 'UtilService', function (State, RasterService, UtilService) {
   return {
     link: function (scope) {
+
+      scope.util = UtilService;
 
       scope.rrc = {
         active: false

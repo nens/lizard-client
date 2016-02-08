@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
 
+- Fix no rain export.
+
 - Fix statistics.
 
 - Fix no rain in box.

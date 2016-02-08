@@ -5,9 +5,8 @@
      <full-details></full-details>
 
      <span class="card-title-text" ng-class="{hidden: fullDetails}" translate>Rain</span>
-     <div ng-class="{ hidden: !fullDetails }">
+     <div ng-if="graphContent" ng-class="{ hidden: !fullDetails }">
        <graph
-          ng-if="graphContent"
           bar-chart
           temporal="timeState"
           content="graphContent"
@@ -24,7 +23,7 @@
          <a
            class="btn btn-default btn-xs"
            title="Data van deze infocard exporteren"
-           ng-csv="$parent.formatCSVColumns(rain.data)"
+           ng-csv="util.formatCSVColumns(rain.properties.rain.data, rain.geometry.coordinates)"
            field-separator=";"
            filename="neerslag.csv"
            csv-header="['Latitude', 'Longitude', 'Datestamp', 'Timestamp', 'Rain (mm)']">
