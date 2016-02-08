@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
 
+- Fix no rain in box.
+
 - Up angular and everything related to 1.5.0.
 
 - Draw selected timeseries and raster data in dashboard.
