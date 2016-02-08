@@ -166,7 +166,8 @@ angular.module('map')
               var defer = $q.defer();
 
               // Resolve and return when nothing changed.
-              if (timeState.at === this.timeState.at
+              if (this.timeState &&
+                timeState.at === this.timeState.at
                 && timeState.aggWindow === this.timeState.aggWindow
                 && timeState.playing === this.timeState.playing) {
                 defer.resolve();
