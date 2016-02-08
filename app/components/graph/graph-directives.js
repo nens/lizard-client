@@ -94,7 +94,13 @@ angular.module('lizard-nxt')
   link = function (scope, element, attrs, graphCtrl) {
 
     var graphUpdateHelper = function () {
-      graphCtrl.setData(scope);
+      if (scope.content) {
+        graphCtrl.setData(scope);
+      }
+      else if (scope.data) {
+        graphCtrl.setFormattedContent(scope);
+      }
+
 
       // UpdateData is called with temporal.timelineMoving to draw subset for
       // performance reasons.
@@ -125,8 +131,11 @@ angular.module('lizard-nxt')
      * Calls updateGraph when data is different than controller.content.
      * NOTE: Controller data is set on precompile.
      */
-    scope.$watch('content', function (n, o) {
-      if (n === o) { return true; }
+    var contentWatch = scope.$watch('content', function (n, o) {
+      if (scope.data) {
+        contentWatch();
+        return;
+      }
       graphUpdateHelper();
     }, true);
 
@@ -139,15 +148,7 @@ angular.module('lizard-nxt')
         dataWatch();
         return;
       }
-
-      scope.content = [{
-        data: scope.data, labels: {
-          x: scope.xlabel,
-          y: scope.ylabel
-        },
-        keys: { x: 0, y: 1 }
-      }];
-    });
+    }, true);
 
     scope.$watch('temporal.at', function (n, o) {
       if (n === o) { return true; }
@@ -194,7 +195,31 @@ angular.module('lizard-nxt')
       this.temporal = scope.temporal;
     };
 
-    this.setData($scope);
+    /**
+     * Support legacy graph api. Formats scope.data, scope.labels and scope.keys
+     * to a scope.content object with a single graph object.
+     */
+    this.setFormattedContent = function (scope) {
+      this.content = [{
+        data: scope.data,
+        labels: {
+          x: scope.xlabel,
+          y: scope.ylabel
+        },
+        keys: {
+          x: (scope.keys && scope.keys.x) || 0,
+          y: (scope.keys && scope.keys.y) || 1
+        }
+      }];
+    };
+
+    if ($scope.content) {
+      this.setData($scope);
+    }
+    // Support legacy graph api
+    else if ($scope.data) {
+      this.setFormattedContent($scope);
+    }
 
     this.graph = {};
     this.yfilter = '';
@@ -230,6 +255,7 @@ angular.module('lizard-nxt')
       data: '=?',
       xlabel: '=?',
       ylabel: '=?',
+      keys: '=?'
     },
     restrict: 'E',
     replace: true,
@@ -390,7 +416,6 @@ angular.module('lizard-nxt')
     var graph = graphCtrl.graph;
 
     graph.drawHorizontalStack(graphCtrl.content);
-
     // Function to call when data changes
     graphCtrl.updateData = graph.drawHorizontalStack;
 
