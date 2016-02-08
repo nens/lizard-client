@@ -198,31 +198,35 @@ angular.module('omnibox')
 }]);
 
 angular.module('omnibox')
-  .directive('rain', ['State', 'RasterService', function (State, RasterService) {
+  .directive('rain', ['State', 'RasterService', 'UtilService', function (State, RasterService, UtilService) {
   return {
     link: function (scope) {
+
+      scope.util = UtilService;
 
       scope.rrc = {
         active: false
       };
 
+      var setGraphContent = function () {
+        scope.graphContent = [{
+          data: scope.rain.properties.rain.data,
+          keys: {x: 0, y: 1},
+          labels: {y: 'mm'}
+        }];
+      };
+
       scope.recurrenceTimeToggle = function () {
-        if (!scope.$$phase) {
-          scope.$apply(function () {
-            scope.rrc.active = !scope.rrc.active;
-            scope.lg.changed =
-              !scope.lg.changed;
-          });
-        } else {
-          scope.rrc.active = !scope.rrc.active;
-          scope.lg.changed = !scope.lg.changed;
-        }
+        scope.rrc.active = !scope.rrc.active;
+        if (scope.rrc.active) { getRecurrenceTime(); }
       };
 
 
-      scope.$watchCollection("lg.data", function (n, o) {
-        if (n === o || !scope.rrc.active) { return; }
-        getRecurrenceTime();
+      scope.$watchCollection("rain.properties.rain.data", function (n, o) {
+        setGraphContent();
+        if (scope.rrc.active) {
+          getRecurrenceTime();
+        }
       });
 
       var getRecurrenceTime = function () {
@@ -234,7 +238,7 @@ angular.module('omnibox')
           {slug: 'rain'},
           {
             agg: 'rrc',
-            geom: L.Latlng(scope.geom.geomtry.coordinates[1], scope.geom.geomtry.coordinates[0]),
+            geom: L.latLng(scope.rain.geometry.coordinates[1], scope.rain.geometry.coordinates[0]),
             start: State.temporal.start,
             end: State.temporal.end
           }
@@ -247,7 +251,7 @@ angular.module('omnibox')
     restrict: 'E',
     scope: {
       rain: '=',
-      state: '='
+      timeState: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/rain.html'

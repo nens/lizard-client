@@ -10,8 +10,8 @@
 
   <rain
     ng-if="geom.properties.rain"
-    rain="geom.properties.rain"
-    state="omnibox.state">
+    rain="geom"
+    time-state="timeState">
   </rain>
 
   <annotations
@@ -66,16 +66,17 @@
   <div
     ng-if="geom.geometry.type === 'Polygon' && slug !== 'rain'"
     class="card active">
-    <div ng-repeat="(slug, content) in geom.properties">
+    <div ng-if="content.data" ng-repeat="(slug, content) in geom.properties">
 
       <div
         class="card-content">
 
         <graph
-          ng-if="geom.properties.elevation.aggType === 'curve'"
-          line xlabel="'[%]'"
-          ylabel="geom.properties.elevation.unit"
-          data="geom.properties.elevation.data"
+          ng-if="content.aggType === 'curve'"
+          line
+          xlabel="'[%]'"
+          ylabel="content.unit"
+          data="content.data"
           keys="{x: 0, y: 1}">
         </graph>
 
@@ -95,7 +96,7 @@
           data="content.data"
           keys="{x: 'data', y: 'label'}"
           xlabel="'[%]'"
-          dimensions="{height: 80, padding: {left: 0, right: 0, top: 5, bottom: 50}}">
+          dimensions="{height: 80, padding: {left: 0, right: 0, top: 5, bottom: 50 } }">
         </graph>
 
         <div ng-if="content.aggType !== 'histogram' && content.aggType !== 'curve' && content.aggType !== 'counts'">
