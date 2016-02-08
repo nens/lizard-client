@@ -1,25 +1,16 @@
 <div ng-controller="DatamenuController as menu">
-    <div class="layer-switcher-wrapper material-shadow"
-      ng-class="{'slide-left': menu.enabled}">
+    <div class="material-shadow"
+         ng-class="{'slide-left': menu.enabled,
+                    'layer-adder-wrapper': menu.layerAdderEnabled,
+                    'layer-switcher-wrapper': !menu.layerAdderEnabled,}">
 
-      <div class="layer-switcher">
-            <ul class="list-group">
-              <li>
-                <baselayer-chooser></baselayer-chooser>
-              </li>
-              <li ng-repeat="layergroup in menu.layerGroups | orderObjectBy: 'order': false"
-                  ng-if="!(layergroup.isEventLayerGroup() || layergroup.baselayer)">
-                <layer-chooser layergroup="layergroup">
-                </layer-chooser>
-              </li>
-
-              <li ng-repeat="layergroup in menu.layerGroups | orderObjectBy: 'order': false"
-                  ng-if="layergroup.isEventLayerGroup() && !layergroup.baselayer">
-                <eventlayer-chooser layergroup="layergroup">
-                </eventlayer-chooser>
-              </li>
-            </ul>
-      </div>
+      <layer-switcher
+        ng-if="!menu.layerAdderEnabled"
+        layergroup="layergroup"
+        menu="menu"></layer-switcher>
+      <layer-adder
+        menu="menu"
+        ng-if="menu.layerAdderEnabled"></layer-adder>
 
       <div class="button-list-container" ng-if="context === 'map' || context === 'scenarios'">
         <div class="button-list-item compass" ng-click="menu.enabled = !menu.enabled">

@@ -2,24 +2,31 @@
  * Layer switcher layout
  */
 
-.layer-switcher-wrapper {
+%layer-wrapper-base {
+    position: absolute;
+    top: 150px;
     background-color: rgba($white, 0.9);
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
-    position: absolute;
-    right: -200px;
     transition: .3s ease;
-    width: $width6 + 50px;
-    top: 150px;
+}
+.layer-switcher-wrapper {
+    @extend %layer-wrapper-base;
+    width: 250px;
+    right: -200px;
+}
+.layer-adder-wrapper {
+    @extend %layer-wrapper-base;
+    width: 550px;
+    right: -500px;
 }
 
 .slide-left {
     right: 0;
 }
 
-.layer-switcher {
+%layer-base {
     float: right;
-    width: $width6;
     min-height: 300px;
     max-height: 600px;
     overflow-y: auto;
@@ -27,8 +34,48 @@
     background: $clouds;
     color: $asbestos;
     list-style-type: none;
+}
 
-    label {
+.layer-adder {
+    @extend %layer-base;
+    width: 500px;
+    right: -550px;  // Necessary to make the resizing animation smooth.
+
+    input {
+        width: 100%;
+        border: none;
+        height: 40px;
+        padding: 0 10px;
+    }
+
+    table tbody tr {
+        td:last-child {
+            text-align: left;
+        }
+
+        &:hover {
+            @include material-shadow-hover();
+        }
+    }
+
+    .go-back {
+        display: block;
+        font-size: 0.87em;
+        margin-top: -15px;
+        margin-bottom: 10px;
+        text-align: center;
+        padding: 8px;
+        text-transform: uppercase;
+    }
+}
+
+.layer-switcher {
+    @extend %layer-base;
+    width: 200px;
+    right: -250px;  // Necessary to make the resizing animation smooth.
+
+    .layer-item {
+        display: block;
         width: $width19;
         position: relative;
         margin-bottom: 0;
@@ -38,6 +85,7 @@
         line-height: 1;
         transition: .3s ease;
         cursor: pointer;
+        color: $asbestos;
 
         span {
             // To improve text on background color readability.
@@ -61,6 +109,22 @@
 
         &:hover, &.active {
             border-color: $asbestos;
+        }
+
+        &.add-data {
+            border: 1px dashed $asbestos;
+            border-right: 0;
+
+            &:hover {
+                border-style: solid;
+            }
+
+            i {
+                background: none;
+                &:hover {
+                    color: $asbestos;
+                }
+            }
         }
 
         &.count {
