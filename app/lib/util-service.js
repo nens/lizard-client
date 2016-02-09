@@ -118,7 +118,7 @@ angular.module('lizard-nxt')
     // timeline, while omnibox subsequently syncs to timeState.aggWindow
 
     var aggWindow;
-    var MIN_PX = 4; // Minimum width of a bar
+    var MIN_PX = 3; // Minimum width of a bar
 
     // ms per pixel
     var msPerPx = (stop - start) / drawingWidth;

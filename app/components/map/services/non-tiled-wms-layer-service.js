@@ -192,7 +192,10 @@ angular.module('map')
                   + store.name.split('/')[1];
               }
 
-              this._syncToNewTime(timeState, map, defer);
+              // Continue when layers need to update to new time.
+              if (this._imageOverlays.length) {
+                this._syncToNewTime(timeState, map, defer);
+              }
 
               return defer.promise;
             },

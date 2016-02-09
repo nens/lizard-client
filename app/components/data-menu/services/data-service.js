@@ -498,11 +498,10 @@ angular.module('data-menu')
         }
 
         angular.forEach(this.layerGroups, function (layerGroup) {
-          // UTF has a special status and is not queried in this loop. Only get
-          // data for non temporal or point. Too many dimensions.
-          if (layerGroup.slug === instance.utfLayerGroup.slug
-            || (layerGroup.temporal && geo.geometry.type !== 'Point')) {
-            return; }
+          // UTF has a special status and is not queried in this loop.
+          if (layerGroup.slug === instance.utfLayerGroup.slug) {
+            return;
+          }
 
           promises.push(
             layerGroup.getData('DataService', options).then(null, null, function (response) {

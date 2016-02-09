@@ -691,6 +691,12 @@ angular.module('lizard-nxt')
    */
   var updateRectangleElements = function (rectangles, xScale, oldDimensions,
                                           newDimensions) {
+
+
+    var getBarHeight = function (d) {
+      return d[1] ? yScale(d[1]) : 0;
+    };
+
     // UPDATE
     // Update old elements as needed.
     if (rectangles[0].length > 0) {
@@ -711,9 +717,9 @@ angular.module('lizard-nxt')
         rectangles.transition()
           .duration(Timeline.prototype.transTime)
           .delay(Timeline.prototype.transTime)
-          .attr("height", function (d) {return yScale(d[1]); })
+          .attr("height", getBarHeight)
           .attr("y", function (d) {
-            return newHeight - yScale(d[1]);
+            return newHeight - getBarHeight(d);
           })
           .attr("x", function (d) {
             return xScale(d[0]) - barWidth;
@@ -722,9 +728,9 @@ angular.module('lizard-nxt')
       } else {
         rectangles.transition()
           .duration(Timeline.prototype.transTime)
-          .attr("height", function (d) {return yScale(d[1]); })
+          .attr("height", getBarHeight)
           .attr("y", function (d) {
-            return newHeight - yScale(d[1]);
+            return newHeight - getBarHeight(d);
           })
           .attr("x", function (d) {
             return xScale(d[0]) - barWidth;
@@ -965,13 +971,17 @@ angular.module('lizard-nxt')
       barWidth = 0;
     }
 
+    var getBarHeight = function (d) {
+      return d[1] ? yScale(d[1]) : 0;
+    };
+
     // UPDATE
     // Update old elements as needed.
     bars.transition()
       .duration(Timeline.prototype.transTime)
       .attr("x", function (d) { return xScale(d[0]) - barWidth; })
       .attr('width', barWidth)
-      .attr("height", function (d) { return yScale(d[1]); })
+      .attr("height", getBarHeight)
       .attr("y", function (d) { return height - yScale(d[1]); });
 
     // ENTER
@@ -987,7 +997,7 @@ angular.module('lizard-nxt')
       .transition()
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
-      .attr("height", function (d) { return yScale(d[1]); })
+      .attr("height", getBarHeight)
       .attr("y", function (d) { return height - yScale(d[1]); });
 
     // EXIT

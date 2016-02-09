@@ -9,7 +9,7 @@
   </div>
 
   <rain
-    ng-if="geom.properties.rain"
+    ng-if="geom.properties.rain && (geom.id || geom.geometry.type !== 'Polygon')"
     rain="geom"
     time-state="timeState">
   </rain>
@@ -64,53 +64,53 @@
   </div>
 
   <div
-    ng-if="geom.geometry.type === 'Polygon' && slug !== 'rain'"
+    ng-if="content.data
+    && geom.geometry.type === 'Polygon'
+    && slug !== 'rain'"
+    ng-repeat="(slug, content) in geom.properties"
     class="card active">
-    <div ng-if="content.data" ng-repeat="(slug, content) in geom.properties">
 
-      <div
-        class="card-content">
+    <div class="card-content">
+
+      <graph
+        ng-if="content.aggType === 'curve'"
+        line
+        xlabel="'[%]'"
+        ylabel="content.unit"
+        data="content.data"
+        keys="{x: 0, y: 1}">
+      </graph>
+
+      <graph
+        ng-if="content.aggType === 'histogram'"
+        bar-chart
+        quantity="'linear'"
+        ylabel="'[%]'"
+        xlabel="content.unit"
+        data="content.data"
+        keys="{x: 0, y: 1}">
+      </graph>
+
+      <graph
+        ng-if="content.aggType === 'counts'"
+        horizontal-stack
+        data="content.data"
+        keys="{x: 'data', y: 'label'}"
+        xlabel="'[%]'"
+        dimensions="{height: 80, padding: {left: 0, right: 0, top: 5, bottom: 50 } }">
+      </graph>
+
+      <div ng-if="content.aggType !== 'histogram' && content.aggType !== 'curve' && content.aggType !== 'counts'">
 
         <graph
-          ng-if="content.aggType === 'curve'"
+          ng-if="content.format === Store"
           line
-          xlabel="'[%]'"
-          ylabel="content.unit"
-          data="content.data"
-          keys="{x: 0, y: 1}">
+          data="content.data">
         </graph>
-
-        <graph
-          ng-if="content.aggType === 'histogram'"
-          bar-chart
-          quantity="'linear'"
-          ylabel="'[%]'"
-          xlabel="content.unit"
-          data="content.data"
-          keys="{x: 0, y: 1}">
-        </graph>
-
-        <graph
-          ng-if="content.aggType === 'counts'"
-          horizontal-stack
-          data="content.data"
-          keys="{x: 'data', y: 'label'}"
-          xlabel="'[%]'"
-          dimensions="{height: 80, padding: {left: 0, right: 0, top: 5, bottom: 50 } }">
-        </graph>
-
-        <div ng-if="content.aggType !== 'histogram' && content.aggType !== 'curve' && content.aggType !== 'counts'">
-
-          <graph
-            ng-if="content.format === Store"
-            line
-            data="content.data">
-          </graph>
-
-        </div>
 
       </div>
 
     </div>
+
   </div>
 </div>
