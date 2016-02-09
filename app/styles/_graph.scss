@@ -20,8 +20,14 @@
     stroke-width: 2;
 }
 
-.axis line {
+.y-axis {
+  g line {
+    stroke-width: 1px;
+    stroke-dasharray: 1;
+  }
+  path {
     display: none;
+  }
 }
 
 .line {

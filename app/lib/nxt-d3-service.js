@@ -48,7 +48,7 @@ angular.module('lizard-nxt')
      * @description        The duration of transitions in ms. Use(d)
      *                     throughout the graphs and timeline.
      */
-    transTime: 120,
+    transTime: 300,
 
     /**
      * @attribute
@@ -307,8 +307,8 @@ angular.module('lizard-nxt')
       // Make an axis for d3 based on a scale
       var decimalCount,
           axis = d3.svg.axis()
-            .scale(scale)
-            .orient(options.orientation);
+          .scale(scale)
+          .orient(options.orientation);
       if (options.ticks) {
         axis.ticks(options.ticks);
       } else {
@@ -344,6 +344,13 @@ angular.module('lizard-nxt')
           }
         }
       }
+
+      if (options.drawGrid) {
+        var gridLength = this._getWidth(this.dimensions);
+        axis
+          .tickSize(-gridLength);
+      }
+
       return axis;
     },
 

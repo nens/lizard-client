@@ -398,11 +398,20 @@ angular.module('lizard-nxt')
           }
         };
       }
+
+      var width = this._getWidth(this.dimensions);
+
       var xy = {x: {}, y: {}};
 
       angular.forEach(xy, function (value, key) {
         var y = key === 'y';
-        xy[key] = this._createD3Objects(data, keys[key], options[key], y);
+        options[key].drawGrid = width > MIN_WIDTH_INTERACTIVE_GRAPHS && y;
+        xy[key] = this._createD3Objects(
+          data,
+          keys[key],
+          options[key],
+          y
+        );
         drawAxes(this._svg, xy[key].axis, this.dimensions, y);
         drawLabel(this._svg, this.dimensions, labels[key], y);
       }, this);
@@ -504,7 +513,7 @@ angular.module('lizard-nxt')
           origin[key] = value.maxMin.min;
         }
         value.scale.domain([origin[key], value.maxMin.max]);
-        value.axis = Graph.prototype._makeAxis(value.scale, {orientation: orientation[key]});
+        // value.axis = Graph.prototype._makeAxis(value.scale, {orientation: orientation[key]});
         drawAxes(svg, value.axis, dimensions, key === 'y' ? true : false, Graph.prototype.transTime);
       }
     });
