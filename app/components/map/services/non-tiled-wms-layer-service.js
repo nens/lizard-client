@@ -165,17 +165,7 @@ angular.module('map')
             syncTime: function (timeState, map) {
               var defer = $q.defer();
 
-              // Resolve and return when nothing changed.
-              if (this.timeState &&
-                timeState.at === this.timeState.at
-                && timeState.aggWindow === this.timeState.aggWindow
-                && timeState.playing === this.timeState.playing) {
-                defer.resolve();
-                return defer.promise;
-              }
-
-              // Store copy no reference.
-              this.timeState = angular.copy(timeState);
+              this.timeState = timeState;
 
               // this only works for stores with different aggregation levels
               // for now this is only for the radar stores
