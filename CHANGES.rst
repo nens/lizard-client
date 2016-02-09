@@ -24,6 +24,9 @@ Unreleased (2.6.2) (XXXX-XX-XX)
 
 - Update font-awesome from 4.2.0 to 4.5.0.
 
+- Fix data menu tools such that the entire button is clickable instead of just
+  the icon.
+
 
 Release 2.7.1 (2016-1-29)
 ---------------------

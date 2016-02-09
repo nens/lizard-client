@@ -11,9 +11,11 @@
     font-size: 18px;
     text-align: center;
     cursor: pointer;
+    color: $concrete;
 
     &:hover {
         @include material-shadow-hover();
+        color: $pomegranate;
     }
 
     &:first-child {
@@ -36,9 +38,10 @@
     }
 
     a {
-        color: $concrete;
+        color: inherit;
         transition:.3s;
         &:hover, &.active, &:active {
+            transition:.3s;
             color: $pomegranate;
         }
     }
