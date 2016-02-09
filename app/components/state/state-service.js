@@ -132,13 +132,29 @@ angular.module('global-state')
 
     state.temporal = {
       at: now,
-      aggWindow: 1000 * 60 * 5,  // 5 minutes
       buffering: false,
       timelineMoving: false,
       playing: false,
       start: null, // defined below
       end: null // defined below
     };
+
+    Object.defineProperty(state.temporal, 'aggWindow', {
+
+      get: function () {
+
+        var drawingWidth = 320;
+        if (state.context === 'dashboard') {
+          drawingWidth = angular.element('.dashboard-wrapper').width();
+        }
+
+        return UtilService.getAggWindow(
+          state.temporal.start,
+          state.temporal.end,
+          drawingWidth
+        )
+      }
+    });
 
     // State.temporal.start must be higher than MIN_TIME_FOR_EXTENT
     var _start = INITIAL_START_FOR_EXTENT;
