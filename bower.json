@@ -39,9 +39,6 @@
     "notie": "*",
     "raven-js": "~1.1.16"
   },
-  "resolutions": {
-    "angular": "1.4.7"
-  },
   "overrides": {
     "leaflet.markercluster": {
       "main": "dist/leaflet.markercluster.js"
