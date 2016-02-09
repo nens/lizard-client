@@ -498,8 +498,15 @@ angular.module('data-menu')
         }
 
         angular.forEach(this.layerGroups, function (layerGroup) {
-          // UTF has a special status and is not queried in this loop.
-          if (layerGroup.slug === instance.utfLayerGroup.slug) {
+          if (
+
+            // UTF has a special status and is not queried in this loop.
+            layerGroup.slug === instance.utfLayerGroup.slug ||
+
+            // One too many dimension
+            (layerGroup.temporal && geo.geometry.type === 'LineString')
+
+            ) {
             return;
           }
 
