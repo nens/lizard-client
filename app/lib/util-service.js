@@ -118,7 +118,7 @@ angular.module('lizard-nxt')
     // timeline, while omnibox subsequently syncs to timeState.aggWindow
 
     var aggWindow;
-    var MIN_PX = 4; // Minimum width of a bar
+    var MIN_PX = 3; // Minimum width of a bar
 
     // ms per pixel
     var msPerPx = (stop - start) / drawingWidth;
@@ -810,7 +810,7 @@ angular.module('lizard-nxt')
    * time) in a way that makes it comprehensible for les autres.
    *
    * @param {object []} data - list with data objects to parse.
-   * @param {object} latLng - latlng object with location of data.
+   * @param {array} coords - list of coordinates of data.
    * @returns list of formatted data objects.
    */
   this.formatCSVColumns = function (data, coords) {
