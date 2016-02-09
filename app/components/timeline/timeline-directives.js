@@ -69,12 +69,6 @@ angular.module('lizard-nxt')
           State.temporal.start = scale.domain()[0].getTime();
           State.temporal.end   = scale.domain()[1].getTime();
 
-          State.temporal.aggWindow = UtilService.getAggWindow(
-            State.temporal.start,
-            State.temporal.end,
-            UtilService.getCurrentWidth(element)
-          );
-
           State.temporal.at = UtilService.roundTimestamp(
             State.temporal.at,
             State.temporal.aggWindow,
@@ -341,7 +335,7 @@ angular.module('lizard-nxt')
       .then(
         function (response) {
           if (response && response !== 'null' && response.data !== null) {
-            timeline.drawBars([{data: response.data, keys: {x:0, y:1}}]);
+            timeline.drawBars(response.data);
           }
         }
       );
@@ -415,12 +409,6 @@ angular.module('lizard-nxt')
     scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
       if (!timelineSetsTime) {
-
-        State.temporal.aggWindow = UtilService.getAggWindow(
-          State.temporal.start,
-          State.temporal.end,
-          UtilService.getCurrentWidth(element)
-        );
 
         timeline.zoomTo(
           State.temporal.start,

@@ -18,6 +18,7 @@ angular.module('omnibox')
           });
 
           scope.noData = scope.noRasterData && scope.geom.entity_name === undefined;
+
         }, true);
 
       },

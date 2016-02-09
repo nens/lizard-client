@@ -165,16 +165,7 @@ angular.module('map')
             syncTime: function (timeState, map) {
               var defer = $q.defer();
 
-              // Resolve and return when nothing changed.
-              if (timeState.at === this.timeState.at
-                && timeState.aggWindow === this.timeState.aggWindow
-                && timeState.playing === this.timeState.playing) {
-                defer.resolve();
-                return defer.promise;
-              }
-
-              // Store copy no reference.
-              this.timeState = angular.copy(timeState);
+              this.timeState = timeState;
 
               // this only works for stores with different aggregation levels
               // for now this is only for the radar stores
@@ -191,7 +182,10 @@ angular.module('map')
                   + store.name.split('/')[1];
               }
 
-              this._syncToNewTime(timeState, map, defer);
+              // Continue when layers need to update to new time.
+              if (this._imageOverlays.length) {
+                this._syncToNewTime(timeState, map, defer);
+              }
 
               return defer.promise;
             },

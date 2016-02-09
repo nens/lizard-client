@@ -317,17 +317,17 @@ angular.module('lizard-nxt')
    *                        It draws the rectangles.
    */
   Graph.prototype.drawHorizontalStack = function (content) {
-      var data = content[0].values,
+      var data = content[0].data,
           keys = content[0].keys,
           labels = content[0].labels;
-      if (!this._x) {
-        var options = {
-          scale: 'linear',
-          orientation: 'bottom',
-          tickFormat: d3.format(".0%") // Custom tickFomat in percentages
-        };
-        this._x = createXGraph(this._svg, this.dimensions, labels, options);
-      }
+
+      var options = {
+        scale: 'linear',
+        orientation: 'bottom',
+        tickFormat: d3.format(".0%") // Custom tickFomat in percentages
+      };
+      this._x = createXGraph(this._svg, this.dimensions, labels, options);
+
       // normalize data
       var total = d3.sum(data, function (d) {
         return Number(d[keys.x]);

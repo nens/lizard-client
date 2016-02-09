@@ -498,7 +498,17 @@ angular.module('data-menu')
         }
 
         angular.forEach(this.layerGroups, function (layerGroup) {
-          if (layerGroup.slug === instance.utfLayerGroup.slug) { return; }
+          if (
+
+            // UTF has a special status and is not queried in this loop.
+            layerGroup.slug === instance.utfLayerGroup.slug ||
+
+            // One too many dimension
+            (layerGroup.temporal && geo.geometry.type === 'LineString')
+
+            ) {
+            return;
+          }
 
           promises.push(
             layerGroup.getData('DataService', options).then(null, null, function (response) {
