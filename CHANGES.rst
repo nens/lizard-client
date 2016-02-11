@@ -36,6 +36,11 @@ Unreleased (2.6.2) (XXXX-XX-XX)
 
 - Re-add help button to the user menu.
 
+- Fix data menu tools such that the entire button is clickable instead of just
+  the icon.
+
+- Fix data menu crosshair click is also toggles the layer visibility.
+
 
 Release 2.7.1 (2016-1-29)
 ---------------------

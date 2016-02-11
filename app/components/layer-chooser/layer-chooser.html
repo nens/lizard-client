@@ -11,7 +11,7 @@
       <i
         ng-if="((layergroup.spatialBounds.north - layergroup.spatialBounds.east) !== 0)
                && layergroup.isActive()"
-        single-click="menu.zoomToBounds(layergroup.spatialBounds, layergroup.temporalBounds)"
+        ng-click="menu.zoomToBounds(layergroup.spatialBounds, layergroup.temporalBounds); $event.stopPropagation()"
         class="fa fa-crosshairs">
       </i>
   </label>
