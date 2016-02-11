@@ -26,9 +26,8 @@
           <span translate>Map</span>
         </a>
       </li>
-      <li>
+      <li ng-if="user.authenticated">
         <a title="<% 'Favorite' | translate %>"
-           target="_blank"
            href="">
           <i class="fa fa-star"></i>
           <span translate>Favorite</span>
