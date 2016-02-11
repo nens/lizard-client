@@ -1,8 +1,5 @@
-<div class="button-list-item clickable">
-  <a ng-click="changeBoxType()"
-     ng-class="{'active': boxType === type}">
-     <i class="fa fa-<% icon %>"></i>
-  </a>
-</div>
-
-
+<a ng-class="{'active': boxType === type}"
+   ng-click="changeBoxType()"
+   class="button-list-item clickable">
+   <i class="fa fa-<% icon %>"></i>
+</a>
