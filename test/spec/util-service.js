@@ -26,11 +26,11 @@ describe('Testing util-service functions', function () {
       function () {
 
     var inputData = [[1420070400000, 0.58], [1420149600000, 8.2354]],
-        latLng = {lat: 52.7, lng: 5.2},
+        coords = [5.2, 52.7],
         expectedResult = [[ '52,7', '5,2', '1-1-2015', '1:00:00', '0,58' ],
                           [ '52,7', '5,2', '1-1-2015', '23:00:00', '8,24' ]];
 
-    var result = UtilService.formatCSVColumns(inputData, latLng);
+    var result = UtilService.formatCSVColumns(inputData, coords);
     expect(result).toEqual(expectedResult);
   });
 
@@ -47,13 +47,13 @@ describe('Testing util-service functions', function () {
         max: 8.2354
       }
     ],
-    latLng = {lat: 52.7, lng: 5.2},
+    coords = [5.2, 52.7],
     expectedResult = [
       [ '52,7', '5,2', '1-1-2015', '1:00:00', '0,58', '0,59' ],
       [ '52,7', '5,2', '1-1-2015', '23:00:00', '8,24', '8,24' ]
     ];
 
-    var result = UtilService.formatCSVColumns(inputData, latLng);
+    var result = UtilService.formatCSVColumns(inputData, coords);
     expect(result).toEqual(expectedResult);
   });
 
