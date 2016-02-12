@@ -34,11 +34,11 @@ angular.module('dashboard')
     var graphs = [];
 
     if (timeseries.length) {
-      var content = [];
       timeseries.forEach(function (ts) {
+        var content = [];
         content.push(ts);
+        graphs.push({ 'type': 'temporalLine', 'content': content });
       });
-      graphs.push({ 'type': 'temporalLine', 'content': content });
     }
 
     assets.forEach(function (asset) {
