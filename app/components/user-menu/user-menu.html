@@ -26,11 +26,14 @@
           <span translate>Map</span>
         </a>
       </li>
-      <li ng-if="user.authenticated">
-        <a title="<% 'Favorite' | translate %>"
-           href="">
+      <li ng-if="user.authenticated"
+          ng-class="{'open': favourites.enabled}">
+        <a title="<% 'Favourites' | translate %>"
+           href=""
+           ng-click="toggleFavourites($event)">
           <i class="fa fa-star"></i>
-          <span translate>Favorite</span>
+          <span translate>Favourites</span>
+          <span class="caret"></span>
         </a>
       </li>
     </ul>

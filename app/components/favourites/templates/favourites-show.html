@@ -1,0 +1,30 @@
+<p ng-if="favourites.data.length == 0" translate>
+You don't have any favourites yet.<br />
+Add the current portal state to your favourites!
+</p>
+<table class="table table-hover table-no-borders"
+       ng-if="favourites.data.length > 0">
+  <colgroup>
+    <col class="col-sm-1"></col>
+    <col class="col-sm-9"></col>
+    <col class="col-sm-2"></col>
+  </colgroup>
+  <tbody>
+    <tr ng-repeat="obj in favourites.data">
+      <td ng-click="applyFavourite(obj)"
+          class="clickable">
+        <i class="fa fa-star text-primary"></i>
+      </td>
+      <td ng-click="applyFavourite(obj)"
+          class="clickable">
+        <% obj.name %>
+      </td>
+      <td>
+        <button class="btn btn-link"
+                ng-click="deleteFavourite(obj)">
+          <i class="fa fa-trash text-danger"></i>
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>

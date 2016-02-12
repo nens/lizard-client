@@ -38,6 +38,7 @@ angular.module("lizard-nxt", [
   'dashboard',
   'scenarios',
   'user-menu',
+  'favourites',
   'global-state',
   'ngSanitize',
   'ngCsv',

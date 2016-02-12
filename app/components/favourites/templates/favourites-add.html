@@ -1,0 +1,54 @@
+<form name="favouritesForm" novalidate>
+  <table class="table table-hover table-no-borders">
+    <colgroup>
+      <col class="col-sm-1"></col>
+      <col class="col-sm-9"></col>
+      <col class="col-sm-2"></col>
+    </colgroup>
+    <tbody>
+      <tr>
+        <td>
+        </td>
+        <td>
+          <input type="text"
+                 class="form-control input-sm"
+                 name="text"
+                 ng-maxlength=256
+                 required
+                 ng:model="favourite.name"
+                 placeholder="<% 'New favourite name...'|translate %>" />
+          <div
+            ng-show="favouritesForm.favourite.name.$dirty && favouritesForm.favourite.name.$invalid">
+            <small
+              class="text-danger"
+              ng-show="favouritesForm.favourite.name.$error.required"
+              translate>
+              Favourite name is required.
+            </small>
+            <small
+              class="text-danger"
+              ng-show="favouritesForm.favourite.name.$error.maxlength"
+              translate>
+              Favourite name cannot be longer than 256 characters.
+            </small>
+          </div>
+        </td>
+        <td>
+          <button
+            class="btn btn-link"
+            ng-disabled="favouritesForm.$invalid"
+            ng-click="createFavourite()">
+            <i class="fa fa-plus text-primary"></i>
+          </button>
+          &nbsp;
+          <button
+            class="btn btn-link"
+            ng-disabled="favouritesForm.$pristine"
+            ng-click="resetForm()">
+            <i class="fa fa-times text-danger"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</form>

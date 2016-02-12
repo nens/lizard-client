@@ -43,6 +43,8 @@ Unreleased (2.6.2) (XXXX-XX-XX)
 
 - Fix translation of creation errors in annotations directive.
 
+- Add favourites.
+
 
 Release 2.7.1 (2016-1-29)
 ---------------------
