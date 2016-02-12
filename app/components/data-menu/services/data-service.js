@@ -21,7 +21,6 @@ angular.module('data-menu')
   .service('DataService', [
     '$q',
     'AssetService',
-    'TimeseriesService',
     'dataLayers',
     'DataLayerGroup',
     'State',
@@ -29,7 +28,6 @@ angular.module('data-menu')
     function (
       $q,
       AssetService,
-      TimeseriesService,
       dataLayers,
       DataLayerGroup,
       State

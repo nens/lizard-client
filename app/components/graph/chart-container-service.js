@@ -20,6 +20,9 @@ angular.module('lizard-nxt')
    * For now this is a way to keep track of the scales, domains and xy's of the graph
    */
   function ChartContainer (content, graph, temporal) {
+
+    var DEFAULT_GREEN = '#16a085';
+
     this._x = null;
 
     this._graph = graph;
@@ -31,6 +34,8 @@ angular.module('lizard-nxt')
     };
     this.keys = content.keys || defaultKeys;
     this.labels = content.labels || {x: '', y:''};
+
+    this.color = content.color || DEFAULT_GREEN;
 
     var options = {
       x: {

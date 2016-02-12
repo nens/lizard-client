@@ -112,23 +112,6 @@ angular.module('lizard-nxt')
     angular.forEach(content, function (item, index) {
       var chartContainer;
 
-      var colorIndex = 0; // unless proven otherwise
-      if (content.constructor === Object) {
-        colorIndex = Object.keys(content).indexOf(index);
-      } else {
-        colorIndex = index;
-      }
-
-      var colors = [
-        '#16a085',
-        '#3498db',
-        '#c0392b',
-        '#2980b9',
-        '#1abc9c',
-        '#7f8c8d',
-        '#e74c3c',
-      ];
-
       // only update things, don't instantiate new ones
       if (graph._containers[index]) {
         if (graph._containers[index].constructor === ChartContainer) {
@@ -140,8 +123,6 @@ angular.module('lizard-nxt')
         graph._containers[index] = new ChartContainer(item, graph, temporal);
         chartContainer = graph._containers[index];
       }
-
-      chartContainer.color = colors[colorIndex];
 
       var data = chartContainer.data,
           keys = chartContainer.keys,
