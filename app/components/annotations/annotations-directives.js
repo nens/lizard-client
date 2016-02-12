@@ -215,8 +215,8 @@ angular.module('annotations')
  */
 angular.module('annotations')
   .directive('annotationsMake',
-             ['AnnotationsService', '$window', 'gettext', 'notie',
-              function (AnnotationsService, $window, gettext, notie) {
+             ['AnnotationsService', '$window', 'gettextCatalog', 'notie',
+              function (AnnotationsService, $window, gettextCatalog, notie) {
 
     var link = function (scope, element, attrs) {
 
@@ -263,12 +263,10 @@ angular.module('annotations')
        */
       var createAnnotationError = function(httpResponse){
         notie.alert(3,
-          gettext(
+          gettextCatalog.getString(
             "Oops! Something went wrong while creating the annotation."));
         throw new Error(
-          httpResponse.status + " - "
-          + gettext(
-            "Could not create annotation."));
+          httpResponse.status + " - " + "Could not create annotation.");
       };
 
       /**
