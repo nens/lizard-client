@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 2.8.1 (2016-2-12)
+---------------------
 
 - Fix landuse, kind of.
 
