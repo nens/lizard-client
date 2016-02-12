@@ -445,7 +445,8 @@ angular.module('map')
      */
     var createLeafletMap = function (mapElem, options) { // String or Element.
 
-      var leafletMap = LeafletService.map(mapElem, options);
+      var leafletMap = LeafletService.map(mapElem, options),
+          MAXZOOMLEVEL = 21;
 
       return leafletMap;
     };
@@ -468,7 +469,7 @@ angular.module('map')
             retina: retinaSupport && L.Browser.retina ? '@2x' : '',
             slug: nonLeafLayer.slug,
             minZoom: nonLeafLayer.min_zoom || 0,
-            maxZoom: 19,
+            maxZoom: MAXZOOMLEVEL,
             detectRetina: retinaSupport,
             zIndex: nonLeafLayer.zIndex,
             ext: 'png'
@@ -483,7 +484,7 @@ angular.module('map')
           format: 'image/png',
           version: '1.1.1',
           minZoom: nonLeafLayer.min_zoom || 0,
-          maxZoom: 19,
+          maxZoom: MAXZOOMLEVEL,
           crs: LeafletService.CRS.EPSG3857,
           opacity: nonLeafLayer.opacity,
           zIndex: nonLeafLayer.zIndex
@@ -503,7 +504,7 @@ angular.module('map')
           name: nonLeafLayer.slug,
           useJsonP: false,
           minZoom: nonLeafLayer.min_zoom_click || 0,
-          maxZoom: 19,
+          maxZoom: MAXZOOMLEVEL,
           order: nonLeafLayer.zIndex,
           zIndex: nonLeafLayer.zIndex
         });
