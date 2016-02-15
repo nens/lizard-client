@@ -8,6 +8,8 @@ Unreleased (2.2.11) (XXXX-XX-XX)
 
 - Set max zoom level of leaflet from 19 to 21.
 
+- Updated lookups of shape and material codes in lizard-nxt-filters.js.
+
 
 Release 2.2.12 (2016-2-5)
 ---------------------
