@@ -13,14 +13,12 @@ angular.module('omnibox')
       var watchTimeseries = scope.$watch('asset.timeseries', function (n, o) {
         if (n) {
 
-          var selectedTS = [];
           scope.asset.timeseries.forEach(function (ts) {
-            selectedTS.push(ts.uuid);
-            ts.active = true;
+            if (State.selected.timeseries.indexOf(ts.uuid) !== -1) {
+              ts.active = true;
+            }
             scope.noTimeseries = false;
           });
-
-          State.selected.timeseries = _.union(State.selected.timeseries, selectedTS);
 
           watchTimeseries(); // rm watch
 
