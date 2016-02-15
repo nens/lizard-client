@@ -88,7 +88,7 @@ angular.module('favourites')
     };
 
     FavouritesService.fetchAllFavourites(
-      {},
+      {'page_size': 0},
       fetchFavouritesSuccess,
       fetchFavouritesError);
 
