@@ -242,7 +242,10 @@ describe('Testing hash controller', function () {
     // Mock the box
     $scope.box = {type: 'area'};
 
+    $scope.transitionToContext = function () {};
+
     createController = function (scope) {
+
       return $controller('UrlController', {
         '$scope': $scope,
         'LocationGetterSetter': LocationGetterSetter

@@ -4,6 +4,14 @@ Changelog of lizard-nxt client
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
 
+- Add default color and order to timeseries.
+
+- Enable toggling timeseries and temporal raster data off in db.
+
+- Add subtle grid in db.
+
+- Improve allignment of graphs in db.
+
 - Fix landuse, kind of.
 
 - Fix no rain export.
