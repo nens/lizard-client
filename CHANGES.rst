@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.2.11) (XXXX-XX-XX)
 ---------------------
+-
+
+
+Release 2.2.13 (2016-2-15)
+---------------------
 
 - Add chalk to npm dependencies.
 
