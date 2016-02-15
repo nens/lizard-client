@@ -8,8 +8,8 @@ Unreleased (2.6.2) (XXXX-XX-XX)
 
 Release 2.8.2 (2016-2-15)
 ---------------------
--
 
+-
 
 Release 2.8.1 (2016-2-12)
 ---------------------
@@ -44,6 +44,7 @@ Release 2.8.1 (2016-2-12)
 
 - Add chalk to npm dependencies.
 
+<<<<<<< HEAD
 - Refine the data-menu restyle.
 
 - Added ansible deployment.
@@ -208,6 +209,14 @@ Release 2.3.1 (2015-11-5)
 
 - Fix clip path not clipping. Use absolute url to refer to clippath and keep
   track of the url for nxt-d3 instances.
+
+
+Release 2.2.13 (2016-2-15)
+---------------------
+
+- Set max zoom level of leaflet from 19 to 21.
+
+- Updated lookups of shape and material codes in lizard-nxt-filters.js.
 
 
 Release 2.2.12 (2016-2-5)
