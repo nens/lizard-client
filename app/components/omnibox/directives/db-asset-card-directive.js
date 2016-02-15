@@ -16,6 +16,8 @@ angular.module('omnibox')
           scope.asset.timeseries.forEach(function (ts) {
             if (State.selected.timeseries.indexOf(ts.uuid) !== -1) {
               ts.active = true;
+            } else {
+              ts.active = false;
             }
             scope.noTimeseries = false;
           });
