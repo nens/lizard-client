@@ -230,7 +230,7 @@ angular.module('lizard-nxt')
       if (n === old) { return true; }
       state.context.update = false;
       LocationGetterSetter.setUrlValue(
-        state.context.part, state.context.index, $scope.context
+        state.context.part, state.context.index, State.context
       );
     });
 
@@ -261,17 +261,12 @@ angular.module('lizard-nxt')
       );
 
       if (context) {
-        // Set context after digest loop because we need to enter on 'map'
-        $timeout(
-          function () {
-            $scope.transitionToContext(context);
-          },
-          0, // no delay, fire when digest ends
-          true // trigger new digest loop
-        );
+        $scope.transitionToContext(context);
       } else {
         LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
+        $scope.transitionToContext(state.context.value);
       }
+      $rootScope.context = State.context;
 
       if (boxType) {
         State.box.type = boxType;

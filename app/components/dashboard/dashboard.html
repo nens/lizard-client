@@ -31,4 +31,20 @@
 
     </div>
 
+    <div
+      ng-if="item.type === 'rain'"
+      class="row"
+      ng-repeat="item in dashboard.graphs">
+
+      <div class="dashboard-inner">
+        <graph
+          bar-chart
+          content="item.content"
+          temporal="dashboard.state.temporal"
+          dimensions="item.dimensions">
+         <graph/>
+      </div>
+
+    </div>
+
 </div>

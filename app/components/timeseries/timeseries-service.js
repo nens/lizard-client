@@ -2,8 +2,14 @@
  * Service to handle timeseries retrieval.
  */
 angular.module('timeseries')
-  .service("TimeseriesService", ['$q', 'State', '$http', 'notie',
-    function ($q, State, $http, notie) {
+.service("TimeseriesService", [
+  '$q',
+  'State',
+  '$http',
+  'notie',
+  'UtilService',
+  'DataService',
+  function ($q, State, $http, notie, UtilService, DataService) {
 
     var GRAPH_WIDTH = 320; // Width of drawing area of box graphs.
 
@@ -126,8 +132,14 @@ angular.module('timeseries')
         })
 
         .then(function (response) {
+          var timeseries = response.data.results;
+          var colors = UtilService.GRAPH_COLORS;
+          for (var i = timeseries.length - 1; i >= 0; i--) {
+            timeseries[i].order = i; // add default order to ts to draw ts in db
+            timeseries[i].color = colors[i % (colors.length - 1)];
+          }
           if (response.data.results.length) {
-            asset.timeseries = response.data.results;
+            asset.timeseries = timeseries;
           }
           return asset;
         });
@@ -141,11 +153,35 @@ angular.module('timeseries')
 
     };
 
+    /**
+     * Looks up timeseries in DataService.assets and copies color and order.
+     * TimeseriesService.timeseries are not persistent when toggled.
+     * asset.timeseries is persistent till a user removes it from selection.
+     *
+     * @param {object} graphTimeseries timeseriesSerivce.timeseries timeseries
+     *                                 object.
+     */
+    var addColorAndOrder = function (graphTimeseries) {
+      var ts; // initialize undefined and set when found.
+
+      _.forEach(DataService.assets, function (asset) {
+        ts = _.find(asset.timeseries, { 'uuid': graphTimeseries.id });
+        return ts === undefined; // Break out early
+      });
+
+      graphTimeseries.color = ts.color;
+      graphTimeseries.order = ts.order;
+
+      return graphTimeseries;
+    };
+
     var formatTimeseriesForGraph = function (timeseries) {
 
       var graphTimeseriesTemplate = {
         id: '', //uuid
         data: [],
+        color: '', // Defined on asset.timeseries
+        order: '', // Defined on asset.timeseries
         labels: {
           x: '',
           y: ''
@@ -158,6 +194,7 @@ angular.module('timeseries')
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
         graphTimeseries.data = ts.events;
         graphTimeseries.id = ts.uuid;
+        graphTimeseries = addColorAndOrder(graphTimeseries);
         result.push(graphTimeseries);
       });
       return result;

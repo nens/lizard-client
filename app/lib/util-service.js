@@ -41,6 +41,23 @@ angular.module('lizard-nxt')
     return roundedTimestamp;
   };
 
+  // List of graph colors used to color timeseries
+  this.GRAPH_COLORS = [
+    '#1abc9c', // turquoise
+    '#3498db', // peterRiver
+    '#f1c40f', // sunflower
+    '#9b59b6', // amethyst
+    '#2ecc71', // emerald
+    '#2980b9', // belizeHole
+    '#e67e22', // carrot
+    '#8e44ad', // wisteria
+    '#16a085', // greenSea
+    '#34495e', // wetAsphalt
+    '#27ae60', // nephritis
+    '#f39c12', // orange
+    '#2c3e50', // midnightBlue
+    '#d35400' // pumpkin
+  ];
 
   /**
    * Returns true for <protocol>:<domain>.

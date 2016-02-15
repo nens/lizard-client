@@ -112,23 +112,6 @@ angular.module('lizard-nxt')
     angular.forEach(content, function (item, index) {
       var chartContainer;
 
-      var colorIndex = 0; // unless proven otherwise
-      if (content.constructor === Object) {
-        colorIndex = Object.keys(content).indexOf(index);
-      } else {
-        colorIndex = index;
-      }
-
-      var colors = [
-        '#16a085',
-        '#3498db',
-        '#c0392b',
-        '#2980b9',
-        '#1abc9c',
-        '#7f8c8d',
-        '#e74c3c',
-      ];
-
       // only update things, don't instantiate new ones
       if (graph._containers[index]) {
         if (graph._containers[index].constructor === ChartContainer) {
@@ -140,8 +123,6 @@ angular.module('lizard-nxt')
         graph._containers[index] = new ChartContainer(item, graph, temporal);
         chartContainer = graph._containers[index];
       }
-
-      chartContainer.color = colors[colorIndex];
 
       var data = chartContainer.data,
           keys = chartContainer.keys,
@@ -398,11 +379,20 @@ angular.module('lizard-nxt')
           }
         };
       }
+
+      var width = this._getWidth(this.dimensions);
+
       var xy = {x: {}, y: {}};
 
       angular.forEach(xy, function (value, key) {
         var y = key === 'y';
-        xy[key] = this._createD3Objects(data, keys[key], options[key], y);
+        options[key].drawGrid = width > MIN_WIDTH_INTERACTIVE_GRAPHS && y;
+        xy[key] = this._createD3Objects(
+          data,
+          keys[key],
+          options[key],
+          y
+        );
         drawAxes(this._svg, xy[key].axis, this.dimensions, y);
         drawLabel(this._svg, this.dimensions, labels[key], y);
       }, this);
@@ -504,7 +494,7 @@ angular.module('lizard-nxt')
           origin[key] = value.maxMin.min;
         }
         value.scale.domain([origin[key], value.maxMin.max]);
-        value.axis = Graph.prototype._makeAxis(value.scale, {orientation: orientation[key]});
+        // value.axis = Graph.prototype._makeAxis(value.scale, {orientation: orientation[key]});
         drawAxes(svg, value.axis, dimensions, key === 'y' ? true : false, Graph.prototype.transTime);
       }
     });
