@@ -445,8 +445,7 @@ angular.module('map')
      */
     var createLeafletMap = function (mapElem, options) { // String or Element.
 
-      var leafletMap = LeafletService.map(mapElem, options),
-          MAXZOOMLEVEL = 21;
+      var leafletMap = LeafletService.map(mapElem, options);
 
       return leafletMap;
     };
@@ -455,6 +454,8 @@ angular.module('map')
      * Initializers for every layer format
      */
     var initializers = {
+
+      MAXZOOMLEVEL: 21,
 
       TMS: function (nonLeafLayer) {
 
@@ -469,7 +470,7 @@ angular.module('map')
             retina: retinaSupport && L.Browser.retina ? '@2x' : '',
             slug: nonLeafLayer.slug,
             minZoom: nonLeafLayer.min_zoom || 0,
-            maxZoom: MAXZOOMLEVEL,
+            maxZoom: this.MAXZOOMLEVEL,
             detectRetina: retinaSupport,
             zIndex: nonLeafLayer.zIndex,
             ext: 'png'
@@ -484,7 +485,7 @@ angular.module('map')
           format: 'image/png',
           version: '1.1.1',
           minZoom: nonLeafLayer.min_zoom || 0,
-          maxZoom: MAXZOOMLEVEL,
+          maxZoom: this.MAXZOOMLEVEL,
           crs: LeafletService.CRS.EPSG3857,
           opacity: nonLeafLayer.opacity,
           zIndex: nonLeafLayer.zIndex
@@ -504,7 +505,7 @@ angular.module('map')
           name: nonLeafLayer.slug,
           useJsonP: false,
           minZoom: nonLeafLayer.min_zoom_click || 0,
-          maxZoom: MAXZOOMLEVEL,
+          maxZoom: this.MAXZOOMLEVEL,
           order: nonLeafLayer.zIndex,
           zIndex: nonLeafLayer.zIndex
         });
