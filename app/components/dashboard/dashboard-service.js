@@ -33,13 +33,15 @@ angular.module('dashboard')
 
     var graphs = [];
 
-    if (timeseries.length) {
-      timeseries.forEach(function (ts) {
-        var content = [];
-        content.push(ts);
-        graphs.push({ 'type': 'temporalLine', 'content': content });
-      });
-    }
+    timeseries.forEach(function (ts) {
+      if (graphs[ts.order]) {
+        graphs[ts.order].content.push(ts);
+      }
+      else {
+        var content = [ts];
+        graphs[ts.order] = { 'type': 'temporalLine', 'content': content };
+      }
+    });
 
     assets.forEach(function (asset) {
       graphs = addPropertyData(graphs, asset.properties);

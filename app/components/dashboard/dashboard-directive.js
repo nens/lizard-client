@@ -1,15 +1,19 @@
 
 angular.module('dashboard')
 .directive('dashboard', [
+  '$timeout',
   'State',
   'DataService',
   'TimeseriesService',
   'DashboardService',
+  'DragService',
   function (
+    $timeout,
     State,
     DataService,
     TimeseriesService,
-    DashboardService
+    DashboardService,
+    DragService
   ) {
 
     var link = function (scope, element, attrs) {
@@ -36,6 +40,14 @@ angular.module('dashboard')
             graph.type === 'distance' // give space for axis.
           );
         });
+
+        if (scope.dashboard.graphs.length > 0) {
+          // After ng-repeat has run, add the new graph areas as dropzones.
+          $timeout(
+            function () { DragService.addDropZones(element.children()); },
+            0
+          );
+        }
 
       };
 
@@ -64,6 +76,8 @@ angular.module('dashboard')
         DataService.onGeometriesChange = null;
         TimeseriesService.onTimeseriesChange = null;
       });
+
+      DragService.addDropZones([element[0]]);
 
     };
 

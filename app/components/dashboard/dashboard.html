@@ -1,50 +1,30 @@
 <div class="dashboard-wrapper">
 
-    <div
-      ng-if="item.type === 'distance'"
-      class="row"
-      ng-repeat="item in dashboard.graphs">
+  <div ng-repeat="item in dashboard.graphs" data-order="<% $index %>" class="row dashboard-inner">
 
-      <div class="dashboard-inner">
-         <graph
-          line
-          content="item.content"
-          dimensions="item.dimensions">
-         <graph/>
-      </div>
-
-    </div>
-
-    <div
+    <graph
       ng-if="item.type === 'temporalLine'"
-      class="row"
-      ng-repeat="item in dashboard.graphs">
+      line
+      content="item.content"
+      temporal="dashboard.state.temporal"
+      dimensions="item.dimensions">
+     <graph/>
 
-      <div class="dashboard-inner">
-        <graph
-          line
-          content="item.content"
-          temporal="dashboard.state.temporal"
-          dimensions="item.dimensions">
-         <graph/>
-      </div>
+    <graph
+      ng-if="item.type === 'distance'"
+      line
+      content="item.content"
+      dimensions="item.dimensions">
+    <graph/>
 
-    </div>
-
-    <div
+    <graph
       ng-if="item.type === 'rain'"
-      class="row"
-      ng-repeat="item in dashboard.graphs">
+      bar-chart
+      content="item.content"
+      temporal="dashboard.state.temporal"
+      dimensions="item.dimensions">
+    <graph/>
 
-      <div class="dashboard-inner">
-        <graph
-          bar-chart
-          content="item.content"
-          temporal="dashboard.state.temporal"
-          dimensions="item.dimensions">
-         <graph/>
-      </div>
-
-    </div>
+  </div>
 
 </div>
