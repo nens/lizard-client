@@ -83,7 +83,7 @@ angular.module('omnibox')
 
         var ts = _.find(scope.asset.timeseries, function (ts) { return ts.uuid === uuid; });
 
-        ts.order = order;
+        ts.order = order || 0; // dashboard could be empty
         ts.active = true;
 
         State.selected.timeseries = _.union(State.selected.timeseries, [ts.uuid]);

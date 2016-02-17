@@ -41,14 +41,6 @@ angular.module('dashboard')
           );
         });
 
-        if (scope.dashboard.graphs.length > 0) {
-          // After ng-repeat has run, add the new graph areas as dropzones.
-          $timeout(
-            function () { DragService.addDropZones(element.children()); },
-            0
-          );
-        }
-
       };
 
       DataService.onAssetsChange = buildDashboard;
@@ -77,7 +69,8 @@ angular.module('dashboard')
         TimeseriesService.onTimeseriesChange = null;
       });
 
-      DragService.addDropZones([element[0]]);
+      // Make dashboard a dropable element.
+      DragService.addDropZone(element);
 
     };
 
