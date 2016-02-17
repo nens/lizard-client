@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
 
+- Fix data.data.filter bug in dataservice.
+
 - Add basic support for drag and drop. Click puts ts in seperate graph. Drag
 adds ts to existing.
 
