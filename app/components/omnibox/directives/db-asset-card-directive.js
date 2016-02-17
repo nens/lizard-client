@@ -62,17 +62,25 @@ angular.module('omnibox')
           // On toggle, add seperate graph. Give order of highest order + 1.
           var orders = [];
           DataService.assets.forEach(function (asset) {
-            orders.push(_.maxBy(
+            var lowestTS = _.maxBy(
               asset.timeseries,
               function (ts) { return ts.active && ts.order; }
-            ).order);
+            );
+            if (lowestTS) { orders.push(lowestTS.order); }
+
+            var lowestAssetProp = _.maxBy(
+              asset.properties,
+              function (property) { return property.active && property.order; }
+            );
+            if (lowestAssetProp) { orders.push(lowestAssetProp.order); }
           });
 
           DataService.geometries.forEach(function (geometry) {
-            orders.push(_.maxBy(
+            var lowestProp = _.maxBy(
               geometry.properties,
               function (property) { return property.active && property.order; }
-            ).order);
+            );
+            if (lowestProp) { orders.push(lowestProp.order); }
           });
 
           timeseries.order = State.selected.timeseries.length > 0
@@ -85,6 +93,7 @@ angular.module('omnibox')
         }
 
         else {
+
           // On remove, check whether it was alone in a graph and lower all
           // following graph orders.
           var order = timeseries.order;

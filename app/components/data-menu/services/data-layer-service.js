@@ -111,7 +111,8 @@ angular.module('data-menu')
             var buildSuccesCallback = function (data) {
               deferred.notify({
                 color: color,
-                data: (typeof(data) === 'object' && data.hasOwnProperty('data'))
+                data: data &&
+                  (typeof(data) === 'object' && data.hasOwnProperty('data'))
                   ? data.data
                   : data,
                 format: format,

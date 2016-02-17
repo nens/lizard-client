@@ -33,6 +33,8 @@ angular.module('dashboard')
           DataService.geometries
         );
 
+        console.log(scope.dashboard.graphs);
+
         _.forEach(scope.dashboard.graphs, function (graph) {
           graph.dimensions = DashboardService.getDimensions(
             element,
@@ -40,7 +42,6 @@ angular.module('dashboard')
             graph.type === 'distance' // give space for axis.
           );
         });
-
       };
 
       DataService.onAssetsChange = buildDashboard;

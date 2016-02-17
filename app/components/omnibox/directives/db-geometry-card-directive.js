@@ -15,7 +15,7 @@ angular.module('omnibox')
 
           _.forEach(scope.geom.properties, function (property) {
             if (property.active === undefined) {
-              property.active = true;
+              scope.toggleProperty(property);
             }
           });
 
@@ -29,10 +29,69 @@ angular.module('omnibox')
 
 
         scope.toggleProperty = function (property) {
-          property.active = !property.active;
+
+          if (!property.active) {
+            // On toggle, add seperate graph. Give order of highest order + 1.
+            var orders = [];
+            var actives = 0;
+
+            DataService.assets.forEach(function (asset) {
+              var lowestTS = _.maxBy(
+                asset.timeseries,
+                function (ts) {
+                  if (ts.active) { actives++; }
+                  return ts.active && ts.order; }
+              );
+              if (lowestTS) { orders.push(lowestTS.order); }
+
+              _.forEach(
+                asset.properties,
+                function (property) {
+                  if (property.active) {
+                    actives++;
+                    orders.push(property.order);
+                  }
+                }
+              );
+            });
+
+            DataService.geometries.forEach(function (geometry) {
+              _.forEach(
+                geometry.properties,
+                function (property) {
+                  if (property.active) {
+                    actives++;
+                    orders.push(property.order);
+                  }
+                }
+              );
+            });
+
+            property.order = actives > 0
+              ? _.max(orders) + 1
+              : 0;
+
+            property.active = true;
+          }
+
+          else {
+
+            var order = property.order;
+
+            DataService.geometries.forEach(function (geometry) {
+              _.forEach(geometry.properties, function (property) {
+                if (property.order > order) { property.order--; }
+              });
+            });
+
+            property.active = false;
+
+          }
+
           if (DataService.onGeometriesChange) {
             DataService.onGeometriesChange();
           }
+
         };
 
       },
