@@ -512,23 +512,13 @@ angular.module('data-menu')
             layerGroup.getData('DataService', options).then(null, null, function (response) {
               // async so remove anything obsolete.
               geo.properties = geo.properties || {};
-              geo.properties[response.layerGroupSlug] = response;
-              if (
-                (!instance.layerGroups[response.layerGroupSlug].isActive()
-                && layerGroup.slug in Object.keys(geo.properties))
-                || !response.data
-                || !response.data.filter(function (val) {
-                  var rich = true;
-                  if (val === null) {
-                    rich = false;
-                  }
-                  else if (val.hasOwnProperty && val.hasOwnProperty(1)) {
-                    rich = val[1] !== null;
-                  }
-                  return rich;
-                }).length
-                ) {
-                delete geo.properties[layerGroup.slug];
+              geo.properties[response.layerGroupSlug] = geo.properties[response.layerGroupSlug] || {};
+              _.merge(geo.properties[response.layerGroupSlug], response);
+              if (!instance.layerGroups[response.layerGroupSlug].isActive()
+                && layerGroup.slug in Object.keys(geo.properties)) {
+
+                  geo.properties[layerGroup.slug] = null;
+
               }
             })
           );
