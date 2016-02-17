@@ -21,9 +21,30 @@ angular.module('lizard-nxt')
   var dragContainer;
   var dropContainer;
 
+  /**
+   * Return true if el is a child of the dropContainer or if the dropContainer
+   * has no children true if el is the dropContainer.
+   *
+   * @param  {DOM element}  el
+   * @return {Boolean}
+   */
   var isDropContainerOrChild = function (el) {
+    var itIs = false;
     if (dropContainer === undefined) { return false; }
-    return el === dropContainer || el in dropContainer.children;
+
+    if (dropContainer.children.length
+      // element.children contains an HTMLCollection object, which does not have
+      // an indexOf method. Lodash to the rescue.
+      && _.indexOf(dropContainer.children, el) !== -1) {
+      itIs = true;
+    }
+
+    else if (!dropContainer.children.length && el === dropContainer) {
+      console.log('parent');
+      itIs = true;
+    }
+
+    return itIs;
   };
 
   /**

@@ -93,7 +93,7 @@ angular.module('dashboard')
           labels: {x: 'm', y: property.unit }
         };
         var type = slug === 'rain' ? 'rain' : 'distance';
-        graphs.push({ type: type, content: [item] });
+        graphs[property.order] = { type: type, content: [item] };
       }
     });
     return graphs;

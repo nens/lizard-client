@@ -1,7 +1,7 @@
 
 angular.module('omnibox')
-  .directive('dbAssetCard', [ 'State', 'TimeseriesService', 'DragService',
-    function (State, TimeseriesService, DragService) {
+  .directive('dbAssetCard', [ 'State', 'DataService', 'DragService',
+    function (State, DataService, DragService) {
   return {
     link: function (scope, element) {
 
@@ -53,24 +53,63 @@ angular.module('omnibox')
           var keep = ts !== timeseries.uuid;
           if (!keep) {
             add = false;
-            timeseries.active = false;
           }
           return keep;
         });
 
         if (add) {
+
+          // On toggle, add seperate graph. Give order of highest order + 1.
+          var orders = [];
+          DataService.assets.forEach(function (asset) {
+            orders.push(_.maxBy(
+              asset.timeseries,
+              function (ts) { return ts.active && ts.order; }
+            ).order);
+          });
+
+          DataService.geometries.forEach(function (geometry) {
+            orders.push(_.maxBy(
+              geometry.properties,
+              function (property) { return property.active && property.order; }
+            ).order);
+          });
+
+          timeseries.order = State.selected.timeseries.length > 0
+            ? _.max(orders) + 1
+            : 0;
+
           timeseries.active = true;
 
-          // On toggle, add seperate graph. Give order of last graph + 1.
-          // NOTE: TimeseriesService.timeseries only consists of requested ts.
-          // All ts that are toggled to active while fetching are put in the
-          // same graph.
-          var lastTs = _.maxBy(
-            TimeseriesService.timeseries,
-            function (ts) { return ts.order; }
-          );
-          timeseries.order = lastTs ? lastTs.order + 1 : 0;
           State.selected.timeseries = _.union(State.selected.timeseries, [timeseries.uuid]);
+        }
+
+        else {
+          // On remove, check whether it was alone in a graph and lower all
+          // following graph orders.
+          var order = timeseries.order;
+          var uuid = timeseries.uuid;
+          var otherTS = 0;
+
+          DataService.assets.forEach(function (asset) {
+            otherTS += _.filter(
+              asset.timeseries,
+              function (ts) {
+                return ts.active && ts.uuid !== uuid && ts.order === order;
+              }
+            ).length;
+          });
+
+          if (otherTS === 0) {
+            DataService.assets.forEach(function (asset) {
+              asset.timeseries.forEach(function (ts) {
+                if (ts.order > order) { ts.order--; }
+              });
+            });
+          }
+
+          timeseries.active = false;
+
         }
 
       };
