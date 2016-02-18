@@ -51,6 +51,13 @@ angular.module('dashboard')
       graphs = addPropertyData(graphs, geometry.properties);
     });
 
+    // Add empty graphs for undefined items.
+    _.forEach(graphs, function (graph, i) {
+      if (graph === undefined) {
+        graphs[i] = {'type': 'empty'};
+      }
+    });
+
     return graphs;
   };
 
@@ -86,12 +93,13 @@ angular.module('dashboard')
    */
   var addPropertyData = function (graphs, properties) {
     _.forEach(properties, function (property, slug) {
-      if (property.active && property.data.length > 1) {
+      if (property.active) {
         var item = {
           data: property.data,
           keys: {x: 0, y: 1},
           labels: {x: 'm', y: property.unit }
         };
+
         var type = slug === 'rain' ? 'rain' : 'distance';
         graphs[property.order] = { type: type, content: [item] };
       }

@@ -33,8 +33,6 @@ angular.module('dashboard')
           DataService.geometries
         );
 
-        console.log(scope.dashboard.graphs);
-
         _.forEach(scope.dashboard.graphs, function (graph) {
           graph.dimensions = DashboardService.getDimensions(
             element,

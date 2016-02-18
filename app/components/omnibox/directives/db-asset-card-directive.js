@@ -1,7 +1,7 @@
 
 angular.module('omnibox')
-  .directive('dbAssetCard', [ 'State', 'DataService', 'DragService',
-    function (State, DataService, DragService) {
+  .directive('dbAssetCard', [ 'State', 'DataService', 'DragService', 'DBCardsService',
+    function (State, DataService, DragService, DBCardsService) {
   return {
     link: function (scope, element) {
 
@@ -59,32 +59,10 @@ angular.module('omnibox')
 
         if (add) {
 
-          // On toggle, add seperate graph. Give order of highest order + 1.
-          var orders = [];
-          DataService.assets.forEach(function (asset) {
-            var lowestTS = _.maxBy(
-              asset.timeseries,
-              function (ts) { return ts.active && ts.order; }
-            );
-            if (lowestTS) { orders.push(lowestTS.order); }
+          var plots = DBCardsService.getActiveCountAndOrder();
 
-            var lowestAssetProp = _.maxBy(
-              asset.properties,
-              function (property) { return property.active && property.order; }
-            );
-            if (lowestAssetProp) { orders.push(lowestAssetProp.order); }
-          });
-
-          DataService.geometries.forEach(function (geometry) {
-            var lowestProp = _.maxBy(
-              geometry.properties,
-              function (property) { return property.active && property.order; }
-            );
-            if (lowestProp) { orders.push(lowestProp.order); }
-          });
-
-          timeseries.order = State.selected.timeseries.length > 0
-            ? _.max(orders) + 1
+          timeseries.order = plots.count > 0
+            ? plots.order + 1
             : 0;
 
           timeseries.active = true;
@@ -94,29 +72,7 @@ angular.module('omnibox')
 
         else {
 
-          // On remove, check whether it was alone in a graph and lower all
-          // following graph orders.
-          var order = timeseries.order;
-          var uuid = timeseries.uuid;
-          var otherTS = 0;
-
-          DataService.assets.forEach(function (asset) {
-            otherTS += _.filter(
-              asset.timeseries,
-              function (ts) {
-                return ts.active && ts.uuid !== uuid && ts.order === order;
-              }
-            ).length;
-          });
-
-          if (otherTS === 0) {
-            DataService.assets.forEach(function (asset) {
-              asset.timeseries.forEach(function (ts) {
-                if (ts.order > order) { ts.order--; }
-              });
-            });
-          }
-
+          DBCardsService.removeItemFromPlot(timeseries);
           timeseries.active = false;
 
         }
@@ -129,12 +85,38 @@ angular.module('omnibox')
         var order = Number(target.dataset.order);
         var uuid = el.dataset.uuid;
 
-        var ts = _.find(scope.asset.timeseries, function (ts) { return ts.uuid === uuid; });
+        // El either represents a timeseries or another plottable item.
+        //
+        // NOTE: there is only one drop callbakc for all the possible assets. So
+        // instead of searching for the ts in scope.asset.timeseries, all the
+        // assets are searched.
+        if (uuid) {
+          // timeseries
+          var ts;
 
-        ts.order = order || 0; // dashboard could be empty
-        ts.active = true;
+          _.forEach(DataService.assets, function (asset) {
+            ts = _.find(asset.timeseries, function (ts) {
+              return ts.uuid === uuid;
+            });
+            return ts === undefined; // if true: continue
+          });
 
-        State.selected.timeseries = _.union(State.selected.timeseries, [ts.uuid]);
+          ts.order = order; // dashboard could be empty
+          ts.active = true;
+          State.selected.timeseries = _.union(
+            State.selected.timeseries,
+            [ts.uuid]
+          );
+        }
+        else {
+          // other plottable item. Toggle on drag to put element in their own
+          // plot.
+          el.dispatchEvent(new MouseEvent("click", {
+            "view": window,
+            "bubbles": true,
+            "cancelable": false
+          }));
+        }
 
         el.remove();
 
