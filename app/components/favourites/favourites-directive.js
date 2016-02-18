@@ -137,12 +137,37 @@ angular.module('favourites')
         deleteFavouriteError);
     };
 
+
+    /**
+     * @function
+     * @description calculate the interval from the fav State
+     * to the new state if the interval should be relative
+     */
+    var adhereTemporalStateToInterval = function (temporal) {
+      var now = Date.now();
+      console.log(JSON.stringify(temporal));
+
+      temporal.start = now - (temporal.end - temporal.start);
+      temporal.at = now - (temporal.end - temporal.at);
+      if (temporal.end > temporal.now) {
+        temporal.end = now - (temporal.now - temporal.end);
+      } else if (temporal.end < temporal.now) {
+        temporal.end = now - (temporal.end - temporal.now);
+      }
+
+      console.log(JSON.stringify(temporal));
+    };
+
     /**
      * Replace the current portal state with the favourite state.
      * @param {object} favourite - The favourite to apply.
      */
     scope.applyFavourite = function (favourite) {
+      if (favourite.state.temporal.relative) {
+        adhereTemporalStateToInterval(favourite.state.temporal);
+      }
       _.merge(State, favourite.state);
+      State.temporal.timelineMoving = true; // update timeline
     };
 
   };
@@ -199,12 +224,22 @@ angular.module('favourites')
      * Create a new favourite with the current portal state.
      */
     scope.createFavourite = function () {
+      var oldRelativeVal = !!State.temporal.relative;
+      State.temporal.relative = scope.favourite.relative;
+
+      // if the time is temporal save the now to calculate the
+      // intervals
+      if (State.temporal.relative) {
+        State.temporal.now = Date.now();
+      }
+
       FavouritesService.createFavourite(
         scope.favourite.name,
         State,
         createFavouriteSuccess,
         createFavouriteError
       );
+      State.temporal.relative = oldRelativeVal;
     };
   };
 

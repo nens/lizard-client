@@ -53,6 +53,8 @@ Unreleased (2.6.2) (XXXX-XX-XX)
 
 - Add favourites.
 
+- Time relative to now, in the url and in favourites.
+
 
 Release 2.7.1 (2016-1-29)
 ---------------------

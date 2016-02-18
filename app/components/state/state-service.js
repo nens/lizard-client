@@ -125,10 +125,8 @@ angular.module('global-state')
 
     // Temporal
     var now = Date.now(),
-        hour = 60 * 60 * 1000,
-        day = 24 * hour,
-        INITIAL_START_FOR_EXTENT = now - 3 * hour,
-        INITIAL_END_FOR_EXTENT = now + 3 * hour;
+        INITIAL_START_FOR_EXTENT = now - 3 * UtilService.hour,
+        INITIAL_END_FOR_EXTENT = now + 3 * UtilService.hour;
 
     state.temporal = {
       at: now,
@@ -136,7 +134,8 @@ angular.module('global-state')
       timelineMoving: false,
       playing: false,
       start: null, // defined below
-      end: null // defined below
+      end: null, // defined below
+      relative: true // relative or absolut offset.
     };
 
     Object.defineProperty(state.temporal, 'aggWindow', {
@@ -152,7 +151,7 @@ angular.module('global-state')
           state.temporal.start,
           state.temporal.end,
           drawingWidth
-        )
+        );
       }
     });
 

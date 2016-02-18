@@ -150,22 +150,46 @@ angular.module('lizard-nxt')
       * @param {object} state config object
       * @param {int} start time in ms
       * @param {int} end time in ms
+      * @param {bool} relative time or absolute
       */
-      setTimeStateUrl: function (state, start, end) {
+      setTimeStateUrl: function (state, start, end, relative) {
         var startDate = new Date(start);
         var endDate = new Date(end);
-        var startDateString = startDate.toDateString()
+
+        if (relative) {
+          var now = Date.now(),
+              past = now - start,
+              future = now - end;
+
+          past = UtilService.getTimeIntervalAsText(start, now);
+          future = UtilService.getTimeIntervalAsText(now, end);
+
+          var pastString = '-' + past.days + 'Days' + past.hours + 'Hours';
+          var futureString = '';
+
+          if (future.days !== '' && future.hours !== '') {
+            futureString = '+' + future.days + 'Days' + future.hours + 'Hours';
+          }
+
+          LocationGetterSetter.setUrlValue(
+            state.timeState.part,
+            state.timeState.index,
+            pastString + futureString
+          );
+        } else {
+          var startDateString = startDate.toDateString()
           .slice(4) // Cut off day name
           .split(' ') // Replace spaces by hyphens
           .join(',');
-        var endDateString = endDate.toDateString()
+          var endDateString = endDate.toDateString()
           .slice(4) // Cut off day name
           .split(' ') // Replace spaces by hyphens
           .join(',');
-        LocationGetterSetter.setUrlValue(
+          LocationGetterSetter.setUrlValue(
           state.timeState.part,
           state.timeState.index,
           startDateString + '-' + endDateString);
+        }
       },
 
      /**
@@ -180,8 +204,8 @@ angular.module('lizard-nxt')
       setCoordinatesUrl: function (state, lat, lng, zoom) {
         var COORD_PRECISION = 4;
         var newHash = [
-          lat.toFixed(COORD_PRECISION),
-          lng.toFixed(COORD_PRECISION),
+          parseFloat(lat).toFixed(COORD_PRECISION),
+          parseFloat(lng).toFixed(COORD_PRECISION),
           zoom
         ].join(',');
         LocationGetterSetter.setUrlValue(
@@ -256,19 +280,32 @@ angular.module('lizard-nxt')
        * @return {object} nxt timeState
        */
       parseTimeState: function (time, timeState) {
-        // Browser independent. IE requires datestrings in a certain format.
-        var times = time.replace(/,/g, ' ').split('-');
-        var msStartTime = Date.parse(times[0]);
-        // bail if time is not parsable, but return timeState
-        if (isNaN(msStartTime)) { return timeState; }
-        timeState.start = msStartTime;
+        if (time.split('Days').length > 1) {
+          var times = time.split('-')[1].split('+');
+          var past = times[0];
+          var future = times[1];
 
-        var msEndTime = Date.parse(times[1]);
-        if (isNaN(msEndTime)) { return timeState; }
-        if (msEndTime <= timeState.start) {
-          msEndTime = timeState.start + 43200000; // half a day
+          var msStartTime = UtilService.parseDaysHours(past);
+          var msEndTime = UtilService.parseDaysHours(future);
+
+          timeState.start = Date.now() - msStartTime;
+          timeState.end = Date.now() + msEndTime;
+        } else {
+          // Browser independent. IE requires datestrings in a certain format.
+          var times = time.replace(/,/g, ' ').split('-');
+          var msStartTime = Date.parse(times[0]);
+          // bail if time is not parsable, but return timeState
+          if (isNaN(msStartTime)) { return timeState; }
+          timeState.start = msStartTime;
+
+          var msEndTime = Date.parse(times[1]);
+          if (isNaN(msEndTime)) { return timeState; }
+          if (msEndTime <= timeState.start) {
+            msEndTime = timeState.start + 43200000; // half a day
+          }
+          timeState.end = msEndTime;
         }
-        timeState.end = msEndTime;
+
         return timeState;
       },
       /**
