@@ -7,8 +7,8 @@
     <em ng-if="noData" translate>No raster data available for this geometry</em>
 
     <div
-      ng-if="prop.temporal || geom.geometry.type === 'LineString'"
-      ng-repeat="prop in geom.properties">
+      ng-if="slug === 'rain' || geom.geometry.type !== 'Point'"
+      ng-repeat="(slug, prop) in geom.properties">
       <div ng-click="toggleProperty(prop)" class="card-content-list clickable">
         <i class="fa fa-line-chart"></i>
         <span ng-class="{'text-primary bg-warning': prop.active}"><% prop.quantity %>, (<% prop.unit %>)</span>

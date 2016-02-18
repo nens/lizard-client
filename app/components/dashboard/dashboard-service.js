@@ -35,6 +35,7 @@ angular.module('dashboard')
 
     timeseries.forEach(function (ts) {
       if (graphs[ts.order]) {
+        graphs.type = 'temporalLine';
         graphs[ts.order].content.push(ts);
       }
       else {

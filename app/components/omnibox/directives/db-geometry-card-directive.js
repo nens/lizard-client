@@ -12,20 +12,19 @@ angular.module('omnibox')
          */
         scope.$watch('geom.properties', function (n, o) {
 
-          _.forEach(scope.geom.properties, function (property) {
+          _.forEach(scope.geom.properties, function (property, slug) {
             if (property.active === undefined
               && (
-                scope.geom.geometry.type === 'LineString'
-                || property.temporal
+                scope.geom.geometry.type !== 'Point'
+                || property.slug === 'rain' // We really need to know whether it
+                                            // is a temporal property.
                 )
               ) {
               scope.toggleProperty(property);
             }
           });
 
-          var noRasterData = !_.some(scope.geom.properties, function (property) {
-            return property;
-          });
+          var noRasterData = scope.geom.properties && !Object.keys(scope.geom.properties);
 
           scope.noData = noRasterData && scope.geom.entity_name === undefined;
 
