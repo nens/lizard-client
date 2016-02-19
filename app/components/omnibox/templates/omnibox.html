@@ -6,7 +6,7 @@
 
     <search-results ng-if="omnibox.searchResults"></search-results>
 
-    <div ng-if="omnibox.state.context === 'map'">
+    <div ng-if="omnibox.context === 'map'">
 
       <asset-cards
         asset="asset"
@@ -24,7 +24,7 @@
     </div>
 
     <div
-      ng-if="omnibox.state.context === 'dashboard'">
+      ng-if="omnibox.context === 'dashboard'">
 
       <db-asset-card
         timeseries
