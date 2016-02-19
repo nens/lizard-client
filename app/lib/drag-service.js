@@ -115,9 +115,7 @@ angular.module('lizard-nxt')
     },
 
     on: function (type, cb) {
-      drake.on('over', function () {
-        console.log(arguments);
-      });
+      drake.on(type, cb);
     },
 
     destroy: function () {
