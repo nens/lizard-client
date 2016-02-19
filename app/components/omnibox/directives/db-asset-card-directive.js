@@ -1,9 +1,9 @@
 
 angular.module('omnibox')
-  .directive('dbAssetCard', [ 'State',
-    function (State) {
+  .directive('dbAssetCard', [ 'State', 'DataService', 'DragService', 'DBCardsService',
+    function (State, DataService, DragService, DBCardsService) {
   return {
-    link: function (scope) {
+    link: function (scope, element) {
 
       scope.noTimeseries = true;
 
@@ -13,37 +13,18 @@ angular.module('omnibox')
       var watchTimeseries = scope.$watch('asset.timeseries', function (n, o) {
         if (n) {
 
-          var selectedTS = [];
           scope.asset.timeseries.forEach(function (ts) {
-            selectedTS.push(ts.uuid);
-            ts.active = true;
+            if (State.selected.timeseries.indexOf(ts.uuid) !== -1) {
+              ts.active = true;
+            } else {
+              ts.active = false;
+            }
             scope.noTimeseries = false;
           });
-
-          State.selected.timeseries = _.union(State.selected.timeseries, selectedTS);
 
           watchTimeseries(); // rm watch
 
         }
-      });
-
-
-      scope.$on('$destroy', function () {
-        // Remove all the selected timeseries of this asset.
-        State.selected.timeseries = _.filter(State.selected.timeseries,
-          function (uuid) {
-            var keep = true;
-            _.forEach(scope.asset.timeseries, function (ts) {
-              if (ts.uuid === uuid) {
-                // This selected timeseries is one of the asset that is removed.
-                // cancel loop and return false to remove ts from selection.
-                keep = false;
-                return false;
-              }
-            });
-            return keep;
-          }
-        );
       });
 
       scope.toggleTimeseries = function (timeseries) {
@@ -53,17 +34,33 @@ angular.module('omnibox')
           var keep = ts !== timeseries.uuid;
           if (!keep) {
             add = false;
-            timeseries.active = false;
           }
           return keep;
         });
 
         if (add) {
+
+          var plots = DBCardsService.getActiveCountAndOrder();
+
+          timeseries.order = plots.count > 0
+            ? plots.order + 1
+            : 0;
+
           timeseries.active = true;
+
           State.selected.timeseries = _.union(State.selected.timeseries, [timeseries.uuid]);
         }
 
+        else {
+
+          DBCardsService.removeItemFromPlot(timeseries);
+          timeseries.active = false;
+
+        }
+
       };
+
+      DragService.addDraggableContainer(element.find('#drag-container'));
 
     },
     restrict: 'E',

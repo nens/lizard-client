@@ -3,15 +3,14 @@ Changelog of lizard-nxt client
 
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix data.data.filter bug in dataservice.
+
+- Add basic support for drag and drop. Click puts ts in seperate graph. Drag
+adds ts to existing.
 
 
 Release 2.8.2 (2016-2-15)
----------------------
-
--
-
-Release 2.8.1 (2016-2-12)
 ---------------------
 
 - Add default color and order to timeseries.
@@ -21,6 +20,10 @@ Release 2.8.1 (2016-2-12)
 - Add subtle grid in db.
 
 - Improve allignment of graphs in db.
+
+
+Release 2.8.1 (2016-2-12)
+---------------------
 
 - Fix landuse, kind of.
 

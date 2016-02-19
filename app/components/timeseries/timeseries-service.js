@@ -135,7 +135,7 @@ angular.module('timeseries')
           var timeseries = response.data.results;
           var colors = UtilService.GRAPH_COLORS;
           for (var i = timeseries.length - 1; i >= 0; i--) {
-            timeseries[i].order = i; // add default order to ts to draw ts in db
+            timeseries[i].order = 0; // add default order to ts to draw ts in db
             timeseries[i].color = colors[i % (colors.length - 1)];
           }
           if (response.data.results.length) {
