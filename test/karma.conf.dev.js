@@ -36,9 +36,7 @@ module.exports = function(config) {
       'vendor/ng-csv/build/ng-csv.min.js',
       'vendor/notie/notie.js',
       'vendor/raven-js/dist/raven.js',
-      'vendor/interact/interact.js',
       'vendor/dragula/dist/dragula.js',
-      'vendor/angular-dragula/dist/angular-dragula.js',
       // endbower
 
       'vendor/moment/locale/nl.js',

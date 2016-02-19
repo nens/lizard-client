@@ -38,9 +38,7 @@
     "ng-csv": "~0.3.6",
     "notie": "*",
     "raven-js": "~1.1.16",
-    "interact": "~1.2.6",
-    "dragula": "~3.6.6",
-    "angular-dragula": "~1.2.4"
+    "dragula": "~3.6.6"
   },
   "overrides": {
     "leaflet.markercluster": {
