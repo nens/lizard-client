@@ -24,7 +24,11 @@ angular.module('omnibox')
             }
           });
 
-          var noRasterData = scope.geom.properties && !Object.keys(scope.geom.properties);
+          // No raster data when properties is undefined or when properties is
+          // empty object.
+          var noRasterData = scope.geom.properties
+            ? !Object.keys(scope.geom.properties).length
+            : true;
 
           scope.noData = noRasterData && scope.geom.entity_name === undefined;
 
