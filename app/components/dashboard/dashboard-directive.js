@@ -5,11 +5,13 @@ angular.module('dashboard')
   'DataService',
   'TimeseriesService',
   'DashboardService',
+  'DragService',
   function (
     State,
     DataService,
     TimeseriesService,
-    DashboardService
+    DashboardService,
+    DragService
   ) {
 
     var link = function (scope, element, attrs) {
@@ -36,7 +38,6 @@ angular.module('dashboard')
             graph.type === 'distance' // give space for axis.
           );
         });
-
       };
 
       DataService.onAssetsChange = buildDashboard;
@@ -64,6 +65,9 @@ angular.module('dashboard')
         DataService.onGeometriesChange = null;
         TimeseriesService.onTimeseriesChange = null;
       });
+
+      // Make dashboard a dropable element.
+      DragService.addDropZone(element);
 
     };
 

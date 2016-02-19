@@ -2,18 +2,19 @@
 
   <cardheader ng-if="header" geom="geom"></cardheader>
 
-  <div ng-if="!noRasterData" class="card-content">
+  <div class="card-content">
 
-    <em ng-if="noData" translate>No data available for this geometry</em>
+    <em ng-if="noData" translate>No raster data available for this geometry</em>
 
-		<div ng-if="prop.data.length > 1" ng-repeat="prop in geom.properties">
-		  <div ng-click="toggleProperty(prop)" class="card-content-list clickable">
-		    <i class="fa fa-line-chart"></i>
-		    <span ng-class="{'text-primary bg-warning': prop.active}"><% prop.quantity %>, (<% prop.unit %>)</span>
-		  </div>
-		  <div class="circle pull-right"></div>
-		</div>
-
+    <div
+      ng-if="slug === 'rain' || geom.geometry.type !== 'Point'"
+      ng-repeat="(slug, prop) in geom.properties">
+      <div ng-click="toggleProperty(prop)" class="card-content-list clickable">
+        <i class="fa fa-line-chart"></i>
+        <span ng-class="{'text-primary bg-warning': prop.active}"><% prop.quantity %>, (<% prop.unit %>)</span>
+      </div>
+      <div class="circle pull-right"></div>
+    </div>
 
   </div>
 

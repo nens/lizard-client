@@ -33,13 +33,16 @@ angular.module('dashboard')
 
     var graphs = [];
 
-    if (timeseries.length) {
-      timeseries.forEach(function (ts) {
-        var content = [];
-        content.push(ts);
-        graphs.push({ 'type': 'temporalLine', 'content': content });
-      });
-    }
+    timeseries.forEach(function (ts) {
+      if (graphs[ts.order]) {
+        graphs.type = 'temporalLine';
+        graphs[ts.order].content.push(ts);
+      }
+      else {
+        var content = [ts];
+        graphs[ts.order] = { 'type': 'temporalLine', 'content': content };
+      }
+    });
 
     assets.forEach(function (asset) {
       graphs = addPropertyData(graphs, asset.properties);
@@ -47,6 +50,13 @@ angular.module('dashboard')
 
     geometries.forEach(function (geometry) {
       graphs = addPropertyData(graphs, geometry.properties);
+    });
+
+    // Add empty graphs for undefined items.
+    _.forEach(graphs, function (graph, i) {
+      if (graph === undefined) {
+        graphs[i] = {'type': 'empty'};
+      }
     });
 
     return graphs;
@@ -84,14 +94,15 @@ angular.module('dashboard')
    */
   var addPropertyData = function (graphs, properties) {
     _.forEach(properties, function (property, slug) {
-      if (property.active && property.data.length > 1) {
+      if (property.active) {
         var item = {
           data: property.data,
           keys: {x: 0, y: 1},
           labels: {x: 'm', y: property.unit }
         };
+
         var type = slug === 'rain' ? 'rain' : 'distance';
-        graphs.push({ type: type, content: [item] });
+        graphs[property.order] = { type: type, content: [item] };
       }
     });
     return graphs;

@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="/vendor/components-font-awesome/css/font-awesome.css" />
     <link rel="stylesheet" href="/vendor/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="/vendor/lizard-iconfont/lizard/dest/css/Lizard.css" />
+    <link rel="stylesheet" href="/vendor/dragula/dist/dragula.css" />
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -35,10 +36,20 @@
 
     <div ng-if="context === 'map' || context === 'scenarios'">
       <map></map>
+      <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
+      <datamenu></datamenu>
+      <timeline
+        class="
+          timeline
+          timeline-map
+          navbar-fixed-bottom
+          material-shadow"
+        ng-if="context !== 'dashboard'"></timeline>
     </div>
 
     <div ng-if="context === 'dashboard'">
       <dashboard></dashboard>
+      <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
       <timeline
         class="
           timeline
@@ -47,23 +58,8 @@
           material-shadow"></timeline>
     </div>
 
-    <timeline
-      class="
-        timeline
-        timeline-map
-        navbar-fixed-bottom
-        material-shadow"
-      ng-if="context !== 'dashboard'"></timeline>
-
-    <div ng-if="context !== 'dashboard'">
-      <datamenu></datamenu>
-    </div>
-
     <user-menu></user-menu>
-
     <favourites></favourites>
-
-    <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
 
     <div id="context-transition-overlay"></div>
 
@@ -96,6 +92,7 @@
     <script src="/vendor/ng-csv/build/ng-csv.min.js"></script>
     <script src="/vendor/notie/notie.js"></script>
     <script src="/vendor/raven-js/dist/raven.js"></script>
+    <script src="/vendor/dragula/dist/dragula.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -120,6 +117,7 @@
     <script src="/lib/click-feedback-service.js"></script>
     <script src="/lib/event-aggregate-service.js"></script>
     <script src="/lib/CSV-service.js"></script>
+    <script src="/lib/drag-service.js"></script>
 
     <script src="/lizard-nxt-filters.js"></script>
 
@@ -169,10 +167,11 @@
 
     <script src="/components/omnibox/services/date-parse-service.js"></script>
     <script src="/components/omnibox/services/search-service.js"></script>
-    <script src="/components/omnibox/controllers/dashboard-card-controller.js"></script>
+    <script src="/components/omnibox/services/db-cards-service.js"></script>
     <script src="/components/omnibox/directives/template-directives.js"></script>
     <script src="/components/omnibox/directives/search-directive.js"></script>
     <script src="/components/omnibox/directives/omnibox-directives.js"></script>
+    <script src="/components/omnibox/directives/db-cards-directive.js"></script>
     <script src="/components/omnibox/directives/db-asset-card-directive.js"></script>
     <script src="/components/omnibox/directives/db-geometry-card-directive.js"></script>
     <script src="/components/omnibox/directives/close-card-directive.js"></script>

@@ -208,6 +208,10 @@
     transition: all 200ms cubic-bezier(0.52,0,0.48,1);
 }
 
+.draggable-ts {
+  user-select: none;
+}
+
 .nav a{
     color: $deprecated-color1;
 }
@@ -428,7 +432,6 @@ table tr td:last-child {
     width: 98%;
     height: 98%;
     background-color: $white;
-    z-index: 999999 !important;
     opacity: 0.95;
     transition: all .3s ease;
     -webkit-transition: all .3s ease;
@@ -469,7 +472,6 @@ table tr td:last-child {
 
 .card {
   position: relative;
-  overflow: hidden;
   white-space: normal;
   background: $white;
   background: rgba($white, 0.95);
