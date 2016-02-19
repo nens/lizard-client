@@ -27,25 +27,6 @@ angular.module('omnibox')
         }
       });
 
-
-      scope.$on('$destroy', function () {
-        // Remove all the selected timeseries of this asset.
-        State.selected.timeseries = _.filter(State.selected.timeseries,
-          function (uuid) {
-            var keep = true;
-            _.forEach(scope.asset.timeseries, function (ts) {
-              if (ts.uuid === uuid) {
-                // This selected timeseries is one of the asset that is removed.
-                // cancel loop and return false to remove ts from selection.
-                keep = false;
-                return false;
-              }
-            });
-            return keep;
-          }
-        );
-      });
-
       scope.toggleTimeseries = function (timeseries) {
         var add = true;
 
