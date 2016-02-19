@@ -209,8 +209,7 @@
 }
 
 .draggable-ts {
-  -webkit-transform: translate(0px, 0px);
-          transform: translate(0px, 0px);
+  user-select: none;
 }
 
 .nav a{

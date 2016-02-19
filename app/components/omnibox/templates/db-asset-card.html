@@ -9,7 +9,7 @@
     <em ng-if="noTimeseries" translate>No timeseries available for this asset</em>
 
     <div id="drag-container">
-      <div ng-repeat="s in asset.timeseries" data-uuid="<% s.uuid %>">
+      <div ng-repeat="s in asset.timeseries" data-uuid="<% s.uuid %>" class="draggable-ts">
         <div ng-click="toggleTimeseries(s)" class="card-content-list clickable">
           <i class="fa fa-clock-o"></i>
           <span ng-class="{'text-primary bg-warning': s.active}"><% s.location.name %>, <% s.parameter_referenced_unit.parameter_short_display_name %></span>
