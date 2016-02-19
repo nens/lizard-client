@@ -1,0 +1,19 @@
+<div>
+
+  <db-asset-card
+    timeseries
+    time-state="omnibox.state.temporal"
+    asset="asset"
+    ng-repeat="asset in omnibox.data.assets">
+  </db-asset-card>
+
+  <div class="card active">
+    <db-geometry-cards
+      time-state="state.temporal"
+      geom="geom"
+      header="true"
+      ng-repeat="geom in omnibox.data.geometries">
+    </db-geometry-cards>
+  </div>
+
+</div>

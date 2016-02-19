@@ -18,12 +18,13 @@ angular.module('lizard-nxt')
     throw new Error('Dragula can not be found');
   }
 
+  var drake;
   var dragContainer;
   var dropContainer;
 
   /**
    * Return true if el is a child of the dropContainer or if the dropContainer
-   * has no children true if el is the dropContainer.
+   * has no children and el is the dropContainer.
    *
    * @param  {DOM element}  el
    * @return {Boolean}
@@ -40,7 +41,6 @@ angular.module('lizard-nxt')
     }
 
     else if (!dropContainer.children.length && el === dropContainer) {
-      console.log('parent');
       itIs = true;
     }
 
@@ -66,23 +66,27 @@ angular.module('lizard-nxt')
     drake.containers.push(el);
   };
 
-  var drake = dragula({
+  var createDrake = function () {
 
-    // Dynamically accept all existing graphs in dashboard as valid dropzones.
-    isContainer: isDropContainerOrChild,
+    drake = dragula({
 
-    // Elements cannot be dragged into the dragContainer
-    accepts: function (el, target) {
-      return target !== dragContainer;
-    },
+      // Dynamically accept all existing graphs in dashboard as valid dropzones.
+      isContainer: isDropContainerOrChild,
 
-    // Dropcontainer elements cannot be dragged.
-    invalid: isDropContainerOrDescendant,
+      // Elements cannot be dragged into the dragContainer
+      accepts: function (el, target) {
+        return target !== dragContainer;
+      },
 
-    copy: true, // Keep original in place.
-    revertOnSpill: true // Spilling puts element back where it was dragged from.
+      // Dropcontainer elements cannot be dragged.
+      invalid: isDropContainerOrDescendant,
 
-  });
+      copy: true, // Keep original in place.
+      revertOnSpill: true // Spilling puts element back where it was dragged from.
+
+    });
+
+  };
 
   return {
 
@@ -108,6 +112,20 @@ angular.module('lizard-nxt')
     addDropZone: function (element) {
       dropContainer = element[0];
       return drake;
+    },
+
+    on: function (type, cb) {
+      drake.on('over', function () {
+        console.log(arguments);
+      });
+    },
+
+    destroy: function () {
+      drake.destroy();
+    },
+
+    create: function () {
+      createDrake();
     }
 
   };
