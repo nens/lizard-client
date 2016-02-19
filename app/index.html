@@ -37,10 +37,20 @@
 
     <div ng-if="context === 'map' || context === 'scenarios'">
       <map></map>
+      <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
+      <datamenu></datamenu>
+      <timeline
+        class="
+          timeline
+          timeline-map
+          navbar-fixed-bottom
+          material-shadow"
+        ng-if="context !== 'dashboard'"></timeline>
     </div>
 
     <div ng-if="context === 'dashboard'">
       <dashboard></dashboard>
+      <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
       <timeline
         class="
           timeline
@@ -49,23 +59,8 @@
           material-shadow"></timeline>
     </div>
 
-    <timeline
-      class="
-        timeline
-        timeline-map
-        navbar-fixed-bottom
-        material-shadow"
-      ng-if="context !== 'dashboard'"></timeline>
-
-    <div ng-if="context !== 'dashboard'">
-      <datamenu></datamenu>
-    </div>
-
     <user-menu></user-menu>
-
     <favourites></favourites>
-
-    <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
 
     <div id="context-transition-overlay"></div>
 
