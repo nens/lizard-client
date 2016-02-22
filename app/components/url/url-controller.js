@@ -189,10 +189,16 @@ angular.module('lizard-nxt')
      */
     var setTimeStateUrlHelper = function () {
       if (!State.temporal.timelineMoving) {
+        if (Date.now() - State.temporal.start > 7 * UtilService.day) {
+          State.temporal.relative = false;
+        } else {
+          State.temporal.relative = true;
+        }
         UrlState.setTimeStateUrl(
           state,
           State.temporal.start,
-          State.temporal.end
+          State.temporal.end,
+          State.temporal.relative
         );
       }
     };
@@ -288,7 +294,12 @@ angular.module('lizard-nxt')
         State.temporal = UrlState.parseTimeState(time, State.temporal);
       } else {
         state.timeState.update = false;
-        UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
+        UrlState.setTimeStateUrl(
+          state,
+          State.temporal.start,
+          State.temporal.end,
+          State.temporal.relative
+        );
       }
 
       UtilService.announceMovedTimeline(State);

@@ -67,6 +67,8 @@ Release 2.8.1 (2016-2-12)
 
 - Add favourites.
 
+- Time relative to now, in the url and in favourites.
+
 
 Release 2.7.1 (2016-1-29)
 ---------------------
