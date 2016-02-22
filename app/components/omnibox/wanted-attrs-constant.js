@@ -259,6 +259,17 @@ angular.module('omnibox')
     ]
   };
 
+  this.leveecrosssection = {
+    rows: [
+      {
+        /// Naam
+        keyName: gettext("Name"),
+        attrName: "name",
+        ngBindValue: "waterchain.name"
+      }
+    ]
+  };
+
   this.leveereferencepoint = {
     rows: [
       {
@@ -356,6 +367,26 @@ angular.module('omnibox')
           "waterchain.code",
         valueSuffix: "",
         defaultValue: "6278"
+      }
+    ]
+  };
+
+  this.monitoringwell = {
+    rows: [
+      {
+        keyName: gettext("Well top level"),
+        attrName: "well_top_level",
+        ngBindValue: "waterchain.well_top_level",
+        valueSuffix: "",
+        defaultValue: ""
+      },
+      {
+        keyName: gettext("Well bottom level"),
+        attrName: "well_bottom_level",
+        ngBindValue:
+          "waterchain.well_bottom_level",
+        valueSuffix: "",
+        defaultValue: ""
       }
     ]
   };
