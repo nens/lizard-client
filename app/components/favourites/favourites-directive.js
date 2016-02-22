@@ -145,7 +145,6 @@ angular.module('favourites')
      */
     var adhereTemporalStateToInterval = function (temporal) {
       var now = Date.now();
-      console.log(JSON.stringify(temporal));
 
       temporal.start = now - (temporal.end - temporal.start);
       temporal.at = now - (temporal.end - temporal.at);
@@ -154,8 +153,6 @@ angular.module('favourites')
       } else if (temporal.end < temporal.now) {
         temporal.end = now - (temporal.end - temporal.now);
       }
-
-      console.log(JSON.stringify(temporal));
     };
 
     /**
