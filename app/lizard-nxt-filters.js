@@ -508,7 +508,9 @@ angular.module('lizard-nxt-filters')
       'sluice':gettext('Sluice'),
       'wastewatertreatmentplant': gettext('Wastewater treatment plant'),
       'levee': gettext('Levee'),
+      'leveecrosssection': gettext('Levee cross section'),
       'leveereferencepoint': gettext('Levee reference point'),
+      'monitoringwell': gettext('Monitoring well'),
       'pump': gettext('Pump'),
       'filter': gettext('Filter')
     }[input] || input;
