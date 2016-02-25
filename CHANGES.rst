@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
 
+- Add colorpicker to omnibox timeseries on the dashboard.
+
 - Fix data.data.filter bug in dataservice.
 
 - Add basic support for drag and drop. Click puts ts in seperate graph. Drag
