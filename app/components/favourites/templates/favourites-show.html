@@ -22,6 +22,11 @@ Add the current portal state to your favourites!
         </td>
         <td>
           <button class="btn btn-link"
+                  title="Share favourite link"
+                  ng-click="shareFavourite(obj)">
+            <i class="fa fa-share-alt"></i>
+          </button>
+          <button class="btn btn-link"
                   ng-click="deleteFavourite(obj)">
             <i class="fa fa-trash text-danger"></i>
           </button>

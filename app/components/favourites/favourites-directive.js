@@ -219,3 +219,26 @@ angular.module('favourites')
     templateUrl: 'favourites/templates/favourites-add.html'
   };
   }]);
+
+/**
+ * @module
+ * @description Share favourites.
+ */
+angular.module('favourites')
+  .directive('shareFavourites', ['$window', function ($window) {
+
+    var link = function (scope, element, attrs) {
+
+      scope.shareFavourite = function (favourite) {
+        scope.favouriteURL = $window.location.origin +
+          '/favourites/' +
+          favourite.uuid;
+      };
+    };
+
+    return {
+      restrict: 'E',
+      link: link,
+      templateUrl: 'favourites/templates/favourites-share.html'
+    };
+  }]);
