@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 2.9.1 (2016-2-26)
+---------------------
 
 - Add colorpicker to omnibox timeseries on the dashboard.
 
