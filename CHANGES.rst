@@ -1,7 +1,7 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (2.6.2) (XXXX-XX-XX)
+Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
 - Add colorpicker to omnibox timeseries on the dashboard.
@@ -51,7 +51,6 @@ Release 2.8.1 (2016-2-12)
 
 - Add chalk to npm dependencies.
 
-<<<<<<< HEAD
 - Refine the data-menu restyle.
 
 - Added ansible deployment.
