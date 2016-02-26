@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
 
+- Add colorpicker to omnibox timeseries on the dashboard.
+
 - Added attributes for LeveeCrosssection and MonitoringWell.
 
 - Fix data.data.filter bug in dataservice.
