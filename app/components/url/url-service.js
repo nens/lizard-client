@@ -380,34 +380,6 @@ angular.module('lizard-nxt')
           }
         });
 
-
-
-
-
-        // })
-        // if (type === 'point'
-        //   && point.length > 1
-        //   && parseFloat(point[0])
-        //   && parseFloat(point[1])) {
-        //   state.here = L.latLng(point[0], point[1]);
-        // }
-
-        // else if (type === 'line') {
-        //   var points = geom.split('-');
-        //   angular.forEach(points, function (pointStr, key) {
-        //     var point = pointStr.split(',');
-        //     if (parseFloat(point[0]) &&
-        //         parseFloat(point[1])) {
-        //       state.points[key] = L.latLng(point[0], point[1]);
-        //     }
-        //   });
-        // }
-
-        // else if (type === 'multi-point' || 'point') {
-        //   var items = geom.split(',');
-        //   state.assets = items;
-        // }
-
         return selection;
       },
       update: function (state) {

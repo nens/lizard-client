@@ -53,8 +53,8 @@ angular.module('favourites')
  */
 angular.module('favourites')
   .directive('showFavourites',
-             ['FavouritesService', 'notie', 'gettextCatalog', 'State',
-              function (FavouritesService, notie, gettextCatalog, State) {
+             ['FavouritesService', 'notie', 'gettextCatalog', 'State', 'DataService',
+              function (FavouritesService, notie, gettextCatalog, State, DataService) {
 
   var link = function (scope, element, attrs) {
     /**
@@ -143,8 +143,11 @@ angular.module('favourites')
      * @description calculate the interval from the fav State
      * to the new state if the interval should be relative
      */
-    var adhereTemporalStateToInterval = function (temporal) {
+    var adhereTemporalStateToInterval = function (favtime) {
       var now = Date.now();
+
+      var temporal = angular.copy(favtime); // otherwise all changes are applied to the
+                                      // retrieved temporal state.
 
       temporal.start = now - (temporal.end - temporal.start);
       temporal.at = now - (temporal.end - temporal.at);
@@ -164,7 +167,7 @@ angular.module('favourites')
         adhereTemporalStateToInterval(favourite.state.temporal);
       }
       _.merge(State, favourite.state);
-      State.temporal.timelineMoving = true; // update timeline
+      State.temporal.timelineMoving = !favourite.state.temporal.timelineMoving; // update timeline
     };
 
   };
