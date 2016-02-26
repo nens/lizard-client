@@ -21,7 +21,7 @@ angular.module('favourites')
                 return angularData.results;
               } else {
                 return angularData;
-              };
+              }
             }
          }
       });
