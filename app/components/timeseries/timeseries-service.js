@@ -65,7 +65,7 @@ angular.module('timeseries')
       if (service.timeseries.length > 0) {
         var ts = _.find(service.timeseries, function (o) {
           return o.id === changedTS.uuid;
-        })
+        });
         ts.color = changedTS.color;
         service.onTimeseriesChange();
       }

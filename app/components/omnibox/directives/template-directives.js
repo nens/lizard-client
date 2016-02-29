@@ -180,7 +180,13 @@ angular.module('omnibox')
        */
       scope.$watch('asset', function () {
         scope.attr = scope.asset.pumps ? 'pump' : 'filter';
-        scope.list = JSON.parse(scope.asset[scope.attr + 's']);
+        if (typeof(scope.asset[scope.attr + 's']) === 'string') {
+          scope.list = JSON.parse(scope.asset[scope.attr + 's']);
+        } else if (typeof(scope.asset[scope.attr + 's']) === 'object') {
+          scope.list = scope.asset[scope.attr + 's'];
+        } else {
+          scope.list = [];
+        }
         angular.forEach(scope.list, function (asset) {
           asset.entity_name = scope.attr;
         });

@@ -578,7 +578,7 @@ table tr td:last-child {
 }
 
 .card-tools {
-  float: right;
+  /* float: right; not sure what's wrong but stuff's weird on staging*/ 
   position: relative;
   top: -1px;
   z-index: 9999;
