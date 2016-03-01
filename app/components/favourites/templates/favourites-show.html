@@ -12,11 +12,11 @@ Add the current portal state to your favourites!
     </colgroup>
     <tbody>
       <tr ng-repeat="obj in favourites.data">
-        <td ng-click="applyFavourite(obj)"
+        <td ng-click="selectFavourite(obj)"
             class="clickable">
           <i class="fa fa-star text-primary"></i>
         </td>
-        <td ng-click="applyFavourite(obj)"
+        <td ng-click="selectFavourite(obj)"
             class="clickable">
           <% obj.name %>
         </td>
