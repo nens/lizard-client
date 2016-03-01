@@ -188,7 +188,6 @@ angular.module('timeseries')
 
       var result = [];
       timeseries.forEach(function (ts) {
-        console.log(ts)
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
         graphTimeseries.data = ts.events;
         graphTimeseries.id = ts.uuid;

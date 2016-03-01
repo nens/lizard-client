@@ -126,11 +126,9 @@ angular.module('map')
        */
       scope.$watch(State.toString('spatial.view'), function (n, o) {
         if (n !== o && !mapSetsBounds) {
-          console.log('changing view')
           MapService.setView(State.spatial.view);
           State.spatial.bounds = MapService.getBounds();
         } else {
-          console.log('oder nicht')
           mapSetsView = false;
         }
       });

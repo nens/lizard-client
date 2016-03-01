@@ -233,10 +233,8 @@ angular.module('lizard-nxt')
      * Set context when context changed
      */
     $scope.$watch(State.toString('context'), function (n, old) {
-      console.log(n, old)
       if (n === old) { return true; }
       state.context.update = true;
-
       // update this
       $rootScope.context = State.context;
 
