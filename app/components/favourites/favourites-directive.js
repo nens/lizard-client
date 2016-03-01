@@ -52,9 +52,20 @@ angular.module('favourites')
  * @description Show and delete favourites.
  */
 angular.module('favourites')
-  .directive('showFavourites',
-             ['FavouritesService', 'notie', 'gettextCatalog', 'State', 'DataService',
-              function (FavouritesService, notie, gettextCatalog, State, DataService) {
+.directive('showFavourites',
+ [
+  'FavouritesService',
+  'notie',
+  'gettextCatalog',
+  'State',
+  'DataService',
+   function (
+    FavouritesService,
+    notie,
+    gettextCatalog,
+    State,
+    DataService
+  ) {
 
   var link = function (scope, element, attrs) {
     /**
@@ -166,6 +177,12 @@ angular.module('favourites')
       if (favourite.state.temporal.relative) {
         adhereTemporalStateToInterval(favourite.state.temporal);
       }
+
+      // NOTE: do not move favourites or the master-controller relative to each
+      // other in the scope tree. Context is a primitive which cannot just be
+      // merged like the rest of the state.
+      scope.$parent.$parent.transitionToContext(favourite.state.context);
+
       _.merge(State, favourite.state);
 
       // _.merge pushes objects in the list, does not call setAssets

@@ -24,7 +24,6 @@ angular.module('lizard-nxt')
   'MapService',
   'NxtRegionsLayer',
   'State',
-  '$rootScope',
   'LeafletService',
   'gettextCatalog',
   function (
@@ -39,7 +38,6 @@ angular.module('lizard-nxt')
     MapService,
     NxtRegionsLayer,
     State,
-    $rootScope,
     LeafletService,
     gettextCatalog
   ) {
@@ -235,8 +233,6 @@ angular.module('lizard-nxt')
     $scope.$watch(State.toString('context'), function (n, old) {
       if (n === old) { return true; }
       state.context.update = true;
-      // update this
-      $rootScope.context = State.context;
 
       LocationGetterSetter.setUrlValue(
         state.context.part, state.context.index, State.context
@@ -275,7 +271,6 @@ angular.module('lizard-nxt')
         LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
         $scope.transitionToContext(state.context.value);
       }
-      $rootScope.context = State.context;
 
       if (boxType) {
         State.box.type = boxType;
