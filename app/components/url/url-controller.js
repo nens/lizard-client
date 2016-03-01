@@ -221,7 +221,7 @@ angular.module('lizard-nxt')
         state.boxType.part, state.boxType.index, State.box.type
       );
 
-      if (old === 'point' || old === 'line' || old === 'region' || old === 'multi-point') {
+      if (['point', 'line', 'region', 'multi-point'].indexOf(old) != -1) {
         // Remove geometry from url
         LocationGetterSetter.setUrlValue(
           state.geom.part, state.geom.index, undefined);
@@ -253,13 +253,21 @@ angular.module('lizard-nxt')
      * when the url is empty.
      */
     var setStateFromUrl = function () {
-      var language = LocationGetterSetter.getUrlValue(state.language.part, state.language.index),
-        boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
-        geom = LocationGetterSetter.getUrlValue(state.geom.part, state.geom.index),
-        layerGroupsFromURL = LocationGetterSetter.getUrlValue(state.layerGroups.part, state.layerGroups.index),
-        mapView = LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index),
-        time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index),
-        context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
+
+      var language = LocationGetterSetter.getUrlValue(
+          state.language.part, state.language.index),
+        boxType = LocationGetterSetter.getUrlValue(
+          state.boxType.part, state.boxType.index),
+        geom = LocationGetterSetter.getUrlValue(
+          state.geom.part, state.geom.index),
+        layerGroupsFromURL = LocationGetterSetter.getUrlValue(
+          state.layerGroups.part, state.layerGroups.index),
+        mapView = LocationGetterSetter.getUrlValue(
+          state.mapView.part, state.mapView.index),
+        time = LocationGetterSetter.getUrlValue(
+          state.timeState.part, state.timeState.index),
+        context = LocationGetterSetter.getUrlValue(
+          state.context.part, state.context.index);
 
       setLanguage(language);
 
@@ -272,7 +280,8 @@ angular.module('lizard-nxt')
       if (context) {
         $scope.transitionToContext(context);
       } else {
-        LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
+        LocationGetterSetter.setUrlValue(
+          state.context.part, state.context.index, state.context.value);
         $scope.transitionToContext(state.context.value);
       }
       $rootScope.context = State.context;
@@ -280,7 +289,8 @@ angular.module('lizard-nxt')
       if (boxType) {
         State.box.type = boxType;
       } else {
-        LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, State.box.type);
+        LocationGetterSetter.setUrlValue(
+          state.boxType.part, state.boxType.index, State.box.type);
       }
 
       if (geom) {
