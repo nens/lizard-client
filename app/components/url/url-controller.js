@@ -27,6 +27,7 @@ angular.module('lizard-nxt')
   '$rootScope',
   'LeafletService',
   'gettextCatalog',
+  'FavouritesService',
   function (
     $scope,
     $timeout,
@@ -41,7 +42,8 @@ angular.module('lizard-nxt')
     State,
     $rootScope,
     LeafletService,
-    gettextCatalog
+    gettextCatalog,
+    FavouritesService
   ) {
 
     // Configuration object for url state.
@@ -248,11 +250,32 @@ angular.module('lizard-nxt')
       UrlState.setSelectedUrl(state, State.selected);
     });
 
+    var favouritesFromUrl = function () {
+      var first_url_part = LocationGetterSetter.getUrlValue(
+        'path', 0);
+      if ( first_url_part !== 'favourites' ) {
+        return false;
+      } else {
+        var favouriteUUID = LocationGetterSetter.getUrlValue(
+            'path', 1);
+        FavouritesService.getFavourite(
+          favouriteUUID,
+          function (favourite, getResponseHeaders) {
+            FavouritesService.applyFavourite(favourite);
+          });
+        return true;
+      }
+    };
+
     /**
      * Set the state from the url on init or set the url from the default state
      * when the url is empty.
      */
     var setStateFromUrl = function () {
+
+      if ( favouritesFromUrl() ) {
+        return;
+      }
 
       var language = LocationGetterSetter.getUrlValue(
           state.language.part, state.language.index),
