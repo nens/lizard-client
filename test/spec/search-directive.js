@@ -1,25 +1,28 @@
 'use strict';
 
-describe('Directives: Search with mocked LocationService', function () {
+describe('Directives: Search with mocked CabinetService', function () {
   var MapService, State;
 
-  module(function($provide) {
-    $provide.service('LocationService', function () {
-      // Mock promise
-      this.search = {
-        geocode: function (searchString, spatialState) {
-          return {
-            then: function (cb) { cb({status: 'OVER_QUERY_LIMIT'}); }
-          };
-        }
-      };
-    });
-  });
+  var CabinetService = function () {
+    // Mock promise
+    this.henk = 'piet'
+    this.geocode = {
+      get: function (searchString, spatialState) {
+        return {
+          then: function (cb) { cb({status: 'OVER_QUERY_LIMIT'}); }
+        };
+      }
+    };
+  };
 
   // load the service's module
   beforeEach(module('lizard-nxt'));
   beforeEach(module('global-state'));
-
+  beforeEach(function () {
+    module(function ($provide) {
+      $provide.service('CabinetService', CabinetService)
+    });
+  });
   var scope, element;
 
   beforeEach(inject(function ($rootScope, $compile, $injector) {
@@ -63,7 +66,7 @@ describe('Directives: Search with mocked LocationService', function () {
     'should throw error when response status other than ZERO_RESULTS or OK',
     function () {
       scope.query = 'test';
-      // Mocked locationservice will respond whith status 'OVER_QUERY_LIMIT'
+      // Mocked CabinetService will respond whith status 'OVER_QUERY_LIMIT'
       expect(scope.search).toThrow();
     }
   );

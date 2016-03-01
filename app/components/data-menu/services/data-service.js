@@ -120,7 +120,6 @@ angular.module('data-menu')
 
       // Define assets on State and update DataService.assets.
       var setAssets = function (assets) {
-        console.log('also setting.. whoops')
         instance.oldAssets = angular.copy(instance.assets);
         AssetService.updateAssets(instance.assets, _assets, assets)
         .then(assetChange);
@@ -141,7 +140,6 @@ angular.module('data-menu')
 
       // Reset the asset list and retrieve from the API
       var resetAssets = function (assets) {
-        console.log('resetting.')
         instance.oldAssets = instance.assets = [];
         assets.forEach(function (newAsset) {
           var entity = newAsset.split('$')[0];

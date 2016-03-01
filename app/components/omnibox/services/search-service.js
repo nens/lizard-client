@@ -45,6 +45,7 @@ angular.module('omnibox')
 
       var bounds;
 
+      // bounds are not available in the dashboard view.
       if (state.spatial.bounds.getSouth) {
           bounds = // Prefer results from the current viewport
             state.spatial.bounds.getSouth() + ',' +
@@ -59,6 +60,7 @@ angular.module('omnibox')
         language: state.language, // Preferred language of search results.
         bounds: bounds
       });
+
       var moment = dateParser(searchString);
 
       var search = CabinetService.search.get({
