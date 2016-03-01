@@ -5,6 +5,22 @@ angular.module('data-menu')
   .service("AssetService", ['CabinetService', '$q', '$http',
     function (CabinetService, $q, $http) {
 
+      /**
+       * @param {string} entity - name of the entity
+       * @param {string} id -  id of the enitity
+       * returns {object} promise - thenable with result of the asset API
+       */
+      this.getAsset = function (entity, id) {
+        return $http({
+          url: 'api/v2/' + entity + 's' + '/' + id + '/',
+          method: 'GET'
+        })
+
+        .then(function (response) {
+          response.data.entity_name = entity;
+          return response.data;
+        });
+      };
 
       /**
        * Updates assets by making requests to asset api.
@@ -28,15 +44,7 @@ angular.module('data-menu')
           var entity = newAsset.split('$')[0];
           var id = newAsset.split('$')[1];
 
-          return $http({
-            url: 'api/v2/' + entity + 's' + '/' + id + '/',
-            method: 'GET'
-          })
-
-          .then(function (response) {
-            response.data.entity_name = entity;
-            return response.data;
-          });
+          return this.getAsset(entity, id);
         }
 
         else {
@@ -50,4 +58,3 @@ angular.module('data-menu')
   }
 
 ]);
-

@@ -170,6 +170,7 @@ angular.module('omnibox')
      */
     var setResultsOnBox = function (results) {
       var MAX_RESULTS = 3;
+
       if (
         results.temporal.isValid()
         && results.temporal.valueOf() > UtilService.MIN_TIME
@@ -236,4 +237,3 @@ angular.module('omnibox')
   };
 
 }]);
-

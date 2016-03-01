@@ -52,9 +52,20 @@ angular.module('favourites')
  * @description Show and delete favourites.
  */
 angular.module('favourites')
-  .directive('showFavourites',
-             ['FavouritesService', 'notie', 'gettextCatalog', 'State',
-              function (FavouritesService, notie, gettextCatalog, State) {
+.directive('showFavourites',
+ [
+  'FavouritesService',
+  'notie',
+  'gettextCatalog',
+  'State',
+  'DataService',
+   function (
+    FavouritesService,
+    notie,
+    gettextCatalog,
+    State,
+    DataService
+  ) {
 
   var link = function (scope, element, attrs) {
     /**
@@ -143,8 +154,11 @@ angular.module('favourites')
      * @description calculate the interval from the fav State
      * to the new state if the interval should be relative
      */
-    var adhereTemporalStateToInterval = function (temporal) {
+    var adhereTemporalStateToInterval = function (favtime) {
       var now = Date.now();
+
+      var temporal = angular.copy(favtime); // otherwise all changes are applied to the
+                                      // retrieved temporal state.
 
       temporal.start = now - (temporal.end - temporal.start);
       temporal.at = now - (temporal.end - temporal.at);
@@ -163,8 +177,19 @@ angular.module('favourites')
       if (favourite.state.temporal.relative) {
         adhereTemporalStateToInterval(favourite.state.temporal);
       }
+
+      // NOTE: do not move favourites or the master-controller relative to each
+      // other in the scope tree. Context is a primitive which cannot just be
+      // merged like the rest of the state.
+      scope.$parent.$parent.transitionToContext(favourite.state.context);
+
       _.merge(State, favourite.state);
-      State.temporal.timelineMoving = true; // update timeline
+
+      // _.merge pushes objects in the list, does not call setAssets
+      // so first make it empty then stuff everything in there.
+      State.selected.assets.resetAssets(favourite.state.selected.assets);
+      // State.selected.assets = favourite.state.selected.assets;
+      State.temporal.timelineMoving = !favourite.state.temporal.timelineMoving; // update timeline
     };
 
   };

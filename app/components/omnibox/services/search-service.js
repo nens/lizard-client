@@ -42,17 +42,25 @@ angular.module('omnibox')
      *                        promise resolves with response from geocoder.
      */
     this.search = function (searchString, state) {
+
+      var bounds;
+
+      // bounds are not available in the dashboard view.
+      if (state.spatial.bounds.getSouth) {
+          bounds = // Prefer results from the current viewport
+            state.spatial.bounds.getSouth() + ',' +
+            state.spatial.bounds.getWest() + '|' +
+            state.spatial.bounds.getNorth() + ',' +
+            state.spatial.bounds.getEast();
+      }
       // TODO: request results in portals language and restrict results based
       // on portal by adding: components: 'country:NL'.
       var prom = CabinetService.geocode.get({
         address: searchString,
         language: state.language, // Preferred language of search results.
-        bounds: // Prefer results from the current viewport
-          state.spatial.bounds.getSouth() + ',' +
-          state.spatial.bounds.getWest() + '|' +
-          state.spatial.bounds.getNorth() + ',' +
-          state.spatial.bounds.getEast()
+        bounds: bounds
       });
+
       var moment = dateParser(searchString);
 
       var search = CabinetService.search.get({

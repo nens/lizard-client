@@ -16,6 +16,7 @@ angular.module('lizard-nxt')
   .controller('MasterCtrl',
 
   ['$scope',
+    '$rootScope',
    '$timeout',
    'CabinetService',
    'UtilService',
@@ -26,6 +27,7 @@ angular.module('lizard-nxt')
    'MapService',
 
   function ($scope,
+            $rootScope,
             $timeout,
             CabinetService,
             UtilService,
@@ -62,7 +64,7 @@ angular.module('lizard-nxt')
         overlay.style.opacity = 1;
       }, 10);
       $timeout(function () {
-        $scope.context = State.context;
+        $rootScope.context = State.context;
         overlay.style.opacity = 0;
       }, 300);
       $timeout(function () {
