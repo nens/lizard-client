@@ -14,6 +14,7 @@
 angular.module('lizard-nxt')
 .controller('UrlController', [
   '$scope',
+  '$q',
   '$timeout',
   'LocationGetterSetter',
   'UrlState',
@@ -27,8 +28,10 @@ angular.module('lizard-nxt')
   '$rootScope',
   'LeafletService',
   'gettextCatalog',
+  'FavouritesService',
   function (
     $scope,
+    $q,
     $timeout,
     LocationGetterSetter,
     UrlState,
@@ -41,7 +44,8 @@ angular.module('lizard-nxt')
     State,
     $rootScope,
     LeafletService,
-    gettextCatalog
+    gettextCatalog,
+    FavouritesService
   ) {
 
     // Configuration object for url state.
@@ -221,7 +225,7 @@ angular.module('lizard-nxt')
         state.boxType.part, state.boxType.index, State.box.type
       );
 
-      if (old === 'point' || old === 'line' || old === 'region' || old === 'multi-point') {
+      if (['point', 'line', 'region', 'multi-point'].indexOf(old) != -1) {
         // Remove geometry from url
         LocationGetterSetter.setUrlValue(
           state.geom.part, state.geom.index, undefined);
@@ -249,17 +253,52 @@ angular.module('lizard-nxt')
     });
 
     /**
+     * @function
+     * @description Checks if the url is a `favourite url`. And then proceeds to
+     * fetch the favourites as it is asked.
+     * return {object} - thennable promise which resolves to true/false
+     */
+    var favouritesFromUrl = function () {
+      var deferred = $q.defer();
+      var first_url_part = LocationGetterSetter.getUrlValue(
+        'path', 0);
+      if ( first_url_part !== 'favourites' ) {
+        deferred.resolve(false);
+      } else {
+        var favouriteUUID = LocationGetterSetter.getUrlValue(
+            'path', 1);
+        FavouritesService.getFavourite(
+          favouriteUUID,
+          function (favourite, getResponseHeaders) {
+            FavouritesService.applyFavourite(favourite);
+            deferred.resolve(true);
+          });
+      }
+      return deferred.promise;
+    };
+
+    /**
      * Set the state from the url on init or set the url from the default state
      * when the url is empty.
      */
-    var setStateFromUrl = function () {
-      var language = LocationGetterSetter.getUrlValue(state.language.part, state.language.index),
-        boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
-        geom = LocationGetterSetter.getUrlValue(state.geom.part, state.geom.index),
-        layerGroupsFromURL = LocationGetterSetter.getUrlValue(state.layerGroups.part, state.layerGroups.index),
-        mapView = LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index),
-        time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index),
-        context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
+    var setStateFromUrl = function (favouriteURL) {
+
+      if (!favouriteURL) {
+        var language = LocationGetterSetter.getUrlValue(
+            state.language.part, state.language.index),
+          boxType = LocationGetterSetter.getUrlValue(
+            state.boxType.part, state.boxType.index),
+          geom = LocationGetterSetter.getUrlValue(
+            state.geom.part, state.geom.index),
+          layerGroupsFromURL = LocationGetterSetter.getUrlValue(
+            state.layerGroups.part, state.layerGroups.index),
+          mapView = LocationGetterSetter.getUrlValue(
+            state.mapView.part, state.mapView.index),
+          time = LocationGetterSetter.getUrlValue(
+            state.timeState.part, state.timeState.index),
+          context = LocationGetterSetter.getUrlValue(
+            state.context.part, state.context.index);
+      }
 
       setLanguage(language);
 
@@ -272,7 +311,8 @@ angular.module('lizard-nxt')
       if (context) {
         $scope.transitionToContext(context);
       } else {
-        LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
+        LocationGetterSetter.setUrlValue(
+          state.context.part, state.context.index, state.context.value);
         $scope.transitionToContext(state.context.value);
       }
       $rootScope.context = State.context;
@@ -280,7 +320,8 @@ angular.module('lizard-nxt')
       if (boxType) {
         State.box.type = boxType;
       } else {
-        LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, State.box.type);
+        LocationGetterSetter.setUrlValue(
+          state.boxType.part, state.boxType.index, State.box.type);
       }
 
       if (geom) {
@@ -309,7 +350,8 @@ angular.module('lizard-nxt')
 
     };
 
-    setStateFromUrl();
+
+    favouritesFromUrl().then(setStateFromUrl);
 
   }
 ]);

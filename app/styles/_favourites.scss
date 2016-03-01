@@ -26,6 +26,11 @@
         top: -27px;
         left: 180px;
     }
+
+    .favourites-show {
+        max-height: 400px;
+        overflow-y: auto;
+    }
 }
 
 table.table-no-borders {

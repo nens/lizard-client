@@ -53,8 +53,8 @@ angular.module('favourites')
  */
 angular.module('favourites')
   .directive('showFavourites',
-             ['FavouritesService', 'notie', 'gettextCatalog', 'State', 'DataService',
-              function (FavouritesService, notie, gettextCatalog, State, DataService) {
+             ['FavouritesService', 'notie', 'gettextCatalog', 'State',
+              function (FavouritesService, notie, gettextCatalog, State) {
 
   var link = function (scope, element, attrs) {
     /**
@@ -88,7 +88,7 @@ angular.module('favourites')
     };
 
     FavouritesService.fetchAllFavourites(
-      {},
+      {'page_size': 0},
       fetchFavouritesSuccess,
       fetchFavouritesError);
 
@@ -137,44 +137,9 @@ angular.module('favourites')
         deleteFavouriteError);
     };
 
-
-    /**
-     * @function
-     * @description calculate the interval from the fav State
-     * to the new state if the interval should be relative
-     */
-    var adhereTemporalStateToInterval = function (favtime) {
-      var now = Date.now();
-
-      var temporal = angular.copy(favtime); // otherwise all changes are applied to the
-                                      // retrieved temporal state.
-
-      temporal.start = now - (temporal.end - temporal.start);
-      temporal.at = now - (temporal.end - temporal.at);
-      if (temporal.end > temporal.now) {
-        temporal.end = now - (temporal.now - temporal.end);
-      } else if (temporal.end < temporal.now) {
-        temporal.end = now - (temporal.end - temporal.now);
-      }
+    scope.selectFavourite = function (favourite) {
+      FavouritesService.applyFavourite(favourite);
     };
-
-    /**
-     * Replace the current portal state with the favourite state.
-     * @param {object} favourite - The favourite to apply.
-     */
-    scope.applyFavourite = function (favourite) {
-      if (favourite.state.temporal.relative) {
-        adhereTemporalStateToInterval(favourite.state.temporal);
-      }
-      _.merge(State, favourite.state);
-
-      // _.merge pushes objects in the list, does not call setAssets
-      // so first make it empty then stuff everything in there.
-      State.selected.assets.resetAssets(favourite.state.selected.assets);
-      // State.selected.assets = favourite.state.selected.assets;
-      State.temporal.timelineMoving = !favourite.state.temporal.timelineMoving; // update timeline
-    };
-
   };
 
   return {
@@ -253,4 +218,27 @@ angular.module('favourites')
     link: link,
     templateUrl: 'favourites/templates/favourites-add.html'
   };
+  }]);
+
+/**
+ * @module
+ * @description Share favourites.
+ */
+angular.module('favourites')
+  .directive('shareFavourites', ['$window', function ($window) {
+
+    var link = function (scope, element, attrs) {
+
+      scope.shareFavourite = function (favourite) {
+        scope.favouriteURL = $window.location.origin +
+          '/favourites/' +
+          favourite.uuid;
+      };
+    };
+
+    return {
+      restrict: 'E',
+      link: link,
+      templateUrl: 'favourites/templates/favourites-share.html'
+    };
   }]);
