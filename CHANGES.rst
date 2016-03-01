@@ -3,7 +3,7 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+- Favourites have more state and gets some bugfixes
 
 
 Release 2.9.2 (2016-2-26)
