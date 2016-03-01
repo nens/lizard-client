@@ -62,11 +62,18 @@ angular.module('timeseries')
 
     var localPromises = {};
 
+    /**
+     * Color is stored with the ts metadata in asset.timeseries of every asset
+     * in DataService.assets. This function searches in the selected timeseries
+     * in timeseriesService.timeseries to update the color.
+     *
+     * @param  {object} changedTS timeseries metadata object
+     */
     this.onColorChange = function (changedTS) {
-      if (service.timeseries.length > 0) {
-        var ts = _.find(service.timeseries, function (o) {
-          return o.id === changedTS.uuid;
-        });
+      var ts = _.find(service.timeseries, function (o) {
+        return o.id === changedTS.uuid;
+      });
+      if (ts) {
         ts.color = changedTS.color;
         service.onTimeseriesChange();
       }
