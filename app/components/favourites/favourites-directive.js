@@ -167,6 +167,11 @@ angular.module('favourites')
         adhereTemporalStateToInterval(favourite.state.temporal);
       }
       _.merge(State, favourite.state);
+
+      // _.merge pushes objects in the list, does not call setAssets
+      // so first make it empty then stuff everything in there.
+      State.selected.assets.resetAssets(favourite.state.selected.assets);
+      // State.selected.assets = favourite.state.selected.assets;
       State.temporal.timelineMoving = !favourite.state.temporal.timelineMoving; // update timeline
     };
 

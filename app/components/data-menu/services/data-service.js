@@ -100,33 +100,57 @@ angular.module('data-menu')
         configurable: false
       });
 
+      // Callback for when assets are being retrieved from api
+      var assetChange = function (asset) {
+        if (asset) {
+          instance.assets.push(asset);
+        }
+        instance.assets = instance.assets.filter(function (asset) {
+          var assetId = asset.entity_name + '$' + asset.id;
+          return _assets.indexOf(assetId) !== -1;
+        });
+        instance.getGeomDataForAssets(instance.oldAssets, instance.assets);
+
+        if (instance.onAssetsChange) {
+          instance.onAssetsChange();
+        }
+
+        console.log('DataService.assets:', instance.assets);
+      };
+
       // Define assets on State and update DataService.assets.
       var setAssets = function (assets) {
-        var oldAssets = angular.copy(instance.assets);
+        console.log('also setting.. whoops')
+        instance.oldAssets = angular.copy(instance.assets);
         AssetService.updateAssets(instance.assets, _assets, assets)
-        .then(function (asset) {
-          if (asset) {
-            instance.assets.push(asset);
-          }
-          instance.assets = instance.assets.filter(function (asset) {
-            var assetId = asset.entity_name + '$' + asset.id;
-            return _assets.indexOf(assetId) !== -1;
-          });
-          instance.getGeomDataForAssets(oldAssets, instance.assets);
-
-          if (instance.onAssetsChange) {
-            instance.onAssetsChange();
-          }
-
-          console.log('DataService.assets:', instance.assets);
-        });
+        .then(assetChange);
         _assets = assets;
         console.log('State.selected.assets:', State.selected.assets);
 
-        // Rebind add and remove because selected.assets might have been
-        // redefined when calling state.selected.assets = []
+        rebindAssetFunctions();
+      };
+
+
+      // Rebind add and remove because selected.assets might have been
+      // redefined when calling state.selected.assets = []
+      var rebindAssetFunctions = function () {
         State.selected.assets.addAsset = addAsset;
         State.selected.assets.removeAsset = removeAsset;
+        State.selected.assets.resetAssets = resetAssets;
+      };
+
+      // Reset the asset list and retrieve from the API
+      var resetAssets = function (assets) {
+        console.log('resetting.')
+        instance.oldAssets = instance.assets = [];
+        assets.forEach(function (newAsset) {
+          var entity = newAsset.split('$')[0];
+          var id = newAsset.split('$')[1];
+          AssetService.getAsset(entity, id)
+            .then(assetChange)
+        });
+        _assets = assets;
+        rebindAssetFunctions();
       };
 
       var addAsset = function (asset) {
@@ -141,15 +165,17 @@ angular.module('data-menu')
         setAssets(newAssets);
       };
 
-      instance.assets = [];
+      instance.assets = instance.oldAssets = [];
       var _assets = [];
       Object.defineProperty(State.selected, 'assets', {
         get: function () { return _assets; },
-        set: setAssets
+        set: setAssets,
+        enumerable: true
       });
 
       State.selected.assets.addAsset = addAsset;
       State.selected.assets.removeAsset = removeAsset;
+      State.selected.assets.resetAssets = resetAssets;
 
       // Define geometries on State and update DataService.geometries.
       var setGeometries = function (geometries) {

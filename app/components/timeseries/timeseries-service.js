@@ -28,7 +28,8 @@ angular.module('timeseries')
         console.log('State.selected.timeseries:', timeseries);
         service.syncTime(timeseries);
         _timeseries = timeseries;
-      }
+      },
+      enumerable: true
     });
 
     this.syncTime = function (timeseries) {
@@ -133,35 +134,13 @@ angular.module('timeseries')
       return err; // continue anyway
     };
 
-    this.getTimeSeriesForAsset = function (asset) {
-      // Get ts if asset has ts at the back but not yet at the front.
-      if (asset.num_timeseries && asset.timeseries === undefined) {
-        return $http({
-          url: 'api/v2/timeseries/',
-          method: 'GET',
-          params: { object: asset.entity_name + '$' + asset.id }
-        })
-
-        .then(function (response) {
-          var timeseries = response.data.results;
-          var colors = UtilService.GRAPH_COLORS;
-          for (var i = timeseries.length - 1; i >= 0; i--) {
-            timeseries[i].order = 0; // add default order to ts to draw ts in db
-            timeseries[i].color = colors[i % (colors.length - 1)];
-          }
-          if (response.data.results.length) {
-            asset.timeseries = timeseries;
-          }
-          return asset;
-        });
+    this.setInitialColorAndOrder = function (asset) {
+      var colors = UtilService.GRAPH_COLORS;
+      for (var i = asset.timeseries.length - 1; i >= 0; i--) {
+        asset.timeseries[i].order = 0; // add default order to ts to draw ts in db
+        asset.timeseries[i].color = colors[i % (colors.length - 1)];
       }
-
-      else {
-        var defer = $q.defer();
-        defer.resolve(asset);
-        return defer.promise;
-      }
-
+      return asset;
     };
 
     /**
@@ -202,7 +181,7 @@ angular.module('timeseries')
 
       var result = [];
       timeseries.forEach(function (ts) {
-        console.log()
+        console.log(ts)
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
         graphTimeseries.data = ts.events;
         graphTimeseries.id = ts.uuid;

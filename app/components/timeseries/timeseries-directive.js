@@ -9,25 +9,10 @@ angular.module('timeseries')
       link: function (scope) {
 
         /**
-         * Fetch timeseries for asset. Remove zero datapoints from response and
-         * update the selected ts.
-         * @param  {object} asset utfgrid asset with entity_name and id.
-         */
-        var fetchTS = function(asset) {
-          var assetId = asset.entity_name + '$' + asset.id;
-
-          var prom = TimeseriesService.getTimeSeriesForAsset(asset);
-
-          prom.then(function (asset) {
-            scope.asset = asset;
-          });
-        };
-
-        /**
          * Get new ts when asset changes
          */
         scope.$watch('asset', function () {
-          fetchTS(scope.asset);
+          TimeseriesService.setInitialColorAndOrder(scope.asset);
         });
 
       },
@@ -49,7 +34,8 @@ angular.module('timeseries')
         scope.fetching = false;
 
         var selectTimeseries = function () {
-          State.selected.timeseries = [scope.timeseries.selected.uuid];
+          var selectedTimeseries = (scope.timeseries.selected) ? [scope.timeseries.selected.uuid] : [];
+          State.selected.timeseries = selectedTimeseries;
         };
 
         scope.content = TimeseriesService;
@@ -86,4 +72,3 @@ angular.module('timeseries')
       templateUrl: 'timeseries/timeseries.html'
     };
 }]);
-
