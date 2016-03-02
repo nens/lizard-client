@@ -46,6 +46,17 @@ angular.module('dashboard')
 
     assets.forEach(function (asset) {
       graphs = addPropertyData(graphs, asset.properties);
+
+      // Specific logic to add crosssections. We could abstract this to all
+      // assets with children that have timeseries.
+      if (asset.entity_name === 'leveecrosssection'
+        && asset.crosssection && asset.crosssection.active) {
+        graphs[asset.crosssection.order] = {
+          'type': 'crosssection',
+          'content': asset
+        };
+      }
+
     });
 
     geometries.forEach(function (geometry) {

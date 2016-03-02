@@ -428,3 +428,22 @@ angular.module('lizard-nxt')
   };
 
 }]);
+
+
+/**
+ *
+ */
+angular.module('lizard-nxt')
+  .directive('crossSection', [function () {
+    var link = function (scope, element, attrs) {
+      console.log(scope);
+    };
+
+    return {
+      link: link,
+      restrict: 'A'
+    };
+
+  }
+]);
+

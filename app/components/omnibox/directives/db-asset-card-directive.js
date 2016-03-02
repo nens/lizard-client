@@ -60,6 +60,39 @@ angular.module('omnibox')
 
       };
 
+      /**
+       * Specific toggle for crosssection
+       *
+       * @param  {object} asset with entity_name crossection and a crossection
+       *                        model.
+       */
+      scope.toggleCrosssection = function (asset) {
+        asset.crosssection.active = !asset.crosssection.active;
+
+        if (asset.crosssectionActive) {
+          var plots = DBCardsService.getActiveCountAndOrder();
+
+          asset.crosssection.order = plots.count > 0
+            ? plots.order + 1
+            : 0;
+
+        } else {
+          DBCardsService.removeItemFromPlot(asset.crosssection);
+        }
+      };
+
+      // Init crosssection
+      if (scope.asset.entity_name = 'leveecrosssection') {
+        scope.asset.monitoring_wells.forEach(function (well) {
+          scope.asset.timeseries = _.concat(scope.asset.timeseries, well.timeseries);
+        });
+        scope.asset.crosssection = {
+          active: false, // set to true by  toggle
+          order: 0
+        };
+        scope.toggleCrosssection(scope.asset);
+      }
+
       DragService.addDraggableContainer(element.find('#drag-container'));
 
     },
