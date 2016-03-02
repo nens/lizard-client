@@ -35,7 +35,7 @@ angular.module('dashboard')
           graph.dimensions = DashboardService.getDimensions(
             element,
             scope.dashboard.graphs.length,
-            graph.type === 'distance' // give space for axis.
+            graph.type === 'distance' || graph.type === 'crosssection' // give space for axis.
           );
         });
       };

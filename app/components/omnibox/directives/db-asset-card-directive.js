@@ -67,17 +67,23 @@ angular.module('omnibox')
        *                        model.
        */
       scope.toggleCrosssection = function (asset) {
-        asset.crosssection.active = !asset.crosssection.active;
 
-        if (asset.crosssectionActive) {
+        if (!asset.crosssection.active) {
           var plots = DBCardsService.getActiveCountAndOrder();
 
           asset.crosssection.order = plots.count > 0
             ? plots.order + 1
             : 0;
 
+          asset.crosssection.active = true;
+
         } else {
           DBCardsService.removeItemFromPlot(asset.crosssection);
+          asset.crosssection.active = false;
+        }
+
+        if (DataService.onGeometriesChange) {
+          DataService.onGeometriesChange();
         }
       };
 

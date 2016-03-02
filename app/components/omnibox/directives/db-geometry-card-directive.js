@@ -39,6 +39,7 @@ angular.module('omnibox')
 
           if (!property.active) {
             var plots = DBCardsService.getActiveCountAndOrder();
+
             // On toggle, add seperate graph. Give order of highest order + 1.
             property.order = plots.count > 0
               ? plots.order + 1

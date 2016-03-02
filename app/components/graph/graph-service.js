@@ -136,7 +136,7 @@ angular.module('lizard-nxt')
         : graph._createLine(chartContainer._xy, keys);
 
         var MIN_POINTS_FOR_SUBSET = 15,
-            DELAY = 10, // ms
+            DELAY = 30, // ms
             DATA_REDUCTION_FACTOR = 5;
         if (transitioning && data.length > MIN_POINTS_FOR_SUBSET) {
           graph._registerTimeout(
@@ -319,6 +319,12 @@ angular.module('lizard-nxt')
       drawHorizontalRects(this._svg, this.dimensions, this.transTime, this._x.scale, data, keys, labels);
   };
 
+  Graph.prototype.drawCrosssection = function (content) {
+    this.drawLine([content.line], false, false);
+    addPointsToLineGraph(this._svg, this.transTime, content.points, this._xy);
+    addInterpolatedLineToLineGraph(this._svg, this.transTime, content.points, this._xy);
+  };
+
   /**
    * @function
    * @memberOf Graph
@@ -425,7 +431,7 @@ angular.module('lizard-nxt')
   var createPie, createArc, drawPie, drawAxes, drawLabel, needToRescale,
       drawPath, setupLineGraph, createDonut, addInteractionToPath, getBarWidth,
       drawVerticalRects, addInteractionToRects, drawHorizontalRects,
-      createXGraph, rescale, createYValuesForCumulativeData, getDataSubset;
+      createXGraph, rescale, createYValuesForCumulativeData, getDataSubset, addPointsToLineGraph, addInterpolatedLineToLineGraph;
 
   /**
    * Creates y cumulatie y values for elements on the same x value.
@@ -499,6 +505,65 @@ angular.module('lizard-nxt')
       }
     });
     return xy;
+  };
+
+  addPointsToLineGraph = function (svg, duration, points, xy) {
+    var xScale = xy.x.scale;
+    var yScale = xy.y.scale;
+
+    // Join new points to svg circles
+    var circles = svg.select('g').select('#feature-group').selectAll("circle")
+      .data(points, function(d) { return d.id; });
+
+    // UPDATE
+    // Update elements start and width as needed.
+    circles.transition()
+      .duration(duration)
+      .attr('y', function (d) { return yScale(d.value); });
+    // ENTER
+    // Create new elements as needed.
+    circles.enter().append("circle")
+      .attr("x", function (d) { return xScale(d.x); })
+      .attr('y', function (d) { return yScale(d.value); })
+      .transition()
+      .duration(duration)
+      .attr('r', 4);
+    // EXIT
+    // Remove old elements as needed. First transition to width = 0
+    // and then remove.
+    circles.exit()
+      .transition()
+      .duration(duration)
+      .attr('width', 0)
+      .remove();
+  };
+
+  addInterpolatedLineToLineGraph = function (svg, duration, points, xy) {
+    var xScale = xy.x.scale;
+    var yScale = xy.y.scale;
+    var TENSION = 0.5; // Goes nicely in between the points.
+
+    var path = d3.svg.line()
+      .y(function (d) { return xScale(d.x); })
+      .x(function (d) { return yScale(d.value); })
+      // interrupt the line when no data
+      .defined(function (d) { return !isNaN(parseFloat(d.value)); })
+      .interpolate('cardinal')
+      .tension(TENSION);
+
+    // generate line paths
+    var lines = svg.select('#feature-group').selectAll(".interpolation-line")
+      .data(points).attr("class","interpolation-line");
+
+    // transition from previous paths to new paths
+    lines.transition().duration(duration)
+      .attr("d", path);
+
+    // enter any new data
+    lines.enter()
+      .append("path")
+      .attr("class","interpolation-line")
+      .attr("d",path);
   };
 
   drawHorizontalRects = function (svg, dimensions, duration, scale, data, keys, labels) {
