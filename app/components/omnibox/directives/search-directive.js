@@ -61,19 +61,6 @@ angular.module('omnibox')
       scope.omnibox.searchResults = {};
     };
 
-
-
-    /**
-     * @description opens layergroup belonging to result
-     * @param {object} search result with layergroup.
-     * simple pointer to SearchService functio
-     */
-    scope.openLayerGroup = function (lg) {
-      scope.query = "";
-      scope.omnibox.searchResults = {};
-      SearchService.openLayerGroup(lg);
-    };
-
     /**
      * @description zooms to search resulit
      * @param {object} one search result.
@@ -214,8 +201,6 @@ angular.module('omnibox')
           if (scope.omnibox.searchResults === undefined) { return; }
           scope.omnibox.searchResults.timeseries = SearchService
             .filter(response.results, 'timeseries');
-          scope.omnibox.searchResults.layergroups = SearchService
-            .filter(response.results, 'layergroup');
         }
       );
     };

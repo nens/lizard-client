@@ -96,20 +96,6 @@ angular.module('omnibox')
       });
     };
 
-
-    this.openLayerGroup = function (result) {
-      if (!result.lg) {
-        result.lg = DataService.createLayerGroup(result);
-      }
-      if (result.lg) {
-        DataService.toggleLayerGroup(result.lg);
-        if (result.lg.spatialBounds) {
-          MapService.fitBounds(result.lg.spatialBounds);
-        }
-
-      }
-    };
-
     /**
      * Zooms to result of geocoder. If result is precise it also simulates a
      * click on the result.

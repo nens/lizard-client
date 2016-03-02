@@ -30,22 +30,7 @@
           tabindex="2"
           href="">
           <span><% result.location.name %> - <% result.name %></span>
-        </a>
-      </li>
-    </ul>
 
-    <h3 ng-if="omnibox.searchResults.layergroups.length > 0">
-      <i class="fa fa-clock-o">&nbsp;</i>
-      <span translate>Map</span>&nbsp;(<% omnibox.searchResults.layergroups.length %>)
-    </h3>
-    <ul>
-      <li ng-cloak
-        ng-repeat="result in omnibox.searchResults.layergroups"
-        class="cluster location">
-        <a ng-click="openLayerGroup(result)"
-          tabindex="2"
-          href="">
-          <span><% result.name %></span>
         </a>
       </li>
     </ul>
