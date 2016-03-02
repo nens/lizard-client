@@ -428,3 +428,31 @@ angular.module('lizard-nxt')
   };
 
 }]);
+
+
+/**
+ *
+ */
+angular.module('lizard-nxt')
+.directive('crossSection', [function () {
+  var link = function (scope, element, attrs, graphCtrl) {
+
+    var content = graphCtrl.content,
+        graph = graphCtrl.graph;
+
+    graph.drawCrosssection(content);
+
+    // Function to call when data changes
+    graphCtrl.updateData = graph.drawCrosssection;
+
+    };
+
+    return {
+      require: 'graph',
+      link: link,
+      restrict: 'A'
+    };
+
+  }
+]);
+

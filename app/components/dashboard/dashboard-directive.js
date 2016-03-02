@@ -17,6 +17,7 @@ angular.module('dashboard')
     var link = function (scope, element, attrs) {
 
       scope.dashboard = {
+        graphs: [],
         state: State
       };
 
@@ -26,6 +27,7 @@ angular.module('dashboard')
           element.width() - DashboardService.GRAPH_PADDING;
 
         scope.dashboard.graphs = DashboardService.buildGraphs(
+          scope.dashboard.graphs,
           TimeseriesService.timeseries,
           DataService.assets,
           DataService.geometries
@@ -35,7 +37,7 @@ angular.module('dashboard')
           graph.dimensions = DashboardService.getDimensions(
             element,
             scope.dashboard.graphs.length,
-            graph.type === 'distance' // give space for axis.
+            graph.type === 'distance' || graph.type === 'crosssection' // give space for axis.
           );
         });
       };

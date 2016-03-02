@@ -29,23 +29,42 @@ angular.module('dashboard')
    * @param  {array} geometries Data source DataService.geometries.
    * @return {array} graph
    */
-  this.buildGraphs = function (timeseries, assets, geometries) {
-
-    var graphs = [];
+  this.buildGraphs = function (graphs, timeseries, assets, geometries) {
 
     timeseries.forEach(function (ts) {
       if (graphs[ts.order]) {
         graphs.type = 'temporalLine';
-        graphs[ts.order].content.push(ts);
+        var partOfContent =_.find(graphs[ts.order].content, function (c) {
+          return c.id === ts.id;
+        });
+        if (partOfContent) {
+          partOfContent.data = ts.data;
+        } else {
+          graphs[ts.order].content.push(ts);
+        }
       }
       else {
         var content = [ts];
         graphs[ts.order] = { 'type': 'temporalLine', 'content': content };
       }
+      var indexOflast = graphs[ts.order].content.length -1;
+      graphs[ts.order].content[indexOflast].updated = true;
     });
 
     assets.forEach(function (asset) {
       graphs = addPropertyData(graphs, asset.properties);
+
+      // Specific logic to add crosssections. We could abstract this to all
+      // assets with children that have timeseries.
+      if (asset.entity_name === 'leveecrosssection'
+        && asset.crosssection && asset.crosssection.active) {
+        graphs[asset.crosssection.order] = {
+          'type': 'crosssection',
+          'content': [asset]
+        };
+        graphs[asset.crosssection.order].content[0].updated = true;
+      }
+
     });
 
     geometries.forEach(function (geometry) {
@@ -55,7 +74,15 @@ angular.module('dashboard')
     // Add empty graphs for undefined items.
     _.forEach(graphs, function (graph, i) {
       if (graph === undefined) {
-        graphs[i] = {'type': 'empty'};
+        graphs[i] = {'type': 'empty', content: [{updated: true}]};
+      }
+    });
+
+    _.forEach(graphs, function (g, i) {
+      g.content = _.filter(g.content, function (c) { return c.updated === true; });
+      _.forEach(g.content, function (c) { c.updated = false; });
+      if (!g.content.length) {
+        graphs.splice(i, 1);
       }
     });
 
@@ -103,6 +130,8 @@ angular.module('dashboard')
 
         var type = slug === 'rain' ? 'rain' : 'distance';
         graphs[property.order] = { type: type, content: [item] };
+        var indexOflast = graphs[property.order].content.length - 1;
+        graphs[property.order].content[indexOflast].updated = true;
       }
     });
     return graphs;
