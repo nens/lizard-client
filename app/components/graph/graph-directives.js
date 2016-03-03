@@ -431,7 +431,10 @@ angular.module('lizard-nxt')
 
 
 /**
+ * Creates a specific line and point graph for levee crosssections.
  *
+ * Content should contain property line for elevation data and the property
+ * points for timeseries values of wells.
  */
 angular.module('lizard-nxt')
 .directive('crossSection', [function () {
