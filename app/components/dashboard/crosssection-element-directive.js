@@ -72,9 +72,11 @@ angular.module('dashboard')
 
             content.points.push({
               id: ts.id,
-              value: ts.data[i].value,
-              x: well.profileX
+              value: ts.data[i].max,
+              x: well.distance_along_crosssection
             });
+
+            content.points = _.sortBy(content.points, 'x');
 
           }
 
