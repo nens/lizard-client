@@ -557,6 +557,7 @@ angular.module('lizard-nxt')
     // Update elements start and width as needed.
     circles.transition()
       .duration(duration)
+      .attr("cx", function (d) { return xScale(d.x); })
       .attr('cy', function (d) { return yScale(d.value); });
     // ENTER
     // Create new elements as needed.
