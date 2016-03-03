@@ -27,7 +27,7 @@
 
     <cross-section
       ng-if="item.type === 'crosssection'"
-      asset="item.content"
+      asset="item.content[0]"
       dimensions="item.dimensions"
       temporal="dashboard.state.temporal">
     </cross-section>
