@@ -136,24 +136,25 @@ angular.module('lizard-nxt')
         : graph._createLine(chartContainer._xy, keys);
 
         var MIN_POINTS_FOR_SUBSET = 15,
-            DELAY = 30, // ms
+            DELAY = 100, // ms
             DATA_REDUCTION_FACTOR = 5;
         if (transitioning && data.length > MIN_POINTS_FOR_SUBSET) {
+          var fullData = _.clone(data);
           graph._registerTimeout(
+            chartContainer,
             function () {
               chartContainer.path = drawPath(
                 graph._svg,
                 chartContainer.pathFn,
-                data,
+                fullData,
                 0, // transition 0 ms when drawing while zooming.
                 chartContainer.path,
                 lineAsArea ? chartContainer.color : 'none',
                 chartContainer.color
               );
             },
-            DELAY // delay with 30 ms
+            DELAY
           );
-
           data = getDataSubset(data, DATA_REDUCTION_FACTOR);
         }
 
@@ -450,14 +451,14 @@ angular.module('lizard-nxt')
    *                      resolves.
    * @param {int} delay in ms of the cb execution.
    */
-  Graph.prototype._registerTimeout = function(cb, delay) {
-      if (this.timeout) {
-        $timeout.cancel(this.timeout);
+  Graph.prototype._registerTimeout = function(chart, cb, delay) {
+      if (chart.timeout) {
+        $timeout.cancel(chart.timeout);
       }
 
       var graph = this;
 
-      this.timeout = $timeout(
+      chart.timeout = $timeout(
         function () {
           cb.call(graph); },
         delay,
