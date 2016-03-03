@@ -320,8 +320,30 @@ angular.module('lizard-nxt')
       drawHorizontalRects(this._svg, this.dimensions, this.transTime, this._x.scale, data, keys, labels);
   };
 
+  /**
+   * Draws an elevation profile, with monitoring well values as points and an
+   * interpolation through the well values.
+   *
+   * Crosssection gets a combined y domain and the x domain of the line.
+   *
+   * Get range, domain, make scale and axis, draw everything.
+   *
+   * Data should look like this:
+   *
+   * content = {
+   *   line: {
+   *     data: [],
+   *     keys: {}
+   *   },
+   *   points: [{x: int, value: int}]
+   * };
+   *
+   * @param  {object} content data to plot
+   */
   Graph.prototype.drawCrosssection = function (content) {
     if (!content.points.length || !content.line.data) { return; }
+
+
     var width = this._getWidth(this.dimensions);
     var height = this._getHeight(this.dimensions);
 
@@ -350,17 +372,58 @@ angular.module('lizard-nxt')
     var xRange = {min: 0, max: width};
     var yRange = {min: 0, max: height};
 
-    this._xy.x.scale = this._makeScale(this._xy.x.minMax, xRange, {scale: 'linear'});
-    this._xy.x.axis = this._makeAxis(this._xy.x.scale, {orientation: 'bottom'});
-    this._drawAxes(this._svg, this._xy.x.axis, this.dimensions, false, this.transTime);
+    this._xy.x.scale = this._makeScale(
+      this._xy.x.minMax,
+      xRange,
+      {scale: 'linear'}
+    );
+    this._xy.x.axis = this._makeAxis(
+      this._xy.x.scale,
+      {orientation: 'bottom'}
+    );
+    this._drawAxes(
+      this._svg,
+      this._xy.x.axis,
+      this.dimensions,
+      false, // is not a y axis.
+      this.transTime
+    );
 
-    this._xy.y.scale = this._makeScale(this._xy.y.minMax, yRange, {scale: 'linear'});
+    this._xy.y.scale = this._makeScale(
+      this._xy.y.minMax,
+      yRange,
+      {scale: 'linear'}
+    );
     this._xy.y.axis = this._makeAxis(this._xy.y.scale, {orientation: 'left'});
-    this._drawAxes(this._svg, this._xy.y.axis, this.dimensions, true, this.transTime);
+    this._drawAxes(
+      this._svg,
+      this._xy.y.axis,
+      this.dimensions,
+      true, // is a y axis.
+      this.transTime
+    );
 
-    addLineToLineGraph(this._svg, this.transTime, content.line.data, {x: 0, y:1}, this._xy, 'line');
-    addPointsToLineGraph(this._svg, this.transTime, content.points, this._xy);
-    addLineToLineGraph(this._svg, this.transTime, content.points, {x: 'x', y: 'value'}, this._xy, 'interpolation-line');
+    var className = 'line';
+    addLineToGraph(
+      this._svg,
+      this.transTime,
+      content.line.data,
+      {x: 0, y:1},
+      this._xy,
+      className
+    );
+
+    addPointsToGraph(this._svg, this.transTime, content.points, this._xy);
+
+    className = 'interpolation-line';
+    addLineToGraph(
+      this._svg,
+      this.transTime,
+      content.points,
+      {x: 'x', y: 'value'},
+      this._xy,
+      className
+    );
   };
 
   /**
@@ -469,7 +532,7 @@ angular.module('lizard-nxt')
   var createPie, createArc, drawPie, drawAxes, drawLabel, needToRescale,
       drawPath, setupLineGraph, createDonut, addInteractionToPath, getBarWidth,
       drawVerticalRects, addInteractionToRects, drawHorizontalRects,
-      createXGraph, rescale, createYValuesForCumulativeData, getDataSubset, addPointsToLineGraph, addLineToLineGraph;
+      createXGraph, rescale, createYValuesForCumulativeData, getDataSubset, addPointsToGraph, addLineToGraph;
 
   /**
    * Creates y cumulatie y values for elements on the same x value.
@@ -545,7 +608,7 @@ angular.module('lizard-nxt')
     return xy;
   };
 
-  addPointsToLineGraph = function (svg, duration, points, xy) {
+  addPointsToGraph = function (svg, duration, points, xy) {
     var xScale = xy.x.scale;
     var yScale = xy.y.scale;
 
@@ -578,7 +641,11 @@ angular.module('lizard-nxt')
       .remove();
   };
 
-  addLineToLineGraph = function (svg, duration, data, keys, xy, className) {
+  /**
+   * Adds a line to a graph. Assumes xy contains d3 scales and className
+   * describes a unique line.
+   */
+  addLineToGraph = function (svg, duration, data, keys, xy, className) {
     var xScale = xy.x.scale;
     var yScale = xy.y.scale;
 

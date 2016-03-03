@@ -1,13 +1,14 @@
 'use strict';
 
 /**
- *
+ * Collects crosssection data from api and creates a graph content object.
  */
 angular.module('dashboard')
   .directive('crossSection', ['TimeseriesService', 'CabinetService', function (TimeseriesService, CabinetService) {
 
     var link = function (scope, element, attrs) {
 
+      // Contains content for crosssection graph.
       var content = {
         line: {
           data: [],
@@ -19,7 +20,7 @@ angular.module('dashboard')
       var tsData = [];
 
 
-      // Get timeseries data of monitoring wells
+      // Get timeseries ids of monitoring wells
       var timeseriesIds = [];
       scope.asset.monitoring_wells.forEach(function(well) {
         if (well.timeseries[0]) {
@@ -45,7 +46,7 @@ angular.module('dashboard')
                                  // graph.
       });
 
-
+      /** Gets timeseries using TimeseriesService .*/
       var getTimeseries = function (timeseries, timeState) {
         TimeseriesService
         ._getTimeseries(timeseries, timeState, TimeseriesService.minPoints)
@@ -57,6 +58,12 @@ angular.module('dashboard')
         });
       };
 
+      /**
+       * Updates content to contain the data in the ts beloning to at.
+       *
+       * @param {array}  timeseries list of timeseries.
+       * @param {int}    at         virtual now.
+       */
       var setTimeseriesToAt = function (timeseries, at) {
         content.points = [];
         timeseries.forEach(function (ts) {
@@ -87,15 +94,16 @@ angular.module('dashboard')
        * Returns the index of the value at key in arrayObject closest to value.
        * When value is exactly in the middle, the first index is returned.
        *
-       * @param  {array}        arrayOfObjects array to be searched.
+       * @param  {array}        collection array of objects or array of arrays
+       *                                   to be searched.
        * @param  {string | int} key to compare property in arrayOfObjects.
        * @param  {int}          value to search for.
        * @return {int}          first index closest to value.
        */
-      var bisect = function (arrayOfObjects, key, value) {
+      var bisect = function (collection, key, value) {
         var index;
         var initialSmallestDiff = Infinity;
-        _.reduce(arrayOfObjects, function (smallestDiff, d, i) {
+        _.reduce(collection, function (smallestDiff, d, i) {
           var currentDiff = Math.abs(d[key] - value);
           if (currentDiff < smallestDiff) {
             index = i;

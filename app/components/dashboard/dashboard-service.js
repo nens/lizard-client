@@ -24,6 +24,7 @@ angular.module('dashboard')
    *   }]
    * }
    *
+   * @param  {array} graphs     Currently plotted graphs.
    * @param  {array} timeseries Data source timeseries from timseriesService.
    * @param  {array} assets     Data source DataService.assets.
    * @param  {array} geometries Data source DataService.geometries.
@@ -34,6 +35,7 @@ angular.module('dashboard')
     timeseries.forEach(function (ts) {
       if (graphs[ts.order]) {
         graphs.type = 'temporalLine';
+        // Check if timeseries is already in the plot, if so replace data.
         var partOfContent =_.find(graphs[ts.order].content, function (c) {
           return c.id === ts.id;
         });
@@ -47,6 +49,7 @@ angular.module('dashboard')
         var content = [ts];
         graphs[ts.order] = { 'type': 'temporalLine', 'content': content };
       }
+      // Keep this graph
       var indexOflast = graphs[ts.order].content.length -1;
       graphs[ts.order].content[indexOflast].updated = true;
     });
@@ -78,6 +81,7 @@ angular.module('dashboard')
       }
     });
 
+    // Remove all graphs that have not been updated and are empty.
     _.forEach(graphs, function (g, i) {
       g.content = _.filter(g.content, function (c) { return c.updated === true; });
       _.forEach(g.content, function (c) { c.updated = false; });
