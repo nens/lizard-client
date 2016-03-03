@@ -65,13 +65,16 @@ angular.module('omnibox')
      * @description zooms to search resulit
      * @param {object} one search result.
      */
-    scope.zoomToSearchResult = function (result, origin) {
-      State = SearchService.zoomToResult(result, State);
-      var object = result.location.object;
+    scope.zoomToSearchResult = function (result) {
+      if (State.box.type !== 'multi-point') {
+        State.selected.reset();
+      }
+      State.selected.assets.addAsset(
+        result.entity_name + '$' + result.entity_id);
       MapService.setView({
-        lat: object.geometry.coordinates[1],
-        lng: object.geometry.coordinates[0],
-        zoom: ZOOM_FOR_OBJECT
+        lat: result.view[0],
+        lng: result.view[1],
+        zoom: result.view[2] || ZOOM_FOR_OBJECT
       });
       scope.omnibox.searchResults = {};
       scope.query = "";
@@ -81,7 +84,7 @@ angular.module('omnibox')
      * @description zooms to geocoder search result
      * @param {object} one search result.
      */
-    scope.zoomToSpatialResult = function (result, origin) {
+    scope.zoomToSpatialResult = function (result) {
       scope.omnibox.searchResults = {};
       scope.query = "";
       State = SearchService.zoomToGoogleGeocoderResult(result, State);
@@ -199,8 +202,7 @@ angular.module('omnibox')
         .then(function (response) {
           // Asynchronous so check whether still relevant.
           if (scope.omnibox.searchResults === undefined) { return; }
-          scope.omnibox.searchResults.timeseries = SearchService
-            .filter(response.results, 'timeseries');
+          scope.omnibox.searchResults.api = response.results;
         }
       );
     };

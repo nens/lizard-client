@@ -18,19 +18,20 @@
       </li>
     </ul>
 
-    <h3 ng-if="omnibox.searchResults.timeseries.length > 0">
+    <h3 ng-if="omnibox.searchResults.api.length > 0">
       <i class="fa fa-clock-o">&nbsp;</i>
-      <span translate>Timeseries</span>&nbsp;(<% omnibox.searchResults.timeseries.length %>)
+      <span translate>Assets</span>&nbsp;(<% omnibox.searchResults.api.length %>)
     </h3>
     <ul>
       <li ng-cloak
-        ng-repeat="result in omnibox.searchResults.timeseries"
+        ng-repeat="result in omnibox.searchResults.api"
         class="cluster location">
-        <a ng-click="zoomToSearchResult(result, 'timeseries')"
+        <a ng-click="zoomToSearchResult(result)"
           tabindex="2"
           href="">
-          <span><% result.location.name %> - <% result.name %></span>
-
+          <i class="fa"
+             ng-class="getIconClass(result.entity_name)"></i>
+          <span><% result.title %></span>
         </a>
       </li>
     </ul>
