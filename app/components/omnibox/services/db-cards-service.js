@@ -16,13 +16,16 @@ angular.module('omnibox')
     var actives = 0;
 
     DataService.assets.forEach(function (asset) {
-      var lowestTS = _.maxBy(
+
+      _.forEach(
         asset.timeseries,
         function (ts) {
-          if (ts.active) { actives++; }
-          return ts.active && ts.order; }
+          if (ts.active) {
+            actives++;
+            orders.push(ts.order);
+          }
+        }
       );
-      if (lowestTS) { orders.push(lowestTS.order); }
 
       _.forEach(
         asset.properties,
@@ -33,6 +36,12 @@ angular.module('omnibox')
           }
         }
       );
+
+      if (asset.entity_name === 'leveecrosssection' &&
+        asset.crosssection.active) {
+        actives++;
+        orders.push(asset.crosssection.order);
+      }
     });
 
     DataService.geometries.forEach(function (geometry) {
@@ -55,7 +64,6 @@ angular.module('omnibox')
   };
 
   var removeItemFromPlot = function (item) {
-
     var order = item.order;
     var uuid = item.uuid; // Timeseries have a uuid. Other plottable items do
                           // not.
@@ -63,7 +71,7 @@ angular.module('omnibox')
     var otherItems = 0;
 
     if (item.uuid) {
-
+      // Check if it was the last timeseries in the chart.
       DataService.assets.forEach(function (asset) {
         otherItems += _.filter(
           asset.timeseries,
@@ -97,6 +105,12 @@ angular.module('omnibox')
             }
           });
         }
+
+        if (asset.entity_name === 'leveecrosssection' &&
+          asset.crosssection.active && asset.crosssection.order > order) {
+          asset.crosssection.order--;
+        }
+
       });
 
       DataService.assets.forEach(function (asset) {

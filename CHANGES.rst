@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Add crosssections visualization in dashboard.
 
 
 Release 2.9.4 (2016-3-1)
