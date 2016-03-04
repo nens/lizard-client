@@ -68,18 +68,9 @@ angular.module('omnibox')
      * @param {object} one search result.
      */
     scope.zoomToSearchResult = function (result) {
-      if (State.box.type !== 'multi-point') {
-        State.selected.reset();
-      }
-      State.selected.assets.addAsset(
-        result.entity_name + '$' + result.entity_id);
-      MapService.setView({
-        lat: result.view[0],
-        lng: result.view[1],
-        zoom: result.view[2] || ZOOM_FOR_OBJECT
-      });
       scope.omnibox.searchResults = {};
       scope.query = "";
+      State = SearchService.zoomToSearchResult(result, State);
     };
 
     /**

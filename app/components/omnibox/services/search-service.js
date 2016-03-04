@@ -90,5 +90,30 @@ angular.module('omnibox')
       return state;
     };
 
+    /**
+     * Zooms to API search result. If the box type is multi-point add the
+     * selected search result to the other selected points, otherwise replace
+     * the currently selected point.
+     *
+     * @param {object} result: API search result.
+     * @param {object} state: the current state.
+     * @return {object} state: the new state.
+     */
+    this.zoomToSearchResult = function (result, state) {
+      if (state.box.type !== 'multi-point') {
+        state.selected.reset();
+      }
+
+      state.selected.assets.addAsset(
+        result.entity_name + '$' + result.entity_id);
+
+      MapService.setView({
+        lat: result.view[0],
+        lng: result.view[1],
+        zoom: result.view[2] || ZOOM_FOR_OBJECT
+      });
+
+      return state;
+    };
   }
 ]);
