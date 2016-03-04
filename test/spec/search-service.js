@@ -34,70 +34,37 @@ describe('Service: SearchService', function () {
         'status' : 'OK'
       },
       endpointResult = {
-          results: [
+        results: [
           {
-            location: {
-              object: {
-                type: 'measuringstation',
-                id: 53,
-                geometry: {
-                  type: 'Point',
-                  coordinates: [
-                    4.749649268530605,
-                    52.9989098864558,
-                    0
-                  ]
-                },
-              },
-            },
-            search_result_type: 'timeseries'  // jshint ignore:line
+            id: 1,
+            title: "B19D0303",
+            description: "396",
+            rank: 1.1,
+            entity_name: "groundwaterstation",
+            entity_id: 4,
+            entity_url: "/api/v2/groundwaterstations/4/",
+            view: [
+                52.53154,
+                4.853579999999999,
+                15
+            ]
           },
           {
-            name: 'TexelTestTestTestTest Maximale waterdiepte',
-            layers: [
-            {
-              slug: 'texeltesttesttesttest-maximale-waterdiepte',
-              type: 'Raster',
-              format: 'Store',
-              url: '/api/v2/raster-aggregates',
-              tiled: true,
-              rescalable: false,
-              scale: 'ratio',
-              quantity: 'Waterhoogte',
-              unit: 'mNAP',
-              options: {
-                styles: 'Blues:0.0:2.0'
-              },
-              color: '',
-              meta: {
-                spatial_bounds: { // jshint ignore:line
-                    west: 4.703263588777599,
-                    east: 4.903438504805467,
-                    north: 53.186603673467665,
-                    south: 52.99573210580159
-                  }
-              }
-            },
-            {
-              slug: 'scenarios:115:maxwdepth',
-              type: 'Raster',
-              format: 'WMS',
-              url: 'http://10.0.3.10:4999/wms',
-              tiled: true,
-              rescalable: false,
-              scale: 'ratio',
-              quantity: 'Waterhoogte',
-              unit: 'mNAP',
-              options: {
-                styles: 'Blues:0.0:2.0'
-              },
-              color: '#FFFFFF',
-            }
-            ],
-            search_result_type: 'layergroup' // jshint ignore:line
-          },
-          ]
-        };
+            id: 2,
+            title: "B38A1855",
+            description: "404",
+            rank: 1.1,
+            entity_name: "groundwaterstation",
+            entity_id: 5,
+            entity_url: "/api/v2/groundwaterstations/5/",
+            view: [
+                51.98899999999999,
+                4.65027,
+                15
+            ]
+          }
+        ]
+      };
 
   beforeEach(inject(function ($injector) {
     SearchService = $injector.get('SearchService');
@@ -110,7 +77,7 @@ describe('Service: SearchService', function () {
         getWest: function () {},
         getEast: function () {},
       }
-    };
+    }
   }));
 
   it('should return an object with a CabinetService promise ', function () {
@@ -134,24 +101,11 @@ describe('Service: SearchService', function () {
       .toBe(ggResult.results[0].geometry.location.lat);
   });
 
-  it('should filter the results to the search_result_type', function () {
-    var filtered = SearchService.filter(endpointResult.results, 'timeseries');
-    expect(filtered.length).toBe(1);
-    filtered = SearchService.filter(endpointResult.results, 'layergroup');
-    expect(filtered.length).toBe(1);
+  xit('should set first API search result as selected on State', function () {
+    SearchService.zoomToSearchResult(endpointResult.results[0], State);
+    expect(State.selected.assets.length)
+      .toBe(1);
+    // Please check here if the selected asset on the State actually
+    // corresponds to the search result.
   });
-
-  it('should instantiate a layer group', function () {
-    var layergroupResult = endpointResult.results[1];
-    SearchService.openLayerGroup(layergroupResult);
-    expect(layergroupResult.hasOwnProperty('lg')).toBe(true);
-  });
-
-  it('should set bounds based on layer', function () {
-    var layergroupResult = endpointResult.results[1];
-    SearchService.openLayerGroup(layergroupResult);
-    expect(layergroupResult.lg.spatialBounds.south)
-      .toBe(layergroupResult.layers[0].meta.spatial_bounds.south); // jshint ignore:line
-  });
-
 });
