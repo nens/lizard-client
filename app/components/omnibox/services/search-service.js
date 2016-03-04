@@ -74,42 +74,6 @@ angular.module('omnibox')
       };
     };
 
-
-    /**
-     * Add result of API searchendpoint to selection.
-     * @param  {object} result search result.
-     */
-    this.zoomToResult = function (result, state) {
-
-      var asset = result.location.object;
-
-      if (asset.type && asset.id) {
-        state.selected.assets.addAsset(asset.type + '$' + asset.id);
-      }
-
-      return state;
-    };
-
-    this.filter = function (results, filterKey) {
-      return results.filter(function (item) {
-        return item.search_result_type === filterKey;
-      });
-    };
-
-
-    this.openLayerGroup = function (result) {
-      if (!result.lg) {
-        result.lg = DataService.createLayerGroup(result);
-      }
-      if (result.lg) {
-        DataService.toggleLayerGroup(result.lg);
-        if (result.lg.spatialBounds) {
-          MapService.fitBounds(result.lg.spatialBounds);
-        }
-
-      }
-    };
-
     /**
      * Zooms to result of geocoder. If result is precise it also simulates a
      * click on the result.
