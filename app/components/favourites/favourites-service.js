@@ -10,7 +10,7 @@ angular.module('favourites')
        *
        * Use a reconfigured 'query' so it actually returns an array of items.
        */
-      var Favourites = $resource('/api/v2/favourites/:id/', {}, {
+      var Favourites = $resource('/api/v2/favourites/:uuid/', {uuid:'@uuid'}, {
         'query': {
           method:'GET',
           isArray:true,
@@ -36,6 +36,10 @@ angular.module('favourites')
        */
       this.fetchAllFavourites = function (params, success, error) {
         return Favourites.query(params, success, error);
+      };
+
+      this.getFavourite = function(uuid, success) {
+        return Favourites.get({'uuid': uuid}, success);
       };
 
       /**
@@ -68,6 +72,44 @@ angular.module('favourites')
        */
       this.deleteFavourite = function (favourite, success, error) {
         return Favourites.delete({id: favourite.id}, success, error);
+      };
+
+      /**
+       * @function
+       * @description calculate the interval from the fav State
+       * to the new state if the interval should be relative
+       */
+      var adhereTemporalStateToInterval = function (favtime) {
+        var now = Date.now();
+
+        var temporal = angular.copy(favtime); // otherwise all changes are applied to the
+                                        // retrieved temporal state.
+
+        temporal.start = now - (temporal.end - temporal.start);
+        temporal.at = now - (temporal.end - temporal.at);
+        if (temporal.end > temporal.now) {
+          temporal.end = now - (temporal.now - temporal.end);
+        } else if (temporal.end < temporal.now) {
+          temporal.end = now - (temporal.end - temporal.now);
+        }
+      };
+
+      /**
+       * Replace the current portal state with the favourite state.
+       * @param {object} favourite - The favourite to apply.
+       */
+      this.applyFavourite = function (favourite) {
+        if (favourite.state.temporal.relative) {
+          adhereTemporalStateToInterval(favourite.state.temporal);
+        }
+
+        _.merge(State, favourite.state);
+
+        // _.merge pushes objects in the list, does not call setAssets
+        // so first make it empty then stuff everything in there.
+        State.selected.assets.resetAssets(favourite.state.selected.assets);
+        // State.selected.assets = favourite.state.selected.assets;
+        State.temporal.timelineMoving = !favourite.state.temporal.timelineMoving; // update timeline
       };
 
       return this;

@@ -56,23 +56,27 @@ angular.module('lizard-nxt')
   $scope.transitionToContext = function (context) {
     if (context !== State.context) {
       State.context = context;
-      var overlay = angular.element('#context-transition-overlay')[0];
-      overlay.style.transition = null;
-      overlay.style.minHeight = window.innerHeight + 'px';
-      $timeout(function () {
-        overlay.style.transition = 'ease .3s';
-        overlay.style.opacity = 1;
-      }, 10);
-      $timeout(function () {
-        $rootScope.context = State.context;
-        overlay.style.opacity = 0;
-      }, 300);
-      $timeout(function () {
-        overlay.style.transition = null;
-        overlay.style.minHeight = 0;
-      }, 600, true);
     }
+    var overlay = angular.element('#context-transition-overlay')[0];
+    overlay.style.transition = null;
+    overlay.style.minHeight = window.innerHeight + 'px';
+    $timeout(function () {
+      overlay.style.transition = 'ease .3s';
+      overlay.style.opacity = 1;
+    }, 10);
+    $timeout(function () {
+      $rootScope.context = State.context;
+      overlay.style.opacity = 0;
+    }, 300);
+    $timeout(function () {
+      overlay.style.transition = null;
+      overlay.style.minHeight = 0;
+    }, 600, true);
   };
+
+  $scope.$watch(State.toString('context'), function () {
+    $scope.transitionToContext(State.context);
+  });
 
   $scope.toggleDashboard = function () {
     $scope.transitionToContext(($scope.context === 'map') ? 'dashboard' : 'map');
