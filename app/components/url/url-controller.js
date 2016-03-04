@@ -273,22 +273,42 @@ angular.module('lizard-nxt')
      * when the url is empty.
      */
     var setStateFromUrl = function (favouriteURL) {
-
+      var language;
+      var boxType;
+      var geom;
+      var layerGroupsFromURL;
+      var mapView;
+      var time;
+      var context;
       if (!favouriteURL) {
-        var language = LocationGetterSetter.getUrlValue(
-            state.language.part, state.language.index),
-          boxType = LocationGetterSetter.getUrlValue(
-            state.boxType.part, state.boxType.index),
-          geom = LocationGetterSetter.getUrlValue(
-            state.geom.part, state.geom.index),
-          layerGroupsFromURL = LocationGetterSetter.getUrlValue(
-            state.layerGroups.part, state.layerGroups.index),
-          mapView = LocationGetterSetter.getUrlValue(
-            state.mapView.part, state.mapView.index),
-          time = LocationGetterSetter.getUrlValue(
-            state.timeState.part, state.timeState.index),
-          context = LocationGetterSetter.getUrlValue(
-            state.context.part, state.context.index);
+        language = LocationGetterSetter.getUrlValue(
+          state.language.part,
+          state.language.index
+        );
+        boxType = LocationGetterSetter.getUrlValue(
+          state.boxType.part,
+          state.boxType.index
+        );
+        geom = LocationGetterSetter.getUrlValue(
+          state.geom.part,
+          state.geom.index
+        );
+        layerGroupsFromURL = LocationGetterSetter.getUrlValue(
+          state.layerGroups.part,
+          state.layerGroups.index
+        );
+        mapView = LocationGetterSetter.getUrlValue(
+          state.mapView.part,
+          state.mapView.index
+        );
+        time = LocationGetterSetter.getUrlValue(
+          state.timeState.part,
+          state.timeState.index
+        );
+        context = LocationGetterSetter.getUrlValue(
+          state.context.part,
+          state.context.index
+        );
       }
 
       setLanguage(language);
