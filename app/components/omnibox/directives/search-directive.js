@@ -17,6 +17,8 @@ angular.module('omnibox')
 
     scope.omnibox.searchResults = {};
 
+    scope.util = UtilService;
+
     var ZOOM_FOR_OBJECT = 16;
 
     // Set focus on search input field.

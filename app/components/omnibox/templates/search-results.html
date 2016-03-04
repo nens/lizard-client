@@ -19,7 +19,7 @@
     </ul>
 
     <h3 ng-if="omnibox.searchResults.api.length > 0">
-      <i class="fa fa-clock-o">&nbsp;</i>
+      <i class="fa fa-map-pin">&nbsp;</i>
       <span translate>Assets</span>&nbsp;(<% omnibox.searchResults.api.length %>)
     </h3>
     <ul>
@@ -30,13 +30,13 @@
           tabindex="2"
           href="">
           <i class="fa"
-             ng-class="getIconClass(result.entity_name)"></i>
+             ng-class="util.getIconClass(result.entity_name)"></i>
           <span><% result.title %></span>
         </a>
       </li>
     </ul>
 
-    <h3 ng-if="omnibox.searchResults.temporal.length > 0" translate>Time</h3>
+    <h3 ng-if="omnibox.searchResults.temporal" translate>Time</h3>
   	<div
   		ng-if="omnibox.searchResults.temporal"
   		class="cluster location">
