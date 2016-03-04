@@ -306,7 +306,7 @@ angular.module('lizard-nxt')
 
       if (context) {
         $scope.transitionToContext(context);
-      } else {
+      } else if (!favouriteURL) {
         LocationGetterSetter.setUrlValue(
           state.context.part, state.context.index, state.context.value);
         $scope.transitionToContext(state.context.value);
