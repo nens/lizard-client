@@ -185,11 +185,29 @@ angular.module('lizard-nxt')
           ? { min: this._xDomainStart, max: this._xDomainEnd }
           : this._maxMin(data, key);
       }
+      d3Objects.range = range;
       d3Objects.scale = this._makeScale(d3Objects.maxMin, range, options);
       d3Objects.axis = this._makeAxis(d3Objects.scale, options);
       return d3Objects;
     },
 
+    /**
+     * @function
+     * @description give back a range based on the Dimensions
+     * @param {string} - axis can either be 'y' or 'x'
+     * return {object} - min and max for the pixel range
+     */
+    _makeRange: function (axis, dimensions) {
+      var width = this._getWidth(dimensions),
+          height = this._getHeight(dimensions),
+          range;
+      if (axis === 'y') {
+        range = { max: 0, min: height };
+      } else {
+        range = { min: 0, max: width };
+      }
+      return range;
+    },
 
     /**
      * @function

@@ -19,7 +19,7 @@ angular.module('lizard-nxt')
    *
    * For now this is a way to keep track of the scales, domains and xy's of the graph
    */
-  function ChartContainer (content, graph, temporal) {
+  function ChartContainer (chartContent, graph, temporal) {
 
     var DEFAULT_GREEN = '#16a085';
 
@@ -27,15 +27,16 @@ angular.module('lizard-nxt')
 
     this._graph = graph;
 
-    this.data = content.data;
     var defaultKeys = {
       x: 'timestamp',
       y: { 'y0': 'min', 'y1': 'max' }
     };
-    this.keys = content.keys || defaultKeys;
-    this.labels = content.labels || {x: '', y:''};
+    this.keys = chartContent.keys || defaultKeys;
+    this.labels = chartContent.labels || {x: '', y:''};
 
-    this.color = content.color || DEFAULT_GREEN;
+    this.color = chartContent.color || DEFAULT_GREEN;
+
+    this.unit = chartContent.unit;
 
     var options = {
       x: {
@@ -47,27 +48,15 @@ angular.module('lizard-nxt')
         orientation: 'left'
       }
     };
-    this._xy = this._graph._createXYGraph(
-      this.data,
-      this.keys,
-      this.labels,
-      temporal ? options : undefined,
-      this._graph._xDomainInfo
-    );
+
+    this.updateXY(chartContent);
     return;
   }
 
-  ChartContainer.prototype.updateXY = function (content) {
-    this.data = content.data;
-    this._xy = this._graph.rescale(
-      this._graph._svg,
-      this._graph.dimensions,
-      this._xy,
-      this.data,
-      this.keys,
-      null,
-      this._graph._xDomainInfo
-    );
+  ChartContainer.prototype.updateXY = function (chartContent) {
+    this.data = chartContent.data;
+    this.y = { maxMin: this._graph._maxMin(this.data, this.keys.y) };
+    this.x = { maxMin: this._graph._maxMin(this.data, this.keys.x) };
   };
 
   return ChartContainer;

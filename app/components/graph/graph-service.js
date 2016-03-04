@@ -108,7 +108,8 @@ angular.module('lizard-nxt')
    */
   Graph.prototype.drawLine = function (content, temporal, transitioning) {
     var graph = this;
-    graph.rescale = rescale;
+    // graph.rescale = rescale;
+    graph._xyPerUnit = {};
     angular.forEach(content, function (item, index) {
       var chartContainer;
 
@@ -116,13 +117,20 @@ angular.module('lizard-nxt')
       if (graph._containers[index]) {
         if (graph._containers[index].constructor === ChartContainer) {
           chartContainer = graph._containers[index];
-          chartContainer.updateXY(item);
           drawLabel(graph._svg, graph.dimensions, chartContainer.labels.y, true);
         }
       } else {
         graph._containers[index] = new ChartContainer(item, graph, temporal);
         chartContainer = graph._containers[index];
       }
+
+      if (chartContainer.data.length === 0) {
+        return; // for the love of pete don't let it continue
+      }
+
+
+      graph._xyPerUnit = updateXYs(chartContainer, graph._svg, graph._xyPerUnit, graph.dimensions);
+      var xy = graph._xyPerUnit[chartContainer.unit];
 
       var data = chartContainer.data,
           keys = chartContainer.keys,
@@ -132,8 +140,8 @@ angular.module('lizard-nxt')
         && chartContainer.keys.y.hasOwnProperty('y1');
 
       chartContainer.pathFn = lineAsArea
-        ? graph._createArea(chartContainer._xy, keys)
-        : graph._createLine(chartContainer._xy, keys);
+        ? graph._createArea(xy, keys)
+        : graph._createLine(xy, keys);
 
         var MIN_POINTS_FOR_SUBSET = 15,
             DELAY = 10, // ms
@@ -177,11 +185,11 @@ angular.module('lizard-nxt')
             keys,
             labels,
             chartContainer.path,
-            chartContainer._xy,
+            xy,
             graph.transTime
           );
         }
-        graph._xy = chartContainer._xy;
+        graph._xy = xy; // for mouse interaction?
     });
 
   };
@@ -425,7 +433,8 @@ angular.module('lizard-nxt')
   var createPie, createArc, drawPie, drawAxes, drawLabel, needToRescale,
       drawPath, setupLineGraph, createDonut, addInteractionToPath, getBarWidth,
       drawVerticalRects, addInteractionToRects, drawHorizontalRects,
-      createXGraph, rescale, createYValuesForCumulativeData, getDataSubset;
+      createXGraph, rescale, createYValuesForCumulativeData, getDataSubset,
+      updateXYs;
 
   /**
    * Creates y cumulatie y values for elements on the same x value.
@@ -471,6 +480,50 @@ angular.module('lizard-nxt')
     );
   };
 
+  /**
+   * @function
+   * @description Updates all of the XY containers for the graph based on all
+   * the timeseries in this graph. It looks for similar units and calculates
+   * the min and the max based on all of the items with the same unit.
+   * In this way the timeseries can be compared and different y-axes calculated.
+   * @param {object} - chartContainer - ChartContainer object with x, y and data
+   * @param {object} - svg - svg selected by d3 to do manipulations on
+   * @param {object} - xyPerUnit - xy characteristics (domain, scale, axis) per unit of the graph
+   * @param {object} - dimensions - object describing the size of the graphCtrl
+   */
+  updateXYs = function (chartContainer, svg, xyPerUnit, dimensions) {
+    var limits = {
+      x: 1,
+      y: 0.2
+    };
+    var orientation = {
+      x: 'bottom',
+      y: 'left'
+    };
+
+    angular.forEach(['x', 'y'], function (key) {
+      var maxMin = Graph.prototype._maxMin(chartContainer.data, chartContainer.keys[key]);
+      var unitXY = xyPerUnit[chartContainer.unit];
+
+      if (unitXY) {
+        maxMin.min = Math.min(chartContainer[key].maxMin.min, unitXY[key].maxMin.min);
+        maxMin.max = Math.max(chartContainer[key].maxMin.max, unitXY[key].maxMin.max);
+      } else {
+        xyPerUnit[chartContainer.unit] = {x: chartContainer.x, y: chartContainer.y };
+        unitXY = xyPerUnit[chartContainer.unit];
+      }
+
+      unitXY[key].maxMin = maxMin;
+      unitXY[key].range = Graph.prototype._makeRange(key, dimensions);
+      unitXY[key].scale = Graph.prototype._makeScale(unitXY[key].maxMin, unitXY[key].range, {scale: 'linear'});
+      unitXY[key].scale.domain([unitXY[key].maxMin.min, unitXY[key].maxMin.max]);
+      unitXY[key].axis = Graph.prototype._makeAxis(unitXY[key].scale, {orientation: orientation[key]});
+      drawAxes(svg, unitXY[key].axis, dimensions, true, Graph.prototype.transTime);
+    });
+
+    return xyPerUnit;
+  };
+
   rescale = function (svg, dimensions, xy, data, keys, origin, xDomainInfo) {
     // Sensible limits to rescale. If the max
     // of the y values is smaller than 0.2 (or 20 %) of the max of the scale,
@@ -484,7 +537,7 @@ angular.module('lizard-nxt')
       y: 'left'
     };
     origin = origin || {};
-    // Decide to rescale for each axis.
+    // Decide to rescale for each axis. Non canem qui intelligit.
     angular.forEach(xy, function (value, key) {
       if (needToRescale(data, keys[key], limits[key], value.maxMin, xDomainInfo)) {
         value.maxMin = key === "x" && xDomainInfo
