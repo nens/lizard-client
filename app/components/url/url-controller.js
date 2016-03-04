@@ -255,22 +255,17 @@ angular.module('lizard-nxt')
      * return {object} - thennable promise which resolves to true/false
      */
     var favouritesFromUrl = function () {
-      var deferred = $q.defer();
-      var first_url_part = LocationGetterSetter.getUrlValue(
+      var firstUrlPart = LocationGetterSetter.getUrlValue(
         'path', 0);
-      if ( first_url_part !== 'favourites' ) {
-        deferred.resolve(false);
+      if (firstUrlPart !== 'favourites') {
+        return false;
       } else {
         var favouriteUUID = LocationGetterSetter.getUrlValue(
-            'path', 1);
-        FavouritesService.getFavourite(
-          favouriteUUID,
-          function (favourite, getResponseHeaders) {
-            FavouritesService.applyFavourite(favourite);
-            deferred.resolve(true);
-          });
+          'path',
+          1
+        );
+        return favouriteUUID;
       }
-      return deferred.promise;
     };
 
     /**
@@ -346,7 +341,20 @@ angular.module('lizard-nxt')
     };
 
 
-    favouritesFromUrl().then(setStateFromUrl);
+    var favouriteUUID = favouritesFromUrl();
+    if (favouriteUUID) {
+      var deferred = $q.defer();
+      FavouritesService.getFavourite(
+        favouriteUUID,
+        function (favourite, getResponseHeaders) {
+          FavouritesService.applyFavourite(favourite);
+          deferred.resolve(true);
+        });
+      deferred.promise.then(setStateFromUrl);
+    }
+    else {
+      setStateFromUrl(false);
+    }
 
   }
 ]);
