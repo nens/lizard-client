@@ -17,6 +17,8 @@ angular.module('omnibox')
 
     scope.omnibox.searchResults = {};
 
+    scope.util = UtilService;
+
     var ZOOM_FOR_OBJECT = 16;
 
     // Set focus on search input field.
@@ -61,40 +63,21 @@ angular.module('omnibox')
       scope.omnibox.searchResults = {};
     };
 
-
-
-    /**
-     * @description opens layergroup belonging to result
-     * @param {object} search result with layergroup.
-     * simple pointer to SearchService functio
-     */
-    scope.openLayerGroup = function (lg) {
-      scope.query = "";
-      scope.omnibox.searchResults = {};
-      SearchService.openLayerGroup(lg);
-    };
-
     /**
      * @description zooms to search resulit
      * @param {object} one search result.
      */
-    scope.zoomToSearchResult = function (result, origin) {
-      State = SearchService.zoomToResult(result, State);
-      var object = result.location.object;
-      MapService.setView({
-        lat: object.geometry.coordinates[1],
-        lng: object.geometry.coordinates[0],
-        zoom: ZOOM_FOR_OBJECT
-      });
+    scope.zoomToSearchResult = function (result) {
       scope.omnibox.searchResults = {};
       scope.query = "";
+      State = SearchService.zoomToSearchResult(result, State);
     };
 
     /**
      * @description zooms to geocoder search result
      * @param {object} one search result.
      */
-    scope.zoomToSpatialResult = function (result, origin) {
+    scope.zoomToSpatialResult = function (result) {
       scope.omnibox.searchResults = {};
       scope.query = "";
       State = SearchService.zoomToGoogleGeocoderResult(result, State);
@@ -170,6 +153,7 @@ angular.module('omnibox')
      */
     var setResultsOnBox = function (results) {
       var MAX_RESULTS = 3;
+
       if (
         results.temporal.isValid()
         && results.temporal.valueOf() > UtilService.MIN_TIME
@@ -211,10 +195,7 @@ angular.module('omnibox')
         .then(function (response) {
           // Asynchronous so check whether still relevant.
           if (scope.omnibox.searchResults === undefined) { return; }
-          scope.omnibox.searchResults.timeseries = SearchService
-            .filter(response.results, 'timeseries');
-          scope.omnibox.searchResults.layergroups = SearchService
-            .filter(response.results, 'layergroup');
+          scope.omnibox.searchResults.api = response.results;
         }
       );
     };
@@ -236,4 +217,3 @@ angular.module('omnibox')
   };
 
 }]);
-

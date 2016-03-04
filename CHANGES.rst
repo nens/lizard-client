@@ -3,7 +3,17 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Add share favourites.
+
+- Remove layergroups from search.
+
+- Adapt search results to updated full-text search API response.
+
+
+Release 2.9.4 (2016-3-1)
+---------------------
+- Favourites have more state and gets some bugfixes
 
 
 Release 2.9.3 (2016-2-26)

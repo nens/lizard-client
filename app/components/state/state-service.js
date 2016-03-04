@@ -45,7 +45,8 @@ angular.module('global-state')
             + "] are accepted values."
           );
         }
-      }
+      },
+      enumerable: true
     });
 
     // Default language.
@@ -56,7 +57,6 @@ angular.module('global-state')
     state.layerGroups = {
       all: [], // Immutable representation of all layergroups
       active: [],
-      isLoading: null, // Either gettingData or syncingTime
       gettingData: false, // Making server requests through DataService
       timeIsSyncing: false // Getting new layers and so on
     };
@@ -65,7 +65,8 @@ angular.module('global-state')
     Object.defineProperty(state.layerGroups, 'isLoading', {
       get: function () {
         return state.layerGroups.timeIsSyncing || state.layerGroups.gettingData;
-      }
+      },
+      enumerable: false
     });
 
     // Box
@@ -86,7 +87,8 @@ angular.module('global-state')
             + "] are accepted values."
           );
         }
-      }
+      },
+      enumerable: true
     });
 
     // Spatial
@@ -162,7 +164,8 @@ angular.module('global-state')
       set: function (start) {
         _start = UtilService.getMinTime(start);
         state.temporal.at = _moveAtInTemporalExtent(state.temporal);
-      }
+      },
+      enumerable: true
     });
 
     // State.temporal.end must be lower than MAX_TIME_FOR_EXTENT
@@ -172,7 +175,8 @@ angular.module('global-state')
       set: function (end) {
         _end = UtilService.getMaxTime(end);
         state.temporal.at = _moveAtInTemporalExtent(state.temporal);
-      }
+      },
+      enumerable: true
     });
 
     /**
