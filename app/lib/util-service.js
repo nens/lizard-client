@@ -41,6 +41,23 @@ angular.module('lizard-nxt')
     return roundedTimestamp;
   };
 
+  // List of graph colors used to color timeseries
+  this.GRAPH_COLORS = [
+    '#1abc9c', // turquoise
+    '#3498db', // peterRiver
+    '#f1c40f', // sunflower
+    '#9b59b6', // amethyst
+    '#2ecc71', // emerald
+    '#2980b9', // belizeHole
+    '#e67e22', // carrot
+    '#8e44ad', // wisteria
+    '#16a085', // greenSea
+    '#34495e', // wetAsphalt
+    '#27ae60', // nephritis
+    '#f39c12', // orange
+    '#2c3e50', // midnightBlue
+    '#d35400' // pumpkin
+  ];
 
   /**
    * Returns true for <protocol>:<domain>.
@@ -118,7 +135,7 @@ angular.module('lizard-nxt')
     // timeline, while omnibox subsequently syncs to timeState.aggWindow
 
     var aggWindow;
-    var MIN_PX = 4; // Minimum width of a bar
+    var MIN_PX = 3; // Minimum width of a bar
 
     // ms per pixel
     var msPerPx = (stop - start) / drawingWidth;
@@ -146,6 +163,7 @@ angular.module('lizard-nxt')
     return text;
   };
 
+  this.getAggWindowAsText = this.getAggWindowAsString;
 
   /**
    * @function fadeCurrentCards
@@ -178,6 +196,58 @@ angular.module('lizard-nxt')
         }
       }, 700);
     }
+  };
+
+
+  // helper for time stuff
+  this.hour = 60 * 60 * 1000;
+  this.day = 24 * this.hour;
+
+  /**
+   * @function parseDaysHours
+   * @param {string} 0Days3Hours string
+   * @return {int} milliseconds representation
+   */
+  this.parseDaysHours = function (timeString) {
+    if (timeString === undefined) {
+      return 0;
+    }
+
+    var days = parseInt(timeString.split('Days')[0]);
+    var hours = parseInt(timeString.split('Days')[1].split('Hours')[0]);
+
+    var totalMS = 0;
+    if (!isNaN(days)) {
+      totalMS += parseInt(days) * this.day;
+    }
+
+    if (!isNaN(hours)) {
+      totalMS += parseInt(hours) * this.hour;
+    }
+
+    return totalMS;
+  };
+
+  /**
+   * @function getTimeIntervalAsText
+   * @param {int} Start time
+   * @param {int} End time
+   * @return {string} Difference in format of: 7 days 3 hours
+   */
+  this.getTimeIntervalAsText = function (start, end) {
+    var days = '',
+        hours = '';
+
+    // only calculate if the end is larger than start
+    if (end > start) {
+      var interval = end - start;
+      days = Math.floor(interval / this.day);
+      hours = Math.floor((interval % this.day) / this.hour);
+    }
+    return {
+      days: days,
+      hours: hours
+    };
   };
 
   /**
@@ -646,7 +716,7 @@ angular.module('lizard-nxt')
   })();
 
   this.MIN_TIME = (new Date("Jan 01, 1900")).getTime();
-  this.MAX_TIME = (new Date()).getTime() + 24 * 60 * 60 * 1000;
+  this.MAX_TIME = (new Date()).getTime() + 20 * 24 * 60 * 60 * 1000; // 20 Days
   this.TIMELINE_LEFT_MARGIN = 60;
   this.TIMELINE_RIGHT_MARGIN = 40;
   this.OMNIBOX_WIDTH = 420;
@@ -669,8 +739,8 @@ angular.module('lizard-nxt')
     return leftMargin;
   };
 
-  this.getCurrentWidth = function () {
-    return window.innerWidth - (
+  this.getCurrentWidth = function (element) {
+    return element[0].clientWidth - (
       this.TIMELINE_LEFT_MARGIN + this.TIMELINE_RIGHT_MARGIN
     );
   };
@@ -724,7 +794,7 @@ angular.module('lizard-nxt')
    * @descriptions - Round numbers, but use specified decimalCount for
    *                 resolution
    * @param {number} nr- The number to round.
-   * @param {integer/undefined} - The amount of decimals wanted.
+   * @param {integer} - The amount of decimals wanted. Integer of undefined
    * @return {float} - The formatted number
    */
   this.round = function (nr, decimalCount) {
@@ -809,11 +879,12 @@ angular.module('lizard-nxt')
    * time) in a way that makes it comprehensible for les autres.
    *
    * @param {object []} data - list with data objects to parse.
-   * @param {object} latLng - latlng object with location of data.
+   * @param {array} coords - list of coordinates of data.
    * @returns list of formatted data objects.
    */
-  this.formatCSVColumns = function (data, latLng) {
+  this.formatCSVColumns = function (data, coords) {
     var i,
+        latLng = L.latLng(coords[1], coords[0]),
         formattedDateTime,
         formattedData = [];
 

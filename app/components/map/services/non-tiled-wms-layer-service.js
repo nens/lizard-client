@@ -165,28 +165,12 @@ angular.module('map')
             syncTime: function (timeState, map) {
               var defer = $q.defer();
 
-              // Resolve and return when nothing changed.
-              if (timeState.at === this.timeState.at
-                && timeState.aggWindow === this.timeState.aggWindow
-                && timeState.playing === this.timeState.playing) {
-                defer.resolve();
-                return defer.promise;
-              }
-
-              // Store copy no reference.
-              this.timeState = angular.copy(timeState);
+              this.timeState = timeState;
 
               // this only works for stores with different aggregation levels
               // for now this is only for the radar stores
               // change image url based on timestate.
-              var store = this._determineStore(timeState);
-              this._temporalResolution = store.resolution;
-              this._imageUrlBase = RasterService.buildURLforWMS(
-                this,
-                map,
-                store.name,
-                timeState.playing
-              );
+              var store = this._determineStore(this.timeState);
 
               this._temporalResolution = store.resolution;
 
@@ -198,7 +182,10 @@ angular.module('map')
                   + store.name.split('/')[1];
               }
 
-              this._syncToNewTime(timeState, map, defer);
+              // Continue when layers need to update to new time.
+              if (this._imageOverlays.length) {
+                this._syncToNewTime(timeState, map, defer);
+              }
 
               return defer.promise;
             },
@@ -309,15 +296,36 @@ angular.module('map')
              * @param  {object} defer       defer to resolve when done
              */
             _animateSyncTime: function (map, currentDate, defer) {
-              var newBounds = map.getBounds();
+              var newBounds = this._getAnimationBounds(map);
 
               if (this._imageOverlays.length < this._bufferLength
-                || newBounds.getNorth() !== this._bounds.getNorth()
-                || newBounds.getWest() !== this._bounds.getWest()) {
-                // add leaflet layers to fill up the buffer
+                || newBounds.getNorth() !== this._animationBounds.getNorth()
+                || newBounds.getWest() !== this._animationBounds.getWest()) {
+                this._animationBounds = newBounds;
+
+                // add leaflet layers to fill up the buffer and set imageUrlBase
+                // which depends on the bounds of the map and the layer and the
+                // store that corresponds to the timeState.
+
+                var store = this._determineStore(this.timeState);
+
+                var options = {
+                  bounds: this._animationBounds,
+                  size: this._getImageSize(map, this._animationBounds)
+                };
+
+                this._imageUrlBase = RasterService.buildURLforWMS(
+                  this,
+                  map,
+                  store.name,
+                  this.timeState.playing,
+                  options
+                );
+
                 this._imageOverlays = this._createImageOverlays(
                   map,
-                  this._bufferLength
+                  this._bufferLength,
+                  this._animationBounds
                 );
               }
 
@@ -348,19 +356,69 @@ angular.module('map')
              * @param  {int} buffer   amount of imageOverlays to include.
              * @return {array} array of L.imageOverlays.
              */
-            _createImageOverlays: function (map, buffer) {
+            _createImageOverlays: function (map, buffer, bounds) {
               // detach all listeners and references to the imageOverlays.
               this.remove(map);
               // create new ones.
               for (var i = this._imageOverlays.length; i < buffer; i++) {
                 this._imageOverlays.push(
-                  addLeafletLayer(map, LeafletService.imageOverlay('', map.getBounds()))
+                  addLeafletLayer(map, LeafletService.imageOverlay('', bounds))
                 );
               }
-              this._bounds = angular.copy(map.getBounds());
               return this._imageOverlays;
             },
 
+            /**
+             * Takes the bounds of the map and creates an intersection of the
+             * layer and the map for animation.
+             *
+             * @param  {L.Map} map with getBounds
+             * @return {L.LatLngBounds} leaflet bounds of intersection
+             */
+            _getAnimationBounds: function (map) {
+              var mapBounds = map.getBounds();
+
+              var smallestSoutWest = LeafletService.latLng(
+                Math.max(this.bounds.south, mapBounds.getSouth()),
+                Math.max(this.bounds.west, mapBounds.getWest())
+              );
+
+              var smallesNorthEast = LeafletService.latLng(
+                Math.min(this.bounds.north, mapBounds.getNorth()),
+                Math.min(this.bounds.east, mapBounds.getEast())
+              );
+
+              return LeafletService.latLngBounds(
+                smallestSoutWest,
+                smallesNorthEast
+              );
+
+            },
+
+            /**
+             * Determines the pixel size of the imageoverlay on the map.
+             *
+             * @param  {L.Map} map
+             * @param  {L.LatLngBounds} animationBounds intersection of map
+             *                          bounds and layer bounds.
+             *
+             * @return {object}  object with x and y size in horizontal (x) and
+             *                               vertical (y) direction.
+             */
+            _getImageSize: function (map, animationBounds) {
+              var bottomLeft = map.latLngToContainerPoint(
+                animationBounds.getSouthWest()
+              );
+
+              var topRight = map.latLngToContainerPoint(
+                animationBounds.getNorthEast()
+              );
+
+              return {
+                x : topRight.x - bottomLeft.x,
+                y: bottomLeft.y- topRight.y
+              };
+            },
 
             /**
              * Local helper that returns a rounded timestamp

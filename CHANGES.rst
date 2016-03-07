@@ -1,7 +1,182 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (2.4.1) (XXXX-XX-XX)
+Unreleased (2.9.0) (XXXX-XX-XX)
+-------------------------------
+
+- Add share favourites.
+
+- Remove layergroups from search.
+
+- Adapt search results to updated full-text search API response.
+
+
+Release 2.9.4 (2016-3-1)
+---------------------
+- Favourites have more state and gets some bugfixes
+
+
+Release 2.9.3 (2016-2-26)
+---------------------
+-
+
+
+Release 2.9.2 (2016-2-26)
+---------------------
+-
+
+
+Release 2.9.1 (2016-2-26)
+---------------------
+
+- Add colorpicker to omnibox timeseries on the dashboard.
+
+- Added attributes for LeveeCrosssection and MonitoringWell.
+
+- Fix data.data.filter bug in dataservice.
+
+- Add basic support for drag and drop. Click puts ts in seperate graph. Drag
+adds ts to existing.
+
+
+Release 2.8.2 (2016-2-15)
+---------------------
+
+- Add default color and order to timeseries.
+
+- Enable toggling timeseries and temporal raster data off in db.
+
+- Add subtle grid in db.
+
+- Improve allignment of graphs in db.
+
+
+Release 2.8.1 (2016-2-12)
+---------------------
+
+- Fix landuse, kind of.
+
+- Fix no rain export.
+
+- Fix statistics.
+
+- Fix no rain in box.
+
+- Up angular and everything related to 1.5.0.
+
+- Draw selected timeseries and raster data in dashboard.
+
+- No longer load map before dashboard. Dashboard no longer needs map.
+
+- Refactored timeseries. State.selected.timeseries keeps track of selected ts
+  TimeseriesService synchronizes the data with the selection. Draw graphs for
+  TimeseriesService.timeseries.
+
+- Only startPlugins if Lizard plugins is loaded.
+
+- Add chalk to npm dependencies.
+
+- Refine the data-menu restyle.
+
+- Added ansible deployment.
+
+- Add 'add extra layers to the portal' functionality to the data menu.
+
+- Update font-awesome from 4.2.0 to 4.5.0.
+
+- Re-add help button to the user menu.
+
+- Fix data menu tools such that the entire button is clickable instead of just
+  the icon.
+
+- Fix data menu crosshair click is also toggles the layer visibility.
+
+- Fix translation of creation errors in annotations directive.
+
+- Add favourites.
+
+- Time relative to now, in the url and in favourites.
+
+
+Release 2.7.1 (2016-1-29)
+---------------------
+
+- Add geometry to annotation and add annotation to geometry. Enabling annotation
+  on latlngs.
+
+- Empty vector cache when closing layergroup.
+
+- Use map-service spatialSelect when clicking on events.
+
+- Use specified url when getting 'vector' data. Convert to events when
+annotation
+
+- Set full-details to false when more than two selected elements.
+
+- Added notification bar with notie
+
+- Add plugin dom elements and js file
+
+- Adjusted the styling of the plugins.
+
+- Graphs are refactored to display multiple lines.
+
+- Improve the dashboard/map toggle.
+
+- Restyle & resize timeline.
+
+- Added close-card directive to remove assets from selection.
+
+- Added state.assets.selection and state.geometries.selection to store ids of
+  selected assets or geometry.
+
+- Migrate data-fetch logic from box to data-service. DataService.assets and
+  DataService.geometries contains data of the selection.
+
+- Added ng-animate to omnibox.
+
+- Restyle the user menu.
+
+- Restyle the search box.
+
+- Fix bugs in zoom buttons, openLayerGroups and clearing of the search query.
+
+- Initial restyle of the data menu.
+
+
+Release 2.6.1 (2016-1-18)
+---------------------
+
+- Created specific omnibox dashboard card for dashboard.
+
+- Keep global state when destroying omnibox controller so other controllers can use draw cards for the same assets.
+
+- Get assets data and ts for dashboard omnibox.
+
+- Added header directive for asset cards and use them for point, multi and dashboard cards.
+
+- Remove some obsolete css.
+
+- Keep global stat when destroying omnibox controllers so other controllers can draw cards for the same assets.
+
+- Enable timeseries service to only request meta data.
+
+- Fixed a regression bug in dashboard, tctx is now dashboard.
+
+- Fixed missing parameter referenced unit error in dashboard. It is consistent with the rest, no ts when when the pru is missing.
+
+- Dashboard graphs have a shadow around them and are placed under each other correctly.
+
+- Url sets state for point and multipoint.
+
+- Fixed a bug with spatial.here not cleaned on point scope destroy.
+
+- Fixed a bug with geometry not drawn in multipolygon.
+
+- Sped up the context switch since we no longer need the map to create a dashboard on init.
+
+
+Release 2.5.1 (2015-12-11)
 ---------------------
 
 - When rain station request timeseries for a specific aggregation window instead
@@ -69,6 +244,57 @@ Release 2.3.1 (2015-11-5)
 
 - Fix clip path not clipping. Use absolute url to refer to clippath and keep
   track of the url for nxt-d3 instances.
+
+
+Release 2.2.13 (2016-2-15)
+---------------------
+
+- Set max zoom level of leaflet from 19 to 21.
+
+- Updated lookups of shape and material codes in lizard-nxt-filters.js.
+
+
+Release 2.2.12 (2016-2-5)
+---------------------
+
+- Fix not rendering filter attributes in omnibox.
+
+
+Release 2.2.11 (2016-1-18)
+---------------------
+
+- Bump MAX_TIME (future) from 1 to 20 days.
+
+
+Release 2.2.10 (2016-1-8)
+---------------------
+
+- Fix pagination for scenarios page.
+
+- Fix WMSGetFeatureInfo bug wrong relative pixel coordinates.
+
+
+Release 2.2.9 (2015-12-16)
+---------------------
+
+- Fix wms getfeatureinfo getting info of features not being clicked on.
+
+- Fix rescale layer on doubleclick when initial domain is set.
+
+- Fix no units on y-axes in time-ctx.
+
+- Fix labelling of rectangles in tim-ctx out of drawing area.
+
+
+Release 2.2.8 (2015-12-7)
+---------------------
+
+- Fix click on animation pause button not registered.
+
+- Animate only the intersection of map bounds and layer bounds, to have more
+  resolution with less data.
+
+- Store bounds of layer on group and layer for zooming to lg and animating wms.
 
 
 Release 2.2.7 (2015-11-25)

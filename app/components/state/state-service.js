@@ -30,7 +30,7 @@ angular.module('global-state')
 
     // Context. State.context returns 'map' or 'db', it can only be set with
     // either one of those values.
-    var _context = 'map'; // The default
+    var _context = ''; // Set on init from url or defaults to map.
     var CONTEXT_VALUES = ['map', 'dashboard', 'scenarios'];
     Object.defineProperty(state, 'context', {
       get: function () { return _context; },
@@ -45,7 +45,8 @@ angular.module('global-state')
             + "] are accepted values."
           );
         }
-      }
+      },
+      enumerable: true
     });
 
     // Default language.
@@ -56,7 +57,6 @@ angular.module('global-state')
     state.layerGroups = {
       all: [], // Immutable representation of all layergroups
       active: [],
-      isLoading: null, // Either gettingData or syncingTime
       gettingData: false, // Making server requests through DataService
       timeIsSyncing: false // Getting new layers and so on
     };
@@ -65,14 +65,15 @@ angular.module('global-state')
     Object.defineProperty(state.layerGroups, 'isLoading', {
       get: function () {
         return state.layerGroups.timeIsSyncing || state.layerGroups.gettingData;
-      }
+      },
+      enumerable: false
     });
 
     // Box
     state.box = {};
 
     var _type = 'point'; // Default box type
-    var TYPE_VALUES = ["point", "line", "region", "area", "omnibox-dashboard"];
+    var TYPE_VALUES = ["point", "line", "region", "area", "multi-point"];
     Object.defineProperty(state.box, 'type', {
       get: function () { return _type; },
       set: function (type) {
@@ -86,15 +87,12 @@ angular.module('global-state')
             + "] are accepted values."
           );
         }
-      }
+      },
+      enumerable: true
     });
 
     // Spatial
     state.spatial = {
-      here: {},
-      points: [], // History of here for drawing and creating line and polygons
-      region: {},// geojson feature describing region, with name and type in
-              // properties
       bounds: { // leaflet bounds object, initialized with a validity check
                 // function.
         isValid: function () { return false; }
@@ -105,22 +103,59 @@ angular.module('global-state')
       mapMoving: false
     };
 
+    state.selected = {
+      assets: [], // hydra-core asset id <entity>$<id>,
+                  // is defined in DataService use state.selected.asset.addAsset
+                  // to add and state.selected.assetremoveAsset to remove
+                  // asset, or reset by calling state.selected.reset()
+      geometries: [], // geojson with points, lines, polygons. Same as asset,
+                      // is redefined in dataservice. use addGeometry and
+                      // removegeometry on state.selected.geometries to ass or
+                      // remove individual geometries or use reset function.
+      timeseries: [], // <uuid> Redefined in timeseriesService. mirrored
+                      // asynchronously by timeseriesService.timeseries. Array
+                      // only contains selected timeseries.
+      reset: function () {
+        // Selected items
+        state.selected.assets = [];
+        state.selected.geometries = [];
+        state.selected.timeseries = [];
+      }
+    };
+
+    state.selected.reset();
+
     // Temporal
     var now = Date.now(),
-        hour = 60 * 60 * 1000,
-        day = 24 * hour,
-        INITIAL_START_FOR_EXTENT = now - 3 * hour,
-        INITIAL_END_FOR_EXTENT = now + 3 * hour;
+        INITIAL_START_FOR_EXTENT = now - 3 * UtilService.hour,
+        INITIAL_END_FOR_EXTENT = now + 3 * UtilService.hour;
 
     state.temporal = {
       at: now,
-      aggWindow: 1000 * 60 * 5,  // 5 minutes
       buffering: false,
       timelineMoving: false,
       playing: false,
       start: null, // defined below
-      end: null // defined below
+      end: null, // defined below
+      relative: true // relative or absolut offset.
     };
+
+    Object.defineProperty(state.temporal, 'aggWindow', {
+
+      get: function () {
+
+        var drawingWidth = 320;
+        if (state.context === 'dashboard') {
+          drawingWidth = angular.element('.dashboard-wrapper').width();
+        }
+
+        return UtilService.getAggWindow(
+          state.temporal.start,
+          state.temporal.end,
+          drawingWidth
+        );
+      }
+    });
 
     // State.temporal.start must be higher than MIN_TIME_FOR_EXTENT
     var _start = INITIAL_START_FOR_EXTENT;
@@ -129,7 +164,8 @@ angular.module('global-state')
       set: function (start) {
         _start = UtilService.getMinTime(start);
         state.temporal.at = _moveAtInTemporalExtent(state.temporal);
-      }
+      },
+      enumerable: true
     });
 
     // State.temporal.end must be lower than MAX_TIME_FOR_EXTENT
@@ -139,7 +175,8 @@ angular.module('global-state')
       set: function (end) {
         _end = UtilService.getMaxTime(end);
         state.temporal.at = _moveAtInTemporalExtent(state.temporal);
-      }
+      },
+      enumerable: true
     });
 
     /**

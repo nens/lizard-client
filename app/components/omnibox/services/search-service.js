@@ -37,22 +37,30 @@ angular.module('omnibox')
      *
      * @param  {str} searchString used to query geocoder and parse date.
      * @param  {object} spatialState to use in biasing geocoder to current view.
-     * @return {object.promise and object.moment} moment is a moment.js object
-     *                                            promise resolves with response
-     *                                            from geocoder.
+     * @return {object} object with moment and promise
+     *                        moment is a moment.js object
+     *                        promise resolves with response from geocoder.
      */
     this.search = function (searchString, state) {
+
+      var bounds;
+
+      // bounds are not available in the dashboard view.
+      if (state.spatial.bounds.getSouth) {
+          bounds = // Prefer results from the current viewport
+            state.spatial.bounds.getSouth() + ',' +
+            state.spatial.bounds.getWest() + '|' +
+            state.spatial.bounds.getNorth() + ',' +
+            state.spatial.bounds.getEast();
+      }
       // TODO: request results in portals language and restrict results based
       // on portal by adding: components: 'country:NL'.
       var prom = CabinetService.geocode.get({
         address: searchString,
         language: state.language, // Preferred language of search results.
-        bounds: // Prefer results from the current viewport
-          state.spatial.bounds.getSouth() + ',' +
-          state.spatial.bounds.getWest() + '|' +
-          state.spatial.bounds.getNorth() + ',' +
-          state.spatial.bounds.getEast()
+        bounds: bounds
       });
+
       var moment = dateParser(searchString);
 
       var search = CabinetService.search.get({
@@ -64,44 +72,6 @@ angular.module('omnibox')
         spatial: prom,
         temporal: moment
       };
-    };
-
-
-    /**
-     * Zooms to result of API searchendpoint. It also simulates a
-     * click on the result.
-     * @param  {object} result search result.
-     */
-    this.zoomToResult = function (result, state) {
-
-      var object = result.location.object;
-
-      state.spatial.here = LeafletService.latLng(
-        object.geometry.coordinates[1],
-        object.geometry.coordinates[0]
-      );
-
-      return state;
-    };
-
-    this.filter = function (results, filterKey) {
-      return results.filter(function (item) {
-        return item.search_result_type === filterKey;
-      });
-    };
-
-
-    this.openLayerGroup = function (result) {
-      if (!result.lg) {
-        result.lg = DataService.createLayerGroup(result);
-      }
-      if (result.lg) {
-        DataService.toggleLayerGroup(result.lg);
-        if (result.lg.spatialBounds) {
-          MapService.fitBounds(result.lg.spatialBounds);
-        }
-
-      }
     };
 
     /**
@@ -120,5 +90,30 @@ angular.module('omnibox')
       return state;
     };
 
+    /**
+     * Zooms to API search result. If the box type is multi-point add the
+     * selected search result to the other selected points, otherwise replace
+     * the currently selected point.
+     *
+     * @param {object} result: API search result.
+     * @param {object} state: the current state.
+     * @return {object} state: the new state.
+     */
+    this.zoomToSearchResult = function (result, state) {
+      if (state.box.type !== 'multi-point') {
+        state.selected.reset();
+      }
+
+      state.selected.assets.addAsset(
+        result.entity_name + '$' + result.entity_id);
+
+      MapService.setView({
+        lat: result.view[0],
+        lng: result.view[1],
+        zoom: result.view[2] || ZOOM_FOR_OBJECT
+      });
+
+      return state;
+    };
   }
 ]);

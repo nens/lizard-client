@@ -1,61 +1,53 @@
-<div class="search-results">
+<div class="card active">
 
-  <h3 ng-if="box.content.searchResults.spatial.length > 0">
-    <i class="fa fa-map-marker">&nbsp;</i>
-    <span translate>Locations</span>&nbsp;(<% box.content.searchResults.spatial.length %>)
-  </h3>
-  <ul>
-    <li ng-cloak
-      ng-repeat="result in box.content.searchResults.spatial"
-      class="cluster location">
-      <a ng-click="zoomToSpatialResult(result)"
-        class="pointer clickable">
-        <span><% result.formatted_address %></span>
-      </a>
-    </li>
-  </ul>
+  <div class="search-results">
 
-  <h3 ng-if="box.content.searchResults.timeseries.length > 0">
-    <i class="fa fa-clock-o">&nbsp;</i>
-    <span translate>Timeseries</span>&nbsp;(<% box.content.searchResults.timeseries.length %>)
-  </h3>
-  <ul>
-    <li ng-cloak
-      ng-repeat="result in box.content.searchResults.timeseries"
-      class="cluster location">
-      <a ng-click="zoomToSearchResult(result, 'timeseries')"
-        class="pointer clickable">
-        <span><% result.location.name %> - <% result.name %></span>
-      </a>
-    </li>
-  </ul>
+    <h3 ng-if="omnibox.searchResults.spatial.length > 0">
+      <i class="fa fa-map-marker">&nbsp;</i>
+      <span translate>Locations</span>&nbsp;(<% omnibox.searchResults.spatial.length %>)
+    </h3>
+    <ul>
+      <li ng-cloak
+        ng-repeat="result in omnibox.searchResults.spatial"
+        class="cluster location">
+        <a ng-click="zoomToSpatialResult(result)"
+          tabindex="2"
+          href="">
+          <span><% result.formatted_address %></span>
+        </a>
+      </li>
+    </ul>
 
-  <h3 ng-if="box.content.searchResults.layergroups.length > 0">
-    <i class="fa fa-clock-o">&nbsp;</i>
-    <span translate>Map</span>&nbsp;(<% box.content.searchResults.layergroups.length %>)
-  </h3>
-  <ul>
-    <li ng-cloak
-      ng-repeat="result in box.content.searchResults.layergroups"
-      class="cluster location">
-      <a ng-click="openLayerGroup(result)"
-        class="pointer clickable">
-        <span><% result.name %></span>
-      </a>
-    </li>
-  </ul>
+    <h3 ng-if="omnibox.searchResults.api.length > 0">
+      <i class="fa fa-map-pin">&nbsp;</i>
+      <span translate>Assets</span>&nbsp;(<% omnibox.searchResults.api.length %>)
+    </h3>
+    <ul>
+      <li ng-cloak
+        ng-repeat="result in omnibox.searchResults.api"
+        class="cluster location">
+        <a ng-click="zoomToSearchResult(result)"
+          tabindex="2"
+          href="">
+          <i class="fa"
+             ng-class="util.getIconClass(result.entity_name)"></i>
+          <span><% result.title %></span>
+        </a>
+      </li>
+    </ul>
 
-  <h3 ng-if="box.content.searchResults.temporal.length > 0" translate>Time</h3>
-	<div
-		ng-if="box.content.searchResults.temporal"
-		class="cluster location">
-	  <a ng-click="zoomToTemporalResult(box.content.searchResults.temporal)"
-	    class="pointer clickable">
-	    <span><% box.content.searchResults.temporal.format(
-	    	box.content.searchResults.temporal.nxtFormatString
-	    ) %></span>
-	  </a>
-	</div>
+    <h3 ng-if="omnibox.searchResults.temporal" translate>Time</h3>
+  	<div
+  		ng-if="omnibox.searchResults.temporal"
+  		class="cluster location">
+  	  <a ng-click="zoomToTemporalResult(omnibox.searchResults.temporal)"
+  	    class="pointer clickable">
+  	    <span><% omnibox.searchResults.temporal.format(
+  	    	omnibox.searchResults.temporal.nxtFormatString
+  	    ) %></span>
+  	  </a>
+  	</div>
+
+  </div>
 
 </div>
-

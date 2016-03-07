@@ -1,22 +1,17 @@
-<div ng-controller="rain">
+<div>
 
   <div class="card active">
-    <div class="card-content"
-      ng-init="lg = box.content.rain">
-
-      <% aggWinToYLabel %>
+    <div class="card-content">
      <full-details></full-details>
+
      <span class="card-title-text" ng-class="{hidden: fullDetails}" translate>Rain</span>
-     <div ng-class="{ hidden: !fullDetails }">
+     <div ng-if="graphContent" ng-class="{ hidden: !fullDetails }">
        <graph
-         bar-chart
-         class="xyGraph"
-         data="lg.layers['rain'].data"
-         ylabel="lg.layers['rain'].aggWindow"
-         yfilter="aggWinToYLabel"
-         keys="{x: 0, y: 1}"
-         temporal="omnibox.state.temporal">
-       </graph>
+          bar-chart
+          temporal="timeState"
+          content="graphContent"
+          now="state.temporal.at">
+        </graph>
        <div class="card-tools"
             ng-mouseover="checkTempInterval()"
             ng-attr-title="{{ !exportActive && 'Export regendata > 1 maand wordt niet ondersteund' || '' }}"
@@ -28,22 +23,21 @@
             translate>
             Statistics
          </a>
-           <a target="_blank"
-              href="<% rawDataUrl %>"
-              ng-class="{disabled: !exportActive}"
-              class="btn btn-default btn-xs"
-              title="<% 'Export info card data' | translate %>">
-               <i class="fa fa-share-square-o"></i>
-               <span translate>Export</span>
-           </a>
+          <a target="_blank"
+             href="<% rawDataUrl %>"
+             ng-class="{disabled: !exportActive}"
+             class="btn btn-default btn-xs"
+             title="<% 'Export info card data' | translate %>">
+             <i class="fa fa-share-square-o"></i>
+             <span translate>Export</span>
+          </a>
        </div>
      </div>
    </div>
   </div>
 
   <div class="card active ng-class: {hidden: !fullDetails}" ng-if="rrc.active">
-    <div class="card-content-message"
-      ng-init="lg = box.content.rain">
+    <div class="card-content-message">
       <div class="recurrence-time-container">
         <div ng-if="!rrc.data.message">
           <table class="table table-hover table-condensed">

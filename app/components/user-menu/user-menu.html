@@ -1,46 +1,96 @@
-<div>
-
-  <div class="user-menu-wrapper">
-
-    <a ng-if="user.authenticated"
-       class="logout user"
-       href="/accounts/logout/?next=/"
-       title="<% tooltips.logout %>"
-       onclick="return logOut()">
-      <div class="pull-right">
-        <i id="" class="fa fa-power-off"></i>
-      </div>
-    </a>
-
-    <a ng-if="!user.authenticated"
-       onclick="logIn()" title="<% tooltips.login %>"
-      class="clickable" >
-      <div ng-cloak id="username" >
-        <i id="" class="fa fa-user"></i>
-        <span translate>Log in</span>
-      </div>
-    </a>
-
-
-    <a ng-if="user.authenticated"
-       title="<% tooltips.profile %>"
-       class="user"
-       href="http://sso.lizard.net/edit_profile/">
-      <div 
-        ng-cloak id="username" >
-        <i id="" class="fa fa-user"></i>
-        <span ng-bind="user.firstName"></span>
-      </div>
-    </a>
-
+<nav class="navbar navbar-default">
+  <div id="lizard-apps-container" class="lizard-apps-container"></div>
+  <div class="container-fluid">
+    <ul class="nav navbar-nav navbar-left">
+      <li>
+        <div id="lizard-apps-button" class="lizard-apps-button" title="Apps"></div>
+      </li>
+      <li ng-if="context == 'map'">
+        <a ng-click="toggleDashboard()"
+           title="<% 'Switch to dashboard' | translate %>"
+           target="_blank"
+           accesskey="d"
+           href="">
+          <i class="fa fa-bar-chart"></i>
+          <span translate>Dashboard</span>
+        </a>
+      </li>
+      <li ng-if="context == 'dashboard'">
+        <a class="hidden-xs"
+           ng-click="toggleDashboard()"
+           title="<% 'Switch to map' | translate %>"
+           target="_blank"
+           accesskey="m"
+           href="">
+          <i class="fa fa-globe"></i>
+          <span translate>Map</span>
+        </a>
+      </li>
+      <li ng-if="user.authenticated"
+          ng-class="{'open': favourites.enabled}">
+        <a title="<% 'Favourites' | translate %>"
+           href=""
+           ng-click="toggleFavourites($event)">
+          <i class="fa fa-star"></i>
+          <span translate>Favourites</span>
+          <span class="caret"></span>
+        </a>
+      </li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li ng-if="!user.authenticated">
+        <a onclick="logIn()"
+           title="<% tooltips.login %>"
+           class="clickable">
+          <div ng-cloak id="username">
+            <i id="" class="fa fa-user"></i>
+            <span translate>Log in</span>
+          </div>
+        </a>
+      </li>
+      <li class="dropdown" ng-if="user.authenticated">
+        <a title="<% tooltips.profile %>"
+           class="dropdown-toggle"
+           data-toggle="dropdown"
+           role="button"
+           aria-haspopup="true"
+           aria-expanded="false"
+           href="#">
+          <div ng-cloak id="username">
+            <i class="fa fa-user"></i>
+            <span ng-bind="user.firstName"></span>
+            <span class="caret"></span>
+          </div>
+        </a>
+        <ul class="dropdown-menu">
+          <li>
+            <a href="https://www.lizard.net/support"
+               title="<% 'Question and manual' | translate %>"
+               target="_blank">
+              <i class="fa fa-question"></i>
+              <span translate>Help</span>
+            </a>
+          </li>
+          <li>
+            <a href="http://sso.lizard.net/edit_profile/"
+               title="<% 'Edit profile' | translate %>">
+              <i class="fa fa-pencil"></i>
+              <span translate>Edit profile</span>
+            </a>
+          </li>
+          <li role="separator" class="divider"></li>
+          <li>
+            <a ng-if="user.authenticated"
+               class="logout user"
+               href="/accounts/logout/?next=/"
+               title="<% tooltips.logout %>"
+               onclick="return logOut()">
+               <i id="" class="fa fa-power-off"></i>
+               <span translate>Log out</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
   </div>
-
-  <nav>
-    <a class="hidden-xs material-shadow" ng-click="toggleDashboard()" title="<% 'Switch to ' + context | translate %>" target="_blank">
-      <i class="fa fa-refresh"></i>
-    </a>
-    <a class="hidden-xs material-shadow" href="https://www.lizard.net/support" title="<% 'Question and manual' | translate %>" target="_blank">
-      <i class="fa fa-question"></i>
-    </a>
-  </nav>
-</div>
+</nav>

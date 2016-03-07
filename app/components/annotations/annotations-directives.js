@@ -6,11 +6,15 @@
 angular.module('annotations')
   .directive('annotations', [function () {
     var link = function (scope, element, attrs) {
-      scope.annotations = {};
+      scope.annotations = [];
     };
 
     return {
       restrict: 'E',
+      scope: {
+        data: '=',
+        timeState: '=',
+      },
       link: link,
       templateUrl: 'annotations/templates/annotations.html'
     };
@@ -22,8 +26,8 @@ angular.module('annotations')
  */
 angular.module('annotations')
   .directive('annotationsView',
-             ['AnnotationsService', '$window', 'gettext',
-              function (AnnotationsService, $window, gettext) {
+             ['AnnotationsService', '$window', 'gettextCatalog', 'notie',
+              function (AnnotationsService, $window, gettextCatalog, notie) {
 
     var link = function (scope, element, attrs) {
 
@@ -45,24 +49,40 @@ angular.module('annotations')
       };
 
       /**
-       * Get all annotations for an asset.
+       * Get all annotations for an asset or geometry.
        * @returns {array} - An array of annotations.
        */
       var fetchAnnotations = function() {
-        AnnotationsService.getAnnotationsForObject(
-          scope.asset.entity_name,
-          scope.asset.id,
-          5,
-          scope.timeState.start,
-          scope.timeState.end,
-          fetchAnnotationsSuccess
-        );
+        if (scope.data.properties && scope.data.properties.annotations) {
+          var events = scope.data.properties.annotations.data;
+          var annotations = [];
+          events.forEach(function (ev) {
+            annotations.push(ev.properties);
+          });
+          fetchAnnotationsSuccess(annotations);
+        }
+
+        else if (scope.data && scope.data.entity_name && scope.data.id) {
+          AnnotationsService.getAnnotationsForObject(
+            scope.data.entity_name,
+            scope.data.id,
+            5,
+            scope.timeState.start,
+            scope.timeState.end,
+            fetchAnnotationsSuccess
+          );
+        }
+
+        else {
+          scope.annotations = [];
+        }
+
       };
 
       /**
        * Get annotations when asset changes.
        */
-      scope.$watch('asset', function () {
+      scope.$watch('data', function () {
         fetchAnnotations();
       });
 
@@ -76,6 +96,7 @@ angular.module('annotations')
       });
       /**
        * Update the front-end to reflect a successful delete of an annotation.
+       * Both on the map and timeline as in the box.
        * @param {object} id - The ID of the asset.
        * @param {?} value - Not actually used but required by $resource.
        * @param {dict} responseHeaders - Not actually used but required
@@ -84,6 +105,7 @@ angular.module('annotations')
       var deleteAnnotationSuccess = function(
           annotation, value, responseHeaders) {
         scope.annotations.splice(scope.annotations.indexOf(annotation), 1);
+        AnnotationsService.refreshAnnotationLayer();
       };
 
       /**
@@ -94,13 +116,12 @@ angular.module('annotations')
        */
       var deleteAnnotationError = function(httpResponse) {
         console.log(httpResponse);
-        $window.alert(
-          gettext(
+        notie.alert(3,
+          gettextCatalog.getString(
             "Oops! Something went wrong while deleting the annotation."));
         throw new Error(
           httpResponse.status + " - "
-          + gettext(
-            "Could not delete previously retrieved annotation:")
+          + "Could not delete previously retrieved annotation:"
           + " " + httpResponse.config.url
           + ".");
       };
@@ -123,7 +144,7 @@ angular.module('annotations')
       link: link,
       restrict: 'E',
       scope: {
-        asset: '=',
+        data: '=',
         annotations: '=',
         timeState: '='
       },
@@ -194,8 +215,8 @@ angular.module('annotations')
  */
 angular.module('annotations')
   .directive('annotationsMake',
-             ['AnnotationsService', '$window', 'gettext',
-              function (AnnotationsService, $window, gettext) {
+             ['AnnotationsService', '$window', 'gettextCatalog', 'notie',
+              function (AnnotationsService, $window, gettextCatalog, notie) {
 
     var link = function (scope, element, attrs) {
 
@@ -231,6 +252,7 @@ angular.module('annotations')
        */
       var createAnnotationSuccess = function(value, responseHeaders){
         scope.annotations.splice(0, 0, value);
+        AnnotationsService.refreshAnnotationLayer();
       };
 
       /**
@@ -240,13 +262,11 @@ angular.module('annotations')
        *                              POST.
        */
       var createAnnotationError = function(httpResponse){
-        $window.alert(
-          gettext(
+        notie.alert(3,
+          gettextCatalog.getString(
             "Oops! Something went wrong while creating the annotation."));
         throw new Error(
-          httpResponse.status + " - "
-          + gettext(
-            "Could not create annotation."));
+          httpResponse.status + " - " + "Could not create annotation.");
       };
 
       /**
@@ -254,7 +274,7 @@ angular.module('annotations')
        */
       scope.createAnnotation = function () {
         AnnotationsService.addAnnotationToObject(
-          scope.asset,
+          scope.data,
           scope.text,
           scope.attachment,
           scope.timelineat,
@@ -268,7 +288,7 @@ angular.module('annotations')
       link: link,
       restrict: 'E',
       scope: {
-        asset: '=',
+        data: '=',
         annotations: '=',
         timelineat: '='
       },

@@ -11,13 +11,14 @@ describe('Testing State service', function () {
     UtilService = $injector.get('UtilService');
   }));
 
-  it('should contain global state spatial, temporal, box, layergroups and ' +
-    ' context', function () {
+  it('should contain global state spatial, temporal, box, layergroups, ' +
+    'selected and context', function () {
     expect(State.spatial).toBeDefined();
     expect(State.temporal).toBeDefined();
     expect(State.box).toBeDefined();
     expect(State.layerGroups).toBeDefined();
     expect(State.context).toBeDefined();
+    expect(State.selected).toBeDefined();
   });
 
   it('should set temporal.end to the max when set with a futuristic timestamp',
@@ -43,6 +44,13 @@ describe('Testing State service', function () {
   it('should have a box type that can have the value region', function () {
     State.box.type = 'region';
     expect(State.box.type).toBe('region');
+  });
+
+  it('should reset the selected field', function () {
+    State.selected.assets.push('bogus$1');
+    expect(State.selected.assets.length).toBe(1);
+    State.selected.reset();
+    expect(State.selected.assets.length).toBe(0);
   });
 
 });

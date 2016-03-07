@@ -16,15 +16,14 @@
 
     <annotations-view
       ng-class="{ hidden: !fullDetails }"
-      asset="box.content.waterchain.layers.waterchain_grid.data"
-      time-state="omnibox.state.temporal"
+      data="data"
+      time-state="timeState"
       annotations="annotations">
     </annotations-view>
     <annotations-make
       ng-class="{ hidden: !fullDetails }"
-      ng-if="box.content.waterchain.layers.waterchain_grid.data"
-      asset="box.content.waterchain.layers.waterchain_grid.data"
-      timelineat="timeline.state.temporal.at"
+      data="data"
+      timelineat="timeState.at"
       annotations="annotations">
     </annotations-make>
   </div>

@@ -1,5 +1,6 @@
 ![Build Status](http://buildbot.lizardsystem.nl/jenkins/buildStatus/icon?job=Lizard-Client Integration 2. Deploy)
 
+
 # Lizard client
 
 Angular/leaflet/d3 app that visualizes (geo-)information specific for the water sector. It is the front-end in the lizard-nxt ecosystem, with the closed source lizard-nxt django app as an API to the hydra-core db.
@@ -12,9 +13,16 @@ For more than demo purposes Lizard client depends on:
 * [Hydra-core]( https://github.com/nens/hydra-core ), a django app with hydrological models and utils
 * [Lizard-nxt]( https://github.com/nens/lizard-nxt ), a django site that provides an api for hydra-core
 
+
+## Requirements
+
+    sudo apt-get install git npm nodejs-legacy
+
+
 ## Install
 
 Lizard client can be installed independent of the lizard-nxt ecosystem.
+
 
 ### Independent
 
@@ -44,12 +52,14 @@ English to enable other language run:
 
     grunt translate --txusername=<transifex username> --txpassword=<transifex password>
 
+
 ### Django backend
 
 Django serves a REST API which also bootstraps the data for the client. Tiles and stuff also come from Lizard-NXT django site:
 
     cd to/wherever/this/may/be/lizard-nxt
     bin/django runserver <ip>:<port>
+
 
 ## Use
 
@@ -70,33 +80,59 @@ adding the --save option. Always check your bower.json afterwards. e.g.:
     bin/bower search leaflet-dist
     bin/bower install leaflet-dist --save
 
+
 ### Release
 
-Doing a release for your package is easy. There is a grunt task to tag and push tags to github.
+Doing a release for your package is easy(-ish). There is a grunt task to tag and push tags to github.
 
 **NOTE: make sure you are not running `grunt serve` in a different session**
+
+Change the package.json / bower.json for a major version release. Check for a fixes branch.
 
 Workflow:
 
     git pull origin
-    git checkout staging
-    git merge integration
-    grunt release
-    git checkout integration
-    git merge staging
+    git checkout master
+    
+    grunt release --txusername=<transifex username> --txpassword=<transifex password>
 
-This creates a staging release of integration. The release can be pushed to the server by following instructions on https://github.com/nens/lizard-nxt#deployment.
+This creates a staging release of master.
 
 **NOTE:** grunt release expects:
 
 * There is a CHANGES.rst with `Unreleased ()` as a header.
 * There is a package.json.
 * There is a bower.json.
-* You release from `integration` branch.
+* You release from `master` branch.
 * There is a `dist` folder where the build will be released.
 
 
+### Deployment
+
+Deployment is done with `ansible`. Make sure to install ansible with eg:
+
+    pip install ansible
+
+Copy `hosts.example` to `hosts` and `production_hosts.example` to `production_hosts` and edit to match your server layout.
+
+    cp hosts.example hosts
+    cp production_hosts.example production_hosts
+
+Deploy to integration:
+
+    ansible-playbook -i deploy/hosts --limit=integration -K deploy/deploy.yml
+
+Deploy to staging:
+
+    ansible-playbook -i deploy/hosts --limit=staging -K deploy/deploy.yml --extra-vars="version=2.7.1"
+
+Deploy to production:
+
+    ansible-playbook -i deploy/production_hosts -K deploy/deploy.yml --extra-vars="version=2.7.1"
+
+
 ## Source files
+
 Files are grouped per component, mini angular apps doing one thing. Timeline is currently our most straightforward example. It has a template, a directive, a controller and a service under `app/components/timeline`.
 
 There are still 3 todo's for this example:
@@ -109,7 +145,9 @@ The components can include other components and should be used by a *core* modul
 
 `app/lib` contains low level services and non-angular files. These do not make up a component but contain individual pieces of logic that are used by components or *core* modules.
 
+
 ## Internationalization
+
 Supported languages:
 
 * Nederlands nl_NL
@@ -135,6 +173,7 @@ To create a new string that requires translation:
 4. Get yourself a language wizard and get some coffee.
 5. Run `grunt translate --txusername=<transifex username> --txpassword=<transifex password>` to get the newest translations or run `grunt release --txusername=<transifex username> --txpassword=<transifex password>` to make a release with the newest translations.
 
+
 ## Browser compatibility chart
 
 Lizard NXT may not work as expected in every browser, which is why we attempt to track compatibility using the following table.
@@ -157,6 +196,7 @@ If you experience errors, bugs or visual inconsistency, please `create <https://
 +-------------------+-----+-----+-----+------+----------+----------+--------------+--------------+--------------+----------+
 | Styling / layout  |     |     |     |      |          |     V    |      V       |              |     V        |          |
 +-------------------+-----+-----+-----+------+----------+----------+--------------+--------------+--------------+----------+
+
 
 ## Angular coding guidelines
 

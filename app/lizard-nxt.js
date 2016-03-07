@@ -30,6 +30,7 @@ angular.module('ngResource').config([
  */
 angular.module("lizard-nxt", [
   'lizard-nxt-filters',
+  'ngAnimate',
   'annotations',
   'data-menu',
   'map',
@@ -37,6 +38,7 @@ angular.module("lizard-nxt", [
   'dashboard',
   'scenarios',
   'user-menu',
+  'favourites',
   'global-state',
   'ngSanitize',
   'ngCsv',
@@ -85,6 +87,14 @@ angular.module('lizard-nxt')
  */
 angular.module('lizard-nxt')
   .constant('user', window.user);
+
+/**
+ * @name notie
+ * @memberOf app
+ * @description Notification service
+ */
+angular.module('lizard-nxt')
+  .constant('notie', window.notie);
 
 /**
  * @name versioning

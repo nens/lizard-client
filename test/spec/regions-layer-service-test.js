@@ -46,7 +46,7 @@ describe('Testing NxtRegionsLayer', function () {
         }
       },
       {
-        "id": "",
+        "id": 4,
         "type": "Feature",
         "geometry": {
           "type": "Polygon",
@@ -73,8 +73,8 @@ describe('Testing NxtRegionsLayer', function () {
 
   it('should fire a click on specific region', function () {
 
-    var regionString = 'Aalburg';
-    NxtRegionsLayer.setActiveRegion(regionString);
+    var regionId = 4;
+    NxtRegionsLayer.setActiveRegion(regionId);
 
     var clickedRegion = {};
 
@@ -82,9 +82,9 @@ describe('Testing NxtRegionsLayer', function () {
       clickedRegion = layer;
     };
 
-    NxtRegionsLayer.add(regions, cb);
+    NxtRegionsLayer.add(MapService, regions, cb);
 
-    expect(clickedRegion.feature.properties.name).toBe(regionString);
+    expect(clickedRegion.feature.id).toBe(regionId);
   });
 
   it('should not fire a click after re-adding', function () {
@@ -98,9 +98,10 @@ describe('Testing NxtRegionsLayer', function () {
       clickedRegion = layer;
     };
 
-    NxtRegionsLayer.add(regions, function () {});
-    NxtRegionsLayer.remove();
-    NxtRegionsLayer.add(regions, cb);
+
+    NxtRegionsLayer.add(MapService, regions, function () {});
+    NxtRegionsLayer.remove(MapService);
+    NxtRegionsLayer.add(MapService, regions, cb);
 
     expect(clickedRegion).not.toBeDefined();
   });

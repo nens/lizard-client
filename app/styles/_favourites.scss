@@ -1,0 +1,40 @@
+.favourites {
+    position: absolute;
+    right: 10px;
+    top: 70px;
+    width: 350px;
+    background: rgba($white, 0.9);
+    padding: 15px;
+    font-size: 0.9em;
+    transition: .3s ease;
+
+    input {
+        width: 100%;
+        padding: 5px;
+    }
+
+    table {
+        margin-bottom: 0;
+    }
+
+    &:before {
+        content: "\f0d8";
+        font-family: FontAwesome;
+        font-size: 30px;
+        color: rgba($white, 0.9);
+        position: absolute;
+        top: -27px;
+        left: 180px;
+    }
+
+    .favourites-show {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+}
+
+table.table-no-borders {
+    tr td {
+        border: none;
+    }
+}

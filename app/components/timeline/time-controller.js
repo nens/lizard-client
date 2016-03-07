@@ -51,11 +51,6 @@ angular.module('lizard-nxt')
                  // to resolve and re-syncing the data layers to the new time and
                  // making a new step when animation is playing.
 
-    State.temporal.aggWindow = UtilService.getAggWindow(
-      State.temporal.start,
-      State.temporal.end,
-      UtilService.getCurrentWidth()
-    );
 
     this.state = State;
 
@@ -220,7 +215,7 @@ angular.module('lizard-nxt')
      * @description progresses animation when provided promiss finishes and the
      *              minLag has passed. Sets buffering when he promise is not re-
      *              solved after minLag.
-     * @param  {promise} finish
+     * @param  {object} finish
      */
     var progressAnimation = function (finish) {
       // Remove any old timeout

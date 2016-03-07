@@ -3,107 +3,72 @@
  * Timeseries directive.
  */
 angular.module('timeseries')
-  .directive('timeseries', ['TimeseriesService', 'UtilService', '$filter',
-    function (TimeseriesService, UtilService, $filter) {
+  .directive('timeseries', ['TimeseriesService',
+    function (TimeseriesService) {
   return {
       link: function (scope) {
-
-        var GRAPH_WIDTH = 320; // Width of drawing area of box graphs.
-
-        scope.timeseries = {};
-        scope.fetching = false;
-
-        /**
-         * Return the currently selected timeseries if it is one of the
-         * available timeseries.
-         * @param  {array} timeseries list of available timeseries.
-         * @param  {object} current   currently selected ts.
-         * @return {object} selected timeseries.
-         */
-        var getSelectedTS = function (timeseries, current) {
-          var selected = {};
-          if (current) {
-            selected = timeseries.filter(function (ts) {
-              return ts.uuid === current.uuid;
-            });
-          }
-          return selected.length > 0 ? selected[0] : timeseries[0];
-        };
-
-        /**
-         * Fetch timeseries for asset. Remove zero datapoints from response and
-         * update the selected ts.
-         * @param  {object} asset utfgrid asset with entity_name and id.
-         */
-        var fetchTS = function(asset) {
-          scope.fetching = true;
-
-          var prom = {};
-
-          var assetId = asset.entity_name + '$' + asset.id;
-
-          // Get aggregation the size of the aggWindow when drawing bars for
-          // rain stations.
-          if (
-            asset.entity_name === 'measuringstation' &&
-            asset.station_type === 1
-          ) {
-            prom = TimeseriesService.getTimeSeriesForObject(
-              assetId,
-              scope.timeState.start,
-              scope.timeState.end,
-              false,
-              UtilService.getAggWindowAsText(scope.timeState.aggWindow)
-            );
-          }
-          else {
-            prom = TimeseriesService.getTimeSeriesForObject(
-              assetId,
-              scope.timeState.start,
-              scope.timeState.end,
-              GRAPH_WIDTH,
-              false
-            );
-          }
-
-          prom.then(function (response) {
-            scope.timeseries.data =
-              $filter('rmZeroDatumTimeseries')(response.results);
-
-            scope.timeseries.selectedTimeseries = getSelectedTS(
-              scope.timeseries.data,
-              scope.timeseries.selectedTimeseries
-            );
-            scope.fetching = false;
-
-          });
-        };
 
         /**
          * Get new ts when asset changes
          */
         scope.$watch('asset', function () {
-          fetchTS(scope.asset);
+          TimeseriesService.setInitialColorAndOrder(scope.asset);
         });
 
+      },
+      restrict: 'E', // Timeseries can be an element with single-select or
+                      // multi select as as an attribute or without in which
+                      // case it only collects the ts metadata.
+    };
+}]);
+
+/**
+ * Timeseries directive.
+ */
+angular.module('timeseries')
+  .directive('timeseriesSingleSelect', ['State', 'TimeseriesService',
+    function (State, TimeseriesService) {
+  return {
+      link: function (scope) {
+
+        scope.fetching = false;
+
+        var selectTimeseries = function () {
+          var selectedTimeseries = (scope.timeseries.selected) ? [scope.timeseries.selected.uuid] : [];
+          State.selected.timeseries = selectedTimeseries;
+        };
+
+        scope.content = TimeseriesService;
+
+        scope.timeseries = {
+          selected: {},
+          change: function () {
+           selectTimeseries(scope.timeseries.selected);
+          }
+        };
+
+        /** timeseries are asynchronous so we set a default selection when
+         *  they are set.
+         */
+        var watchTimeseries = scope.$watch('asset.timeseries', function (n, o) {
+          if (n) {
+            scope.timeseries.selected = scope.asset.timeseries[0];
+            scope.timeseries.change();
+            watchTimeseries(); // rm watch
+          }
+        });
 
         /**
          * Get new ts when time changes
          */
-        scope.$watch('timeState.timelineMoving', function (off) {
-          if (!off) {
-            fetchTS(scope.asset);
+        scope.$watch('timeState.timelineMoving', function (newValue, oldValue) {
+          if (!newValue && newValue !== oldValue) {
+            TimeseriesService.syncTime();
           }
         });
 
       },
-      restrict: 'E',
-      scope: {
-        asset: '=',
-        fullDetails: '=',
-        timeState: '='
-      },
-      // replace: true,
+      restrict: 'A',
       templateUrl: 'timeseries/timeseries.html'
     };
 }]);

@@ -20,14 +20,14 @@
 angular.module('data-menu')
   .service('DataService', [
     '$q',
-    'TimeseriesService',
+    'AssetService',
     'dataLayers',
     'DataLayerGroup',
     'State',
 
     function (
       $q,
-      TimeseriesService,
+      AssetService,
       dataLayers,
       DataLayerGroup,
       State
@@ -44,11 +44,12 @@ angular.module('data-menu')
         }
       });
 
+      var instance = this;
 
       /**
        * Creates a new layerGroup and adds to the layerGroups
        * @param  {object} lgConfig config of layergroup
-       * @return {layerGroup instance}
+       * @return {object} layerGroup instance
        */
       this.createLayerGroup = function (lgConfig) {
         return this.layerGroups[lgConfig.slug] = new DataLayerGroup(lgConfig);
@@ -63,7 +64,23 @@ angular.module('data-menu')
       this._createLayerGroups = function (serverSideLayerGroups) {
         var layerGroups = {};
         angular.forEach(serverSideLayerGroups, function (sslg) {
-          this.createLayerGroup(sslg);
+
+          var utf = false;
+
+          angular.forEach(sslg.layers, function (layer) {
+            if (layer.format === 'UTFGrid') {
+              utf = true;
+            }
+          }, this);
+
+          var lg = new DataLayerGroup(sslg);
+
+          if (utf) { this.utfLayerGroup = lg; }
+
+          this.layerGroups[lg.slug] = lg;
+
+          // utf ? this.utfLayerGroup = lg :
+
         }, this);
         return this.layerGroups;
       };
@@ -83,6 +100,137 @@ angular.module('data-menu')
         configurable: false
       });
 
+      // Callback for when assets are being retrieved from api
+      var assetChange = function (asset) {
+        if (asset) {
+          instance.assets.push(asset);
+        }
+        instance.assets = instance.assets.filter(function (asset) {
+          var assetId = asset.entity_name + '$' + asset.id;
+          return _assets.indexOf(assetId) !== -1;
+        });
+        instance.getGeomDataForAssets(instance.oldAssets, instance.assets);
+
+        if (instance.onAssetsChange) {
+          instance.onAssetsChange();
+        }
+
+        console.log('DataService.assets:', instance.assets);
+      };
+
+      // Define assets on State and update DataService.assets.
+      var setAssets = function (assets) {
+        instance.oldAssets = angular.copy(instance.assets);
+        AssetService.updateAssets(instance.assets, _assets, assets)
+        .then(assetChange);
+        _assets = assets;
+        console.log('State.selected.assets:', State.selected.assets);
+
+        rebindAssetFunctions();
+      };
+
+
+      // Rebind add and remove because selected.assets might have been
+      // redefined when calling state.selected.assets = []
+      var rebindAssetFunctions = function () {
+        State.selected.assets.addAsset = addAsset;
+        State.selected.assets.removeAsset = removeAsset;
+        State.selected.assets.resetAssets = resetAssets;
+      };
+
+      // Reset the asset list and retrieve from the API
+      var resetAssets = function (assets) {
+        instance.oldAssets = instance.assets = [];
+        assets.forEach(function (newAsset) {
+          var entity = newAsset.split('$')[0];
+          var id = newAsset.split('$')[1];
+          AssetService.getAsset(entity, id)
+            .then(assetChange)
+        });
+        _assets = assets;
+        rebindAssetFunctions();
+      };
+
+      var addAsset = function (asset) {
+        var newAssets = angular.copy(_assets);
+        newAssets.push(asset);
+        setAssets(newAssets);
+      };
+
+      var removeAsset = function (asset) {
+        var newAssets = angular.copy(_assets);
+        newAssets.splice(_assets.indexOf(asset), 1);
+        setAssets(newAssets);
+      };
+
+      instance.assets = instance.oldAssets = [];
+      var _assets = [];
+      Object.defineProperty(State.selected, 'assets', {
+        get: function () { return _assets; },
+        set: setAssets,
+        enumerable: true
+      });
+
+      State.selected.assets.addAsset = addAsset;
+      State.selected.assets.removeAsset = removeAsset;
+      State.selected.assets.resetAssets = resetAssets;
+
+      // Define geometries on State and update DataService.geometries.
+      var setGeometries = function (geometries) {
+        instance._updateGeometries(_geometries, angular.copy(geometries))
+        .then(function (geometries) {
+          instance.geometries = geometries;
+          console.log('DataService.geometries:', instance.geometries);
+
+          if (instance.onGeometriesChange) {
+            instance.onGeometriesChange();
+          }
+
+        });
+        _geometries = geometries;
+        console.log('State.selected.geometries:', State.selected.geometries);
+        State.selected.geometries.addGeometry = addGeometry;
+        State.selected.geometries.removeGeometry = removeGeometry;
+      };
+
+      var addGeometry = function (geometry) {
+        var newGeoms = angular.copy(_geometries);
+        newGeoms.push(geometry);
+        setGeometries(newGeoms);
+      };
+
+      var removeGeometry = function (geometry) {
+        var newGeometries = angular.copy(_geometries);
+        var index = -1;
+        _geometries.forEach(function(geom, i) {
+          if (geom.geometry.coordinates[0] === geometry.geometry.coordinates[0]
+          && geom.geometry.coordinates[1] === geometry.geometry.coordinates[1]
+          && geom.geometry.coordinates[2] === geometry.geometry.coordinates[2]) {
+            index = i;
+          }
+        });
+        newGeometries.splice(index, 1);
+        setGeometries(newGeometries);
+      };
+
+
+      instance.geometries = [];
+      var _geometries = [];
+      Object.defineProperty(State.selected, 'geometries', {
+        get: function () { return _geometries; },
+        set: setGeometries
+      });
+
+      State.selected.geometries.addGeometry = addGeometry;
+      State.selected.geometries.removeGeometry = removeGeometry;
+
+      // Immutable representation of all layergroups set on State.layerGroups
+      Object.defineProperty(State.layerGroups, 'all', {
+        value: Object.keys(layerGroups),
+        writeable: false,
+        configurable: false
+      });
+
       this.REJECTION_REASONS = {};
 
       Object.defineProperty(this.REJECTION_REASONS, 'OVERRIDDEN', {
@@ -92,7 +240,6 @@ angular.module('data-menu')
       });
 
       // List of slugs of active layerGroups, two-way.
-      var instance = this;
       Object.defineProperty(State.layerGroups, 'active', {
         get: function () {
           return Object.keys(layerGroups).filter(function (layerGroup) {
@@ -107,6 +254,18 @@ angular.module('data-menu')
               this.toggleLayerGroup(_lg);
             }
           }, instance);
+        }
+      });
+
+      // Define temporal here so DataService can update assets, geometries etc.
+      var _timelineMoving = State.temporal.timelineMoving;
+      Object.defineProperty(State.temporal, 'timelineMoving', {
+        get: function () { return _timelineMoving; },
+        set: function (value) {
+          _timelineMoving = value;
+          if (!value) {
+            instance.refreshSelected();
+          }
         }
       });
 
@@ -128,6 +287,7 @@ angular.module('data-menu')
         // turn layer group on
         if (!(layerGroup.baselayer && layerGroup.isActive())) {
           layerGroup.toggle();
+          instance.refreshSelected();
         }
         if (layerGroup.baselayer) {
           angular.forEach(this.layerGroups, function (_layerGroup) {
@@ -144,7 +304,7 @@ angular.module('data-menu')
 
       /**
        * Adds the provided layerGroups to the layerGroups
-       * @param {layerGroup instance}
+       * @param {object} layerGroup instance
        */
       this.addLayergroup = function (layerGroup) {
         return this.layerGroups[layerGroup.slug] = layerGroup;
@@ -152,7 +312,7 @@ angular.module('data-menu')
 
       /**
        * Removes the provided layerGroups from nxt
-       * @param {layerGroup instance}
+       * @param {object} layerGroup instance
        */
       this.removeLayerGroup = function (layerGroup) {
         delete this.layerGroups[layerGroup.slug];
@@ -169,7 +329,7 @@ angular.module('data-menu')
        *                                data. Used for recursively calling get
        *                                data with data from waterchain of a
        *                                previous getData call.
-       * @return {promise} notifies with data from layergroup and resolves when
+       * @return {object} notifies with data from layergroup and resolves when
        *                   all layergroups and the timeseries returned data.
        */
       this.getData = function (callee, options, recursiveDefer) {
@@ -185,24 +345,10 @@ angular.module('data-menu')
         }
 
         var promises = [];
-        var waitForTimeseriesAndEvents = false;
         var instance = this;
         angular.forEach(this.layerGroups, function (layerGroup) {
           promises.push(
             layerGroup.getData(callee, options).then(null, null, function (response) {
-
-              // TS and events are dependent on the waterchain response. So the
-              // waterchain response is checked for signs of timeseries. If
-              // neccessary we will wait for the timeseries request to finish.
-              // Else we keep checking every response.
-              if (!waitForTimeseriesAndEvents) {
-                waitForTimeseriesAndEvents = instance.getTimeseriesAndEvents(
-                  response,
-                  options,
-                  defer,
-                  callee
-                );
-              }
 
               if (recursiveDefer) {
                 recursiveDefer.notify(response);
@@ -215,13 +361,7 @@ angular.module('data-menu')
         });
 
         $q.all(promises).then(function () {
-          if (waitForTimeseriesAndEvents) {
-            waitForTimeseriesAndEvents.then(function () {
-              finishDefers();
-            });
-          } else {
-            finishDefers();
-          }
+          finishDefers();
         });
 
         /**
@@ -262,6 +402,163 @@ angular.module('data-menu')
         }
       };
 
+      this.refreshSelected = function () {
+        this.geometries.forEach(function (geom) {
+
+          angular.forEach(geom.properties, function (v, s) {
+            if (!this.layerGroups[s].isActive()) {
+              delete geom.properties[s];
+            }
+          }, this);
+
+          this.getGeomData(geom)
+          .then(function(newGeo) {
+            instance.geometries.forEach(function (old, i) {
+              if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
+                instance.geometries[i] = newGeo;
+                console.log('DataService.geometries:', instance.geometries);
+              }
+            });
+          });
+
+        }, this);
+
+        this.assets.forEach(function (asset) {
+
+          this.getGeomData(asset)
+          .then(function(newAsset) {
+            instance.assets.forEach(function (old, i) {
+              if (old.entity_name === newAsset.entity_name && old.id === newAsset.id) {
+                instance.assets[i] = newAsset;
+              }
+            });
+          });
+
+        }, this);
+
+      };
+
+      this._updateGeometries = function (oldGeoms, newGeoms) {
+
+        instance.geometries = instance.geometries.filter(function (geom) {
+          return newGeoms.filter(function (oldGeom) {
+            var oC = oldGeom.geometry.coordinates;
+            var nC = geom.geometry.coordinates;
+            return _.isEqual(oC, nC);
+          }).length;
+        });
+
+        if (newGeoms.length > 0) {
+          return this.getGeomData(newGeoms[newGeoms.length -1])
+          .then(function(newGeo) {
+            var dupe = false;
+            instance.geometries.forEach(function (old, i) {
+              if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
+                dupe = true;
+                instance.geometries[i] = newGeo;
+              }
+            });
+            if (!dupe) {
+              instance.geometries.push(newGeo);
+            }
+            return instance.geometries;
+          });
+        }
+        else {
+          var defer = $q.defer();
+          defer.resolve(instance.geometries);
+          return defer.promise;
+        }
+
+      };
+
+      this.getGeomDataForAssets = function (oldAssets, assets) {
+        var newAssets = assets.filter(function (asset) {
+          return !oldAssets.filter(function (oldAsset) {
+            return oldAsset.entity_name === asset.entity_name && oldAsset.id === asset.id;
+          }).length;
+        });
+
+        newAssets.forEach(function (asset) {
+          this.getGeomData(asset)
+          .then(function(geo) {
+            asset.geometry = geo.geometry;
+            asset.properties = geo.properties;
+          });
+        }, this);
+      };
+
+      this.getGeomData = function (geo) {
+        var defer = $q.defer();
+
+        var promises = [];
+        var instance = this;
+
+        var options = {
+          start: State.temporal.start,
+          end: State.temporal.end
+        };
+
+        if (geo.geometry.type === 'Point') {
+          options.geom = L.latLng(geo.geometry.coordinates[1], geo.geometry.coordinates[0]);
+        }
+
+        else if (geo.geometry.type === 'LineString') {
+          var coords = geo.geometry.coordinates;
+          options.geom = [
+            L.latLng(coords[0][1], coords[0][0]),
+            L.latLng(coords[1][1], coords[1][0])
+          ];
+        }
+
+        else if (geo.geometry.type === 'Polygon' && geo.id) {
+          options.id = geo.id;
+        }
+
+        if (geo.geometry.type === 'Polygon') {
+          options.geom = L.geoJson(geo).getBounds();
+        }
+
+        angular.forEach(this.layerGroups, function (layerGroup) {
+          if (
+
+            // UTF has a special status and is not queried in this loop.
+            layerGroup.slug === instance.utfLayerGroup.slug ||
+
+            // One too many dimension
+            (layerGroup.temporal && geo.geometry.type === 'LineString')
+
+            ) {
+            return;
+          }
+
+          promises.push(
+            layerGroup.getData('DataService', options).then(null, null, function (response) {
+              // async so remove anything obsolete.
+              geo.properties = geo.properties || {};
+              geo.properties[response.layerGroupSlug] = geo.properties[response.layerGroupSlug] || {};
+              _.merge(geo.properties[response.layerGroupSlug], response);
+              if (!instance.layerGroups[response.layerGroupSlug].isActive()
+                && layerGroup.slug in Object.keys(geo.properties)) {
+
+                  geo.properties[layerGroup.slug] = null;
+
+              }
+            })
+          );
+        });
+
+        $q.all(promises).then(function () {
+            geo.properties = geo.properties || {};
+            State.layerGroups.gettingData = false;
+            defer.resolve(geo);
+            defer = undefined; // Clear the defer
+        });
+
+        State.layerGroups.gettingData = true;
+        return defer.promise;
+      };
+
       /**
        * @function
        * @memberOf app.NxtMap
@@ -277,64 +574,6 @@ angular.module('data-menu')
             this.toggleLayerGroup(layerGroup);
           }
         }, this);
-      };
-
-      /**
-       * Checks response for id and entity_name and passes this
-       * getTimeSeriesForObject with start and end.
-       *
-       * NOTE, TODO: Since now (october 2015) getting timeseries is a job of the
-       * timeseries module with a dedicated directive. This code is legacey,
-       * used by the time context and for events. This will change when we
-       * implement the livedijk xl features.
-       *
-       * @param  {object} response response from layergroup
-       * @param  {int}    start    time start
-       * @param  {int}    end      time end
-       * @param  {defer}  defer    defer object to notify with timeseries
-       * @param  {string} callee   the origin of the data request, specified by
-       *                           the function calling DataService.getData.
-       *
-       * @return {promise || false} false when no id and entity name or promise
-       *                            when making request to timeseries endpoint.
-       */
-      this.getTimeseriesAndEvents = function (
-        response,
-        options,
-        defer,
-        callee
-      ) {
-        if (response.format === 'UTFGrid'
-          && response.data
-          && response.data.id
-          && response.data.entity_name
-        ) {
-          // Apparently, we're dealing with the waterchain:
-          // The defer from getData is recycled, no need to pass a callee param.
-          options.type = 'Event';
-          options.object = {
-            type: response.data.entity_name,
-            id: response.data.id
-          };
-          // Get all events for the provided options and the events belonging to
-          // this object.
-          var promises = [this.getData(null, options, defer)];
-
-          // LEGACY: getting timeseries is only done for legacy time context.
-          // Omnibox uses the timeseries module for this.
-          if (callee === 'dashboard') {
-            promises.push(TimeseriesService.getTimeSeriesForObject(
-              response.data.entity_name + '$' + response.data.id,
-              options.start,
-              options.end,
-              options.minPoints,
-              false,
-              defer
-            ));
-          }
-
-          return $q.all(promises);
-        } else { return false; }
       };
 
     }

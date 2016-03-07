@@ -13,15 +13,15 @@
  */
 angular.module('map')
   .directive('map', [
-  '$controller',
   'MapService',
   'DataService',
+  'ClickFeedbackService',
   'UtilService',
   'State',
   function (
-    $controller,
     MapService,
     DataService,
+    ClickFeedbackService,
     UtilService,
     State
   ) {
@@ -53,7 +53,15 @@ angular.module('map')
         * @param  {event}  e Leaflet event object
         */
       var _clicked = function (e) {
-        State.spatial.here = e.latlng;
+        if (State.box.type === 'point'
+          || State.box.type === 'multi-point'
+          || State.box.type === 'line') {
+          MapService.spatialSelect(e.latlng);
+        }
+        if (State.box.type === 'line'
+          && MapService.line.geometry.coordinates.length === 2) {
+          ClickFeedbackService.emptyClickLayer(MapService);
+        }
       };
 
       /**
@@ -70,7 +78,17 @@ angular.module('map')
        */
       var _mouseMove = function (e) {
         if (State.box.type === 'line') {
-          State.spatial.userHere = e.latlng;
+          var coords = MapService.line.geometry.coordinates;
+          if (coords.length === 1) {
+            var start = L.latLng(coords[0][1], coords[0][0]);
+            var end = e.latlng;
+            ClickFeedbackService.emptyClickLayer(MapService);
+            ClickFeedbackService.drawLine(
+              MapService,
+              start,
+              end
+            );
+          }
         }
       };
 
@@ -125,6 +143,14 @@ angular.module('map')
         } else {
           mapSetsBounds = false;
         }
+        if (State.box.type === 'area') {
+          var b = State.spatial.bounds;
+          State.selected.geometries = [];
+          State.selected.geometries.addGeometry(L.rectangle(b).toGeoJSON());
+        }
+        else if (State.box.type === 'region') {
+          MapService.getRegions(State.spatial.bounds);
+        }
       });
 
       /**
@@ -163,20 +189,32 @@ angular.module('map')
         switch (n) {
         case "point":
           selector = "";
+          MapService.removeRegions();
+          break;
+        case "multi-point":
+          selector = "";
+          MapService.removeRegions();
           break;
         case "line":
           selector = "#map * {cursor: crosshair;}";
+          MapService.removeRegions();
           break;
         case "region":
           selector = "";
+          MapService.getRegions(State.spatial.bounds);
           break;
         case "area":
           selector = "#map * {cursor: -webkit-grab; cursor: -moz-grab; cursor: grab; cursor: hand;}";
+          MapService.removeRegions();
+          State.selected.geometries = [];
+          var b = State.spatial.bounds;
+          State.selected.geometries.addGeometry(L.rectangle(b).toGeoJSON());
           break;
         default:
           return;
         }
         UtilService.addNewStyle(selector);
+
 
       });
 

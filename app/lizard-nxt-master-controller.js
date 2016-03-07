@@ -16,7 +16,7 @@ angular.module('lizard-nxt')
   .controller('MasterCtrl',
 
   ['$scope',
-   '$controller',
+    '$rootScope',
    '$timeout',
    'CabinetService',
    'UtilService',
@@ -27,7 +27,7 @@ angular.module('lizard-nxt')
    'MapService',
 
   function ($scope,
-            $controller,
+            $rootScope,
             $timeout,
             CabinetService,
             UtilService,
@@ -55,26 +55,28 @@ angular.module('lizard-nxt')
    */
   $scope.transitionToContext = function (context) {
     if (context !== State.context) {
-      var overlay = angular.element('#context-transition-overlay')[0];
-      overlay.style.minHeight = window.innerHeight + 'px';
-      overlay.style.transition = 'ease .3s';
-      $timeout(function () {
-        overlay.style.opacity = 1;
-      }, 300);
-      $timeout(function () {
-        State.context = context;
-        $scope.context = State.context;
-        overlay.style.opacity = 0;
-      }, 600, true);
-      $timeout(function () {
-        overlay.style.transition = null;
-        overlay.style.minHeight = 0;
-      }, 900);
+      State.context = context;
     }
+    var overlay = angular.element('#context-transition-overlay')[0];
+    overlay.style.transition = null;
+    overlay.style.minHeight = window.innerHeight + 'px';
+    $timeout(function () {
+      overlay.style.transition = 'ease .3s';
+      overlay.style.opacity = 1;
+    }, 10);
+    $timeout(function () {
+      $rootScope.context = State.context;
+      overlay.style.opacity = 0;
+    }, 300);
+    $timeout(function () {
+      overlay.style.transition = null;
+      overlay.style.minHeight = 0;
+    }, 600, true);
   };
 
-  // initialise context.
-  $scope.context = State.context;
+  $scope.$watch(State.toString('context'), function () {
+    $scope.transitionToContext(State.context);
+  });
 
   $scope.toggleDashboard = function () {
     $scope.transitionToContext(($scope.context === 'map') ? 'dashboard' : 'map');
@@ -91,9 +93,6 @@ angular.module('lizard-nxt')
   // catch window.load event
   window.addEventListener("load", function () {
     window.loaded = true;
-    $scope.$apply(function () {
-      $controller('UrlController', {$scope: $scope});
-    });
   });
 
 

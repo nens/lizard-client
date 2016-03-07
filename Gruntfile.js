@@ -281,19 +281,6 @@ module.exports = function (grunt) {
       }
     },
 
-    // Profiling
-    phantomas: {
-      gruntSite: {
-        options: {
-          indexPath: 'qa/phantomas/',
-          numberOfRuns: 5,
-          output: ['json'],
-          url: 'http://integration.nxt.lizard.net',
-          buildUi: true
-        }
-      }
-    },
-
     // Renames files for browser caching purposes
     filerev: {
       dist: {
@@ -370,6 +357,18 @@ module.exports = function (grunt) {
         assetsDirs: ['<%= yeoman.dist %>', '<%= yeoman.dist %>/images']
       }
     },
+
+    imagemin: {
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '<%= yeoman.app %>/images',
+          src: '{,*/}*.{png,jpg,jpeg,gif}',
+          dest: '<%= yeoman.dist %>/images'
+        }]
+      }
+    },
+
 
     svgmin: {
       dist: {
@@ -451,10 +450,13 @@ module.exports = function (grunt) {
     },
 
     // produces docs
-    doxx: {
+    mrdoc: {
       all: {
-        src: 'app/',
-        target: 'doc'
+        src: 'app',
+        target: 'doc',
+        options: {
+          title: require('./bower.json').name
+        }
       }
     },
 
@@ -526,6 +528,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-usemin');
+    grunt.loadNpmTasks('grunt-contrib-imagemin');
     grunt.loadNpmTasks('grunt-svgmin');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-ng-annotate');
@@ -540,6 +543,7 @@ module.exports = function (grunt) {
       'wiredep',
       'useminPrepare',
       'sass',
+      'imagemin',
       'copy:styles',
       'autoprefixer',
       'svgmin',
@@ -554,8 +558,8 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('docs', function () {
-    grunt.loadNpmTasks('grunt-doxx');
-    grunt.task.run(['doxx']);
+    grunt.loadNpmTasks('grunt-mrdoc');
+    grunt.task.run(['mrdoc']);
   });
 
   grunt.registerTask('internationalize', function () {

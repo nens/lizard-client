@@ -1,19 +1,17 @@
-<li class="noselect need-bottom-margin">
+<div class="noselect need-bottom-margin">
   <label
-    class="ng-class: {active: layergroup.isActive()}; layer-chooser"
+    single-click="menu.toggleLayerGroup(layergroup)"
+    ng-class="{active: layergroup.isActive()}"
+    class="layer-item layer-img"
     for="<% layergroup.id %>-layer"
-    title="<% layergroup.name %>">
-    <div class="layer-img" class="layer-chooser" ng-style="layergroup.imageStyle"></div>
-    <span 
-      single-click="menu.toggleLayerGroup(layergroup)"
-      class="layer-text" ng-bind="layergroup.name">
-    </span>
-    <span
+    title="<% layergroup.name %>"
+    ng-style="layergroup.imageStyle">
+    <span ng-bind="layergroup.name"></span>
+    <i
       ng-if="((layergroup.spatialBounds.north - layergroup.spatialBounds.east) !== 0)
              && layergroup.isActive()"
-      class="layer-icon"
-      single-click="menu.zoomToBounds(layergroup.spatialBounds, layergroup.temporalBounds)">
-        <i class="fa fa-crosshairs"></i>
-    </span>
+      ng-click="menu.zoomToBounds(layergroup.spatialBounds, layergroup.temporalBounds); $event.stopPropagation()"
+      class="fa fa-crosshairs">
+    </i>
   </label>
-</li>
+</div>

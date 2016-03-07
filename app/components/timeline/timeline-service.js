@@ -163,7 +163,7 @@ angular.module('lizard-nxt')
       value: function (timestamp, interval, oldDimensions) {
         var height;
 
-        if (!aggWindow) {
+        if (this._svg.select('#feature-group').select(".agg-window-group").empty()) {
           height = this._getHeight(this.dimensions);
           aggWindow = this._svg.select('#feature-group').append("g")
             .attr('class', 'agg-window-group');
@@ -424,7 +424,7 @@ angular.module('lizard-nxt')
   /**
    * Takes a d3 multiselection of text elements and add click interaction to
    * zoom to rounded dates.
-   * @param {d3 selections} ticks text elements of tick marks.
+   * @param {object} d3 selection ticks text elements of tick marks.
    */
   var addClickToAxisTicks = function(ticks) {
     ticks
@@ -672,9 +672,7 @@ angular.module('lizard-nxt')
     var clicked = function () {
       // Check whether user is dragging instead of clicking
       if (!d3.event.defaultPrevented) {
-        var x = d3.event.clientX
-          - UtilService.getLeftMargin(State.context)
-          - dimensions.padding.left;
+        var x = d3.mouse(this)[0] - dimensions.padding.left;
         var ts = xScale.invert(x);
         clickFn(ts, dimensions);
       }
@@ -693,6 +691,12 @@ angular.module('lizard-nxt')
    */
   var updateRectangleElements = function (rectangles, xScale, oldDimensions,
                                           newDimensions) {
+
+
+    var getBarHeight = function (d) {
+      return d[1] ? yScale(d[1]) : 0;
+    };
+
     // UPDATE
     // Update old elements as needed.
     if (rectangles[0].length > 0) {
@@ -713,9 +717,9 @@ angular.module('lizard-nxt')
         rectangles.transition()
           .duration(Timeline.prototype.transTime)
           .delay(Timeline.prototype.transTime)
-          .attr("height", function (d) {return yScale(d[1]); })
+          .attr("height", getBarHeight)
           .attr("y", function (d) {
-            return newHeight - yScale(d[1]);
+            return newHeight - getBarHeight(d);
           })
           .attr("x", function (d) {
             return xScale(d[0]) - barWidth;
@@ -724,9 +728,9 @@ angular.module('lizard-nxt')
       } else {
         rectangles.transition()
           .duration(Timeline.prototype.transTime)
-          .attr("height", function (d) {return yScale(d[1]); })
+          .attr("height", getBarHeight)
           .attr("y", function (d) {
-            return newHeight - yScale(d[1]);
+            return newHeight - getBarHeight(d);
           })
           .attr("x", function (d) {
             return xScale(d[0]) - barWidth;
@@ -967,13 +971,17 @@ angular.module('lizard-nxt')
       barWidth = 0;
     }
 
+    var getBarHeight = function (d) {
+      return d[1] ? yScale(d[1]) : 0;
+    };
+
     // UPDATE
     // Update old elements as needed.
     bars.transition()
       .duration(Timeline.prototype.transTime)
       .attr("x", function (d) { return xScale(d[0]) - barWidth; })
       .attr('width', barWidth)
-      .attr("height", function (d) { return yScale(d[1]); })
+      .attr("height", getBarHeight)
       .attr("y", function (d) { return height - yScale(d[1]); });
 
     // ENTER
@@ -989,7 +997,7 @@ angular.module('lizard-nxt')
       .transition()
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
-      .attr("height", function (d) { return yScale(d[1]); })
+      .attr("height", getBarHeight)
       .attr("y", function (d) { return height - yScale(d[1]); });
 
     // EXIT

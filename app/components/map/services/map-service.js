@@ -10,8 +10,8 @@
  */
 
 angular.module('map')
-.service('MapService', ['$rootScope', '$q', 'LeafletService', 'LeafletVectorService', 'DataService', 'NxtNonTiledWMSLayer', 'NxtMapLayer', 'State',
-  function ($rootScope, $q, LeafletService, LeafletVectorService, DataService, NxtNonTiledWMSLayer, NxtMapLayer, State) {
+.service('MapService', ['$rootScope', '$q', 'LeafletService', 'LeafletVectorService','CabinetService', 'DataService', 'NxtNonTiledWMSLayer', 'NxtRegionsLayer', 'NxtMapLayer', 'State',
+  function ($rootScope, $q, LeafletService, LeafletVectorService, CabinetService, DataService, NxtNonTiledWMSLayer, NxtRegionsLayer, NxtMapLayer, State) {
 
     var service = {
 
@@ -47,8 +47,8 @@ angular.module('map')
        * Syncs all layer groups to provided timeState object.
        * @param  {object} timeState   State.temporal object, containing start,
        *                              end, at and aggwindow.
-       * @param  {leaflet map} optionalMap map object to sync the data to.
-       * @return {promise}             promise that resolves layergroups synced.
+       * @param  {object} optionalMap map object to sync the data to.
+       * @return {object}             promise that resolves layergroups synced.
        */
       syncTime: function (timeState) {
         var defer = $q.defer();
@@ -63,7 +63,7 @@ angular.module('map')
             });
           } else {
             angular.forEach(layerGroup.mapLayers, function (layer) {
-              layer.timeState = angular.copy(timeState);
+              layer.timeState = timeState;
             });
           }
         });
@@ -131,11 +131,172 @@ angular.module('map')
         return service._map.getBounds();
       },
 
+      line: {
+        geometry: {
+          type: 'LineString',
+          coordinates: []
+        }
+      },
+
       /**
        * @description legacy function.
        */
       latLngToLayerPoint: function (latlng) {
         return service._map.latLngToLayerPoint(latlng);
+      },
+
+      _setAssetOrGeomFromUtfOnState: function (latLng) {
+        State.selected.assets = [];
+        State.selected.geometries = [];
+        DataService.utfLayerGroup.getData('dataService', {'geom': latLng})
+        .then(null, null, function (response) {
+
+          var data = response.data;
+          if (response.data) {
+            // Create one entry in selected.assets.
+            var assetId = data.entity_name + '$' + data.id;
+            State.selected.assets = [assetId];
+            State.selected.geometries = [];
+          }
+
+          else {
+            State.selected.assets = [];
+            service._setGeomFromUtfToState(latLng);
+          }
+        });
+      },
+
+      _setGeomFromUtfToState: function (latLng) {
+        // Create one entry in selected.geometries.
+        State.selected.geometries = [{
+          geometry: {
+            type: 'Point',
+            coordinates: [latLng.lng, latLng.lat]
+          }
+        }];
+      },
+
+
+      /**
+       * @function
+       * @description Checks whether asset is already in the assets container
+       * @params {array} list of assets
+       * @params {number} id of asset that you want to append
+       */
+      _isUniqueAssetId: function (assets, assetId) {
+        // dedupe the shiz
+        var unique = true;
+        assets.filter(function (item, index) {
+          if (item === assetId) {
+            unique = false;
+            return item;
+          }
+        });
+        return unique;
+      },
+
+      _addAssetOrGeomFromUtfOnState: function (latLng) {
+
+        DataService.utfLayerGroup.getData('dataService', {'geom': latLng})
+        .then(null, null, function (response) {
+
+          var data = response.data;
+          if (data) {
+            // Create one entry in selected.assets.
+            var assetId = data.entity_name + '$' + data.id;
+            if (service._isUniqueAssetId(State.selected.assets, assetId)) {
+              State.selected.assets.addAsset(assetId);
+            }
+          }
+
+          else {
+            service._addGeomFromUtfToState(latLng);
+          }
+        });
+      },
+
+      _addGeomFromUtfToState: function (latLng) {
+        // Create one entry in selected.geometries.
+        State.selected.geometries.addGeometry({
+          geometry: {
+            type: 'Point',
+            coordinates: [latLng.lng, latLng.lat]
+          }
+        });
+      },
+
+      /**
+       * Callback for the map when clicked.
+       * @param  {[type]} latLng [description]
+       * @return {[type]}        [description]
+       */
+      spatialSelect: function (latLng) {
+        var utfSlug = DataService.utfLayerGroup.slug;
+        if (State.box.type === 'point') {
+          if (State.layerGroups.active.indexOf(utfSlug) !== -1) {
+            this._setAssetOrGeomFromUtfOnState(latLng);
+          }
+          else {
+            this._setGeomFromUtfToState(latLng);
+          }
+        }
+
+        else if (State.box.type === 'multi-point') {
+          if (State.layerGroups.active.indexOf(utfSlug) !== -1) {
+            service._addAssetOrGeomFromUtfOnState(latLng);
+          }
+          else {
+            this._addGeomFromUtfToState(latLng);
+          }
+        }
+        else if (State.box.type === 'line') {
+          if (this.line.geometry.coordinates.length === 2
+            || State.selected.geometries.length > 0) {
+            State.selected.geometries = [];
+            this.line.geometry.coordinates = [];
+          }
+          if (this.line.geometry.coordinates.length < 2) {
+            this.line.geometry.coordinates.push([latLng.lng, latLng.lat]);
+          }
+          if (this.line.geometry.coordinates.length === 2) {
+            State.selected.geometries.addGeometry(this.line);
+          }
+        }
+      },
+
+      getRegions: function () {
+
+        /**
+         * Callback for clicks on regions. Calls fillRegion.
+         *
+         * @param  {object} leaflet ILayer that recieved the click.
+         */
+        var clickCb = function (layer) {
+          for (var key in layer.feature.properties) {
+            var newkey = key === 'type' ? 'regionType' : key;
+            layer.feature[newkey] = layer.feature.properties[key];
+          }
+          layer.feature.properties = {};
+          State.selected.geometries = [layer.feature];
+        };
+
+       CabinetService.regions.get({
+          z: State.spatial.view.zoom,
+          in_bbox: State.spatial.bounds.getWest()
+            + ','
+            + State.spatial.bounds.getNorth()
+            + ','
+            + State.spatial.bounds.getEast()
+            + ','
+            + State.spatial.bounds.getSouth()
+        })
+        .then(function (regions) {
+          NxtRegionsLayer.add(service, regions.results, clickCb);
+        });
+      },
+
+      removeRegions: function () {
+        NxtRegionsLayer.remove(this);
       },
 
       /**
@@ -163,8 +324,8 @@ angular.module('map')
       /**
        * @function
        * @memberOf map.MapService
-       * @param  {L.Class} Leaflet map
-       * @param  {L.Class} Leaflet layer
+       * @param  {object} Leaflet map
+       * @param  {object} Leaflet layer
        * @description Removes layer from map
        */
       addLeafletLayer: function (leafletLayer) {
@@ -181,8 +342,8 @@ angular.module('map')
       /**
        * @function
        * @memberOf map.MapService
-       * @param  {L.Class} Leaflet map
-       * @param  {L.Class} Leaflet layer
+       * @param  {object} Leaflet map
+       * @param  {object} Leaflet layer
        * @description Removes layer from map
        */
       removeLeafletLayer: function (leafletLayer) { // Leaflet NxtLayer
@@ -194,14 +355,7 @@ angular.module('map')
 
       _toggleLayers: function (lg) {
         if (lg.isActive() && lg.mapLayers.length > 0) {
-          if (lg.temporal) {
-            // copy timeState to layers so when added they will respect the
-            // current timestate and can make independent descisions about when
-            // to sync to new timestate.
-            angular.forEach(lg.mapLayers, function (layer) {
-              layer.timeState = angular.copy(State.temporal);
-            });
-          }
+          service.syncTime(State.temporal);
           addLayersRecursively(service._map, lg.mapLayers, 0);
         }
         else {
@@ -274,6 +428,7 @@ angular.module('map')
             layer._leafletLayer = initializers[layer.format](layer);
             angular.extend(layer, NxtMapLayer);
           } else if (layer.format === 'WMS') {
+            if (!layer.bounds) { layer.bounds = lg.spatialBounds; }
             layer = NxtNonTiledWMSLayer.create(layer);
           }
         });
@@ -343,7 +498,7 @@ angular.module('map')
      * @param  {object} map Leaflet map to add layers to.
      * @param  {array} layers Array of nxt layers.
      * @param  {int} i index to start from.
-     * @param  {inte} loadOrder Current load order to add layers.
+     * @param  {int} loadOrder Current load order to add layers.
      * @return {object} next index and list of promises that resolve when layer
      *                       is fully loaded.
      * @description Adds the layers from index i with the given loadorder to the
@@ -454,6 +609,8 @@ angular.module('map')
      */
     var initializers = {
 
+      MAXZOOMLEVEL: 21,
+
       TMS: function (nonLeafLayer) {
 
         var layerUrl = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}{retina}.{ext}';
@@ -467,7 +624,7 @@ angular.module('map')
             retina: retinaSupport && L.Browser.retina ? '@2x' : '',
             slug: nonLeafLayer.slug,
             minZoom: nonLeafLayer.min_zoom || 0,
-            maxZoom: 19,
+            maxZoom: this.MAXZOOMLEVEL,
             detectRetina: retinaSupport,
             zIndex: nonLeafLayer.zIndex,
             ext: 'png'
@@ -482,7 +639,7 @@ angular.module('map')
           format: 'image/png',
           version: '1.1.1',
           minZoom: nonLeafLayer.min_zoom || 0,
-          maxZoom: 19,
+          maxZoom: this.MAXZOOMLEVEL,
           crs: LeafletService.CRS.EPSG3857,
           opacity: nonLeafLayer.opacity,
           zIndex: nonLeafLayer.zIndex
@@ -502,7 +659,7 @@ angular.module('map')
           name: nonLeafLayer.slug,
           useJsonP: false,
           minZoom: nonLeafLayer.min_zoom_click || 0,
-          maxZoom: 19,
+          maxZoom: this.MAXZOOMLEVEL,
           order: nonLeafLayer.zIndex,
           zIndex: nonLeafLayer.zIndex
         });
@@ -510,8 +667,8 @@ angular.module('map')
       },
 
       Vector: function (nonLeafLayer) {
-        var leafletLayer = new LeafletVectorService({
-          slug: nonLeafLayer.slug,
+        var options = {
+          layer: nonLeafLayer,
           color: nonLeafLayer.color,
           showCoverageOnHover: false,  // When you mouse over a cluster it shows
                                        // the bounds of its markers.
@@ -567,10 +724,13 @@ angular.module('map')
                     + size + '</text>'
                     + '</svg>'
             });
+          },
+          callbackClick: function (e, features) {
+            service.spatialSelect(e.latlng);
           }
+        };
 
-        });
-        return leafletLayer;
+        return new LeafletVectorService(options);
       }
 
     };

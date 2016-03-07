@@ -167,20 +167,6 @@ describe('Testing UrlState', function () {
     expect(latLonZoom).toBe(false);
   });
 
-  it('should parse geom when point', function () {
-    var mapState = {here: {}, points: []};
-    var geom = '52.1065,5.9656';
-    var mapState = service.parseGeom('point', geom, mapState);
-    expect(mapState.here.lat).toBe(52.1065);
-  });
-
-  it('should parse geom when line', function () {
-    var mapState = {here: {}, points: []};
-    var geom = '52.5430,5.9216-52.0221,5.8173';
-    var mapState = service.parseGeom('line', geom, mapState);
-    expect(mapState.points[1].lat).toBe(52.0221);
-  });
-
   it('should give update when no changes', function () {
     expect(service.update(state)).toBe(true);
   });
@@ -256,7 +242,10 @@ describe('Testing hash controller', function () {
     // Mock the box
     $scope.box = {type: 'area'};
 
+    $scope.transitionToContext = function () {};
+
     createController = function (scope) {
+
       return $controller('UrlController', {
         '$scope': $scope,
         'LocationGetterSetter': LocationGetterSetter

@@ -34,7 +34,7 @@ angular.module('lizard-nxt')
   };
 
   this.options = {};
-  
+
   /**
    * @function
    * @description sets $http settings application wide like default Headers
@@ -59,7 +59,7 @@ angular.module('lizard-nxt')
       params: params
     });
 
-    return options; 
+    return options;
   };
 
   var self = this;
@@ -76,9 +76,13 @@ angular.module('lizard-nxt')
      * @function
      * @description GET method on rest api
      */
-    this.get = function (params) {
+    this.get = function (params, httpOptions) {
       var newUrl = self.makeUrl(this.url, this.baseUrl);
       var options = self.buildOptions(newUrl, params, 'GET');
+
+      if (httpOptions) {
+        angular.extend(options, httpOptions);
+      }
 
       if (resourceOptions) {
         angular.extend(options, resourceOptions);
@@ -88,7 +92,8 @@ angular.module('lizard-nxt')
         .then(function (response) {
           return response.data;
         }, function (error) {
-          throw error;
+          // something went wrong
+          console.error(error);
         });
     };
 

@@ -1,32 +1,6 @@
 <div id="timeline"
      ng-controller="TimeCtrl as timeline">
 
-    <div class="clock-wrapper noselect">
-
-      <!-- TODO?: use toLocaleString() for datetime dutchification? -->
-
-      <div class="clock-time">
-        <div
-           ng-click="timeline.toggleTimelineVisiblity()"
-           ng-bind="timeline.state.temporal.at | date: timeline.formatDatetime()"
-           title="<% timelineVisible ? tooltips.closeTimeline : tooltips.openTimeline %>">
-        </div>
-        <div ng-if="timeline.showContextSwitch">
-          <a
-            ng-click="timeline.toggleTimeCtx()"
-            class="button-list-link"
-            title="<% 'Show dashboard' | translate %>"
-            style="cursor: pointer;">
-            <i class="fa" ng-class="{
-              'fa-minus-square': timeline.state.context === 'dashboard',
-              'fa-bar-chart': timeline.state.context === 'map'
-            }"></i>
-          </a>
-        </div>
-      </div>
-
-    </div>
-
   <div class="timeline-wrapper">
     <div class="time-controls" id="time-controls" ng-if="timeline.animatable">
       <div class="btn-group">
@@ -39,14 +13,11 @@
            title="<% timeline.state.temporal.playing ? tooltips.stopAnim : tooltips.startAnim %>"
            data-original-title="<% 'Play/pause' | translate %>">
           <span
-            ng-if="timeline.state.layerGroups.timeIsSyncing"
-            class="fa fa-circle-o-notch fa-spin">
-          </span>
-          <span
-            ng-if="!timeline.state.layerGroups.timeIsSyncing"
+            class="fa"
             ng-class="{
-              'fa fa-pause active': timeline.state.temporal.playing,
-              'fa fa-play': !timeline.state.temporal.playing,
+              'fa-circle-o-notch fa-spin': timeline.state.layerGroups.timeIsSyncing,
+              'fa-pause active': timeline.state.temporal.playing,
+              'fa-play': !timeline.state.temporal.playing && !timeline.state.layerGroups.timeIsSyncing,
               }">
           </span>
         </a>
@@ -56,7 +27,7 @@
       <svg></svg>
     </div>
     <div class="time-controls-right">
-      <div class="btn-group-horizontal">
+      <div class="btn-group-vertical">
           <a class="btn btn-default btn-xss" ng-click="timeline.zoom('in')"
             class="extra-padding timeline-button"
             title="<% tooltips.zoomInTimeline %>"

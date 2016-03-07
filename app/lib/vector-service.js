@@ -16,8 +16,8 @@ angular.module('lizard-nxt')
                              '$rootScope',
                              'LeafletService',
                              'UtilService',
-                             'CabinetService',
-  function ($q, $rootScope, LeafletService, UtilService, CabinetService) {
+                             '$http',
+  function ($q, $rootScope, LeafletService, UtilService, $http) {
 
 
     /**
@@ -171,11 +171,11 @@ angular.module('lizard-nxt')
      * @param  {object} geomortime  geometry or time that it needs to get
      *                  (e.g. bboxs)
      * @param  {object} time  start, stop object
-     * @return {promise}
+     * @return {object}
      */
     var getData = function (callee, nonLeafLayer, options) {
       var deferred = $q.defer(),
-          layerSlug, layer;
+          layerSlug;
 
       // leaflet knows nothing, so sends slug and leaflayer
       if (typeof nonLeafLayer === 'string') {
@@ -185,7 +185,7 @@ angular.module('lizard-nxt')
       }
 
       if (!vectorLayers[layerSlug] || vectorLayers[layerSlug].isLoading) {
-        getDataAsync(layerSlug, layer, options, deferred);
+        getDataAsync(layerSlug, nonLeafLayer, options, deferred);
       } else {
         var set = filterSet(vectorLayers[layerSlug].data,
         options.geom, options.object, {
@@ -199,11 +199,15 @@ angular.module('lizard-nxt')
       return deferred.promise;
     };
 
+    var invalidateData = function (nonLeafLayer) {
+      vectorLayers[nonLeafLayer.slug] = null;
+    };
+
     /**
      * @description Triggers resolve callback on loaded data.
      * @param {layer}
      * @param {options}
-     * @param {promise}
+     * @param {object}
      */
     var getDataAsync = function (layerSlug, layer, options, deferred) {
       if (!vectorLayers[layerSlug]) {
@@ -214,10 +218,23 @@ angular.module('lizard-nxt')
           promise: {}
         };
 
-        vectorLayers[layerSlug].promise = CabinetService.events
-        .get({'event_series__layer__slug': layerSlug}).then(function (response) {
+        vectorLayers[layerSlug].promise = $http({
+          url: layer.url,
+          method: 'GET',
+          params: { page_size: 1000 }
+        })
+        .then(function (response) {
           vectorLayers[layerSlug].isLoading = false;
-          setData(layerSlug, response.results, 1);
+          var annotations;
+
+          // Legacy, annotations come from api/annotations, which differs
+          // from /events because it serves all events which belong to a
+          // annotation eventseries, but it also comes in a legacy format for
+          // portal.ddsc.nl. So we use the endpoint en convert the format here.
+          if (layer.slug === 'annotations') {
+            annotations = parseAnnotation(response.data.results);
+          }
+          setData(layerSlug, annotations || response.results, 1);
         });
 
       }
@@ -231,6 +248,26 @@ angular.module('lizard-nxt')
         ));
       });
 
+    };
+
+    /**
+     * Parses annotations to lizard events
+     * @param  {object} data annotation api results
+     * @return {array}  lizard events.
+     */
+    var parseAnnotation = function (data) {
+      var result = [];
+      data.forEach(function (anno) {
+        if (anno.location) {
+          result.push({
+            id: anno.id,
+            type: 'Feature',
+            geometry: anno.location,
+            properties: anno
+          });
+        }
+      });
+      return result;
     };
 
     /**
@@ -269,7 +306,8 @@ angular.module('lizard-nxt')
     return {
       getData: getData,
       setData: setData,
-      isInTempExtent: isInTempExtent
+      isInTempExtent: isInTempExtent,
+      invalidateData: invalidateData
     };
   }
 ]);

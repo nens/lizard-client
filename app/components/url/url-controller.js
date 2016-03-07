@@ -14,6 +14,7 @@
 angular.module('lizard-nxt')
 .controller('UrlController', [
   '$scope',
+  '$q',
   '$timeout',
   'LocationGetterSetter',
   'UrlState',
@@ -24,11 +25,12 @@ angular.module('lizard-nxt')
   'MapService',
   'NxtRegionsLayer',
   'State',
-  '$rootScope',
   'LeafletService',
   'gettextCatalog',
+  'FavouritesService',
   function (
     $scope,
+    $q,
     $timeout,
     LocationGetterSetter,
     UrlState,
@@ -39,9 +41,9 @@ angular.module('lizard-nxt')
     MapService,
     NxtRegionsLayer,
     State,
-    $rootScope,
     LeafletService,
-    gettextCatalog
+    gettextCatalog,
+    FavouritesService
   ) {
 
     // Configuration object for url state.
@@ -74,7 +76,7 @@ angular.module('lizard-nxt')
       timeState: {
         part: 'at',
         index: 1,
-      }
+      },
     };
 
    /**
@@ -189,10 +191,16 @@ angular.module('lizard-nxt')
      */
     var setTimeStateUrlHelper = function () {
       if (!State.temporal.timelineMoving) {
+        if (Date.now() - State.temporal.start > 7 * UtilService.day) {
+          State.temporal.relative = false;
+        } else {
+          State.temporal.relative = true;
+        }
         UrlState.setTimeStateUrl(
           state,
           State.temporal.start,
-          State.temporal.end
+          State.temporal.end,
+          State.temporal.relative
         );
       }
     };
@@ -215,9 +223,8 @@ angular.module('lizard-nxt')
         state.boxType.part, state.boxType.index, State.box.type
       );
 
-      if (old === 'point' || old === 'line' || old === 'region') {
+      if (['point', 'line', 'region', 'multi-point'].indexOf(old) != -1) {
         // Remove geometry from url
-        state.boxType.update = false;
         LocationGetterSetter.setUrlValue(
           state.geom.part, state.geom.index, undefined);
       }
@@ -229,66 +236,60 @@ angular.module('lizard-nxt')
      */
     $scope.$watch(State.toString('context'), function (n, old) {
       if (n === old) { return true; }
-      state.context.update = false;
+      state.context.update = true;
+
       LocationGetterSetter.setUrlValue(
-        state.context.part, state.context.index, $scope.context
+        state.context.part, state.context.index, State.context
       );
     });
 
-    /**
-     * Set geom when mapState.here changed and box.type is point.
-     */
-    $scope.$watch(State.toString('spatial.here'), function (n, o) {
-      if (n === o || State.box.type !== 'point') { return true; }
-      state.geom.update = false;
-      UrlState.setgeomUrl(
-        state,
-        State.box.type,
-        State.spatial.here,
-        State.spatial.points
-      );
+    $scope.$watch(State.toString('selected'), function (n, o) {
+      if (n === o) { return true; }
+      UrlState.setSelectedUrl(state, State.selected);
     });
 
     /**
-     * Set geom when mapState.points changed and box.type is line.
+     * @function
+     * @description Checks if the url is a `favourite url`. And then proceeds to
+     * fetch the favourites as it is asked.
+     * return {object} - thennable promise which resolves to true/false
      */
-    $scope.$watch(State.toString('spatial.points'), function (n, o) {
-      if (n === o || State.box.type !== 'line') { return true; }
-      UrlState.setgeomUrl(state,
-        State.box.type,
-        State.spatial.here,
-        State.spatial.points
-      );
-    });
-
-    /**
-     * Set region when State.spatial.region changed and box.type is region.
-     */
-    $scope.$watch(State.toString('spatial.region'), function (n, o) {
-      if (n === o || State.box.type !== 'region') { return true; }
-      if (State.spatial.region.properties) {
-        LocationGetterSetter.setUrlValue(
-          state.geom.part, state.geom.index, State.spatial.region.properties.name
-        );
+    var favouritesFromUrl = function () {
+      var firstUrlPart = LocationGetterSetter.getUrlValue(
+        'path', 0);
+      if (firstUrlPart !== 'favourites') {
+        return false;
       } else {
-        LocationGetterSetter.setUrlValue(
-          state.geom.part, state.geom.index, ''
+        var favouriteUUID = LocationGetterSetter.getUrlValue(
+          'path',
+          1
         );
+        return favouriteUUID;
       }
-    });
+    };
 
     /**
      * Set the state from the url on init or set the url from the default state
      * when the url is empty.
      */
-    var setStateFromUrl = function () {
-      var language = LocationGetterSetter.getUrlValue(state.language.part, state.language.index),
-        boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
-        geom = LocationGetterSetter.getUrlValue(state.geom.part, state.geom.index),
-        layerGroupsFromURL = LocationGetterSetter.getUrlValue(state.layerGroups.part, state.layerGroups.index),
-        mapView = LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index),
-        time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index),
-        context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
+    var setStateFromUrl = function (favouriteURL) {
+
+      if (!favouriteURL) {
+        var language = LocationGetterSetter.getUrlValue(
+            state.language.part, state.language.index),
+          boxType = LocationGetterSetter.getUrlValue(
+            state.boxType.part, state.boxType.index),
+          geom = LocationGetterSetter.getUrlValue(
+            state.geom.part, state.geom.index),
+          layerGroupsFromURL = LocationGetterSetter.getUrlValue(
+            state.layerGroups.part, state.layerGroups.index),
+          mapView = LocationGetterSetter.getUrlValue(
+            state.mapView.part, state.mapView.index),
+          time = LocationGetterSetter.getUrlValue(
+            state.timeState.part, state.timeState.index),
+          context = LocationGetterSetter.getUrlValue(
+            state.context.part, state.context.index);
+      }
 
       setLanguage(language);
 
@@ -299,29 +300,24 @@ angular.module('lizard-nxt')
       );
 
       if (context) {
-        // Set context after digest loop because we need to enter on 'map'
-        $timeout(
-          function () {
-            $scope.transitionToContext(context);
-          },
-          0, // no delay, fire when digest ends
-          true // trigger new digest loop
-        );
-      } else {
-        LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
+        $scope.transitionToContext(context);
+      } else if (!favouriteURL) {
+        LocationGetterSetter.setUrlValue(
+          state.context.part, state.context.index, state.context.value);
+        $scope.transitionToContext(state.context.value);
       }
 
       if (boxType) {
         State.box.type = boxType;
       } else {
-        LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, State.box.type);
+        LocationGetterSetter.setUrlValue(
+          state.boxType.part, state.boxType.index, State.box.type);
       }
 
       if (geom) {
-        if (/\d/.test(geom)) {
-          State.spatial = UrlState.parseGeom(State.box.type, geom, State.spatial);
-        } else {
-          NxtRegionsLayer.setActiveRegion(geom);
+        State.selected = UrlState.parseSelection(geom, State.selected);
+        if (boxType === 'region') {
+          NxtRegionsLayer.setActiveRegion(parseInt(geom));
         }
       }
 
@@ -332,14 +328,33 @@ angular.module('lizard-nxt')
         State.temporal = UrlState.parseTimeState(time, State.temporal);
       } else {
         state.timeState.update = false;
-        UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
+        UrlState.setTimeStateUrl(
+          state,
+          State.temporal.start,
+          State.temporal.end,
+          State.temporal.relative
+        );
       }
 
       UtilService.announceMovedTimeline(State);
 
     };
 
-    setStateFromUrl();
+
+    var favouriteUUID = favouritesFromUrl();
+    if (favouriteUUID) {
+      var deferred = $q.defer();
+      FavouritesService.getFavourite(
+        favouriteUUID,
+        function (favourite, getResponseHeaders) {
+          FavouritesService.applyFavourite(favourite);
+          deferred.resolve(true);
+        });
+      deferred.promise.then(setStateFromUrl);
+    }
+    else {
+      setStateFromUrl(false);
+    }
 
   }
 ]);

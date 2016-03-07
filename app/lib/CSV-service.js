@@ -30,7 +30,7 @@ angular.module('lizard-nxt')
      *                for temporal rasters and on for non-temporal rasters.
      * @param {string} lgSlug - The slug for the layergroup we want to intersect.
      * @param {object} layer - The layer we want to intersect.
-     * @return {string/number[][]} - The result, which can be formatted to an
+     * @return {object} - Array of arrays result, which can be formatted to an
      *                               actual CSV by the ng-csv directive.
      */
     this.formatLineCSV = function (lgSlug, layer) {
@@ -183,7 +183,7 @@ angular.module('lizard-nxt')
     /**
      * @description - format the CSV data (non-temporal raster data)
      * @param {number[][]} data - The data to be formatted.
-     * @return {number/string[][]} - the formatted data
+     * @return {number[][]} - the formatted data
      */
     var _formatLineCSVNonTemporal = function (data) {
 
@@ -222,7 +222,7 @@ angular.module('lizard-nxt')
     /**
      * @description - format the CSV data (temporal raster data)
      * @param {number[][]} data - The data to be formatted.
-     * @return {number/string[][]} - the formatted data
+     * @return {number[][]} - the formatted data
      */
     var _formatLineCSVTemporal = function (data, lgSlug) {
 

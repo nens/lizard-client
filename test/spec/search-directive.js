@@ -1,43 +1,44 @@
 'use strict';
 
-describe('Directives: Search with mocked LocationService', function () {
+describe('Directives: Search with mocked CabinetService', function () {
   var MapService, State;
 
-  module(function($provide) {
-    $provide.service('LocationService', function () {
-      // Mock promise
-      this.search = {
-        geocode: function (searchString, spatialState) {
-          return {
-            then: function (cb) { cb({status: 'OVER_QUERY_LIMIT'}); }
-          };
-        }
-      };
-    });
-  });
+  var CabinetService = function () {
+    // Mock promise
+    this.henk = 'piet'
+    this.geocode = {
+      get: function (searchString, spatialState) {
+        return {
+          then: function (cb) { cb({status: 'OVER_QUERY_LIMIT'}); }
+        };
+      }
+    };
+  };
 
   // load the service's module
   beforeEach(module('lizard-nxt'));
   beforeEach(module('global-state'));
-
+  beforeEach(function () {
+    module(function ($provide) {
+      $provide.service('CabinetService', CabinetService)
+    });
+  });
   var scope, element;
 
   beforeEach(inject(function ($rootScope, $compile, $injector) {
-    scope = $rootScope;
+    scope = $rootScope.$new();
+    // create empty object to destroy
+    scope.omnibox = {
+      searchResults: {}
+    };
     MapService = $injector.get('MapService');
     State = $injector.get('State');
 
     element = angular.element('<search></search>');
-    $compile(element)($rootScope);
+    $compile(element)(scope);
     var el = angular.element('<div></div>');
     MapService.initializeMap(el[0], {});
     scope.$digest();
-    // create empty object to destroy
-    scope.box = {
-      content: {
-        searchResults: {}
-      }
-    };
 
   }));
 
@@ -54,30 +55,18 @@ describe('Directives: Search with mocked LocationService', function () {
   });
 
   it('should remove content from box when calling cleanInput', function () {
-    scope.box.content = {reset: 'content'};
-    State.spatial.points = [123, 567];
+    scope.omnibox.searchResults = {harry: 'bertenernie'};
+    State.selected.assets = ['gemaalomdehoe$666'];
     scope.cleanInput();
-    expect(scope.box.content).toBeDefined();
-    expect(State.spatial.points.length).toEqual(0);
-    expect(scope.box.content.reset).toBeUndefined();
-  });
-
-  it('should destroy location model', function () {
-    // destroy is a private function so we call the function
-    // calling it.
-    scope.zoomToSpatialResult({
-      geometry: {
-        viewport: {}
-      }
-    });
-    expect(scope.box.content.hasOwnProperty('searchResults')).toBe(false);
+    expect(State.selected.assets.length).toEqual(0);
+    expect(scope.omnibox.searchResults.harry).toBeUndefined();
   });
 
   it(
     'should throw error when response status other than ZERO_RESULTS or OK',
     function () {
       scope.query = 'test';
-      // Mocked locationservice will respond whith status 'OVER_QUERY_LIMIT'
+      // Mocked CabinetService will respond whith status 'OVER_QUERY_LIMIT'
       expect(scope.search).toThrow();
     }
   );
@@ -100,16 +89,12 @@ describe('Directives: Search with real LocationService', function () {
     State = $injector.get('State');
 
     element = angular.element('<search></search>');
+    scope.omnibox = {};
     $compile(element)(scope);
     var el = angular.element('<div></div>');
     MapService.initializeMap(el[0], {});
     scope.$digest();
     // create empty object to destroy
-    scope.box = {
-      content: {
-        location: {}
-      }
-    };
 
     State = $injector.get('State');
 
@@ -128,7 +113,7 @@ describe('Directives: Search with real LocationService', function () {
   it('should set moment on scope when queried with time', function () {
     scope.query = '23-10-2014';
     scope.search();
-    expect(moment.isMoment(scope.box.content.searchResults.temporal)).toBe(true);
+    expect(moment.isMoment(scope.omnibox.searchResults.temporal)).toBe(true);
   });
 
   it(
@@ -136,14 +121,14 @@ describe('Directives: Search with real LocationService', function () {
     function () {
       scope.query = moment().year(moment().year() + 1).toISOString();
       scope.search();
-      expect(scope.box.content.searchResults.temporal).not.toBeDefined();
+      expect(scope.omnibox.searchResults.temporal).not.toBeDefined();
     }
   );
 
   it('should zoom to temporal result', function () {
     scope.query = '2014-10-23';
     scope.search();
-    var m = scope.box.content.searchResults.temporal
+    var m = scope.omnibox.searchResults.temporal
     scope.zoomToTemporalResult(m);
     expect(State.temporal.start).toBe(m.valueOf());
     expect(State.temporal.end).toBe(m.valueOf() + m.nxtInterval.valueOf());
@@ -156,7 +141,7 @@ describe('Directives: Search with real LocationService', function () {
     var e = $.Event('keydown');
     e.which = ENTER;
 
-    scope.box.content.searchResults = {
+    scope.omnibox.searchResults = {
       temporal: window.moment(),
 
       spatial: [

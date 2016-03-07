@@ -120,7 +120,7 @@ angular.module('lizard-nxt')
 
      /**
       * @function
-      * @memberOf angular.module('lizard-nxt').UrlState
+      * @memberOf UrlState
       * @description Sets the points or the here on the url when
       *              respectively point or line is specified as type.
       * @param {object} state config object
@@ -145,34 +145,56 @@ angular.module('lizard-nxt')
 
      /**
       * @function
-      * @memberOf angular.module('lizard-nxt')
-  .UrlState
+      * @memberOf UrlState
       * @description Sets the start and end epoch ms on the url
       * @param {object} state config object
       * @param {int} start time in ms
       * @param {int} end time in ms
+      * @param {bool} relative time or absolute
       */
-      setTimeStateUrl: function (state, start, end) {
+      setTimeStateUrl: function (state, start, end, relative) {
         var startDate = new Date(start);
         var endDate = new Date(end);
-        var startDateString = startDate.toDateString()
+
+        if (relative) {
+          var now = Date.now(),
+              past = now - start,
+              future = now - end;
+
+          past = UtilService.getTimeIntervalAsText(start, now);
+          future = UtilService.getTimeIntervalAsText(now, end);
+
+          var pastString = '-' + past.days + 'Days' + past.hours + 'Hours';
+          var futureString = '';
+
+          if (future.days !== '' && future.hours !== '') {
+            futureString = '+' + future.days + 'Days' + future.hours + 'Hours';
+          }
+
+          LocationGetterSetter.setUrlValue(
+            state.timeState.part,
+            state.timeState.index,
+            pastString + futureString
+          );
+        } else {
+          var startDateString = startDate.toDateString()
           .slice(4) // Cut off day name
           .split(' ') // Replace spaces by hyphens
           .join(',');
-        var endDateString = endDate.toDateString()
+          var endDateString = endDate.toDateString()
           .slice(4) // Cut off day name
           .split(' ') // Replace spaces by hyphens
           .join(',');
-        LocationGetterSetter.setUrlValue(
+          LocationGetterSetter.setUrlValue(
           state.timeState.part,
           state.timeState.index,
           startDateString + '-' + endDateString);
+        }
       },
 
      /**
       * @function
-      * @memberOf angular.module('lizard-nxt')
-  .UrlState
+      * @memberOf UrlState
       * @description Sets the mapView coordinates on the url.
       * @param {object} state config object
       * @param {object} lat leaflet Latitude object
@@ -182,8 +204,8 @@ angular.module('lizard-nxt')
       setCoordinatesUrl: function (state, lat, lng, zoom) {
         var COORD_PRECISION = 4;
         var newHash = [
-          lat.toFixed(COORD_PRECISION),
-          lng.toFixed(COORD_PRECISION),
+          parseFloat(lat).toFixed(COORD_PRECISION),
+          parseFloat(lng).toFixed(COORD_PRECISION),
           zoom
         ].join(',');
         LocationGetterSetter.setUrlValue(
@@ -194,8 +216,49 @@ angular.module('lizard-nxt')
 
       /**
        * @function
-       * @memberOf angular.module('lizard-nxt')
-  .UrlState
+       * @memberOf UrlState
+       * @description Sets the selected items part of the url
+       * @param {object} state config object
+       * @param {object} selected object (containing, assets, and geoms)
+       */
+      setSelectedUrl: function (state, selected) {
+        var newHash = angular.copy(selected.assets);
+        var n = Math.pow(10, COORD_PRECISION);
+        var coords;
+        angular.forEach(selected.geometries, function (geom) {
+          if (geom.geometry.type === 'Point') {
+            coords = angular.copy(geom.geometry.coordinates);
+            coords.forEach(function (point, i) {
+              coords[i] = Math.round(point * n) / n;
+            });
+            newHash.push(coords.join(','));
+          }
+          if (geom.geometry.type === 'LineString') {
+            var points = [];
+            coords = angular.copy(geom.geometry.coordinates);
+            angular.forEach(coords, function (point) {
+              point.forEach(function (pos, i) {
+                point[i] = Math.round(pos * n) / n;
+              });
+              points.push(point.join(','));
+            });
+            newHash.push(points.join('-'));
+          }
+          if (geom.geometry.type === 'Polygon' && geom.id) {
+            newHash.push(geom.id);
+          }
+        });
+
+        LocationGetterSetter.setUrlValue(
+          state.geom.part,
+          state.geom.index,
+          newHash.join('+')
+        );
+      },
+
+      /**
+       * @function
+       * @memberOf UrlState
        * @description Sets the layer slugs on the url.
        * @param {object} state config object
        * @param {object} layerGroups list
@@ -210,44 +273,45 @@ angular.module('lizard-nxt')
       },
       /**
        * @function
-       * @memberOf angular.module('lizard-nxt')
-  .UrlState
+       * @memberOf UrlState
        * @description Sets the layer slugs on the url.
        * @param  {str} time time value of the url
        * @param  {object} timeState nxt timeState
        * @return {object} nxt timeState
        */
       parseTimeState: function (time, timeState) {
-        // Browser independent. IE requires datestrings in a certain format.
-        var times = time.replace(/,/g, ' ').split('-');
-        var msStartTime = Date.parse(times[0]);
-        // bail if time is not parsable, but return timeState
-        if (isNaN(msStartTime)) { return timeState; }
-        timeState.start = msStartTime;
+        var times, msStartTime, msEndTime;
+        if (time.split('Days').length > 1) {
+          times = time.split('-')[1].split('+');
+          var past = times[0];
+          var future = times[1];
 
-        var msEndTime = Date.parse(times[1]);
-        if (isNaN(msEndTime)) { return timeState; }
-        if (msEndTime <= timeState.start) {
-          msEndTime = timeState.start + 43200000; // half a day
+          msStartTime = UtilService.parseDaysHours(past);
+          msEndTime = UtilService.parseDaysHours(future);
+
+          timeState.start = Date.now() - msStartTime;
+          timeState.end = Date.now() + msEndTime;
+        } else {
+          // Browser independent. IE requires datestrings in a certain format.
+          times = time.replace(/,/g, ' ').split('-');
+          msStartTime = Date.parse(times[0]);
+          // bail if time is not parsable, but return timeState
+          if (isNaN(msStartTime)) { return timeState; }
+          timeState.start = msStartTime;
+
+          msEndTime = Date.parse(times[1]);
+          if (isNaN(msEndTime)) { return timeState; }
+          if (msEndTime <= timeState.start) {
+            msEndTime = timeState.start + 43200000; // half a day
+          }
+          timeState.end = msEndTime;
         }
-        timeState.end = msEndTime;
-        timeState.aggWindow = UtilService.getAggWindow(
-          timeState.start,
-          timeState.end,
-          UtilService.getCurrentWidth()
-        );
-        var timeAt = timeState.start + (timeState.end - timeState.start) / 2;
-        timeState.at = UtilService.roundTimestamp(
-          timeAt,
-          timeState.aggWindow,
-          true
-        );
+
         return timeState;
       },
       /**
        * @function
-       * @memberOf angular.module('lizard-nxt')
-  .UrlState
+       * @memberOf UrlState
        * @description returns the mapview value parsed to
        *              latlonzoom
        * @param  {str} mapView
@@ -269,24 +333,55 @@ angular.module('lizard-nxt')
           return false;
         }
       },
-      parseGeom: function (type, geom, mapState) {
-        if (type === 'point') {
-          var point = geom.split(',');
-          if (parseFloat(point[0]) &&
-              parseFloat(point[1])) {
-            mapState.here = L.latLng(point[0], point[1]);
+
+      parseSelection: function (geom, selection) {
+        var selections = geom.split('+');
+        selections.forEach(function (selected) {
+          if (selected.split('$').length === 2) {
+            selection.assets.addAsset(selected);
           }
-        } else if (type === 'line') {
-          var points = geom.split('-');
-          angular.forEach(points, function (pointStr, key) {
-            var point = pointStr.split(',');
-            if (parseFloat(point[0]) &&
-                parseFloat(point[1])) {
-              mapState.points[key] = L.latLng(point[0], point[1]);
+
+          else {
+            var geometry = {
+              geometry: {
+                type: 'LineString'
+              }
+            };
+
+            if (selected.split('-').length > 1) {
+              // Line
+              var points = selected.split('-');
+              var coordinates = [];
+              angular.forEach(points, function (pointStr) {
+                var point = pointStr.split(',');
+                if (parseFloat(point[0]) &&
+                    parseFloat(point[1])) {
+                  coordinates.push([Number(point[0]), Number(point[1])]);
+                }
+              });
+              geometry.geometry.coordinates = coordinates;
+              selection.geometries.addGeometry(geometry);
             }
-          });
-        }
-        return mapState;
+
+            else if (selected.split(',').length > 1) {
+              var geometry = {
+                geometry: {
+                  type: 'Point'
+                }
+              };
+              var point = selected.split(',');
+              if (parseFloat(point[0]) &&
+                  parseFloat(point[1])) {
+                var coordinates = [Number(point[0]), Number(point[1])];
+                geometry.geometry.coordinates = coordinates;
+                selection.geometries.addGeometry(geometry);
+              }
+            }
+
+          }
+        });
+
+        return selection;
       },
       update: function (state) {
         var u = true;

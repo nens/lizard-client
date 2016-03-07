@@ -48,7 +48,7 @@ angular.module('lizard-nxt')
      * @description        The duration of transitions in ms. Use(d)
      *                     throughout the graphs and timeline.
      */
-    transTime: 120,
+    transTime: 300,
 
     /**
      * @attribute
@@ -159,7 +159,7 @@ angular.module('lizard-nxt')
      *                            bottom, left and right padding.
      *                            All values in px.
      * @param {array} data        Array of data objects.
-     * @param {int-or-string} key key to the values for the scale and
+     * @param {string} key (int or string) key to the values for the scale and
      *                            axis in the data element
      * @param {object} options    options object that will be passed
      *                            to the d3 scale and axis.
@@ -215,7 +215,7 @@ angular.module('lizard-nxt')
      * @memberOf angular.module('lizard-nxt').NxtD3
      *
      * @param {array} data        Array of data objects.
-     * @param {int-or-string} key to the value in the array or object.
+     * @param {string} key to the value in the array or object.
      * @description returns the maximum and minimum
      * @return {object} containing the max and min
      */
@@ -226,7 +226,10 @@ angular.module('lizard-nxt')
 
       var min, max;
 
-      if (key.hasOwnProperty('y0') && key.hasOwnProperty('y1')) {
+      // Key can be a string or integer, or an object containing two y keys.
+      if (key.hasOwnProperty
+        && key.hasOwnProperty('y0')
+        && key.hasOwnProperty('y1')) {
         var minComparator = function (d) { return d[key.y0]; };
         min = d3.min(data, minComparator);
 
@@ -304,8 +307,8 @@ angular.module('lizard-nxt')
       // Make an axis for d3 based on a scale
       var decimalCount,
           axis = d3.svg.axis()
-            .scale(scale)
-            .orient(options.orientation);
+          .scale(scale)
+          .orient(options.orientation);
       if (options.ticks) {
         axis.ticks(options.ticks);
       } else {
@@ -341,6 +344,13 @@ angular.module('lizard-nxt')
           }
         }
       }
+
+      if (options.drawGrid) {
+        var gridLength = this._getWidth(this.dimensions);
+        axis
+          .tickSize(-gridLength);
+      }
+
       return axis;
     },
 

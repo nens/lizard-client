@@ -22,6 +22,7 @@
 // START variables
 
 $font-family: 'Roboto', Helvetica, Arial, sans-serif;
+$sans-serif-alternative: "Helvetica Neue", Arial, Helvetica, sans-serif;
 
 // Width variables (appears count calculates by raw css)
 $width2: 140px; // Appears 2 times
@@ -70,17 +71,19 @@ $navbarandtimeline: 50px + 82px;
 }
 
 @mixin material-shadow() {
-   -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
--webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    -ms-box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 200ms cubic-bezier(0.52,0,0.48,1);
+   -moz-box-shadow: 0 1px 3px rgba($black, 0.12), 0 1px 2px rgba($black, 0.24);
+-webkit-box-shadow: 0 1px 3px rgba($black, 0.12), 0 1px 2px rgba($black, 0.24);
+    -ms-box-shadow: 0 1px 3px rgba($black, 0.12), 0 1px 2px rgba($black, 0.24);
+        box-shadow: 0 1px 3px rgba($black, 0.12), 0 1px 2px rgba($black, 0.24);
 }
 
 @mixin material-shadow-hover() {
-   -moz-box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
--webkit-box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-    -ms-box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    transition: all 200ms cubic-bezier(0.52,0,0.48,1);
+   -moz-box-shadow: 0 10px 20px rgba($black, 0.19), 0 6px 6px rgba($black, 0.23);
+-webkit-box-shadow: 0 10px 20px rgba($black, 0.19), 0 6px 6px rgba($black, 0.23);
+    -ms-box-shadow: 0 10px 20px rgba($black, 0.19), 0 6px 6px rgba($black, 0.23);
+        box-shadow: 0 10px 20px rgba($black, 0.19), 0 6px 6px rgba($black, 0.23);
 }
 
 @mixin cross-browser ($cssProperty, $value) {
@@ -88,6 +91,26 @@ $navbarandtimeline: 50px + 82px;
 -webkit-#{$cssProperty}: #{$value};
     -ms-#{$cssProperty}: #{$value};
         #{$cssProperty}: #{$value};
+}
+
+@mixin center-block () {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@mixin keyframe ($animation_name) {
+    @-webkit-keyframes $animation_name {
+        @content;
+    }
+
+    @-moz-keyframes $animation_name {
+        @content;
+    }
+
+    @keyframes $animation_name {
+        @content;
+    }
 }
 
 .material-shadow {
@@ -109,6 +132,7 @@ $navbarandtimeline: 50px + 82px;
 
 @import 'layout';
 @import 'omnibox';
+@import 'searchbox';
 @import 'graph';
 @import 'navbar';
 @import 'layer-chooser';
@@ -117,3 +141,5 @@ $navbarandtimeline: 50px + 82px;
 @import 'dashboard';
 @import 'scenarios';
 @import 'leaflet-overrides';
+@import 'favourites';
+@import 'color-picker';
