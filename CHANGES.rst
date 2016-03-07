@@ -6,6 +6,12 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Add crosssections visualization in dashboard.
 
+- Add share favourites.
+
+- Remove layergroups from search.
+
+- Adapt search results to updated full-text search API response.
+
 
 Release 2.9.4 (2016-3-1)
 ---------------------
