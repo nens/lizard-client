@@ -6,6 +6,17 @@
 
   <div class="card-content">
 
+    <!-- crosssections are not draggable and a specific visualization. -->
+    <div
+      ng-if="asset.entity_name === 'leveecrosssection'"
+      ng-click="toggleCrosssection(asset)"
+      class="card-content-list clickable">
+      <i class="fa fa-line-chart"></i>
+      <span translate ng-class="{'text-primary bg-warning': asset.crosssection.active}">
+        Levee crosssection
+      </span>
+    </div>
+
     <em ng-if="noTimeseries" translate>
       No timeseries available for this asset
     </em>
@@ -29,12 +40,13 @@
         <color-picker></color-picker>
       </div>
     </div>
+
   </div>
 
-    <db-geometry-cards
-      time-state="timeState"
-      geom="asset"
-      header="false">
-    </db-geometry-cards>
+  <db-geometry-cards
+    time-state="timeState"
+    geom="asset"
+    header="false">
+  </db-geometry-cards>
 
 </div>

@@ -136,24 +136,25 @@ angular.module('lizard-nxt')
         : graph._createLine(chartContainer._xy, keys);
 
         var MIN_POINTS_FOR_SUBSET = 15,
-            DELAY = 10, // ms
+            DELAY = 100, // ms
             DATA_REDUCTION_FACTOR = 5;
         if (transitioning && data.length > MIN_POINTS_FOR_SUBSET) {
+          var fullData = _.clone(data);
           graph._registerTimeout(
+            chartContainer,
             function () {
               chartContainer.path = drawPath(
                 graph._svg,
                 chartContainer.pathFn,
-                data,
+                fullData,
                 0, // transition 0 ms when drawing while zooming.
                 chartContainer.path,
                 lineAsArea ? chartContainer.color : 'none',
                 chartContainer.color
               );
             },
-            DELAY // delay with 30 ms
+            DELAY
           );
-
           data = getDataSubset(data, DATA_REDUCTION_FACTOR);
         }
 
@@ -320,6 +321,112 @@ angular.module('lizard-nxt')
   };
 
   /**
+   * Draws an elevation profile, with monitoring well values as points and an
+   * interpolation through the well values.
+   *
+   * Crosssection gets a combined y domain and the x domain of the line.
+   *
+   * Get range, domain, make scale and axis, draw everything.
+   *
+   * Data should look like this:
+   *
+   * content = {
+   *   line: {
+   *     data: [],
+   *     keys: {}
+   *   },
+   *   points: [{x: int, value: int}]
+   * };
+   *
+   * @param  {object} content data to plot
+   */
+  Graph.prototype.drawCrosssection = function (content) {
+    if (!content.points.length || !content.line.data) { return; }
+
+
+    var width = this._getWidth(this.dimensions);
+    var height = this._getHeight(this.dimensions);
+
+    var xLineMinMax = this._maxMin(content.line.data, 0);
+
+    var yLineMinMax = this._maxMin(content.line.data, 1);
+
+    var minimumPoint = _.minBy(content.points, function (p) {return p.value; });
+    var maximumPoint = _.maxBy(content.points, function (p) {return p.value; });
+
+    this._xy = {
+      x: {
+        minMax: {
+          min: 0,
+          max: xLineMinMax.max
+        }
+      },
+      y: {
+        minMax: {
+          min: Math.max(yLineMinMax.max, maximumPoint.value),
+          max: Math.min(0, minimumPoint.value)
+        }
+      }
+    };
+
+    var xRange = {min: 0, max: width};
+    var yRange = {min: 0, max: height};
+
+    this._xy.x.scale = this._makeScale(
+      this._xy.x.minMax,
+      xRange,
+      {scale: 'linear'}
+    );
+    this._xy.x.axis = this._makeAxis(
+      this._xy.x.scale,
+      {orientation: 'bottom'}
+    );
+    this._drawAxes(
+      this._svg,
+      this._xy.x.axis,
+      this.dimensions,
+      false, // is not a y axis.
+      this.transTime
+    );
+
+    this._xy.y.scale = this._makeScale(
+      this._xy.y.minMax,
+      yRange,
+      {scale: 'linear'}
+    );
+    this._xy.y.axis = this._makeAxis(this._xy.y.scale, {orientation: 'left'});
+    this._drawAxes(
+      this._svg,
+      this._xy.y.axis,
+      this.dimensions,
+      true, // is a y axis.
+      this.transTime
+    );
+
+    var className = 'line';
+    addLineToGraph(
+      this._svg,
+      this.transTime,
+      content.line.data,
+      {x: 0, y:1},
+      this._xy,
+      className
+    );
+
+    addPointsToGraph(this._svg, this.transTime, content.points, this._xy);
+
+    className = 'interpolation-line';
+    addLineToGraph(
+      this._svg,
+      this.transTime,
+      content.points,
+      {x: 'x', y: 'value'},
+      this._xy,
+      className
+    );
+  };
+
+  /**
    * @function
    * @memberOf Graph
    * @param {function} callback
@@ -407,14 +514,14 @@ angular.module('lizard-nxt')
    *                      resolves.
    * @param {int} delay in ms of the cb execution.
    */
-  Graph.prototype._registerTimeout = function(cb, delay) {
-      if (this.timeout) {
-        $timeout.cancel(this.timeout);
+  Graph.prototype._registerTimeout = function(chart, cb, delay) {
+      if (chart.timeout) {
+        $timeout.cancel(chart.timeout);
       }
 
       var graph = this;
 
-      this.timeout = $timeout(
+      chart.timeout = $timeout(
         function () {
           cb.call(graph); },
         delay,
@@ -425,7 +532,7 @@ angular.module('lizard-nxt')
   var createPie, createArc, drawPie, drawAxes, drawLabel, needToRescale,
       drawPath, setupLineGraph, createDonut, addInteractionToPath, getBarWidth,
       drawVerticalRects, addInteractionToRects, drawHorizontalRects,
-      createXGraph, rescale, createYValuesForCumulativeData, getDataSubset;
+      createXGraph, rescale, createYValuesForCumulativeData, getDataSubset, addPointsToGraph, addLineToGraph;
 
   /**
    * Creates y cumulatie y values for elements on the same x value.
@@ -499,6 +606,70 @@ angular.module('lizard-nxt')
       }
     });
     return xy;
+  };
+
+  addPointsToGraph = function (svg, duration, points, xy) {
+    var xScale = xy.x.scale;
+    var yScale = xy.y.scale;
+
+    // Join new points to svg circles
+    var circles = svg.select('g').select('#feature-group').selectAll("circle")
+      .data(points, function(d) { return d.id; });
+
+    // UPDATE
+    // Update elements start and width as needed.
+    circles.transition()
+      .duration(duration)
+      .attr("cx", function (d) { return xScale(d.x); })
+      .attr('cy', function (d) { return yScale(d.value); });
+    // ENTER
+    // Create new elements as needed.
+    circles.enter().append("circle")
+      .attr("cx", function (d) { return xScale(d.x); })
+      .attr('cy', function (d) { return yScale(d.value); })
+      .attr("class", "point")
+      .transition()
+      .duration(duration)
+      .attr('r', 8);
+    // EXIT
+    // Remove old elements as needed. First transition to width = 0
+    // and then remove.
+    circles.exit()
+      .transition()
+      .duration(duration)
+      .attr('width', 0)
+      .remove();
+  };
+
+  /**
+   * Adds a line to a graph. Assumes xy contains d3 scales and className
+   * describes a unique line.
+   */
+  addLineToGraph = function (svg, duration, data, keys, xy, className) {
+    var xScale = xy.x.scale;
+    var yScale = xy.y.scale;
+
+    var path = d3.svg.line()
+      .interpolate('basis') // Goes nicely in between the points. Makes it look
+                            // very scientific.
+      .x(function (d) { return xScale(d[keys.x]); })
+      .y(function (d) { return yScale(d[keys.y]); })
+      // interrupt the line when no data
+      .defined(function (d) { return !isNaN(parseFloat(d[keys.y])); });
+
+    // generate line paths
+    var line = svg.select('#feature-group').selectAll("." + className)
+      .data([data]).attr("class", className);
+
+    // Create the line
+    line.enter()
+      .append("path")
+      .attr("class", className)
+      .attr("d", function (d) { return path(d); });
+
+    // Update the line
+    line.transition().duration(duration)
+      .attr("d", path);
   };
 
   drawHorizontalRects = function (svg, dimensions, duration, scale, data, keys, labels) {
