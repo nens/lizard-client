@@ -53,19 +53,8 @@ $grid-float-breakpoint-max: 768px;
 
 // lizard apps stuff
 .lizard-apps-button {
-  user-select: none;
-  cursor: pointer;
-  padding: 15px 10px;
-  float: right;
-  border: none;
-  border-radius: 0;
-  background-color: $greenSea;
   color: $white;
 
-  &:hover {
-      @include material-shadow-hover();
-      background-color: $turquoise;
-  }
   ul.dropdown-menu {
       border-radius: 0;
   }
