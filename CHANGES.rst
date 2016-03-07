@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Adding graphs with multiple y-axes.
+
 - Add share favourites.
 
 - Remove layergroups from search.

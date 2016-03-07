@@ -110,6 +110,7 @@ angular.module('lizard-nxt')
     var graph = this;
     // graph.rescale = rescale;
     graph._xyPerUnit = {};
+    graph._yaxes = {};
     angular.forEach(content, function (item, index) {
       var chartContainer;
 
@@ -117,7 +118,6 @@ angular.module('lizard-nxt')
       if (graph._containers[index]) {
         if (graph._containers[index].constructor === ChartContainer) {
           chartContainer = graph._containers[index];
-          drawLabel(graph._svg, graph.dimensions, chartContainer.labels.y, true);
         }
       } else {
         graph._containers[index] = new ChartContainer(item, graph, temporal);
@@ -128,8 +128,8 @@ angular.module('lizard-nxt')
         return; // for the love of pete don't let it continue
       }
 
-
-      graph._xyPerUnit = updateXYs(chartContainer, graph._svg, graph._xyPerUnit, graph.dimensions);
+      graph._xyPerUnit = updateXYs(chartContainer, graph._svg, graph._xyPerUnit,
+                                   graph.dimensions, graph._yaxes);
       var xy = graph._xyPerUnit[chartContainer.unit];
 
       var data = chartContainer.data,
@@ -191,7 +191,6 @@ angular.module('lizard-nxt')
         }
         graph._xy = xy; // for mouse interaction?
     });
-
   };
 
   /**
@@ -434,7 +433,7 @@ angular.module('lizard-nxt')
       drawPath, setupLineGraph, createDonut, addInteractionToPath, getBarWidth,
       drawVerticalRects, addInteractionToRects, drawHorizontalRects,
       createXGraph, rescale, createYValuesForCumulativeData, getDataSubset,
-      updateXYs;
+      updateXYs, drawMultipleAxes, setActiveAxis;
 
   /**
    * Creates y cumulatie y values for elements on the same x value.
@@ -491,15 +490,13 @@ angular.module('lizard-nxt')
    * @param {object} - xyPerUnit - xy characteristics (domain, scale, axis) per unit of the graph
    * @param {object} - dimensions - object describing the size of the graphCtrl
    */
-  updateXYs = function (chartContainer, svg, xyPerUnit, dimensions) {
+  updateXYs = function (chartContainer, svg, xyPerUnit, dimensions, axes) {
     var limits = {
       x: 1,
       y: 0.2
     };
-    var orientation = {
-      x: 'bottom',
-      y: 'left'
-    };
+
+    var options = chartContainer.options;
 
     angular.forEach(['x', 'y'], function (key) {
       var maxMin = Graph.prototype._maxMin(chartContainer.data, chartContainer.keys[key]);
@@ -515,10 +512,16 @@ angular.module('lizard-nxt')
 
       unitXY[key].maxMin = maxMin;
       unitXY[key].range = Graph.prototype._makeRange(key, dimensions);
-      unitXY[key].scale = Graph.prototype._makeScale(unitXY[key].maxMin, unitXY[key].range, {scale: 'linear'});
+      unitXY[key].scale = Graph.prototype._makeScale(unitXY[key].maxMin, unitXY[key].range, options[key]);
       unitXY[key].scale.domain([unitXY[key].maxMin.min, unitXY[key].maxMin.max]);
-      unitXY[key].axis = Graph.prototype._makeAxis(unitXY[key].scale, {orientation: orientation[key]});
-      drawAxes(svg, unitXY[key].axis, dimensions, true, Graph.prototype.transTime);
+      unitXY[key].axis = Graph.prototype._makeAxis(unitXY[key].scale, options[key]);
+      if (key === 'y') {
+        drawMultipleAxes(svg, unitXY[key].axis, dimensions, true,
+                       Graph.prototype.transTime, chartContainer.unit, axes);
+      } else {
+        drawAxes(svg, unitXY[key].axis, dimensions, false,
+                       Graph.prototype.transTime, chartContainer.unit);
+      }
     });
 
     return xyPerUnit;
@@ -929,7 +932,8 @@ angular.module('lizard-nxt')
       el.attr('dy', mv);
    }
     else {
-      el = svg.append("text")
+      el = svg.append('g')
+        .append("text")
         .attr('class', 'graph-text graph-label')
         .style("text-anchor", "middle")
         .text(label);
@@ -948,6 +952,7 @@ angular.module('lizard-nxt')
           .attr('y', dimensions.height);
       }
     }
+    return el;
   };
 
   drawAxes = function (svg, axis, dimensions, y, duration) {
@@ -956,7 +961,7 @@ angular.module('lizard-nxt')
     var axisEl;
     // Make graph specific changes to the x and y axis
     if (y) {
-      axisEl = svg.select('#yaxis')
+      axisEl = svg.select('#yaxis').select('g')
         .attr("class", "y-axis y axis")
         .selectAll("text")
           .style("text-anchor", "end")
@@ -971,6 +976,69 @@ angular.module('lizard-nxt')
           .attr('class', 'graph-text')
           .attr("transform", "rotate(-25)");
     }
+    return axisEl;
+  };
+
+
+  /**
+   * Draws or updates graph axis labels, with multiple y's.
+   * @param  {object}       d3 selection svg
+   * @param  {object}       dimensions
+   * @param  {string}       (optional) label, if undefined uupdates current.
+   * @param  {boolean}      draw on y axis, else x-axis.
+   * @param  {string}       unit (e.g. mNAP)
+   * @param  {object}       axes - keeps track of active axis.
+   */
+  drawMultipleAxes = function (svg, axis, dimensions, y, duration, unit, axes) {
+    axes[unit] = {
+      axis: axis,
+      active: false
+    };
+
+    svg.select('#yaxis').on('click', function (e) {
+      setActiveAxis(svg, undefined, dimensions, duration, axes);
+    });
+    setActiveAxis(svg, unit, dimensions, duration, axes);
+  };
+
+  /**
+   * see which axis is active and select the next one
+   * (or the first one if the last)
+   */
+  var nextAxis = function (axes, axunit) {
+
+    var axKeys = Object.keys(axes);
+    var _activeAxis;
+    angular.forEach(axes, function (axis, key) {
+      if (axis.active) _activeAxis = key;
+      return axis.active;
+    });
+    var ki = axKeys.indexOf(_activeAxis);
+
+    var newAxis;
+    if (axKeys.length - 1 === ki) {
+      newAxis = 0;
+    } else {
+      newAxis = ki + 1;
+    }
+    return axKeys[newAxis];
+  };
+
+  /**
+   * Determines which label should be shown.
+   * @param  {object}       d3 selection svg
+   * @param  {string}       unit (e.g. mNAP)
+   * @param  {object}       axes - keeps track of active axis.
+   */
+  setActiveAxis = function (svg, unit, dimensions, duration, axes) {
+    unit = (String(unit) !== 'undefined') ? unit : nextAxis(axes, unit);
+    angular.forEach(axes, function (axis, key) {
+      if (key !== unit) {
+        axis.active = false;
+      }
+    });
+    axes[unit].active = true;
+    drawAxes(svg, axes[unit].axis, dimensions, true, duration);
   };
 
   createDonut = function (dimensions) {

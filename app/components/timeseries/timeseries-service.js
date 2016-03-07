@@ -177,6 +177,7 @@ angular.module('timeseries')
       var graphTimeseriesTemplate = {
         id: '', //uuid
         data: [],
+        unit: '',
         color: '', // Defined on asset.timeseries
         order: '', // Defined on asset.timeseries
         labels: {
@@ -191,6 +192,7 @@ angular.module('timeseries')
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
         graphTimeseries.data = ts.events;
         graphTimeseries.id = ts.uuid;
+        graphTimeseries.unit = (ts.parameter_referenced_unit) ? ts.parameter_referenced_unit.referenced_unit_short_display_name : '';
         graphTimeseries = addColorAndOrder(graphTimeseries);
         result.push(graphTimeseries);
       });

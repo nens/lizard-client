@@ -38,9 +38,10 @@ angular.module('lizard-nxt')
 
     this.unit = chartContent.unit;
 
-    var options = {
+    var xscale = (temporal) ? 'time' : 'linear';
+    this.options = {
       x: {
-        scale: 'time',
+        scale: xscale,
         orientation: 'bottom'
       },
       y: {
