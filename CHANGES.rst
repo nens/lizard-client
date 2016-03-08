@@ -6,6 +6,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Adding graphs with multiple y-axes.
 
+- Add crosssections visualization in dashboard.
+
 - Add share favourites.
 
 - Remove layergroups from search.
