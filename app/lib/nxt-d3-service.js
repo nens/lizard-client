@@ -321,7 +321,7 @@ angular.module('lizard-nxt')
      * @description returns a d3 axis
      * @return {object} d3 axis
      */
-    _makeAxis: function (scale, options) {
+    _makeAxis: function (scale, options, dimensions) {
       // Make an axis for d3 based on a scale
       var decimalCount,
           axis = d3.svg.axis()
@@ -363,8 +363,10 @@ angular.module('lizard-nxt')
         }
       }
 
-      if (options.drawGrid) {
-        var gridLength = this._getWidth(this.dimensions);
+      dimensions = (this.dimensions) ? this.dimensions : dimensions;
+
+      if (options.drawGrid && dimensions) {
+        var gridLength = this._getWidth(dimensions);
         axis
           .tickSize(-gridLength);
       }

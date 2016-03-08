@@ -131,7 +131,7 @@ angular.module('lizard-nxt')
       }
 
       graph._xyPerUnit = updateXYs(chartContainer, graph._svg, graph._xyPerUnit,
-                                   graph.dimensions, graph._yaxes);
+                                   graph.dimensions, graph._yaxes, graph._xDomainInfo);
       var xy = graph._xyPerUnit[chartContainer.unit];
 
       var data = chartContainer.data,
@@ -180,19 +180,19 @@ angular.module('lizard-nxt')
           chartContainer.color
         );
 
-        if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
-          addInteractionToPath(
-            graph._svg,
-            graph.dimensions,
-            data,
-            keys,
-            labels,
-            chartContainer.path,
-            xy,
-            graph.transTime
-          );
-        }
-        graph._xy = xy; // for mouse interaction?
+        // if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+        //   addInteractionToPath(
+        //     graph._svg,
+        //     graph.dimensions,
+        //     data,
+        //     keys,
+        //     labels,
+        //     chartContainer.path,
+        //     xy,
+        //     graph.transTime
+        //   );
+        // }
+        // graph._xy = xy; // for mouse interaction?
     });
   };
 
@@ -599,15 +599,19 @@ angular.module('lizard-nxt')
    * @param {object} - xyPerUnit - xy characteristics (domain, scale, axis) per unit of the graph
    * @param {object} - dimensions - object describing the size of the graphCtrl
    */
-  updateXYs = function (chartContainer, svg, xyPerUnit, dimensions, axes) {
+  updateXYs = function (chartContainer, svg, xyPerUnit, dimensions, axes, xDomainInfo) {
     var limits = {
       x: 1,
       y: 0.2
     };
 
     var options = chartContainer.options;
+    var width = Graph.prototype._getWidth(dimensions);
 
     angular.forEach(['x', 'y'], function (key) {
+      var y = key === 'y';
+      options[key].drawGrid = width > MIN_WIDTH_INTERACTIVE_GRAPHS && y;
+
       var maxMin = Graph.prototype._maxMin(chartContainer.data, chartContainer.keys[key]);
       var unitXY = xyPerUnit[chartContainer.unit];
 
@@ -620,10 +624,15 @@ angular.module('lizard-nxt')
       }
 
       unitXY[key].maxMin = maxMin;
+
+      if (key === "x" && xDomainInfo) {
+        unitXY[key].maxMin =  { min: xDomainInfo.start, max: xDomainInfo.end };
+      }
+
       unitXY[key].range = Graph.prototype._makeRange(key, dimensions);
       unitXY[key].scale = Graph.prototype._makeScale(unitXY[key].maxMin, unitXY[key].range, options[key]);
       unitXY[key].scale.domain([unitXY[key].maxMin.min, unitXY[key].maxMin.max]);
-      unitXY[key].axis = Graph.prototype._makeAxis(unitXY[key].scale, options[key]);
+      unitXY[key].axis = Graph.prototype._makeAxis(unitXY[key].scale, options[key], dimensions);
       if (key === 'y') {
         drawMultipleAxes(svg, unitXY[key].axis, dimensions, true,
                        Graph.prototype.transTime, chartContainer.unit, axes);
@@ -1134,7 +1143,7 @@ angular.module('lizard-nxt')
     var axisEl;
     // Make graph specific changes to the x and y axis
     if (y) {
-      axisEl = svg.select('#yaxis').select('g')
+      axisEl = svg.select('#yaxis')
         .attr("class", "y-axis y axis")
         .selectAll("text")
           .style("text-anchor", "end")
