@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Fix redraw feedback on map when coming from dashboard.
+
 - Add support for timeseries with time image.
 
 - Add crosssections visualization in dashboard.
