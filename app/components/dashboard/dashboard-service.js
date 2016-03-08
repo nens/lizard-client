@@ -34,7 +34,6 @@ angular.module('dashboard')
 
     timeseries.forEach(function (ts) {
       if (graphs[ts.order]) {
-        graphs.type = 'temporalLine';
         // Check if timeseries is already in the plot, if so replace data.
         var partOfContent =_.find(graphs[ts.order].content, function (c) {
           return c.id === ts.id;
@@ -47,8 +46,10 @@ angular.module('dashboard')
       }
       else {
         var content = [ts];
-        graphs[ts.order] = { 'type': 'temporalLine', 'content': content };
+        graphs[ts.order] = { 'content': content };
       }
+      graphs[ts.order].type = ts.valueType === 'image'? 'image' : 'temporalLine';
+
       // Keep this graph
       var indexOflast = graphs[ts.order].content.length -1;
       graphs[ts.order].content[indexOflast].updated = true;

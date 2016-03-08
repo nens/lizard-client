@@ -17,8 +17,9 @@ angular.module('timeseries')
 
       },
       restrict: 'E', // Timeseries can be an element with single-select or
-                      // multi select as as an attribute or without in which
-                      // case it only collects the ts metadata.
+                      // multi select as an attribute or without in which
+                      // case it only sets the color and order of timeseries of
+                      // new assets.
     };
 }]);
 
@@ -47,16 +48,10 @@ angular.module('timeseries')
           }
         };
 
-        /** timeseries are asynchronous so we set a default selection when
-         *  they are set.
+        /** timeseries are not asynchronous so we set a default immediately
          */
-        var watchTimeseries = scope.$watch('asset.timeseries', function (n, o) {
-          if (n) {
-            scope.timeseries.selected = scope.asset.timeseries[0];
-            scope.timeseries.change();
-            watchTimeseries(); // rm watch
-          }
-        });
+        scope.timeseries.selected = scope.asset.timeseries[0];
+        scope.timeseries.change();
 
         /**
          * Get new ts when time changes

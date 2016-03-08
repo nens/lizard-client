@@ -3,4 +3,4 @@
  * Initialise angular.module('dashboard')
  *
  */
-angular.module('dashboard', ['timeseries']);
+angular.module('dashboard', ['image-carousel', 'timeseries']);

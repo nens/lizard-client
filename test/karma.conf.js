@@ -50,6 +50,7 @@ module.exports = function(config) {
       'app/components/state/state.js',
       'app/components/scenarios/scenarios.js',
       'app/components/timeseries/timeseries.js',
+      'app/components/image-carousel/image-carousel.js',
       'app/components/annotations/annotations.js',
       'app/components/user-menu/user-menu.js',
       'app/components/dashboard/dashboard.js',
