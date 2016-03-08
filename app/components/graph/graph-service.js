@@ -107,8 +107,8 @@ angular.module('lizard-nxt')
    *                        supported.
    */
   Graph.prototype.drawLine = function (content, temporal, transitioning) {
+
     var graph = this;
-    // graph.rescale = rescale;
     graph._xyPerUnit = {};
     graph._yaxes = {};
     angular.forEach(content, function (item, index) {
@@ -118,6 +118,8 @@ angular.module('lizard-nxt')
       if (graph._containers[index]) {
         if (graph._containers[index].constructor === ChartContainer) {
           chartContainer = graph._containers[index];
+          chartContainer.updateXY(item); // refresh data and min, max
+          drawLabel(graph._svg, graph.dimensions, chartContainer.labels.y, true);
         }
       } else {
         graph._containers[index] = new ChartContainer(item, graph, temporal);

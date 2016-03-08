@@ -289,7 +289,7 @@ describe('Testing graph', function () {
     expect(graph._xy.y.maxMin.max).toBe(4);
   });
 
-  it('should not rescale the y when max halves', function () {
+  it('should rescale the y when max halves', function () {
 
     var data = [[0, 0], [1, 3], [2, 1]],
         keys = {x: 0, y: 1},
@@ -309,7 +309,7 @@ describe('Testing graph', function () {
       labels: labels
     }]);
 
-    expect(graph._xy.y.maxMin.max).toBe(3);
+    expect(graph._xy.y.maxMin.max).toBe(1.5);
   });
 
   it('should rescale the y when max diminishes', function () {
