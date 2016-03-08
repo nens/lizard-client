@@ -204,15 +204,15 @@ angular.module('omnibox')
 }]);
 
 angular.module('omnibox')
-  .directive('rain', ['State', 'RasterService', 'UtilService', function (State, RasterService, UtilService) {
+  .directive('rain', ['State', 'RasterService', function (State, RasterService) {
   return {
     link: function (scope) {
-
-      scope.util = UtilService;
 
       scope.rrc = {
         active: false
       };
+
+      scope.rain.MAX_TIME_INTERVAL = 86400000 * 365.2425 / 12; // 1 month
 
       var setGraphContent = function () {
         scope.graphContent = [{
@@ -235,41 +235,26 @@ angular.module('omnibox')
         }
       });
 
-      // Hack to get raw rain data when hitting Export
       // Gets data directly from raster endpoint of raster RAW_RAIN_RASTER_UUID
-      // limited to MAX_TIME_INTERVAL in ms
-      var RAW_RAIN_RASTER_UUID = '730d6675-35dd-4a35-aa9b-bfb8155f9ca7',
-          MAX_TIME_INTERVAL = 86400000 * 365.2425 / 12;  // 1 month
+      var RAW_RAIN_RASTER_UUID = '730d6675-35dd-4a35-aa9b-bfb8155f9ca7';
 
-      // export button is active by default
-      scope.exportActive = true;
-
-      // disable export button when interval is bigger than MAX_TIME_INTERVAL
-      scope.checkTempInterval = function () {
-        if (State.temporal.end - State.temporal.start < MAX_TIME_INTERVAL) {
-
-          scope.rawDataUrl =
-            window.location.origin + '/api/v2/rasters/' +
-            RAW_RAIN_RASTER_UUID + '/data/' +
-            '?format=csv' +
-            '&start=' +
-            new Date(State.temporal.start).toISOString().split('.')[0] +
-            '&stop=' +
-            new Date(State.temporal.end).toISOString().split('.')[0] +
-            '&geom=' + UtilService.geomToWkt(State.spatial.here) +
-            '&srs=EPSG:4326';
-
-          scope.exportActive = true;
-        } else {
-          scope.exportActive = false;
-        }
+      scope.getRawDataUrl = function (event) {
+        var coords = scope.rain.geometry.coordinates;
+        return window.location.origin + '/api/v2/rasters/' +
+          RAW_RAIN_RASTER_UUID + '/data/' +
+          '?format=csv' +
+          '&start=' +
+          new Date(State.temporal.start).toISOString().split('.')[0] +
+          '&stop=' +
+          new Date(State.temporal.end).toISOString().split('.')[0] +
+          '&geom=' + 'POINT(' + coords[0] + ' ' + coords[1] +')' +
+          '&srs=EPSG:4326';
       };
       // ENDHACK
 
       var getRecurrenceTime = function () {
         scope.rrc.data = null;
 
-        // TODO: refactor this shit
         RasterService.getData(
           'RainController',
           {slug: 'rain'},

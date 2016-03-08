@@ -2,38 +2,44 @@
 
   <div class="card active">
     <div class="card-content">
-     <full-details></full-details>
+      <full-details></full-details>
 
-     <span class="card-title-text" ng-class="{hidden: fullDetails}" translate>Rain</span>
-     <div ng-if="graphContent" ng-class="{ hidden: !fullDetails }">
-       <graph
+      <span class="card-title-text" ng-class="{hidden: fullDetails}" translate>Rain</span>
+      <div ng-if="graphContent" ng-class="{ hidden: !fullDetails }">
+        <graph
           bar-chart
           temporal="timeState"
           content="graphContent"
-          now="state.temporal.at">
+          now="timeState.at">
         </graph>
-       <div class="card-tools"
-            ng-mouseover="checkTempInterval()"
-            ng-attr-title="{{ !exportActive && 'Export regendata > 1 maand wordt niet ondersteund' || '' }}"
-            ng-class="{hidden: !fullDetails}">
-         <a ng-click="recurrenceTimeToggle()"
-            ng-class="{'active': rrc.active}"
+
+        <div
+          class="card-tools"
+          ng-class="{hidden: !fullDetails}">
+
+          <a
+            ng-click="recurrenceTimeToggle()"
+            ng-class="{ active: rrc.active }"
             class="btn btn-default btn-xs"
-            title="<% 'Extra statistieken, herhalingstijden' | translate %>"
+            title="<% 'Rain recurrence statistics' | translate %>"
             translate>
-            Statistics
-         </a>
-          <a target="_blank"
-             href="<% rawDataUrl %>"
-             ng-class="{disabled: !exportActive}"
-             class="btn btn-default btn-xs"
-             title="<% 'Export info card data' | translate %>">
-             <i class="fa fa-share-square-o"></i>
-             <span translate>Export</span>
+            <span translate>Statistics</span>
           </a>
-       </div>
-     </div>
-   </div>
+
+          <a
+            target="_blank"
+            ng-href="<% getRawDataUrl() %>"
+            ng-class="timeState.end - timeState.start > rain.MAX_TIME_INTERVAL ? 'disabled' : ''"
+            class="btn btn-default btn-xs"
+            title="<% 'Export data' | translate %>">
+            <i class="fa fa-share-square-o"></i>
+            <span translate>Export</span>
+          </a>
+
+        </div>
+
+      </div>
+    </div>
   </div>
 
   <div class="card active ng-class: {hidden: !fullDetails}" ng-if="rrc.active">
