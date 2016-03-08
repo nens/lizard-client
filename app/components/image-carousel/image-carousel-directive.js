@@ -22,6 +22,11 @@ angular.module('image-carousel')
           };
         }
 
+        /**
+         * Replace dataset lazyloadsrc with the real src to trigger browser to
+         * load image.
+         * @param  {DOM element} el img
+         */
         var loadImage = function (el) {
           var src = el.dataset.lazyLoadSrc;
           el.src = src;
@@ -30,23 +35,12 @@ angular.module('image-carousel')
         var tempChanged;
         var carouselChanged;
 
-        element.on('slide.bs.carousel', function (event) {
-
-          loadImage(event.relatedTarget.children[0]);
-
-          if (tempChanged) {
-            tempChanged = false;
-          }
-          else {
-            carouselChanged = true;
-            scope.$apply(function () {
-              var timestamp = event.relatedTarget.children[0].dataset.timestamp;
-              State.temporal.at = Number(timestamp);
-            });
-          }
-        });
-
-        scope.$watch('temporal.at', function () {
+        /**
+         * Prevents slide carousel from being triggered and sets the right
+         * image to active after the first digest renders the whole ng-repeat
+         * tree.
+         */
+        var setImagesToTimeAfterDigest = function () {
           if (carouselChanged) {
             carouselChanged = false;
           }
@@ -57,14 +51,49 @@ angular.module('image-carousel')
               'timestamp',
               scope.temporal.at
             );
-            element.carousel(i);
+
+            $timeout(function () {
+              var activeElement = element
+                .find('.carousel-inner')
+                .children()[i];
+              if (activeElement) {
+                var activeImg = activeElement.children[0];
+                loadImage(activeImg);
+                element.carousel(i);
+              }
+            }, 0, false);
+          }
+        };
+
+        scope.slide = function (direction) {
+          element.carousel(direction);
+        };
+
+        /**
+         * On sliding through carousel, set time
+         */
+        element.on('slide.bs.carousel', function (event) {
+          if (tempChanged) {
+            tempChanged = false;
+          }
+          else {
+            carouselChanged = true;
+            loadImage(event.relatedTarget.children[0]);
+            var timestamp = event.relatedTarget.children[0].dataset.timestamp;
+            State.temporal.at = Number(timestamp);
           }
         });
 
-        $timeout(function () {
-          element.carousel(
-            UtilService.bisect(scope.images, 'timestamp', scope.temporal.at));
-        }, 0);
+        scope.$watch('temporal.at', function (n, o) {
+          if (n === o) { return; }
+          setImagesToTimeAfterDigest();
+        });
+
+        scope.$watchCollection('images', function (images) {
+          if (images.length) {
+            setImagesToTimeAfterDigest();
+          }
+        });
 
       },
       restrict: 'E',
