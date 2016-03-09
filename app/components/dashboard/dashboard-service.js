@@ -33,6 +33,7 @@ angular.module('dashboard')
   this.buildGraphs = function (graphs, timeseries, assets, geometries) {
 
     timeseries.forEach(function (ts) {
+
       if (graphs[ts.order]) {
         graphs.type = 'temporalLine';
         // Check if timeseries is already in the plot, if so replace data.
@@ -41,6 +42,8 @@ angular.module('dashboard')
         });
         if (partOfContent) {
           partOfContent.data = ts.data;
+          // Keep this graph
+          partOfContent.updated = true;
         } else {
           graphs[ts.order].content.push(ts);
         }
@@ -49,7 +52,7 @@ angular.module('dashboard')
         var content = [ts];
         graphs[ts.order] = { 'type': 'temporalLine', 'content': content };
       }
-      // Keep this graph
+      // Keep the last graph
       var indexOflast = graphs[ts.order].content.length -1;
       graphs[ts.order].content[indexOflast].updated = true;
     });
