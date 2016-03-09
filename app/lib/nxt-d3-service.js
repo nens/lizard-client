@@ -31,10 +31,9 @@ angular.module('lizard-nxt')
    * @param {int} xDomainStart  unix-time; start of wanted domain
    * @param {int} xDomainEnd    unix-time; end of wanted domain
    */
-  function NxtD3(element, dimensions, xDomainStart, xDomainEnd) {
+  function NxtD3(element, dimensions, xDomain) {
     this.dimensions = angular.copy(dimensions);
-    this._xDomainStart = xDomainStart;
-    this._xDomainEnd = xDomainEnd;
+    this._xDomain = xDomain;
     this._svg = createCanvas(element, this.dimensions);
   }
 
@@ -181,8 +180,8 @@ angular.module('lizard-nxt')
         d3Objects.maxMin = this._maxMin(data, key);
       } else {
         range = { min: 0, max: width };
-        d3Objects.maxMin = (this._xDomainStart && this._xDomainEnd)
-          ? { min: this._xDomainStart, max: this._xDomainEnd }
+        d3Objects.maxMin = (this._xDomain.start && this._xDomain.end)
+          ? { min: this._xDomain.start, max: this._xDomain.end }
           : this._maxMin(data, key);
       }
       d3Objects.range = range;

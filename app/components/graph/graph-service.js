@@ -31,12 +31,11 @@ angular.module('lizard-nxt')
    *                            an object containing top,
    *                            bottom, left and right padding.
    *                            All values in px.
-   * @param {object} xDomainInfo - override the domain for the graphs.
+   * @param {object} xDomain - override the domain for the graphs.
    */
-  function Graph(element, dimensions, xDomainInfo) {
-    if (xDomainInfo && xDomainInfo.start && xDomainInfo.end) {
-      NxtD3.call(this, element, dimensions, xDomainInfo.start, xDomainInfo.end);
-      this._xDomainInfo = xDomainInfo;
+  function Graph(element, dimensions, xDomain) {
+    if (xDomain && xDomain.start && xDomain.end) {
+      NxtD3.call(this, element, dimensions, xDomain);
     } else {
       NxtD3.call(this, element, dimensions);
     }
@@ -49,13 +48,13 @@ angular.module('lizard-nxt')
   });
 
   Graph.prototype.resize = function (newDim) {
-      NxtD3.prototype.resize.call(this, newDim);
-      this._svg = this._createDrawingArea();
-      this._svg.selectAll('.axis').remove();
+    NxtD3.prototype.resize.call(this, newDim);
+    this._svg = this._createDrawingArea();
+    this._svg.selectAll('.axis').remove();
 
-      // reposition labels
-      drawLabel(this._svg, this.dimensions, undefined, true);
-      drawLabel(this._svg, this.dimensions, undefined, false);
+    // reposition labels
+    drawLabel(this._svg, this.dimensions, undefined, true);
+    drawLabel(this._svg, this.dimensions, undefined, false);
   };
 
   /**
@@ -74,10 +73,10 @@ angular.module('lizard-nxt')
    *                    draws the features in the data element.
    */
   Graph.prototype.drawDonut = function (data) {
-      if (!this.dimensions.r || this._arc || this._pie) {
-        this._donut = createDonut(this.dimensions);
-      }
-      drawPie(this._svg, this.dimensions, this._donut, data);
+    if (!this.dimensions.r || this._arc || this._pie) {
+      this._donut = createDonut(this.dimensions);
+    }
+    drawPie(this._svg, this.dimensions, this._donut, data);
   };
 
   /**
@@ -130,8 +129,15 @@ angular.module('lizard-nxt')
         return; // for the love of pete don't let it continue
       }
 
-      graph._xyPerUnit = updateXYs(chartContainer, graph._svg, graph._xyPerUnit,
-                                   graph.dimensions, graph._yaxes, graph._xDomainInfo);
+      graph._xyPerUnit = updateXYs(
+        chartContainer,
+        graph._svg,
+        graph._xyPerUnit,
+        graph.dimensions,
+        graph._yaxes,
+        graph._xDomain
+      );
+
       var xy = graph._xyPerUnit[chartContainer.unit];
 
       var data = chartContainer.data,
@@ -148,25 +154,25 @@ angular.module('lizard-nxt')
         var MIN_POINTS_FOR_SUBSET = 15,
             DELAY = 100, // ms
             DATA_REDUCTION_FACTOR = 5;
-        if (transitioning && data.length > MIN_POINTS_FOR_SUBSET) {
-          var fullData = _.clone(data);
-          graph._registerTimeout(
-            chartContainer,
-            function () {
-              chartContainer.path = drawPath(
-                graph._svg,
-                chartContainer.pathFn,
-                fullData,
-                0, // transition 0 ms when drawing while zooming.
-                chartContainer.path,
-                lineAsArea ? chartContainer.color : 'none',
-                chartContainer.color
-              );
-            },
-            DELAY
-          );
-          data = getDataSubset(data, DATA_REDUCTION_FACTOR);
-        }
+        // if (transitioning && data.length > MIN_POINTS_FOR_SUBSET) {
+        //   var fullData = _.clone(data);
+        //   graph._registerTimeout(
+        //     chartContainer,
+        //     function () {
+        //       chartContainer.path = drawPath(
+        //         graph._svg,
+        //         chartContainer.pathFn,
+        //         fullData,
+        //         0, // transition 0 ms when drawing while zooming.
+        //         chartContainer.path,
+        //         lineAsArea ? chartContainer.color : 'none',
+        //         chartContainer.color
+        //       );
+        //     },
+        //     DELAY
+        //   );
+        //   data = getDataSubset(data, DATA_REDUCTION_FACTOR);
+        // }
 
         chartContainer.path = drawPath(
           graph._svg,
@@ -257,7 +263,7 @@ angular.module('lizard-nxt')
       data,
       keys,
       {y: 0},
-      graph._xDomainInfo
+      graph._xDomain
     );
 
     drawLabel(graph._svg, graph.dimensions, labels.y, true);
@@ -269,7 +275,7 @@ angular.module('lizard-nxt')
       keys,
       data,
       graph.transTime,
-      graph._xDomainInfo
+      graph._xDomain
     );
 
     if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
@@ -572,13 +578,13 @@ angular.module('lizard-nxt')
     return cumulativeData;
   };
 
-  needToRescale = function (data, key, limit, old, xDomainInfo) {
+  needToRescale = function (data, key, limit, old, xDomain) {
     var newDomain;
     if (key === "y") {
       newDomain = Graph.prototype._maxMin(data, "y");
     } else {
-      newDomain = xDomainInfo
-        ? { min: xDomainInfo.start, max: xDomainInfo.end }
+      newDomain = xDomain
+        ? { min: xDomain.start, max: xDomain.end }
         : Graph.prototype._maxMin(data, key);
     }
     return (
@@ -599,7 +605,7 @@ angular.module('lizard-nxt')
    * @param {object} - xyPerUnit - xy characteristics (domain, scale, axis) per unit of the graph
    * @param {object} - dimensions - object describing the size of the graphCtrl
    */
-  updateXYs = function (chartContainer, svg, xyPerUnit, dimensions, axes, xDomainInfo) {
+  updateXYs = function (chartContainer, svg, xyPerUnit, dimensions, axes, xDomain) {
     var limits = {
       x: 1,
       y: 0.2
@@ -625,8 +631,8 @@ angular.module('lizard-nxt')
 
       unitXY[key].maxMin = maxMin;
 
-      if (key === "x" && xDomainInfo) {
-        unitXY[key].maxMin =  { min: xDomainInfo.start, max: xDomainInfo.end };
+      if (key === "x" && xDomain) {
+        unitXY[key].maxMin =  { min: xDomain.start, max: xDomain.end };
       }
 
       unitXY[key].range = Graph.prototype._makeRange(key, dimensions);
@@ -645,7 +651,7 @@ angular.module('lizard-nxt')
     return xyPerUnit;
   };
 
-  rescale = function (svg, dimensions, xy, data, keys, origin, xDomainInfo) {
+  rescale = function (svg, dimensions, xy, data, keys, origin, xDomain) {
     // Sensible limits to rescale. If the max
     // of the y values is smaller than 0.2 (or 20 %) of the max of the scale,
     // update domain of the scale and redraw the axis.
@@ -660,9 +666,9 @@ angular.module('lizard-nxt')
     origin = origin || {};
     // Decide to rescale for each axis. Non canem qui intelligit.
     angular.forEach(xy, function (value, key) {
-      if (needToRescale(data, keys[key], limits[key], value.maxMin, xDomainInfo)) {
-        value.maxMin = key === "x" && xDomainInfo
-          ? { min: xDomainInfo.start, max: xDomainInfo.end }
+      if (needToRescale(data, keys[key], limits[key], value.maxMin, xDomain)) {
+        value.maxMin = key === "x" && xDomain
+          ? { min: xDomain.start, max: xDomain.end }
           : Graph.prototype._maxMin(data, keys[key]);
         if (origin[key] === undefined) {
           origin[key] = value.maxMin.min;
@@ -807,10 +813,10 @@ angular.module('lizard-nxt')
     });
   };
 
-  drawVerticalRects = function (svg, dimensions, xy, keys, data, duration, xDomainInfo) {
-    // We update the domain for X, if xDomainInfo was set...
-    if (xDomainInfo && xDomainInfo.start && xDomainInfo.end) {
-      xy.x.scale.domain([xDomainInfo.start, xDomainInfo.end]);
+  drawVerticalRects = function (svg, dimensions, xy, keys, data, duration, xDomain) {
+    // We update the domain for X, if xDomain was set...
+    if (xDomain && xDomain.start && xDomain.end) {
+      xy.x.scale.domain([xDomain.start, xDomain.end]);
     }
 
     var width = Graph.prototype._getWidth(dimensions),
@@ -821,7 +827,7 @@ angular.module('lizard-nxt')
         barWidth = Math.max(
           MIN_BAR_WIDTH,
           Math.floor(
-            getBarWidth(xy.x.scale, data, keys, dimensions, xDomainInfo)
+            getBarWidth(xy.x.scale, data, keys, dimensions, xDomain)
           )
         ),
         strokeWidth = barWidth === MIN_BAR_WIDTH ? 0 : 1,
@@ -886,11 +892,11 @@ angular.module('lizard-nxt')
       .remove();
   };
 
-  getBarWidth = function (scale, data, keys, dimensions, xDomainInfo) {
+  getBarWidth = function (scale, data, keys, dimensions, xDomain) {
 
     // If aggWindow is passed, use it
-    if (xDomainInfo && xDomainInfo.aggWindow) {
-      return scale(xDomainInfo.aggWindow) - scale(0);
+    if (xDomain && xDomain.aggWindow) {
+      return scale(xDomain.aggWindow) - scale(0);
     }
 
     else if (data.length === 0) {

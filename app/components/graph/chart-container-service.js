@@ -23,8 +23,6 @@ angular.module('lizard-nxt')
 
     var DEFAULT_GREEN = '#16a085';
 
-    this._x = null;
-
     this._graph = graph;
 
     var defaultKeys = {
