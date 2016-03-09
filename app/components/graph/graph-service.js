@@ -40,7 +40,7 @@ angular.module('lizard-nxt')
       NxtD3.call(this, element, dimensions);
     }
     this._svg = this._createDrawingArea();
-    this._containers = {};
+    this._containers = [];
   }
 
   Graph.prototype = Object.create(NxtD3.prototype, {
@@ -108,98 +108,149 @@ angular.module('lizard-nxt')
   Graph.prototype.drawLine = function (content, temporal, transitioning) {
 
     var graph = this;
-    graph._xyPerUnit = {};
-    graph._yaxes = {};
-    angular.forEach(content, function (item, index) {
-      var chartContainer;
+    graph._yPerUnit = {}; // one line graph has a y -scale and axis per unit in
+                          // content.
 
-      // only update things, don't instantiate new ones
+    // Get x scale and axis for temporal domain.
+    var range = graph._makeRange('x', graph.dimensions);
+    var width = graph._getWidth(graph.dimensions);
+    var scale = graph._makeScale(
+      {max: graph._xDomain.end, min: graph._xDomain.start},
+      range,
+      {scale: 'time'}
+    );
+    var axis = Graph.prototype._makeAxis(scale, {}, graph.dimensions);
+    graph._xy = {
+      x: {
+        scale: scale,
+        axis: axis
+      }
+    };
+
+    // Draw x axis
+    this._drawAxes(
+      this._svg,
+      graph._xy.x.axis,
+      this.dimensions,
+      false, // is not a y axis.
+      0 // no transition
+    );
+
+    // Update or create charts with content.
+    content.forEach(function (item, index) {
+      // Update existing.
       if (graph._containers[index]) {
-        if (graph._containers[index].constructor === ChartContainer) {
-          chartContainer = graph._containers[index];
-          chartContainer.updateXY(item); // refresh data and min, max
-          drawLabel(graph._svg, graph.dimensions, chartContainer.labels.y, true);
+        var chartContainer = graph._containers[index];
+        chartContainer.setContentUpdateY(item); // refresh data and min, max
+        if (chartContainer.path) {
+          chartContainer.path.remove(); // Redraw every path, to prevent mixups.
+          chartContainer.path = null; // Redraw every path, to prevent mixups.
         }
-      } else {
-        graph._containers[index] = new ChartContainer(item, graph, temporal);
-        chartContainer = graph._containers[index];
       }
 
-      if (chartContainer.data.length === 0) {
+      // Create new ones
+      else {
+        graph._containers[index] = new ChartContainer(item, temporal);
+      }
+
+    });
+
+    // Filter out old charts.
+    graph._containers = graph._containers.filter(function (chart) {
+      var present = _.some(content, function (item) {
+        return chart.id === item.id;
+      });
+      if (!present && chart.path) {
+        chart.path.remove(); // Remove path from graph.
+      }
+      return present;
+    });
+
+    if (graph._containers.length === 0) {
+      return; // for the love of pete don't let it continue
+    }
+    // Create the y scales and axes for the updated charts.
+    graph._yPerUnit = updateYs(
+      graph._containers,
+      graph._svg,
+      graph._yPerUnit,
+      graph.dimensions,
+      width > MIN_WIDTH_INTERACTIVE_GRAPHS
+    );
+
+    var charts = graph._containers;
+
+    // Draw all the charts in graph with their respective scales.
+    charts.forEach(function (chart) {
+      if (chart.data.length === 0) {
         return; // for the love of pete don't let it continue
       }
 
-      graph._xyPerUnit = updateXYs(
-        chartContainer,
+      graph._xy.y = graph._yPerUnit[chart.unit];
+
+      var data = chart.data,
+          keys = chart.keys,
+          labels = chart.labels;
+
+      var lineAsArea = chart.keys.y.hasOwnProperty('y0')
+        && chart.keys.y.hasOwnProperty('y1');
+
+      chart.pathFn = lineAsArea
+        ? graph._createArea(graph._xy, keys)
+        : graph._createLine(graph._xy, keys);
+
+      var MIN_POINTS_FOR_SUBSET = 15,
+          DELAY = 100, // ms
+          DATA_REDUCTION_FACTOR = 5;
+
+      if (transitioning && data.length > MIN_POINTS_FOR_SUBSET) {
+        var fullData = _.clone(data);
+        graph._registerTimeout(
+          chart,
+          function () {
+            chart.path = drawPath(
+              graph._svg,
+              chart.pathFn,
+              fullData,
+              0, // transition 0 ms when drawing while zooming.
+              chart.path,
+              lineAsArea ? chart.color : 'none',
+              chart.color
+            );
+          },
+          DELAY
+        );
+        data = getDataSubset(data, DATA_REDUCTION_FACTOR);
+      }
+
+      chart.path = drawPath(
         graph._svg,
-        graph._xyPerUnit,
-        graph.dimensions,
-        graph._yaxes,
-        graph._xDomain
+        chart.pathFn,
+        data,
+        temporal ? 0 : graph.transTime, // Do not transition line graphs
+                                       // when temporal.
+        chart.path,
+        lineAsArea ? chart.color : 'none', // Set fill to 'none' for normal
+                                   // lines.
+        chart.color
       );
 
-      var xy = graph._xyPerUnit[chartContainer.unit];
-
-      var data = chartContainer.data,
-          keys = chartContainer.keys,
-          labels = chartContainer.labels;
-
-      var lineAsArea = chartContainer.keys.y.hasOwnProperty('y0')
-        && chartContainer.keys.y.hasOwnProperty('y1');
-
-      chartContainer.pathFn = lineAsArea
-        ? graph._createArea(xy, keys)
-        : graph._createLine(xy, keys);
-
-        var MIN_POINTS_FOR_SUBSET = 15,
-            DELAY = 100, // ms
-            DATA_REDUCTION_FACTOR = 5;
-        // if (transitioning && data.length > MIN_POINTS_FOR_SUBSET) {
-        //   var fullData = _.clone(data);
-        //   graph._registerTimeout(
-        //     chartContainer,
-        //     function () {
-        //       chartContainer.path = drawPath(
-        //         graph._svg,
-        //         chartContainer.pathFn,
-        //         fullData,
-        //         0, // transition 0 ms when drawing while zooming.
-        //         chartContainer.path,
-        //         lineAsArea ? chartContainer.color : 'none',
-        //         chartContainer.color
-        //       );
-        //     },
-        //     DELAY
-        //   );
-        //   data = getDataSubset(data, DATA_REDUCTION_FACTOR);
-        // }
-
-        chartContainer.path = drawPath(
-          graph._svg,
-          chartContainer.pathFn,
-          data,
-          temporal ? 0 : graph.transTime, // Do not transition line graphs
-                                         // when temporal.
-          chartContainer.path,
-          lineAsArea ? chartContainer.color : 'none', // Set fill to 'none' for normal
-                                     // lines.
-          chartContainer.color
-        );
-
-        // if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
-        //   addInteractionToPath(
-        //     graph._svg,
-        //     graph.dimensions,
-        //     data,
-        //     keys,
-        //     labels,
-        //     chartContainer.path,
-        //     xy,
-        //     graph.transTime
-        //   );
-        // }
-        // graph._xy = xy; // for mouse interaction?
     });
+
+    drawMultipleAxes(graph);
+
+    // if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+    //   addInteractionToPath(
+    //     graph._svg,
+    //     graph.dimensions,
+    //     data,
+    //     keys,
+    //     labels,
+    //     chartContainer.path,
+    //     xy,
+    //     graph.transTime
+    //   );
+    // }
   };
 
   /**
@@ -357,7 +408,6 @@ angular.module('lizard-nxt')
    */
   Graph.prototype.drawCrosssection = function (content) {
     if (!content.points.length || !content.line.data) { return; }
-
 
     var width = this._getWidth(this.dimensions);
     var height = this._getHeight(this.dimensions);
@@ -548,7 +598,7 @@ angular.module('lizard-nxt')
       drawPath, setupLineGraph, createDonut, addInteractionToPath, getBarWidth,
       drawVerticalRects, addInteractionToRects, drawHorizontalRects,
       createXGraph, rescale, createYValuesForCumulativeData, getDataSubset,
-      updateXYs, drawMultipleAxes, setActiveAxis, addPointsToGraph, addLineToGraph;
+      updateYs, drawMultipleAxes, setActiveAxis, addPointsToGraph, addLineToGraph;
 
   /**
    * Creates y cumulatie y values for elements on the same x value.
@@ -605,50 +655,34 @@ angular.module('lizard-nxt')
    * @param {object} - xyPerUnit - xy characteristics (domain, scale, axis) per unit of the graph
    * @param {object} - dimensions - object describing the size of the graphCtrl
    */
-  updateXYs = function (chartContainer, svg, xyPerUnit, dimensions, axes, xDomain) {
-    var limits = {
-      x: 1,
-      y: 0.2
+  updateYs = function (charts, svg, yPerUnit, dimensions, drawGrid) {
+    var width = Graph.prototype._getWidth(dimensions);
+    var options = {
+      scale: 'linear',
+      orientation: 'left',
+      drawGrid: drawGrid
     };
 
-    var options = chartContainer.options;
-    var width = Graph.prototype._getWidth(dimensions);
+    charts.forEach(function (chart) {
 
-    angular.forEach(['x', 'y'], function (key) {
-      var y = key === 'y';
-      options[key].drawGrid = width > MIN_WIDTH_INTERACTIVE_GRAPHS && y;
+      var maxMin = Graph.prototype._maxMin(chart.data, chart.keys.y);
+      var unitY = yPerUnit[chart.unit];
 
-      var maxMin = Graph.prototype._maxMin(chartContainer.data, chartContainer.keys[key]);
-      var unitXY = xyPerUnit[chartContainer.unit];
-
-      if (unitXY) {
-        maxMin.min = Math.min(chartContainer[key].maxMin.min, unitXY[key].maxMin.min);
-        maxMin.max = Math.max(chartContainer[key].maxMin.max, unitXY[key].maxMin.max);
-      } else {
-        xyPerUnit[chartContainer.unit] = {x: chartContainer.x, y: chartContainer.y };
-        unitXY = xyPerUnit[chartContainer.unit];
+      if (unitY) {
+        maxMin.min = Math.min(chart.yMaxMin.min, unitY.maxMin.min);
+        maxMin.max = Math.max(chart.yMaxMin.max, unitY.maxMin.max);
       }
 
-      unitXY[key].maxMin = maxMin;
-
-      if (key === "x" && xDomain) {
-        unitXY[key].maxMin =  { min: xDomain.start, max: xDomain.end };
-      }
-
-      unitXY[key].range = Graph.prototype._makeRange(key, dimensions);
-      unitXY[key].scale = Graph.prototype._makeScale(unitXY[key].maxMin, unitXY[key].range, options[key]);
-      unitXY[key].scale.domain([unitXY[key].maxMin.min, unitXY[key].maxMin.max]);
-      unitXY[key].axis = Graph.prototype._makeAxis(unitXY[key].scale, options[key], dimensions);
-      if (key === 'y') {
-        drawMultipleAxes(svg, unitXY[key].axis, dimensions, true,
-                       Graph.prototype.transTime, chartContainer.unit, axes);
-      } else {
-        drawAxes(svg, unitXY[key].axis, dimensions, false,
-                       Graph.prototype.transTime, chartContainer.unit);
-      }
+      yPerUnit[chart.unit] = { maxMin: maxMin };
     });
 
-    return xyPerUnit;
+    _.forEach(yPerUnit, function (unitY) {
+      unitY.range = Graph.prototype._makeRange('y', dimensions);
+      unitY.scale = Graph.prototype._makeScale(unitY.maxMin, unitY.range, options);
+      unitY.axis = Graph.prototype._makeAxis(unitY.scale, options, dimensions);
+    });
+
+    return yPerUnit;
   };
 
   rescale = function (svg, dimensions, xy, data, keys, origin, xDomain) {
@@ -664,7 +698,7 @@ angular.module('lizard-nxt')
       y: 'left'
     };
     origin = origin || {};
-    // Decide to rescale for each axis. Non canem qui intelligit.
+    // Decide to rescale for each axis.
     angular.forEach(xy, function (value, key) {
       if (needToRescale(data, keys[key], limits[key], value.maxMin, xDomain)) {
         value.maxMin = key === "x" && xDomain
@@ -674,7 +708,7 @@ angular.module('lizard-nxt')
           origin[key] = value.maxMin.min;
         }
         value.scale.domain([origin[key], value.maxMin.max]);
-        // value.axis = Graph.prototype._makeAxis(value.scale, {orientation: orientation[key]});
+        value.axis = Graph.prototype._makeAxis(value.scale, {orientation: orientation[key]});
         drawAxes(svg, value.axis, dimensions, key === 'y' ? true : false, Graph.prototype.transTime);
       }
     });
@@ -1177,39 +1211,11 @@ angular.module('lizard-nxt')
    * @param  {string}       unit (e.g. mNAP)
    * @param  {object}       axes - keeps track of active axis.
    */
-  drawMultipleAxes = function (svg, axis, dimensions, y, duration, unit, axes) {
-    axes[unit] = {
-      axis: axis,
-      active: false
-    };
-
-    svg.select('#yaxis').on('click', function (e) {
-      setActiveAxis(svg, undefined, dimensions, duration, axes);
+  drawMultipleAxes = function (graph) {
+    graph._svg.select('#yaxis').on('click', function (e) {
+      setActiveAxis(graph);
     });
-    setActiveAxis(svg, unit, dimensions, duration, axes);
-  };
-
-  /**
-   * see which axis is active and select the next one
-   * (or the first one if the last)
-   */
-  var nextAxis = function (axes, axunit) {
-
-    var axKeys = Object.keys(axes);
-    var _activeAxis;
-    angular.forEach(axes, function (axis, key) {
-      if (axis.active) _activeAxis = key;
-      return axis.active;
-    });
-    var ki = axKeys.indexOf(_activeAxis);
-
-    var newAxis;
-    if (axKeys.length - 1 === ki) {
-      newAxis = 0;
-    } else {
-      newAxis = ki + 1;
-    }
-    return axKeys[newAxis];
+    setActiveAxis(graph);
   };
 
   /**
@@ -1218,15 +1224,26 @@ angular.module('lizard-nxt')
    * @param  {string}       unit (e.g. mNAP)
    * @param  {object}       axes - keeps track of active axis.
    */
-  setActiveAxis = function (svg, unit, dimensions, duration, axes) {
-    unit = (String(unit) !== 'undefined') ? unit : nextAxis(axes, unit);
-    angular.forEach(axes, function (axis, key) {
-      if (key !== unit) {
-        axis.active = false;
-      }
-    });
-    axes[unit].active = true;
-    drawAxes(svg, axes[unit].axis, dimensions, true, duration);
+  setActiveAxis = function (graph) {
+    var units = Object.keys(graph._yPerUnit);
+    var indexOfUnit = units.indexOf(graph._activeUnit);
+    if (indexOfUnit < 1 || indexOfUnit++ === units.length) {
+      indexOfUnit = 0;
+    }
+    graph._activeUnit = units[indexOfUnit];
+    drawAxes(
+      graph._svg,
+      graph._yPerUnit[graph._activeUnit].axis,
+      graph.dimensions,
+      true,
+      graph.transTime
+    );
+    drawLabel(
+      graph._svg,
+      graph.dimensions,
+      graph._activeUnit,
+      true
+    );
   };
 
   createDonut = function (dimensions) {

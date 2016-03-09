@@ -5,6 +5,12 @@
 angular.module('lizard-nxt')
   .factory('ChartContainer', ['NxtD3', function (NxtD3) {
 
+  var DEFAULT_GREEN = '#16a085';
+
+  var defaultKeys = {
+    x: 'timestamp',
+    y: { 'y0': 'min', 'y1': 'max' }
+  };
 
   /**
    * Charts are are small objects that are drawn on the graph canvas
@@ -19,43 +25,24 @@ angular.module('lizard-nxt')
    *
    * For now this is a way to keep track of the scales, domains and xy's of the graph
    */
-  function ChartContainer (chartContent, graph, temporal) {
+  function ChartContainer (chartContent) {
 
-    var DEFAULT_GREEN = '#16a085';
-
-    this._graph = graph;
-
-    var defaultKeys = {
-      x: 'timestamp',
-      y: { 'y0': 'min', 'y1': 'max' }
-    };
+    this.id = chartContent.id;
     this.keys = chartContent.keys || defaultKeys;
     this.labels = chartContent.labels || {x: '', y:''};
-
     this.color = chartContent.color || DEFAULT_GREEN;
-
     this.unit = chartContent.unit;
 
-    var xscale = (temporal) ? 'time' : 'linear';
-    this.options = {
-      x: {
-        scale: xscale,
-        orientation: 'bottom'
-      },
-      y: {
-        scale: 'linear',
-        orientation: 'left'
-      }
-    };
+    this.setContentUpdateY(chartContent);
 
-    this.updateXY(chartContent);
     return;
   }
 
-  ChartContainer.prototype.updateXY = function (chartContent) {
+  ChartContainer.prototype.setContentUpdateY = function (chartContent) {
     this.data = chartContent.data;
-    this.y = { maxMin: this._graph._maxMin(this.data, this.keys.y) };
-    this.x = { maxMin: this._graph._maxMin(this.data, this.keys.x) };
+    this.keys = chartContent.keys || defaultKeys;
+    this.color = chartContent.color || DEFAULT_GREEN;
+    this.yMaxMin = NxtD3.prototype._maxMin(this.data, this.keys.y);
   };
 
   return ChartContainer;

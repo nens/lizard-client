@@ -158,7 +158,8 @@ angular.module('timeseries')
      * @param {object} graphTimeseries timeseriesSerivce.timeseries timeseries
      *                                 object.
      */
-    var addColorAndOrder = function (graphTimeseries) {
+    var addColorAndOrderAndUnit = function (graphTimeseries) {
+      var EMPTY = '...';
       var ts; // initialize undefined and set when found.
 
       _.forEach(DataService.assets, function (asset) {
@@ -168,6 +169,11 @@ angular.module('timeseries')
 
       graphTimeseries.color = ts.color;
       graphTimeseries.order = ts.order;
+      graphTimeseries.parameter = ts.parameter || EMPTY;
+      graphTimeseries.unit = ts.unit || EMPTY;
+      if (ts.reference_frame) {
+        graphTimeseries.unit += ' (' + ts.reference_frame + ')';
+      }
 
       return graphTimeseries;
     };
@@ -192,8 +198,7 @@ angular.module('timeseries')
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
         graphTimeseries.data = ts.events;
         graphTimeseries.id = ts.uuid;
-        graphTimeseries.unit = (ts.parameter_referenced_unit) ? ts.parameter_referenced_unit.referenced_unit_short_display_name : '';
-        graphTimeseries = addColorAndOrder(graphTimeseries);
+        graphTimeseries = addColorAndOrderAndUnit(graphTimeseries);
         result.push(graphTimeseries);
       });
       return result;
