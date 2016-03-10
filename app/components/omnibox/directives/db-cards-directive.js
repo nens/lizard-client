@@ -7,6 +7,16 @@ angular.module('omnibox')
 
       DragService.create();
 
+      var emulateClick = function (el) {
+        // other plottable item. Toggle on drag to put element in their own
+        // plot.
+        el.dispatchEvent(new MouseEvent("click", {
+          "view": window,
+          "bubbles": true,
+          "cancelable": false
+        }));
+      };
+
       DragService.on('drop', function (el, target, source) {
         var order = Number(target.dataset.order);
         var uuid = el.dataset.uuid;
@@ -18,7 +28,7 @@ angular.module('omnibox')
         // assets are searched.
         if (uuid) {
           // timeseries
-          var ts;
+          var ts, otherGraphTS;
 
           _.forEach(DataService.assets, function (asset) {
             ts = _.find(asset.timeseries, function (ts) {
@@ -26,6 +36,18 @@ angular.module('omnibox')
             });
             return ts === undefined; // if true: continue
           });
+
+
+          _.forEach(DataService.assets, function (asset) {
+            otherGraphTS = _.find(asset.timeseries, function (ts) {
+              return ts.order === order && ts.active;
+            });
+            return otherGraphTS === undefined; // if true: continue
+          });
+
+          if (otherGraphTS === undefined || ts.value_type !== otherGraphTS.value_type) {
+            emulateClick(el);
+          }
 
           ts.order = order || 0; // dashboard could be empty
           ts.active = true;
@@ -35,13 +57,7 @@ angular.module('omnibox')
           );
         }
         else {
-          // other plottable item. Toggle on drag to put element in their own
-          // plot.
-          el.dispatchEvent(new MouseEvent("click", {
-            "view": window,
-            "bubbles": true,
-            "cancelable": false
-          }));
+          emulateClick(el);
         }
 
         el.remove();

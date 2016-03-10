@@ -4,7 +4,11 @@
  * Collects crosssection data from api and creates a graph content object.
  */
 angular.module('dashboard')
-  .directive('crossSection', ['TimeseriesService', 'CabinetService', function (TimeseriesService, CabinetService) {
+.directive('crossSection', [
+  'TimeseriesService',
+  'CabinetService',
+  'UtilService',
+  function (TimeseriesService, CabinetService, UtilService) {
 
     var link = function (scope, element, attrs) {
 
@@ -67,7 +71,7 @@ angular.module('dashboard')
       var setTimeseriesToAt = function (timeseries, at) {
         content.points = [];
         timeseries.forEach(function (ts) {
-          var i = bisect(ts.data, 'timestamp', at);
+          var i = UtilService.bisect(ts.data, 'timestamp', at);
           if (i !== undefined) {
 
             // Get the well of timeseries.
@@ -88,30 +92,6 @@ angular.module('dashboard')
           }
 
         });
-      };
-
-      /**
-       * Returns the index of the value at key in arrayObject closest to value.
-       * When value is exactly in the middle, the first index is returned.
-       *
-       * @param  {array}        collection array of objects or array of arrays
-       *                                   to be searched.
-       * @param  {string | int} key to compare property in arrayOfObjects.
-       * @param  {int}          value to search for.
-       * @return {int}          first index closest to value.
-       */
-      var bisect = function (collection, key, value) {
-        var index;
-        var initialSmallestDiff = Infinity;
-        _.reduce(collection, function (smallestDiff, d, i) {
-          var currentDiff = Math.abs(d[key] - value);
-          if (currentDiff < smallestDiff) {
-            index = i;
-            smallestDiff = currentDiff;
-          }
-          return smallestDiff;
-        }, initialSmallestDiff);
-        return index;
       };
 
       scope.$watch('temporal.timeLineMoving', function () {

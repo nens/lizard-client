@@ -3,5 +3,6 @@ angular.module('omnibox', [
   'global-state',
   'data-menu',
   'map',
-  'timeseries'
+  'timeseries',
+  'image-carousel'
 ]);

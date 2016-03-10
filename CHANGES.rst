@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Add support for timeseries with time image.
+
 - Adding graphs with multiple y-axes.
 
 - Add crosssections visualization in dashboard.

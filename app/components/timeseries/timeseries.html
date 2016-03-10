@@ -31,41 +31,55 @@
 
       <br>
 
-      <div class="timeseries-graph-container"
+      <div ng-if="content.timeseries[0].valueType !== 'image'">
+        <div class="timeseries-graph-container"
+            ng-class="{hidden: !fullDetails}"
+            ng-if="content.timeseries[0].type === 'bar-chart'">
+           <graph
+              bar-chart
+              type="temporal"
+              temporal="timeState"
+              content="content.timeseries"
+              now="timeState.at">
+            </graph>
+        </div>
+
+        <div class="timeseries-graph-container"
           ng-class="{hidden: !fullDetails}"
-          ng-if="content.timeseries[0].type === 'bar-chart'">
-         <graph
-            bar-chart
+            ng-if="content.timeseries[0].type !== 'bar-chart'">
+          <graph
+            line
             type="temporal"
             temporal="timeState"
             content="content.timeseries"
             now="timeState.at">
           </graph>
+        </div>
+
+        <div class="card-tools"
+          ng-class="{hidden: !fullDetails}">
+          <a
+            target="_blank"
+            href="<% timeseries[0].url
+            + 'data/?format=csv&start=' + timeState.start + '&end=' + timeState.end %>"
+            class="btn btn-default btn-xs"
+            title="<% 'Export info card data' | translate %>">
+            <i class="fa fa-share-square-o"></i>
+            Exporteer
+          </a>
+        </div>
       </div>
 
-      <div class="timeseries-graph-container"
-        ng-class="{hidden: !fullDetails}"
-          ng-if="content.timeseries[0].type !== 'bar-chart'">
-        <graph
-          line
-          type="temporal"
-          temporal="timeState"
-          content="content.timeseries"
-          now="timeState.at">
-        </graph>
-      </div>
+      <div ng-if="content.timeseries[0].valueType === 'image'">
 
-      <div class="card-tools"
-        ng-class="{hidden: !fullDetails}">
-        <a
-          target="_blank"
-          href="<% timeseries[0].url
-          + 'data/?format=csv&start=' + timeState.start + '&end=' + timeState.end %>"
-          class="btn btn-default btn-xs"
-          title="<% 'Export info card data' | translate %>">
-          <i class="fa fa-share-square-o"></i>
-          Exporteer
-        </a>
+      <!-- hardcoded context, timeseries directive is only used in omnibox when
+           map -->
+        <image-carousel
+          images="content.timeseries[0].data"
+          context="map"
+          temporal="timeState">
+        </image-carousel>
+
       </div>
 
     </div>

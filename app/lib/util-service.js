@@ -8,6 +8,31 @@
 angular.module('lizard-nxt')
   .service("UtilService", ["NxtD3", "$timeout", function (NxtD3, $timeout) {
 
+
+  /**
+   * Returns the index of the value at key in arrayObject closest to value.
+   * When value is exactly in the middle, the first index is returned.
+   *
+   * @param  {array}        collection array of objects or array of arrays
+   *                                   to be searched.
+   * @param  {string | int} key to compare property in arrayOfObjects.
+   * @param  {int}          value to search for.
+   * @return {int}          first index closest to value.
+   */
+  this.bisect = function (collection, key, value) {
+    var index;
+    var initialSmallestDiff = Infinity;
+    _.reduce(collection, function (smallestDiff, d, i) {
+      var currentDiff = Math.abs(d[key] - value);
+      if (currentDiff < smallestDiff) {
+        index = i;
+        smallestDiff = currentDiff;
+      }
+      return smallestDiff;
+    }, initialSmallestDiff);
+    return index;
+  };
+
   /**
    * @function roundTimestamp
    * @memberOf UtilService
@@ -863,7 +888,7 @@ angular.module('lizard-nxt')
    * @param {integer} epoch - time in ms since 1970.
    * @returns {string} formatted date.
    */
-  this._formatDate = function (epoch) {
+  this.formatDate = function (epoch) {
     var d = new Date(parseInt(epoch, 10));
     return [
       [d.getDate(), d.getMonth() + 1,
@@ -890,7 +915,7 @@ angular.module('lizard-nxt')
 
     for (i = 0; i < data.length; i++) {
 
-      formattedDateTime = this._formatDate(data[i]['timestamp'] || data[i][0]);
+      formattedDateTime = this.formatDate(data[i]['timestamp'] || data[i][0]);
 
       var formattedDatum = [
         this.formatNumber(latLng.lat, 0, 0, true),

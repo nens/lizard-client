@@ -99,16 +99,6 @@
     text-overflow: ellipsis;
 }
 
-.card .left{
-    float: left;
-    width: 150px;
-    margin-left: 37px;
-}
-
-.card .right{
-    width: 150px;
-}
-
 .card table.fullwidth{
     line-height: 15px;
     font-size: 0.9em;
@@ -578,7 +568,7 @@ table tr td:last-child {
 }
 
 .card-tools {
-  /* float: right; not sure what's wrong but stuff's weird on staging*/ 
+  /* float: right; not sure what's wrong but stuff's weird on staging*/
   position: relative;
   top: -1px;
   z-index: 9999;

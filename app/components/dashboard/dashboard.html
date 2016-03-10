@@ -31,6 +31,14 @@
       dimensions="item.dimensions">
     </graph>
 
+    <image-carousel
+      ng-if="item.type === 'image'"
+      images="item.content[0].data"
+      context="dashboard"
+      temporal="dashboard.state.temporal"
+      dimensions="item.dimensions">
+    </image-carousel>
+
     <cross-section
       ng-if="item.type === 'crosssection'"
       asset="item.content[0]"
