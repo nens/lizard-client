@@ -114,11 +114,22 @@ angular.module('lizard-nxt')
     // Get x scale and axis for temporal domain.
     var range = graph._makeRange('x', graph.dimensions);
     var width = graph._getWidth(graph.dimensions);
-    var scale = graph._makeScale(
-      {max: graph._xDomain.end, min: graph._xDomain.start},
-      range,
-      {scale: 'time'}
-    );
+    var scale
+    if (temporal) {
+      scale = graph._makeScale(
+        {max: graph._xDomain.end, min: graph._xDomain.start},
+        range,
+        {scale: 'time'}
+      );
+    } else {
+      // If not temporal content has lenght 1.
+      var xMinMax = this._maxMin(content[0].data, content[0].keys.x);
+      scale = graph._makeScale(
+        xMinMax,
+        range,
+        {scale: 'linear'}
+      );
+    }
     var axis = Graph.prototype._makeAxis(scale, {}, graph.dimensions);
     graph._xy = {
       x: {
