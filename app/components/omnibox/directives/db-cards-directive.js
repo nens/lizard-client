@@ -45,7 +45,7 @@ angular.module('omnibox')
             return otherGraphTS === undefined; // if true: continue
           });
 
-          if (otherGraphTS === undefined || ts.type !== otherGraphTS.type) {
+          if (otherGraphTS === undefined || ts.value_type !== otherGraphTS.value_type) {
             emulateClick(el);
           }
 
