@@ -8,6 +8,8 @@ angular.module('user-menu')
 
     var link = function (scope, element, attrs) {
 
+      scope.showApps = false;
+
       var appsScreenUrl = function() {
         var appsScreenSlug = UtilService.slugify($location.host());
         return "//apps.lizard.net/screens/" + appsScreenSlug + ".js";
@@ -18,15 +20,15 @@ angular.module('user-menu')
       script.onload = function () {
         if (typeof window.Lizard.startPlugins === 'function') {
           window.Lizard.startPlugins(); // jshint ignore:line
+          scope.showApps =  element
+            .find('#lizard-apps-button')
+            .children().length > 0;
           scope.$digest();
         }
       };
 
       document.head.appendChild(script);
 
-      scope.showApps = function() {
-        return $('#lizard-apps-button').children().length > 0;
-      };
     };
 
     return {
