@@ -42,6 +42,7 @@ angular.module('dashboard')
         });
         if (partOfContent) {
           partOfContent.data = ts.data;
+          partOfContent.color = ts.color;
           // Keep this graph
           partOfContent.updated = true;
         } else {

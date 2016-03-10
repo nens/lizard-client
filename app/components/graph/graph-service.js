@@ -1236,15 +1236,16 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * Determines which label should be shown.
-   * @param  {object}       d3 selection svg
-   * @param  {string}       unit (e.g. mNAP)
-   * @param  {object}       axes - keeps track of active axis.
+   * Determines which axis should be drawn and includes label and circles for
+   * active datasets.
+   *
+   * @param  {Graph}        Graph instance.
+   * @param  {int}          integer 0 to keep current unit, 1 for next.
    */
   setActiveAxis = function (graph, up) {
     var units = Object.keys(graph._yPerUnit);
     var indexOfUnit = units.indexOf(graph._activeUnit) + up;
-    if (indexOfUnit === units.length || indexOfUnit === -1) {
+    if (indexOfUnit >= units.length || indexOfUnit === -1) {
       indexOfUnit = 0;
     }
     graph._activeUnit = units[indexOfUnit];
@@ -1289,6 +1290,7 @@ angular.module('lizard-nxt')
         .delay(graph.transTime)
         .duration(graph.transTime)
         .attr('r', SIZE)
+        .attr('fill', function (d) {return d.color;})
         .attr('cy', function (d, i) {
           var box = label.node().getBBox();
           return -(box.x + box.width) - PADDING - i * PADDING;
