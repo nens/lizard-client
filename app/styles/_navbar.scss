@@ -7,29 +7,48 @@ nav.navbar {
     margin: 10px;
     border: none;
     border-radius: 0;
-    background-color: $greenSea;
     color: $white;
 
-    > .container-fluid {
-      @include material-shadow();
-      &:hover {
-        @include material-shadow-hover();
-      }
+    .navbar-header {
+        background: none;
+        margin: 0 -15px;
     }
 
-    &.navbar-default .navbar-nav {
-        > li > a {
-            color: $white;
-            &:hover {
-                background-color: $turquoise;
-                @include material-shadow-hover();
-            }
-        }
-        > li.open > a {
-            color: $white;
-            background-color: $turquoise;
+    .navbar-collapse {
+        margin: 0 -15px;
+        @include material-shadow();
+        &:hover {
+            @include material-shadow-hover();
         }
     }
+
+    &.navbar-default {
+        background-color: transparent;
+
+        .navbar-header .navbar-toggle {
+            background-color: $white;
+        }
+
+        .navbar-collapse {
+            border: none;
+            background-color: $greenSea;
+        }
+
+        .navbar-nav {
+            > li > a {
+                color: $white;
+                &:hover {
+                    background-color: $turquoise;
+                    @include material-shadow-hover();
+                }
+            }
+            > li.open > a {
+                color: $white;
+                background-color: $turquoise;
+            }
+        }
+    }
+
     i {
         margin-right: 0.25em;
     }
@@ -53,19 +72,8 @@ $grid-float-breakpoint-max: 768px;
 
 // lizard apps stuff
 .lizard-apps-button {
-  user-select: none;
-  cursor: pointer;
-  padding: 15px 10px;
-  float: right;
-  border: none;
-  border-radius: 0;
-  background-color: $greenSea;
   color: $white;
 
-  &:hover {
-      @include material-shadow-hover();
-      background-color: $turquoise;
-  }
   ul.dropdown-menu {
       border-radius: 0;
   }

@@ -12,6 +12,10 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Adapt search results to updated full-text search API response.
 
+- Improve user menu for mobile devices.
+
+- Make lizard apps screen load dynamically.
+
 
 Release 2.9.4 (2016-3-1)
 ---------------------
