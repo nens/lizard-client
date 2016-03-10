@@ -1226,13 +1226,13 @@ angular.module('lizard-nxt')
       clickRect = graph._svg.append('rect')
       .attr('class', 'click-axis')
       .on('click', function (e) {
-        setActiveAxis(graph);
+        setActiveAxis(graph, 1);
       });
     }
     clickRect
       .attr('width', graph.dimensions.padding.left)
       .attr('height', graph.dimensions.height);
-    setActiveAxis(graph);
+    setActiveAxis(graph, 0);
   };
 
   /**
@@ -1241,10 +1241,10 @@ angular.module('lizard-nxt')
    * @param  {string}       unit (e.g. mNAP)
    * @param  {object}       axes - keeps track of active axis.
    */
-  setActiveAxis = function (graph) {
+  setActiveAxis = function (graph, up) {
     var units = Object.keys(graph._yPerUnit);
-    var indexOfUnit = units.indexOf(graph._activeUnit) + 1;
-    if (indexOfUnit === units.length) {
+    var indexOfUnit = units.indexOf(graph._activeUnit) + up;
+    if (indexOfUnit === units.length || indexOfUnit === -1) {
       indexOfUnit = 0;
     }
     graph._activeUnit = units[indexOfUnit];
@@ -1275,18 +1275,22 @@ angular.module('lizard-nxt')
       circles
         .enter()
         .append('circle')
-        .attr('r', SIZE)
+        .attr('r', 0)
         .attr('cx', SIZE)
-        .attr('cy', -SIZE)
-        .attr('fill', function (d) {return d.color;});
+        .attr('fill', function (d) {return d.color;})
+        .attr('cy', function (d, i) {
+          var box = label.node().getBBox()
+          return -(box.x + box.width) - PADDING - i * PADDING;
+        });
 
       circles
         .transition()
         .ease('polyInOut')
         .delay(graph.transTime)
         .duration(graph.transTime)
+        .attr('r', SIZE)
         .attr('cy', function (d, i) {
-          var box = label.node().getBBox()
+          var box = label.node().getBBox();
           return -(box.x + box.width) - PADDING - i * PADDING;
         });
 
@@ -1295,7 +1299,7 @@ angular.module('lizard-nxt')
         .ease('polyInOut')
         .delay(function (d, i) { return i * graph.transTime * DELAY; })
         .duration(graph.transTime)
-        .attr('cy', 0)
+        .attr('r', 0)
       .remove();
     }
   };
