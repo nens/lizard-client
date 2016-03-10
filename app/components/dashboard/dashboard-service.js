@@ -33,6 +33,7 @@ angular.module('dashboard')
   this.buildGraphs = function (graphs, timeseries, assets, geometries) {
 
     timeseries.forEach(function (ts) {
+      ts.updated = true;
       if (graphs[ts.order]) {
         graphs.type = 'temporalLine';
         // Check if timeseries is already in the plot, if so replace data.
@@ -41,6 +42,9 @@ angular.module('dashboard')
         });
         if (partOfContent) {
           partOfContent.data = ts.data;
+          partOfContent.color = ts.color;
+          // Keep this graph
+          partOfContent.updated = true;
         } else {
           graphs[ts.order].content.push(ts);
         }
@@ -49,9 +53,6 @@ angular.module('dashboard')
         var content = [ts];
         graphs[ts.order] = { 'type': 'temporalLine', 'content': content };
       }
-      // Keep this graph
-      var indexOflast = graphs[ts.order].content.length -1;
-      graphs[ts.order].content[indexOflast].updated = true;
     });
 
     assets.forEach(function (asset) {
@@ -81,11 +82,11 @@ angular.module('dashboard')
       }
     });
 
-    // Remove all graphs that have not been updated and are empty.
+    // Remove all graphs that have not been updated or are empty.
     _.forEach(graphs, function (g, i) {
       g.content = _.filter(g.content, function (c) { return c.updated === true; });
       _.forEach(g.content, function (c) { c.updated = false; });
-      if (!g.content.length) {
+      if (g.content.length === 0) {
         graphs.splice(i, 1);
       }
     });
@@ -129,7 +130,9 @@ angular.module('dashboard')
         var item = {
           data: property.data,
           keys: {x: 0, y: 1},
-          labels: {x: 'm', y: property.unit }
+          unit: property.unit,
+          // TODO: xLabel is not always meters.
+          xLabel: 'm'
         };
 
         var type = slug === 'rain' ? 'rain' : 'distance';
