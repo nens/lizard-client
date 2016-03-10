@@ -48,6 +48,7 @@ angular.module('dashboard')
         var content = [ts];
         graphs[ts.order] = { 'content': content };
       }
+
       graphs[ts.order].type = ts.valueType === 'image'? 'image' : 'temporalLine';
 
       // Keep this graph

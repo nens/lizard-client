@@ -17,7 +17,7 @@ angular.module('image-carousel')
         else if (scope.context === 'dashboard') {
           var d = scope.graphDims;
           scope.dimensions = {
-            maxWidth: d.widht - 2 * d.padding.left,
+            maxWidth: d.width - 2 * d.padding.left,
             maxHeight: d.height - 2 * d.padding.top
           };
         }
