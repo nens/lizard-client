@@ -29,10 +29,8 @@ angular.module('lizard-nxt')
 
     this.id = chartContent.id;
     this.keys = chartContent.keys || defaultKeys;
-    this.labels = chartContent.labels || {x: '', y:''};
     this.color = chartContent.color || DEFAULT_GREEN;
     this.unit = chartContent.unit;
-
     this.setContentUpdateY(chartContent);
 
     return;

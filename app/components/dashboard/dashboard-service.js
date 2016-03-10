@@ -129,7 +129,9 @@ angular.module('dashboard')
         var item = {
           data: property.data,
           keys: {x: 0, y: 1},
-          labels: {x: 'm', y: property.unit }
+          unit: property.unit,
+          // TODO: xLabel is not always meters.
+          xLabel: 'm'
         };
 
         var type = slug === 'rain' ? 'rain' : 'distance';

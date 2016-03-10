@@ -82,7 +82,8 @@ angular.module('lizard-nxt')
   /**
    * @function
    * @memberOf Graph
-   * @param {object} content - Object or Array with data, keys and labels
+   * @param {object} content - Array of object with data, keys, unit, color,
+   *                           xlabel and if multi line: id.
    *        data   Currently supports the format:
    *                        [
    *                          [value, value],
@@ -114,7 +115,7 @@ angular.module('lizard-nxt')
     // Get x scale and axis for temporal domain.
     var range = graph._makeRange('x', graph.dimensions);
     var width = graph._getWidth(graph.dimensions);
-    var scale
+    var scale;
     if (temporal) {
       scale = graph._makeScale(
         {max: graph._xDomain.end, min: graph._xDomain.start},
@@ -122,15 +123,16 @@ angular.module('lizard-nxt')
         {scale: 'time'}
       );
     } else {
-      // If not temporal content has lenght 1.
+      // If not temporal content has lenght 1 and is linear.
       var xMinMax = this._maxMin(content[0].data, content[0].keys.x);
       scale = graph._makeScale(
         xMinMax,
         range,
         {scale: 'linear'}
       );
+      drawLabel(graph._svg, graph.dimensions, content[0].xLabel, false);
     }
-    var axis = Graph.prototype._makeAxis(scale, {}, graph.dimensions);
+    var axis = graph._makeAxis(scale, {orientation: 'bottom'}, graph.dimensions);
     graph._xy = {
       x: {
         scale: scale,
@@ -180,6 +182,7 @@ angular.module('lizard-nxt')
     if (graph._containers.length === 0) {
       return; // for the love of pete don't let it continue
     }
+
     // Create the y scales and axes for the updated charts.
     graph._yPerUnit = updateYs(
       graph._containers,
@@ -248,6 +251,7 @@ angular.module('lizard-nxt')
 
     });
 
+    // Draw one of the y axis
     drawMultipleAxes(graph);
 
     // if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
