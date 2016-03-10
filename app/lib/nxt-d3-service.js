@@ -31,10 +31,9 @@ angular.module('lizard-nxt')
    * @param {int} xDomainStart  unix-time; start of wanted domain
    * @param {int} xDomainEnd    unix-time; end of wanted domain
    */
-  function NxtD3(element, dimensions, xDomainStart, xDomainEnd) {
+  function NxtD3(element, dimensions, xDomain) {
     this.dimensions = angular.copy(dimensions);
-    this._xDomainStart = xDomainStart;
-    this._xDomainEnd = xDomainEnd;
+    this._xDomain = xDomain;
     this._svg = createCanvas(element, this.dimensions);
   }
 
@@ -181,15 +180,33 @@ angular.module('lizard-nxt')
         d3Objects.maxMin = this._maxMin(data, key);
       } else {
         range = { min: 0, max: width };
-        d3Objects.maxMin = (this._xDomainStart && this._xDomainEnd)
-          ? { min: this._xDomainStart, max: this._xDomainEnd }
+        d3Objects.maxMin = (this._xDomain.start && this._xDomain.end)
+          ? { min: this._xDomain.start, max: this._xDomain.end }
           : this._maxMin(data, key);
       }
+      d3Objects.range = range;
       d3Objects.scale = this._makeScale(d3Objects.maxMin, range, options);
       d3Objects.axis = this._makeAxis(d3Objects.scale, options);
       return d3Objects;
     },
 
+    /**
+     * @function
+     * @description give back a range based on the Dimensions
+     * @param {string} - axis can either be 'y' or 'x'
+     * return {object} - min and max for the pixel range
+     */
+    _makeRange: function (axis, dimensions) {
+      var width = this._getWidth(dimensions),
+          height = this._getHeight(dimensions),
+          range;
+      if (axis === 'y') {
+        range = { max: 0, min: height };
+      } else {
+        range = { min: 0, max: width };
+      }
+      return range;
+    },
 
     /**
      * @function
@@ -303,7 +320,7 @@ angular.module('lizard-nxt')
      * @description returns a d3 axis
      * @return {object} d3 axis
      */
-    _makeAxis: function (scale, options) {
+    _makeAxis: function (scale, options, dimensions) {
       // Make an axis for d3 based on a scale
       var decimalCount,
           axis = d3.svg.axis()
@@ -345,8 +362,10 @@ angular.module('lizard-nxt')
         }
       }
 
-      if (options.drawGrid) {
-        var gridLength = this._getWidth(this.dimensions);
+      dimensions = (this.dimensions) ? this.dimensions : dimensions;
+
+      if (options.drawGrid && dimensions) {
+        var gridLength = this._getWidth(dimensions);
         axis
           .tickSize(-gridLength);
       }

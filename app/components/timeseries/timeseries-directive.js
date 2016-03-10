@@ -44,7 +44,7 @@ angular.module('timeseries')
         scope.timeseries = {
           selected: {},
           change: function () {
-           selectTimeseries(scope.timeseries.selected);
+            selectTimeseries(scope.timeseries.selected);
           }
         };
 

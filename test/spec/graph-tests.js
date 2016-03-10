@@ -83,19 +83,30 @@ describe('Testing line graph attribute directive', function() {
         bottom: 4
       }
     };
-    var stringDim = '{width: ' + String(dimensions.width) + ', height: ' + String(dimensions.height)
-    + ', padding: ' + '{top: ' + String(dimensions.padding.top) + ', left: ' + String(dimensions.padding.left)
-    + ', right: ' + String(dimensions.padding.right) + ', bottom: ' + String(dimensions.padding.bottom) + '}}';
-    var dataString = '[{ data: [[3, 4], [2,3], [5,6]] }]';
-    element = angular.element('<div>' +
-      '<graph line content="' + dataString +'" dimensions="' + stringDim + '"></graph></div>');
+    // Make a DOM element: make string from object and replace all double quotes
+    // for single quotes and put it in the domstring and compile it to DOM.
+    var stringDim = JSON.stringify(dimensions).replace(/["]/g, "'");
+
+    var content = [{
+      data: [[3, 4], [2,3], [5,6]],
+      id: 'abc',
+      unit: '...',
+      color: 'red',
+      keys: {x: 0, y: 1}
+    }];
+    var contentString = JSON.stringify(content).replace(/["]/g, "'");
+    domstring = '<div>'+
+      '<graph line content="' + contentString +
+      '" dimensions="' + stringDim +
+      '"></graph></div>';
+    element = angular.element(domstring);
     element = $compile(element)($rootScope);
     scope = element.scope();
     scope.$digest();
   });
 
   it('should draw a line', function () {
-    expect(d3.select(element[0]).select('path')[0][0]).not.toBeNull();
+    expect(d3.select(element[0]).select('path').empty()).toBe(false);
   });
 
 });
@@ -112,9 +123,9 @@ describe('Testing barChart attribute directive', function() {
 
   beforeEach(function () {
     var dataString = '[ {data: [[3, 4], [2,3], [5,6]], keys: {x: 0, y: 1}, labels: {x: 0, y: 1} } ]';
-
+    temporal = "{start: 0, end: 1000}";
     element = angular.element('<div>' +
-      '<graph bar-chart content="' + dataString + '"></graph></div>');
+      '<graph bar-chart content="' + dataString + '" temporal="' + temporal +'" now="234"></graph></div>');
     element = $compile(element)($rootScope);
     scope = element.scope();
     scope.$digest();
@@ -140,7 +151,7 @@ describe('Testing horizontalStackChart attribute directive', function() {
   beforeEach(function () {
     var dataString = '[ {data: [[3, 4], [2,3], [5,6]], keys: {x: 0, y: 1}, labels: {x: 0, y: 1} } ]';
     element = angular.element('<div>' +
-      '<graph bar-chart content="' + dataString + '"></graph></div>');
+      '<graph horizontal-stack content="' + dataString + '"></graph></div>');
     element = $compile(element)($rootScope);
     scope = element.scope();
     scope.$digest();
@@ -178,7 +189,8 @@ describe('Testing graph', function () {
           left: 4
         }
       },
-      graph = new Graph(el, dimensions);
+      temporal = {start: 0, end: 1000};
+      graph = new Graph(el, dimensions, temporal);
     })
   );
 
@@ -253,19 +265,20 @@ describe('Testing graph', function () {
     graph.drawLine([{
       data: data,
       keys: keys,
-      labels: labels
+      unit: labels.y,
+      xLabel: labels.x
     }]);
-    expect(graph._xy.x.maxMin.min).toBe(0);
-    expect(graph._xy.x.maxMin.max).toBe(2);
+    expect(graph._xy.x.scale.domain()[0]).toBe(0);
+    expect(graph._xy.x.scale.domain()[1]).toBe(2);
     data[0][0] = -1;
-    data[2][0] = 3;
+    data[2][0] = 4;
     graph.drawLine([{
       data: data,
       keys: keys,
       labels: labels
     }]);
-    expect(graph._xy.x.maxMin.min).toBe(-1);
-    expect(graph._xy.x.maxMin.max).toBe(3);
+    expect(graph._xy.x.scale.domain()[0]).toBe(-1);
+    expect(graph._xy.x.scale.domain()[1]).toBe(4);
   });
 
   it('should rescale the y when max increase', function () {
@@ -289,7 +302,7 @@ describe('Testing graph', function () {
     expect(graph._xy.y.maxMin.max).toBe(4);
   });
 
-  it('should not rescale the y when max halves', function () {
+  it('should rescale the y when max halves', function () {
 
     var data = [[0, 0], [1, 3], [2, 1]],
         keys = {x: 0, y: 1},
@@ -298,7 +311,8 @@ describe('Testing graph', function () {
     graph.drawLine([{
       data: data,
       keys: keys,
-      labels: labels
+      unit: labels.y,
+      xLabel: labels.x
     }]);
     expect(graph._xy.y.maxMin.max).toBe(3);
     data[1][1] = 1.5;
@@ -309,26 +323,30 @@ describe('Testing graph', function () {
       labels: labels
     }]);
 
-    expect(graph._xy.y.maxMin.max).toBe(3);
+    expect(graph._xy.y.maxMin.max).toBe(1.5);
   });
 
   it('should rescale the y when max diminishes', function () {
-    var data = [[0, 0], [1, 3], [2, 1]];
-    keys = {x: 0, y: 1},
-    labels = {x: 'afstand', y: 'elevation'},
+
+    var data = [[0, 0], [1, 3], [2, 1]],
+        keys = {x: 0, y: 1},
+        labels = {x: 'afstand', y: 'elevation'};
+
     graph.drawLine([{
       data: data,
       keys: keys,
-      labels: labels
+      unit: labels.y,
+      xLabel: labels.x
     }]);
+
     expect(graph._xy.y.maxMin.max).toBe(3);
-    graph._containers = {};
     data[1][1] = 0.2;
     data[2][1] = 0.2;
     graph.drawLine([{
       data: data,
       keys: keys,
-      labels: labels
+      unit: labels.y,
+      xLabel: labels.x
     }]);
     expect(graph._xy.y.maxMin.max).toBe(0.2);
   });

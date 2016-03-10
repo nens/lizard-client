@@ -202,10 +202,8 @@ angular.module('lizard-nxt')
     this.setFormattedContent = function (scope) {
       this.content = [{
         data: scope.data,
-        labels: {
-          x: scope.xlabel,
-          y: scope.ylabel
-        },
+        unit: scope.ylabel,
+        xLabel: scope.xlabel,
         keys: {
           x: (scope.keys && scope.keys.x) || 0,
           y: (scope.keys && scope.keys.y) || 1
