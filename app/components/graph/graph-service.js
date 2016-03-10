@@ -1159,36 +1159,30 @@ angular.module('lizard-nxt')
         // expected and the y label a little bit less.
         PIXEL_CORRECTION = 2,
         el = svg.select(y ? '#ylabel': '#xlabel');
-    if (!el.empty()) {
-      if (label) {
-        el.text(label);
-      }
-      mv = y
-        ? 0.5 * el.node().getBBox().height + PIXEL_CORRECTION
-        : - 0.5 * el.node().getBBox().height + PIXEL_CORRECTION;
-      el.attr('dy', mv);
-   }
-    else {
+    if (el.empty()) {
       el = svg.append('g')
         .append("text")
         .attr('class', 'graph-text graph-label')
         .style("text-anchor", "middle")
         .text(label);
-      mv = y
-        ? 0.5 * el.node().getBBox().height + PIXEL_CORRECTION
-        : - 0.5 * el.node().getBBox().height + PIXEL_CORRECTION;
-      el.attr('dy', mv);
-      if (y) {
-        el.attr('id', 'ylabel')
-          .attr('transform', 'rotate(-90)')
-          .attr('y', 0)
-          .attr('x', 0 - height / 2);
-      } else {
-        el.attr('id', 'xlabel')
-          .attr('x', dimensions.padding.left + width / 2)
-          .attr('y', dimensions.height);
-      }
     }
+    if (label) {
+      el.text(label);
+    }
+    if (y) {
+      el.attr('id', 'ylabel')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', 0)
+        .attr('x', 0 - height / 2);
+    } else {
+      el.attr('id', 'xlabel')
+        .attr('x', dimensions.padding.left + width / 2)
+        .attr('y', dimensions.height);
+    }
+    mv = y
+      ? 0.5 * el.node().getBBox().height + PIXEL_CORRECTION
+      : - 0.5 * el.node().getBBox().height + PIXEL_CORRECTION;
+    el.attr('dy', mv);
     return el;
   };
 
@@ -1227,9 +1221,17 @@ angular.module('lizard-nxt')
    * @param  {object}       axes - keeps track of active axis.
    */
   drawMultipleAxes = function (graph) {
-    graph._svg.select('#yaxis').on('click', function (e) {
-      setActiveAxis(graph);
-    });
+    var clickRect = graph._svg.select('.click-axis');
+    if (clickRect.empty()) {
+      clickRect = graph._svg.append('rect')
+      .attr('class', 'click-axis')
+      .on('click', function (e) {
+        setActiveAxis(graph);
+      });
+    }
+    clickRect
+      .attr('width', graph.dimensions.padding.left)
+      .attr('height', graph.dimensions.height);
     setActiveAxis(graph);
   };
 
@@ -1241,8 +1243,8 @@ angular.module('lizard-nxt')
    */
   setActiveAxis = function (graph) {
     var units = Object.keys(graph._yPerUnit);
-    var indexOfUnit = units.indexOf(graph._activeUnit);
-    if (indexOfUnit < 1 || indexOfUnit++ === units.length) {
+    var indexOfUnit = units.indexOf(graph._activeUnit) + 1;
+    if (indexOfUnit === units.length) {
       indexOfUnit = 0;
     }
     graph._activeUnit = units[indexOfUnit];
@@ -1253,12 +1255,49 @@ angular.module('lizard-nxt')
       true,
       graph.transTime
     );
-    drawLabel(
+    var label = drawLabel(
       graph._svg,
       graph.dimensions,
       graph._activeUnit,
       true
     );
+    var activeCharts = graph._containers.filter(function (chart) {
+      return chart.unit === graph._activeUnit;
+    });
+
+    if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+      var PADDING = 15;
+      var SIZE = 6;
+      var DELAY = 0.5; // times transTime
+      var circles = d3.select(label.node().parentNode).selectAll('circle')
+        .data(activeCharts, function (d) {return d.id; });
+
+      circles
+        .enter()
+        .append('circle')
+        .attr('r', SIZE)
+        .attr('cx', SIZE)
+        .attr('cy', -SIZE)
+        .attr('fill', function (d) {return d.color;});
+
+      circles
+        .transition()
+        .ease('polyInOut')
+        .delay(graph.transTime)
+        .duration(graph.transTime)
+        .attr('cy', function (d, i) {
+          var box = label.node().getBBox()
+          return -(box.x + box.width) - PADDING - i * PADDING;
+        });
+
+      circles.exit()
+        .transition()
+        .ease('polyInOut')
+        .delay(function (d, i) { return i * graph.transTime * DELAY; })
+        .duration(graph.transTime)
+        .attr('cy', 0)
+      .remove();
+    }
   };
 
   createDonut = function (dimensions) {
