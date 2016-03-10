@@ -300,7 +300,7 @@ angular.module('lizard-nxt')
     var data, keys, labels;
     data = content.data;
     keys = content.keys;
-    labels = content.labels;
+    labels = { x: content.xLabel, y: content.unit };
     var originalKey = keys.y;
     if (keys.category) {
       // Create data for stacked bars.
