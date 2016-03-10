@@ -34,11 +34,7 @@ angular.module('lizard-nxt')
    * @param {object} xDomain - override the domain for the graphs.
    */
   function Graph(element, dimensions, xDomain) {
-    if (xDomain && xDomain.start && xDomain.end) {
-      NxtD3.call(this, element, dimensions, xDomain);
-    } else {
-      NxtD3.call(this, element, dimensions);
-    }
+    NxtD3.call(this, element, dimensions, xDomain);
     this._svg = this._createDrawingArea();
     this._containers = [];
   }
@@ -86,13 +82,17 @@ angular.module('lizard-nxt')
    *                           xlabel and if multi line: id.
    *        data   Currently supports the format:
    *                        [
-   *                          [value, value],
+   *                          collection,
    *                          ...,
    *                        ]
    *        keys   Mapping between x and y values of data object:
    *                        example: {x: 0, y: 1}
-   *        labels Object {x: 'x label', y: 'y label'} will be
-   *                        mapped to axis labels of the graph
+   *        unit   string   will be
+   *                        mapped to y axis and the label of the y axis.
+   *        color  string   Color.
+   *        xLabel stirng   Label for x axis.
+   *        id     string or inter identiefier for charts in the graph.
+   *
    * @param {boolean} temporal to draw an time axis or not.
    * @param {boolean} transitioning to draw a subset of data now, and the full
    *                                set after a timeout if drawline is not
@@ -100,7 +100,7 @@ angular.module('lizard-nxt')
    *                                Use transitioning = true when callig this
    *                                function many times as a result of a user
    *                                induced action.
-   * @description           Draws a line, if necessary sets up the graph,
+   * @description           Draws multiple line, if necessary sets up the graph,
    *                        if necessary modifies domain and redraws axis,
    *                        and draws the line according to the data object.
    *                        Currently only a linear scale on the x-axis is
@@ -186,7 +186,6 @@ angular.module('lizard-nxt')
     // Create the y scales and axes for the updated charts.
     graph._yPerUnit = updateYs(
       graph._containers,
-      graph._svg,
       graph._yPerUnit,
       graph.dimensions,
       width > MIN_WIDTH_INTERACTIVE_GRAPHS
@@ -253,6 +252,8 @@ angular.module('lizard-nxt')
 
     // Draw one of the y axis
     drawMultipleAxes(graph);
+
+    //TODO fix hover interaction for mult lines.
 
     // if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
     //   addInteractionToPath(
@@ -661,16 +662,17 @@ angular.module('lizard-nxt')
 
   /**
    * @function
-   * @description Updates all of the XY containers for the graph based on all
-   * the timeseries in this graph. It looks for similar units and calculates
+   * @description Updates all of the Y containers for the graph based on all
+   * the charts in this graph. It looks for similar units and calculates
    * the min and the max based on all of the items with the same unit.
-   * In this way the timeseries can be compared and different y-axes calculated.
-   * @param {object} - chartContainer - ChartContainer object with x, y and data
-   * @param {object} - svg - svg selected by d3 to do manipulations on
-   * @param {object} - xyPerUnit - xy characteristics (domain, scale, axis) per unit of the graph
-   * @param {object} - dimensions - object describing the size of the graphCtrl
+   * In this way the charts can be compared and different y-axes calculated.
+   * @param {object} - charts - ChartContainer object with y and data
+   * @param {object} - xyPerUnit - y characteristics (domain, scale, axis) per
+   *                               unit of the graph
+   * @param {object} - dimensions - object describing the size of the graph
+   * @param {boolean}  drawGrid    to draw a grid or not.
    */
-  updateYs = function (charts, svg, yPerUnit, dimensions, drawGrid) {
+  updateYs = function (charts, yPerUnit, dimensions, drawGrid) {
     var width = Graph.prototype._getWidth(dimensions);
     var options = {
       scale: 'linear',
@@ -987,8 +989,9 @@ angular.module('lizard-nxt')
       var tHeight = t.node().getBBox().height,
           tWidth = t.node().getBBox().width;
 
-      var BOX_PADDING_WIDTH = 10,
-          BOX_PADDING_HEIGHT = TEXY_PADDING_WIDTH = 5;
+      var BOX_PADDING_WIDTH = 10;
+      var BOX_PADDING_HEIGHT = 5;
+      var TEXY_PADDING_WIDTH = BOX_PADDING_HEIGHT;
 
       var bgY = Math.min(
         height - tHeight - BOX_PADDING_HEIGHT,
