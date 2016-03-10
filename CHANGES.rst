@@ -4,6 +4,11 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+
+- Fix selection persist between tools.
+
+- Fix redraw feedback on map when coming from dashboard.
+
 - Add support for timeseries with time image.
 
 - Adding graphs with multiple y-axes.
@@ -23,6 +28,7 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 Release 2.9.4 (2016-3-1)
 ---------------------
+
 - Favourites have more state and gets some bugfixes
 
 

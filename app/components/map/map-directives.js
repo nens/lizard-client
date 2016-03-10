@@ -220,6 +220,13 @@ angular.module('map')
 
       init();
 
+      // Remove all references to current map.
+      element.on('$destroy', function () {
+        MapService.remove();
+        ClickFeedbackService.remove();
+      });
+
+
     };
 
     return {

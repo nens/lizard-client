@@ -158,23 +158,39 @@ angular.module('data-menu')
 
   var link = function (scope, elem, attrs) {
 
-    var rmAllButLastAsset = function () {
+    /**
+     * Removes all but last asset. If no assets, it removes all but last
+     * geometry, else all geometries. Result, one selected element.
+     */
+    var rmAllButLastAssetAndGeometry = function () {
       State.selected.assets.forEach(function (asset) {
         if (State.selected.assets.length > 1) {
           State.selected.assets.removeAsset(asset);
         }
       });
+      if (State.selected.assets.length === 0) {
+        State.selected.geometries.forEach(function (geom) {
+          if (State.selected.geometries.length > 1) {
+            State.selected.geometries.removeGeometry(geom);
+          }
+        });
+      }
+      else {
+        State.selected.geometries = [];
+      }
     };
 
+    /**
+     * Leaves all points when going from point to multi-point. Removes all but
+     * last asset when going from multi-point to point and removes everything
+     * when coming or going to line, region or area.
+     */
     scope.changeBoxType = function () {
-      if (scope.type === 'point'
-        || scope.type === 'region'
-        || scope.type === 'area') {
-        State.selected.geometries = [];
-        rmAllButLastAsset();
+      if (scope.type === 'point' && scope.boxType === 'multi-point') {
+        rmAllButLastAssetAndGeometry();
       }
       // TODO: enable line with others, only clicklayer is bitching.
-      else if (scope.type === 'line') {
+      else if (!(scope.boxType === 'point' && scope.type === 'multi-point')) {
         State.selected.geometries = [];
         State.selected.assets = [];
       }

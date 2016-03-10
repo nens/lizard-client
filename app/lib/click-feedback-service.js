@@ -49,6 +49,10 @@ angular.module('lizard-nxt')
         mapState.addLeafletLayer(this.clickLayer);
       };
 
+      this.remove = function () {
+        this.clickLayer = null;
+      };
+
       this.drawPointsAsCircleMarker = function (self) {
         // Explain leaflet to draw points as circlemarkers.
         this.clickLayer.options.pointToLayer = function (feature, latlng) {
@@ -268,7 +272,8 @@ angular.module('lizard-nxt')
         drawLine,
         drawGeometry,
         startVibration,
-        vibrateOnce;
+        vibrateOnce,
+        removeLayer;
 
     /**
      * @description should remove that exact click that is wanting to be
@@ -276,7 +281,8 @@ angular.module('lizard-nxt')
      * @params {object} LatLng object
      */
     removeClickFromClickLayer = function (toBeRemovedClick) {
-      if (toBeRemovedClick in clickLayer.clickLayer._layers) {
+      if (clickLayer.clickLayer
+        &&toBeRemovedClick in clickLayer.clickLayer._layers) {
         clickLayer.clickLayer.removeLayer(toBeRemovedClick);
       }
     };
@@ -360,6 +366,10 @@ angular.module('lizard-nxt')
       clickLayer.vibrateOnce(geojson);
     };
 
+    removeLayer = function () {
+      clickLayer.remove();
+    };
+
     return {
       emptyClickLayer: emptyClickLayer,
       drawArrow: drawArrow,
@@ -368,7 +378,8 @@ angular.module('lizard-nxt')
       startVibration: startVibration,
       drawLine: drawLine,
       removeClickFromClickLayer: removeClickFromClickLayer,
-      vibrateOnce: vibrateOnce
+      vibrateOnce: vibrateOnce,
+      remove: removeLayer
     };
   }
 ]);
