@@ -8,6 +8,10 @@
   color: $concrete;
 }
 
+svg {
+  @include cross-browser(user-select, none);
+}
+
 .plot {
     fill: $deprecated-gray18;
     fill-opacity: 0;
