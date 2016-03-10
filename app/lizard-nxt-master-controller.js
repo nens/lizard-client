@@ -16,7 +16,7 @@ angular.module('lizard-nxt')
   .controller('MasterCtrl',
 
   ['$scope',
-    '$rootScope',
+   '$rootScope',
    '$timeout',
    'CabinetService',
    'UtilService',
@@ -94,6 +94,4 @@ angular.module('lizard-nxt')
   window.addEventListener("load", function () {
     window.loaded = true;
   });
-
-
 }]);
