@@ -1227,7 +1227,7 @@ angular.module('lizard-nxt')
     var clickRect = graph._svg.select('.click-axis');
     if (clickRect.empty()) {
       clickRect = graph._svg.append('rect')
-      .attr('class', 'click-axis')
+      .attr('class', 'click-axis clickable')
       .on('click', function (e) {
         setActiveAxis(graph, 1);
       });
