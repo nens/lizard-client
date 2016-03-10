@@ -10,6 +10,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Add support for timeseries with time image.
 
+- Adding graphs with multiple y-axes.
+
 - Add crosssections visualization in dashboard.
 
 - Add share favourites.
@@ -17,6 +19,10 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 - Remove layergroups from search.
 
 - Adapt search results to updated full-text search API response.
+
+- Improve user menu for mobile devices.
+
+- Make lizard apps screen load dynamically.
 
 
 Release 2.9.4 (2016-3-1)

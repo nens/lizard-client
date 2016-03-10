@@ -959,4 +959,25 @@ angular.module('lizard-nxt')
     return formattedData;
   };
 
+  /**
+   * Create a slug from a string.
+   * This is the Javascript equivalent of the Django algorithm:
+   * https://docs.djangoproject.com/en/1.8/_modules/django/utils/text/#slugify
+   *
+   * @param {string} s - The string to slugify.
+   * @returns a slugified version of the string.
+   */
+  this.slugify = function(s) {
+    value = s;
+    // Remove all non-alphanumeric-underscore-dash-space characters.
+    value = _.replace(value, /[^\w\s-]/g, '');
+    // Remove leading and trailing whitespace.
+    value = _.trim(value);
+    // Convert to lowercase.
+    value = _.lowerCase(value);
+    // Replace spaces with dashes.
+    value = _.replace(value, /[-\s]+/g, '-');
+    return value;
+  };
+
 }]);

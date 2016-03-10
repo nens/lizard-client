@@ -42,6 +42,7 @@ describe('Testing NxtD3', function () {
     var data = [[0, 0], [1, 3], [2, 1]],
     keys = {x: 0, y: 1},
     options = {scale: 'linear'};
+    nxtD3._xDomain = {start: 0, end: 1000};
     var objects = nxtD3._createD3Objects(data, keys.x, options, false);
     expect(objects.maxMin.max).toEqual(2);
     expect(objects.scale(2)).toEqual(114);
