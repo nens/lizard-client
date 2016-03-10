@@ -310,7 +310,7 @@ angular.module('omnibox')
         defaultValue: "beton"
       },
       {
-        keyName: gettext("Widht"),
+        keyName: gettext("Width"),
         attrName: "width",
         ngBindValue:
           "waterchain.width | niceNumberOrEllipsis: 2",

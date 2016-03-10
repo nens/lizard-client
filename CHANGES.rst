@@ -4,6 +4,7 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+
 - Fix selection persist between tools.
 
 - Fix redraw feedback on map when coming from dashboard.

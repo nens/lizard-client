@@ -52,11 +52,13 @@ angular.module('dashboard')
         var content = [ts];
         graphs[ts.order] = { 'content': content };
       }
+
       graphs[ts.order].type = ts.valueType === 'image'? 'image' : 'temporalLine';
 
       // Keep this graph
       var indexOflast = graphs[ts.order].content.length -1;
       graphs[ts.order].content[indexOflast].updated = true;
+
     });
 
     assets.forEach(function (asset) {
