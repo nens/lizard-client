@@ -25,8 +25,10 @@
       <div ng-repeat="s in asset.timeseries"
            data-uuid="<% s.uuid %>"
            class="draggable-ts">
-        <div ng-click="toggleTimeseries(s)"
-             class="card-content-list clickable">
+        <div
+          id="<% s.uuid %>"
+          ng-click="toggleTimeseries(s)"
+          class="card-content-list clickable">
           <i class="fa" ng-class="{
             'fa-clock-o': s.value_type !== 'image',
             'fa-file-image-o': s.value_type === 'image'
