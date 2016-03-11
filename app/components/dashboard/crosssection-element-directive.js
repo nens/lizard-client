@@ -74,9 +74,12 @@ angular.module('dashboard')
           var i = UtilService.bisect(ts.data, 'timestamp', at);
           if (i !== undefined) {
 
-            // Get the well of timeseries.
+            // Get the well of timeseries and the ts.
+            var wellTs; // stores linked property, needed to include or exclude
+                        // timeseries values from cross section interpolation.
             var well = _.find(scope.asset.monitoring_wells, function(well) {
               return _.some(well.timeseries, function (mwts) {
+                if (mwts.uuid === ts.id) { wellTs = mwts; }
                 return mwts.uuid === ts.id;
               });
             });
@@ -84,7 +87,8 @@ angular.module('dashboard')
             content.points.push({
               id: ts.id,
               value: ts.data[i].max,
-              x: well.distance_along_crosssection
+              x: well.distance_along_crosssection,
+              linked: wellTs.linked
             });
 
             content.points = _.sortBy(content.points, 'x');

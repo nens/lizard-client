@@ -497,10 +497,12 @@ angular.module('lizard-nxt')
     addPointsToGraph(this._svg, this.transTime, content.points, this._xy);
 
     className = 'interpolation-line';
+    // Only use ts linked to freatic line.
+    var linePoints = content.points.filter(function (p) { return p.linked; });
     addLineToGraph(
       this._svg,
       this.transTime,
-      content.points,
+      linePoints,
       {x: 'x', y: 'value'},
       this._xy,
       className
