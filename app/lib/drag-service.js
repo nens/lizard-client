@@ -33,14 +33,13 @@ angular.module('lizard-nxt')
     var itIs = false;
     if (dropContainer === undefined) { return false; }
 
-    if (dropContainer.children.length
+    if (!dropContainer.children.length && el === dropContainer) {
+      itIs = true;
+    }
+    else if (dropContainer.children.length
       // element.children contains an HTMLCollection object, which does not have
       // an indexOf method. Lodash to the rescue.
       && _.indexOf(dropContainer.children, el) !== -1) {
-      itIs = true;
-    }
-
-    else if (!dropContainer.children.length && el === dropContainer) {
       itIs = true;
     }
 
@@ -70,8 +69,12 @@ angular.module('lizard-nxt')
 
     drake = dragula({
 
+      direction: 'horizontal',
+
       // Dynamically accept all existing graphs in dashboard as valid dropzones.
-      isContainer: isDropContainerOrChild,
+      isContainer: function (el) {
+        return el.classList.contains('drag-target');
+      },
 
       // Elements cannot be dragged into the dragContainer
       accepts: function (el, target) {

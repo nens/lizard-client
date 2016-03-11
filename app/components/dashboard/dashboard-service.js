@@ -53,7 +53,7 @@ angular.module('dashboard')
         graphs[ts.order] = { 'content': content };
       }
 
-      graphs[ts.order].type = ts.valueType === 'image'? 'image' : 'temporalLine';
+      graphs[ts.order].type = ts.valueType === 'image' ? 'image' : 'temporalLine';
 
       // Keep this graph
       var indexOflast = graphs[ts.order].content.length -1;
