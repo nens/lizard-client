@@ -588,7 +588,8 @@ table tr td:last-child {
   padding-left: 10px;
 }
 
-.timeseries-header-container .fa-clock-o {
+.timeseries-header-container .fa-clock-o,
+.timeseries-header-container .fa-file-image-o {
   color: $alizarin;
   font-size: 1.5em;
   top: 2px;
