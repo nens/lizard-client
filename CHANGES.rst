@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Fix delete favourites.
+
 - Cross section: only use timeseries linked to freatic line.
 
 - Don't open image timeseries in a line chart and vice versa.
