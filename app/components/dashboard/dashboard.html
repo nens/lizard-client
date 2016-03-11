@@ -1,4 +1,4 @@
-<div class="dashboard-wrapper">
+<div class="dashboard-wrapper drag-target">
 
   <!-- Use track by to keep references to dom elements and prevent redraws -->
   <!-- Store index on dom element for drag and drop functionality -->
@@ -6,7 +6,7 @@
     ng-if="item.type !== 'empty'"
     ng-repeat="item in dashboard.graphs track by $index"
     data-order="<% $index %>"
-    class="row dashboard-inner">
+    class="row dashboard-inner drag-target">
 
     <graph
       ng-if="item.type === 'temporalLine'"
