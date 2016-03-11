@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 2.10.1 (2016-3-11)
+---------------------
 
 - Cross section: only use timeseries linked to freatic line.
 
