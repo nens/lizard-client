@@ -9,6 +9,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 Release 2.10.1 (2016-3-11)
 ---------------------
 
+- Fix delete favourites.
+
 - Cross section: only use timeseries linked to freatic line.
 
 - Don't open image timeseries in a line chart and vice versa.
