@@ -71,7 +71,7 @@ angular.module('favourites')
        *                           wrong with the DELETE.
        */
       this.deleteFavourite = function (favourite, success, error) {
-        return Favourites.delete({id: favourite.id}, success, error);
+        return Favourites.delete({uuid: favourite.uuid}, success, error);
       };
 
       /**
