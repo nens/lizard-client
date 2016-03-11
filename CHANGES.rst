@@ -3,7 +3,7 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+- Make the apps buttons a bit less ugly
 
 
 Release 2.10.1 (2016-3-11)
