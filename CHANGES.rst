@@ -3,6 +3,9 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+
+- Add hover interaction to multiline graphs
+
 - Make the apps buttons a bit less ugly
 
 

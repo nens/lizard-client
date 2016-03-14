@@ -85,6 +85,12 @@ rect.bar.selected {
   fill: $pomegranate;
 }
 
+rect.valuebox {
+  fill: white;
+  stroke: $concrete;
+  stroke-width: 1;
+}
+
 .tooltip-background {
   stroke-width: 0;
   fill: $white;
@@ -115,6 +121,13 @@ text, axis text {
   fill: $concrete;
   stroke: none;
   font-size: 13px;
+}
+
+.valuebox rect {
+  fill: $white;
+  stroke: $silver;
+  stroke-width: 0.5;
+  stroke-dasharray: none;
 }
 
 .graph-text {

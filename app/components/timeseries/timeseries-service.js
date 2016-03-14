@@ -171,6 +171,7 @@ angular.module('timeseries')
       graphTimeseries.order = ts.order;
       graphTimeseries.parameter = ts.parameter || EMPTY;
       graphTimeseries.unit = ts.unit || EMPTY;
+      graphTimeseries.location = ts.location || EMPTY;
       if (ts.reference_frame) {
         graphTimeseries.unit += ' (' + ts.reference_frame + ')';
       }
