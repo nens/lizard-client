@@ -5,8 +5,8 @@ angular.module('favourites')
   // NOTE: inject TimeseriesService even though it is not used.
   // TimeseriesService defines State.selected.timeseries which may be restored
   // from favourite.
-  .service("FavouritesService", ['$resource', 'State', 'TimeseriesService',
-    function ($resource, State) {
+  .service("FavouritesService", ['$resource', 'State', 'gettextCatalog', 'notie', 'TimeseriesService',
+    function ($resource, State, gettextCatalog, notie) {
 
       /* Create a resource for interacting with the favourites endpoint of the
        * API.
@@ -42,7 +42,36 @@ angular.module('favourites')
       };
 
       this.getFavourite = function(uuid, success, error) {
-        return Favourites.get({'uuid': uuid}, success, error);
+        return Favourites.get(
+          {'uuid': uuid},
+          function (response) {
+            notie.alert(
+              4,
+              gettextCatalog.getString('Restoring favourite ') +
+              response.name,
+              3
+            );
+            success(response);
+          },
+          function (err) {
+          if (err.status === 404) {
+            notie.alert(
+              3,
+              gettextCatalog.getString('Whoops: favourite has been removed'),
+              3
+            );
+          }
+          else {
+            notie.alert(
+              3,
+              gettextCatalog.getString(
+                'Ay ay: Lizard could not retrieve your favourite'
+              ),
+              3
+            );
+          }
+          error();
+        });
       };
 
       /**
