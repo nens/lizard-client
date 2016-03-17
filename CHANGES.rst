@@ -6,6 +6,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Add hover interaction to multiline graphs
 
+- Fix the lack of a temporal indicator for some of the graphs
+
 - Make the apps buttons a bit less ugly
 
 
