@@ -253,7 +253,7 @@ angular.module('lizard-nxt')
     // Draw one of the y axis
     drawMultipleAxes(graph);
     if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
-      addLineInteraction(graph);
+      addLineInteraction(graph, temporal);
     }
   };
 
@@ -1073,7 +1073,7 @@ angular.module('lizard-nxt')
    *
    * @params {object} - the graph object (all-encompassing, ever-faithful)
    */
-  var addLineInteraction = function (graph) {
+  var addLineInteraction = function (graph, temporal) {
     var height = graph._getHeight(graph.dimensions),
         fg = graph._svg.select('#feature-group'),
         MIN_LABEL_Y = 50,
@@ -1085,7 +1085,7 @@ angular.module('lizard-nxt')
 
     // Move listener rectangle to the front
     var el = graph._svg.select('#listeners').node();
-        // el.parentNode.appendChild(el);
+        el.parentNode.appendChild(el);
 
     var cb = function () {
       var boundingRect = this; // `this` is otherwise lost in foreach
@@ -1102,7 +1102,12 @@ angular.module('lizard-nxt')
 
         x2 = xy.x.scale(d[chart.keys.x]);
         var y2 = graph._yPerUnit[chart.unit].scale(value);
-        xText = new Date(chart.data[i][chart.keys.x]).toLocaleString();
+        xText = (temporal) ? new Date(chart.data[i][chart.keys.x]).toLocaleString() : chart.data[i][chart.keys.x].toFixed(2);
+
+        if (!chart.labels) {
+          chart.labels = {y:''};
+        }
+
         values.push({
           x: x2,
           y: y2,
@@ -1167,9 +1172,10 @@ angular.module('lizard-nxt')
             .attr('stroke', 'none')
             .attr('fill', v.color);
 
+        var location = (v.location) ? '' + ' - ' + v.location : '';
         var tspan = valuebox.select('text')
           .append('tspan')
-            .text(v.value.toFixed(2) + ' ' + v.ylabel + v.unit + ' - ' + v.location)
+            .text(v.value.toFixed(2) + ' ' + v.ylabel + v.unit + location)
             .attr('class', 'graph-tooltip-y')
             .attr('x', 25)
             .attr('y', 15 + 15 * i);
