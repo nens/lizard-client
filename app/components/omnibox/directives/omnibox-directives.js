@@ -16,7 +16,6 @@ angular.module("omnibox")
       return $templateCache.get(templateUrl);
     };
 
-
     return {
       restrict: 'E',
       replace: true,

@@ -10,6 +10,17 @@ angular.module('omnibox')
     // does not exist yet.
     this.context = State.context;
 
+    /**
+     * Adds a unique identifier to asset objects for keeping track of angular
+     * scopes. Without this, the close-card-dir may remove the wrong asset.
+     *
+     * @param  {object} asset
+     * @return {string}       asset id.
+     */
+    this.trackAssets = function (asset) {
+      return asset.entity_name + '$' + asset.id;
+    };
+
   }
 
 ]);

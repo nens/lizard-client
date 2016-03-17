@@ -1,8 +1,9 @@
 angular.module('omnibox')
 .service('DBCardsService', [
+  'State',
   'DataService',
   'TimeseriesService',
-  function (DataService, TimeseriesService) {
+  function (State, DataService, TimeseriesService) {
 
   /**
    * Loops over all the items that can be plotted and return the count and the
@@ -15,17 +16,17 @@ angular.module('omnibox')
     var orders = [];
     var actives = 0;
 
-    DataService.assets.forEach(function (asset) {
-
-      _.forEach(
-        asset.timeseries,
-        function (ts) {
-          if (ts.active) {
-            actives++;
-            orders.push(ts.order);
-          }
+    _.forEach(
+      State.selected.timeseries,
+      function (ts) {
+        if (ts.active) {
+          actives++;
+          orders.push(ts.order);
         }
-      );
+      }
+    );
+
+    DataService.assets.forEach(function (asset) {
 
       _.forEach(
         asset.properties,
@@ -72,45 +73,38 @@ angular.module('omnibox')
 
     if (item.uuid) {
       // Check if it was the last timeseries in the chart.
-      DataService.assets.forEach(function (asset) {
-        otherItems += _.filter(
-          asset.timeseries,
-          function (ts) {
-            return ts.active && ts.uuid !== uuid && ts.order === order;
-          }
-        ).length;
-      });
-
+      otherItems += _.filter(
+        State.selected.timeseries,
+        function (ts) {
+          return ts.active && ts.uuid !== uuid && ts.order === order;
+        }
+      ).length;
     }
 
     if (otherItems === 0) {
+      State.selected.timeseries.forEach(function (ts) {
+        if (ts.order > order) {
+          ts.order--;
+
+          // TimeseriesService.timeseries get an order when fetched. Set
+          // this when changing order of timeseries in
+          // TimeseriesService.timeseries.
+          var fetchedTimeseries = _.find(
+            TimeseriesService.timeseries,
+            function (fts) { return fts.id === ts.uuid; }
+          );
+          if (fetchedTimeseries) {
+            fetchedTimeseries.order = ts.order;
+          }
+
+        }
+      });
 
       DataService.assets.forEach(function (asset) {
-        if (asset.timeseries) {
-          asset.timeseries.forEach(function (ts) {
-            if (ts.order > order) {
-              ts.order--;
-
-              // TimeseriesService.timeseries get an order when fetched. Set
-              // this when changing order of timeseries in
-              // TimeseriesService.timeseries.
-              var fetchedTimeseries = _.find(
-                TimeseriesService.timeseries,
-                function (fts) { return fts.id === ts.uuid; }
-              );
-              if (fetchedTimeseries) {
-                fetchedTimeseries.order = ts.order;
-              }
-
-            }
-          });
-        }
-
         if (asset.entity_name === 'leveecrosssection' &&
           asset.crosssection.active && asset.crosssection.order > order) {
           asset.crosssection.order--;
         }
-
       });
 
       DataService.assets.forEach(function (asset) {
