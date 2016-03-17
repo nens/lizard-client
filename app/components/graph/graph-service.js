@@ -1189,7 +1189,7 @@ angular.module('lizard-nxt')
     graph._svg.select('#listeners').on('click', cb);
     graph._svg.select('#listeners').on('mousemove', cb);
     graph._svg.select('#listeners').on('mouseout', function () {
-      // fg.select('.interaction-group').remove();
+      fg.select('.interaction-group').remove();
     });
 
   };
