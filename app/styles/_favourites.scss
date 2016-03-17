@@ -3,7 +3,7 @@
     right: 10px;
     top: 70px;
     width: 350px;
-    background: rgba($white, 0.9);
+    background: rgba($white, 1);
     padding: 15px;
     font-size: 0.9em;
     transition: .3s ease;
@@ -17,14 +17,29 @@
         margin-bottom: 0;
     }
 
+    &:after, &:before {
+      bottom: 100%;
+      top: -20px;
+      left: 180px;
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+    }
+
+    &:after {
+      border-color: rgba(255, 255, 255, 0.0);
+      border-bottom-color: rgba(255, 255, 255, 1);
+      border-width: 10px;
+      margin-left: -10px;
+    }
     &:before {
-        content: "\f0d8";
-        font-family: FontAwesome;
-        font-size: 30px;
-        color: rgba($white, 0.9);
-        position: absolute;
-        top: -27px;
-        left: 180px;
+      border-color: rgba(255, 255, 255, 0.0);
+      border-bottom-color: rgba(255, 255, 255, 1);
+      border-width: 12px;
+      margin-left: -12px;
     }
 
     .favourites-show {

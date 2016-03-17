@@ -23,6 +23,7 @@ angular.module('data-menu')
     'AssetService',
     'dataLayers',
     'DataLayerGroup',
+    'LayerAdderService',
     'State',
 
     function (
@@ -30,6 +31,7 @@ angular.module('data-menu')
       AssetService,
       dataLayers,
       DataLayerGroup,
+      LayerAdderService,
       State
     ) {
 
@@ -145,7 +147,7 @@ angular.module('data-menu')
           var entity = newAsset.split('$')[0];
           var id = newAsset.split('$')[1];
           AssetService.getAsset(entity, id)
-            .then(assetChange)
+            .then(assetChange);
         });
         _assets = assets;
         rebindAssetFunctions();
@@ -213,6 +215,12 @@ angular.module('data-menu')
         setGeometries(newGeometries);
       };
 
+      var addLayerFromURL = function (layerGroup) {
+        // Create the layergroup.
+        var newLayerGroup = instance.createLayerGroup(layerGroup);
+        // Turn the layergroup on.
+        instance.toggleLayerGroup(newLayerGroup);
+      };
 
       instance.geometries = [];
       var _geometries = [];
@@ -250,10 +258,19 @@ angular.module('data-menu')
           angular.forEach(layerGroups, function (_lg, slug) {
             if (newActivelayerGroups.indexOf(slug) !== -1 && !_lg.isActive()) {
               this.toggleLayerGroup(_lg);
-            } else if (_lg.isActive()) {
-              this.toggleLayerGroup(_lg);
             }
           }, instance);
+          var nonExistent = _.difference(newActivelayerGroups, Object.keys(layerGroups));
+
+          nonExistent.forEach(function (newLg) {
+            // if the layegroup is on the url, at least show the courtesy
+            // to pretend you care by looking it up in the datta-bash
+            LayerAdderService.fetchLayerGroup(newLg, addLayerFromURL, function (e) {
+              // this is the error callback, which fails silently.
+              console.log('Didn\'t find what you are looking for: ', e);
+            });
+          });
+
         }
       });
 
