@@ -198,8 +198,6 @@ angular.module('timeseries')
         return ts === undefined; // Break out early
       });
 
-      if (ts.reference_frame) {
-        graphTimeseries.unit += ' (' + ts.reference_frame + ')';
       if (ts) {
         graphTimeseries.parameter = ts.parameter || EMPTY;
         graphTimeseries.unit = ts.unit || EMPTY;
