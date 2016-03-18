@@ -148,6 +148,7 @@ angular.module('lizard-nxt')
         dataWatch();
         return;
       }
+      graphUpdateHelper();
     }, true);
 
     scope.$watch('temporal.at', function (n, o) {

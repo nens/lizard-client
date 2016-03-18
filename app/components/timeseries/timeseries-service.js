@@ -26,8 +26,8 @@ angular.module('timeseries')
       get: function () { return _timeseries; },
       set: function (timeseries) {
         console.log('State.selected.timeseries:', timeseries);
-        service.syncTime(timeseries);
         _timeseries = timeseries;
+        service.syncTime(timeseries);
       },
       enumerable: true
     });
@@ -43,7 +43,14 @@ angular.module('timeseries')
       }
 
       else {
-        promise = this._getTimeseries(timeseries || State.selected.timeseries, State.temporal, service.minPoints);
+        var actives = State.selected.timeseries.map(function (ts) {
+          return ts.active && ts.uuid;
+        });
+        promise = this._getTimeseries(
+          actives,
+          State.temporal,
+          service.minPoints
+        );
       }
 
       promise.then(function (ts) {
@@ -53,9 +60,9 @@ angular.module('timeseries')
 
       .then(function () {
 
-          if (service.onTimeseriesChange) {
-            service.onTimeseriesChange();
-          }
+        if (service.onTimeseriesChange) {
+          service.onTimeseriesChange();
+        }
 
       });
     };
@@ -118,8 +125,17 @@ angular.module('timeseries')
       })
 
       .then(function (response) {
-
-        return response.data;
+        // Called asynchronously, so check if timeseries is still in state and
+        // active.
+        var result = _.filter(
+          response.data.results,
+          function (ts) { return _.some(
+            State.selected.timeseries,
+            function (stateTs) {
+              return ts.uuid === stateTs.uuid && stateTs.active;
+            });
+          });
+        return result;
 
       }, errorFn)
 
@@ -141,17 +157,32 @@ angular.module('timeseries')
       return err; // continue anyway
     };
 
-    this.setInitialColorAndOrder = function (asset) {
+    this.initializeTimeseriesOfAsset = function (asset) {
       var colors = UtilService.GRAPH_COLORS;
-      for (var i = asset.timeseries.length - 1; i >= 0; i--) {
-        asset.timeseries[i].order = 0; // add default order to ts to draw ts in db
-        asset.timeseries[i].color = colors[i % (colors.length - 1)];
-      }
+      State.selected.timeseries = _.unionBy(
+        State.selected.timeseries,
+        asset.timeseries.map(function (ts, i) {
+          return {
+            uuid: ts.uuid,
+            active: false,
+            order: 0,
+            color: colors[i % (colors.length - 1)]
+          };
+        }),
+        'uuid'
+      );
       return asset;
     };
 
+    this.removeTimeseriesOfAsset = function (asset) {
+      State.selected.timeseries = _.filter(
+        State.selected.timeseries,
+        function (ts) { return !_.some(asset.timeseries, {uuid: ts.uuid}); }
+      );
+    };
+
     /**
-     * Looks up timeseries in DataService.assets and copies color and order.
+     * Looks up timeseries in State.selected.timeseries and copies color and order.
      * TimeseriesService.timeseries are not persistent when toggled.
      * asset.timeseries is persistent till a user removes it from selection.
      *
@@ -167,14 +198,24 @@ angular.module('timeseries')
         return ts === undefined; // Break out early
       });
 
-      graphTimeseries.color = ts.color;
-      graphTimeseries.order = ts.order;
-      graphTimeseries.parameter = ts.parameter || EMPTY;
-      graphTimeseries.unit = ts.unit || EMPTY;
-      graphTimeseries.location = ts.location || EMPTY;
       if (ts.reference_frame) {
         graphTimeseries.unit += ' (' + ts.reference_frame + ')';
+      if (ts) {
+        graphTimeseries.parameter = ts.parameter || EMPTY;
+        graphTimeseries.unit = ts.unit || EMPTY;
+        graphTimeseries.location = ts.location || EMPTY;
+        if (ts.reference_frame) {
+          graphTimeseries.unit += ' (' + ts.reference_frame + ')';
+        }
       }
+
+      var tsState = _.find(
+        State.selected.timeseries,
+        { 'uuid': graphTimeseries.id }
+      );
+
+      graphTimeseries.color = tsState.color;
+      graphTimeseries.order = tsState.order;
 
       return graphTimeseries;
     };
@@ -208,7 +249,7 @@ angular.module('timeseries')
 
     };
 
-    var filterTimeseries = function (response) {
+    var filterTimeseries = function (results) {
 
       // maximum number of timeseries events, more probably results in a
       // memory error.
@@ -216,7 +257,7 @@ angular.module('timeseries')
 
       var filteredResult = [];
 
-      angular.forEach(response.results, function (ts) {
+      angular.forEach(results, function (ts) {
         var msg = '';
         if (ts.events === null) {
           filteredResult.push(ts);
@@ -237,12 +278,6 @@ angular.module('timeseries')
             + ' events, while '
             + MAX_NR_TIMESERIES_EVENTS
             + ' is the maximum supported amount';
-          window.Raven.captureException(new Error(msg));
-          console.info(msg);
-        } else if (!ts.parameter_referenced_unit) {
-          msg = 'Timeseries: '
-            + ts.uuid
-            + ' has no valid parameter_referenced_unit';
           window.Raven.captureException(new Error(msg));
           console.info(msg);
         }

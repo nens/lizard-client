@@ -2,8 +2,11 @@
  * Service to handle favourites retrieval, creation and deletion.
  */
 angular.module('favourites')
-  .service("FavouritesService", ['$resource', 'State',
-    function ($resource, State) {
+  // NOTE: inject TimeseriesService even though it is not used.
+  // TimeseriesService defines State.selected.timeseries which may be restored
+  // from favourite.
+  .service("FavouritesService", ['$resource', 'State', 'gettextCatalog', 'notie', 'TimeseriesService',
+    function ($resource, State, gettextCatalog, notie) {
 
       /* Create a resource for interacting with the favourites endpoint of the
        * API.
@@ -38,8 +41,37 @@ angular.module('favourites')
         return Favourites.query(params, success, error);
       };
 
-      this.getFavourite = function(uuid, success) {
-        return Favourites.get({'uuid': uuid}, success);
+      this.getFavourite = function(uuid, success, error) {
+        return Favourites.get(
+          {'uuid': uuid},
+          function (response) {
+            notie.alert(
+              4,
+              gettextCatalog.getString('Restoring favourite ') +
+              response.name,
+              3
+            );
+            success(response);
+          },
+          function (err) {
+          if (err.status === 404) {
+            notie.alert(
+              3,
+              gettextCatalog.getString('Whoops: favourite has been removed'),
+              3
+            );
+          }
+          else {
+            notie.alert(
+              3,
+              gettextCatalog.getString(
+                'Ay ay: Lizard could not retrieve your favourite'
+              ),
+              3
+            );
+          }
+          error();
+        });
       };
 
       /**
@@ -105,11 +137,15 @@ angular.module('favourites')
 
         _.merge(State, favourite.state);
 
+        // _.merge does not set the property, only properties of properties.
+        State.selected.timeseries = favourite.state.selected.timeseries;
+
         // _.merge pushes objects in the list, does not call setAssets
         // so first make it empty then stuff everything in there.
         State.selected.assets.resetAssets(favourite.state.selected.assets);
-        // State.selected.assets = favourite.state.selected.assets;
-        State.temporal.timelineMoving = !favourite.state.temporal.timelineMoving; // update timeline
+
+        // update timeline
+        State.temporal.timelineMoving = !favourite.state.temporal.timelineMoving;
       };
 
       return this;

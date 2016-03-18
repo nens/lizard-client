@@ -14,7 +14,6 @@
 angular.module('lizard-nxt')
 .controller('UrlController', [
   '$scope',
-  '$q',
   '$timeout',
   'LocationGetterSetter',
   'UrlState',
@@ -30,7 +29,6 @@ angular.module('lizard-nxt')
   'FavouritesService',
   function (
     $scope,
-    $q,
     $timeout,
     LocationGetterSetter,
     UrlState,
@@ -319,7 +317,9 @@ angular.module('lizard-nxt')
         gettextCatalog.getCurrentLanguage()
       );
 
-      if (context) {
+      // If language === 'favourites' something went wrong with the favourite
+      // ignore it and default.
+      if (context && language !== 'favourites') {
         $scope.transitionToContext(context);
       } else if (!favouriteURL) {
         LocationGetterSetter.setUrlValue(
@@ -363,14 +363,16 @@ angular.module('lizard-nxt')
 
     var favouriteUUID = favouritesFromUrl();
     if (favouriteUUID) {
-      var deferred = $q.defer();
       FavouritesService.getFavourite(
         favouriteUUID,
         function (favourite, getResponseHeaders) {
           FavouritesService.applyFavourite(favourite);
-          deferred.resolve(true);
-        });
-      deferred.promise.then(setStateFromUrl);
+          setStateFromUrl(true);
+        },
+        function () {
+          setStateFromUrl(false);
+        }
+      );
     }
     else {
       setStateFromUrl(false);
