@@ -12,7 +12,8 @@ angular.module('omnibox')
 .directive('closeCard', [
   'State',
   'DataService',
-  function (State, DataService) {
+  'TimeseriesService',
+  function (State, DataService, TimeseriesService) {
 
     var link = function (scope, element, attrs) {
 
@@ -26,33 +27,15 @@ angular.module('omnibox')
           State.selected.geometries.removeGeometry(scope.geometry);
         }
 
-        else if (scope.entity && scope.id) {
-          var assetId = scope.entity + '$' + scope.id;
-
-          var asset = _.find(DataService.assets, function (asset) {
-            return asset.entity_name === scope.entity
-              && asset.id === scope.id;
-          });
+        else if (scope.asset) {
 
           // Remove all the selected timeseries of this asset.
-          State.selected.timeseries = _.filter(State.selected.timeseries,
-            function (uuid) {
-              var keep = true;
-              _.forEach(asset.timeseries, function (ts) {
-                if (ts.uuid === uuid) {
-                  // This selected timeseries is one of the asset that is removed.
-                  // cancel loop and return false to remove ts from selection.
-                  keep = false;
-                  return false;
-                }
-              });
-              return keep;
-            }
-          );
+          TimeseriesService.removeTimeseriesOfAsset(scope.asset);
 
+          var assetId = scope.asset.entity_name + '$' + scope.asset.id;
           // Remove the asset from the selection.
           var selectedAssets = State.selected.assets;
-          if (State.selected.assets.indexOf(assetId) >= 0) {
+          if (selectedAssets.indexOf(assetId) >= 0) {
             selectedAssets.removeAsset(assetId);
           }
 
@@ -66,8 +49,7 @@ angular.module('omnibox')
       link: link,
       restrict: 'E',
       scope: {
-        entity: '=',
-        id: '=',
+        asset: '=',
         geometry: '='
       },
       replace: true,

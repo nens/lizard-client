@@ -55,10 +55,6 @@ angular.module('dashboard')
 
       graphs[ts.order].type = ts.valueType === 'image' ? 'image' : 'temporalLine';
 
-      // Keep this graph
-      var indexOflast = graphs[ts.order].content.length -1;
-      graphs[ts.order].content[indexOflast].updated = true;
-
     });
 
     assets.forEach(function (asset) {
@@ -90,7 +86,7 @@ angular.module('dashboard')
 
     // Remove all graphs that have not been updated or are empty.
     _.forEach(graphs, function (g, i) {
-      g.content = _.filter(g.content, function (c) { return c.updated === true; });
+      g.content = _.filter(g.content, function (c) { return c.updated; });
       _.forEach(g.content, function (c) { c.updated = false; });
       if (g.content.length === 0) {
         graphs.splice(i, 1);

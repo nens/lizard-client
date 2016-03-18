@@ -4,6 +4,12 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Make the apps buttons a bit less ugly.
+
+- Store and restore timeseries state in dashboard. Refactored state.selected.
+  timeseries to contain objects with ts state. DataService.assets.[timeseries]
+  contains ts metadata and TimeseriesService.timeseries contains ts in graph
+  format with data, state and metadata.
 - The reactivated layergroups are not ignored. (by URL or fav)
 
 - Lizard Apps and Favourites are more similar and don't interfere

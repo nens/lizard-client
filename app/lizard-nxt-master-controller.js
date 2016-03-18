@@ -60,12 +60,12 @@ angular.module('lizard-nxt')
     var overlay = angular.element('#context-transition-overlay')[0];
     overlay.style.transition = null;
     overlay.style.minHeight = window.innerHeight + 'px';
+    $rootScope.context = State.context;
     $timeout(function () {
       overlay.style.transition = 'ease .3s';
       overlay.style.opacity = 1;
     }, 10);
     $timeout(function () {
-      $rootScope.context = State.context;
       overlay.style.opacity = 0;
     }, 300);
     $timeout(function () {

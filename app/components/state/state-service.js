@@ -110,11 +110,12 @@ angular.module('global-state')
                   // asset, or reset by calling state.selected.reset()
       geometries: [], // geojson with points, lines, polygons. Same as asset,
                       // is redefined in dataservice. use addGeometry and
-                      // removegeometry on state.selected.geometries to ass or
+                      // removegeometry on state.selected.geometries to add or
                       // remove individual geometries or use reset function.
-      timeseries: [], // <uuid> Redefined in timeseriesService. mirrored
-                      // asynchronously by timeseriesService.timeseries. Array
-                      // only contains selected timeseries.
+      timeseries: [], // {<uuid>, <active>, <order>, <color>}
+                      // Redefined in timeseriesService. mirrored asynchronously
+                      // by timeseriesService.timeseries. Array contains all
+                      // timeseries of all assets in a flat list.
       reset: function () {
         // Selected items
         state.selected.assets = [];

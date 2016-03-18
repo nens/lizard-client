@@ -149,6 +149,17 @@ angular.module('lizard-nxt')
       0 // no transition
     );
 
+    // Filter out old charts.
+    graph._containers = graph._containers.filter(function (chart) {
+      var present = _.some(content, function (item) {
+        return chart.id === item.id;
+      });
+      if (!present && chart.path) {
+        chart.path.remove(); // Remove path from graph.
+      }
+      return present;
+    });
+
     // Update or create charts with content.
     content.forEach(function (item, index) {
       // Update existing.
@@ -166,17 +177,6 @@ angular.module('lizard-nxt')
         graph._containers[index] = new ChartContainer(item, temporal);
       }
 
-    });
-
-    // Filter out old charts.
-    graph._containers = graph._containers.filter(function (chart) {
-      var present = _.some(content, function (item) {
-        return chart.id === item.id;
-      });
-      if (!present && chart.path) {
-        chart.path.remove(); // Remove path from graph.
-      }
-      return present;
     });
 
     if (graph._containers.length === 0) {

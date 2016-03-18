@@ -12,7 +12,7 @@
         asset="asset"
         long-format="omnibox.data.geometries.length + omnibox.data.assets.length < 2"
         time-state="omnibox.state.temporal"
-        ng-repeat="asset in omnibox.data.assets track by $index"></asset-cards>
+        ng-repeat="asset in omnibox.data.assets track by omnibox.trackAssets(asset)"></asset-cards>
 
       <geometry-cards
         geom="geom"

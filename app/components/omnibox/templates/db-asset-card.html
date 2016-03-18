@@ -22,24 +22,25 @@
     </em>
 
     <div id="drag-container">
-      <div ng-repeat="s in asset.timeseries"
-           data-uuid="<% s.uuid %>"
+      <div ng-repeat="ts in selected.timeseries"
+           ng-if="getTsMetaData(ts.uuid)"
+           data-uuid="<% ts.uuid %>"
            class="draggable-ts">
         <div
-          id="<% s.uuid %>"
-          ng-click="toggleTimeseries(s)"
+          id="<% ts.uuid %>"
+          ng-click="toggleTimeseries(ts)"
           class="card-content-list clickable">
           <i class="fa" ng-class="{
-            'fa-clock-o': s.value_type !== 'image',
-            'fa-file-image-o': s.value_type === 'image'
+            'fa-clock-o': getTsMetaData(ts.uuid).value_type !== 'image',
+            'fa-file-image-o': getTsMetaData(ts.uuid).value_type === 'image'
           }"></i>
-          <span ng-class="{'text-primary bg-warning': s.active}">
-            <% s.location %>,
-            <% s.parameter %>
+          <span ng-class="{'text-primary bg-warning': ts.active}">
+            <% getTsMetaData(ts.uuid).location %>,
+            <% getTsMetaData(ts.uuid).parameter %>
           </span>
         </div>
         <div class="circle pull-right"
-             ng-style="{'background-color': s.color}"
+             ng-style="{'background-color': ts.color}"
              ng-click="toggleColorPicker()">
         </div>
         <color-picker></color-picker>
