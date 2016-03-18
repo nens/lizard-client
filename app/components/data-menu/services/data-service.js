@@ -81,8 +81,6 @@ angular.module('data-menu')
 
           this.layerGroups[lg.slug] = lg;
 
-          // utf ? this.utfLayerGroup = lg :
-
         }, this);
         return this.layerGroups;
       };
