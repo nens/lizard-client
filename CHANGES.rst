@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 2.10.2 (2016-3-18)
+---------------------
 
 - Add hover interaction to multiline graphs
 
