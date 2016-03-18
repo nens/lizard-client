@@ -11,6 +11,10 @@ Unreleased (2.9.0) (XXXX-XX-XX)
   contains ts metadata and TimeseriesService.timeseries contains ts in graph
   format with data, state and metadata.
 
+- Fix the lack of a temporal indicator for some of the graphs
+
+- Make the apps buttons a bit less ugly
+
 
 Release 2.10.1 (2016-3-11)
 ---------------------
