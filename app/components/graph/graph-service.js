@@ -16,8 +16,8 @@
  * Everything in the graphs is animated according to NxtD3.transTime.
  */
 angular.module('lizard-nxt')
-  .factory("Graph", ["$timeout", "NxtD3", "ChartContainer",
-  function ($timeout, NxtD3, ChartContainer) {
+  .factory("Graph", ["$timeout", "NxtD3", "ChartContainer", "UtilService",
+  function ($timeout, NxtD3, ChartContainer, UtilService) {
 
   var MIN_WIDTH_INTERACTIVE_GRAPHS = 400; // Only graphs bigger get mouseover
                                           // and click interaction.
@@ -252,21 +252,9 @@ angular.module('lizard-nxt')
 
     // Draw one of the y axis
     drawMultipleAxes(graph);
-
-    //TODO fix hover interaction for mult lines.
-
-    // if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
-    //   addInteractionToPath(
-    //     graph._svg,
-    //     graph.dimensions,
-    //     data,
-    //     keys,
-    //     labels,
-    //     chartContainer.path,
-    //     xy,
-    //     graph.transTime
-    //   );
-    // }
+    if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+      addLineInteraction(graph, temporal);
+    }
   };
 
   /**
@@ -1078,6 +1066,138 @@ angular.module('lizard-nxt')
         return p;
       });
     return path;
+  };
+
+  /**
+   * When hovering show information on the data in the lines in the graph.
+   *
+   * @params {object} - the graph object (all-encompassing, ever-faithful)
+   */
+  var addLineInteraction = function (graph, temporal) {
+    var height = graph._getHeight(graph.dimensions),
+        fg = graph._svg.select('#feature-group'),
+        MIN_LABEL_Y = 50,
+        LABEL_PADDING_X = 10,
+        LABEL_PADDING_Y = 5,
+        xy = graph._xy;
+
+    var duration = 0.3; // zoing
+
+    // Move listener rectangle to the front
+    var el = graph._svg.select('#listeners').node();
+        el.parentNode.appendChild(el);
+
+    var cb = function () {
+      var boundingRect = this; // `this` is otherwise lost in foreach
+
+      var values = [];
+      var x2, xText; // needed for the time.
+
+      angular.forEach(graph._containers, function (chart, id) {
+        var i = UtilService.bisect(chart.data, chart.keys.x, xy.x.scale.invert(d3.mouse(boundingRect)[0]));
+        i = i === chart.data.length ? chart.data.length - 1 : i;
+        var d = chart.data[i];
+        var value = chart.keys.y.hasOwnProperty('y1') ? d[chart.keys.y.y1] : d[chart.keys.y];
+        if (d[chart.keys.x] === null || d[chart.keys.y] === null) { return; }
+
+        x2 = xy.x.scale(d[chart.keys.x]);
+        var y2 = graph._yPerUnit[chart.unit].scale(value);
+        xText = (temporal) ? new Date(chart.data[i][chart.keys.x]).toLocaleString() : chart.data[i][chart.keys.x].toFixed(2);
+
+        if (!chart.labels) {
+          chart.labels = {y:''};
+        }
+
+        values.push({
+          x: x2,
+          y: y2,
+          location: chart.location,
+          ylabel: chart.labels.y,
+          unit: chart.unit,
+          value: value,
+          color: chart.color
+        });
+      });
+
+      var g = fg.select('.interaction-group');
+      var valuebox = fg.select('.valuebox');
+      var textLength;
+
+      if (!g[0][0]) {
+        g = fg.append('g').attr('class', 'interaction-group');
+        valuebox = g.append('g').attr('class', 'valuebox');
+        valuebox.append('rect');
+        valuebox.append('text');
+        g.append('line');
+      } else {
+        g.selectAll('circle').remove();
+        g.selectAll('tspan').remove();
+        g.selectAll('text.graph-tooltip-x').remove();
+      }
+
+      valuebox
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', 100)
+        .attr('height', 20 * values.length - 1);
+
+      g.select('line')
+        .attr('y1', height)
+        .attr('y2', 0)
+        .attr('x1', x2)
+        .attr('x2', x2);
+
+      values.forEach(function (v, i) {
+        g.append('circle')
+          .attr('r', 0)
+          .attr('cx', v.x)
+          .attr('cy', v.y)
+          .transition()
+          .ease('easeInOut')
+          .duration(duration)
+          .attr('r', 5);
+          var texty2 = Math.max(v.y - LABEL_PADDING_Y, MIN_LABEL_Y);
+
+        valuebox.select('rect')
+          .attr('fill', 'white')
+          .attr('x', 5)
+          .attr('y', 0)
+          .attr('width', 100)
+          .attr('height', 20 + 15 * i);
+        valuebox
+          .append('circle')
+            .attr('r', 4)
+            .attr('cx', 15)
+            .attr('cy', 10 + 15 * i)
+            .attr('stroke', 'none')
+            .attr('fill', v.color);
+
+        var location = (v.location) ? '' + ' - ' + v.location : '';
+        var tspan = valuebox.select('text')
+          .append('tspan')
+            .text(v.value.toFixed(2) + ' ' + v.ylabel + v.unit + location)
+            .attr('class', 'graph-tooltip-y')
+            .attr('x', 25)
+            .attr('y', 15 + 15 * i);
+
+        textLength = (textLength) ? textLength : 0;
+        textLength = Math.max(tspan[0][0].getComputedTextLength(), textLength);
+        valuebox.select('rect')
+          .attr('width', textLength + 25);
+      });
+      g.append('text')
+        .text(xText)
+        .attr('class', 'graph-tooltip-x')
+        .attr('x', x2 + LABEL_PADDING_X)
+        .attr('y', height - LABEL_PADDING_Y);
+    };
+
+    graph._svg.select('#listeners').on('click', cb);
+    graph._svg.select('#listeners').on('mousemove', cb);
+    graph._svg.select('#listeners').on('mouseout', function () {
+      fg.select('.interaction-group').remove();
+    });
+
   };
 
   addInteractionToPath = function (svg, dimensions, data, keys, labels, path, xy, duration) {
