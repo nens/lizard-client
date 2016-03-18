@@ -58,7 +58,6 @@ angular.module('omnibox')
      * (5) - Clear the click feedback.
      */
     scope.cleanInput = function () {
-      State.selected.reset();
       scope.query = "";
       scope.omnibox.searchResults = {};
     };
