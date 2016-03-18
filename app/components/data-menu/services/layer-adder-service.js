@@ -9,7 +9,7 @@ angular.module('data-menu')
        *
        * Use a reconfigured 'query' so it actually returns an array of items.
        */
-      var layerGroups = $resource('/api/v2/layergroups/:id/', {}, {
+      var layerGroups = $resource('/api/v2/layergroups/:slug/', {}, {
         'query': {
           method:'GET',
           isArray:true,
@@ -20,7 +20,7 @@ angular.module('data-menu')
                 return angularData.results;
               } else {
                 return angularData;
-              };
+              }
             }
          }
       });
@@ -35,7 +35,18 @@ angular.module('data-menu')
        */
       this.fetchLayerGroups = function (params, success, error) {
         layerGroups.query(params, success, error);
-      }
+      };
+
+      /**
+       * Get single layergroup from the API.
+       * @param {string} params - slug for layergroup you are looking for.
+       * @param {function} success - Execute this function on a successful GET.
+       * @param {function} error - Execute this function on an unsuccessful
+       *                           GET.
+       */
+      this.fetchLayerGroup = function (slug, success, error) {
+        layerGroups.get({slug: slug}, success, error);
+      };
 
       return this;
     }
