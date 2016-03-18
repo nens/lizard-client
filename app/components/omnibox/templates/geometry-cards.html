@@ -65,12 +65,43 @@
 
   <div
     ng-if="content.data
-    && geom.geometry.type === 'Polygon'
+    && (geom.geometry.type === 'Polygon' || geom.geometry.type === 'MultiPolygon')
     && slug !== 'rain'"
     ng-repeat="(slug, content) in geom.properties"
     class="card active">
 
     <div class="card-content">
+
+      <div ng-if="content.format === 'Vector'">
+        <span class="card-title">
+          <span><i class="fa fa-circle" ng-style="{'color': content.color }"></i></span>
+          <span><% content.data.length %></span>
+          <span><% content.quantity %></span>
+        </span>
+        <full-details class="table-details-toggler"></full-details>
+        <table ng-if="fullDetails" class="table table-hover table-condensed" >
+          <tbody>
+            <tr ng-repeat="event in content.data">
+              <td rel="tooltip"
+                  data-placement="left"
+                  title="<% 'Start' | translate %>: <% event.properties.timestamp_start | date:'dd/MM/yyyy' %>
+                         <% 'End' | translate %>: <% event.properties.timestamp_end | date:'dd/MM/yyyy' %>">
+                  <% event.properties.timestamp_start | date:'dd/MM/yyyy' %>
+              </td>
+              <td rel="tooltip"
+                  data-placement="left"
+                  title="<% event.properties.category %>">
+                  <% event.properties.category %>
+              </td>
+              <td rel="tooltip"
+                  data-placement="left"
+                  title="<% event.properties.value %>">
+                  <% event.properties.value | truncate:17 %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <graph
         ng-if="content.aggType === 'curve'"

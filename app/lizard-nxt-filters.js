@@ -450,6 +450,8 @@ angular.module('lizard-nxt-filters')
 
   return function (input, maxLength) {
 
+    if (input === undefined) { return ''; }
+
     var MAX_LENGTH = maxLength || 20;
 
     if (input.length > MAX_LENGTH) {
