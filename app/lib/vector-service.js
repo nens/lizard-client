@@ -234,7 +234,11 @@ angular.module('lizard-nxt')
           if (layer.slug === 'annotations') {
             annotations = parseAnnotation(response.data.results);
           }
-          setData(layerSlug, annotations || response.results, 1);
+          var data = annotations || response.data.results;
+          var geoData = data.filter(
+            function (item) { return item.geometry !== null; }
+          );
+          setData(layerSlug, geoData, 1);
         });
 
       }

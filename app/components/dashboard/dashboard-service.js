@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('dashboard')
-.service('DashboardService', [ function () {
+.service('DashboardService', ['EventAggregateService', 'State', function (EventAggregateService, State) {
 
   this.GRAPH_PADDING = 13; // Padding around the graph svg. Not to be confused
                           // with the padding inside the svg which is used for
@@ -129,15 +129,37 @@ angular.module('dashboard')
   var addPropertyData = function (graphs, properties) {
     _.forEach(properties, function (property, slug) {
       if (property.active) {
-        var item = {
-          data: property.data,
-          keys: {x: 0, y: 1},
-          unit: property.unit,
-          // TODO: xLabel is not always meters.
-          xLabel: 'm'
-        };
+        var type = '';
+        var item = {};
+        if (property.format !== 'Vector') {
+          item = {
+            data: property.data,
+            keys: {x: 0, y: 1},
+            unit: property.unit,
+            // TODO: xLabel is not always meters.
+            xLabel: 'm'
+          };
 
-        var type = slug === 'rain' ? 'rain' : 'distance';
+          type = slug === 'rain' ? 'rain' : 'distance';
+        }
+        else if (property.format === 'Vector') {
+          item = {
+            data: EventAggregateService.aggregate(
+              property.data,
+              State.temporal.aggWindow,
+              property.color
+            ),
+            keys: {
+              x: 'timestamp',
+              y: 'count',
+              color: 'color',
+              category: 'category'
+            },
+            unit: property.unit,
+          };
+
+          type = 'event';
+        }
         graphs[property.order] = { type: type, content: [item] };
         var indexOflast = graphs[property.order].content.length - 1;
         graphs[property.order].content[indexOflast].updated = true;

@@ -33,6 +33,15 @@
       dimensions="item.dimensions">
     </graph>
 
+    <graph
+      ng-if="item.type === 'event'"
+      bar-chart
+      content="item.content"
+      type="temporal"
+      temporal="dashboard.state.temporal"
+      dimensions="item.dimensions">
+    </graph>
+
     <image-carousel
       ng-if="item.type === 'image'"
       images="item.content[0].data"
