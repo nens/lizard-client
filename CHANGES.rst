@@ -7,6 +7,9 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 - Remove events from timeline when in db, since db shows it in a graph.
 
 - Fix events hopping around freely on the timeline when dragging.
+- Fix bug 1565 that close button on search closes all da tings.
+
+- Fix duplicate retrieval of assets (undocumented bug).
 
 
 Release 2.10.2 (2016-3-18)

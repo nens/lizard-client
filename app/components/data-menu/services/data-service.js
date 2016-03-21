@@ -109,6 +109,10 @@ angular.module('data-menu')
           var assetId = asset.entity_name + '$' + asset.id;
           return _assets.indexOf(assetId) !== -1;
         });
+
+        // deduplicate assets
+        instance.assets = _.uniqBy(instance.assets, _.isEqual);
+
         instance.getGeomDataForAssets(instance.oldAssets, instance.assets);
 
         if (instance.onAssetsChange) {
