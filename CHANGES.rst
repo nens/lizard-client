@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 2.10.3 (2016-3-21)
+---------------------
 - Fix bug 1565 that close button on search closes all da tings.
 
 - Fix duplicate retrieval of assets (undocumented bug).
