@@ -146,7 +146,7 @@ angular.module('lizard-nxt')
       graph._xy.x.axis,
       this.dimensions,
       false, // is not a y axis.
-      0 // no transition
+      0 // no transition of x axis
     );
 
     // Filter out old charts.
@@ -296,7 +296,15 @@ angular.module('lizard-nxt')
       data = createYValuesForCumulativeData(data, keys);
       keys.y = 'y1';
     }
-    if (!graph._xy) {
+
+    var graphSizeChanged = function () {
+      var scaleRangeMaxX = graph._xy.x.scale.range()[1];
+      var scaleRangeMaxY = graph._xy.y.scale.range()[0];
+      return scaleRangeMaxY !== graph.dimensions.height
+      || scaleRangeMaxX !== graph.dimensions.width;
+    };
+
+    if (!graph._xy || graphSizeChanged()) {
       var options = {
         x: {
           scale: scale,
@@ -455,7 +463,7 @@ angular.module('lizard-nxt')
       this._xy.x.axis,
       this.dimensions,
       false, // is not a y axis.
-      this.transTime
+      0 // no transition of x axis
     );
 
     this._xy.y.scale = this._makeScale(
@@ -714,9 +722,12 @@ angular.module('lizard-nxt')
         if (origin[key] === undefined) {
           origin[key] = value.maxMin.min;
         }
+        var animationDuration = key === 'y' ? Graph.prototype.transTime : 0;
+        var options = {orientation: orientation[key]};
+        options.drawGrid = dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS && key === 'y';
         value.scale.domain([origin[key], value.maxMin.max]);
-        value.axis = Graph.prototype._makeAxis(value.scale, {orientation: orientation[key]});
-        drawAxes(svg, value.axis, dimensions, key === 'y' ? true : false, Graph.prototype.transTime);
+        value.axis = Graph.prototype._makeAxis(value.scale, options, dimensions);
+        drawAxes(svg, value.axis, dimensions, key === 'y' ? true : false, animationDuration);
       }
     });
     return xy;
@@ -888,20 +899,18 @@ angular.module('lizard-nxt')
 
     // UPDATE
     bar
+      // change x when bar is invisible:
+      .attr("x", function (d) { return x.scale(d[keys.x]) - barWidth; })
+      // change width when bar is invisible:
+      .attr('width', function (d) { return barWidth; });
+    bar
       .transition()
       .duration(duration)
-        // change x when bar is invisible:
-        .attr("x", function (d) { return x.scale(d[keys.x]) - barWidth; })
-        // change width when bar is invisible:
-        .attr('width', function (d) { return barWidth; })
         .style("fill", function (d) { return d[keys.color] || ''; })
-          .transition()
-          .duration(duration)
-          .delay(duration * 4)
-            .attr("height", function (d) {
-              return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
-            })
-            .attr("y", function (d) { return y.scale(d[keys.y]); })
+        .attr("height", function (d) {
+          return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
+        })
+        .attr("y", function (d) { return y.scale(d[keys.y]); })
     ;
 
     // ENTER
@@ -913,6 +922,7 @@ angular.module('lizard-nxt')
       .attr("y", function (d) { return y.scale(0); })
       .attr("height", 0)
       .style("fill", function (d) { return d[keys.color] || ''; })
+      .attr("stroke-width", strokeWidth)
       .transition()
       .duration(duration)
         // Bring bars in one by one
@@ -920,8 +930,7 @@ angular.module('lizard-nxt')
         .attr("height", function (d) {
           return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
         })
-        .attr("y", function (d) { return y.scale(d[keys.y]); })
-        .attr("stroke-width", strokeWidth);
+        .attr("y", function (d) { return y.scale(d[keys.y]); });
 
     // EXIT
     // Remove old elements as needed.
