@@ -631,7 +631,7 @@ angular.module('lizard-nxt')
 
       if (circles) {
         var xOneFunction = function (d) {
-          return xScale(parseFloat(d.timestamp) + (d.interval / 2));
+          return xScale(parseFloat(d.timestamp) - (parseFloat(d.interval) / 2));
         };
 
         d3.select("#circle-group").selectAll("circle")
@@ -877,7 +877,7 @@ angular.module('lizard-nxt')
         MAX_COUNT = 100;
 
     var xOneFunction = function (d) {
-      return xScale(parseFloat(d.timestamp) + (aggWindow / 2));
+      return xScale(parseFloat(d.timestamp) - (parseFloat(aggWindow) / 2));
     };
 
     var yFunction = function (d) { return yScale(order); };
