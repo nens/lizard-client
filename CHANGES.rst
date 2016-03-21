@@ -3,7 +3,10 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Remove events from timeline when in db, since db shows it in a graph.
+
+- Fix events hopping around freely on the timeline when dragging.
 
 
 Release 2.10.2 (2016-3-18)
