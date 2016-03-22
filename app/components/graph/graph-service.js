@@ -1414,7 +1414,7 @@ angular.module('lizard-nxt')
         .attr('cx', SIZE)
         .attr('fill', function (d) {return d.color;})
         .attr('cy', function (d, i) {
-          var box = label.node().getBBox()
+          var box = label.node().getBBox();
           return -(box.x + box.width) - PADDING - i * PADDING;
         });
 

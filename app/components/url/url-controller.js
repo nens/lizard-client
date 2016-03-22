@@ -221,7 +221,7 @@ angular.module('lizard-nxt')
         state.boxType.part, state.boxType.index, State.box.type
       );
 
-      if (['point', 'line', 'region', 'multi-point'].indexOf(old) != -1) {
+      if (['point', 'line', 'region', 'multi-point'].indexOf(old) !== -1) {
         // Remove geometry from url
         LocationGetterSetter.setUrlValue(
           state.geom.part, state.geom.index, undefined);
