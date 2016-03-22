@@ -37,6 +37,11 @@ angular.module('timeseries')
  * Timeseries directive.
  */
 angular.module('timeseries')
+.config([ // stop the sanitation -- > SO: http://stackoverflow.com/questions/15606751/angular-changes-urls-to-unsafe-in-extension-page
+  '$compileProvider',
+  function($compileProvider) {
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|http):/);
+  }])
 .directive('timeseriesSingleSelect', ['State', 'TimeseriesService',
   function (State, TimeseriesService) {
   return {
@@ -46,6 +51,9 @@ angular.module('timeseries')
 
       var selectTimeseries = function () {
         var selectedTimeseries = scope.timeseries.selected.uuid;
+        scope.timeseries.selected.url = window.location.protocol + '//' + window.location.host
+            + '/api/v2/timeseries/' + selectedTimeseries + '/' + 'data/?format=csv&start='
+            + scope.timeState.start + '&end=' + scope.timeState.end ;
 
         State.selected.timeseries.forEach(function (ts) {
           ts.active = ts.uuid === selectedTimeseries;

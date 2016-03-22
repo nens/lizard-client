@@ -62,10 +62,10 @@
 
         <div class="card-tools"
           ng-class="{hidden: !fullDetails}">
+          <% timeseries.selected.url %>
           <a
             target="_blank"
-            href="<% timeseries[0].url
-            + 'data/?format=csv&start=' + timeState.start + '&end=' + timeState.end %>"
+            href="<% timeseries.selected.url %>"
             class="btn btn-default btn-xs"
             title="<% 'Export info card data' | translate %>">
             <i class="fa fa-share-square-o"></i>
