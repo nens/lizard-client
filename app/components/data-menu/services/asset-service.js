@@ -2,8 +2,22 @@
  * Service to handle timeseries retrieval.
  */
 angular.module('data-menu')
-  .service("AssetService", ['CabinetService', '$q', '$http',
-    function (CabinetService, $q, $http) {
+  .service("AssetService", ['State', '$q', '$http',
+    function (State, $q, $http) {
+
+      /**
+       * Removes all the ts from the selection of the asset. It should not be
+       * possible to select ts of assets.
+       *
+       * @param  {object} asset
+       */
+      var removeTSofAsset = function (asset) {
+        State.selected.timeseries = _.differenceBy(
+          State.selected.timeseries,
+          asset.timeseries,
+          'uuid'
+        );
+      };
 
       /**
        * @param {string} entity - name of the entity
@@ -33,7 +47,11 @@ angular.module('data-menu')
 
         assets = assets.filter(function (asset) {
           var assetId = asset.entity_name + '$' + asset.id;
-          return newSelection.indexOf(assetId) !== -1;
+          var keep = newSelection.indexOf(assetId) !== -1;
+          if (!keep) {
+            removeTSofAsset(asset);
+          }
+          return keep;
         });
 
         var newAsset = newSelection.filter(function (assetId) {

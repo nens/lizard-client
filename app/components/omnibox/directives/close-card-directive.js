@@ -29,9 +29,6 @@ angular.module('omnibox')
 
         else if (scope.asset) {
 
-          // Remove all the selected timeseries of this asset.
-          TimeseriesService.removeTimeseriesOfAsset(scope.asset);
-
           var assetId = scope.asset.entity_name + '$' + scope.asset.id;
           // Remove the asset from the selection.
           var selectedAssets = State.selected.assets;

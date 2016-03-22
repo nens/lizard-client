@@ -3,6 +3,13 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 2.10.4 (2016-3-22)
+---------------------
+
+- Prevent duplication of geometries.
 
 - Remove events from timeline when in db, since db shows it in a graph.
 
@@ -15,6 +22,9 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 - Fix bug #1485. Elevation / line data is now downloadable again.
 
 - Fix bug #1555 of nens/lizard-nxt. Timeseries can yet again export to csv.
+- Remove timeseries of removed assets.
+
+- Search box has a starting query of ""
 
 
 Release 2.10.3 (2016-3-21)
