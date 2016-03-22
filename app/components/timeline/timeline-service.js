@@ -631,8 +631,7 @@ angular.module('lizard-nxt')
 
       if (circles) {
         var xOneFunction = function (d) {
-          var interval = 0;
-          return xScale(parseFloat(d.timestamp) + (interval / 2));
+          return xScale(parseFloat(d.timestamp) - (parseFloat(d.interval) / 2));
         };
 
         d3.select("#circle-group").selectAll("circle")
@@ -878,7 +877,7 @@ angular.module('lizard-nxt')
         MAX_COUNT = 100;
 
     var xOneFunction = function (d) {
-      return xScale(parseFloat(d.timestamp) - (aggWindow / 2));
+      return xScale(parseFloat(d.timestamp) - (parseFloat(aggWindow) / 2));
     };
 
     var yFunction = function (d) { return yScale(order); };
@@ -915,8 +914,6 @@ angular.module('lizard-nxt')
     // UPDATE
     // Update old elements as needed.
     circles.transition()
-      .delay(Timeline.prototype.transTime)
-      .duration(Timeline.prototype.transTime)
       .attr("stroke", color)
       .attr("fill", color)
       .attr("cx", xOneFunction)
@@ -940,12 +937,9 @@ angular.module('lizard-nxt')
     // EXIT
     // Remove old elements as needed.
     circles.exit()
-      .transition()
-      .delay(0)
-      .duration(Timeline.prototype.transTime)
     .transition()
-      .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
+      .delay(Timeline.prototype.transTime)
       .attr("stroke-width", 0)
       .style("fill-opacity", 0)
       .remove();

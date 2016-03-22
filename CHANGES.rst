@@ -4,6 +4,9 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Remove events from timeline when in db, since db shows it in a graph.
+
+- Fix events hopping around freely on the timeline when dragging.
 - Fix bug 1564. Backspace doesn't keep open the search results if search query is empty.
 
 - JSHint prettify.

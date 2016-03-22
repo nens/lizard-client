@@ -263,6 +263,9 @@ angular.module('lizard-nxt')
       var result = [];
       data.forEach(function (anno) {
         if (anno.location) {
+          // Make annotations like events and like annotations, to have the best
+          // of both worlds.
+          anno.value = anno.text;
           result.push({
             id: anno.id,
             type: 'Feature',
@@ -279,9 +282,9 @@ angular.module('lizard-nxt')
      */
     var replaceData = function (layerSlug, data, zoom) {
       vectorLayers[layerSlug] = {
-          data: [],
-          zoom: zoom
-        };
+        data: [],
+        zoom: zoom
+      };
       vectorLayers[layerSlug].data = vectorLayers[layerSlug].data.concat(data);
     };
 

@@ -179,22 +179,24 @@ angular.module('lizard-nxt')
                             rasterStore: {layers: []},
                             rain: undefined};
 
-      angular.forEach(layerGroups, function (layergroup) {
-        if (layergroup.isActive()) {
-          angular.forEach(layergroup._dataLayers, function (layer) {
-            if (layer.format === "Vector") {
-              timelineLayers.events.layers.push(layer);
-              timelineLayers.events.slugs.push(layer.slug);
-            } else if (layer.format === "Store" && State.context !== 'dashboard') {
-              if (layer.slug !== "rain") {
-                timelineLayers.rasterStore.layers.push(layer);
-              } else if (layer.slug === "rain") {
-                timelineLayers.rain = layer;
-              }
-           }
-          });
-        }
-      });
+      if (State.context !== 'dashboard') {
+        angular.forEach(layerGroups, function (layergroup) {
+          if (layergroup.isActive()) {
+            angular.forEach(layergroup._dataLayers, function (layer) {
+              if (layer.format === "Vector") {
+                timelineLayers.events.layers.push(layer);
+                timelineLayers.events.slugs.push(layer.slug);
+              } else if (layer.format === "Store" && State.context !== 'dashboard') {
+                if (layer.slug !== "rain") {
+                  timelineLayers.rasterStore.layers.push(layer);
+                } else if (layer.slug === "rain") {
+                  timelineLayers.rain = layer;
+                }
+             }
+            });
+          }
+        });
+      }
 
       return timelineLayers;
     };

@@ -237,7 +237,7 @@ angular.module('lizard-nxt')
      * @return {object} containing the max and min
      */
     _maxMin: function (data, key) {
-      if (data.length < 0) {
+      if (data === null || data.length < 0) {
         return {max: null, min: null};
       }
 

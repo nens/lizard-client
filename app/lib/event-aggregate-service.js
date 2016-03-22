@@ -179,7 +179,8 @@ angular.module('lizard-nxt')
           .forEach(function (timestamp, value) {
             var tmpObj = {
               timestamp: Number(timestamp) + aggWindow,
-              count: value.count
+              count: value.count,
+              interval: aggWindow
             };
             aggregatedArray.push(tmpObj);
           }
