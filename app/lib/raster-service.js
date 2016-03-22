@@ -90,8 +90,8 @@ angular.module('lizard-nxt')
    * @return {string}            url
    */
   var buildURLforWMS = function (wmsLayer, map, store, singleTile, options) {
-    var options = options || {},
-        layerName = store || wmsLayer.slug,
+    options = options || {};
+    var layerName = store || wmsLayer.slug,
         bounds = options.bounds || map.getBounds(),
         DEFAULT_TILE_SIZE = 256; // in px
 

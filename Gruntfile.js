@@ -578,8 +578,8 @@ module.exports = function (grunt) {
       ]);
 
     } else {
-      grunt.log.writeln('Missing transifex credentials, '['red'].bold +
-        'newly annotated strings will not be uploaded to transifex'['red'].bold);
+      grunt.log.writeln('Missing transifex credentials, '.red.bold +
+        'newly annotated strings will not be uploaded to transifex'.red.bold);
       grunt.log.ok('Specify --txusername=<transifex username> and '+
         '--txpassword=<transifex password> to upload strings to transifex.');
     }
@@ -587,15 +587,15 @@ module.exports = function (grunt) {
 
   grunt.registerTask('translate', function () {
     if (grunt.option('txusername') && grunt.option('txpassword')) {
-      grunt.log.ok('Got transifex credentials, getting translations.')
+      grunt.log.ok('Got transifex credentials, getting translations.');
       grunt.loadNpmTasks('grunt-angular-gettext');
       grunt.task.run([
         'download-po-files',
         'nggettext_compile',
       ]);
     } else {
-      grunt.log.writeln('Missing transifex credentials, '['red'].bold +
-        'build will be in English.'['red'].bold);
+      grunt.log.writeln('Missing transifex credentials, '.red.bold +
+        'build will be in English.'.red.bold);
       grunt.log.ok('Specify --txusername=<transifex username> and '+
         '--txpassword=<transifex password> to include translations.');
     }
