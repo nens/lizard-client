@@ -379,7 +379,7 @@ angular.module('lizard-nxt')
   Graph.prototype.drawHorizontalStack = function (content) {
       var data = content[0].data,
           keys = content[0].keys,
-          labels = content[0].labels;
+          labels = { x: content.xLabel, y: content.unit };
 
       var options = {
         scale: 'linear',
@@ -387,6 +387,8 @@ angular.module('lizard-nxt')
         tickFormat: d3.format(".0%") // Custom tickFomat in percentages
       };
       this._x = createXGraph(this._svg, this.dimensions, labels, options);
+
+      if (data === null) { return; } // We are done here.
 
       // normalize data
       var total = d3.sum(data, function (d) {
