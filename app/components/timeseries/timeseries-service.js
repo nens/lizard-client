@@ -35,17 +35,18 @@ angular.module('timeseries')
     this.syncTime = function (timeseries) {
       var promise = {};
 
+      var actives = State.selected.timeseries.map(function (ts) {
+        return ts.active && ts.uuid;
+      });
+
       // Return empty timeseries when empty selection
-      if (timeseries && timeseries.length === 0) {
+      if (actives.length === 0) {
         var defer = $q.defer();
         defer.resolve([]);
         promise = defer.promise;
       }
 
       else {
-        var actives = State.selected.timeseries.map(function (ts) {
-          return ts.active && ts.uuid;
-        });
         promise = this._getTimeseries(
           actives,
           State.temporal,
