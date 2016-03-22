@@ -186,12 +186,12 @@ angular.module('data-menu')
        * same coordinates.
        *
        * @param  {object}  one   geometry
-       * @param  {object}  other geoemtry
+       * @param  {object}  other geometry
        * @return {Boolean}
        */
       var isDuplicateGeometry = function (one, other) {
         var oneg = one.geometry;
-        var otherg = one.geometry;
+        var otherg = other.geometry;
         if (oneg.type === otherg.type) {
           return _.every(oneg.coordinates, function (coord, i) {
             return coord === otherg.coordinates[i];
