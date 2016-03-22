@@ -15,9 +15,12 @@ angular.module('omnibox')
           _.forEach(scope.geom.properties, function (property, slug) {
             if (property.active === undefined
               && (
-                scope.geom.geometry.type !== 'Point'
-                || property.slug === 'rain' // We really need to know whether it
+                property.slug === 'rain' // We really need to know whether it
                                             // is a temporal property.
+                || (scope.geom.geometry.type !== 'Point'
+                  && property.scale !== 'nominal'
+                  && property.scale !== 'ordinal')
+                || property.format === 'Vector'
                 )
               ) {
               scope.toggleProperty(property);
