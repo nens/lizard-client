@@ -11,6 +11,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Fix duplicate retrieval of assets (undocumented bug).
 
+- Prevent duplication of geometries.
+
 
 Release 2.10.2 (2016-3-18)
 ---------------------

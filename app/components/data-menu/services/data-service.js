@@ -181,11 +181,35 @@ angular.module('data-menu')
       State.selected.assets.removeAsset = removeAsset;
       State.selected.assets.resetAssets = resetAssets;
 
+      /**
+       * Return true if geometry is of same type (point, line etc) and has the
+       * same coordinates.
+       *
+       * @param  {object}  one   geometry
+       * @param  {object}  other geoemtry
+       * @return {Boolean}
+       */
+      var isDuplicateGeometry = function (one, other) {
+        var oneg = one.geometry;
+        var otherg = one.geometry;
+        if (oneg.type === otherg.type) {
+          return _.every(oneg.coordinates, function (coord, i) {
+            return coord === otherg.coordinates[i];
+          });
+        }
+        else {
+          return false;
+        }
+      };
+
       // Define geometries on State and update DataService.geometries.
-      var setGeometries = function (geometries) {
+      var setGeometries = function (geometriesIn) {
+        // Dedupe geometries in selection synchronous.
+        var geometries = _.uniqWith(geometriesIn, isDuplicateGeometry);
         instance._updateGeometries(_geometries, angular.copy(geometries))
         .then(function (geometries) {
-          instance.geometries = geometries;
+          // Dedupe instance.geometries asynchronous.
+          instance.geometries = _.uniqWith(geometries, isDuplicateGeometry);
           console.log('DataService.geometries:', instance.geometries);
 
           if (instance.onGeometriesChange) {
