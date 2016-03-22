@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 2.10.4 (2016-3-22)
+---------------------
 
 - Prevent duplication of geometries.
 
