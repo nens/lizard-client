@@ -174,13 +174,6 @@ angular.module('timeseries')
       return asset;
     };
 
-    this.removeTimeseriesOfAsset = function (asset) {
-      State.selected.timeseries = _.filter(
-        State.selected.timeseries,
-        function (ts) { return !_.some(asset.timeseries, {uuid: ts.uuid}); }
-      );
-    };
-
     /**
      * Looks up timeseries in State.selected.timeseries and copies color and order.
      * TimeseriesService.timeseries are not persistent when toggled.

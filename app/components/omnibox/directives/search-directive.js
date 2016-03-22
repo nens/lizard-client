@@ -18,6 +18,7 @@ angular.module('omnibox')
     scope.omnibox.searchResults = {};
 
     scope.util = UtilService;
+    scope.query = '';
 
     var ZOOM_FOR_OBJECT = 16;
 
@@ -124,7 +125,7 @@ angular.module('omnibox')
         } else if ($event.which === KEYPRESS.BACKSPACE && prevKey === KEYPRESS.BACKSPACE) {
           scope.omnibox.searchResults = {}; // only delete search results
         } else if ($event.which === KEYPRESS.BACKSPACE && scope.query === "") {
-          scope.omnibox.searchResults = {}; // only delete search results           
+          scope.omnibox.searchResults = {}; // only delete search results
         } else if ($event.which === KEYPRESS.SPACE) {
           // prevent anim. start/stop
           $event.originalEvent.stopPropagation();

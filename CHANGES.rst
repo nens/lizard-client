@@ -4,12 +4,19 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Prevent duplication of geometries.
+
 - Remove events from timeline when in db, since db shows it in a graph.
 
 - Fix events hopping around freely on the timeline when dragging.
+
 - Fix bug 1564. Backspace doesn't keep open the search results if search query is empty.
 
 - JSHint prettify.
+
+- Remove timeseries of removed assets.
+
+- Search box has a starting query of ""
 
 
 Release 2.10.3 (2016-3-21)
