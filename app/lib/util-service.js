@@ -915,7 +915,7 @@ angular.module('lizard-nxt')
 
     for (i = 0; i < data.length; i++) {
 
-      formattedDateTime = this.formatDate(data[i]['timestamp'] || data[i][0]);
+      formattedDateTime = this.formatDate(data[i].timestamp || data[i][0]);
 
       var formattedDatum = [
         this.formatNumber(latLng.lat, 0, 0, true),
@@ -927,7 +927,7 @@ angular.module('lizard-nxt')
       if (data[i].max !== undefined && data[i].min !== undefined) {
         formattedDatum.push(
           this.formatNumber(
-            Math.round(100 * data[i]['min']) / 100 || 0,
+            Math.round(100 * data[i].min) / 100 || 0,
             0,
             2,
             true // Dutchify seperators
@@ -935,7 +935,7 @@ angular.module('lizard-nxt')
         );
         formattedDatum.push(
           this.formatNumber(
-            Math.round(100 * data[i]['max']) / 100 || 0,
+            Math.round(100 * data[i].max) / 100 || 0,
             0,
             2,
             true
@@ -968,6 +968,7 @@ angular.module('lizard-nxt')
    * @returns a slugified version of the string.
    */
   this.slugify = function(s) {
+    var value;
     value = s;
     // Remove all non-alphanumeric-underscore-dash-space characters.
     value = _.replace(value, /[^\w\s-]/g, '');

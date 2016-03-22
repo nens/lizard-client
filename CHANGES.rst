@@ -3,7 +3,10 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix bug 1564. Backspace doesn't keep open the search results if search query is empty.
+
+- JSHint prettify.
 
 
 Release 2.10.3 (2016-3-21)
