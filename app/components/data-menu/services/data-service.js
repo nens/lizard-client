@@ -110,8 +110,8 @@ angular.module('data-menu')
           return _assets.indexOf(assetId) !== -1;
         });
 
-        // deduplicate assets
-        instance.assets = _.uniqBy(instance.assets, _.isEqual);
+        // Deduplicate instance.assets asynchronous.
+        instance.assets = _.uniqWith(instance.assets, _.isEqual);
 
         instance.getGeomDataForAssets(instance.oldAssets, instance.assets);
 
@@ -123,7 +123,9 @@ angular.module('data-menu')
       };
 
       // Define assets on State and update DataService.assets.
-      var setAssets = function (assets) {
+      var setAssets = function (assetsIn) {
+        // Dedupe assets in selection synchronous.
+        var assets = _.uniq(assetsIn);
         instance.oldAssets = angular.copy(instance.assets);
         AssetService.updateAssets(instance.assets, _assets, assets)
         .then(assetChange);
