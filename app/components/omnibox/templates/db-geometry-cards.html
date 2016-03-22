@@ -7,9 +7,7 @@
     <em ng-if="noData" translate>No raster data available for this geometry</em>
 
     <div
-      ng-if="slug === 'rain'
-        || (geom.geometry.type !== 'Point' && prop.scale !== 'nominal' && prop.scale !== 'ordinal')
-        || prop.format === 'Vector'"
+      ng-if="dbSupportedData(geom.geometry.type, prop)"
       ng-repeat="(slug, prop) in geom.properties">
       <div ng-click="toggleProperty(prop)" class="card-content-list clickable">
         <i class="fa fa-line-chart"></i>

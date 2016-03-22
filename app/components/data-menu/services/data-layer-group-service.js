@@ -197,16 +197,27 @@ angular.module('data-menu')
       getData: function (callee, options) {
         var lgSlug = this.slug,
             lgActive = this._active,
+            temporal = this.temporal,
             deferred = $q.defer(),
             promises = [];
 
         if (!this._active) {
-          deferred.resolve({slug: this.slug, active: this._active});
+          deferred.resolve({
+            slug: this.slug,
+            active: this._active,
+            temporal: temporal
+          });
           return deferred.promise;
         }
         else {
           angular.forEach(this._dataLayers, function (layer) {
-            promises.push(layer.getData(callee, lgSlug, options, deferred));
+            promises.push(layer.getData(
+              callee,
+              lgSlug,
+              temporal,
+              options,
+              deferred
+            ));
           });
         }
 
@@ -218,7 +229,8 @@ angular.module('data-menu')
         $q.all(promises).then(function () {
           deferred.resolve({
             slug: lgSlug,
-            active: lgActive
+            active: lgActive,
+            temporal: temporal
           });
         });
 
