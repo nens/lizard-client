@@ -16,6 +16,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Remove timeseries of removed assets.
 
+- Search box has a starting query of ""
+
 
 Release 2.10.3 (2016-3-21)
 ---------------------
