@@ -23,7 +23,6 @@ angular.module('dashboard')
 
       var tsData = [];
 
-
       // Get timeseries ids of monitoring wells
       var timeseriesIds = [];
       scope.asset.monitoring_wells.forEach(function(well) {
@@ -57,6 +56,7 @@ angular.module('dashboard')
         TimeseriesService
         ._getTimeseries(timeseries, timeState, TimeseriesService.minPoints)
         .then(function (result) {
+          tsData = [];
           result.forEach(function (ts) {
             tsData.push(ts);
           });
@@ -96,11 +96,10 @@ angular.module('dashboard')
             content.points = _.sortBy(content.points, 'x');
 
           }
-
         });
       };
 
-      scope.$watch('temporal.timeLineMoving', function () {
+      scope.$watch('temporal.timelineMoving', function () {
         getTimeseries(timeseriesIds, scope.temporal);
       });
 

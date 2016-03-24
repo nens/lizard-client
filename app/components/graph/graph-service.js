@@ -421,7 +421,7 @@ angular.module('lizard-nxt')
    * @param  {object} content data to plot
    */
   Graph.prototype.drawCrosssection = function (content) {
-    if (!content.points.length || !content.line.data) { return; }
+    if (!content.line.data) { return; }
 
     var width = this._getWidth(this.dimensions);
     var height = this._getHeight(this.dimensions);
@@ -430,8 +430,15 @@ angular.module('lizard-nxt')
 
     var yLineMinMax = this._maxMin(content.line.data, 1);
 
-    var minimumPoint = _.minBy(content.points, function (p) {return p.value; });
-    var maximumPoint = _.maxBy(content.points, function (p) {return p.value; });
+    var maxY;
+    var minY;
+
+    if (content.points.length) {
+      var minimumPoint = _.minBy(content.points, function (p) {return p.value; });
+      var maximumPoint = _.maxBy(content.points, function (p) {return p.value; });
+      maxY = Math.max(yLineMinMax.max, maximumPoint.value);
+      minY = Math.min(0, yLineMinMax.min, minimumPoint.value);
+    }
 
     this._xy = {
       x: {
@@ -442,8 +449,8 @@ angular.module('lizard-nxt')
       },
       y: {
         minMax: {
-          min: Math.max(yLineMinMax.max, maximumPoint.value),
-          max: Math.min(0, minimumPoint.value)
+          min: maxY || yLineMinMax.max,
+          max: minY || yLineMinMax.min
         }
       }
     };
@@ -758,10 +765,11 @@ angular.module('lizard-nxt')
     // Create new elements as needed.
     circles.enter().append("circle")
       .attr("cx", function (d) { return xScale(d.x); })
-      .attr('cy', function (d) { return yScale(d.value); })
+      .attr('cy', function (d) { return yScale.range()[1]; })
       .attr("class", "point")
       .transition()
       .duration(duration)
+      .attr('cy', function (d) { return yScale(d.value); })
       .attr('r', 8);
     // EXIT
     // Remove old elements as needed. First transition to width = 0
@@ -769,7 +777,7 @@ angular.module('lizard-nxt')
     circles.exit()
       .transition()
       .duration(duration)
-      .attr('width', 0)
+      .attr('r', 0)
       .remove();
   };
 
