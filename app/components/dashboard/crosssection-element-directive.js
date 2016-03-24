@@ -37,7 +37,7 @@ angular.module('dashboard')
       var coords = scope.asset.geometry.coordinates;
 
       CabinetService.raster().get({
-        raster_names: 'dem',
+        raster_names: 'dem/nl',
         srs: 'EPSG:4326',
         geom: 'LINESTRING(' + coords[0][0]
           + ' ' + coords[0][1]
