@@ -53,12 +53,17 @@ angular.module('omnibox')
 
 
 angular.module('omnibox')
-  .directive('geometryCards', ['MapService', 'ClickFeedbackService',
-    function (MapService, ClickFeedbackService) {
+  .directive('geometryCards', ['MapService', 'ClickFeedbackService', 'CSVService',
+    function (MapService, ClickFeedbackService, CSVService) {
   return {
     link: function (scope, element) {
 
       scope.showNoData = false;
+
+      // expose CSV functions for export
+      scope.formatLineCSV = CSVService.formatLineCSV;
+      scope.getLineCSVHeaders = CSVService.getLineCSVHeaders;
+
       var clickId = 0;
 
       var destroy = function () {
