@@ -467,20 +467,25 @@ angular.module('lizard-nxt')
       false, // is not a y axis.
       0 // no transition of x axis
     );
+    drawLabel(this._svg, this.dimensions, 'm', false);
 
     this._xy.y.scale = this._makeScale(
       this._xy.y.minMax,
       yRange,
       {scale: 'linear'}
     );
-    this._xy.y.axis = this._makeAxis(this._xy.y.scale, {orientation: 'left'});
-    this._drawAxes(
+    this._xy.y.axis = this._makeAxis(
+      this._xy.y.scale,
+      {orientation: 'left', drawGrid: true}
+    );
+    drawAxes(
       this._svg,
       this._xy.y.axis,
       this.dimensions,
       true, // is a y axis.
       this.transTime
     );
+    drawLabel(this._svg, this.dimensions, 'hoogte (mNAP)', true);
 
     var className = 'line';
     addLineToGraph(
