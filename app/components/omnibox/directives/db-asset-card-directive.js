@@ -67,9 +67,6 @@ angular.module('omnibox')
 
       // Init crosssection
       if (scope.asset.entity_name === 'leveecrosssection') {
-        scope.asset.monitoring_wells.forEach(function (well) {
-          scope.asset.timeseries = _.concat(scope.asset.timeseries, well.timeseries);
-        });
         scope.asset.crosssection = {
           active: false, // set to true by  toggle
           order: 0

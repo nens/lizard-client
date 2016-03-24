@@ -27,9 +27,11 @@ angular.module('dashboard')
       // Get timeseries ids of monitoring wells
       var timeseriesIds = [];
       scope.asset.monitoring_wells.forEach(function(well) {
-        if (well.timeseries[0]) {
-          timeseriesIds.push(well.timeseries[0].uuid);
-        }
+        well.timeseries.forEach(function (ts) {
+          if (ts.parameter === 'Stijghoogte') {
+            timeseriesIds.push(ts.uuid);
+          }
+        });
       });
 
 
