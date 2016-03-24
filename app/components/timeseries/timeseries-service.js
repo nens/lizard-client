@@ -59,6 +59,21 @@ angular.module('timeseries')
         console.log('TimeseriesService.timeseries:', service.timeseries);
       })
 
+
+      .then(function (results) {
+        // Called asynchronously, so check if timeseries is still in state and
+        // active.
+        return _.filter(
+          results,
+          function (ts) { return _.some(
+            State.selected.timeseries,
+            function (stateTs) {
+              return ts.uuid === stateTs.uuid && stateTs.active;
+            });
+          });
+
+      })
+
       .then(function () {
 
         if (service.onTimeseriesChange) {
@@ -126,21 +141,10 @@ angular.module('timeseries')
       })
 
       .then(function (response) {
-        // Called asynchronously, so check if timeseries is still in state and
-        // active.
-        var result = _.filter(
-          response.data.results,
-          function (ts) { return _.some(
-            State.selected.timeseries,
-            function (stateTs) {
-              return ts.uuid === stateTs.uuid && stateTs.active;
-            });
-          });
-        return result;
-
+        return response.data.results;
       }, errorFn)
 
-      .then(filterTimeseries, null)
+      .then(filterTimeseries, errorFn)
       .then(formatTimeseriesForGraph, null);
     };
 
@@ -206,8 +210,11 @@ angular.module('timeseries')
         { 'uuid': graphTimeseries.id }
       );
 
-      graphTimeseries.color = tsState.color;
-      graphTimeseries.order = tsState.order;
+      // In db with crosssections it is possible to not have state of a ts.
+      if (tsState) {
+        graphTimeseries.color = tsState.color;
+        graphTimeseries.order = tsState.order;
+      }
 
       return graphTimeseries;
     };
