@@ -127,8 +127,11 @@ angular.module('data-menu')
         // Dedupe assets in selection synchronous.
         var assets = _.uniq(assetsIn);
         instance.oldAssets = angular.copy(instance.assets);
+
         AssetService.updateAssets(instance.assets, _assets, assets)
-        .then(assetChange);
+        .forEach(function (assetPromise) {
+          assetPromise.then(assetChange);
+        });
         _assets = assets;
         console.log('State.selected.assets:', State.selected.assets);
 

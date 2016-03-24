@@ -24,7 +24,7 @@ angular.module('data-menu')
        * @param {string} id -  id of the enitity
        * returns {object} promise - thenable with result of the asset API
        */
-      this.getAsset = function (entity, id) {
+      var getAsset = function (entity, id) {
         return $http({
           url: 'api/v2/' + entity + 's' + '/' + id + '/',
           method: 'GET'
@@ -54,21 +54,23 @@ angular.module('data-menu')
           return keep;
         });
 
-        var newAsset = newSelection.filter(function (assetId) {
+        var newAssets = newSelection.filter(function (assetId) {
           return oldSelection.indexOf(assetId) === -1;
-        })[0];
+        });
 
-        if (newAsset) {
-          var entity = newAsset.split('$')[0];
-          var id = newAsset.split('$')[1];
+        if (newAssets) {
+          return _.map(newAssets, function (asset) {
+            var entity = asset.split('$')[0];
+            var id = asset.split('$')[1];
 
-          return this.getAsset(entity, id);
+            return getAsset(entity, id);
+          });
         }
 
         else {
           var defer = $q.defer();
           defer.resolve();
-          return defer.promise;
+          return [defer.promise];
         }
 
       };
