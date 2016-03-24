@@ -105,9 +105,6 @@ angular.module('omnibox')
           asset.crosssection.active && asset.crosssection.order > order) {
           asset.crosssection.order--;
         }
-      });
-
-      DataService.assets.forEach(function (asset) {
         _.forEach(asset.properties, function (property) {
           if (property.order > order) { property.order--; }
         });

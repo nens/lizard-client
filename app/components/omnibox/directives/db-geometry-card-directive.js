@@ -25,7 +25,7 @@ angular.module('omnibox')
         scope.$watch('geom.properties', function (n, o) {
 
           _.forEach(scope.geom.properties, function (property, slug) {
-            if (property.active === undefined
+            if (!property.active
               && scope.dbSupportedData(
                 scope.geom.geometry.type,
                 property
@@ -67,6 +67,13 @@ angular.module('omnibox')
           }
 
         };
+
+        scope.$on('$destroy', function () {
+          _.forEach(scope.geom.properties, function (property) {
+            property.active = true;
+            scope.toggleProperty(property);
+          });
+        });
 
       },
       restrict: 'E',
