@@ -3,7 +3,13 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Favourite: Fix #1578 restore area and geometries in favourite.
+
+- Favourite: Replace state when loading favourite using mergeWith.
+
+- Fix bug in image carousel, showing the same image twice when changing time
+  interval.
 
 
 Release 2.10.4 (2016-3-22)

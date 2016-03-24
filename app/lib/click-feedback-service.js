@@ -132,22 +132,19 @@ angular.module('lizard-nxt')
 
         var oldIds = Object.keys(this.clickLayer._layers);
 
-        this.strokeWidth = 2;
+        this.strokeWidth = 3;
 
         var geojsonFeature = { "type": "Feature" };
         geojsonFeature.geometry = {
           "type": "LineString",
           "coordinates": [[first.lng, first.lat], [second.lng, second.lat]]
         };
-        this.clickLayer.options.style = {
-          color: '#c0392b',
-          weight: this.strokeWidth,
-          opacity: 1,
-          smoothFactor: 1
-        };
+
+
         if (dashed) {
           this.clickLayer.options.style.dashArray = "5, 5";
         }
+
         this.clickLayer.addData(geojsonFeature);
 
         // check id.
@@ -246,19 +243,24 @@ angular.module('lizard-nxt')
        * @return {int}             radius
        */
       var getRadius = function (feature) {
-        var entityName = feature.properties.entity_name,
-            entityType = feature.properties.type;
-        var radius = feature.properties.radius || 0;
-        if (entityName) {
-          radius = 12;
-          if (entityName === "pumpstation" && entityType !== "Rioolgemaal") {
-            radius =  13;
-          } else if (entityType === "Rioolgemaal" || entityName === "weir") {
-            radius =  11;
-          } else if (entityName === "bridge" || entityName === "manhole") {
-            radius =  14;
+        var radius = 0;
+
+        if (feature.properties) {
+          var entityName = feature.properties.entity_name,
+              entityType = feature.properties.type;
+          radius = feature.properties.radius || 0;
+          if (entityName) {
+            radius = 12;
+            if (entityName === "pumpstation" && entityType !== "Rioolgemaal") {
+              radius =  13;
+            } else if (entityType === "Rioolgemaal" || entityName === "weir") {
+              radius =  11;
+            } else if (entityName === "bridge" || entityName === "manhole") {
+              radius =  14;
+            }
           }
         }
+
         return radius;
       };
 
@@ -282,7 +284,7 @@ angular.module('lizard-nxt')
      */
     removeClickFromClickLayer = function (toBeRemovedClick) {
       if (clickLayer.clickLayer
-        &&toBeRemovedClick in clickLayer.clickLayer._layers) {
+        && toBeRemovedClick in clickLayer.clickLayer._layers) {
         clickLayer.clickLayer.removeLayer(toBeRemovedClick);
       }
     };
@@ -316,7 +318,7 @@ angular.module('lizard-nxt')
       return clickLayer.drawFeature(geometry);
     };
 
-    drawGeometry = function (mapState, geometry, entityName) {
+    drawGeometry = function (mapState, geometry) {
       if (!clickLayer.clickLayer) {
         clickLayer.emptyClickLayer(mapState);
       }
@@ -362,8 +364,8 @@ angular.module('lizard-nxt')
       clickLayer.vibrateFeatures(id);
     };
 
-    vibrateOnce = function (geojson) {
-      clickLayer.vibrateOnce(geojson);
+    vibrateOnce = function (geojson, id) {
+      clickLayer.vibrateOnce(geojson, id);
     };
 
     removeLayer = function () {

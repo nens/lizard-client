@@ -92,7 +92,7 @@ angular.module('lizard-nxt')
         // Either layerGroups are on url
         State.layerGroups.active = layerGroupString.split(',');
         // Or layerGroups are not on url, turn default layerGroups on
-      } else {
+      } else if (State.layerGroups.active.length === 0){
         DataService.setLayerGoupsToDefault();
       }
       UrlState.setlayerGroupsUrl(state, State.layerGroups.active);

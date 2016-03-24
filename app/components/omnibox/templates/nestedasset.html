@@ -7,12 +7,10 @@
       ng-class="$parent.getIconClass(attr)">
     </i>
 
-    <!-- <span class="kunstwerk-title" ng-class="{'sm-icon': !fullDetails};"> -->
-      <span id="title-holder"
-            class="card-title-text kunstwerk-title-text"
-            ng-bind="attr | objectTitle | translate">
-      </span>
-    <!-- </span> -->
+    <span id="title-holder"
+          class="card-title-text kunstwerk-title-text"
+          ng-bind="attr | objectTitle | translate">
+    </span>
 
     <select
       class="timeseries nested-asset"

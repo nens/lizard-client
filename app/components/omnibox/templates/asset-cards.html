@@ -5,7 +5,7 @@
     </div>
     <timeseries
       timeseries-single-select
-      ng-if="longFormat"
+      ng-if="longFormat && asset.timeseries.length > 0"
       asset="asset"
       time-state="timeState">
     </timeseries>
@@ -21,8 +21,7 @@
     </div>
 
     <timeseries
-      ng-if="asset.selectedAsset &&
-             context !== 'dashboard'"
+      ng-if="asset.selectedAsset && asset.selectedAsset.timeseries.length > 0"
       asset="asset.selectedAsset"
       time-state="timeState">
     </timeseries>

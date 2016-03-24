@@ -141,20 +141,6 @@ angular.module('data-menu')
       var rebindAssetFunctions = function () {
         State.selected.assets.addAsset = addAsset;
         State.selected.assets.removeAsset = removeAsset;
-        State.selected.assets.resetAssets = resetAssets;
-      };
-
-      // Reset the asset list and retrieve from the API
-      var resetAssets = function (assets) {
-        instance.oldAssets = instance.assets = [];
-        assets.forEach(function (newAsset) {
-          var entity = newAsset.split('$')[0];
-          var id = newAsset.split('$')[1];
-          AssetService.getAsset(entity, id)
-            .then(assetChange);
-        });
-        _assets = assets;
-        rebindAssetFunctions();
       };
 
       var addAsset = function (asset) {
@@ -179,7 +165,6 @@ angular.module('data-menu')
 
       State.selected.assets.addAsset = addAsset;
       State.selected.assets.removeAsset = removeAsset;
-      State.selected.assets.resetAssets = resetAssets;
 
       /**
        * Return true if geometry is of same type (point, line etc) and has the
@@ -283,8 +268,12 @@ angular.module('data-menu')
           });
         },
         set: function (newActivelayerGroups) {
+
           angular.forEach(layerGroups, function (_lg, slug) {
+            // Turn layers on or off.
             if (newActivelayerGroups.indexOf(slug) !== -1 && !_lg.isActive()) {
+              this.toggleLayerGroup(_lg);
+            } else if (newActivelayerGroups.indexOf(slug) === -1 && _lg.isActive()) {
               this.toggleLayerGroup(_lg);
             }
           }, instance);

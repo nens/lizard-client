@@ -32,7 +32,7 @@ angular.module('omnibox')
         feature
       );
 
-      ClickFeedbackService.vibrateOnce(feature);
+      ClickFeedbackService.vibrateOnce(feature, clickId);
 
       element.on('$destroy', function () {
         ClickFeedbackService.removeClickFromClickLayer(clickId);

@@ -58,8 +58,11 @@ angular.module('image-carousel')
                 .children()[i];
               if (activeElement) {
                 var activeImg = activeElement.children[0];
-                loadImage(activeImg);
+                // First shift carousel, then start loading the image. The
+                // browser might already have the image, and we should not show
+                // two at the same time.
                 element.carousel(i);
+                loadImage(activeImg);
               }
             }, 0, false);
           }

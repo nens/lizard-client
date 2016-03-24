@@ -7,6 +7,18 @@ angular.module('omnibox')
 
         scope.noData = true;
 
+        scope.dbSupportedData = function (type, property) {
+          var temporal = property.temporal && type === 'Point';
+
+          var events = property.format === 'Vector' && type !== 'LineString';
+
+          var other = type !== 'Point'
+            && property.scale !== 'nominal'
+            && property.scale !== 'ordinal';
+
+          return temporal || events || other;
+        };
+
         /**
          * Properties are asynchronous so watch it to set noData when added.
          */
@@ -14,12 +26,10 @@ angular.module('omnibox')
 
           _.forEach(scope.geom.properties, function (property, slug) {
             if (property.active === undefined
-              && (
-                scope.geom.geometry.type !== 'Point'
-                || property.slug === 'rain' // We really need to know whether it
-                                            // is a temporal property.
-                )
-              ) {
+              && scope.dbSupportedData(
+                scope.geom.geometry.type,
+                property
+              )) {
               scope.toggleProperty(property);
             }
           });

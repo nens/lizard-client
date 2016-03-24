@@ -5,8 +5,8 @@ angular.module('favourites')
   // NOTE: inject TimeseriesService even though it is not used.
   // TimeseriesService defines State.selected.timeseries which may be restored
   // from favourite.
-  .service("FavouritesService", ['$resource', 'State', 'gettextCatalog', 'notie', 'TimeseriesService',
-    function ($resource, State, gettextCatalog, notie) {
+  .service("FavouritesService", ['$resource', 'State', 'gettextCatalog', 'UtilService', 'notie', 'TimeseriesService',
+    function ($resource, State, gettextCatalog, UtilService, notie) {
 
       /* Create a resource for interacting with the favourites endpoint of the
        * API.
@@ -135,17 +135,18 @@ angular.module('favourites')
           adhereTemporalStateToInterval(favourite.state.temporal);
         }
 
-        _.merge(State, favourite.state);
+        // Use _.mergeWith to set the whole array to trigger functions of
+        // properties.
+        var arrayStates = ['active', 'timeseries', 'assets', 'geometries'];
+        _.mergeWith(State, favourite.state, function (state, favstate, key, parent) {
+          if (arrayStates.indexOf(key) !== -1) {
+            state = favstate;
+            return state;
+          }
+        });
 
-        // _.merge does not set the property, only properties of properties.
-        State.selected.timeseries = favourite.state.selected.timeseries;
+        UtilService.announceMovedTimeline(State);
 
-        // _.merge pushes objects in the list, does not call setAssets
-        // so first make it empty then stuff everything in there.
-        State.selected.assets.resetAssets(favourite.state.selected.assets);
-
-        // update timeline
-        State.temporal.timelineMoving = !favourite.state.temporal.timelineMoving;
       };
 
       return this;
