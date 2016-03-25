@@ -25,7 +25,7 @@ angular.module('omnibox')
         scope.$watch('geom.properties', function (n, o) {
 
           _.forEach(scope.geom.properties, function (property, slug) {
-            if (!property.active
+            if (property.active === undefined
               && scope.dbSupportedData(
                 scope.geom.geometry.type,
                 property
@@ -72,6 +72,9 @@ angular.module('omnibox')
           _.forEach(scope.geom.properties, function (property) {
             property.active = true;
             scope.toggleProperty(property);
+            // Activity of property should not be defined when creating
+            // dashboard.
+            property.active = undefined;
           });
         });
 
