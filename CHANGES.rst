@@ -14,6 +14,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 - Enable cross sections to be drawn with only elevation data.
   Update with points.
 
+- Fix Use data.lenght for bar width when not aggregted events (rain etc).
+
 
 Release 2.10.4 (2016-3-22)
 ---------------------
