@@ -32,7 +32,7 @@ angular.module('annotations')
           isArray:true,
           transformResponse:
             function (data, headers) {
-              return angular.fromJson(data).results;
+              return angular.fromJson(data).results.features;
             }
         },
         'save': {
@@ -96,7 +96,9 @@ angular.module('annotations')
           asset, text, file, timelineat, success, error) {
 
         var fd = new FormData();
-        if (file) { fd.append('attachment', file); }
+        if (file) {
+          fd.append('attachment', file);
+        }
         if (asset.entity_name) {
           fd.append('object_type', asset.entity_name);
         }
@@ -104,8 +106,7 @@ angular.module('annotations')
           fd.append('object_id', asset.id);
         }
         fd.append('text', text);
-        fd.append('timestamp_start', timelineat);
-        fd.append('timestamp_end', timelineat);
+        fd.append('timestamp', timelineat);
         fd.append('location', JSON.stringify(asset.geometry));
 
         return Annotations.save(fd, success, error);
