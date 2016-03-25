@@ -881,10 +881,6 @@ angular.module('lizard-nxt')
   };
 
   drawVerticalRects = function (svg, dimensions, xy, keys, data, duration, xDomain) {
-    // We update the domain for X, if xDomain was set...
-    if (xDomain && xDomain.start && xDomain.end) {
-      xy.x.scale.domain([xDomain.start, xDomain.end]);
-    }
 
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
@@ -912,12 +908,25 @@ angular.module('lizard-nxt')
             }
           );
 
+    // Aggregated events explicitly have an interval property which correspond
+    // to a pixel size when parsed by scale function.
+    var widthFn = function (d) {
+      var width;
+      if (d.hasOwnProperty('interval')) {
+        width = xy.x.scale(d.interval) - xy.x.scale(0);
+      }
+      else {
+        width = barWidth;
+      }
+      return width;
+    };
+
     // UPDATE
     bar
       // change x when bar is invisible:
-      .attr("x", function (d) { return x.scale(d[keys.x]) - barWidth; })
+      .attr("x", function (d) { return x.scale(d[keys.x]) - widthFn(d); })
       // change width when bar is invisible:
-      .attr('width', function (d) { return barWidth; });
+      .attr('width', widthFn);
     bar
       .transition()
       .duration(duration)
@@ -932,8 +941,8 @@ angular.module('lizard-nxt')
     // Create new elements as needed.
     bar.enter().append("rect")
       .attr("class", "bar")
-      .attr("x", function (d) { return x.scale(d[keys.x]) - barWidth; })
-      .attr('width', function (d) { return barWidth; })
+      .attr("x", function (d) { return x.scale(d[keys.x]) - widthFn(d); })
+      .attr('width', widthFn)
       .attr("y", function (d) { return y.scale(0); })
       .attr("height", 0)
       .style("fill", function (d) { return d[keys.color] || ''; })
@@ -959,12 +968,7 @@ angular.module('lizard-nxt')
 
   getBarWidth = function (scale, data, keys, dimensions, xDomain) {
 
-    // If aggWindow is passed, use it
-    if (xDomain && xDomain.aggWindow) {
-      return scale(xDomain.aggWindow) - scale(0);
-    }
-
-    else if (data.length === 0) {
+    if (data.length === 0) {
       // Apparently, no data is present: return a dummy value since nothing
       // is to be drawn.
       return 0;
