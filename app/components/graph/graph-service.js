@@ -622,6 +622,43 @@ angular.module('lizard-nxt')
       );
   };
 
+  Graph.prototype.drawCircleOnLine = function (xLocation, remove) {
+    var fg = this._svg.select('#feature-group');
+
+    // Move listener rectangle to the front
+    var el = this._svg.select('#listeners').node();
+        el.parentNode.appendChild(el);
+
+    var g = fg.select('.interaction-group');
+    if (remove) {
+      g.selectAll('circle').remove();
+    }
+
+    var chart = this._containers[0];
+    var i = UtilService.bisect(chart.data, chart.keys.x, xLocation);
+    var d = chart.data[i];
+
+    if (!d) { return; }
+
+    var x = this._xy.x.scale(d[chart.keys.x]);
+    var y = this._xy.y.scale(d[chart.keys.y]);
+
+    if (!g[0][0]) {
+      g = fg.append('g').attr('class', 'interaction-group');
+    } else {
+      g.selectAll('circle').remove();
+    }
+
+    g.append('circle')
+      .attr('r', 5)
+      .attr('cx', x)
+      .attr('cy', y)
+      .transition()
+      .ease('easeInOut')
+      .duration(100)
+      .attr('r', 3);
+  };
+
   var createPie, createArc, drawPie, drawAxes, drawLabel, needToRescale,
       drawPath, setupLineGraph, createDonut, addInteractionToPath, getBarWidth,
       drawVerticalRects, addInteractionToRects, drawHorizontalRects,

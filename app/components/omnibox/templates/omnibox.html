@@ -18,7 +18,8 @@
         geom="geom"
         header="true"
         ng-repeat="geom in omnibox.data.geometries track by $index"
-        time-state="omnibox.state.temporal">
+        time-state="omnibox.state.temporal"
+        mouseloc="omnibox.state.selected.mouseOnLine">
       </geometry-cards>
 
     </div>

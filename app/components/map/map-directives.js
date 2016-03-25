@@ -61,6 +61,8 @@ angular.module('map')
         if (State.box.type === 'line'
           && MapService.line.geometry.coordinates.length === 2) {
           ClickFeedbackService.emptyClickLayer(MapService);
+          circleAlongLine = undefined;
+          State.selected.mouseOnLine = null;
         }
       };
 
@@ -72,6 +74,7 @@ angular.module('map')
         State.spatial.mapMoving = true;
       };
 
+      var circleAlongLine;
       /**
        * @function
        * @memberOf app.map
@@ -79,15 +82,41 @@ angular.module('map')
       var _mouseMove = function (e) {
         if (State.box.type === 'line') {
           var coords = MapService.line.geometry.coordinates;
+          if (coords.length === 0 && State.selected.geometries.length !== 0) {
+            // Line is the first and only geometry.
+            coords = State.selected.geometries[0].geometry.coordinates;
+          }
+
+          var start = (coords.length > 0) ? L.latLng(coords[0][1], coords[0][0]) : null;
+          var end = e.latlng;
+
           if (coords.length === 1) {
-            var start = L.latLng(coords[0][1], coords[0][0]);
-            var end = e.latlng;
             ClickFeedbackService.emptyClickLayer(MapService);
             ClickFeedbackService.drawLine(
               MapService,
               start,
               end
             );
+          }
+
+          if (coords.length === 2) {
+            var point = UtilService.pointAlongLine(
+              e.latlng,
+              L.latLng(coords[0][1],coords[0][0]),
+              L.latLng(coords[1][1], coords[1][0])
+            );
+            if (circleAlongLine) {
+              ClickFeedbackService.updateCircle(MapService, point, circleAlongLine);
+              // fugly. sorry, not sorry.
+              State.selected.mouseOnLine = L.latLng(
+                coords[0][1],
+                coords[0][0])
+              .distanceTo(point);
+
+              console.log(point, coords[0], State.selected.mouseOnLine);
+            } else {
+              circleAlongLine = ClickFeedbackService.drawCircle(MapService, point, true, 15);
+            }
           }
         }
       };

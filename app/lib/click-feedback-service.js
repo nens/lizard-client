@@ -94,8 +94,8 @@ angular.module('lizard-nxt')
        * @description add data to the clicklayer
        * with a small hackery to find out this specific id
        */
-      this.drawFeature = function (geojson) {
-        this.strokeWidth = 5;
+      this.drawFeature = function (geojson, strokeSize) {
+        this.strokeWidth = strokeSize || 5;
         var oldIds = Object.keys(this.clickLayer._layers);
 
         // actually add the data
@@ -219,7 +219,7 @@ angular.module('lizard-nxt')
       /**
        * @descriptions vibretes a selection.paths by varying the stroke-width
        * @param  {object} sel selection contaning a path.
-       * @param  {boolean} remove to remove or not. When true, stroke-widh
+       * @param  {boolean} remove to remove or not. When true, stroke-width
        *                          is set to 0 at the end the vibration.
        */
       this.vibrate = function (sel, remove) {
@@ -270,6 +270,7 @@ angular.module('lizard-nxt')
         emptyClickLayer,
         removeClickFromClickLayer,
         drawCircle,
+        updateCircle,
         drawArrow,
         drawLine,
         drawGeometry,
@@ -306,7 +307,7 @@ angular.module('lizard-nxt')
      * @param {object} latLng Leaflet object specifying the latitude
      * and longitude of a click
      */
-    drawCircle = function (mapState, latlng, dontEmpty) {
+    drawCircle = function (mapState, latlng, dontEmpty, strokeSize) {
       if (!dontEmpty) {
         clickLayer.emptyClickLayer(mapState);
       }
@@ -315,10 +316,21 @@ angular.module('lizard-nxt')
         "coordinates":
           [latlng.lng, latlng.lat]
       };
-      return clickLayer.drawFeature(geometry);
+      return clickLayer.drawFeature(geometry, strokeSize);
     };
 
-    drawGeometry = function (mapState, geometry) {
+    /**
+     * Updates circle with new position
+     */
+    updateCircle = function (mapState, latlng, id) {
+      var layer = mapState._map._layers[id];
+      d3.select(layer._container).select('path')
+        .attr('stroke-width', 15);
+      layer._latlng = latlng;
+      layer.redraw();
+    }
+
+    drawGeometry = function (mapState, geometry, entityName) {
       if (!clickLayer.clickLayer) {
         clickLayer.emptyClickLayer(mapState);
       }
@@ -381,6 +393,7 @@ angular.module('lizard-nxt')
       drawLine: drawLine,
       removeClickFromClickLayer: removeClickFromClickLayer,
       vibrateOnce: vibrateOnce,
+      updateCircle: updateCircle,
       remove: removeLayer
     };
   }

@@ -114,7 +114,8 @@ angular.module('omnibox')
     scope: {
       geom: '=',
       timeState: '=',
-      header: '='
+      header: '=',
+      mouseloc: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/geometry-cards.html'
