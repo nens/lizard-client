@@ -83,6 +83,7 @@ angular.module('map')
         if (State.box.type === 'line') {
           var coords = MapService.line.geometry.coordinates;
           if (coords.length === 0 && State.selected.geometries.length !== 0) {
+            // Line is the first and only geometry.
             coords = State.selected.geometries[0].geometry.coordinates;
           }
 
@@ -100,13 +101,21 @@ angular.module('map')
 
           if (coords.length === 2) {
             var point = UtilService.pointAlongLine(
-              e.latlng, L.latLng(coords[0][1], coords[0][0]), L.latLng(coords[1][1], coords[1][0]));
+              e.latlng,
+              L.latLng(coords[0][1],coords[0][0]),
+              L.latLng(coords[1][1], coords[1][0])
+            );
             if (circleAlongLine) {
               ClickFeedbackService.updateCircle(MapService, point, circleAlongLine);
               // fugly. sorry, not sorry.
-              State.selected.mouseOnLine = L.latLng(coords[0][1], coords[0][0]).distanceTo(point);
+              State.selected.mouseOnLine = L.latLng(
+                coords[0][1],
+                coords[0][0])
+              .distanceTo(point);
+
+              console.log(point, coords[0], State.selected.mouseOnLine);
             } else {
-              circleAlongLine = ClickFeedbackService.drawCircle(MapService, point, true, 15)
+              circleAlongLine = ClickFeedbackService.drawCircle(MapService, point, true, 15);
             }
           }
         }

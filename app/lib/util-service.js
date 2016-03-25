@@ -999,17 +999,19 @@ angular.module('lizard-nxt')
     };
 
     var ab2 = diffAB.lat * diffAB.lat + diffAB.lng * diffAB.lng;
-    var ap_ab = diffPA.lat * diffAB.lat + diffPA.lng * diffAB.lng;
-    var t = ap_ab / ab2;
-    if (t < 0)
-      t = 0
-    if (t > 1)
-      t = 1
+    var apAb = diffPA.lat * diffAB.lat + diffPA.lng * diffAB.lng;
+    var t = apAb / ab2;
+    if (t < 0) {
+      t = 0;
+    }
+    if (t > 1) {
+      t = 1;
+    }
     var closest = new L.LatLng(
       a.lat + diffAB.lat * t,
       a.lng + diffAB.lng * t
     );
-    return closest
+    return closest;
   };
 
 }]);

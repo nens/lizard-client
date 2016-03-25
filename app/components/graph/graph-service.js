@@ -623,7 +623,7 @@ angular.module('lizard-nxt')
     }
 
     var chart = this._containers[0];
-    var i = UtilService.bisect(chart.data, chart.keys.x, this._xy.x.scale.invert(xLocation));
+    var i = UtilService.bisect(chart.data, chart.keys.x, xLocation);
     var d = chart.data[i];
 
     if (!d) { return; }
