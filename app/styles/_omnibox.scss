@@ -143,6 +143,16 @@
     text-overflow:ellipsis;
     font-size: .9em;
 }
+
+.carousel {
+  min-height: 50px;
+  overflow: hidden;
+}
+
+.carousel-control {
+  background-image: none !important;
+}
+
 .location:focus {
     background-color: $deprecated-gray12 !important;
     outline: 0;

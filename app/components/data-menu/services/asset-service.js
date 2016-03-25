@@ -24,7 +24,7 @@ angular.module('data-menu')
        * @param {string} id -  id of the enitity
        * returns {object} promise - thenable with result of the asset API
        */
-      this.getAsset = function (entity, id) {
+      var getAsset = function (entity, id) {
         return $http({
           url: 'api/v2/' + entity + 's' + '/' + id + '/',
           method: 'GET'
@@ -37,6 +37,24 @@ angular.module('data-menu')
       };
 
       /**
+       * Removes assets from service when not selected.
+       *
+       * @param  {array}  selectedAssets State.selected.asssets.
+       * @param  {array}  currentAssets  DataService.assets
+       * @return {array}                 Updated DataService.assets.
+       */
+      this.removeOldAssets = function (selectedAssets, currentAssets) {
+        return currentAssets.filter(function (asset) {
+          var assetId = asset.entity_name + '$' + asset.id;
+          var keep = selectedAssets.indexOf(assetId) !== -1;
+          if (!keep) {
+            removeTSofAsset(asset);
+          }
+          return keep;
+        });
+      };
+
+      /**
        * Updates assets by making requests to asset api.
        *
        * @param  {array}  assets       array of assets as from api
@@ -45,30 +63,23 @@ angular.module('data-menu')
        */
       this.updateAssets = function (assets, oldSelection, newSelection) {
 
-        assets = assets.filter(function (asset) {
-          var assetId = asset.entity_name + '$' + asset.id;
-          var keep = newSelection.indexOf(assetId) !== -1;
-          if (!keep) {
-            removeTSofAsset(asset);
-          }
-          return keep;
+        var newAssets = newSelection.filter(function (assetId) {
+          return oldSelection.indexOf(assetId) === -1;
         });
 
-        var newAsset = newSelection.filter(function (assetId) {
-          return oldSelection.indexOf(assetId) === -1;
-        })[0];
+        if (newAssets) {
+          return _.map(newAssets, function (asset) {
+            var entity = asset.split('$')[0];
+            var id = asset.split('$')[1];
 
-        if (newAsset) {
-          var entity = newAsset.split('$')[0];
-          var id = newAsset.split('$')[1];
-
-          return this.getAsset(entity, id);
+            return getAsset(entity, id);
+          });
         }
 
         else {
           var defer = $q.defer();
           defer.resolve();
-          return defer.promise;
+          return [defer.promise];
         }
 
       };

@@ -108,12 +108,13 @@ angular.module('dashboard')
     var AXIS_LABEL_SPACE = 60;
     var AXIS_DEFAULT_SPACE = 15;
     var PAD = 10;
+    var PAD_RIGHT = 40;
     return {
       width: element.width() - this.GRAPH_PADDING,
       height: getGraphHeight(element, nGraphs),
       padding: {
         top: PAD,
-        right: PAD,
+        right: PAD_RIGHT,
         bottom: showXAxis ? AXIS_LABEL_SPACE : AXIS_DEFAULT_SPACE,
         left: AXIS_LABEL_SPACE
       }

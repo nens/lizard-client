@@ -421,7 +421,7 @@ angular.module('lizard-nxt')
    * @param  {object} content data to plot
    */
   Graph.prototype.drawCrosssection = function (content) {
-    if (!content.points.length || !content.line.data) { return; }
+    if (!content.line.data) { return; }
 
     var width = this._getWidth(this.dimensions);
     var height = this._getHeight(this.dimensions);
@@ -430,8 +430,15 @@ angular.module('lizard-nxt')
 
     var yLineMinMax = this._maxMin(content.line.data, 1);
 
-    var minimumPoint = _.minBy(content.points, function (p) {return p.value; });
-    var maximumPoint = _.maxBy(content.points, function (p) {return p.value; });
+    var maxY;
+    var minY;
+
+    if (content.points.length) {
+      var minimumPoint = _.minBy(content.points, function (p) {return p.value; });
+      var maximumPoint = _.maxBy(content.points, function (p) {return p.value; });
+      maxY = Math.max(yLineMinMax.max, maximumPoint.value);
+      minY = Math.min(0, yLineMinMax.min, minimumPoint.value);
+    }
 
     this._xy = {
       x: {
@@ -442,8 +449,8 @@ angular.module('lizard-nxt')
       },
       y: {
         minMax: {
-          min: Math.max(yLineMinMax.max, maximumPoint.value),
-          max: Math.min(0, minimumPoint.value)
+          min: maxY || yLineMinMax.max,
+          max: minY || yLineMinMax.min
         }
       }
     };
@@ -467,20 +474,25 @@ angular.module('lizard-nxt')
       false, // is not a y axis.
       0 // no transition of x axis
     );
+    drawLabel(this._svg, this.dimensions, 'm', false);
 
     this._xy.y.scale = this._makeScale(
       this._xy.y.minMax,
       yRange,
       {scale: 'linear'}
     );
-    this._xy.y.axis = this._makeAxis(this._xy.y.scale, {orientation: 'left'});
-    this._drawAxes(
+    this._xy.y.axis = this._makeAxis(
+      this._xy.y.scale,
+      {orientation: 'left', drawGrid: true}
+    );
+    drawAxes(
       this._svg,
       this._xy.y.axis,
       this.dimensions,
       true, // is a y axis.
       this.transTime
     );
+    drawLabel(this._svg, this.dimensions, 'hoogte (mNAP)', true);
 
     var className = 'line';
     addLineToGraph(
@@ -753,10 +765,11 @@ angular.module('lizard-nxt')
     // Create new elements as needed.
     circles.enter().append("circle")
       .attr("cx", function (d) { return xScale(d.x); })
-      .attr('cy', function (d) { return yScale(d.value); })
+      .attr('cy', function (d) { return yScale.range()[1]; })
       .attr("class", "point")
       .transition()
       .duration(duration)
+      .attr('cy', function (d) { return yScale(d.value); })
       .attr('r', 8);
     // EXIT
     // Remove old elements as needed. First transition to width = 0
@@ -764,7 +777,7 @@ angular.module('lizard-nxt')
     circles.exit()
       .transition()
       .duration(duration)
-      .attr('width', 0)
+      .attr('r', 0)
       .remove();
   };
 
@@ -868,10 +881,6 @@ angular.module('lizard-nxt')
   };
 
   drawVerticalRects = function (svg, dimensions, xy, keys, data, duration, xDomain) {
-    // We update the domain for X, if xDomain was set...
-    if (xDomain && xDomain.start && xDomain.end) {
-      xy.x.scale.domain([xDomain.start, xDomain.end]);
-    }
 
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
@@ -899,12 +908,25 @@ angular.module('lizard-nxt')
             }
           );
 
+    // Aggregated events explicitly have an interval property which correspond
+    // to a pixel size when parsed by scale function.
+    var widthFn = function (d) {
+      var width;
+      if (d.hasOwnProperty('interval')) {
+        width = xy.x.scale(d.interval) - xy.x.scale(0);
+      }
+      else {
+        width = barWidth;
+      }
+      return width;
+    };
+
     // UPDATE
     bar
       // change x when bar is invisible:
-      .attr("x", function (d) { return x.scale(d[keys.x]) - barWidth; })
+      .attr("x", function (d) { return x.scale(d[keys.x]) - widthFn(d); })
       // change width when bar is invisible:
-      .attr('width', function (d) { return barWidth; });
+      .attr('width', widthFn);
     bar
       .transition()
       .duration(duration)
@@ -919,8 +941,8 @@ angular.module('lizard-nxt')
     // Create new elements as needed.
     bar.enter().append("rect")
       .attr("class", "bar")
-      .attr("x", function (d) { return x.scale(d[keys.x]) - barWidth; })
-      .attr('width', function (d) { return barWidth; })
+      .attr("x", function (d) { return x.scale(d[keys.x]) - widthFn(d); })
+      .attr('width', widthFn)
       .attr("y", function (d) { return y.scale(0); })
       .attr("height", 0)
       .style("fill", function (d) { return d[keys.color] || ''; })
@@ -946,12 +968,7 @@ angular.module('lizard-nxt')
 
   getBarWidth = function (scale, data, keys, dimensions, xDomain) {
 
-    // If aggWindow is passed, use it
-    if (xDomain && xDomain.aggWindow) {
-      return scale(xDomain.aggWindow) - scale(0);
-    }
-
-    else if (data.length === 0) {
+    if (data.length === 0) {
       // Apparently, no data is present: return a dummy value since nothing
       // is to be drawn.
       return 0;

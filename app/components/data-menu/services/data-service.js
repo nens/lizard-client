@@ -105,10 +105,9 @@ angular.module('data-menu')
         if (asset) {
           instance.assets.push(asset);
         }
-        instance.assets = instance.assets.filter(function (asset) {
-          var assetId = asset.entity_name + '$' + asset.id;
-          return _assets.indexOf(assetId) !== -1;
-        });
+
+        // A-synchronously remove assets no longer in selection.
+        instance.assets = AssetService.removeOldAssets(_assets, instance.assets);
 
         // Deduplicate instance.assets asynchronous.
         instance.assets = _.uniqWith(instance.assets, _.isEqual);
@@ -127,9 +126,16 @@ angular.module('data-menu')
         // Dedupe assets in selection synchronous.
         var assets = _.uniq(assetsIn);
         instance.oldAssets = angular.copy(instance.assets);
+
+        // Synchronously remove assets no longer in selection.
+        instance.assets = AssetService.removeOldAssets(assets, instance.assets);
+
         AssetService.updateAssets(instance.assets, _assets, assets)
-        .then(assetChange);
+        .forEach(function (assetPromise) {
+          assetPromise.then(assetChange);
+        });
         _assets = assets;
+
         console.log('State.selected.assets:', State.selected.assets);
 
         rebindAssetFunctions();

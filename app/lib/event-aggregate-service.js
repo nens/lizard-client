@@ -207,12 +207,15 @@ angular.module('lizard-nxt')
           .forEach(function (timestamp, value) {
             var tmpObj;
             value.forEach(function (category, value) {
-              tmpObj = {timestamp: Number(timestamp) + aggWindow,
-                        category: category,
-                        mean_duration: value.mean_duration,
-                        color: _getColor(category,
-                                         baseColor),
-                        count: value.count};
+              tmpObj = {
+                timestamp: Number(timestamp) + aggWindow,
+                category: category,
+                mean_duration: value.mean_duration,
+                color: _getColor(category,
+                                 baseColor),
+                count: value.count,
+                interval: aggWindow
+              };
               aggregatedArray.push(tmpObj);
             });
           }

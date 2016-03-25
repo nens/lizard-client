@@ -68,6 +68,16 @@ angular.module('omnibox')
 
         };
 
+        scope.$on('$destroy', function () {
+          _.forEach(scope.geom.properties, function (property) {
+            property.active = true;
+            scope.toggleProperty(property);
+            // Activity of property should not be defined when creating
+            // dashboard.
+            property.active = undefined;
+          });
+        });
+
       },
       restrict: 'E',
       scope: {
