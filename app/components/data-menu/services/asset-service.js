@@ -37,6 +37,24 @@ angular.module('data-menu')
       };
 
       /**
+       * Removes assets from service when not selected.
+       *
+       * @param  {array}  selectedAssets State.selected.asssets.
+       * @param  {array}  currentAssets  DataService.assets
+       * @return {array}                 Updated DataService.assets.
+       */
+      this.removeOldAssets = function (selectedAssets, currentAssets) {
+        return currentAssets.filter(function (asset) {
+          var assetId = asset.entity_name + '$' + asset.id;
+          var keep = selectedAssets.indexOf(assetId) !== -1;
+          if (!keep) {
+            removeTSofAsset(asset);
+          }
+          return keep;
+        });
+      };
+
+      /**
        * Updates assets by making requests to asset api.
        *
        * @param  {array}  assets       array of assets as from api
@@ -44,15 +62,6 @@ angular.module('data-menu')
        * @param  {array}  newSelection new array of assetId of selected assets
        */
       this.updateAssets = function (assets, oldSelection, newSelection) {
-
-        assets = assets.filter(function (asset) {
-          var assetId = asset.entity_name + '$' + asset.id;
-          var keep = newSelection.indexOf(assetId) !== -1;
-          if (!keep) {
-            removeTSofAsset(asset);
-          }
-          return keep;
-        });
 
         var newAssets = newSelection.filter(function (assetId) {
           return oldSelection.indexOf(assetId) === -1;
