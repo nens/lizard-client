@@ -15,11 +15,17 @@ angular.module('image-carousel')
           };
         }
         else if (scope.context === 'dashboard') {
-          var d = scope.graphDims;
-          scope.dimensions = {
-            maxWidth: d.width - 2 * d.padding.left,
-            maxHeight: d.height - 2 * d.padding.top
-          };
+          scope.$watch('graphDims', function () {
+            var d = scope.graphDims;
+            scope.dimensions = {
+              'max-width': d.width,
+              'max-height': d.height
+            };
+            scope.itemDimensions = {
+              width: d.width,
+              height: d.height
+            }
+          });
         }
 
         /**
@@ -34,6 +40,7 @@ angular.module('image-carousel')
 
         var tempChanged;
         var carouselChanged;
+        var canceler;
 
         /**
          * Prevents slide carousel from being triggered and sets the right
@@ -52,7 +59,7 @@ angular.module('image-carousel')
               scope.temporal.at
             );
 
-            $timeout(function () {
+            canceler = $timeout(function () {
               var activeElement = element
                 .find('.carousel-inner')
                 .children()[i];
@@ -89,13 +96,20 @@ angular.module('image-carousel')
 
         scope.$watch('temporal.at', function (n, o) {
           if (n === o) { return; }
+          if (canceler) { $timeout.cancel(canceler); }
           setImagesToTimeAfterDigest();
         });
 
         scope.$watchCollection('images', function (images) {
+          if (canceler) { $timeout.cancel(canceler); }
+          element.find('.item').removeClass('active');
           if (images.length) {
             setImagesToTimeAfterDigest();
           }
+        });
+
+        scope.$on('destroy', function () {
+          if (canceler) { $timeout.cancel(canceler); }
         });
 
       },
