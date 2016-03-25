@@ -981,4 +981,35 @@ angular.module('lizard-nxt')
     return value;
   };
 
+  /**
+   * @function
+   * @description given point p find the closest
+   * point on the line between a and b
+   *
+   * Taken from: http://www.gamedev.net/topic/444154-closest-point-on-a-line/
+   */
+  this.pointAlongLine = function (p, a, b) {
+    var diffPA = {
+      lat: p.lat - a.lat,
+      lng: p.lng - a.lng
+    };
+    var diffAB = {
+      lat: b.lat - a.lat,
+      lng: b.lng - a.lng
+    };
+
+    var ab2 = diffAB.lat * diffAB.lat + diffAB.lng * diffAB.lng;
+    var ap_ab = diffPA.lat * diffAB.lat + diffPA.lng * diffAB.lng;
+    var t = ap_ab / ab2;
+    if (t < 0)
+      t = 0
+    if (t > 1)
+      t = 1
+    var closest = new L.LatLng(
+      a.lat + diffAB.lat * t,
+      a.lng + diffAB.lng * t
+    );
+    return closest
+  };
+
 }]);

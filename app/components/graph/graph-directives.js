@@ -226,6 +226,8 @@ angular.module('lizard-nxt')
     this.type = '';
     this.quantity = $scope.quantity || 'time';
 
+    this.mouseloc = $scope.mouseloc || undefined;
+
     // Define data update function in attribute directives
     this.updateData = function () {};
     // Define timeState.now update function in attribute directives
@@ -244,7 +246,7 @@ angular.module('lizard-nxt')
     scope: {
       content: '=?',
 
-      mouseLoc: '=',
+      mouseloc: '=?',
       yfilter: '=',
       dimensions: '=',
       temporal: '=',
@@ -317,13 +319,23 @@ angular.module('lizard-nxt')
 
     graph.drawLine(content, temporal, drawSubset);
 
-    // scope.line is the scope defined by the line controller. Preferably it is
-    // passed around more explicitly through the graph directive, but angular is
-    // being bitchy.
-    if (scope.line && scope.line.mouseLocFn) {
-      graph.followMouse(scope.line.mouseLocFn);
-      graph.mouseExit(scope.line.mouseLocFn);
-    }
+    // fugly ass hackery. This is a sacrifice to Baal for
+    // letting the 'bolletje' run loose and creating havock
+    // and mayhem all around itself
+    // the initiator of this heinous feature is too be blamed.
+    //
+    // The mouseOnLine in the state is being set to get this to work.
+    var watchMouse = scope.$watch('mouseloc', function (n) {
+      if (n) {
+        graph.drawCircleOnLine(n);
+      }
+    });
+
+    scope.$on('$destroy', function () {
+      var remove = true;
+      watchMouse();
+      graph.drawCircleOnLine(null, remove);
+    });
 
     if (temporal) {
       graph.drawNow(graphCtrl.now);
@@ -457,4 +469,3 @@ angular.module('lizard-nxt')
 
   }
 ]);
-

@@ -103,6 +103,11 @@ angular.module('global-state')
       mapMoving: false
     };
 
+    // there is one selected feature which is not being described here.
+    // and is being set in MapDirective (in the _mouseMove function).
+    // This is only relevant for drawing an intersection line in the map.
+    // The location and the distance of the location to the first point of the
+    // is being calculated and set on mouseOnLine for the graph.
     state.selected = {
       assets: [], // hydra-core asset id <entity>$<id>,
                   // is defined in DataService use state.selected.asset.addAsset
