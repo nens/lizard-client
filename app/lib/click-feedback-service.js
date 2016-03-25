@@ -328,7 +328,7 @@ angular.module('lizard-nxt')
         .attr('stroke-width', 15);
       layer._latlng = latlng;
       layer.redraw();
-    }
+    };
 
     drawGeometry = function (mapState, geometry, entityName) {
       if (!clickLayer.clickLayer) {

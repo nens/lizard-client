@@ -24,7 +24,7 @@ angular.module('image-carousel')
             scope.itemDimensions = {
               width: d.width,
               height: d.height
-            }
+            };
           });
         }
 
