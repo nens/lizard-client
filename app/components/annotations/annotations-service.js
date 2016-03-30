@@ -32,7 +32,7 @@ angular.module('annotations')
           isArray:true,
           transformResponse:
             function (data, headers) {
-              return angular.fromJson(data).results.features;
+              return angular.fromJson(data).results;
             }
         },
         'save': {
