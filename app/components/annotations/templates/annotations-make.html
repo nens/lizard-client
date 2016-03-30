@@ -1,5 +1,5 @@
 <form name="annotationform" novalidate>
-  <table class="table table-hover table-condensed">
+  <table class="table table-condensed table-no-borders">
     <colgroup>
       <col class="col-xs-7"></col>
       <col class="col-xs-3"></col>
@@ -30,22 +30,6 @@
               Annotation text cannot be longer than 256 characters.
             </small>
           </div>
-
-          <input type="file"
-                 class="input-sm"
-                 name="attachment"
-                 ng-show="annotationform.text.$dirty"
-                 ng:model="fileupload"
-                 file-model="attachment"
-                 max-size=10000000>
-          <div ng-show="annotationform.attachment.$dirty && annotationform.attachment.$invalid">
-            <small
-              class="text-danger"
-              ng-show="annotationform.attachment.$error.maxsize"
-              translate>
-              Annotation attachment size cannot be bigger than 10MB.
-            </small>
-          </div>
         </td>
         <td class="text-right">
           <span ng-bind="timelineat | date: formatDatetime()"></span>
@@ -65,6 +49,32 @@
             <i class="fa fa-times text-danger"></i>
           </button>
         </td>
+      </tr>
+      <tr ng-show="annotationform.text.$dirty">
+        <td colspan="2">
+          <span translate>Add an attachment:</span>
+          <input type="file"
+                 class="input-sm"
+                 name="attachment"
+                 ng:model="fileupload"
+                 file-model="attachment"
+                 max-size=10000000>
+          <div ng-show="annotationform.attachment.$dirty && annotationform.attachment.$invalid">
+            <small
+              class="text-danger"
+              ng-show="annotationform.attachment.$error.maxsize"
+              translate>
+              Annotation attachment size cannot be bigger than 10MB.
+            </small>
+          </div>
+          <div ng-hide="organisations.length === 1">
+          <span translate>Select an organisation:</span><br>
+          <select
+            ng-options="org as org.name for org in organisations track by org.unique_id"
+            ng-model="selectedOrganisation"></select>
+        </div>
+        </td>
+        <td></td>
       </tr>
     </tbody>
   </table>

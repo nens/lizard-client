@@ -278,10 +278,43 @@ angular.module('annotations')
           scope.text,
           scope.attachment,
           scope.timelineat,
+          scope.selectedOrganisation,
           createAnnotationSuccess,
           createAnnotationError
         );
       };
+
+      /**
+       * Update the scope to reflect a successful fetch of the user's
+       * organisations.
+       * @param {array} value - The organisations.
+       * @param {dict} responseHeaders - The response headers returned by GET.
+       */
+      var getOrganisationsSuccess = function(value, responseHeaders) {
+        scope.organisations = value;
+        scope.selectedOrganisation = scope.organisations[0];
+      };
+
+      /**
+       * Throw an alert and error when something went wrong with getting the
+       * organisations.
+       * @param {dict} httpResponse - The httpResponse headers returned by the
+       *                              GET.
+       */
+      var getOrganisationsError = function(httpResponse) {
+        note.alert(3,
+            gettextCatalog.getString(
+              "Oops! Something went wrong while fetching your organisations.")
+        )
+        throw new Error(
+          httpResponse.status + " - " + "Could not get organisations.");
+      };
+
+      /**
+       *  Get the user's organisations.
+       */
+      AnnotationsService.getOrganisations(
+        getOrganisationsSuccess, getOrganisationsError);
     };
 
     return {
