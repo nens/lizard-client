@@ -146,11 +146,12 @@ angular.module('annotations')
        * turned off. So turn off and on.
        */
       this.refreshAnnotationLayer = function () {
-        var annotationLgIndex = State.layerGroups.active.indexOf('annotations');
-        if (annotationLgIndex) {
+        var ANNOTATION_LG_SLUG = 'annotations';
+        var annotationLgIndex = State.layerGroups.active.indexOf(ANNOTATION_LG_SLUG);
+        if (annotationLgIndex !== -1) {
           var oldLgs = angular.copy(State.layerGroups.active);
           var newLgs = State.layerGroups.active.filter(function (lgslug) {
-            if (lgslug !== 'annotation') {
+            if (lgslug !== ANNOTATION_LG_SLUG) {
               return true;
             } else { return false ;}
           });
