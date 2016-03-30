@@ -55,10 +55,7 @@ angular.module('annotations')
       var fetchAnnotations = function() {
         if (scope.data.properties && scope.data.properties.annotations) {
           var events = scope.data.properties.annotations.data;
-          var annotations = [];
-          events.forEach(function (ev) {
-            annotations.push(ev.properties);
-          });
+          var annotations = scope.data.properties.annotations.data;
           fetchAnnotationsSuccess(annotations);
         }
 
