@@ -213,9 +213,13 @@ angular.module('annotations')
 angular.module('annotations')
   .directive('annotationsMake',
              ['AnnotationsService', '$window', 'gettextCatalog', 'notie',
-              function (AnnotationsService, $window, gettextCatalog, notie) {
+              'user',
+              function (AnnotationsService, $window, gettextCatalog, notie,
+                        user) {
 
     var link = function (scope, element, attrs) {
+
+      scope.user = user;
 
       /**
        * Provide a date time formatter for the annotations templates.
@@ -288,8 +292,8 @@ angular.module('annotations')
        * @param {dict} responseHeaders - The response headers returned by GET.
        */
       var getOrganisationsSuccess = function(value, responseHeaders) {
-        scope.organisations = value;
-        scope.selectedOrganisation = scope.organisations[0];
+        user.organisations = value;
+        scope.selectedOrganisation = user.organisations[0];
       };
 
       /**
@@ -308,10 +312,17 @@ angular.module('annotations')
       };
 
       /**
-       *  Get the user's organisations.
+       *  Get the user's organisations if they haven't already been retrieved.
        */
-      AnnotationsService.getOrganisations(
-        getOrganisationsSuccess, getOrganisationsError);
+      var getUserOrganisations = function () {
+        if (!user.hasOwnProperty('organisations')) {
+          AnnotationsService.getOrganisations(
+            getOrganisationsSuccess, getOrganisationsError);
+        } else {
+          scope.selectedOrganisation = user.organisations[0];
+        }
+      }
+      getUserOrganisations();
     };
 
     return {

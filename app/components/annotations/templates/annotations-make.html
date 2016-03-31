@@ -67,10 +67,10 @@
               Annotation attachment size cannot be bigger than 10MB.
             </small>
           </div>
-          <div ng-hide="organisations.length === 1">
+          <div ng-hide="user.organisations.length === 1">
           <span translate>Select an organisation:</span><br>
           <select
-            ng-options="org as org.name for org in organisations track by org.unique_id"
+            ng-options="org as org.name for org in user.organisations track by org.unique_id"
             ng-model="selectedOrganisation"></select>
         </div>
         </td>
