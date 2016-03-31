@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix bootstrap chevron that's missing in dist folder (glyphicon font)
 
 
 Release 2.11.1 (2016-3-25)
