@@ -157,8 +157,13 @@ angular.module('lizard-nxt')
           nestedData = {},
           aggregatedArray = [],
           timestampKey = function (d) {
-            return UtilService.roundTimestamp(d.properties.timestamp_start,
-                                              aggWindow);
+            var start;
+            if(d.properties.hasOwnProperty('timestamp')) {
+              start = d.properties.timestamp;
+            } else {
+              start = d.properties.timestamp_start;
+            }
+            return UtilService.roundTimestamp(start, aggWindow);
           };
 
       if (baseColor === undefined) {
