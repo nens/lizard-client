@@ -6,6 +6,11 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Fix annotations layer not updating.
 
+- Add choice of organisation when adding an annotation.
+
+- Remove the 'user' from the master controller and inject it only in the
+  components that use it.
+
 
 Release 2.11.1 (2016-3-25)
 ---------------------
