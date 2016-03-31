@@ -436,6 +436,10 @@ angular.module('map')
             layer = NxtNonTiledWMSLayer.create(layer);
           }
         });
+      },
+
+      getLeafletLayer: function (id) {
+        return service._map._layers[id];
       }
 
     };

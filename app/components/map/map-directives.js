@@ -61,7 +61,10 @@ angular.module('map')
         if (State.box.type === 'line'
           && MapService.line.geometry.coordinates.length === 2) {
           ClickFeedbackService.emptyClickLayer(MapService);
-          circleAlongLine = undefined;
+          if (circleAlongLine) {
+            ClickFeedbackService.removeCircle(MapService, circleAlongLine);
+            circleAlongLine = undefined;
+          }
           State.selected.mouseOnLine = null;
         }
       };
@@ -113,11 +116,13 @@ angular.module('map')
                 coords[0][0])
               .distanceTo(point);
 
-              console.log(point, coords[0], State.selected.mouseOnLine);
             } else {
               circleAlongLine = ClickFeedbackService.drawCircle(MapService, point, true, 15);
             }
           }
+        } else if (circleAlongLine) {
+          ClickFeedbackService.removeCircle(MapService, circleAlongLine);
+          circleAlongLine = undefined;
         }
       };
 
