@@ -42,6 +42,31 @@ angular.module('annotations')
         }
       });
 
+      /* Create a resource for interacting with the organisations endpoint of
+       * the API.
+       *
+       * Use a reconfigured 'query' so it actually returns an array of items.
+       */
+      var Organisations = $resource('/api/v2/organisations/:uuid/', {}, {
+        'query': {
+          method:'GET',
+          isArray:true,
+          transformResponse:
+            function (data, headers) {
+              return angular.fromJson(data).results;
+            }
+        }
+      });
+
+      /**
+       * Get all organisations of a user.
+       * @param {function} success - Execute this function on a successful GET.
+       * @param {function} error - Execute this function on a failed GET.
+       */
+      this.getOrganisations = function(success, error) {
+        return Organisations.query({'page_size': 1000}, success, error);
+      };
+
       /**
        * Get all annotations for an asset.
        * @param {string} model - The model name of the asset (e.g. manhole).
@@ -86,6 +111,8 @@ angular.module('annotations')
        * @param {string} file - An optional attachment for the annotation.
        * @param {Date} timelineat - A date to use for timestamp_start and
        *                            timestamp_end.
+       * @param {object} organisation - The organisation to which the
+       *                                annotation is related.
        * @param {function} success - Execute this function on a successful
        *                             POST.
        * @param {function} error - Execute this function when something goes
@@ -93,10 +120,12 @@ angular.module('annotations')
        * @returns {object} - The new annotation.
        */
       this.addAnnotationToObject = function (
-          asset, text, file, timelineat, success, error) {
+          asset, text, file, timelineat, organisation, success, error) {
 
         var fd = new FormData();
-        if (file) { fd.append('attachment', file); }
+        if (file) {
+          fd.append('attachment', file);
+        }
         if (asset.entity_name) {
           fd.append('object_type', asset.entity_name);
         }
@@ -104,8 +133,8 @@ angular.module('annotations')
           fd.append('object_id', asset.id);
         }
         fd.append('text', text);
-        fd.append('timestamp_start', timelineat);
-        fd.append('timestamp_end', timelineat);
+        fd.append('timestamp', timelineat);
+        fd.append('organisation', organisation.unique_id);
         fd.append('location', JSON.stringify(asset.geometry));
 
         return Annotations.save(fd, success, error);
@@ -117,11 +146,12 @@ angular.module('annotations')
        * turned off. So turn off and on.
        */
       this.refreshAnnotationLayer = function () {
-        var annotationLgIndex = State.layerGroups.active.indexOf('annotations');
-        if (annotationLgIndex) {
+        var ANNOTATION_LG_SLUG = 'annotations';
+        var annotationLgIndex = State.layerGroups.active.indexOf(ANNOTATION_LG_SLUG);
+        if (annotationLgIndex !== -1) {
           var oldLgs = angular.copy(State.layerGroups.active);
           var newLgs = State.layerGroups.active.filter(function (lgslug) {
-            if (lgslug !== 'annotation') {
+            if (lgslug !== ANNOTATION_LG_SLUG) {
               return true;
             } else { return false ;}
           });

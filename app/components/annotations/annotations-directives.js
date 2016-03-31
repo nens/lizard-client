@@ -55,10 +55,7 @@ angular.module('annotations')
       var fetchAnnotations = function() {
         if (scope.data.properties && scope.data.properties.annotations) {
           var events = scope.data.properties.annotations.data;
-          var annotations = [];
-          events.forEach(function (ev) {
-            annotations.push(ev.properties);
-          });
+          var annotations = scope.data.properties.annotations.data;
           fetchAnnotationsSuccess(annotations);
         }
 
@@ -216,9 +213,13 @@ angular.module('annotations')
 angular.module('annotations')
   .directive('annotationsMake',
              ['AnnotationsService', '$window', 'gettextCatalog', 'notie',
-              function (AnnotationsService, $window, gettextCatalog, notie) {
+              'user',
+              function (AnnotationsService, $window, gettextCatalog, notie,
+                        user) {
 
     var link = function (scope, element, attrs) {
+
+      scope.user = user;
 
       /**
        * Provide a date time formatter for the annotations templates.
@@ -278,10 +279,50 @@ angular.module('annotations')
           scope.text,
           scope.attachment,
           scope.timelineat,
+          scope.selectedOrganisation,
           createAnnotationSuccess,
           createAnnotationError
         );
       };
+
+      /**
+       * Update the scope to reflect a successful fetch of the user's
+       * organisations.
+       * @param {array} value - The organisations.
+       * @param {dict} responseHeaders - The response headers returned by GET.
+       */
+      var getOrganisationsSuccess = function(value, responseHeaders) {
+        user.organisations = value;
+        scope.selectedOrganisation = user.organisations[0];
+      };
+
+      /**
+       * Throw an alert and error when something went wrong with getting the
+       * organisations.
+       * @param {dict} httpResponse - The httpResponse headers returned by the
+       *                              GET.
+       */
+      var getOrganisationsError = function(httpResponse) {
+        note.alert(3,
+            gettextCatalog.getString(
+              "Oops! Something went wrong while fetching your organisations.")
+        )
+        throw new Error(
+          httpResponse.status + " - " + "Could not get organisations.");
+      };
+
+      /**
+       *  Get the user's organisations if they haven't already been retrieved.
+       */
+      var getUserOrganisations = function () {
+        if (!user.hasOwnProperty('organisations')) {
+          AnnotationsService.getOrganisations(
+            getOrganisationsSuccess, getOrganisationsError);
+        } else {
+          scope.selectedOrganisation = user.organisations[0];
+        }
+      }
+      getUserOrganisations();
     };
 
     return {
