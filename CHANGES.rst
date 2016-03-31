@@ -4,6 +4,7 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Fix bootstrap chevron that's missing in dist folder (glyphicon font)
 - Fix annotations layer not updating.
 
 - Add choice of organisation when adding an annotation.
