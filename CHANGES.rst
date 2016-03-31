@@ -6,6 +6,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Fix no graph for points in temporal raster.
 
+- Fix no translations in header.
+
 
 Release 2.11.1 (2016-3-25)
 ---------------------
