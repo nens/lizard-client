@@ -15,8 +15,6 @@ angular.module('map')
         add: function (map) {
           var defer = $q.defer();
           if (this._leafletLayer) {
-            // Vector layers need a timeState when added.
-            this._leafletLayer.timeState = this.timeState;
             this._addLeafletLayer(map, this._leafletLayer);
             this._leafletLayer.on('load', function () {
               defer.resolve();

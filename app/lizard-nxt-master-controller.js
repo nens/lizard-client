@@ -21,7 +21,6 @@ angular.module('lizard-nxt')
    'CabinetService',
    'UtilService',
    'ClickFeedbackService',
-   'user',
    'versioning',
    'State',
    'MapService',
@@ -32,12 +31,10 @@ angular.module('lizard-nxt')
             CabinetService,
             UtilService,
             ClickFeedbackService,
-            user,
             versioning,
             State,
             MapService) {
 
-  $scope.user = user;
   $scope.versioning = versioning;
   $scope.tooltips = CabinetService.createTooltips();
 
