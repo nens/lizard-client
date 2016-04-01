@@ -81,7 +81,6 @@
         margin-bottom: 0;
         padding: 8px;
         border: 2px solid transparent;
-        border-right: 0;
         line-height: 1;
         transition: .3s ease;
         cursor: pointer;
@@ -93,14 +92,19 @@
             mix-blend-mode: difference;
         }
 
+        .layer-chooser-tools {
+          position: absolute;
+          right: 0;
+          top: 0;
+        }
+
         i {
-            position: absolute;
+            float: right;
             right: 0;
             top: 0;
             bottom: 0;
             padding: 8px;
-            background: $white;
-            background: rgba($white, 0.6);
+            background: rgba($clouds, 0.6);
             transition: .3s ease;
 
             &:hover {
