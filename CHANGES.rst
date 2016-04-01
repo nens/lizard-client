@@ -20,6 +20,7 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 - Fix weirdness with search. Query now fires search instead of keypress
 
 - Add zoom to api result on ENTER key.
+- Add 'remove layergroup from data menu' functionality.
 
 
 Release 2.11.1 (2016-3-25)
