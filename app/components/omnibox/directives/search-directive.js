@@ -222,8 +222,6 @@ angular.module('omnibox')
       delete scope.omnibox.searchResults;
     };
 
-    scope.$watch('query', scope.search);
-
   };
 
   return {
