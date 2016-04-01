@@ -15,6 +15,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 - Remove the 'user' from the master controller and inject it only in the
   components that use it.
 
+- Add 'remove layergroup from data menu' functionality.
+
 
 Release 2.11.1 (2016-3-25)
 ---------------------
