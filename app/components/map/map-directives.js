@@ -228,6 +228,13 @@ angular.module('map')
         MapService.syncTime(State.temporal);
       });
 
+      scope.$watch(State.toString('selected.geometries'), function (n, o) {
+        if (n === o) { return true; }
+        if (State.box.type === 'line' && State.selected.geometries[0] === undefined) {
+          lineCleanup();
+        }
+      });
+
       scope.$watch(State.toString('box.type'), function (n, o) {
         if (n === o) { return true; }
 
