@@ -13,6 +13,13 @@ describe('Directives: Search with mocked CabinetService', function () {
         };
       }
     };
+    this.search = {
+      get: function (searchString, spatialState) {
+          return {
+            then: function (cb) { cb({henk: 'hai'}); }
+          };
+      }
+    };
   };
 
   // load the service's module
