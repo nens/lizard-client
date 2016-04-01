@@ -323,11 +323,19 @@ angular.module('lizard-nxt')
      * Updates circle with new position
      */
     updateCircle = function (mapState, latlng, id) {
-      var layer = mapState._map._layers[id];
+      var layer = mapState.getLeafletLayer(id);
       d3.select(layer._container).select('path')
         .attr('stroke-width', 15);
       layer._latlng = latlng;
       layer.redraw();
+    };
+
+    /**
+     * Removes leafletLayer
+     */
+    removeLeafletLayerWithId = function (mapState, id) {
+      var layer = mapState.getLeafletLayer(id);
+      mapState.removeLeafletLayer(layer);
     };
 
     drawGeometry = function (mapState, geometry, entityName) {
@@ -392,6 +400,7 @@ angular.module('lizard-nxt')
       startVibration: startVibration,
       drawLine: drawLine,
       removeClickFromClickLayer: removeClickFromClickLayer,
+      removeLeafletLayerWithId: removeLeafletLayerWithId,
       vibrateOnce: vibrateOnce,
       updateCircle: updateCircle,
       remove: removeLayer
