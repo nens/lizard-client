@@ -7,7 +7,9 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 - Fix no graph for points in temporal raster.
 
 - Fix no translations in header.
+
 - Fix bootstrap chevron that's missing in dist folder (glyphicon font)
+
 - Fix annotations layer not updating.
 
 - Add choice of organisation when adding an annotation.
@@ -15,6 +17,9 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 - Remove the 'user' from the master controller and inject it only in the
   components that use it.
 
+- Fix graph thowing errors when no data.
+
+- Fix carousel throwing errors when no images.
 
 Release 2.11.1 (2016-3-25)
 ---------------------
