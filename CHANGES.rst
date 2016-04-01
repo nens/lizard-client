@@ -17,6 +17,9 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 - Remove the 'user' from the master controller and inject it only in the
   components that use it.
 
+- Fix graph thowing errors when no data.
+
+- Fix carousel throwing errors when no images.
 - Fix weirdness with search. Query now fires search instead of keypress
 
 - Add zoom to api result on ENTER key.

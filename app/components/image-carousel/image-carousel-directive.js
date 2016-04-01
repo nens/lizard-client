@@ -76,7 +76,9 @@ angular.module('image-carousel')
         };
 
         scope.slide = function (direction) {
-          element.carousel(direction);
+          if (scope.images.length) {
+            element.carousel(direction);
+          }
         };
 
         /**
