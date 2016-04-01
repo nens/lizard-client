@@ -240,6 +240,7 @@ angular.module('map')
 
         if (n !== 'line' && o === 'line') {
           lineCleanup();
+          ClickFeedbackService.emptyClickLayer(MapService);
         }
 
         var selector;

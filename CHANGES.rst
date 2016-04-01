@@ -3,6 +3,9 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+
+- Remove line REALLY when switching to other tool.
+
 - Fix bolletje yet again. Both on the map and in the graph.
   (nens/lizard-nxt#1616 and nens/lizard-nxt#1615)
 
