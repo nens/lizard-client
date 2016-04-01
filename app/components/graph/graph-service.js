@@ -1159,6 +1159,7 @@ angular.module('lizard-nxt')
       var x2, xText; // needed for the time.
 
       angular.forEach(graph._containers, function (chart, id) {
+        if (chart.data.length === 0) { return true; }
         var i = UtilService.bisect(chart.data, chart.keys.x, xy.x.scale.invert(d3.mouse(boundingRect)[0]));
         i = i === chart.data.length ? chart.data.length - 1 : i;
         var d = chart.data[i];
@@ -1183,6 +1184,8 @@ angular.module('lizard-nxt')
           color: chart.color
         });
       });
+
+      if (values.length === 0) { return true; }
 
       var g = fg.select('.interaction-group');
       var valuebox = fg.select('.valuebox');
