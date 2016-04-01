@@ -135,17 +135,15 @@ angular.module('omnibox')
             scope.zoomToTemporalResult(
               scope.omnibox.searchResults.temporal
             );
-          }
-          else if (loc && loc.spatial && loc.spatial[0]) {
+          } else if (loc && loc.spatial && loc.spatial[0]) {
             scope.zoomToSpatialResult(
               scope.omnibox.searchResults.spatial[0]
             );
+          } else if (loc && loc.api && loc.api[0]) {
+            scope.zoomToSearchResult(
+              scope.omnibox.searchResults.api[0]
+            );
           }
-          else {
-            scope.search();
-          }
-        } else {
-          scope.search();
         }
       }
       prevKey = $event.which;
@@ -223,6 +221,8 @@ angular.module('omnibox')
     var destroySearchResultsModel = function () {
       delete scope.omnibox.searchResults;
     };
+
+    scope.$watch('query', scope.search);
 
   };
 

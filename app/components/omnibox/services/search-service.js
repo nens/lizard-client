@@ -44,7 +44,6 @@ angular.module('omnibox')
     this.search = function (searchString, state) {
 
       var bounds;
-
       // bounds are not available in the dashboard view.
       if (state.spatial.bounds.getSouth) {
           bounds = // Prefer results from the current viewport

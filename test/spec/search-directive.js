@@ -13,6 +13,13 @@ describe('Directives: Search with mocked CabinetService', function () {
         };
       }
     };
+    this.search = {
+      get: function (searchString, spatialState) {
+          return {
+            then: function (cb) { cb({henk: 'hai'}); }
+          };
+      }
+    };
   };
 
   // load the service's module
@@ -44,7 +51,11 @@ describe('Directives: Search with mocked CabinetService', function () {
 
   it('should build query from input field', function () {
     scope.query = "Amsterdam";
-    scope.$digest();
+    // expect it to throw because it triggers a scope watch which according
+    // to the mock ALWAYS returns: OVER_QUERY_LIMIT
+    expect(function () { scope.$digest(); }).toThrow(
+      new Error('Geocoder returned with status: OVER_QUERY_LIMIT')
+    );
     expect(element[0].querySelector('#searchboxinput').value).toBe("Amsterdam");
   });
 
