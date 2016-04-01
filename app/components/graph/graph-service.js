@@ -623,6 +623,8 @@ angular.module('lizard-nxt')
   };
 
   Graph.prototype.drawCircleOnLine = function (xLocation, remove) {
+    var R = 5; // radius of dot.
+
     var fg = this._svg.select('#feature-group');
 
     // Move listener rectangle to the front
@@ -641,7 +643,14 @@ angular.module('lizard-nxt')
     if (!d) { return; }
 
     var x = this._xy.x.scale(d[chart.keys.x]);
-    var y = this._xy.y.scale(d[chart.keys.y]);
+    var y;
+    // If d has a y value, use it. Otherwise show dot at bottom of chart.
+    if (d[chart.keys.y] || d[chart.keys.y] === 0) {
+      y = this._xy.y.scale(d[chart.keys.y]);
+    }
+    else {
+      y = this._xy.y.scale.range()[0] - R;
+    }
 
     if (!g[0][0]) {
       g = fg.append('g').attr('class', 'interaction-group');
@@ -650,7 +659,7 @@ angular.module('lizard-nxt')
     }
 
     g.append('circle')
-      .attr('r', 5)
+      .attr('r', R)
       .attr('cx', x)
       .attr('cy', y)
       .transition()
