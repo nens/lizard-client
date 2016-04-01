@@ -9,13 +9,20 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 - Fix no graph for points in temporal raster.
 
 - Fix no translations in header.
+
 - Fix bootstrap chevron that's missing in dist folder (glyphicon font)
+
 - Fix annotations layer not updating.
 
 - Add choice of organisation when adding an annotation.
 
 - Remove the 'user' from the master controller and inject it only in the
   components that use it.
+
+- Fix weirdness with search. Query now fires search instead of keypress
+
+- Add zoom to api result on ENTER key.
+- Add 'remove layergroup from data menu' functionality.
 
 
 Release 2.11.1 (2016-3-25)

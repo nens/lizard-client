@@ -30,9 +30,18 @@ angular.module('data-menu')
  * @description Show the layers in the data menu.
  */
 angular.module('data-menu')
-  .directive('layerSwitcher', [function () {
+  .directive('layerSwitcher', ['DataService', function (DataService) {
 
     var link = function (scope, element, attrs) {
+
+      scope.removeLayerGroup = function (layergroup) {
+        // Turn the layergroup off.
+        if (layergroup.isActive()) {
+          scope.menu.toggleLayerGroup(layergroup);
+        }
+        // Remove the layergroup.
+        DataService.removeLayerGroup(layergroup);
+      };
     };
 
     return {
