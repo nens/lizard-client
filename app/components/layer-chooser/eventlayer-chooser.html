@@ -13,5 +13,7 @@
       ng-click="menu.zoomToBounds(layergroup.spatialBounds, layergroup.temporalBounds); $event.stopPropagation()"
       class="fa fa-crosshairs">
     </i>
+    <i class="fa fa-close"
+       ng-click="removeLayerGroup(layergroup); $event.stopPropagation()"></i>
   </label>
 </div>
