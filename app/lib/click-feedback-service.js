@@ -331,9 +331,9 @@ angular.module('lizard-nxt')
     };
 
     /**
-     * Removes circle
+     * Removes leafletLayer
      */
-    removeCircle = function (mapState, id) {
+    removeLeafletLayerWithId = function (mapState, id) {
       var layer = mapState.getLeafletLayer(id);
       mapState.removeLeafletLayer(layer);
     };
@@ -400,7 +400,7 @@ angular.module('lizard-nxt')
       startVibration: startVibration,
       drawLine: drawLine,
       removeClickFromClickLayer: removeClickFromClickLayer,
-      removeCircle: removeCircle,
+      removeLeafletLayerWithId: removeLeafletLayerWithId,
       vibrateOnce: vibrateOnce,
       updateCircle: updateCircle,
       remove: removeLayer

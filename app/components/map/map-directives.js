@@ -76,7 +76,7 @@ angular.module('map')
       var circleAlongLine;
       var lineCleanup = function (origin) {
         if (circleAlongLine) {
-          ClickFeedbackService.removeCircle(MapService, circleAlongLine);
+          ClickFeedbackService.removeLeafletLayerId(MapService, circleAlongLine);
           circleAlongLine = undefined;
         }
         State.selected.mouseOnLine = null;
@@ -84,6 +84,29 @@ angular.module('map')
           MapService.line.geometry.coordinates = [];
         }
       }
+
+      var feedbackBulb = function (mouseHover) {
+        if (!State.selected.geometries[0]) { return; }
+        var coords = State.selected.geometries[0].geometry.coordinates;
+        if (coords.length === 2) {
+          var point = UtilService.pointAlongLine(
+            mouseHover,
+            L.latLng(coords[0][1],coords[0][0]),
+            L.latLng(coords[1][1], coords[1][0])
+          );
+          if (circleAlongLine) {
+            ClickFeedbackService.updateCircle(MapService, point, circleAlongLine);
+            // fugly. sorry, not sorry.
+            State.selected.mouseOnLine = L.latLng(
+              coords[0][1],
+              coords[0][0])
+            .distanceTo(point);
+
+          } else {
+            circleAlongLine = ClickFeedbackService.drawCircle(MapService, point, true, 15);
+          }
+        }
+      };
 
       /**
        * @function
@@ -108,25 +131,7 @@ angular.module('map')
               end
             );
           }
-
-          if (coords.length === 2) {
-            var point = UtilService.pointAlongLine(
-              e.latlng,
-              L.latLng(coords[0][1],coords[0][0]),
-              L.latLng(coords[1][1], coords[1][0])
-            );
-            if (circleAlongLine) {
-              ClickFeedbackService.updateCircle(MapService, point, circleAlongLine);
-              // fugly. sorry, not sorry.
-              State.selected.mouseOnLine = L.latLng(
-                coords[0][1],
-                coords[0][0])
-              .distanceTo(point);
-
-            } else {
-              circleAlongLine = ClickFeedbackService.drawCircle(MapService, point, true, 15);
-            }
-          }
+          feedbackBulb(e.latlng);
         } else {
           lineCleanup();
         }
@@ -157,7 +162,7 @@ angular.module('map')
           onClick: _clicked,
           onMoveStart: _moveStarted,
           onMoveEnd: _moveEnded,
-          onMouseMove: _mouseMove,
+          onMouseMove: _mouseMove
         }
       );
 
