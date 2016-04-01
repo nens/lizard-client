@@ -86,6 +86,7 @@ angular.module('data-menu')
       };
 
       this.layerGroups = {};
+
       var layerGroups = this._createLayerGroups(dataLayers);
 
       this.baselayerGroups = _.filter(layerGroups, function (lgValue, lgKey) {
@@ -249,6 +250,13 @@ angular.module('data-menu')
           return Object.keys(layerGroups);
         },
         set: function (newLayerGroups) {
+
+          // Remove layergroups not in newLayergroups
+          instance.layerGroups = _.pickBy(instance.layerGroups, function (lg) {
+            return newLayerGroups.indexOf(lg.slug) !== -1;
+          });
+
+          // Request new layegroups from server.
           var nonExistent = _.difference(
             newLayerGroups, Object.keys(layerGroups));
 

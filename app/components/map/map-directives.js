@@ -83,7 +83,7 @@ angular.module('map')
         if (origin !== 'click') {
           MapService.line.geometry.coordinates = [];
         }
-      }
+      };
 
       var feedbackBulb = function (mouseHover) {
         if (!State.selected.geometries[0]) { return; }
