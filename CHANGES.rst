@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix search bug, ng-change did not pick up.
 
 
 Release 3.0.1 (2016-4-1)
