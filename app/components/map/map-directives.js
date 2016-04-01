@@ -76,7 +76,7 @@ angular.module('map')
       var circleAlongLine;
       var lineCleanup = function (origin) {
         if (circleAlongLine) {
-          ClickFeedbackService.removeLeafletLayerId(MapService, circleAlongLine);
+          ClickFeedbackService.removeLeafletLayerWithId(MapService, circleAlongLine);
           circleAlongLine = undefined;
         }
         State.selected.mouseOnLine = null;
