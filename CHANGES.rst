@@ -30,6 +30,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 - Add zoom to api result on ENTER key.
 - Add 'remove layergroup from data menu' functionality.
 
+- Fix favourites don't restore inactive layers.
+
 
 Release 2.11.1 (2016-3-25)
 ---------------------
