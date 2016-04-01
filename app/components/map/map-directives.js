@@ -61,11 +61,7 @@ angular.module('map')
         if (State.box.type === 'line'
           && MapService.line.geometry.coordinates.length === 2) {
           ClickFeedbackService.emptyClickLayer(MapService);
-          if (circleAlongLine) {
-            ClickFeedbackService.removeCircle(MapService, circleAlongLine);
-            circleAlongLine = undefined;
-          }
-          State.selected.mouseOnLine = null;
+          lineCleanup('click');
         }
       };
 
@@ -78,6 +74,17 @@ angular.module('map')
       };
 
       var circleAlongLine;
+      var lineCleanup = function (origin) {
+        if (circleAlongLine) {
+          ClickFeedbackService.removeCircle(MapService, circleAlongLine);
+          circleAlongLine = undefined;
+        }
+        State.selected.mouseOnLine = null;
+        if (origin !== 'click') {
+          MapService.line.geometry.coordinates = [];
+        }
+      }
+
       /**
        * @function
        * @memberOf app.map
@@ -120,9 +127,8 @@ angular.module('map')
               circleAlongLine = ClickFeedbackService.drawCircle(MapService, point, true, 15);
             }
           }
-        } else if (circleAlongLine) {
-          ClickFeedbackService.removeCircle(MapService, circleAlongLine);
-          circleAlongLine = undefined;
+        } else {
+          lineCleanup();
         }
       };
 
@@ -151,7 +157,7 @@ angular.module('map')
           onClick: _clicked,
           onMoveStart: _moveStarted,
           onMoveEnd: _moveEnded,
-          onMouseMove: _mouseMove
+          onMouseMove: _mouseMove,
         }
       );
 
@@ -219,6 +225,11 @@ angular.module('map')
 
       scope.$watch(State.toString('box.type'), function (n, o) {
         if (n === o) { return true; }
+
+        if (n !== 'line' && o === 'line') {
+          lineCleanup();
+        }
+
         var selector;
         switch (n) {
         case "point":
