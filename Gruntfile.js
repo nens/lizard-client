@@ -429,6 +429,11 @@ module.exports = function (grunt) {
           dest: '<%= yeoman.dist %>'
         }, {
           expand: true,
+          cwd: 'vendor/bootstrap',
+          src: 'fonts/*',
+          dest: '<%= yeoman.dist %>'
+        }, {
+          expand: true,
           cwd: 'vendor/lizard-iconfont/lizard/dest',
           src: 'fonts/*',
           dest: '<%= yeoman.dist %>'

@@ -6,6 +6,17 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 - Fix bolletje yet again. Both on the map and in the graph.
   (nens/lizard-nxt#1616 and nens/lizard-nxt#1615)
 
+- Fix no graph for points in temporal raster.
+
+- Fix no translations in header.
+- Fix bootstrap chevron that's missing in dist folder (glyphicon font)
+- Fix annotations layer not updating.
+
+- Add choice of organisation when adding an annotation.
+
+- Remove the 'user' from the master controller and inject it only in the
+  components that use it.
+
 
 Release 2.11.1 (2016-3-25)
 ---------------------
@@ -22,7 +33,7 @@ Release 2.11.1 (2016-3-25)
 - Enable cross sections to be drawn with only elevation data.
   Update with points.
 
-- Fix Use data.lenght for bar width when not aggregted events (rain etc).
+- Fix Use data.length for bar width when not aggregted events (rain etc).
 
 
 Release 2.10.4 (2016-3-22)

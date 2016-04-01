@@ -104,6 +104,10 @@ angular.module('lizard-nxt')
                 && (temporal.end === undefined || eventEndBeforeTLEnd)
               )
               { result = true; }
+      else if (feature.hasOwnProperty("timestamp")) {
+        result = feature.timestamp >= temporal.start
+                 && feature.timestamp <= temporal.end;
+      }
       else {
         result = false;
       }
@@ -225,16 +229,7 @@ angular.module('lizard-nxt')
         })
         .then(function (response) {
           vectorLayers[layerSlug].isLoading = false;
-          var annotations;
-
-          // Legacy, annotations come from api/annotations, which differs
-          // from /events because it serves all events which belong to a
-          // annotation eventseries, but it also comes in a legacy format for
-          // portal.ddsc.nl. So we use the endpoint en convert the format here.
-          if (layer.slug === 'annotations') {
-            annotations = parseAnnotation(response.data.results);
-          }
-          var data = annotations || response.data.results;
+          var data = response.data.results;
           var geoData = data.filter(
             function (item) { return item.geometry !== null; }
           );
@@ -252,29 +247,6 @@ angular.module('lizard-nxt')
         ));
       });
 
-    };
-
-    /**
-     * Parses annotations to lizard events
-     * @param  {object} data annotation api results
-     * @return {array}  lizard events.
-     */
-    var parseAnnotation = function (data) {
-      var result = [];
-      data.forEach(function (anno) {
-        if (anno.location) {
-          // Make annotations like events and like annotations, to have the best
-          // of both worlds.
-          anno.value = anno.text;
-          result.push({
-            id: anno.id,
-            type: 'Feature',
-            geometry: anno.location,
-            properties: anno
-          });
-        }
-      });
-      return result;
     };
 
     /**

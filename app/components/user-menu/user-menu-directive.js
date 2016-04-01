@@ -3,11 +3,12 @@
  * Shows user-menu and has logout login buttons
  */
 angular.module('user-menu')
-  .directive('userMenu', ['UtilService', '$location',
-              function (UtilService, $location) {
+  .directive('userMenu', ['UtilService', '$location', 'user',
+              function (UtilService, $location, user) {
 
     var link = function (scope, element, attrs) {
 
+      scope.user = user;
       scope.showApps = false;
 
       /**

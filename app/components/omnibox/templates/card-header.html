@@ -11,8 +11,8 @@
         </i>
       </span>
 
-      <span class="asset-title" translate>
-        <% asset.entity_name | objectTitle %>
+      <span class="asset-title">
+        <% asset.entity_name | objectTitle | translate %>
       </span>
 
       <br>
@@ -24,7 +24,7 @@
   <div ng-if="geom" class="card-header-center">
     <close-card geometry="geom"></close-card>
 
-    <span ng-if="geom.geometry.type === 'Point'" class="asset-title" translate>
+    <span ng-if="geom.geometry.type === 'Point'" class="asset-title">
       <% geom.geometry.coordinates[1] | number : 2 %>, <% geom.geometry.coordinates[0] | number : 2 %>
     </span>
     <span ng-if="geom.geometry.type === 'LineString'">
