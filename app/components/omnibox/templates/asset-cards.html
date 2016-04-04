@@ -10,7 +10,8 @@
       time-state="timeState">
     </timeseries>
 
-    <annotations data="asset" time-state="timeState"></annotations>
+    <annotations ng-if="user.authenticated" data="asset" time-state="timeState">
+    </annotations>
 
   <div ng-if="longFormat && (asset.filters
     || asset.pumps)">
@@ -35,4 +36,3 @@
   </geometry-cards>
 
 </div>
-
