@@ -303,7 +303,7 @@ angular.module('annotations')
        *                              GET.
        */
       var getOrganisationsError = function(httpResponse) {
-        note.alert(3,
+        notie.alert(3,
             gettextCatalog.getString(
               "Oops! Something went wrong while fetching your organisations.")
         )
