@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix the collosal bug that nothing works without the water layer.
 
 
 Release 3.0.2 (2016-4-1)

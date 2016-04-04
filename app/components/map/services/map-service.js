@@ -235,7 +235,10 @@ angular.module('map')
        * @return {[type]}        [description]
        */
       spatialSelect: function (latLng) {
-        var utfSlug = DataService.utfLayerGroup.slug;
+        var utfSlug;
+        if (DataService.utfLayerGroup){
+          utfSlug = DataService.utfLayerGroup.slug;
+        }
         if (State.box.type === 'point') {
           if (State.layerGroups.active.indexOf(utfSlug) !== -1) {
             this._setAssetOrGeomFromUtfOnState(latLng);
