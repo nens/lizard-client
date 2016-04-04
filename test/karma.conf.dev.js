@@ -28,6 +28,7 @@ module.exports = function(config) {
       'vendor/bootstrap/dist/js/bootstrap.js',
       'vendor/d3/d3.js',
       'vendor/d3-comparator/d3-comparator.js',
+      'vendor/dragula/dist/dragula.js',
       'vendor/leaflet/dist/leaflet-src.js',
       'vendor/leaflet.markercluster/dist/leaflet.markercluster.js',
       'vendor/lodash/lodash.js',
@@ -36,7 +37,6 @@ module.exports = function(config) {
       'vendor/ng-csv/build/ng-csv.min.js',
       'vendor/notie/notie.js',
       'vendor/raven-js/dist/raven.js',
-      'vendor/dragula/dist/dragula.js',
       // endbower
 
       'vendor/moment/locale/nl.js',
