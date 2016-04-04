@@ -15,7 +15,7 @@
   </rain>
 
   <annotations
-    ng-if="header && geom.geometry.type === 'Point'"
+    ng-if="header && geom.geometry.type === 'Point' && $parent.user.authenticated"
     data="geom"
     time-state="timeState">
   </annotations>
