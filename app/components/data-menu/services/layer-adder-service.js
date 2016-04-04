@@ -12,17 +12,8 @@ angular.module('data-menu')
       var layerGroups = $resource('/api/v2/layergroups/:slug/', {}, {
         'query': {
           method:'GET',
-          isArray:true,
-          transformResponse:
-            function (data, headers) {
-              var angularData = angular.fromJson(data);
-              if ('results' in angularData) {
-                return angularData.results;
-              } else {
-                return angularData;
-              }
-            }
-         }
+          isArray:false
+        }
       });
 
       /**
