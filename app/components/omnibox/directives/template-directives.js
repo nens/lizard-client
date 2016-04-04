@@ -11,10 +11,12 @@
  */
 
 angular.module('omnibox')
-  .directive('assetCards', ['ClickFeedbackService', 'MapService',
-    function (ClickFeedbackService, MapService) {
+  .directive('assetCards', ['ClickFeedbackService', 'MapService', 'user',
+    function (ClickFeedbackService, MapService, user) {
   return {
     link: function (scope, element) {
+
+      scope.user = user;
 
       var asset = scope.asset;
 
@@ -53,10 +55,12 @@ angular.module('omnibox')
 
 
 angular.module('omnibox')
-  .directive('geometryCards', ['MapService', 'ClickFeedbackService', 'CSVService',
-    function (MapService, ClickFeedbackService, CSVService) {
+  .directive('geometryCards', ['MapService', 'ClickFeedbackService', 'CSVService', 'user',
+    function (MapService, ClickFeedbackService, CSVService, user) {
   return {
     link: function (scope, element) {
+
+      scope.user = user;
 
       scope.showNoData = false;
 

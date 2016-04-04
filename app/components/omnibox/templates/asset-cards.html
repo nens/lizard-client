@@ -10,7 +10,7 @@
       time-state="timeState">
     </timeseries>
 
-    <annotations ng-if="$parent.user.authenticated" data="asset" time-state="timeState">
+    <annotations ng-if="user.authenticated" data="asset" time-state="timeState">
     </annotations>
 
   <div ng-if="longFormat && (asset.filters
