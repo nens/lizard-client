@@ -1,2 +1,0 @@
-angular.module('image-carousel', [
-]);
