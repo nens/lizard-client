@@ -3,7 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Improve adding layer groups by moving filtering to the backend and adding
+  pagination.
+  
+- Fix plus icon alignment on 'Add data...' data menu item.
 
 
 Release 3.0.3 (2016-4-4)
