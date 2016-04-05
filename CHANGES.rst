@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 3.0.4 (2016-4-5)
+---------------------
 
 - Improve adding layer groups by moving filtering to the backend and adding
   pagination.
