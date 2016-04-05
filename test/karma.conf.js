@@ -26,6 +26,7 @@ module.exports = function(config) {
       'vendor/angular-mocks/angular-mocks.js',
       'vendor/angular-resource/angular-resource.js',
       'vendor/bootstrap/dist/js/bootstrap.js',
+      'vendor/angular-bootstrap/ui-bootstrap-tpls.js',
       'vendor/d3/d3.js',
       'vendor/d3-comparator/d3-comparator.js',
       'vendor/leaflet/dist/leaflet-src.js',

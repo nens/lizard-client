@@ -44,7 +44,8 @@ angular.module("lizard-nxt", [
   'ngCsv',
   'gettext',
   'timeseries',
-  'lodash'
+  'lodash',
+  'ui.bootstrap'
 ])
 // Decorator for ngExceptionHandler to log exceptions to sentry
   .config(function ($provide) {

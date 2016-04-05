@@ -25,4 +25,13 @@
       </tr>
     </tbody>
   </table>
+  <uib-pagination total-items="availableLayerGroups.count"
+                  ng-model="layerGroupsCurrentPage"
+                  max-size="10"
+                  class="pagination-sm"
+                  boundary-link-numbers="true"
+                  rotate="false"
+                  previous-text="&laquo;"
+                  next-text="&raquo;">
+  </uib-pagination>
 </div>

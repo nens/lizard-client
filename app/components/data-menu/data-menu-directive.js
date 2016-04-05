@@ -159,6 +159,10 @@ angular.module('data-menu')
       scope.$watch('searchLayerGroups', function(newValue, oldValue) {
         fetchLayerGroups({'q': newValue});
       });
+
+      scope.$watch('layerGroupsCurrentPage', function (currentPage) {
+        fetchLayerGroups({'q': scope.searchLayerGroups, 'page': currentPage});
+      });
     };
 
     return {
