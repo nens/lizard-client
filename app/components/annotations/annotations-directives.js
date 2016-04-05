@@ -181,14 +181,14 @@ angular.module('annotations')
 
 /**
  * @module
- * @description Max size validation on file field.
+ * @description Max file size validation on file field.
  */
 angular.module('annotations')
-  .directive('maxSize', [function() {
+  .directive('maxFileSize', [function() {
 
     /**
-     * Validate a file on its size with the max-size attribute on file upload
-     * fields.
+     * Validate a file on its size with the max-file-size attribute on file
+     * upload fields.
      * @param {string} scope - The scope.
      * @param {array} element - The input field HTML element.
      * @param {dict} attrs - The attributes on the input field.
@@ -197,7 +197,8 @@ angular.module('annotations')
     var link = function(scope, element, attrs, ngModel) {
       scope.$watch(attrs.fileModel, function() {
         var file = element[0].files[0];
-        ngModel.$setValidity('maxsize', !(file && file.size > attrs.maxSize));
+        ngModel.$setValidity('maxFileSize',
+                             !(file && file.size > attrs.maxFileSize));
       });
     };
 
@@ -306,7 +307,7 @@ angular.module('annotations')
         notie.alert(3,
             gettextCatalog.getString(
               "Oops! Something went wrong while fetching your organisations.")
-        )
+        );
         throw new Error(
           httpResponse.status + " - " + "Could not get organisations.");
       };
@@ -321,7 +322,7 @@ angular.module('annotations')
         } else {
           scope.selectedOrganisation = user.organisations[0];
         }
-      }
+      };
       getUserOrganisations();
     };
 

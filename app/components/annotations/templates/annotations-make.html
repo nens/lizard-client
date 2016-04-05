@@ -58,11 +58,11 @@
                  name="attachment"
                  ng:model="fileupload"
                  file-model="attachment"
-                 max-size=10000000>
+                 max-file-size=10000000>
           <div ng-show="annotationform.attachment.$dirty && annotationform.attachment.$invalid">
             <small
               class="text-danger"
-              ng-show="annotationform.attachment.$error.maxsize"
+              ng-show="annotationform.attachment.$error.maxFileSize"
               translate>
               Annotation attachment size cannot be bigger than 10MB.
             </small>
