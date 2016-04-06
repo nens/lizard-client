@@ -3,7 +3,7 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+- Lizard iconfont used for asset cards
 
 
 Release 3.0.4 (2016-4-5)

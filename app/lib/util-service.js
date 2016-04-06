@@ -613,17 +613,18 @@ angular.module('lizard-nxt')
    * @description Get correct icon for structure
    */
   this.getIconClass = function (str) {
+    var base = 'lz lz-';
     switch (str) {
     case 'pumpstation':
-      return 'icon-pumpstation-diesel';
+      return base + 'pumpstation-electric';
     case 'bridge':
-      return 'icon-bridge';
+      return base +'bridge';
     case 'bridge-draw':
-      return 'icon-bridge';
+      return base + 'bridge-draw';
     case 'bridge-fixed':
-      return 'icon-bridge';
+      return base + 'bridge';
     default:
-      return 'icon-' + str;
+      return base + str;
     }
   };
 
