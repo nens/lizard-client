@@ -374,6 +374,14 @@ angular.module('omnibox')
   this.monitoringwell = {
     rows: [
       {
+        keyName: gettext("Distance along cross section"),
+        attrName: "distance_along_crosssection",
+        ngBindValue:
+          "waterchain.distance_along_crosssection | niceNumberOrEllipsis: 2",
+        valueSuffix: " (m)",
+        defaultValue: ""
+      },
+      {
         keyName: gettext("Well top level"),
         attrName: "well_top_level",
         ngBindValue: "waterchain.well_top_level",

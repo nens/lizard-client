@@ -8,6 +8,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Set initial start to -2 days and plus three hours.
 
+- Represent nested assets as nested asset cards in omnibox.
+
 
 Release 3.0.4 (2016-4-5)
 ---------------------
