@@ -224,10 +224,10 @@ angular.module('omnibox')
 
         var name = Object.keys(child)[0];
         var value = child[name];
-        scope.attr = name.slice(0, -1); // entity_name is singular, property
-                                        // name is plural. Use slice to remove
-                                        // last 's'. Do not worry, I am an
-                                        // engineer.
+
+        // entity_name is singular, property name is plural. Use slice to remove
+        // last 's'. Do not worry, I am an engineer.
+        scope.attr = name.slice(0,-1).replace('_', '');
 
         if (typeof(value) === 'string') {
           scope.list = JSON.parse(value);
