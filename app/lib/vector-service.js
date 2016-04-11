@@ -225,7 +225,7 @@ angular.module('lizard-nxt')
         vectorLayers[layerSlug].promise = $http({
           url: layer.url,
           method: 'GET',
-          params: { page_size: 1000 }
+          params: { page_size: 5000 }
         })
         .then(function (response) {
           vectorLayers[layerSlug].isLoading = false;
