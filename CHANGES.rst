@@ -4,7 +4,10 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Set image-rendering to pixelated and crisp-edges for pixelart-like rain.
+
 - Set page_size for events requests to 5000.
+
 - Round start & end timestamps on timeseries export URL.
 
 
