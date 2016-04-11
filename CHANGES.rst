@@ -5,7 +5,10 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 - Fix data menu height
 
+- Set image-rendering to pixelated and crisp-edges for pixelart-like rain.
+
 - Set page_size for events requests to 5000.
+
 - Round start & end timestamps on timeseries export URL.
 
 - Set initial start to -2 days and plus three hours.
