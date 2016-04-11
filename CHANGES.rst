@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 3.0.5 (2016-4-11)
+---------------------
 - Fix data menu height
 
 - Set image-rendering to pixelated and crisp-edges for pixelart-like rain.
