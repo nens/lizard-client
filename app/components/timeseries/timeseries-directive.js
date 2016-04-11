@@ -51,9 +51,10 @@ angular.module('timeseries')
 
       var selectTimeseries = function () {
         var selectedTimeseries = scope.timeseries.selected.uuid;
-        scope.timeseries.selected.url = window.location.protocol + '//' + window.location.host
-            + '/api/v2/timeseries/' + selectedTimeseries + '/' + 'data/?format=csv&start='
-            + scope.timeState.start + '&end=' + scope.timeState.end ;
+        scope.timeseries.selected.url = window.location.protocol + '//'
+            + window.location.host + '/api/v2/timeseries/' + selectedTimeseries
+            + '/data/?format=csv&start=' + Math.round(scope.timeState.start)
+            + '&end=' + Math.round(scope.timeState.end);
 
         State.selected.timeseries.forEach(function (ts) {
           ts.active = ts.uuid === selectedTimeseries;
