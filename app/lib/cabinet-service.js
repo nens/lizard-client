@@ -21,7 +21,6 @@ angular.module('lizard-nxt')
   }
 
   timeseriesResource = new Resource.Endpoint('api/v2/timeseries/');
-  events = new Resource.Endpoint('api/v2/events/?page_size=25000');
   regions = new Resource.Endpoint('api/v2/regions/?page_size=500');
 
   // Wms getFeatureInfo goes through a proxy. Specify url as a param.

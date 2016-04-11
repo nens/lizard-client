@@ -8,11 +8,15 @@ angular.module('timeseries')
   return {
     link: function (scope) {
 
-      TimeseriesService.initializeTimeseriesOfAsset(scope.asset);
+      scope.$watch('asset', function () {
+        TimeseriesService.initializeTimeseriesOfAsset(scope.asset);
 
-      if (State.context === 'map') {
-        scope.timeseries.change();
-      }
+        if (State.context === 'map') {
+          scope.timeseries.change();
+        }
+
+      });
+
 
       scope.$on('$destroy', function () {
 
@@ -30,7 +34,8 @@ angular.module('timeseries')
                     // multi select as an attribute or without in which
                     // case it only sets the color and order of timeseries of
                     // new assets.
-    };
+    scope: true // Share scope with select directive
+  };
 }]);
 
 /**
@@ -42,6 +47,8 @@ angular.module('timeseries')
   function($compileProvider) {
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|http):/);
   }])
+
+
 .directive('timeseriesSingleSelect', ['State', 'TimeseriesService',
   function (State, TimeseriesService) {
   return {
@@ -51,9 +58,11 @@ angular.module('timeseries')
 
       var selectTimeseries = function () {
         var selectedTimeseries = scope.timeseries.selected.uuid;
-        scope.timeseries.selected.url = window.location.protocol + '//' + window.location.host
-            + '/api/v2/timeseries/' + selectedTimeseries + '/' + 'data/?format=csv&start='
-            + scope.timeState.start + '&end=' + scope.timeState.end ;
+
+        scope.timeseries.selected.url = window.location.protocol + '//'
+            + window.location.host + '/api/v2/timeseries/' + selectedTimeseries
+            + '/data/?format=csv&start=' + Math.round(scope.timeState.start)
+            + '&end=' + Math.round(scope.timeState.end);
 
         State.selected.timeseries.forEach(function (ts) {
           ts.active = ts.uuid === selectedTimeseries;
@@ -72,17 +81,23 @@ angular.module('timeseries')
         }
       };
 
-      var activeTs = _.find(State.selected.timeseries, {active: true});
-      if (activeTs) {
-        scope.timeseries.selected = _.find(
-          scope.asset.timeseries,
-          function (ts) { return ts.uuid === activeTs.uuid;}
-        );
-      }
-      else {
-        scope.timeseries.selected = scope.asset.timeseries[0];
-      }
-      scope.timeseries.change();
+
+      scope.$watch('asset', function () {
+
+        var activeTs = _.find(State.selected.timeseries, {active: true});
+        if (activeTs) {
+          scope.timeseries.selected = _.find(
+            scope.asset.timeseries,
+            function (ts) { return ts.uuid === activeTs.uuid;}
+          );
+        }
+        else {
+          scope.timeseries.selected = scope.asset.timeseries[0];
+        }
+
+        scope.timeseries.change();
+
+      });
 
       /**
        * Get new ts when time changes
@@ -95,6 +110,7 @@ angular.module('timeseries')
 
     },
     restrict: 'A',
-    templateUrl: 'timeseries/timeseries.html'
+    templateUrl: 'timeseries/timeseries.html',
+    scope: true // Share scope with timeseries directive
   };
 }]);

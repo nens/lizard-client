@@ -18,26 +18,40 @@ angular.module('omnibox')
 
       scope.user = user;
 
-      var asset = scope.asset;
+      var clickId;
 
-      var feature = {
-        type: 'Feature',
-        geometry: asset.geometry,
-        properties: {
-          entity_name: asset.entity_name,
-          type: asset.type || ''
-        }
+      var removeAsset = function (id) {
+        ClickFeedbackService.removeClickFromClickLayer(id);
       };
 
-      var clickId = ClickFeedbackService.drawGeometry(
-        MapService,
-        feature
-      );
+      var setAsset = function (asset) {
 
-      ClickFeedbackService.vibrateOnce(feature, clickId);
+        if (clickId) {
+          removeAsset(clickId);
+        }
+
+        var feature = {
+          type: 'Feature',
+          geometry: asset.geometry,
+          properties: {
+            entity_name: asset.entity_name,
+            type: asset.type || ''
+          }
+        };
+
+        clickId = ClickFeedbackService.drawGeometry(
+          MapService,
+          feature
+        );
+
+        ClickFeedbackService.vibrateOnce(feature, clickId);
+
+      };
+
+      scope.$watch('asset', setAsset);
 
       element.on('$destroy', function () {
-        ClickFeedbackService.removeClickFromClickLayer(clickId);
+        removeAsset(clickId);
       });
 
 
@@ -46,7 +60,10 @@ angular.module('omnibox')
     scope: {
       asset: '=',
       timeState: '=',
-      longFormat: '='
+      longFormat: '=',
+      showHeader: '=',
+      showTimeseries: '=',
+      showAnnotations: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/asset-cards.html'
@@ -131,10 +148,13 @@ angular.module('omnibox')
   .directive('cardattributes', ['WantedAttributes',
     function (WantedAttributes) {
   return {
-    link: function (scope) { scope.wanted = WantedAttributes; },
+    link: function (scope) {
+
+      scope.wanted = WantedAttributes; },
     restrict: 'E',
     scope: {
-      waterchain: '='
+      waterchain: '=',
+      showHeader: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/cardattributes.html'
@@ -177,23 +197,42 @@ angular.module('omnibox')
 
 
 angular.module('omnibox')
-  .directive('nestedasset', ['WantedAttributes', 'DataService',
-    function (WantedAttributes, DataService) {
+  .directive('nestedasset', ['WantedAttributes', 'DataService', 'State',
+    function (WantedAttributes, DataService, State) {
   return {
     link: function (scope) {
 
       scope.wanted = WantedAttributes;
+      scope.longFormat = false;
+
+      var NESTED_ASSETS = ['pumps', 'filters', 'monitoring_wells'];
 
       /**
        * Watch asset unpack json string, add entity name and select first child
        * asset.
        */
       scope.$watch('asset', function () {
-        scope.attr = scope.asset.pumps ? 'pump' : 'filter';
-        if (typeof(scope.asset[scope.attr + 's']) === 'string') {
-          scope.list = JSON.parse(scope.asset[scope.attr + 's']);
-        } else if (typeof(scope.asset[scope.attr + 's']) === 'object') {
-          scope.list = scope.asset[scope.attr + 's'];
+
+        var child = _.pickBy(scope.asset, function (value, key) {
+          return NESTED_ASSETS.indexOf(key) !== -1;
+        });
+
+        if (_.isEmpty(child)) {
+          scope.list = [];
+          return;
+        }
+
+        var name = Object.keys(child)[0];
+        var value = child[name];
+
+        // entity_name is singular, property name is plural. Use slice to remove
+        // last 's'. Do not worry, I am an engineer.
+        scope.attr = name.slice(0,-1).replace('_', '');
+
+        if (typeof(value) === 'string') {
+          scope.list = JSON.parse(value);
+        } else if (typeof(value) === 'object') {
+          scope.list = value;
         } else {
           scope.list = [];
         }
@@ -203,10 +242,36 @@ angular.module('omnibox')
         scope.asset.selectedAsset = scope.list[0];
       });
 
+
+      var removeTSofAsset = function (asset) {
+        State.selected.timeseries = _.differenceBy(
+          State.selected.timeseries,
+          asset.timeseries,
+          'uuid'
+        );
+      };
+
+      scope.selectedAssetChanged = function (newAsset) {
+        scope.list.forEach(function (asset) {
+          if (asset.entity_name === newAsset.entity_name
+            && asset.id === newAsset.id) {
+            return;
+          }
+          else {
+            removeTSofAsset(asset);
+          }
+        });
+      };
+
+      scope.$on('$destroy', function () {
+        scope.list.forEach(function (asset) { removeTSofAsset(asset); });
+      });
+
     },
     restrict: 'E',
     scope: {
       asset: '=',
+      timeState: '=',
     },
     replace: true,
     templateUrl: 'omnibox/templates/nestedasset.html'

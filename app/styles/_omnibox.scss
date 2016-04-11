@@ -52,6 +52,12 @@
     clip: rect(0px,400px,1000px,0px);
 }
 
+.card-attributes {
+  margin-top: -8px;
+  padding-top: 8px;
+  padding-bottom: 1px;
+}
+
 .card table i[class*='icon-'] {
     position: relative;
     top: -1px;
