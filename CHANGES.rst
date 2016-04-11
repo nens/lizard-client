@@ -7,13 +7,17 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 - Set page_size for events requests to 5000.
 - Round start & end timestamps on timeseries export URL.
 
+- Set initial start to -2 days and plus three hours.
+
+- Represent nested assets as nested asset cards in omnibox.
+
 
 Release 3.0.4 (2016-4-5)
 ---------------------
 
 - Improve adding layer groups by moving filtering to the backend and adding
   pagination.
-  
+
 - Fix plus icon alignment on 'Add data...' data menu item.
 
 
