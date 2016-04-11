@@ -3,6 +3,7 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+- Fix data menu height
 
 - Set page_size for events requests to 5000.
 - Round start & end timestamps on timeseries export URL.
