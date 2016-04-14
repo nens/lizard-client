@@ -6,6 +6,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Fix show a line graph for temporal rasters.
 
+- Fix restore active and inactive layergroups.
+
 
 Release 3.0.5 (2016-4-11)
 ---------------------
