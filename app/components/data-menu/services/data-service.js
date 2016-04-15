@@ -584,6 +584,9 @@ angular.module('data-menu')
               // async so remove anything obsolete.
               geo.properties = geo.properties || {};
               geo.properties[response.layerGroupSlug] = geo.properties[response.layerGroupSlug] || {};
+              // Replace data and merge everything with existing state of
+              // property.
+              geo.properties[response.layerGroupSlug].data = [];
               _.merge(geo.properties[response.layerGroupSlug], response);
               if (!instance.layerGroups[response.layerGroupSlug].isActive()
                 && layerGroup.slug in Object.keys(geo.properties)) {
