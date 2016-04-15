@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix ng-repeat error: track annotations by id.
 
 
 Release 3.0.6 (2016-4-14)
