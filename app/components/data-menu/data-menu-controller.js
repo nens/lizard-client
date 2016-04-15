@@ -37,9 +37,11 @@ angular.module('data-menu')
 
       // zoom to temporal bounds
       if (temporalBounds.start !== temporalBounds.end) {
-        State.temporal.start = temporalBounds.start;
-        State.temporal.end = temporalBounds.end;
-        State.temporal.at = temporalBounds.start + UtilService.day;
+        // Use 10% padding around bounds to include everything on timeline.
+        var padding = (temporalBounds.end - temporalBounds.start) / 10;
+        State.temporal.start = temporalBounds.start - padding;
+        State.temporal.end = temporalBounds.end + padding;
+        State.temporal.at = temporalBounds.start;
         UtilService.announceMovedTimeline(State);
       }
     };

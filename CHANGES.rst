@@ -5,6 +5,7 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
 - Fixed missing events on zoom to bounds.
+
 - Fixed translate 'export' in timeseries template.
 
 
