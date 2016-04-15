@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 3.0.8 (2016-4-15)
+---------------------
 
 - Fixed missing events on zoom to bounds.
 
