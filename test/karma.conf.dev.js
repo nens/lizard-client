@@ -38,6 +38,7 @@ module.exports = function(config) {
       'vendor/notie/notie.js',
       'vendor/raven-js/dist/raven.js',
       'vendor/dragula/dist/dragula.js',
+      'vendor/angular-loading-bar/build/loading-bar.js',
       // endbower
 
       'vendor/moment/locale/nl.js',
