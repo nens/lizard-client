@@ -12,6 +12,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Include loading bar indicator for all requests passing $http.
 
+- Update Notie location.
+
 
 Release 3.0.6 (2016-4-14)
 ---------------------
