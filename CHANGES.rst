@@ -11,6 +11,8 @@ Release 3.0.6 (2016-4-14)
 
 - Fix show a line graph for temporal rasters.
 
+- Include loading bar indicator for all requests passing $http.
+
 
 Release 3.0.5 (2016-4-11)
 ---------------------
