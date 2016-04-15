@@ -19,6 +19,8 @@ Release 3.0.7 (2016-4-15)
 
 - Update Notie location.
 
+- Fixed translate 'export' in timeseries template.
+
 
 Release 3.0.6 (2016-4-14)
 ---------------------
