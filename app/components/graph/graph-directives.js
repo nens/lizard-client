@@ -201,7 +201,9 @@ angular.module('lizard-nxt')
      * to a scope.content object with a single graph object.
      */
     this.setFormattedContent = function (scope) {
+      this.temporal = scope.temporal;
       this.content = [{
+        id: 1, // Give an arbitrary id to identify chart in multi line.
         data: scope.data,
         unit: scope.ylabel,
         xLabel: scope.xlabel,
@@ -210,6 +212,7 @@ angular.module('lizard-nxt')
           y: (scope.keys && scope.keys.y) || 1
         }
       }];
+
     };
 
     if ($scope.content) {

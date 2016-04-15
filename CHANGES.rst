@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Fix show a line graph for temporal rasters some more, replace data in ds.
+
 - Fix ng-repeat error: track annotations by id.
 
 - Fix restore active and inactive layergroups.
