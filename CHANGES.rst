@@ -7,6 +7,7 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 - Fixed missing events on zoom to bounds.
 
 - Fix restoring active and inactive layers again.
+
 - Fixed translate 'export' in timeseries template.
 
 
