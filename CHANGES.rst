@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fixed translate 'export' in timeseries template.
 
 
 Release 3.0.7 (2016-4-15)
@@ -18,8 +19,6 @@ Release 3.0.7 (2016-4-15)
 - Include loading bar indicator for all requests passing $http.
 
 - Update Notie location.
-
-- Fixed translate 'export' in timeseries template.
 
 
 Release 3.0.6 (2016-4-14)
