@@ -39,7 +39,7 @@ angular.module('data-menu')
       if (temporalBounds.start !== temporalBounds.end) {
         State.temporal.start = temporalBounds.start;
         State.temporal.end = temporalBounds.end;
-        State.temporal.at = temporalBounds.start;
+        State.temporal.at = temporalBounds.start + UtilService.day;
         UtilService.announceMovedTimeline(State);
       }
     };
