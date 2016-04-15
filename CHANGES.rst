@@ -5,6 +5,7 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
 - Fix restoring active and inactive layers again.
+- Fixed translate 'export' in timeseries template.
 
 
 Release 3.0.7 (2016-4-15)
