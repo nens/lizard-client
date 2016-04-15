@@ -5,6 +5,22 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 -
 
+- Fix show a line graph for temporal rasters some more, replace data in ds.
+
+- Fix ng-repeat error: track annotations by id.
+
+- Fix restore active and inactive layergroups.
+
+- Include loading bar indicator for all requests passing $http.
+
+- Update Notie location.
+
+
+Release 3.0.6 (2016-4-14)
+---------------------
+
+- Fix show a line graph for temporal rasters.
+
 
 Release 3.0.5 (2016-4-11)
 ---------------------

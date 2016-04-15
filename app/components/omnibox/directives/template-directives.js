@@ -348,7 +348,7 @@ angular.module('omnibox')
     restrict: 'E',
     scope: {
       content: '=',
-      state: '=',
+      timeState: '=',
     },
     replace: true,
     templateUrl: 'omnibox/templates/defaultpoint.html'

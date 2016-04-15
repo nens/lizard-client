@@ -141,7 +141,13 @@ angular.module('dashboard')
             xLabel: 'm'
           };
 
-          type = slug === 'rain' ? 'rain' : 'distance';
+          if (slug === 'rain') {
+            type = 'rain'
+          } else if (property.temporal) {
+            type = 'temporalLine';
+          } else {
+            type = 'distance';
+          }
         }
         else if (property.format === 'Vector') {
           item = {

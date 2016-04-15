@@ -1,6 +1,6 @@
 {
   "name": "lizard-client",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "homepage": "https://lizard.net",
   "authors": [],
   "description": "Client for Lizard-NxT",
@@ -39,7 +39,8 @@
     "ng-csv": "~0.3.6",
     "notie": "*",
     "raven-js": "~1.1.16",
-    "dragula": "~3.6.6"
+    "dragula": "~3.6.6",
+    "angular-loading-bar": "~0.9.0"
   },
   "overrides": {
     "leaflet.markercluster": {

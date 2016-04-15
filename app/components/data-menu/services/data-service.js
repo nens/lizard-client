@@ -227,13 +227,6 @@ angular.module('data-menu')
         setGeometries(newGeometries);
       };
 
-      var addLayerFromURL = function (layerGroup) {
-        // Create the layergroup.
-        var newLayerGroup = instance.createLayerGroup(layerGroup);
-        // Turn the layergroup on.
-        instance.toggleLayerGroup(newLayerGroup);
-      };
-
       instance.geometries = [];
       var _geometries = [];
       Object.defineProperty(State.selected, 'geometries', {
@@ -252,27 +245,23 @@ angular.module('data-menu')
         set: function (newLayerGroups) {
 
           // Remove layergroups not in newLayergroups
-          instance.layerGroups = _.pickBy(instance.layerGroups, function (lg) {
-            return newLayerGroups.indexOf(lg.slug) !== -1;
+          instance.layerGroups = _.forEach(instance.layerGroups, function (lg) {
+            if (newLayerGroups.indexOf(lg.slug) === -1) {
+              instance.removeLayerGroup(lg);
+            }
           });
 
           // Request new layegroups from server.
           var nonExistent = _.difference(
-            newLayerGroups, Object.keys(layerGroups));
+            newLayerGroups,
+            Object.keys(instance.layerGroups)
+          );
 
-          var addLayer = function (layergroup) {
-            instance.createLayerGroup(layergroup);
-          };
+          LayerAdderService.getNonExistentLayerGroups(
+            nonExistent,
+            instance
+          );
 
-          nonExistent.forEach(function (newLg) {
-            // if the layegroup is on the url, at least show the courtesy
-            // to pretend you care by looking it up in the datta-bash
-            LayerAdderService.fetchLayerGroup(
-              newLg, addLayer, function (e) {
-                // this is the error callback, which fails silently.
-                console.log('Can\'t find what you\'re looking for: ', e);
-            });
-          });
         }
       });
 
@@ -301,17 +290,17 @@ angular.module('data-menu')
               this.toggleLayerGroup(_lg);
             }
           }, instance);
+
           var nonExistent = _.difference(
-            newActivelayerGroups, Object.keys(layerGroups));
-          nonExistent.forEach(function (newLg) {
-            // if the layegroup is on the url, at least show the courtesy
-            // to pretend you care by looking it up in the datta-bash
-            LayerAdderService.fetchLayerGroup(
-              newLg, addLayerFromURL, function (e) {
-                // this is the error callback, which fails silently.
-                console.log('Can\'t find what you\'re looking for: ', e);
-            });
-          });
+            newActivelayerGroups,
+            Object.keys(instance.layerGroups)
+          );
+
+          LayerAdderService.getNonExistentActiveLayerGroups(
+            nonExistent,
+            instance
+          );
+
         }
       });
 
@@ -595,6 +584,9 @@ angular.module('data-menu')
               // async so remove anything obsolete.
               geo.properties = geo.properties || {};
               geo.properties[response.layerGroupSlug] = geo.properties[response.layerGroupSlug] || {};
+              // Replace data and merge everything with existing state of
+              // property.
+              geo.properties[response.layerGroupSlug].data = [];
               _.merge(geo.properties[response.layerGroupSlug], response);
               if (!instance.layerGroups[response.layerGroupSlug].isActive()
                 && layerGroup.slug in Object.keys(geo.properties)) {

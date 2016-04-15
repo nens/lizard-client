@@ -35,9 +35,10 @@ module.exports = function(config) {
       'vendor/moment/moment.js',
       'vendor/angular-sanitize/angular-sanitize.js',
       'vendor/ng-csv/build/ng-csv.min.js',
-      'vendor/notie/notie.js',
+      'vendor/notie/dist/notie.js',
       'vendor/raven-js/dist/raven.js',
       'vendor/dragula/dist/dragula.js',
+      'vendor/angular-loading-bar/build/loading-bar.js',
       // endbower
 
       'vendor/moment/locale/nl.js',
