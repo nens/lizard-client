@@ -4,6 +4,7 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Fix restoring active and inactive layers again.
 - Fixed translate 'export' in timeseries template.
 
 

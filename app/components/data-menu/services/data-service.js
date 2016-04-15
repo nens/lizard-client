@@ -245,11 +245,14 @@ angular.module('data-menu')
         set: function (newLayerGroups) {
 
           // Remove layergroups not in newLayergroups
-          instance.layerGroups = _.forEach(instance.layerGroups, function (lg) {
-            if (newLayerGroups.indexOf(lg.slug) === -1) {
-              instance.removeLayerGroup(lg);
+          _.forEach(
+            instance.layerGroups,
+            function (lg, slug) {
+              if (newLayerGroups.indexOf(slug) === -1) {
+                instance.removeLayerGroup(lg);
+              }
             }
-          });
+          );
 
           // Request new layegroups from server.
           var nonExistent = _.difference(

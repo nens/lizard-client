@@ -137,7 +137,7 @@ angular.module('favourites')
 
         // Use _.mergeWith to set the whole array to trigger functions of
         // properties.
-        var arrayStates = ['active', 'timeseries', 'assets', 'geometries'];
+        var arrayStates = ['all', 'active', 'timeseries', 'assets', 'geometries'];
         _.mergeWith(State, favourite.state, function (state, favstate, key, parent) {
           if (arrayStates.indexOf(key) !== -1) {
             state = favstate;
