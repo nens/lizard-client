@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix no-data in layer for selected point bugs.
 
 
 Release 3.0.8 (2016-4-15)
