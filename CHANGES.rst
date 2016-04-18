@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix line intersection through non temporal rasters again.
 
 
 Release 3.0.8 (2016-4-15)
