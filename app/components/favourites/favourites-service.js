@@ -112,18 +112,17 @@ angular.module('favourites')
        * to the new state if the interval should be relative
        */
       var adhereTemporalStateToInterval = function (favtime) {
+        // Physical now
         var now = Date.now();
+        // Difference between now and the now back when the fav was made.
+        var change = now - favtime.now;
 
-        var temporal = angular.copy(favtime); // otherwise all changes are applied to the
-                                        // retrieved temporal state.
-
-        temporal.start = now - (temporal.end - temporal.start);
-        temporal.at = now - (temporal.end - temporal.at);
-        if (temporal.end > temporal.now) {
-          temporal.end = now - (temporal.now - temporal.end);
-        } else if (temporal.end < temporal.now) {
-          temporal.end = now - (temporal.end - temporal.now);
-        }
+        favtime.start += change;
+        favtime.at  += change;
+        favtime.end += change;
+        favtime.now = null;
+        favtime.relative = false; // Set relative back to default.
+        return favtime;
       };
 
       /**
@@ -131,8 +130,11 @@ angular.module('favourites')
        * @param {object} favourite - The favourite to apply.
        */
       this.applyFavourite = function (favourite) {
+
         if (favourite.state.temporal.relative) {
-          adhereTemporalStateToInterval(favourite.state.temporal);
+          favourite.state.temporal = adhereTemporalStateToInterval(
+            favourite.state.temporal
+          );
         }
 
         // Use _.mergeWith to set the whole array to trigger functions of
