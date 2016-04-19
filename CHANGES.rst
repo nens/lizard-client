@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Fix relative time not restoring relative.
+
 - Fix line intersection through non temporal rasters again.
 
 - Fix no-data in layer for selected point bugs.
