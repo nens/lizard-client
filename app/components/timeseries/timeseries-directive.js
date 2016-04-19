@@ -74,11 +74,6 @@ angular.module('timeseries')
 
 
       var getContentForAsset = function (timeseries) {
-        console.log(timeseries.filter(function (ts) {
-          return _.some(scope.asset.timeseries, {uuid: ts.id});
-        }));
-
-
         scope.content = timeseries.filter(function (ts) {
           return _.some(scope.asset.timeseries, {uuid: ts.id});
         });
