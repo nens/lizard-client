@@ -33,8 +33,7 @@
     </em>
 
     <!-- use ng-show, so div is present and can be added to drag containers -->
-    <div ng-show="asset.entity_name !== 'leveecrosssection'"
-      id="drag-container">
+    <div id="drag-container">
       <div ng-repeat="ts in selected.timeseries"
            ng-if="getTsMetaData(ts.uuid)"
            data-uuid="<% ts.uuid %>"

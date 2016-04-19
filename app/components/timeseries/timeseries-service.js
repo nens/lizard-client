@@ -74,13 +74,16 @@ angular.module('timeseries')
 
       })
 
-      .then(function () {
+      .then(function (ts) {
 
         if (service.onTimeseriesChange) {
           service.onTimeseriesChange();
         }
+        // accomadate chaining;
+        return ts;
 
       });
+      return promise;
     };
 
     var localPromises = {};
