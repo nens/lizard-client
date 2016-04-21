@@ -197,8 +197,8 @@ angular.module('omnibox')
 
 
 angular.module('omnibox')
-  .directive('nestedasset', ['WantedAttributes', 'DataService', 'State',
-    function (WantedAttributes, DataService, State) {
+  .directive('nestedasset', ['WantedAttributes', 'DataService', 'State', 'getNestedAssets',
+    function (WantedAttributes, DataService, State, getNestedAssets) {
   return {
     link: function (scope) {
 
@@ -212,36 +212,9 @@ angular.module('omnibox')
        * asset.
        */
       scope.$watch('asset', function () {
-
-        var child = _.pickBy(scope.asset, function (value, key) {
-          return NESTED_ASSETS.indexOf(key) !== -1;
-        });
-
-        if (_.isEmpty(child)) {
-          scope.list = [];
-          return;
-        }
-
-        var name = Object.keys(child)[0];
-        var value = child[name];
-
-        // entity_name is singular, property name is plural. Use slice to remove
-        // last 's'. Do not worry, I am an engineer.
-        scope.attr = name.slice(0,-1).replace('_', '');
-
-        if (typeof(value) === 'string') {
-          scope.list = JSON.parse(value);
-        } else if (typeof(value) === 'object') {
-          scope.list = value;
-        } else {
-          scope.list = [];
-        }
-        angular.forEach(scope.list, function (asset) {
-          asset.entity_name = scope.attr;
-        });
+        scope.list = getNestedAssets(scope.asset);
         scope.asset.selectedAsset = scope.list[0];
       });
-
 
       var removeTSofAsset = function (asset) {
         State.selected.timeseries = _.differenceBy(
