@@ -288,7 +288,8 @@ angular.module('omnibox')
 
       scope.getRawDataUrl = function (event) {
         var coords = scope.rain.geometry.coordinates;
-        return window.location.origin + '/api/v2/rasters/' +
+        // hack to make it testable on staging :(
+        return 'https://demo.lizard.net/api/v2/rasters/' +
           RAW_RAIN_RASTER_UUID + '/data/' +
           '?format=csv' +
           '&start=' +
