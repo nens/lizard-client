@@ -252,15 +252,15 @@ angular.module('omnibox')
 }]);
 
 angular.module('omnibox')
-  .directive('rain', ['State', 'RasterService', 'UtilService', function (State, RasterService, UtilService) {
+  .directive('rain', ['State', 'RasterService', function (State, RasterService) {
   return {
     link: function (scope) {
-
-      scope.util = UtilService;
 
       scope.rrc = {
         active: false
       };
+
+      scope.rain.MAX_TIME_INTERVAL = 86400000 * 365.2425 / 12; // 1 month
 
       var setGraphContent = function () {
         scope.graphContent = [{
@@ -283,10 +283,27 @@ angular.module('omnibox')
         }
       });
 
+      // Gets data directly from raster endpoint of raster RAW_RAIN_RASTER_UUID
+      var RAW_RAIN_RASTER_UUID = '730d6675-35dd-4a35-aa9b-bfb8155f9ca7';
+
+      scope.getRawDataUrl = function (event) {
+        var coords = scope.rain.geometry.coordinates;
+        // hack to make it testable on staging :(
+        return 'https://demo.lizard.net/api/v2/rasters/' +
+          RAW_RAIN_RASTER_UUID + '/data/' +
+          '?format=csv' +
+          '&start=' +
+          new Date(State.temporal.start).toISOString().split('.')[0] +
+          '&stop=' +
+          new Date(State.temporal.end).toISOString().split('.')[0] +
+          '&geom=' + 'POINT(' + coords[0] + ' ' + coords[1] +')' +
+          '&srs=EPSG:4326';
+      };
+      // ENDHACK
+
       var getRecurrenceTime = function () {
         scope.rrc.data = null;
 
-        // TODO: refactor this shit
         RasterService.getData(
           'RainController',
           {slug: 'rain'},

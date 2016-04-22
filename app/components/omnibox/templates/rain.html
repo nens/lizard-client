@@ -2,38 +2,45 @@
 
   <div class="card active">
     <div class="card-content">
-     <full-details></full-details>
+      <full-details></full-details>
 
-     <span class="card-title-text" ng-class="{hidden: fullDetails}" translate>Rain</span>
-     <div ng-if="graphContent" ng-class="{ hidden: !fullDetails }">
-       <graph
+      <span class="card-title-text" ng-class="{hidden: fullDetails}" translate>Rain</span>
+      <div ng-if="graphContent" ng-class="{ hidden: !fullDetails }">
+        <graph
           bar-chart
           temporal="timeState"
           type="temporal"
           content="graphContent"
-          now="state.temporal.at">
+          now="timeState.at">
         </graph>
-       <div class="card-tools"
-        ng-class="{hidden: !fullDetails}">
-         <a ng-click="recurrenceTimeToggle()"
-            ng-class="{'active': rrc.active}" class="btn btn-default btn-xs"
-            title="<% 'Extra statistieken, herhalingstijden' | translate %>"
+
+        <div
+          class="card-tools"
+          ng-class="{hidden: !fullDetails}">
+
+          <a
+            ng-click="recurrenceTimeToggle()"
+            ng-class="{ active: rrc.active }"
+            class="btn btn-default btn-xs"
+            title="<% 'Rain recurrence statistics' | translate %>"
             translate>
-            Statistics
+            <span translate>Statistics</span>
           </a>
-         <a
-           class="btn btn-default btn-xs"
-           title="Data van deze infocard exporteren"
-           ng-csv="util.formatCSVColumns(rain.properties.rain.data, rain.geometry.coordinates)"
-           field-separator=";"
-           filename="neerslag.csv"
-           csv-header="['Latitude', 'Longitude', 'Datestamp', 'Timestamp', 'Rain (mm)']">
-           <i class="fa fa-share-square-o"></i>
-           <span translate>Export</span>
-         </a>
-       </div>
-     </div>
-   </div>
+
+          <a
+            target="_blank"
+            ng-href="<% getRawDataUrl() %>"
+            ng-class="timeState.end - timeState.start > rain.MAX_TIME_INTERVAL ? 'disabled' : ''"
+            class="btn btn-default btn-xs"
+            title="<% 'Export data' | translate %>">
+            <i class="fa fa-share-square-o"></i>
+            <span translate>Export</span>
+          </a>
+
+        </div>
+
+      </div>
+    </div>
   </div>
 
   <div class="card active ng-class: {hidden: !fullDetails}" ng-if="rrc.active">

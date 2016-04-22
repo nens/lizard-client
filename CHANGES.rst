@@ -4,6 +4,7 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Download rain data directly from 5minute raster endpoint.
 - Fix mixing timeseries of nested and parent assets.
 
 - Cancel consecutive calls for timeseries.
@@ -395,6 +396,7 @@ of a minimum amount of data points.
 - Add translations of codes in filters.
 
 - Add title to timeline toggle.
+
 
 
 Release 2.4.1 (2015-11-25)

@@ -9,7 +9,6 @@ angular.module('lizard-nxt')
       searchResource,
       timeseriesResource,
       locationsResource,
-      events,
       regions,
       wmsGetFeatureInfo;
 
@@ -92,7 +91,6 @@ angular.module('lizard-nxt')
   };
 
   return {
-    events: events,
     createTooltips: createTooltips,
     geocode: geocodeResource,
     raster: rasterResource,
