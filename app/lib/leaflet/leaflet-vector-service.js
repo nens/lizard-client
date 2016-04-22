@@ -8,8 +8,12 @@
  * Creates a Tiled Layer for retrieving and drawing vector data.
  */
 angular.module('lizard-nxt')
-  .service('LeafletVectorService', ["LeafletService", "VectorService", "UtilService",
-      function (LeafletService, VectorService, UtilService) {
+.service('LeafletVectorService', [
+  "LeafletService",
+  "VectorService",
+  "UtilService",
+  "State",
+  function (LeafletService, VectorService, UtilService, State) {
 
   var MarkerClusterLayer = LeafletService.MarkerClusterGroup.extend({
 
@@ -52,6 +56,12 @@ angular.module('lizard-nxt')
       var color = this.options.color,
           layer = this;
 
+      // TODO: when the vector service returns data we need to sync the time.
+      // But this is async and this function is called by leaflet's onAdd. So
+      // this, as in layer (this context), is unreferenced and timeState on
+      // this is lost. For now leaflet-vector-service depends on global state,
+      // but really this whole async business should go somewhere else, like
+      // map-service.
       VectorService.getData('leaflet', this.options.layer, {})
       .then(function (response) {
         layer.markers = [];
@@ -77,19 +87,29 @@ angular.module('lizard-nxt')
 
 
         response.forEach(function (f) {
+          var start;
+          var end;
+
+          if (f.properties.hasOwnProperty('timestamp')) {
+            start = end = f.properties.timestamp;
+          } else {
+            start = f.properties.timestamp_start;
+            end = f.properties.timestamp_end;
+          }
+
           marker = L.marker(
             [f.geometry.coordinates[1], f.geometry.coordinates[0]],
             {
               icon: icon,
-              timestamp_start: f.properties.timestamp_start,
-              timestamp_end: f.properties.timestamp_end,
+              timestamp_start: start,
+              timestamp_end: end,
               feature: f
             });
           layer.addMarker(marker);
           layer.markers.push(marker);
         });
 
-        layer.syncTime();
+        layer.syncTime(State.temporal);
       });
 
     },

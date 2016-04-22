@@ -20,10 +20,6 @@
   padding: 3px;
   @include material-shadow();
 
-  &:hover {
-    @include material-shadow-hover();
-  }
-
   &:first-child {
     /*
       We probably want to increase this to have it nicely under the navbar
@@ -33,5 +29,6 @@
   }
 }
 
-.dashboard-inner {
+.carousel-inner > .item > img {
+    margin: 0 auto;
 }

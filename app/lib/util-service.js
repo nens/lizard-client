@@ -8,6 +8,31 @@
 angular.module('lizard-nxt')
   .service("UtilService", ["NxtD3", "$timeout", function (NxtD3, $timeout) {
 
+
+  /**
+   * Returns the index of the value at key in arrayObject closest to value.
+   * When value is exactly in the middle, the first index is returned.
+   *
+   * @param  {array}        collection array of objects or array of arrays
+   *                                   to be searched.
+   * @param  {string | int} key to compare property in arrayOfObjects.
+   * @param  {int}          value to search for.
+   * @return {int}          first index closest to value.
+   */
+  this.bisect = function (collection, key, value) {
+    var index;
+    var initialSmallestDiff = Infinity;
+    _.reduce(collection, function (smallestDiff, d, i) {
+      var currentDiff = Math.abs(d[key] - value);
+      if (currentDiff < smallestDiff) {
+        index = i;
+        smallestDiff = currentDiff;
+      }
+      return smallestDiff;
+    }, initialSmallestDiff);
+    return index;
+  };
+
   /**
    * @function roundTimestamp
    * @memberOf UtilService
@@ -863,7 +888,7 @@ angular.module('lizard-nxt')
    * @param {integer} epoch - time in ms since 1970.
    * @returns {string} formatted date.
    */
-  this._formatDate = function (epoch) {
+  this.formatDate = function (epoch) {
     var d = new Date(parseInt(epoch, 10));
     return [
       [d.getDate(), d.getMonth() + 1,
@@ -890,7 +915,7 @@ angular.module('lizard-nxt')
 
     for (i = 0; i < data.length; i++) {
 
-      formattedDateTime = this._formatDate(data[i]['timestamp'] || data[i][0]);
+      formattedDateTime = this.formatDate(data[i].timestamp || data[i][0]);
 
       var formattedDatum = [
         this.formatNumber(latLng.lat, 0, 0, true),
@@ -902,7 +927,7 @@ angular.module('lizard-nxt')
       if (data[i].max !== undefined && data[i].min !== undefined) {
         formattedDatum.push(
           this.formatNumber(
-            Math.round(100 * data[i]['min']) / 100 || 0,
+            Math.round(100 * data[i].min) / 100 || 0,
             0,
             2,
             true // Dutchify seperators
@@ -910,7 +935,7 @@ angular.module('lizard-nxt')
         );
         formattedDatum.push(
           this.formatNumber(
-            Math.round(100 * data[i]['max']) / 100 || 0,
+            Math.round(100 * data[i].max) / 100 || 0,
             0,
             2,
             true
@@ -932,6 +957,61 @@ angular.module('lizard-nxt')
     }
 
     return formattedData;
+  };
+
+  /**
+   * Create a slug from a string.
+   * This is the Javascript equivalent of the Django algorithm:
+   * https://docs.djangoproject.com/en/1.8/_modules/django/utils/text/#slugify
+   *
+   * @param {string} s - The string to slugify.
+   * @returns a slugified version of the string.
+   */
+  this.slugify = function(s) {
+    var value;
+    value = s;
+    // Remove all non-alphanumeric-underscore-dash-space characters.
+    value = _.replace(value, /[^\w\s-]/g, '');
+    // Remove leading and trailing whitespace.
+    value = _.trim(value);
+    // Convert to lowercase.
+    value = _.lowerCase(value);
+    // Replace spaces with dashes.
+    value = _.replace(value, /[-\s]+/g, '-');
+    return value;
+  };
+
+  /**
+   * @function
+   * @description given point p find the closest
+   * point on the line between a and b
+   *
+   * Taken from: http://www.gamedev.net/topic/444154-closest-point-on-a-line/
+   */
+  this.pointAlongLine = function (p, a, b) {
+    var diffPA = {
+      lat: p.lat - a.lat,
+      lng: p.lng - a.lng
+    };
+    var diffAB = {
+      lat: b.lat - a.lat,
+      lng: b.lng - a.lng
+    };
+
+    var ab2 = diffAB.lat * diffAB.lat + diffAB.lng * diffAB.lng;
+    var apAb = diffPA.lat * diffAB.lat + diffPA.lng * diffAB.lng;
+    var t = apAb / ab2;
+    if (t < 0) {
+      t = 0;
+    }
+    if (t > 1) {
+      t = 1;
+    }
+    var closest = new L.LatLng(
+      a.lat + diffAB.lat * t,
+      a.lng + diffAB.lng * t
+    );
+    return closest;
   };
 
 }]);

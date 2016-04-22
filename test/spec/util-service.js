@@ -10,6 +10,18 @@ describe('Testing util-service functions', function () {
     UtilService = $injector.get('UtilService');
   }));
 
+  it('Should return the closest item when bisecting collection', function () {
+    var collection = [{a: 1, b:3}, {a: -1, b:2}, {a: 3, b:3},{a: 1, b:5}];
+    var result = UtilService.bisect(collection, 'a', -2);
+    expect(result).toEqual(1);
+  });
+
+  it('Should return the first closest item when bisecting collection', function () {
+    var collection = [{a: 1, b:3}, {a: -1, b:2}, {a: 3, b:3},{a: 1, b:5}];
+    var result = UtilService.bisect(collection, 'a', 1);
+    expect(result).toEqual(0);
+  });
+
   it("Should return and rgb triplet for hex color '#F00'", function () {
 
     var result = UtilService.hexColorToDecimalTriple("#F00");
@@ -63,7 +75,7 @@ describe('Testing util-service functions', function () {
     var epoch = 1420070400000,
         expectedResult = ['1-1-2015', '1:00:00'];
 
-    var result = UtilService._formatDate(epoch);
+    var result = UtilService.formatDate(epoch);
     expect(result).toEqual(expectedResult);
   });
 

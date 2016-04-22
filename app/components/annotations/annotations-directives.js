@@ -55,10 +55,7 @@ angular.module('annotations')
       var fetchAnnotations = function() {
         if (scope.data.properties && scope.data.properties.annotations) {
           var events = scope.data.properties.annotations.data;
-          var annotations = [];
-          events.forEach(function (ev) {
-            annotations.push(ev.properties);
-          });
+          var annotations = scope.data.properties.annotations.data;
           fetchAnnotationsSuccess(annotations);
         }
 
@@ -184,14 +181,14 @@ angular.module('annotations')
 
 /**
  * @module
- * @description Max size validation on file field.
+ * @description Max file size validation on file field.
  */
 angular.module('annotations')
-  .directive('maxSize', [function() {
+  .directive('maxFileSize', [function() {
 
     /**
-     * Validate a file on its size with the max-size attribute on file upload
-     * fields.
+     * Validate a file on its size with the max-file-size attribute on file
+     * upload fields.
      * @param {string} scope - The scope.
      * @param {array} element - The input field HTML element.
      * @param {dict} attrs - The attributes on the input field.
@@ -200,7 +197,8 @@ angular.module('annotations')
     var link = function(scope, element, attrs, ngModel) {
       scope.$watch(attrs.fileModel, function() {
         var file = element[0].files[0];
-        ngModel.$setValidity('maxsize', !(file && file.size > attrs.maxSize));
+        ngModel.$setValidity('maxFileSize',
+                             !(file && file.size > attrs.maxFileSize));
       });
     };
 
@@ -216,9 +214,13 @@ angular.module('annotations')
 angular.module('annotations')
   .directive('annotationsMake',
              ['AnnotationsService', '$window', 'gettextCatalog', 'notie',
-              function (AnnotationsService, $window, gettextCatalog, notie) {
+              'user',
+              function (AnnotationsService, $window, gettextCatalog, notie,
+                        user) {
 
     var link = function (scope, element, attrs) {
+
+      scope.user = user;
 
       /**
        * Provide a date time formatter for the annotations templates.
@@ -278,10 +280,50 @@ angular.module('annotations')
           scope.text,
           scope.attachment,
           scope.timelineat,
+          scope.selectedOrganisation,
           createAnnotationSuccess,
           createAnnotationError
         );
       };
+
+      /**
+       * Update the scope to reflect a successful fetch of the user's
+       * organisations.
+       * @param {array} value - The organisations.
+       * @param {dict} responseHeaders - The response headers returned by GET.
+       */
+      var getOrganisationsSuccess = function(value, responseHeaders) {
+        user.organisations = value;
+        scope.selectedOrganisation = user.organisations[0];
+      };
+
+      /**
+       * Throw an alert and error when something went wrong with getting the
+       * organisations.
+       * @param {dict} httpResponse - The httpResponse headers returned by the
+       *                              GET.
+       */
+      var getOrganisationsError = function(httpResponse) {
+        notie.alert(3,
+            gettextCatalog.getString(
+              "Oops! Something went wrong while fetching your organisations.")
+        );
+        throw new Error(
+          httpResponse.status + " - " + "Could not get organisations.");
+      };
+
+      /**
+       *  Get the user's organisations if they haven't already been retrieved.
+       */
+      var getUserOrganisations = function () {
+        if (!user.hasOwnProperty('organisations')) {
+          AnnotationsService.getOrganisations(
+            getOrganisationsSuccess, getOrganisationsError);
+        } else {
+          scope.selectedOrganisation = user.organisations[0];
+        }
+      };
+      getUserOrganisations();
     };
 
     return {

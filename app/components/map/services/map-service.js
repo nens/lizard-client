@@ -18,6 +18,10 @@ angular.module('map')
       _map: {}, // exposure is legacy, we should not mingle with the leaflet
                 // map instance outside of the map component.
 
+      remove: function () {
+        service._map.remove();
+      },
+
       /**
        * Initializes the map service
        * @param  {DOMelement} element      used by leaflet as the map container.
@@ -231,7 +235,10 @@ angular.module('map')
        * @return {[type]}        [description]
        */
       spatialSelect: function (latLng) {
-        var utfSlug = DataService.utfLayerGroup.slug;
+        var utfSlug;
+        if (DataService.utfLayerGroup){
+          utfSlug = DataService.utfLayerGroup.slug;
+        }
         if (State.box.type === 'point') {
           if (State.layerGroups.active.indexOf(utfSlug) !== -1) {
             this._setAssetOrGeomFromUtfOnState(latLng);
@@ -432,6 +439,10 @@ angular.module('map')
             layer = NxtNonTiledWMSLayer.create(layer);
           }
         });
+      },
+
+      getLeafletLayer: function (id) {
+        return service._map._layers[id];
       }
 
     };

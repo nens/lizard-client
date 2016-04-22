@@ -450,6 +450,8 @@ angular.module('lizard-nxt-filters')
 
   return function (input, maxLength) {
 
+    if (input === undefined) { return ''; }
+
     var MAX_LENGTH = maxLength || 20;
 
     if (input.length > MAX_LENGTH) {
@@ -525,8 +527,13 @@ angular.module('lizard-nxt-filters')
 angular.module('lizard-nxt-filters')
   .filter('discreteRasterType', function () {
   return function (input) {
-    var labelParts = input.split(' - ');
-    return labelParts[labelParts.length - 1];
+    if (input) {
+      var labelParts = input.split(' - ');
+      return labelParts[labelParts.length - 1];
+    }
+    else {
+      return '';
+    }
   };
 });
 
@@ -538,10 +545,15 @@ angular.module('lizard-nxt-filters')
 angular.module('lizard-nxt-filters')
   .filter('discreteRasterSource', function () {
   return function (input) {
+    if (input) {
     var labelParts = input.split(' - ');
     var output = labelParts[labelParts.length - 2];
     if (output === undefined) { output = ''; }
     return output;
+    }
+    else {
+      return '';
+    }
   };
 });
 

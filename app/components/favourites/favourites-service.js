@@ -2,8 +2,11 @@
  * Service to handle favourites retrieval, creation and deletion.
  */
 angular.module('favourites')
-  .service("FavouritesService", ['$resource', 'State',
-    function ($resource, State) {
+  // NOTE: inject TimeseriesService even though it is not used.
+  // TimeseriesService defines State.selected.timeseries which may be restored
+  // from favourite.
+  .service("FavouritesService", ['$resource', 'State', 'gettextCatalog', 'UtilService', 'notie', 'TimeseriesService',
+    function ($resource, State, gettextCatalog, UtilService, notie) {
 
       /* Create a resource for interacting with the favourites endpoint of the
        * API.
@@ -38,8 +41,37 @@ angular.module('favourites')
         return Favourites.query(params, success, error);
       };
 
-      this.getFavourite = function(uuid, success) {
-        return Favourites.get({'uuid': uuid}, success);
+      this.getFavourite = function(uuid, success, error) {
+        return Favourites.get(
+          {'uuid': uuid},
+          function (response) {
+            notie.alert(
+              4,
+              gettextCatalog.getString('Restoring favourite ') +
+              response.name,
+              3
+            );
+            success(response);
+          },
+          function (err) {
+          if (err.status === 404) {
+            notie.alert(
+              3,
+              gettextCatalog.getString('Whoops: favourite has been removed'),
+              3
+            );
+          }
+          else {
+            notie.alert(
+              3,
+              gettextCatalog.getString(
+                'Ay ay: Lizard could not retrieve your favourite'
+              ),
+              3
+            );
+          }
+          error();
+        });
       };
 
       /**
@@ -71,7 +103,7 @@ angular.module('favourites')
        *                           wrong with the DELETE.
        */
       this.deleteFavourite = function (favourite, success, error) {
-        return Favourites.delete({id: favourite.id}, success, error);
+        return Favourites.delete({uuid: favourite.uuid}, success, error);
       };
 
       /**
@@ -80,18 +112,17 @@ angular.module('favourites')
        * to the new state if the interval should be relative
        */
       var adhereTemporalStateToInterval = function (favtime) {
+        // Physical now
         var now = Date.now();
+        // Difference between now and the now back when the fav was made.
+        var change = now - favtime.now;
 
-        var temporal = angular.copy(favtime); // otherwise all changes are applied to the
-                                        // retrieved temporal state.
-
-        temporal.start = now - (temporal.end - temporal.start);
-        temporal.at = now - (temporal.end - temporal.at);
-        if (temporal.end > temporal.now) {
-          temporal.end = now - (temporal.now - temporal.end);
-        } else if (temporal.end < temporal.now) {
-          temporal.end = now - (temporal.end - temporal.now);
-        }
+        favtime.start += change;
+        favtime.at  += change;
+        favtime.end += change;
+        favtime.now = null;
+        favtime.relative = false; // Set relative back to default.
+        return favtime;
       };
 
       /**
@@ -99,17 +130,25 @@ angular.module('favourites')
        * @param {object} favourite - The favourite to apply.
        */
       this.applyFavourite = function (favourite) {
+
         if (favourite.state.temporal.relative) {
-          adhereTemporalStateToInterval(favourite.state.temporal);
+          favourite.state.temporal = adhereTemporalStateToInterval(
+            favourite.state.temporal
+          );
         }
 
-        _.merge(State, favourite.state);
+        // Use _.mergeWith to set the whole array to trigger functions of
+        // properties.
+        var arrayStates = ['all', 'active', 'timeseries', 'assets', 'geometries'];
+        _.mergeWith(State, favourite.state, function (state, favstate, key, parent) {
+          if (arrayStates.indexOf(key) !== -1) {
+            state = favstate;
+            return state;
+          }
+        });
 
-        // _.merge pushes objects in the list, does not call setAssets
-        // so first make it empty then stuff everything in there.
-        State.selected.assets.resetAssets(favourite.state.selected.assets);
-        // State.selected.assets = favourite.state.selected.assets;
-        State.temporal.timelineMoving = !favourite.state.temporal.timelineMoving; // update timeline
+        UtilService.announceMovedTimeline(State);
+
       };
 
       return this;

@@ -8,6 +8,10 @@
   color: $concrete;
 }
 
+svg {
+  @include cross-browser(user-select, none);
+}
+
 .plot {
     fill: $deprecated-gray18;
     fill-opacity: 0;
@@ -31,7 +35,22 @@
 }
 
 .line {
-    stroke-width: 2px;
+  fill: none;
+  stroke: $greenSea;
+  stroke-width: 2px;
+}
+
+.interpolation-line {
+  fill: none;
+  stroke: $asbestos;
+  stroke-width: 4px;
+  stroke-dasharray: 10,10;
+}
+
+.point {
+  stroke: $asbestos;
+  stroke-width: 2px;
+  fill: $concrete;
 }
 
 .title {
@@ -49,6 +68,10 @@ rect {
     fill: $concrete;
 }
 
+.click-axis {
+  fill: transparent;
+}
+
 #listeners {
   opacity: 0;
 }
@@ -60,6 +83,12 @@ rect.bar {
 
 rect.bar.selected {
   fill: $pomegranate;
+}
+
+rect.valuebox {
+  fill: white;
+  stroke: $concrete;
+  stroke-width: 1;
 }
 
 .tooltip-background {
@@ -92,6 +121,13 @@ text, axis text {
   fill: $concrete;
   stroke: none;
   font-size: 13px;
+}
+
+.valuebox rect {
+  fill: $white;
+  stroke: $silver;
+  stroke-width: 0.5;
+  stroke-dasharray: none;
 }
 
 .graph-text {

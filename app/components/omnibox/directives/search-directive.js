@@ -18,6 +18,7 @@ angular.module('omnibox')
     scope.omnibox.searchResults = {};
 
     scope.util = UtilService;
+    scope.query = '';
 
     var ZOOM_FOR_OBJECT = 16;
 
@@ -58,7 +59,6 @@ angular.module('omnibox')
      * (5) - Clear the click feedback.
      */
     scope.cleanInput = function () {
-      State.selected.reset();
       scope.query = "";
       scope.omnibox.searchResults = {};
     };
@@ -97,6 +97,11 @@ angular.module('omnibox')
       UtilService.announceMovedTimeline(State);
     };
 
+
+    var prevKey; // stores the previously pressed key.
+    var prevKeyTimeout; // resets the key after TIMEOUT.
+    var TIMEOUT = 300; // 300 ms
+
     /**
      * @description event handler for key presses.
      * checks if enter is pressed, does search.
@@ -104,7 +109,9 @@ angular.module('omnibox')
      * 13 refers to the RETURN key.
      */
     scope.searchKeyPress = function ($event) {
+      clearTimeout(prevKeyTimeout);
       var KEYPRESS = {
+        BACKSPACE: 8,
         ENTER: 13,
         SPACE: 32,
         ESC: 27
@@ -113,28 +120,36 @@ angular.module('omnibox')
       if ($event.target.id === "searchboxinput") {
         // Intercept keyPresses *within* searchbox,do xor prevent animation
         // from happening when typing.
-        if ($event.which === KEYPRESS.ENTER) {
+        if ($event.which === KEYPRESS.ESC) {
+          scope.cleanInput();
+        } else if ($event.which === KEYPRESS.BACKSPACE && prevKey === KEYPRESS.BACKSPACE) {
+          scope.omnibox.searchResults = {}; // only delete search results
+        } else if ($event.which === KEYPRESS.BACKSPACE && scope.query === "") {
+          scope.omnibox.searchResults = {}; // only delete search results
+        } else if ($event.which === KEYPRESS.SPACE) {
+          // prevent anim. start/stop
+          $event.originalEvent.stopPropagation();
+        } else if ($event.which === KEYPRESS.ENTER) {
           var loc = scope.omnibox.searchResults;
           if (loc && loc.temporal) {
             scope.zoomToTemporalResult(
               scope.omnibox.searchResults.temporal
             );
-          }
-          else if (loc && loc.spatial && loc.spatial[0]) {
+          } else if (loc && loc.spatial && loc.spatial[0]) {
             scope.zoomToSpatialResult(
               scope.omnibox.searchResults.spatial[0]
             );
+          } else if (loc && loc.api && loc.api[0]) {
+            scope.zoomToSearchResult(
+              scope.omnibox.searchResults.api[0]
+            );
           }
-          else {
-            scope.search();
-          }
-        } else if ($event.which === KEYPRESS.SPACE) {
-          // prevent anim. start/stop
-          $event.originalEvent.stopPropagation();
-        } else if ($event.which === KEYPRESS.ESC) { //esc
-          scope.cleanInput();
         }
       }
+      prevKey = $event.which;
+      prevKeyTimeout = setTimeout(function () {
+        prevKey = null;
+      }, TIMEOUT);
     };
 
     /**

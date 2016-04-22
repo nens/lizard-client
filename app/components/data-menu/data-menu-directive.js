@@ -30,9 +30,18 @@ angular.module('data-menu')
  * @description Show the layers in the data menu.
  */
 angular.module('data-menu')
-  .directive('layerSwitcher', [function () {
+  .directive('layerSwitcher', ['DataService', function (DataService) {
 
     var link = function (scope, element, attrs) {
+
+      scope.removeLayerGroup = function (layergroup) {
+        // Turn the layergroup off.
+        if (layergroup.isActive()) {
+          scope.menu.toggleLayerGroup(layergroup);
+        }
+        // Remove the layergroup.
+        DataService.removeLayerGroup(layergroup);
+      };
     };
 
     return {
@@ -63,6 +72,7 @@ angular.module('data-menu')
 
     var link = function (scope, element, attrs) {
 
+
       /**
        * Throw an alert and error when something went wrong with fetching the
        * layer groups.
@@ -70,7 +80,6 @@ angular.module('data-menu')
        *                              GET request.
        */
       var fetchLayerGroupsError = function(httpResponse) {
-        console.log(httpResponse);
         notie.alert(
           3, gettextCatalog.getString(
             "Oops! Something went wrong while fetching the layers."));
@@ -79,24 +88,6 @@ angular.module('data-menu')
           + "Could not retrieve layers:"
           + " " + httpResponse.config.url
           + ".");
-      };
-
-      /**
-       * Throw an alert and error when something went wrong with fetching the
-       * layer groups.
-       * @param {array} layerGroups - The array of layer group objects
-       *                              returned by the GET request.
-       * @return {array} - the layerGroups array without the layergroups
-       *                   already present in the portal.
-       */
-      var excludeExistingLayerGroups = function(layerGroups) {
-        // Filter layergroups to layergroups not yet present in the portal.
-        var existingLayerGroups = _.values(scope.menu.layerGroups);
-        return _.differenceBy(
-          layerGroups,
-          existingLayerGroups,
-          function(o) { return o.slug; }
-        );
       };
 
       /**
@@ -109,17 +100,8 @@ angular.module('data-menu')
        */
       var fetchLayerGroupsSuccess = function (
           allLayerGroups, responseHeaders) {
-        scope.availableLayerGroups = excludeExistingLayerGroups(
-            allLayerGroups);
+        scope.availableLayerGroups = allLayerGroups;
       };
-
-      /**
-       * Get all the layer groups from the API.
-       * Update the front-end to reflect a successful GET or throw an alert
-       * on error.
-       */
-      LayerAdderService.fetchLayerGroups(
-        {'page_size': 0}, fetchLayerGroupsSuccess, fetchLayerGroupsError);
 
       /**
        * Add the selected layergroup to the portal.
@@ -135,6 +117,52 @@ angular.module('data-menu')
         scope.menu.layerAdderEnabled = !scope.menu.layerAdderEnabled;
       };
 
+      /**
+       * Get available layer groups from the API.
+       * Filter the currently selected layer groups from the available layer
+       * groups.
+       * Update the front-end to reflect a successful GET or throw an alert
+       * on error.
+       *
+       * @param {object} query - Optional parameter which accepts an object
+       *                         with query parameters for the API request.
+       */
+      var fetchLayerGroups = function (query) {
+        if (typeof query === "undefined") {
+          query = {};
+        }
+
+        // Generate a list of currently selected layer groups.
+        var menuLayerGroupSlugs = _.join(
+          _.map(
+            _.values(scope.menu.layerGroups),
+            'slug'),
+          ',');
+
+        query.exclude_slugs = menuLayerGroupSlugs;
+
+        LayerAdderService.fetchLayerGroups(
+          query,
+          fetchLayerGroupsSuccess,
+          fetchLayerGroupsError);
+      };
+
+      /**
+       * Fetch layer groups on initialization of the module.
+       */
+      fetchLayerGroups();
+
+      /**
+       * Fire a layer groups query for every key entered in the filter/search
+       * input.
+       */
+      scope.$watch('searchLayerGroups', function(newValue, oldValue) {
+        fetchLayerGroups({'q': newValue});
+      });
+
+      scope.$watch('layerGroupsCurrentPage', function (currentPage) {
+        fetchLayerGroups({'q': scope.searchLayerGroups, 'page': currentPage});
+      });
     };
 
     return {
@@ -158,23 +186,39 @@ angular.module('data-menu')
 
   var link = function (scope, elem, attrs) {
 
-    var rmAllButLastAsset = function () {
+    /**
+     * Removes all but last asset. If no assets, it removes all but last
+     * geometry, else all geometries. Result, one selected element.
+     */
+    var rmAllButLastAssetAndGeometry = function () {
       State.selected.assets.forEach(function (asset) {
         if (State.selected.assets.length > 1) {
           State.selected.assets.removeAsset(asset);
         }
       });
+      if (State.selected.assets.length === 0) {
+        State.selected.geometries.forEach(function (geom) {
+          if (State.selected.geometries.length > 1) {
+            State.selected.geometries.removeGeometry(geom);
+          }
+        });
+      }
+      else {
+        State.selected.geometries = [];
+      }
     };
 
+    /**
+     * Leaves all points when going from point to multi-point. Removes all but
+     * last asset when going from multi-point to point and removes everything
+     * when coming or going to line, region or area.
+     */
     scope.changeBoxType = function () {
-      if (scope.type === 'point'
-        || scope.type === 'region'
-        || scope.type === 'area') {
-        State.selected.geometries = [];
-        rmAllButLastAsset();
+      if (scope.type === 'point' && scope.boxType === 'multi-point') {
+        rmAllButLastAssetAndGeometry();
       }
       // TODO: enable line with others, only clicklayer is bitching.
-      else if (scope.type === 'line') {
+      else if (!(scope.boxType === 'point' && scope.type === 'multi-point')) {
         State.selected.geometries = [];
         State.selected.assets = [];
       }

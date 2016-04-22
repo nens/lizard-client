@@ -3,6 +3,211 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 3.0.9 (2016-4-18)
+---------------------
+-
+Release 3.0.9 (2016-4-19)
+---------------------
+
+- Fix relative time not restoring relative.
+
+- Fix line intersection through non temporal rasters again.
+
+- Fix no-data in layer for selected point bugs.
+
+- Fix mixing timeseries of nested and parent assets.
+
+- Cancel consecutive calls for timeseries.
+
+
+Release 3.0.8 (2016-4-15)
+---------------------
+
+- Fixed missing events on zoom to bounds.
+
+- Fix restoring active and inactive layers again.
+
+- Fixed translate 'export' in timeseries template.
+
+
+Release 3.0.7 (2016-4-15)
+---------------------
+
+- Fix show a line graph for temporal rasters some more, replace data in ds.
+
+- Fix ng-repeat error: track annotations by id.
+
+- Fix restore active and inactive layergroups.
+
+- Include loading bar indicator for all requests passing $http.
+
+- Update Notie location.
+
+
+Release 3.0.6 (2016-4-14)
+---------------------
+
+- Fix show a line graph for temporal rasters.
+
+
+Release 3.0.5 (2016-4-11)
+---------------------
+- Fix data menu height
+
+- Set image-rendering to pixelated and crisp-edges for pixelart-like rain.
+
+- Set page_size for events requests to 5000.
+
+- Round start & end timestamps on timeseries export URL.
+
+- Set initial start to -2 days and plus three hours.
+
+- Represent nested assets as nested asset cards in omnibox.
+
+
+Release 3.0.4 (2016-4-5)
+---------------------
+
+- Improve adding layer groups by moving filtering to the backend and adding
+  pagination.
+
+- Fix plus icon alignment on 'Add data...' data menu item.
+
+
+Release 3.0.3 (2016-4-4)
+---------------------
+
+- Fix the collosal bug that nothing works without the water layer.
+
+- Fix annotations fetching when not authenticated
+
+
+Release 3.0.2 (2016-4-1)
+---------------------
+
+- Fix search bug, ng-change did not pick up.
+
+
+Release 3.0.1 (2016-4-1)
+---------------------
+
+- Remove line REALLY when switching to other tool.
+
+- Fix bolletje yet again. Both on the map and in the graph.
+  (nens/lizard-nxt#1616 and nens/lizard-nxt#1615)
+
+- Fix no graph for points in temporal raster.
+
+- Fix no translations in header.
+
+- Fix bootstrap chevron that's missing in dist folder (glyphicon font)
+
+- Fix annotations layer not updating.
+
+- Add choice of organisation when adding an annotation.
+
+- Remove the 'user' from the master controller and inject it only in the
+  components that use it.
+
+- Fix graph thowing errors when no data.
+
+- Fix carousel throwing errors when no images.
+- Fix weirdness with search. Query now fires search instead of keypress
+
+- Add zoom to api result on ENTER key.
+- Add 'remove layergroup from data menu' functionality.
+
+- Fix favourites don't restore inactive layers.
+
+
+Release 2.11.1 (2016-3-25)
+---------------------
+
+- Fix #1596: bulb hover for profile line is back.
+
+- Favourite: Fix #1578 restore area and geometries in favourite.
+
+- Favourite: Replace state when loading favourite using mergeWith.
+
+- Fix bug in image carousel, showing the same image twice when changing time
+  interval.
+
+- Enable cross sections to be drawn with only elevation data.
+  Update with points.
+
+- Fix Use data.length for bar width when not aggregted events (rain etc).
+
+
+Release 2.10.4 (2016-3-22)
+---------------------
+
+- Prevent duplication of geometries.
+
+- Remove events from timeline when in db, since db shows it in a graph.
+
+- Fix events hopping around freely on the timeline when dragging.
+
+- Fix bug 1564. Backspace doesn't keep open the search results if search query is empty.
+
+- JSHint prettify.
+
+- Fix bug #1485. Elevation / line data is now downloadable again.
+
+- Fix bug #1555 of nens/lizard-nxt. Timeseries can yet again export to csv.
+
+- Remove timeseries of removed assets.
+
+- Search box has a starting query of ""
+
+
+Release 2.10.3 (2016-3-21)
+---------------------
+- Fix bug 1565 that close button on search closes all da tings.
+
+- Fix duplicate retrieval of assets (undocumented bug).
+
+
+Release 2.10.2 (2016-3-18)
+---------------------
+
+- Add hover interaction to multiline graphs
+
+- Make the apps buttons a bit less ugly.
+
+- Store and restore timeseries state in dashboard. Refactored state.selected.
+  timeseries to contain objects with ts state. DataService.assets.[timeseries]
+  contains ts metadata and TimeseriesService.timeseries contains ts in graph
+  format with data, state and metadata.
+- The reactivated layergroups are not ignored. (by URL or fav)
+
+- Lizard Apps and Favourites are more similar and don't interfere
+
+- Fix the lack of a temporal indicator for some of the graphs
+
+- Make the apps buttons a bit less ugly
+
+
+Release 2.10.1 (2016-3-11)
+---------------------
+
+- Fix delete favourites.
+
+- Cross section: only use timeseries linked to freatic line.
+
+- Don't open image timeseries in a line chart and vice versa.
+
+- Fix selection persist between tools.
+
+- Fix redraw feedback on map when coming from dashboard.
+
+- Add support for timeseries with time image.
+
+- Adding graphs with multiple y-axes.
+
+- Add crosssections visualization in dashboard.
 
 - Add share favourites.
 
@@ -10,9 +215,14 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Adapt search results to updated full-text search API response.
 
+- Improve user menu for mobile devices.
+
+- Make lizard apps screen load dynamically.
+
 
 Release 2.9.4 (2016-3-1)
 ---------------------
+
 - Favourites have more state and gets some bugfixes
 
 

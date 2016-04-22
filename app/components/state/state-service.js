@@ -103,6 +103,11 @@ angular.module('global-state')
       mapMoving: false
     };
 
+    // there is one selected feature which is not being described here.
+    // and is being set in MapDirective (in the _mouseMove function).
+    // This is only relevant for drawing an intersection line in the map.
+    // The location and the distance of the location to the first point of the
+    // is being calculated and set on mouseOnLine for the graph.
     state.selected = {
       assets: [], // hydra-core asset id <entity>$<id>,
                   // is defined in DataService use state.selected.asset.addAsset
@@ -110,11 +115,12 @@ angular.module('global-state')
                   // asset, or reset by calling state.selected.reset()
       geometries: [], // geojson with points, lines, polygons. Same as asset,
                       // is redefined in dataservice. use addGeometry and
-                      // removegeometry on state.selected.geometries to ass or
+                      // removegeometry on state.selected.geometries to add or
                       // remove individual geometries or use reset function.
-      timeseries: [], // <uuid> Redefined in timeseriesService. mirrored
-                      // asynchronously by timeseriesService.timeseries. Array
-                      // only contains selected timeseries.
+      timeseries: [], // {<uuid>, <active>, <order>, <color>}
+                      // Redefined in timeseriesService. mirrored asynchronously
+                      // by timeseriesService.timeseries. Array contains all
+                      // timeseries of all assets in a flat list.
       reset: function () {
         // Selected items
         state.selected.assets = [];
@@ -127,7 +133,7 @@ angular.module('global-state')
 
     // Temporal
     var now = Date.now(),
-        INITIAL_START_FOR_EXTENT = now - 3 * UtilService.hour,
+        INITIAL_START_FOR_EXTENT = now - 2 * UtilService.day,
         INITIAL_END_FOR_EXTENT = now + 3 * UtilService.hour;
 
     state.temporal = {

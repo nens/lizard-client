@@ -6,16 +6,16 @@
       <col class="col-xs-2"></col>
     </colgroup>
     <tbody>
-      <tr ng-repeat="obj in annotations">
-        <td><% obj.text %></td>
+      <tr ng-repeat="obj in annotations track by obj.id">
+        <td><% obj.properties.text %></td>
         <td class="text-right">
-          <span ng-bind="obj.datetime_from | date: formatDatetime()"></span>
+          <span ng-bind="obj.properties.timestamp | date: formatDatetime()"></span>
         </td>
         <td class="text-right">
           <a target="_blank"
-             href="<% obj.attachment_url %>"
+             href="<% obj.properties.attachment_url %>"
              title="<% 'Download attachment.'|translate %>"
-             ng-if="obj.attachment_url">
+             ng-if="obj.properties.attachment_url">
             <i class="fa fa-download"></i>
           </a>&nbsp;
           <a class="clickable"

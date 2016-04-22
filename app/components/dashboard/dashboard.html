@@ -1,12 +1,19 @@
-<div class="dashboard-wrapper">
+<div class="dashboard-wrapper drag-target">
 
-  <div ng-if="item.type !== 'empty'" ng-repeat="item in dashboard.graphs" data-order="<% $index %>" class="row dashboard-inner">
+  <!-- Use track by to keep references to dom elements and prevent redraws -->
+  <!-- Store index on dom element for drag and drop functionality -->
+  <div
+    ng-if="item.type !== 'empty'"
+    ng-repeat="item in dashboard.graphs track by $index"
+    data-order="<% $index %>"
+    class="row dashboard-inner drag-target">
 
     <graph
       ng-if="item.type === 'temporalLine'"
       line
       content="item.content"
       temporal="dashboard.state.temporal"
+      type="temporal"
       dimensions="item.dimensions">
      </graph>
 
@@ -21,9 +28,34 @@
       ng-if="item.type === 'rain'"
       bar-chart
       content="item.content"
+      type="temporal"
       temporal="dashboard.state.temporal"
       dimensions="item.dimensions">
     </graph>
+
+    <graph
+      ng-if="item.type === 'event'"
+      bar-chart
+      content="item.content"
+      type="temporal"
+      temporal="dashboard.state.temporal"
+      dimensions="item.dimensions">
+    </graph>
+
+    <image-carousel
+      ng-if="item.type === 'image'"
+      images="item.content[0].data"
+      context="dashboard"
+      temporal="dashboard.state.temporal"
+      dimensions="item.dimensions">
+    </image-carousel>
+
+    <cross-section
+      ng-if="item.type === 'crosssection'"
+      asset="item.content[0]"
+      dimensions="item.dimensions"
+      temporal="dashboard.state.temporal">
+    </cross-section>
 
   </div>
 

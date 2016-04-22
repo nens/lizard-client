@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="/vendor/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="/vendor/lizard-iconfont/lizard/dest/css/Lizard.css" />
     <link rel="stylesheet" href="/vendor/dragula/dist/dragula.css" />
+    <link rel="stylesheet" href="/vendor/angular-loading-bar/build/loading-bar.css" />
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -43,8 +44,8 @@
           timeline
           timeline-map
           navbar-fixed-bottom
-          material-shadow"
-        ng-if="context !== 'dashboard'"></timeline>
+          material-shadow">
+        </timeline>
     </div>
 
     <div ng-if="context === 'dashboard'">
@@ -82,6 +83,7 @@
     <script src="/vendor/angular-mocks/angular-mocks.js"></script>
     <script src="/vendor/angular-resource/angular-resource.js"></script>
     <script src="/vendor/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="/vendor/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="/vendor/d3/d3.js"></script>
     <script src="/vendor/d3-comparator/d3-comparator.js"></script>
     <script src="/vendor/leaflet/dist/leaflet-src.js"></script>
@@ -93,6 +95,7 @@
     <script src="/vendor/notie/notie.js"></script>
     <script src="/vendor/raven-js/dist/raven.js"></script>
     <script src="/vendor/dragula/dist/dragula.js"></script>
+    <script src="/vendor/angular-loading-bar/build/loading-bar.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -157,6 +160,9 @@
     <script src="/components/timeseries/timeseries-service.js"></script>
     <script src="/components/timeseries/timeseries-directive.js"></script>
 
+    <script src="/components/image-carousel/image-carousel.js"></script>
+    <script src="/components/image-carousel/image-carousel-directive.js"></script>
+
     <script src="/components/annotations/annotations.js"></script>
     <script src="/components/annotations/annotations-service.js"></script>
     <script src="/components/annotations/annotations-directives.js"></script>
@@ -165,6 +171,7 @@
     <script src="/components/omnibox/controllers/omnibox-controller.js"></script>
     <script src="/components/omnibox/wanted-attrs-constant.js"></script>
 
+    <script src="/components/omnibox/services/nested-asset-service.js"></script>
     <script src="/components/omnibox/services/date-parse-service.js"></script>
     <script src="/components/omnibox/services/search-service.js"></script>
     <script src="/components/omnibox/services/db-cards-service.js"></script>
@@ -172,6 +179,7 @@
     <script src="/components/omnibox/directives/search-directive.js"></script>
     <script src="/components/omnibox/directives/omnibox-directives.js"></script>
     <script src="/components/omnibox/directives/db-cards-directive.js"></script>
+    <script src="/components/omnibox/directives/db-nested-asset-directive.js"></script>
     <script src="/components/omnibox/directives/db-asset-card-directive.js"></script>
     <script src="/components/omnibox/directives/db-geometry-card-directive.js"></script>
     <script src="/components/omnibox/directives/close-card-directive.js"></script>
@@ -188,6 +196,7 @@
 
     <script src="/components/dashboard/dashboard.js"></script>
     <script src="/components/dashboard/dashboard-service.js"></script>
+    <script src="/components/dashboard/crosssection-element-directive.js"></script>
     <script src="/components/dashboard/dashboard-directive.js"></script>
 
     <script src="/components/scenarios/scenarios.js"></script>
@@ -209,7 +218,5 @@
 
     <script src="/templates.js"></script>
     <!-- endbuild -->
-
-    <script src="//apps.lizard.net/screens/lizard.js"></script>
   </body>
 </html>

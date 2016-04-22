@@ -26,6 +26,7 @@ module.exports = function(config) {
       'vendor/angular-mocks/angular-mocks.js',
       'vendor/angular-resource/angular-resource.js',
       'vendor/bootstrap/dist/js/bootstrap.js',
+      'vendor/angular-bootstrap/ui-bootstrap-tpls.js',
       'vendor/d3/d3.js',
       'vendor/d3-comparator/d3-comparator.js',
       'vendor/leaflet/dist/leaflet-src.js',
@@ -37,6 +38,7 @@ module.exports = function(config) {
       'vendor/notie/notie.js',
       'vendor/raven-js/dist/raven.js',
       'vendor/dragula/dist/dragula.js',
+      'vendor/angular-loading-bar/build/loading-bar.js',
       // endbower
 
       'vendor/moment/locale/nl.js',
@@ -50,6 +52,7 @@ module.exports = function(config) {
       'app/components/state/state.js',
       'app/components/scenarios/scenarios.js',
       'app/components/timeseries/timeseries.js',
+      'app/components/image-carousel/image-carousel.js',
       'app/components/annotations/annotations.js',
       'app/components/user-menu/user-menu.js',
       'app/components/dashboard/dashboard.js',

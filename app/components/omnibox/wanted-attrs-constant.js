@@ -1,4 +1,4 @@
-'use strict;';
+'use strict';
 
 angular.module('omnibox')
 .service("WantedAttributes", ["gettext", function (gettext) {
@@ -310,7 +310,7 @@ angular.module('omnibox')
         defaultValue: "beton"
       },
       {
-        keyName: gettext("Widht"),
+        keyName: gettext("Width"),
         attrName: "width",
         ngBindValue:
           "waterchain.width | niceNumberOrEllipsis: 2",
@@ -373,6 +373,14 @@ angular.module('omnibox')
 
   this.monitoringwell = {
     rows: [
+      {
+        keyName: gettext("Distance along cross section"),
+        attrName: "distance_along_crosssection",
+        ngBindValue:
+          "waterchain.distance_along_crosssection | niceNumberOrEllipsis: 2",
+        valueSuffix: " (m)",
+        defaultValue: ""
+      },
       {
         keyName: gettext("Well top level"),
         attrName: "well_top_level",

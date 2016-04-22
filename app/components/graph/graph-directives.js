@@ -148,6 +148,7 @@ angular.module('lizard-nxt')
         dataWatch();
         return;
       }
+      graphUpdateHelper();
     }, true);
 
     scope.$watch('temporal.at', function (n, o) {
@@ -200,17 +201,18 @@ angular.module('lizard-nxt')
      * to a scope.content object with a single graph object.
      */
     this.setFormattedContent = function (scope) {
+      this.temporal = scope.temporal;
       this.content = [{
+        id: 1, // Give an arbitrary id to identify chart in multi line.
         data: scope.data,
-        labels: {
-          x: scope.xlabel,
-          y: scope.ylabel
-        },
+        unit: scope.ylabel,
+        xLabel: scope.xlabel,
         keys: {
           x: (scope.keys && scope.keys.x) || 0,
           y: (scope.keys && scope.keys.y) || 1
         }
       }];
+
     };
 
     if ($scope.content) {
@@ -226,6 +228,8 @@ angular.module('lizard-nxt')
     this.now = $scope.temporal ? $scope.temporal.at : undefined;
     this.type = '';
     this.quantity = $scope.quantity || 'time';
+
+    this.mouseloc = $scope.mouseloc || undefined;
 
     // Define data update function in attribute directives
     this.updateData = function () {};
@@ -245,7 +249,7 @@ angular.module('lizard-nxt')
     scope: {
       content: '=?',
 
-      mouseLoc: '=',
+      mouseloc: '=?',
       yfilter: '=',
       dimensions: '=',
       temporal: '=',
@@ -318,13 +322,23 @@ angular.module('lizard-nxt')
 
     graph.drawLine(content, temporal, drawSubset);
 
-    // scope.line is the scope defined by the line controller. Preferably it is
-    // passed around more explicitly through the graph directive, but angular is
-    // being bitchy.
-    if (scope.line && scope.line.mouseLocFn) {
-      graph.followMouse(scope.line.mouseLocFn);
-      graph.mouseExit(scope.line.mouseLocFn);
-    }
+    // fugly ass hackery. This is a sacrifice to Baal for
+    // letting the 'bolletje' run loose and creating havock
+    // and mayhem all around itself
+    // the initiator of this heinous feature is too be blamed.
+    //
+    // The mouseOnLine in the state is being set to get this to work.
+    var watchMouse = scope.$watch('mouseloc', function (n) {
+      if (n) {
+        graph.drawCircleOnLine(n);
+      }
+    });
+
+    scope.$on('$destroy', function () {
+      var remove = true;
+      watchMouse();
+      graph.drawCircleOnLine(null, remove);
+    });
 
     if (temporal) {
       graph.drawNow(graphCtrl.now);
@@ -428,3 +442,33 @@ angular.module('lizard-nxt')
   };
 
 }]);
+
+
+/**
+ * Creates a specific line and point graph for levee crosssections.
+ *
+ * Content should contain property line for elevation data and the property
+ * points for timeseries values of wells.
+ */
+angular.module('lizard-nxt')
+.directive('crossSection', [function () {
+  var link = function (scope, element, attrs, graphCtrl) {
+
+    var content = graphCtrl.content,
+        graph = graphCtrl.graph;
+
+    graph.drawCrosssection(content);
+
+    // Function to call when data changes
+    graphCtrl.updateData = graph.drawCrosssection;
+
+    };
+
+    return {
+      require: 'graph',
+      link: link,
+      restrict: 'A'
+    };
+
+  }
+]);

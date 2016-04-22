@@ -13,6 +13,13 @@ describe('Directives: Search with mocked CabinetService', function () {
         };
       }
     };
+    this.search = {
+      get: function (searchString, spatialState) {
+          return {
+            then: function (cb) { cb({henk: 'hai'}); }
+          };
+      }
+    };
   };
 
   // load the service's module
@@ -54,11 +61,11 @@ describe('Directives: Search with mocked CabinetService', function () {
     expect(element[0].querySelector('#searchboxinput').value).toBe("");
   });
 
-  it('should remove content from box when calling cleanInput', function () {
+  it('should not remove assets only search results from box when calling cleanInput', function () {
     scope.omnibox.searchResults = {harry: 'bertenernie'};
     State.selected.assets = ['gemaalomdehoe$666'];
     scope.cleanInput();
-    expect(State.selected.assets.length).toEqual(0);
+    expect(State.selected.assets.length).toEqual(1);
     expect(scope.omnibox.searchResults.harry).toBeUndefined();
   });
 

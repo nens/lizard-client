@@ -104,6 +104,10 @@ angular.module('lizard-nxt')
                 && (temporal.end === undefined || eventEndBeforeTLEnd)
               )
               { result = true; }
+      else if (feature.hasOwnProperty("timestamp")) {
+        result = feature.timestamp >= temporal.start
+                 && feature.timestamp <= temporal.end;
+      }
       else {
         result = false;
       }
@@ -221,20 +225,15 @@ angular.module('lizard-nxt')
         vectorLayers[layerSlug].promise = $http({
           url: layer.url,
           method: 'GET',
-          params: { page_size: 1000 }
+          params: { page_size: 5000 }
         })
         .then(function (response) {
           vectorLayers[layerSlug].isLoading = false;
-          var annotations;
-
-          // Legacy, annotations come from api/annotations, which differs
-          // from /events because it serves all events which belong to a
-          // annotation eventseries, but it also comes in a legacy format for
-          // portal.ddsc.nl. So we use the endpoint en convert the format here.
-          if (layer.slug === 'annotations') {
-            annotations = parseAnnotation(response.data.results);
-          }
-          setData(layerSlug, annotations || response.results, 1);
+          var data = response.data.results;
+          var geoData = data.filter(
+            function (item) { return item.geometry !== null; }
+          );
+          setData(layerSlug, geoData, 1);
         });
 
       }
@@ -251,33 +250,13 @@ angular.module('lizard-nxt')
     };
 
     /**
-     * Parses annotations to lizard events
-     * @param  {object} data annotation api results
-     * @return {array}  lizard events.
-     */
-    var parseAnnotation = function (data) {
-      var result = [];
-      data.forEach(function (anno) {
-        if (anno.location) {
-          result.push({
-            id: anno.id,
-            type: 'Feature',
-            geometry: anno.location,
-            properties: anno
-          });
-        }
-      });
-      return result;
-    };
-
-    /**
      * @description redefines data if zoom level changed
      */
     var replaceData = function (layerSlug, data, zoom) {
       vectorLayers[layerSlug] = {
-          data: [],
-          zoom: zoom
-        };
+        data: [],
+        zoom: zoom
+      };
       vectorLayers[layerSlug].data = vectorLayers[layerSlug].data.concat(data);
     };
 

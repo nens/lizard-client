@@ -1,6 +1,6 @@
 {
   "name": "lizard-client",
-  "version": "2.9.4",
+  "version": "3.0.9",
   "homepage": "https://lizard.net",
   "authors": [],
   "description": "Client for Lizard-NxT",
@@ -27,6 +27,7 @@
     "angular-mocks": "~1.5.0",
     "angular-resource": "~1.5.0",
     "bootstrap": "~3.1.1",
+    "angular-bootstrap": "1.2.5",
     "components-font-awesome": "~4.5.0",
     "d3": "~3.4.11",
     "d3-comparator": "~0.1.0",
@@ -38,7 +39,8 @@
     "ng-csv": "~0.3.6",
     "notie": "*",
     "raven-js": "~1.1.16",
-    "dragula": "~3.6.6"
+    "dragula": "~3.6.6",
+    "angular-loading-bar": "~0.9.0"
   },
   "overrides": {
     "leaflet.markercluster": {

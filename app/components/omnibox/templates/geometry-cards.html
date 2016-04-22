@@ -15,39 +15,31 @@
   </rain>
 
   <annotations
-    ng-if="header && geom.geometry.type === 'Point'"
+    ng-if="header && geom.geometry.type === 'Point' && user.authenticated"
     data="geom"
     time-state="timeState">
   </annotations>
 
-
   <defaultpoint
-    ng-if="geom.geometry.type === 'Point' && !geom.properties.rain "
+    ng-if="geom.geometry.type === 'Point' && !geom.properties.rain && slug !== 'annotations'"
     ng-repeat="(slug, content) in geom.properties"
     content="content"
     name="slug"
-    state="omnibox.state">
+    time-state="timeState">
   </defaultpoint>
 
   <div
-    ng-if="geom.geometry.type === 'LineString'"
+    ng-if="geom.geometry.type === 'LineString' && (content.scale === 'interval' || content.scale === 'ratio')"
     class="card active card-content"
     ng-repeat="(slug, content) in geom.properties">
-    <graph ng-if="content.scale === 'interval' || content.scale === 'ratio'"
+
+    <graph
       line
+      mouseloc="mouseloc"
       data="content.data"
       ylabel="content.quantity + ' [' + content.unit + ']'"
       xlabel="'Afstand in [m]'">
     </graph>
-    <!--    TODO: get proper response from the server when requesting a line of
-    nominal dat and decomment this line
-    <graph ng-if="l.scale === 'nominal'"
-      horizontal-stack
-      data="l.data"
-      keys="{x: 'data', y: 'label'}"
-      xlabel="'[%]'"
-      dimensions="{height: 80, padding: {left: 0, right: 0, top: 5, bottom: 50}}">
-    </graph> -->
 
     <div class="card-tools">
        <a
@@ -65,12 +57,43 @@
 
   <div
     ng-if="content.data
-    && geom.geometry.type === 'Polygon'
+    && (geom.geometry.type === 'Polygon' || geom.geometry.type === 'MultiPolygon')
     && slug !== 'rain'"
     ng-repeat="(slug, content) in geom.properties"
     class="card active">
 
     <div class="card-content">
+
+      <div ng-if="content.format === 'Vector' && slug !== 'annotations'">
+        <span class="card-title">
+          <span><i class="fa fa-circle" ng-style="{'color': content.color }"></i></span>
+          <span><% content.data.length %></span>
+          <span><% content.quantity %></span>
+        </span>
+        <full-details class="table-details-toggler"></full-details>
+        <table ng-if="fullDetails" class="table table-hover table-condensed" >
+          <tbody>
+            <tr ng-repeat="event in content.data">
+              <td rel="tooltip"
+                  data-placement="left"
+                  title="<% 'Start' | translate %>: <% event.properties.timestamp_start | date:'dd/MM/yyyy' %>
+                         <% 'End' | translate %>: <% event.properties.timestamp_end | date:'dd/MM/yyyy' %>">
+                  <% event.properties.timestamp_start | date:'dd/MM/yyyy' %>
+              </td>
+              <td rel="tooltip"
+                  data-placement="left"
+                  title="<% event.properties.category %>">
+                  <% event.properties.category %>
+              </td>
+              <td rel="tooltip"
+                  data-placement="left"
+                  title="<% event.properties.value %>">
+                  <% event.properties.value | truncate:17 %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <graph
         ng-if="content.aggType === 'curve'"

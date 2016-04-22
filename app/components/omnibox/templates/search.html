@@ -31,13 +31,13 @@
       <div class="resize-wrapper">
         <input
           id="searchboxinput"
-          ng-change="search()"
           tabindex="1"
           accesskey="s"
           placeholder="<% 'Search for places, or dates (i.e. 23-10-2013)' | translate %>"
           autocomplete="off"
           dir="ltr"
           ng-model="query"
+          ng-change="search(query)"
           ng-keydown="searchKeyPress($event)"
           spellcheck="false"
           type="search">

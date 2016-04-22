@@ -1,7 +1,7 @@
 <ul class="color-picker"
     ng-if="colorPicker.enabled">
   <li ng-repeat="color in colorPicker.availableColors"
-      ng-class="{selected: (color===colorPicker.selectedColor)}"
+      ng-class="{selected: (color === colorPicker.selectedColor)}"
       ng-click="selectColor(color)"
       ng-style="{'background-color': color}"
       class="clickable">

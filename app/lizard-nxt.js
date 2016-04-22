@@ -44,7 +44,9 @@ angular.module("lizard-nxt", [
   'ngCsv',
   'gettext',
   'timeseries',
-  'lodash'
+  'lodash',
+  'ui.bootstrap',
+  'angular-loading-bar'
 ])
 // Decorator for ngExceptionHandler to log exceptions to sentry
   .config(function ($provide) {
@@ -79,6 +81,16 @@ angular.module('lizard-nxt')
                    window.location.host !== 'lizard.sandbox.lizard.net');
   $locationProvider.html5Mode(html5Mode);
 });
+
+// Configure loading indicator.
+angular.module('lizard-nxt')
+  .config(['cfpLoadingBarProvider', function (cfpLoadingBarProvider) {
+    // Only show bar, no spinner.
+    cfpLoadingBarProvider.includeSpinner = false;
+    // Default is 100, but Lizard is not for impatient teenagers, so 250 is ok.
+    cfpLoadingBarProvider.latencyThreshold = 250;
+  }
+]);
 
 /**
  * @name user

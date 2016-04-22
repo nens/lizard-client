@@ -11,31 +11,47 @@
  */
 
 angular.module('omnibox')
-  .directive('assetCards', ['ClickFeedbackService', 'MapService',
-    function (ClickFeedbackService, MapService) {
+  .directive('assetCards', ['ClickFeedbackService', 'MapService', 'user',
+    function (ClickFeedbackService, MapService, user) {
   return {
     link: function (scope, element) {
 
-      var asset = scope.asset;
+      scope.user = user;
 
-      var feature = {
-        type: 'Feature',
-        geometry: asset.geometry,
-        properties: {
-          entity_name: asset.entity_name,
-          type: asset.type || ''
-        }
+      var clickId;
+
+      var removeAsset = function (id) {
+        ClickFeedbackService.removeClickFromClickLayer(id);
       };
 
-      var clickId = ClickFeedbackService.drawGeometry(
-        MapService,
-        feature
-      );
+      var setAsset = function (asset) {
 
-      ClickFeedbackService.vibrateOnce(feature);
+        if (clickId) {
+          removeAsset(clickId);
+        }
+
+        var feature = {
+          type: 'Feature',
+          geometry: asset.geometry,
+          properties: {
+            entity_name: asset.entity_name,
+            type: asset.type || ''
+          }
+        };
+
+        clickId = ClickFeedbackService.drawGeometry(
+          MapService,
+          feature
+        );
+
+        ClickFeedbackService.vibrateOnce(feature, clickId);
+
+      };
+
+      scope.$watch('asset', setAsset);
 
       element.on('$destroy', function () {
-        ClickFeedbackService.removeClickFromClickLayer(clickId);
+        removeAsset(clickId);
       });
 
 
@@ -44,7 +60,10 @@ angular.module('omnibox')
     scope: {
       asset: '=',
       timeState: '=',
-      longFormat: '='
+      longFormat: '=',
+      showHeader: '=',
+      showTimeseries: '=',
+      showAnnotations: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/asset-cards.html'
@@ -53,12 +72,19 @@ angular.module('omnibox')
 
 
 angular.module('omnibox')
-  .directive('geometryCards', ['MapService', 'ClickFeedbackService',
-    function (MapService, ClickFeedbackService) {
+  .directive('geometryCards', ['MapService', 'ClickFeedbackService', 'CSVService', 'user',
+    function (MapService, ClickFeedbackService, CSVService, user) {
   return {
     link: function (scope, element) {
 
+      scope.user = user;
+
       scope.showNoData = false;
+
+      // expose CSV functions for export
+      scope.formatLineCSV = CSVService.formatLineCSV;
+      scope.getLineCSVHeaders = CSVService.getLineCSVHeaders;
+
       var clickId = 0;
 
       var destroy = function () {
@@ -109,7 +135,8 @@ angular.module('omnibox')
     scope: {
       geom: '=',
       timeState: '=',
-      header: '='
+      header: '=',
+      mouseloc: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/geometry-cards.html'
@@ -121,10 +148,13 @@ angular.module('omnibox')
   .directive('cardattributes', ['WantedAttributes',
     function (WantedAttributes) {
   return {
-    link: function (scope) { scope.wanted = WantedAttributes; },
+    link: function (scope) {
+
+      scope.wanted = WantedAttributes; },
     restrict: 'E',
     scope: {
-      waterchain: '='
+      waterchain: '=',
+      showHeader: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/cardattributes.html'
@@ -167,36 +197,54 @@ angular.module('omnibox')
 
 
 angular.module('omnibox')
-  .directive('nestedasset', ['WantedAttributes', 'DataService',
-    function (WantedAttributes, DataService) {
+  .directive('nestedasset', ['WantedAttributes', 'DataService', 'State', 'getNestedAssets',
+    function (WantedAttributes, DataService, State, getNestedAssets) {
   return {
     link: function (scope) {
 
       scope.wanted = WantedAttributes;
+      scope.longFormat = false;
+
+      var NESTED_ASSETS = ['pumps', 'filters', 'monitoring_wells'];
 
       /**
        * Watch asset unpack json string, add entity name and select first child
        * asset.
        */
       scope.$watch('asset', function () {
-        scope.attr = scope.asset.pumps ? 'pump' : 'filter';
-        if (typeof(scope.asset[scope.attr + 's']) === 'string') {
-          scope.list = JSON.parse(scope.asset[scope.attr + 's']);
-        } else if (typeof(scope.asset[scope.attr + 's']) === 'object') {
-          scope.list = scope.asset[scope.attr + 's'];
-        } else {
-          scope.list = [];
-        }
-        angular.forEach(scope.list, function (asset) {
-          asset.entity_name = scope.attr;
-        });
+        scope.list = getNestedAssets(scope.asset);
         scope.asset.selectedAsset = scope.list[0];
+      });
+
+      var removeTSofAsset = function (asset) {
+        State.selected.timeseries = _.differenceBy(
+          State.selected.timeseries,
+          asset.timeseries,
+          'uuid'
+        );
+      };
+
+      scope.selectedAssetChanged = function (newAsset) {
+        scope.list.forEach(function (asset) {
+          if (asset.entity_name === newAsset.entity_name
+            && asset.id === newAsset.id) {
+            return;
+          }
+          else {
+            removeTSofAsset(asset);
+          }
+        });
+      };
+
+      scope.$on('$destroy', function () {
+        scope.list.forEach(function (asset) { removeTSofAsset(asset); });
       });
 
     },
     restrict: 'E',
     scope: {
       asset: '=',
+      timeState: '=',
     },
     replace: true,
     templateUrl: 'omnibox/templates/nestedasset.html'
@@ -289,7 +337,7 @@ angular.module('omnibox')
     restrict: 'E',
     scope: {
       content: '=',
-      state: '=',
+      timeState: '=',
     },
     replace: true,
     templateUrl: 'omnibox/templates/defaultpoint.html'

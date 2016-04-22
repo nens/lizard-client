@@ -137,23 +137,23 @@ angular.module('lizard-nxt')
      *                     the line.
      */
     var _getLineCoordinates = function () {
-
+      var lineGeom = State.selected.geometries[0].geometry;
       return {
 
         startLat: UtilService.formatNumber(UtilService.round(
-          State.spatial.points[0].lat, COORD_DECIMAL_COUNT
+          lineGeom.coordinates[0][0], COORD_DECIMAL_COUNT
         ), 0, COORD_DECIMAL_COUNT, true),
 
         startLng: UtilService.formatNumber(UtilService.round(
-          State.spatial.points[0].lng, COORD_DECIMAL_COUNT
+          lineGeom.coordinates[0][1], COORD_DECIMAL_COUNT
         ), 0, COORD_DECIMAL_COUNT, true),
 
         endLat: UtilService.formatNumber(UtilService.round(
-          State.spatial.points[1].lat, COORD_DECIMAL_COUNT
+          lineGeom.coordinates[1][0], COORD_DECIMAL_COUNT
         ), 0, COORD_DECIMAL_COUNT, true),
 
         endLng: UtilService.formatNumber(UtilService.round(
-          State.spatial.points[1].lng, COORD_DECIMAL_COUNT
+          lineGeom.coordinates[1][1], COORD_DECIMAL_COUNT
         ), 0, COORD_DECIMAL_COUNT, true)
       };
     };

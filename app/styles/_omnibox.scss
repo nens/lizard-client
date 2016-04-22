@@ -52,6 +52,12 @@
     clip: rect(0px,400px,1000px,0px);
 }
 
+.card-attributes {
+  margin-top: -8px;
+  padding-top: 8px;
+  padding-bottom: 1px;
+}
+
 .card table i[class*='icon-'] {
     position: relative;
     top: -1px;
@@ -99,16 +105,6 @@
     text-overflow: ellipsis;
 }
 
-.card .left{
-    float: left;
-    width: 150px;
-    margin-left: 37px;
-}
-
-.card .right{
-    width: 150px;
-}
-
 .card table.fullwidth{
     line-height: 15px;
     font-size: 0.9em;
@@ -153,6 +149,16 @@
     text-overflow:ellipsis;
     font-size: .9em;
 }
+
+.carousel {
+  min-height: 50px;
+  overflow: hidden;
+}
+
+.carousel-control {
+  background-image: none !important;
+}
+
 .location:focus {
     background-color: $deprecated-gray12 !important;
     outline: 0;
@@ -578,7 +584,7 @@ table tr td:last-child {
 }
 
 .card-tools {
-  /* float: right; not sure what's wrong but stuff's weird on staging*/ 
+  /* float: right; not sure what's wrong but stuff's weird on staging*/
   position: relative;
   top: -1px;
   z-index: 9999;
@@ -598,7 +604,8 @@ table tr td:last-child {
   padding-left: 10px;
 }
 
-.timeseries-header-container .fa-clock-o {
+.timeseries-header-container .fa-clock-o,
+.timeseries-header-container .fa-file-image-o {
   color: $alizarin;
   font-size: 1.5em;
   top: 2px;

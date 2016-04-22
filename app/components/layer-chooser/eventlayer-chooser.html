@@ -7,11 +7,15 @@
     title="<% layergroup.name %>"
     ng-style="layergroup.imageStyle">
     <span ng-bind="layergroup.name"></span>
-    <i
-      ng-if="((layergroup.spatialBounds.north - layergroup.spatialBounds.east) !== 0)
-             && layergroup.isActive()"
-      ng-click="menu.zoomToBounds(layergroup.spatialBounds, layergroup.temporalBounds); $event.stopPropagation()"
-      class="fa fa-crosshairs">
-    </i>
+    <div class="layer-chooser-tools">
+      <i class="fa fa-close"
+         ng-click="removeLayerGroup(layergroup); $event.stopPropagation()"></i>
+      <i
+        ng-if="((layergroup.spatialBounds.north - layergroup.spatialBounds.east) !== 0)
+               && layergroup.isActive()"
+        ng-click="menu.zoomToBounds(layergroup.spatialBounds, layergroup.temporalBounds); $event.stopPropagation()"
+        class="fa fa-crosshairs">
+      </i>
+    </div>
   </label>
 </div>

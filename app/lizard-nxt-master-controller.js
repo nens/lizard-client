@@ -16,12 +16,11 @@ angular.module('lizard-nxt')
   .controller('MasterCtrl',
 
   ['$scope',
-    '$rootScope',
+   '$rootScope',
    '$timeout',
    'CabinetService',
    'UtilService',
    'ClickFeedbackService',
-   'user',
    'versioning',
    'State',
    'MapService',
@@ -32,12 +31,10 @@ angular.module('lizard-nxt')
             CabinetService,
             UtilService,
             ClickFeedbackService,
-            user,
             versioning,
             State,
             MapService) {
 
-  $scope.user = user;
   $scope.versioning = versioning;
   $scope.tooltips = CabinetService.createTooltips();
 
@@ -60,12 +57,12 @@ angular.module('lizard-nxt')
     var overlay = angular.element('#context-transition-overlay')[0];
     overlay.style.transition = null;
     overlay.style.minHeight = window.innerHeight + 'px';
+    $rootScope.context = State.context;
     $timeout(function () {
       overlay.style.transition = 'ease .3s';
       overlay.style.opacity = 1;
     }, 10);
     $timeout(function () {
-      $rootScope.context = State.context;
       overlay.style.opacity = 0;
     }, 300);
     $timeout(function () {
@@ -94,6 +91,4 @@ angular.module('lizard-nxt')
   window.addEventListener("load", function () {
     window.loaded = true;
   });
-
-
 }]);

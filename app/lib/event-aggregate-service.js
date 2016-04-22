@@ -157,8 +157,13 @@ angular.module('lizard-nxt')
           nestedData = {},
           aggregatedArray = [],
           timestampKey = function (d) {
-            return UtilService.roundTimestamp(d.properties.timestamp_start,
-                                              aggWindow);
+            var start;
+            if(d.properties.hasOwnProperty('timestamp')) {
+              start = d.properties.timestamp;
+            } else {
+              start = d.properties.timestamp_start;
+            }
+            return UtilService.roundTimestamp(start, aggWindow);
           };
 
       if (baseColor === undefined) {
@@ -179,7 +184,8 @@ angular.module('lizard-nxt')
           .forEach(function (timestamp, value) {
             var tmpObj = {
               timestamp: Number(timestamp) + aggWindow,
-              count: value.count
+              count: value.count,
+              interval: aggWindow
             };
             aggregatedArray.push(tmpObj);
           }
@@ -206,12 +212,15 @@ angular.module('lizard-nxt')
           .forEach(function (timestamp, value) {
             var tmpObj;
             value.forEach(function (category, value) {
-              tmpObj = {timestamp: Number(timestamp) + aggWindow,
-                        category: category,
-                        mean_duration: value.mean_duration,
-                        color: _getColor(category,
-                                         baseColor),
-                        count: value.count};
+              tmpObj = {
+                timestamp: Number(timestamp) + aggWindow,
+                category: category,
+                mean_duration: value.mean_duration,
+                color: _getColor(category,
+                                 baseColor),
+                count: value.count,
+                interval: aggWindow
+              };
               aggregatedArray.push(tmpObj);
             });
           }

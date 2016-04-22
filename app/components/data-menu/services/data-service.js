@@ -23,6 +23,7 @@ angular.module('data-menu')
     'AssetService',
     'dataLayers',
     'DataLayerGroup',
+    'LayerAdderService',
     'State',
 
     function (
@@ -30,6 +31,7 @@ angular.module('data-menu')
       AssetService,
       dataLayers,
       DataLayerGroup,
+      LayerAdderService,
       State
     ) {
 
@@ -79,25 +81,16 @@ angular.module('data-menu')
 
           this.layerGroups[lg.slug] = lg;
 
-          // utf ? this.utfLayerGroup = lg :
-
         }, this);
         return this.layerGroups;
       };
 
       this.layerGroups = {};
+
       var layerGroups = this._createLayerGroups(dataLayers);
 
       this.baselayerGroups = _.filter(layerGroups, function (lgValue, lgKey) {
         return lgValue.baselayer;
-      });
-
-
-      // Immutable representation of all layergroups set on State.layerGroups
-      Object.defineProperty(State.layerGroups, 'all', {
-        value: Object.keys(layerGroups),
-        writeable: false,
-        configurable: false
       });
 
       // Callback for when assets are being retrieved from api
@@ -105,10 +98,13 @@ angular.module('data-menu')
         if (asset) {
           instance.assets.push(asset);
         }
-        instance.assets = instance.assets.filter(function (asset) {
-          var assetId = asset.entity_name + '$' + asset.id;
-          return _assets.indexOf(assetId) !== -1;
-        });
+
+        // A-synchronously remove assets no longer in selection.
+        instance.assets = AssetService.removeOldAssets(_assets, instance.assets);
+
+        // Deduplicate instance.assets asynchronous.
+        instance.assets = _.uniqWith(instance.assets, _.isEqual);
+
         instance.getGeomDataForAssets(instance.oldAssets, instance.assets);
 
         if (instance.onAssetsChange) {
@@ -119,11 +115,20 @@ angular.module('data-menu')
       };
 
       // Define assets on State and update DataService.assets.
-      var setAssets = function (assets) {
+      var setAssets = function (assetsIn) {
+        // Dedupe assets in selection synchronous.
+        var assets = _.uniq(assetsIn);
         instance.oldAssets = angular.copy(instance.assets);
+
+        // Synchronously remove assets no longer in selection.
+        instance.assets = AssetService.removeOldAssets(assets, instance.assets);
+
         AssetService.updateAssets(instance.assets, _assets, assets)
-        .then(assetChange);
+        .forEach(function (assetPromise) {
+          assetPromise.then(assetChange);
+        });
         _assets = assets;
+
         console.log('State.selected.assets:', State.selected.assets);
 
         rebindAssetFunctions();
@@ -135,20 +140,6 @@ angular.module('data-menu')
       var rebindAssetFunctions = function () {
         State.selected.assets.addAsset = addAsset;
         State.selected.assets.removeAsset = removeAsset;
-        State.selected.assets.resetAssets = resetAssets;
-      };
-
-      // Reset the asset list and retrieve from the API
-      var resetAssets = function (assets) {
-        instance.oldAssets = instance.assets = [];
-        assets.forEach(function (newAsset) {
-          var entity = newAsset.split('$')[0];
-          var id = newAsset.split('$')[1];
-          AssetService.getAsset(entity, id)
-            .then(assetChange)
-        });
-        _assets = assets;
-        rebindAssetFunctions();
       };
 
       var addAsset = function (asset) {
@@ -173,13 +164,36 @@ angular.module('data-menu')
 
       State.selected.assets.addAsset = addAsset;
       State.selected.assets.removeAsset = removeAsset;
-      State.selected.assets.resetAssets = resetAssets;
+
+      /**
+       * Return true if geometry is of same type (point, line etc) and has the
+       * same coordinates.
+       *
+       * @param  {object}  one   geometry
+       * @param  {object}  other geometry
+       * @return {Boolean}
+       */
+      var isDuplicateGeometry = function (one, other) {
+        var oneg = one.geometry;
+        var otherg = other.geometry;
+        if (oneg.type === otherg.type) {
+          return _.every(oneg.coordinates, function (coord, i) {
+            return coord === otherg.coordinates[i];
+          });
+        }
+        else {
+          return false;
+        }
+      };
 
       // Define geometries on State and update DataService.geometries.
-      var setGeometries = function (geometries) {
+      var setGeometries = function (geometriesIn) {
+        // Dedupe geometries in selection synchronous.
+        var geometries = _.uniqWith(geometriesIn, isDuplicateGeometry);
         instance._updateGeometries(_geometries, angular.copy(geometries))
         .then(function (geometries) {
-          instance.geometries = geometries;
+          // Dedupe instance.geometries asynchronous.
+          instance.geometries = _.uniqWith(geometries, isDuplicateGeometry);
           console.log('DataService.geometries:', instance.geometries);
 
           if (instance.onGeometriesChange) {
@@ -213,7 +227,6 @@ angular.module('data-menu')
         setGeometries(newGeometries);
       };
 
-
       instance.geometries = [];
       var _geometries = [];
       Object.defineProperty(State.selected, 'geometries', {
@@ -226,9 +239,33 @@ angular.module('data-menu')
 
       // Immutable representation of all layergroups set on State.layerGroups
       Object.defineProperty(State.layerGroups, 'all', {
-        value: Object.keys(layerGroups),
-        writeable: false,
-        configurable: false
+        get: function () {
+          return Object.keys(layerGroups);
+        },
+        set: function (newLayerGroups) {
+
+          // Remove layergroups not in newLayergroups
+          _.forEach(
+            instance.layerGroups,
+            function (lg, slug) {
+              if (newLayerGroups.indexOf(slug) === -1) {
+                instance.removeLayerGroup(lg);
+              }
+            }
+          );
+
+          // Request new layegroups from server.
+          var nonExistent = _.difference(
+            newLayerGroups,
+            Object.keys(instance.layerGroups)
+          );
+
+          LayerAdderService.getNonExistentLayerGroups(
+            nonExistent,
+            instance
+          );
+
+        }
       });
 
       this.REJECTION_REASONS = {};
@@ -247,13 +284,26 @@ angular.module('data-menu')
           });
         },
         set: function (newActivelayerGroups) {
+
           angular.forEach(layerGroups, function (_lg, slug) {
+            // Turn layers on or off.
             if (newActivelayerGroups.indexOf(slug) !== -1 && !_lg.isActive()) {
               this.toggleLayerGroup(_lg);
-            } else if (_lg.isActive()) {
+            } else if (newActivelayerGroups.indexOf(slug) === -1 && _lg.isActive()) {
               this.toggleLayerGroup(_lg);
             }
           }, instance);
+
+          var nonExistent = _.difference(
+            newActivelayerGroups,
+            Object.keys(instance.layerGroups)
+          );
+
+          LayerAdderService.getNonExistentActiveLayerGroups(
+            nonExistent,
+            instance
+          );
+
         }
       });
 
@@ -523,12 +573,12 @@ angular.module('data-menu')
           if (
 
             // UTF has a special status and is not queried in this loop.
-            layerGroup.slug === instance.utfLayerGroup.slug ||
+            (instance.utfLayerGroup && (layerGroup.slug === instance.utfLayerGroup.slug))
 
             // One too many dimension
-            (layerGroup.temporal && geo.geometry.type === 'LineString')
+            || (layerGroup.temporal && geo.geometry.type === 'LineString')
 
-            ) {
+          ) {
             return;
           }
 
@@ -537,6 +587,9 @@ angular.module('data-menu')
               // async so remove anything obsolete.
               geo.properties = geo.properties || {};
               geo.properties[response.layerGroupSlug] = geo.properties[response.layerGroupSlug] || {};
+              // Replace data and merge everything with existing state of
+              // property.
+              geo.properties[response.layerGroupSlug].data = [];
               _.merge(geo.properties[response.layerGroupSlug], response);
               if (!instance.layerGroups[response.layerGroupSlug].isActive()
                 && layerGroup.slug in Object.keys(geo.properties)) {
