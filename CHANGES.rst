@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 3.0.10 (2016-4-22)
+---------------------
 
 - Download rain data directly from 5minute raster endpoint.
 - Fix mixing timeseries of nested and parent assets.
