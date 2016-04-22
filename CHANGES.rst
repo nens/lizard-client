@@ -5,6 +5,9 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
 - Download rain data directly from 5minute raster endpoint.
+- Fix mixing timeseries of nested and parent assets.
+
+- Cancel consecutive calls for timeseries.
 
 
 Release 3.0.9 (2016-4-19)
@@ -15,10 +18,6 @@ Release 3.0.9 (2016-4-19)
 - Fix line intersection through non temporal rasters again.
 
 - Fix no-data in layer for selected point bugs.
-
-- Fix mixing timeseries of nested and parent assets.
-
-- Cancel consecutive calls for timeseries.
 
 
 Release 3.0.8 (2016-4-15)
