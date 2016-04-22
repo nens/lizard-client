@@ -74,16 +74,19 @@ angular.module('timeseries')
 
       })
 
-      .then(function () {
+      .then(function (ts) {
 
         if (service.onTimeseriesChange) {
           service.onTimeseriesChange();
         }
+        // accomadate chaining;
+        return ts;
 
       });
+      return promise;
     };
 
-    var localPromises = {};
+    var localPromise = {};
 
     /**
      * Color is stored with the ts metadata in asset.timeseries of every asset
@@ -120,12 +123,14 @@ angular.module('timeseries')
      *
      */
     this._getTimeseries = function (uuids, timeState, minPoints) {
-      // Cancel consecutive calls for the same ts.
-      var id = uuids.join(',');
-      if (localPromises[id]) {
-        localPromises[id].reject('consecutive');
+      // Cancel consecutive calls.
+      if (localPromise.reject) {
+        localPromise.resolve({data: {results: []}});
       }
-      localPromises[id] = $q.defer();
+
+      localPromise = $q.defer();
+
+      var id = uuids.join(',');
       var params = {
         uuid: id,
         start: timeState.start ? parseInt(timeState.start, 10): undefined,
@@ -137,7 +142,8 @@ angular.module('timeseries')
       return $http({
         url: 'api/v2/timeseries/',
         method: 'GET',
-        params: params
+        params: params,
+        timeout: localPromise.promise
       })
 
       .then(function (response) {
@@ -149,7 +155,7 @@ angular.module('timeseries')
     };
 
     var errorFn = function (err) {
-      if (err.status === 420) {
+      if (err.status === 420 || err.status === -1) {
         // Cancel normal operations
         return $q.reject(err);
       }

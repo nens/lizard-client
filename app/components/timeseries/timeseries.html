@@ -31,31 +31,31 @@
     </div>
 
 
-    <div ng-if="content.timeseries.length">
+    <div ng-if="content.length">
 
       <br>
 
-      <div ng-if="content.timeseries[0].valueType !== 'image'">
+      <div ng-if="content[0].valueType !== 'image'">
         <div class="timeseries-graph-container"
             ng-class="{hidden: !fullDetails}"
-            ng-if="content.timeseries[0].type === 'bar-chart'">
+            ng-if="content[0].type === 'bar-chart'">
            <graph
               bar-chart
               type="temporal"
               temporal="timeState"
-              content="content.timeseries"
+              content="content"
               now="timeState.at">
             </graph>
         </div>
 
         <div class="timeseries-graph-container"
           ng-class="{hidden: !fullDetails}"
-            ng-if="content.timeseries[0].type !== 'bar-chart'">
+            ng-if="content[0].type !== 'bar-chart'">
           <graph
             line
             type="temporal"
             temporal="timeState"
-            content="content.timeseries"
+            content="content"
             now="timeState.at">
           </graph>
         </div>
@@ -73,12 +73,12 @@
         </div>
       </div>
 
-      <div ng-if="content.timeseries[0].valueType === 'image'">
+      <div ng-if="content[0].valueType === 'image'">
 
       <!-- hardcoded context, timeseries directive is only used in omnibox when
            map -->
         <image-carousel
-          images="content.timeseries[0].data"
+          images="content[0].data"
           context="map"
           temporal="timeState">
         </image-carousel>
