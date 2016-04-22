@@ -1,7 +1,7 @@
 
 angular.module('omnibox')
-  .directive('dbCards', [ 'State', 'DataService', 'DragService', 'gettextCatalog', 'notie', 'TimeseriesService',
-    function (State, DataService, DragService, gettextCatalog, notie, TimeseriesService) {
+  .directive('dbCards', [ 'State', 'DataService', 'DragService', 'gettextCatalog', 'notie', 'TimeseriesService', 'DBCardsService',
+    function (State, DataService, DragService, gettextCatalog, notie, TimeseriesService, DBCardsService) {
   return {
     link: function (scope, element) {
 
@@ -24,7 +24,15 @@ angular.module('omnibox')
         return tsMetaData;
       };
 
-      DragService.on('drop', function (el, target, source) {
+      /**
+       * Turn ts on and give it the order of the dropped plot. Ts could already
+       * be part of a plot above or below it, if so rearrange existing plots.
+       * And make sure ts gets the right order.
+       *
+       * @param  {DOM}    el      Dragged element.
+       * @param  {DOM}    target  Plot in drop.
+       */
+      DragService.on('drop', function (el, target) {
         var order = Number(target.dataset.order);
         var uuid = el.dataset.uuid;
 
@@ -36,32 +44,57 @@ angular.module('omnibox')
         // timeseries
         var ts, otherGraphTS, otherCompatibleGraph;
 
+        // timeseries representend by el.
         ts = _.find(State.selected.timeseries, function (ts) {
           return ts.uuid === uuid;
         });
 
+        // Possible other graph in target.
         otherGraphTS = _.find(State.selected.timeseries, function (ts) {
           return ts.order === order && ts.active;
         });
 
         if (otherGraphTS === undefined) {
+          // No other graph, just turn ts to active.
           emulateClick(el);
+          el.remove();
+          return;
         }
 
-        else {
-          var tsMetaData = getTsMetaData(ts.uuid);
-          var otherGraphTsMetaData = getTsMetaData(otherGraphTS.uuid);
-          if (tsMetaData.value_type !== otherGraphTsMetaData.value_type) {
-            notie.alert(2,
-              gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!'));
-            emulateClick(el);
-          } else {
-            ts.order = order || 0; // dashboard could be empty
-            ts.active = true;
-            TimeseriesService.syncTime();
+        // If ts was already active: first remove and rearrange plots in
+        // dashboard, then continue adding it to the dragged plot.
+        if (ts.active) {
+          var otherTSInOrigninalPlot = _.find(
+            State.selected.timeseries,
+            function (_ts) {
+              return _ts.active
+                && _ts.order === ts.order
+                && _ts.uuid !== ts.uuid;
+            }
+          );
+          if (otherTSInOrigninalPlot === undefined) {
+            // Plot where ts came from is now empty and removed.
+            order = order < ts.order ? order : order - 1;
           }
+
+          ts.active = false;
+          DBCardsService.removeItemFromPlot(ts);
         }
 
+        var tsMetaData = getTsMetaData(ts.uuid);
+        var otherGraphTsMetaData = getTsMetaData(otherGraphTS.uuid);
+        if (tsMetaData.value_type !== otherGraphTsMetaData.value_type) {
+          notie.alert(2,
+            gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!'));
+          emulateClick(el);
+        } else {
+          // Set new order and tell TimeSeriesService to get data.
+          ts.order = order || 0; // dashboard could be empty
+          ts.active = true;
+          TimeseriesService.syncTime();
+        }
+
+        // Remove drag element.
         el.remove();
 
       });
