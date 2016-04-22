@@ -9,6 +9,18 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 Release 3.0.9 (2016-4-18)
 ---------------------
 -
+Release 3.0.9 (2016-4-19)
+---------------------
+
+- Fix relative time not restoring relative.
+
+- Fix line intersection through non temporal rasters again.
+
+- Fix no-data in layer for selected point bugs.
+
+- Fix mixing timeseries of nested and parent assets.
+
+- Cancel consecutive calls for timeseries.
 
 
 Release 3.0.8 (2016-4-15)

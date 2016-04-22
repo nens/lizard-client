@@ -38,7 +38,8 @@
       </graph>
     </div>
 
-    <div ng-switch-when="WMS" ng-if="content.data.features">
+    <div ng-switch-when="WMS"
+         ng-if="content.data.features && content.data.features.length">
       <div class="card-content">
 
         <span id="title-holder"
@@ -73,7 +74,7 @@
     </div>
 
 
-    <div ng-switch-when="Vector">
+    <div ng-switch-when="Vector" ng-if="content.data.length">
       <div class="card-content">
 
         <span class="card-title">

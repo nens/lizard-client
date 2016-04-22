@@ -54,8 +54,6 @@ angular.module('timeseries')
   return {
     link: function (scope) {
 
-      scope.fetching = false;
-
       var selectTimeseries = function () {
         var selectedTimeseries = scope.timeseries.selected.uuid;
 
@@ -65,14 +63,21 @@ angular.module('timeseries')
             + '&end=' + Math.round(scope.timeState.end);
 
         State.selected.timeseries.forEach(function (ts) {
-          ts.active = ts.uuid === selectedTimeseries;
+          if (_.find(scope.asset.timeseries, {uuid: ts.uuid})) {
+            ts.active = ts.uuid === selectedTimeseries;
+          }
         });
 
-        TimeseriesService.syncTime();
+        TimeseriesService.syncTime().then(getContentForAsset);
 
       };
 
-      scope.content = TimeseriesService;
+
+      var getContentForAsset = function (timeseries) {
+        scope.content = timeseries.filter(function (ts) {
+          return _.some(scope.asset.timeseries, {uuid: ts.id});
+        });
+      };
 
       scope.timeseries = {
         selected: {uuid: 'empty'},
@@ -84,15 +89,25 @@ angular.module('timeseries')
 
       scope.$watch('asset', function () {
 
+        var setFirstTSAsSelected = function () {
+          scope.timeseries.selected = scope.asset.timeseries[0];
+        };
+
         var activeTs = _.find(State.selected.timeseries, {active: true});
         if (activeTs) {
-          scope.timeseries.selected = _.find(
+           var tsInAsset = _.find(
             scope.asset.timeseries,
             function (ts) { return ts.uuid === activeTs.uuid;}
           );
+          if (tsInAsset) {
+            scope.timeseries.selected = tsInAsset;
+          }
+          else {
+            setFirstTSAsSelected();
+          }
         }
         else {
-          scope.timeseries.selected = scope.asset.timeseries[0];
+          setFirstTSAsSelected();
         }
 
         scope.timeseries.change();
@@ -104,7 +119,7 @@ angular.module('timeseries')
        */
       scope.$watch('timeState.timelineMoving', function (newValue, oldValue) {
         if (!newValue && newValue !== oldValue) {
-          TimeseriesService.syncTime();
+          TimeseriesService.syncTime().then(getContentForAsset);
         }
       });
 
