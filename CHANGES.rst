@@ -3,7 +3,7 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+- Fix respect to layer minZoom and maxZoom.
 
 
 Release 3.0.10 (2016-4-22)
