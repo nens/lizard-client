@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix IE svg not scalin well, set height in css.
 
 
 Release 3.0.10 (2016-4-22)
