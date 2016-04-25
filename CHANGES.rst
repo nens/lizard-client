@@ -6,7 +6,7 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Fix IE svg not scaling well, set height in css.
 
-- Fix IE dashoard dragging, inlude datalist polyfill and get attribute instead of element.dataset.
+- Fix IE dashoard dragging, include datalist polyfill and get attribute instead of element.dataset.
 
 
 Release 3.0.10 (2016-4-22)
