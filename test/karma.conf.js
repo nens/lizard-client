@@ -39,6 +39,7 @@ module.exports = function(config) {
       'vendor/raven-js/dist/raven.js',
       'vendor/dragula/dist/dragula.js',
       'vendor/angular-loading-bar/build/loading-bar.js',
+      'vendor/classList.js/classList.min.js',
       // endbower
 
       'vendor/moment/locale/nl.js',
