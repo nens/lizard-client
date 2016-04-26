@@ -276,7 +276,8 @@ angular.module('lizard-nxt')
         drawGeometry,
         startVibration,
         vibrateOnce,
-        removeLayer;
+        removeLayer,
+        removeLeafletLayerWithId;
 
     /**
      * @description should remove that exact click that is wanting to be

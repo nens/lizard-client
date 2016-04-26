@@ -142,7 +142,7 @@ angular.module('dashboard')
           };
 
           if (slug === 'rain') {
-            type = 'rain'
+            type = 'rain';
           } else if (property.temporal) {
             type = 'temporalLine';
           } else {

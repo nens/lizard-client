@@ -347,11 +347,11 @@ angular.module('lizard-nxt')
                 type: 'LineString'
               }
             };
+            var coordinates = [];
 
             if (selected.split('-').length > 1) {
               // Line
               var points = selected.split('-');
-              var coordinates = [];
               angular.forEach(points, function (pointStr) {
                 var point = pointStr.split(',');
                 if (parseFloat(point[0]) &&
@@ -364,7 +364,7 @@ angular.module('lizard-nxt')
             }
 
             else if (selected.split(',').length > 1) {
-              var geometry = {
+              geometry = {
                 geometry: {
                   type: 'Point'
                 }
@@ -372,7 +372,7 @@ angular.module('lizard-nxt')
               var point = selected.split(',');
               if (parseFloat(point[0]) &&
                   parseFloat(point[1])) {
-                var coordinates = [Number(point[0]), Number(point[1])];
+                coordinates = [Number(point[0]), Number(point[1])];
                 geometry.geometry.coordinates = coordinates;
                 selection.geometries.addGeometry(geometry);
               }

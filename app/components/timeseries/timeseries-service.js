@@ -137,7 +137,11 @@ angular.module('timeseries')
         end: timeState.end ? parseInt(timeState.end, 10): undefined,
       };
 
-      minPoints ? params.min_points = minPoints : params.window = timeState.aggWindow;
+      if (minPoints) {
+        params.min_points = minPoints;
+      } else {
+        params.window = timeState.aggWindow;
+      }
 
       return $http({
         url: 'api/v2/timeseries/',

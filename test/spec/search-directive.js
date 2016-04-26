@@ -3,9 +3,9 @@
 describe('Directives: Search with mocked CabinetService', function () {
   var MapService, State;
 
-  var CabinetService = function () {
+  var SearchService = function () {
     // Mock promise
-    this.henk = 'piet'
+    this.henk = 'piet';
     this.geocode = {
       get: function (searchString, spatialState) {
         return {
@@ -15,11 +15,12 @@ describe('Directives: Search with mocked CabinetService', function () {
     };
     this.search = {
       get: function (searchString, spatialState) {
-          return {
-            then: function (cb) { cb({henk: 'hai'}); }
-          };
+        return {
+          then: function (cb) { cb({henk: 'hai'}); }
+        };
       }
     };
+    this.cancel = function () {};
   };
 
   // load the service's module
@@ -27,7 +28,7 @@ describe('Directives: Search with mocked CabinetService', function () {
   beforeEach(module('global-state'));
   beforeEach(function () {
     module(function ($provide) {
-      $provide.service('CabinetService', CabinetService)
+      $provide.service('SearchService', SearchService);
     });
   });
   var scope, element;
@@ -135,7 +136,7 @@ describe('Directives: Search with real LocationService', function () {
   it('should zoom to temporal result', function () {
     scope.query = '2014-10-23';
     scope.search();
-    var m = scope.omnibox.searchResults.temporal
+    var m = scope.omnibox.searchResults.temporal;
     scope.zoomToTemporalResult(m);
     expect(State.temporal.start).toBe(m.valueOf());
     expect(State.temporal.end).toBe(m.valueOf() + m.nxtInterval.valueOf());
