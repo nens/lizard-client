@@ -43,7 +43,6 @@ angular.module('omnibox')
         var results = SearchService.search(scope.query, State);
         setResultsOnBox(results);
       } else {
-        SearchService.cancel();
         scope.cleanInput();
       }
     };
@@ -62,6 +61,7 @@ angular.module('omnibox')
      * (5) - Clear the click feedback.
      */
     scope.cleanInput = function () {
+      SearchService.cancel();
       scope.query = "";
       scope.omnibox.searchResults = {};
     };
