@@ -6,6 +6,14 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Fix dragging active timeseries in dashboard.
 
+- Fix IE svg not scaling well, set height in css.
+
+- Fix IE dashoard dragging, include datalist polyfill and get attribute instead of element.dataset.
+
+- Fix respect to layer minZoom and maxZoom.
+
+- Login button visible if not authenticated.
+
 
 Release 3.0.10 (2016-4-22)
 ---------------------
