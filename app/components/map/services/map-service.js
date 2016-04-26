@@ -656,7 +656,6 @@ angular.module('map')
           zIndex: nonLeafLayer.zIndex
         };
         _options = angular.extend(_options, nonLeafLayer.options);
-        console.log("wms "+nonLeafLayer.slug+"-"+nonLeafLayer.minZoom+"-"+nonLeafLayer.maxZoom+"-"+this.MAXZOOMLEVEL);
 
         return LeafletService.tileLayer.wms(nonLeafLayer.url, _options);
       },
