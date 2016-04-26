@@ -34,7 +34,7 @@ angular.module('omnibox')
        */
       DragService.on('drop', function (el, target) {
         var order = Number(target.getAttribute('data-order'));
-        var uuid = el..getAttribute('data-uuid');
+        var uuid = el.getAttribute('data-uuid');
 
         // El either represents a timeseries or another plottable item.
         //
