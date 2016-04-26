@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 3.0.11 (2016-4-26)
+---------------------
 
 - Fix dragging active timeseries in dashboard.
 
