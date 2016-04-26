@@ -40,7 +40,8 @@
     "notie": "*",
     "raven-js": "~1.1.16",
     "dragula": "~3.6.6",
-    "angular-loading-bar": "~0.9.0"
+    "angular-loading-bar": "~0.9.0",
+    "classList.js": "https://github.com/nens/classList.js.git#master"
   },
   "overrides": {
     "leaflet.markercluster": {
