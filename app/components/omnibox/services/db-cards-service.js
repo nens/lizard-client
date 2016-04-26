@@ -71,7 +71,7 @@ angular.module('omnibox')
 
     var otherItems = 0;
 
-    if (item.uuid) {
+    if (uuid) {
       // Check if it was the last timeseries in the chart.
       otherItems += _.filter(
         State.selected.timeseries,
