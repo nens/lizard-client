@@ -25,7 +25,6 @@ angular.module('lizard-nxt')
   // Wms getFeatureInfo goes through a proxy. Specify url as a param.
   wmsGetFeatureInfo = new Resource.Endpoint('proxy/');
 
-  searchResource = new Resource.Endpoint('api/v2/search/');
   geocodeResource = new Resource.Endpoint('api/geocode/json')
     // Use a different base url, go directly to our friends at google.
     // They don't mind.
@@ -94,7 +93,6 @@ angular.module('lizard-nxt')
     createTooltips: createTooltips,
     geocode: geocodeResource,
     raster: rasterResource,
-    search: searchResource,
     timeseries: timeseriesResource,
     wmsGetFeatureInfo: wmsGetFeatureInfo,
     regions: regions

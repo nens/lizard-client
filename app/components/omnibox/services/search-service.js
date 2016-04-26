@@ -10,12 +10,16 @@
 angular.module('omnibox')
   .service('SearchService',
     [
+    '$q',
+    '$http',
     'LeafletService',
     'CabinetService',
     'DateParser',
     'DataService',
     'MapService',
     function SearchService (
+      $q,
+      $http,
       LeafletService,
       CabinetService,
       dateParser,
@@ -32,6 +36,12 @@ angular.module('omnibox')
         UNKNOWN_ERROR: 'UNKNOWN_ERROR'
     };
 
+    var localPromise = {};
+
+    this.cancel = function () {
+      localPromise.resolve({data: {results: []}});
+    };
+
     /**
      * Sends searchstring to date parser and geocoder resource.
      *
@@ -42,6 +52,39 @@ angular.module('omnibox')
      *                        promise resolves with response from geocoder.
      */
     this.search = function (searchString, state) {
+
+      var getSearch = function (params) {
+        // Cancel consecutive calls.
+        if (localPromise.reject) {
+          localPromise.resolve({data: {results: []}});
+        }
+
+        localPromise = $q.defer();
+
+        return $http({
+          url: 'api/v2/search/',
+          method: 'GET',
+          params: params,
+          timeout: localPromise.promise
+        })
+        .then(function (response) {
+          return response.data;
+        }, errorFn);
+      };
+
+      var errorFn = function (err) {
+        if (err.status === 420 || err.status === -1) {
+          // Cancel normal operations
+          return $q.reject(err);
+        }
+        else if (err.status >= 500 && err.status < 600) {
+          notie.alert(3, 'Lizard encountered a problem retrieving your timeseries.', 3);
+          // Cancel normal operations
+          return $q.reject(err);
+        }
+        window.Raven.captureException(err);
+        return err; // continue anyway
+      };
 
       var bounds;
       // bounds are not available in the dashboard view.
@@ -62,7 +105,7 @@ angular.module('omnibox')
 
       var moment = dateParser(searchString);
 
-      var search = CabinetService.search.get({
+      var search = getSearch({
         q: searchString
       });
 

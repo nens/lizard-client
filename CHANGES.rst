@@ -14,6 +14,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Login button visible if not authenticated.
 
+- Fix search issues related to asynch API calls.
+
 
 Release 3.0.10 (2016-4-22)
 ---------------------

@@ -42,6 +42,9 @@ angular.module('omnibox')
       if (scope.query.length > 0) {
         var results = SearchService.search(scope.query, State);
         setResultsOnBox(results);
+      } else {
+        SearchService.cancel();
+        scope.cleanInput();
       }
     };
 
