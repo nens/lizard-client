@@ -634,8 +634,8 @@ angular.module('map')
           layerUrl, {
             retina: retinaSupport && L.Browser.retina ? '@2x' : '',
             slug: nonLeafLayer.slug,
-            minZoom: nonLeafLayer.min_zoom || 0,
-            maxZoom: this.MAXZOOMLEVEL,
+            minZoom: nonLeafLayer.minZoom || 0,
+            maxZoom: nonLeafLayer.maxZoom || this.MAXZOOMLEVEL,
             detectRetina: retinaSupport,
             zIndex: nonLeafLayer.zIndex,
             ext: 'png'
@@ -649,8 +649,8 @@ angular.module('map')
           layers: nonLeafLayer.slug,
           format: 'image/png',
           version: '1.1.1',
-          minZoom: nonLeafLayer.min_zoom || 0,
-          maxZoom: this.MAXZOOMLEVEL,
+          minZoom: nonLeafLayer.minZoom || 0,
+          maxZoom: nonLeafLayer.maxZoom || this.MAXZOOMLEVEL,
           crs: LeafletService.CRS.EPSG3857,
           opacity: nonLeafLayer.opacity,
           zIndex: nonLeafLayer.zIndex
@@ -669,8 +669,8 @@ angular.module('map')
           slug: nonLeafLayer.slug,
           name: nonLeafLayer.slug,
           useJsonP: false,
-          minZoom: nonLeafLayer.min_zoom_click || 0,
-          maxZoom: this.MAXZOOMLEVEL,
+          minZoom: nonLeafLayer.minZoom || 0,
+          maxZoom: nonLeafLayer.maxZoom || this.MAXZOOMLEVEL,
           order: nonLeafLayer.zIndex,
           zIndex: nonLeafLayer.zIndex
         });

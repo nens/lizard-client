@@ -3,6 +3,7 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+- Fix respect to layer minZoom and maxZoom.
 
 - Login button visible if not authenticated.
 
