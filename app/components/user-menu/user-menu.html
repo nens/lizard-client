@@ -55,6 +55,14 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li ng-if="!user.authenticated">
+          <a href="https://www.lizard.net/support"
+             title="<% 'Question and manual' | translate %>"
+             target="_blank">
+            <i class="fa fa-question"></i>
+            <span translate>Help</span>
+          </a>
+        </li>
+        <li ng-if="!user.authenticated">
           <a onclick="logIn()"
              title="<% tooltips.login %>"
              class="clickable">
