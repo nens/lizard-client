@@ -10,6 +10,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Fix crosssection transitions not keeping up with temporal animation.
 
+- Remove old graph code (donut).
+
 
 Release 3.0.11 (2016-4-26)
 ---------------------

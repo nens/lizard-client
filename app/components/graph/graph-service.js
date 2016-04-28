@@ -56,28 +56,6 @@ angular.module('lizard-nxt')
   /**
    * @function
    * @memberOf Graph
-   * @param {object}    data object. Currently supports the format:
-   *                    [
-   *                      {
-   *                        "<key to color>": "<color str>",
-   *                        "<value key": <value int>,
-   *                        "<label key>": "<label>"
-   *                      },
-   *                      ...,
-   *                    ]
-   * @description       If necessary creates a d3 pie and arc and
-   *                    draws the features in the data element.
-   */
-  Graph.prototype.drawDonut = function (data) {
-    if (!this.dimensions.r || this._arc || this._pie) {
-      this._donut = createDonut(this.dimensions);
-    }
-    drawPie(this._svg, this.dimensions, this._donut, data);
-  };
-
-  /**
-   * @function
-   * @memberOf Graph
    * @param {object} content - Array of object with data, keys, unit, color,
    *                           xlabel and if multi line: id.
    *        data   Currently supports the format:
@@ -522,39 +500,6 @@ angular.module('lizard-nxt')
   /**
    * @function
    * @memberOf Graph
-   * @param {function} callback
-   * @description      Sets a listener on the drawing rectangle
-   *                   and on mousemove calls the callback with
-   *                   the current position on the drawing area.
-   */
-  Graph.prototype.followMouse = function (callback) {
-       // Move listener rectangle to the front
-      var el = this._svg.select('g').select('#listeners').node();
-      el.parentNode.appendChild(el);
-      var scale = this._xy.x.scale;
-      this._svg.select('g').select('#listeners')
-        .on('mousemove', function () {
-          var pos = scale.invert(d3.mouse(this)[0]);
-          callback(pos);
-        });
-  };
-  /**
-   * @function
-   * @memberOf Graph
-   * @param {function} callback
-   * @description      Sets a listener on the drawing rectangle
-   *                   and on mouseout calls the callback.
-   */
-  Graph.prototype.mouseExit = function (callback) {
-      this._svg.select('g').select('#listeners')
-        .on('mouseout', function () {
-          callback();
-        });
-  };
-
-  /**
-   * @function
-   * @memberOf Graph
    * @param {int}    draw   Timestamp in ms from epoch
    * @description           draws the now according the
    *                        current active scale.
@@ -690,11 +635,11 @@ angular.module('lizard-nxt')
 
 
 
-  var createPie, createArc, drawPie, drawAxes, drawLabel, needToRescale,
-      drawPath, setupLineGraph, createDonut, addInteractionToPath, getBarWidth,
-      drawVerticalRects, addInteractionToRects, drawHorizontalRects,
-      createXGraph, rescale, createYValuesForCumulativeData, getDataSubset,
-      updateYs, drawMultipleAxes, setActiveAxis, addPointsToGraph, addLineToGraph;
+  var drawAxes, drawLabel, needToRescale, drawPath, setupLineGraph, createDonut,
+      addInteractionToPath, getBarWidth, drawVerticalRects,
+      addInteractionToRects, drawHorizontalRects, createXGraph, rescale,
+      createYValuesForCumulativeData, getDataSubset, updateYs, drawMultipleAxes,
+      setActiveAxis, addPointsToGraph, addLineToGraph;
 
   /**
    * Creates y cumulatie y values for elements on the same x value.
@@ -1528,66 +1473,6 @@ angular.module('lizard-nxt')
         .attr('r', 0)
       .remove();
     }
-  };
-
-  createDonut = function (dimensions) {
-    var donutHeight = Graph.prototype._getHeight(dimensions);
-    dimensions.r = donutHeight / 2;
-    var pie = createPie(dimensions),
-    arc = createArc(dimensions);
-    return {
-      dimensions: dimensions,
-      arc: arc,
-      pie: pie
-    };
-  };
-
-  createPie = function (dimensions) {
-    return d3.layout.pie()
-      .value(function (d) {
-          return d.data;
-        })
-      // Sorting messes with the transition
-      .sort(null);
-  };
-
-  createArc = function (dimensions) {
-    var ARC_INNER_RADIUS = 0.7;
-    return d3.svg.arc()
-      .innerRadius(dimensions.r * ARC_INNER_RADIUS)
-      .outerRadius(dimensions.r);
-  };
-
-  drawPie = function (svg, dimensions, donut, data) {
-    var width = Graph.prototype._getWidth(dimensions),
-    donutHeight = Graph.prototype._getHeight(dimensions),
-    pie = donut.pie,
-    arc = donut.arc;
-
-    // Store the displayed angles in _current.
-    // Then, interpolate from _current to the new angles.
-    // During the transition, _current is updated in-place by d3.interpolate.
-    function arcTween(a) {
-      var i = d3.interpolate(this._current, a);
-      this._current = i(0);
-      return function (t) {
-        return arc(i(t));
-      };
-    }
-
-    var donutArcs = svg.datum(data).selectAll("path").data(pie);
-
-    donutArcs
-      .transition()
-      .duration(Graph.prototype.transTime)
-      .attrTween("d", arcTween); // redraw the arcs
-
-    donutArcs.enter().append("path")
-      .attr("fill", function (d) {return d.data.color; })
-      .attr("d", arc)
-      .each(function (d) { this._current = d; }) // store the initial angles
-      .attr("transform", "translate(" +
-        donutHeight / 2 + ", " + donutHeight / 2 + ")");
   };
 
   /**
