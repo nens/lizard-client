@@ -14,6 +14,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Fix showing rain and other data in omnibox.
 
+- Fix search not cleaning scope after enter keypress.
+
 
 Release 3.0.11 (2016-4-26)
 ---------------------
