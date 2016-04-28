@@ -371,10 +371,13 @@ angular.module('lizard-nxt')
       var total = d3.sum(data, function (d) {
         return Number(d[keys.x]);
       });
-      angular.forEach(data, function (value, key) {
+
+      var dataCopy = angular.copy(data);
+
+      angular.forEach(dataCopy, function (value, key) {
         value[keys.x] = value[keys.x] / total;
       });
-      drawHorizontalRects(this._svg, this.dimensions, this.transTime, this._x.scale, data, keys, labels);
+      drawHorizontalRects(this._svg, this.dimensions, this.transTime, this._x.scale, dataCopy, keys, labels);
   };
 
   /**
@@ -836,6 +839,7 @@ angular.module('lizard-nxt')
       value.start = previousCumu;
       previousCumu += value[keys.x];
     });
+
     // Data should be normalized between 0 and 1.
     var total = 1;
 
@@ -872,16 +876,22 @@ angular.module('lizard-nxt')
     // Rects set their value on the label axis when hoovered
     rects.on('mousemove', function (d) {
       var label;
-      if (d.label === -1) {
+      var labelstr = d.label;
+      if (d.label === -1 || d.label.split === undefined) {
         label = Math.round(d[keys.x] * 100) + "% overig";
       } else {
-        var labelstr = d.label.split('-');
+        labelstr = d.label.split('-');
         label = Math.round(d[keys.x] * 100) + '% ' + labelstr[labelstr.length - 1];
       }
 
       svg.select('#xlabel')
         .text(label)
         .attr("class", "selected");
+
+      // Correct height so label fits within svg.
+      var mv = - 0.5 * svg.select('#xlabel').node().getBBox().height;
+      svg.select('#xlabel')
+        .attr('dy', mv);
     });
 
     // When the user moves the mouse away from the graph, put the original
@@ -1348,6 +1358,7 @@ angular.module('lizard-nxt')
         .attr('x', dimensions.padding.left + width / 2)
         .attr('y', dimensions.height);
     }
+
     mv = y
       ? 0.5 * el.node().getBBox().height + PIXEL_CORRECTION
       : - 0.5 * el.node().getBBox().height + PIXEL_CORRECTION;
