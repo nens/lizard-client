@@ -24,6 +24,9 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Fix multiplying annotations when button bashing.
 
+- Allow multiple assets/geoms in dashboard, independent of single/multi point.
+  Go back to one assets when switching to map and box is not multipoint.
+
 Release 3.0.11 (2016-4-26)
 ---------------------
 

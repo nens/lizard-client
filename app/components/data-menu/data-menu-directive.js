@@ -182,31 +182,9 @@ angular.module('data-menu')
  * @description Makes the data menu items
  */
 angular.module('data-menu')
-  .directive('datamenuItem', ['State', function (State) {
+  .directive('datamenuItem', ['State', 'rmAllButLastAssetAndGeometry', function (State, rmAllButLastAssetAndGeometry) {
 
   var link = function (scope, elem, attrs) {
-
-    /**
-     * Removes all but last asset. If no assets, it removes all but last
-     * geometry, else all geometries. Result, one selected element.
-     */
-    var rmAllButLastAssetAndGeometry = function () {
-      State.selected.assets.forEach(function (asset) {
-        if (State.selected.assets.length > 1) {
-          State.selected.assets.removeAsset(asset);
-        }
-      });
-      if (State.selected.assets.length === 0) {
-        State.selected.geometries.forEach(function (geom) {
-          if (State.selected.geometries.length > 1) {
-            State.selected.geometries.removeGeometry(geom);
-          }
-        });
-      }
-      else {
-        State.selected.geometries = [];
-      }
-    };
 
     /**
      * Leaves all points when going from point to multi-point. Removes all but
