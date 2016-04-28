@@ -8,6 +8,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Fix now in graphs not animating well.
 
+- Fix crosssection transitions not keeping up with temporal animation.
+
 
 Release 3.0.11 (2016-4-26)
 ---------------------

@@ -107,7 +107,6 @@ angular.module('lizard-nxt')
    *                        supported.
    */
   Graph.prototype.drawLine = function (content, temporal, transitioning) {
-
     var graph = this;
     graph._yPerUnit = {}; // one line graph has a y -scale and axis per unit in
                           // content.
@@ -433,6 +432,7 @@ angular.module('lizard-nxt')
     var maxY;
     var minY;
 
+    var transTime = this._getTransTime();
     if (content.points.length) {
       var minimumPoint = _.minBy(content.points, function (p) {return p.value; });
       var maximumPoint = _.maxBy(content.points, function (p) {return p.value; });
@@ -490,28 +490,28 @@ angular.module('lizard-nxt')
       this._xy.y.axis,
       this.dimensions,
       true, // is a y axis.
-      this.transTime
+      transTime
     );
     drawLabel(this._svg, this.dimensions, 'hoogte (mNAP)', true);
 
     var className = 'line';
     addLineToGraph(
       this._svg,
-      this.transTime,
+      transTime,
       content.line.data,
       {x: 0, y:1},
       this._xy,
       className
     );
 
-    addPointsToGraph(this._svg, this.transTime, content.points, this._xy);
+    addPointsToGraph(this._svg, transTime, content.points, this._xy);
 
     className = 'interpolation-line';
     // Only use ts linked to freatic line.
     var linePoints = content.points.filter(function (p) { return p.linked; });
     addLineToGraph(
       this._svg,
-      this.transTime,
+      transTime,
       linePoints,
       {x: 'x', y: 'value'},
       this._xy,
@@ -667,6 +667,28 @@ angular.module('lizard-nxt')
       .duration(100)
       .attr('r', 3);
   };
+
+  /**
+   * Returns this.transTime first time called or when last called a long time
+   * ago, otherwise returns zero. Use it to determine transition duration.
+   */
+  Graph.prototype._getTransTime = function () {
+    var transTime;
+    var now = Date.now();
+    var RENDER_BUFFER = 30; // Browsers need a few ms to render the transtion.
+
+    if (now - this._lastTimeDrawWasCalled < RENDER_BUFFER + this.transTime) {
+      transTime = 0;
+    } else {
+      transTime = this.transTime;
+    }
+
+    this._lastTimeDrawWasCalled = Date.now();
+
+    return transTime;
+  };
+
+
 
   var createPie, createArc, drawPie, drawAxes, drawLabel, needToRescale,
       drawPath, setupLineGraph, createDonut, addInteractionToPath, getBarWidth,
