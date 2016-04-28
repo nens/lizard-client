@@ -30,28 +30,36 @@ angular.module('omnibox')
           removeAsset(clickId);
         }
 
-        var feature = {
-          type: 'Feature',
-          geometry: asset.geometry,
-          properties: {
-            entity_name: asset.entity_name,
-            type: asset.type || ''
-          }
-        };
+        // Child assets (filters from grounwater stations) do not always have
+        // a geometry.
+        if (asset.geometry) {
 
-        clickId = ClickFeedbackService.drawGeometry(
-          MapService,
-          feature
-        );
+          var feature = {
+            type: 'Feature',
+            geometry: asset.geometry,
+            properties: {
+              entity_name: asset.entity_name,
+              type: asset.type || ''
+            }
+          };
 
-        ClickFeedbackService.vibrateOnce(feature, clickId);
+          clickId = ClickFeedbackService.drawGeometry(
+            MapService,
+            feature
+          );
+
+          ClickFeedbackService.vibrateOnce(feature, clickId);
+
+        }
 
       };
 
       scope.$watch('asset', setAsset);
 
       element.on('$destroy', function () {
-        removeAsset(clickId);
+        if (clickId) {
+          removeAsset(clickId);
+        }
       });
 
 
