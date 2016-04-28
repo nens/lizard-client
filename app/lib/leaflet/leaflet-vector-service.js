@@ -64,6 +64,7 @@ angular.module('lizard-nxt')
       // map-service.
       VectorService.getData('leaflet', this.options.layer, {})
       .then(function (response) {
+        layer.clearLayers();
         layer.markers = [];
 
         var pxSize = 10,
@@ -122,7 +123,7 @@ angular.module('lizard-nxt')
      */
     onRemove: function (map) {
       LeafletService.MarkerClusterGroup.prototype.onRemove.call(this, map);
-      this.markers.forEach(function (marker) { this.removeMarker(marker); }, this);
+      this.clearLayers();
       this.markers = [];
       VectorService.invalidateData(this.options.layer);
     },

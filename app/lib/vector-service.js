@@ -250,36 +250,13 @@ angular.module('lizard-nxt')
     };
 
     /**
-     * @description redefines data if zoom level changed
-     */
-    var replaceData = function (layerSlug, data, zoom) {
-      vectorLayers[layerSlug] = {
-        data: [],
-        zoom: zoom
-      };
-      vectorLayers[layerSlug].data = vectorLayers[layerSlug].data.concat(data);
-    };
-
-    /**
-     * @description gets unique values and tosses duplicates
-     * part of PostGis.js (ಠ_ಠ)
-     */
-    var getUnion = function (arr1, arr2) {
-      return UtilService.union(arr1, arr2);
-    };
-
-    /**
-     * @description appends data if zoom level hasn't changed
+     * @description sets data.
      *
      */
     var setData = function (layerSlug, data, zoom) {
-      if (vectorLayers.hasOwnProperty(layerSlug)
-        && vectorLayers[layerSlug].zoom === zoom) {
-        vectorLayers[layerSlug].data = getUnion(
-          vectorLayers[layerSlug].data, data);
-      } else {
-        replaceData.apply(this, arguments);
-      }
+      vectorLayers[layerSlug] = {
+        data: data,
+      };
     };
 
     return {
