@@ -123,36 +123,38 @@ angular.module('omnibox')
       if ($event.target.id === "searchboxinput") {
         // Intercept keyPresses *within* searchbox,do xor prevent animation
         // from happening when typing.
+
         if ($event.which === KEYPRESS.ESC) {
           scope.cleanInput();
-        } else if ($event.which === KEYPRESS.BACKSPACE && prevKey === KEYPRESS.BACKSPACE) {
-          scope.omnibox.searchResults = {}; // only delete search results
-        } else if ($event.which === KEYPRESS.BACKSPACE && scope.query === "") {
-          scope.omnibox.searchResults = {}; // only delete search results
-        } else if ($event.which === KEYPRESS.SPACE) {
+        }
+
+        else if ($event.which === KEYPRESS.SPACE) {
           // prevent anim. start/stop
           $event.originalEvent.stopPropagation();
-        } else if ($event.which === KEYPRESS.ENTER) {
-          var loc = scope.omnibox.searchResults;
-          if (loc && loc.temporal) {
-            scope.zoomToTemporalResult(
-              scope.omnibox.searchResults.temporal
-            );
-          } else if (loc && loc.spatial && loc.spatial[0]) {
-            scope.zoomToSpatialResult(
-              scope.omnibox.searchResults.spatial[0]
-            );
-          } else if (loc && loc.api && loc.api[0]) {
-            scope.zoomToSearchResult(
-              scope.omnibox.searchResults.api[0]
-            );
+        }
+
+        else if ($event.which === KEYPRESS.ENTER) {
+          var results = scope.omnibox.searchResults;
+          if (results.temporal || results.spatial || results.api) {
+            if (results.temporal) {
+              scope.zoomToTemporalResult(
+                scope.omnibox.searchResults.temporal
+              );
+            }
+            else if (results.api) {
+              scope.zoomToSearchResult(
+                scope.omnibox.searchResults.api[0]
+              );
+            }
+            else if (results.spatial) {
+              scope.zoomToSpatialResult(
+                scope.omnibox.searchResults.spatial[0]
+              );
+            }
+            scope.cleanInput();
           }
         }
       }
-      prevKey = $event.which;
-      prevKeyTimeout = setTimeout(function () {
-        prevKey = null;
-      }, TIMEOUT);
     };
 
     /**
@@ -197,12 +199,12 @@ angular.module('omnibox')
               scope.omnibox.searchResults.spatial = results;
             }
             else if (
-                response.status !== SearchService.responseStatus.ZERO_RESULTS
-                ) {
+              response.status !== SearchService.responseStatus.ZERO_RESULTS
+            ) {
               // Throw error so we can find out about it through sentry.
               throw new Error(
-                  'Geocoder returned with status: ' + response.status
-                  );
+                'Geocoder returned with status: ' + response.status
+              );
             }
 
           }
@@ -213,7 +215,9 @@ angular.module('omnibox')
         .then(function (response) {
           // Asynchronous so check whether still relevant.
           if (scope.omnibox.searchResults === undefined) { return; }
-          scope.omnibox.searchResults.api = response.results;
+          if (response.results.length) {
+            scope.omnibox.searchResults.api = response.results;
+          }
         }
       );
     };

@@ -453,5 +453,14 @@ describe('Testing graph', function () {
     }
   );
 
+  it('should use a transition duration of 0 when quickly calling _getTransTime',
+    function () {
+      var first = graph._getTransTime();
+      expect(first).toBe(graph.transTime);
+      var second = graph._getTransTime();
+      expect(second).toBe(0);
+    }
+  );
+
 
 });

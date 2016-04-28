@@ -17,6 +17,7 @@ angular.module('omnibox')
     'DateParser',
     'DataService',
     'MapService',
+    'notie',
     function SearchService (
       $q,
       $http,
@@ -24,7 +25,8 @@ angular.module('omnibox')
       CabinetService,
       dateParser,
       DataService,
-      MapService
+      MapService,
+      notie
       ) {
 
     this.responseStatus = {
@@ -39,7 +41,9 @@ angular.module('omnibox')
     var localPromise = {};
 
     this.cancel = function () {
-      localPromise.resolve({data: {results: []}});
+      if (localPromise.resolve) {
+        localPromise.resolve({data: {results: []}});
+      }
     };
 
     /**
@@ -55,7 +59,7 @@ angular.module('omnibox')
 
       var getSearch = function (params) {
         // Cancel consecutive calls.
-        if (localPromise.reject) {
+        if (localPromise.resolve) {
           localPromise.resolve({data: {results: []}});
         }
 
@@ -78,7 +82,7 @@ angular.module('omnibox')
           return $q.reject(err);
         }
         else if (err.status >= 500 && err.status < 600) {
-          notie.alert(3, 'Lizard encountered a problem retrieving your timeseries.', 3);
+          notie.alert(3, 'Lizard encountered a problem while searching your query.', 3);
           // Cancel normal operations
           return $q.reject(err);
         }
@@ -142,7 +146,9 @@ angular.module('omnibox')
      * @return {object} state: the new state.
      */
     this.zoomToSearchResult = function (result, state) {
-      if (state.box.type !== 'multi-point') {
+      var ZOOM_FOR_OBJECT = 19;
+
+      if (state.box.type !== 'multi-point' && state.context !== 'dashboard') {
         state.selected.reset();
       }
 

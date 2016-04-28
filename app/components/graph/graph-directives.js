@@ -273,36 +273,6 @@ angular.module('lizard-nxt')
  * @ngdoc directive
  * @class graph
  * @memberof graph
- * @name donut
- * @requires graph
- * @description       Draws a donut graph. Currently not in use by nxt.
- */
-angular.module('lizard-nxt')
-  .directive('donut', [function () {
-
-  var link = function (scope, element, attrs, graphCtrl) {
-
-    var graph = graphCtrl.graph;
-
-    var data = graphCtrl.content[0].data; // backwards compatability
-    graph.drawDonut(data);
-    // Function to call when data changes
-    graphCtrl.updateData = graph.drawDonut;
-
-  };
-
-  return {
-    require: 'graph',
-    link: link,
-    restrict: 'A',
-  };
-
-}]);
-
-/**
- * @ngdoc directive
- * @class graph
- * @memberof graph
  * @name line
  * @requires graph
  * @description       Draws a line. Additionally it sets the

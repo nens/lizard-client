@@ -3,8 +3,29 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
 
+- Fix attempting to draw assets (filters) without geometry.
+
+- Fix now in graphs not animating well.
+
+- Fix crosssection transitions not keeping up with temporal animation.
+
+- Remove old graph code (donut).
+
+- Fix showing rain and other data in omnibox.
+
+- Fix search not cleaning scope after enter keypress.
+
+- Fix infinite digest loop, copy land use data.
+
+- Fix landuse label falling outside of svg.
+
+- Fix clicking on cluster zooms too far in.
+
+- Fix multiplying annotations when button bashing.
+
+- Allow multiple assets/geoms in dashboard, independent of single/multi point.
+  Go back to one assets when switching to map and box is not multipoint.
 
 Release 3.0.11 (2016-4-26)
 ---------------------
