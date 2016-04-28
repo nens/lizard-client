@@ -198,6 +198,7 @@ angular.module('data-menu')
         var lgSlug = this.slug,
             lgActive = this._active,
             temporal = this.temporal,
+            layerGroupName = this.name,
             deferred = $q.defer(),
             promises = [];
 
@@ -215,6 +216,7 @@ angular.module('data-menu')
               callee,
               lgSlug,
               temporal,
+              layerGroupName,
               options,
               deferred
             ));
