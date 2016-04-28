@@ -27,6 +27,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 - Allow multiple assets/geoms in dashboard, independent of single/multi point.
   Go back to one assets when switching to map and box is not multipoint.
 
+- Only make search request if searchstring is longer than 2.
+
 Release 3.0.11 (2016-4-26)
 ---------------------
 
