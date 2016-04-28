@@ -6,6 +6,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Fix attempting to draw assets (filters) without geometry.
 
+- Fix now in graphs not animating well.
+
 
 Release 3.0.11 (2016-4-26)
 ---------------------
