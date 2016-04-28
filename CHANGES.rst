@@ -6,6 +6,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 -
 
 
+- Only make search request if searchstring is longer than 2.
+
 Release 3.0.11 (2016-4-26)
 ---------------------
 
