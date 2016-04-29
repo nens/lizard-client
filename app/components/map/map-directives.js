@@ -156,6 +156,7 @@ angular.module('map')
       MapService.initializeMap(element[0], {
           attributionControl: false,
           minZoom: 2,
+          maxZoom: 21,
           zoomControl: false,
           addZoomTitles: true,
         }, {

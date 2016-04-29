@@ -56,28 +56,6 @@ angular.module('lizard-nxt')
   /**
    * @function
    * @memberOf Graph
-   * @param {object}    data object. Currently supports the format:
-   *                    [
-   *                      {
-   *                        "<key to color>": "<color str>",
-   *                        "<value key": <value int>,
-   *                        "<label key>": "<label>"
-   *                      },
-   *                      ...,
-   *                    ]
-   * @description       If necessary creates a d3 pie and arc and
-   *                    draws the features in the data element.
-   */
-  Graph.prototype.drawDonut = function (data) {
-    if (!this.dimensions.r || this._arc || this._pie) {
-      this._donut = createDonut(this.dimensions);
-    }
-    drawPie(this._svg, this.dimensions, this._donut, data);
-  };
-
-  /**
-   * @function
-   * @memberOf Graph
    * @param {object} content - Array of object with data, keys, unit, color,
    *                           xlabel and if multi line: id.
    *        data   Currently supports the format:
@@ -107,7 +85,6 @@ angular.module('lizard-nxt')
    *                        supported.
    */
   Graph.prototype.drawLine = function (content, temporal, transitioning) {
-
     var graph = this;
     graph._yPerUnit = {}; // one line graph has a y -scale and axis per unit in
                           // content.
@@ -394,10 +371,13 @@ angular.module('lizard-nxt')
       var total = d3.sum(data, function (d) {
         return Number(d[keys.x]);
       });
-      angular.forEach(data, function (value, key) {
+
+      var dataCopy = angular.copy(data);
+
+      angular.forEach(dataCopy, function (value, key) {
         value[keys.x] = value[keys.x] / total;
       });
-      drawHorizontalRects(this._svg, this.dimensions, this.transTime, this._x.scale, data, keys, labels);
+      drawHorizontalRects(this._svg, this.dimensions, this.transTime, this._x.scale, dataCopy, keys, labels);
   };
 
   /**
@@ -433,6 +413,7 @@ angular.module('lizard-nxt')
     var maxY;
     var minY;
 
+    var transTime = this._getTransTime();
     if (content.points.length) {
       var minimumPoint = _.minBy(content.points, function (p) {return p.value; });
       var maximumPoint = _.maxBy(content.points, function (p) {return p.value; });
@@ -490,66 +471,33 @@ angular.module('lizard-nxt')
       this._xy.y.axis,
       this.dimensions,
       true, // is a y axis.
-      this.transTime
+      transTime
     );
     drawLabel(this._svg, this.dimensions, 'hoogte (mNAP)', true);
 
     var className = 'line';
     addLineToGraph(
       this._svg,
-      this.transTime,
+      transTime,
       content.line.data,
       {x: 0, y:1},
       this._xy,
       className
     );
 
-    addPointsToGraph(this._svg, this.transTime, content.points, this._xy);
+    addPointsToGraph(this._svg, transTime, content.points, this._xy);
 
     className = 'interpolation-line';
     // Only use ts linked to freatic line.
     var linePoints = content.points.filter(function (p) { return p.linked; });
     addLineToGraph(
       this._svg,
-      this.transTime,
+      transTime,
       linePoints,
       {x: 'x', y: 'value'},
       this._xy,
       className
     );
-  };
-
-  /**
-   * @function
-   * @memberOf Graph
-   * @param {function} callback
-   * @description      Sets a listener on the drawing rectangle
-   *                   and on mousemove calls the callback with
-   *                   the current position on the drawing area.
-   */
-  Graph.prototype.followMouse = function (callback) {
-       // Move listener rectangle to the front
-      var el = this._svg.select('g').select('#listeners').node();
-      el.parentNode.appendChild(el);
-      var scale = this._xy.x.scale;
-      this._svg.select('g').select('#listeners')
-        .on('mousemove', function () {
-          var pos = scale.invert(d3.mouse(this)[0]);
-          callback(pos);
-        });
-  };
-  /**
-   * @function
-   * @memberOf Graph
-   * @param {function} callback
-   * @description      Sets a listener on the drawing rectangle
-   *                   and on mouseout calls the callback.
-   */
-  Graph.prototype.mouseExit = function (callback) {
-      this._svg.select('g').select('#listeners')
-        .on('mouseout', function () {
-          callback();
-        });
   };
 
   /**
@@ -668,11 +616,33 @@ angular.module('lizard-nxt')
       .attr('r', 3);
   };
 
-  var createPie, createArc, drawPie, drawAxes, drawLabel, needToRescale,
-      drawPath, setupLineGraph, createDonut, addInteractionToPath, getBarWidth,
-      drawVerticalRects, addInteractionToRects, drawHorizontalRects,
-      createXGraph, rescale, createYValuesForCumulativeData, getDataSubset,
-      updateYs, drawMultipleAxes, setActiveAxis, addPointsToGraph, addLineToGraph;
+  /**
+   * Returns this.transTime first time called or when last called a long time
+   * ago, otherwise returns zero. Use it to determine transition duration.
+   */
+  Graph.prototype._getTransTime = function () {
+    var transTime;
+    var now = Date.now();
+    var RENDER_BUFFER = 30; // Browsers need a few ms to render the transtion.
+
+    if (now - this._lastTimeDrawWasCalled < RENDER_BUFFER + this.transTime) {
+      transTime = 0;
+    } else {
+      transTime = this.transTime;
+    }
+
+    this._lastTimeDrawWasCalled = Date.now();
+
+    return transTime;
+  };
+
+
+
+  var drawAxes, drawLabel, needToRescale, drawPath, setupLineGraph, createDonut,
+      addInteractionToPath, getBarWidth, drawVerticalRects,
+      addInteractionToRects, drawHorizontalRects, createXGraph, rescale,
+      createYValuesForCumulativeData, getDataSubset, updateYs, drawMultipleAxes,
+      setActiveAxis, addPointsToGraph, addLineToGraph;
 
   /**
    * Creates y cumulatie y values for elements on the same x value.
@@ -869,6 +839,7 @@ angular.module('lizard-nxt')
       value.start = previousCumu;
       previousCumu += value[keys.x];
     });
+
     // Data should be normalized between 0 and 1.
     var total = 1;
 
@@ -905,16 +876,22 @@ angular.module('lizard-nxt')
     // Rects set their value on the label axis when hoovered
     rects.on('mousemove', function (d) {
       var label;
-      if (d.label === -1) {
+      var labelstr = d.label;
+      if (d.label === -1 || d.label.split === undefined) {
         label = Math.round(d[keys.x] * 100) + "% overig";
       } else {
-        var labelstr = d.label.split('-');
+        labelstr = d.label.split('-');
         label = Math.round(d[keys.x] * 100) + '% ' + labelstr[labelstr.length - 1];
       }
 
       svg.select('#xlabel')
         .text(label)
         .attr("class", "selected");
+
+      // Correct height so label fits within svg.
+      var mv = - 0.5 * svg.select('#xlabel').node().getBBox().height;
+      svg.select('#xlabel')
+        .attr('dy', mv);
     });
 
     // When the user moves the mouse away from the graph, put the original
@@ -1381,6 +1358,7 @@ angular.module('lizard-nxt')
         .attr('x', dimensions.padding.left + width / 2)
         .attr('y', dimensions.height);
     }
+
     mv = y
       ? 0.5 * el.node().getBBox().height + PIXEL_CORRECTION
       : - 0.5 * el.node().getBBox().height + PIXEL_CORRECTION;
@@ -1506,66 +1484,6 @@ angular.module('lizard-nxt')
         .attr('r', 0)
       .remove();
     }
-  };
-
-  createDonut = function (dimensions) {
-    var donutHeight = Graph.prototype._getHeight(dimensions);
-    dimensions.r = donutHeight / 2;
-    var pie = createPie(dimensions),
-    arc = createArc(dimensions);
-    return {
-      dimensions: dimensions,
-      arc: arc,
-      pie: pie
-    };
-  };
-
-  createPie = function (dimensions) {
-    return d3.layout.pie()
-      .value(function (d) {
-          return d.data;
-        })
-      // Sorting messes with the transition
-      .sort(null);
-  };
-
-  createArc = function (dimensions) {
-    var ARC_INNER_RADIUS = 0.7;
-    return d3.svg.arc()
-      .innerRadius(dimensions.r * ARC_INNER_RADIUS)
-      .outerRadius(dimensions.r);
-  };
-
-  drawPie = function (svg, dimensions, donut, data) {
-    var width = Graph.prototype._getWidth(dimensions),
-    donutHeight = Graph.prototype._getHeight(dimensions),
-    pie = donut.pie,
-    arc = donut.arc;
-
-    // Store the displayed angles in _current.
-    // Then, interpolate from _current to the new angles.
-    // During the transition, _current is updated in-place by d3.interpolate.
-    function arcTween(a) {
-      var i = d3.interpolate(this._current, a);
-      this._current = i(0);
-      return function (t) {
-        return arc(i(t));
-      };
-    }
-
-    var donutArcs = svg.datum(data).selectAll("path").data(pie);
-
-    donutArcs
-      .transition()
-      .duration(Graph.prototype.transTime)
-      .attrTween("d", arcTween); // redraw the arcs
-
-    donutArcs.enter().append("path")
-      .attr("fill", function (d) {return d.data.color; })
-      .attr("d", arc)
-      .each(function (d) { this._current = d; }) // store the initial angles
-      .attr("transform", "translate(" +
-        donutHeight / 2 + ", " + donutHeight / 2 + ")");
   };
 
   /**

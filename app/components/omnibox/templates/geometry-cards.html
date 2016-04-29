@@ -14,14 +14,8 @@
     time-state="timeState">
   </rain>
 
-  <annotations
-    ng-if="header && geom.geometry.type === 'Point' && user.authenticated"
-    data="geom"
-    time-state="timeState">
-  </annotations>
-
   <defaultpoint
-    ng-if="geom.geometry.type === 'Point' && !geom.properties.rain && slug !== 'annotations'"
+    ng-if="geom.geometry.type === 'Point' && slug !== 'rain' && slug !== 'annotations'"
     ng-repeat="(slug, content) in geom.properties"
     content="content"
     name="slug"
@@ -136,4 +130,11 @@
     </div>
 
   </div>
+
+  <annotations
+    ng-if="header && geom.geometry.type === 'Point' && user.authenticated"
+    data="geom"
+    time-state="timeState">
+  </annotations>
+
 </div>

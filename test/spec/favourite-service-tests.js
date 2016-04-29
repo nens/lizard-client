@@ -32,15 +32,15 @@ describe('Favourites', function () {
 
     FavService.applyFavourite(angular.copy(favourite));
 
-    // Divide by ten to use ToBeCloseTo to give js 10 ms to execute
+    // Divide by 100 to use ToBeCloseTo to give js 100 ms to execute
     // FavService.applyFavourite.
-    var favStart = (favourite.state.temporal.start + tenHours) / 10;
-    var favEnd = (favourite.state.temporal.end + tenHours) / 10;
-    var favAt = (favourite.state.temporal.at + tenHours) / 10;
+    var favStart = (favourite.state.temporal.start + tenHours) / 100;
+    var favEnd = (favourite.state.temporal.end + tenHours) / 100;
+    var favAt = (favourite.state.temporal.at + tenHours) / 100;
 
-    expect(State.temporal.start / 10).toBeCloseTo(favStart, 1);
-    expect(State.temporal.end / 10).toBeCloseTo(favEnd, 1);
-    expect(State.temporal.at / 10).toBeCloseTo(favAt, 1);
+    expect(State.temporal.start / 100).toBeCloseTo(favStart, 1);
+    expect(State.temporal.end / 100).toBeCloseTo(favEnd, 1);
+    expect(State.temporal.at / 100).toBeCloseTo(favAt, 1);
   });
 
 });

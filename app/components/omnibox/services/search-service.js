@@ -17,6 +17,7 @@ angular.module('omnibox')
     'DateParser',
     'DataService',
     'MapService',
+    'notie',
     function SearchService (
       $q,
       $http,
@@ -24,7 +25,8 @@ angular.module('omnibox')
       CabinetService,
       dateParser,
       DataService,
-      MapService
+      MapService,
+      notie
       ) {
 
     this.responseStatus = {
@@ -39,7 +41,9 @@ angular.module('omnibox')
     var localPromise = {};
 
     this.cancel = function () {
-      localPromise.resolve({data: {results: []}});
+      if (localPromise.resolve) {
+        localPromise.resolve({data: {results: []}});
+      }
     };
 
     /**
@@ -54,22 +58,33 @@ angular.module('omnibox')
     this.search = function (searchString, state) {
 
       var getSearch = function (params) {
+
+        var MINIMUM_SEARCH_QUERY_LENGTH = 3;
+
         // Cancel consecutive calls.
-        if (localPromise.reject) {
+        if (localPromise.resolve) {
           localPromise.resolve({data: {results: []}});
         }
 
         localPromise = $q.defer();
 
-        return $http({
-          url: 'api/v2/search/',
-          method: 'GET',
-          params: params,
-          timeout: localPromise.promise
-        })
-        .then(function (response) {
-          return response.data;
-        }, errorFn);
+        // Only send request if searchstring is longer than 2.
+        // Otherwise return zero relevant searches.
+        if (params.q.length >= MINIMUM_SEARCH_QUERY_LENGTH) {
+          return $http({
+            url: 'api/v2/search/',
+            method: 'GET',
+            params: params,
+            timeout: localPromise.promise
+          })
+          .then(function (response) {
+            return response.data;
+          }, errorFn);
+        }
+        else {
+          localPromise.resolve({results: []});
+          return localPromise.promise;
+        }
       };
 
       var errorFn = function (err) {
@@ -78,7 +93,7 @@ angular.module('omnibox')
           return $q.reject(err);
         }
         else if (err.status >= 500 && err.status < 600) {
-          notie.alert(3, 'Lizard encountered a problem retrieving your timeseries.', 3);
+          notie.alert(3, 'Lizard encountered a problem while searching your query.', 3);
           // Cancel normal operations
           return $q.reject(err);
         }
@@ -142,7 +157,9 @@ angular.module('omnibox')
      * @return {object} state: the new state.
      */
     this.zoomToSearchResult = function (result, state) {
-      if (state.box.type !== 'multi-point') {
+      var ZOOM_FOR_OBJECT = 19;
+
+      if (state.box.type !== 'multi-point' && state.context !== 'dashboard') {
         state.selected.reset();
       }
 

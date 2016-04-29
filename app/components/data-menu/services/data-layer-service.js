@@ -40,12 +40,13 @@ angular.module('data-menu')
         * @param deferred the defer to resolve when getting data.
         */
         getData: {
-          value: function (callee, lgSlug, temporal, options, deferred) {
+          value: function (callee, lgSlug, temporal, layerGroupName, options, deferred) {
             if (this._filter(options)) {
               return this._buildPromise(
                 callee,
                 lgSlug,
                 temporal,
+                layerGroupName,
                 options,
                 deferred,
                 this._service
@@ -97,7 +98,7 @@ angular.module('data-menu')
         * @param wantedService Service to getData from.
         */
         _buildPromise: {
-          value: function (callee, lgSlug, temporal, options, deferred, wantedService) {
+          value: function (callee, lgSlug, temporal, layerGroupName, options, deferred, wantedService) {
 
             var aggType = this.aggregationType,
                 color = this.color,
@@ -119,6 +120,7 @@ angular.module('data-menu')
                 format: format,
                 id: options.id,
                 layerGroupSlug: lgSlug,
+                layerGroupName: layerGroupName,
                 temporal: temporal,
                 layerSlug: slug,
                 aggType: aggType,

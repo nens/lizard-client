@@ -24,6 +24,7 @@ angular.module('lizard-nxt')
    'versioning',
    'State',
    'MapService',
+   'rmAllButLastAssetAndGeometry',
 
   function ($scope,
             $rootScope,
@@ -33,7 +34,8 @@ angular.module('lizard-nxt')
             ClickFeedbackService,
             versioning,
             State,
-            MapService) {
+            MapService,
+            rmAllButLastAssetAndGeometry) {
 
   $scope.versioning = versioning;
   $scope.tooltips = CabinetService.createTooltips();
@@ -53,6 +55,9 @@ angular.module('lizard-nxt')
   $scope.transitionToContext = function (context) {
     if (context !== State.context) {
       State.context = context;
+      if (State.context === 'map' && State.box.type === 'point') {
+        rmAllButLastAssetAndGeometry();
+      }
     }
     var overlay = angular.element('#context-transition-overlay')[0];
     overlay.style.transition = null;
