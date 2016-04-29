@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 3.0.13 (2016-4-29)
+---------------------
 
 - Fix attempting to draw assets (filters) without geometry.
 
