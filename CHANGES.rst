@@ -6,6 +6,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Add vertical scroll bar to omnibox.
 
+- Add interceptor to $http to throttle requests.
+
 
 Release 3.0.13 (2016-4-29)
 ---------------------
