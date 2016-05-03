@@ -229,6 +229,7 @@ angular.module('lizard-nxt')
 
     // Draw one of the y axis
     drawMultipleAxes(graph);
+
     if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
       addLineInteraction(graph, temporal);
     }
@@ -642,7 +643,65 @@ angular.module('lizard-nxt')
       addInteractionToPath, getBarWidth, drawVerticalRects,
       addInteractionToRects, drawHorizontalRects, createXGraph, rescale,
       createYValuesForCumulativeData, getDataSubset, updateYs, drawMultipleAxes,
-      setActiveAxis, addPointsToGraph, addLineToGraph;
+      setActiveAxis, addPointsToGraph, addLineToGraph, addThresholds;
+
+  addThresholds = function (svg, charts, activeUnit, xRange, yScale, duration) {
+    var PADDING = 2;
+
+    var tg = svg.select('#feature-group').select('.thresholds');
+
+    if (tg.empty()) {
+      tg = svg.select('#feature-group')
+        .append('g')
+        .attr('class', 'thresholds');
+    }
+
+    var thresholds = [];
+
+    charts.forEach(function (chart) {
+      if (chart.unit === activeUnit) {
+        chart.thresholds.forEach(function (threshold) {
+          thresholds.push(threshold);
+        });
+      }
+    });
+
+    thresholds = _.uniq(thresholds);
+
+    var lines = tg.selectAll("line")
+      .data(thresholds, function(d) { return d.name; });
+
+    lines.enter().append('line')
+      .attr('x1', 0)
+      .attr('x2', xRange[1]);
+
+    lines.transition()
+      .duration(duration)
+      .attr('y1', function (d) { return yScale(d.value); })
+      .attr('y2', function (d) { return yScale(d.value); });
+
+    lines.exit().transition()
+      .duration(duration)
+      .style('stroke-width', 0)
+      .remove();
+
+    var labels = tg.selectAll("text")
+      .data(thresholds, function(d) { return d.name; });
+
+    labels.enter().append('text')
+      .attr('x', PADDING)
+      .text(function (d) {
+        return d.name + ' ' + d.value.toFixed(2) + ' ' + activeUnit;
+      });
+
+    labels.transition()
+      .duration(duration)
+      .attr('y', function (d) { return yScale(d.value) - PADDING; });
+
+    labels.exit()
+      .remove();
+  };
+
 
   /**
    * Creates y cumulatie y values for elements on the same x value.
@@ -1407,12 +1466,32 @@ angular.module('lizard-nxt')
       .attr('class', 'click-axis clickable')
       .on('click', function (e) {
         setActiveAxis(graph, 1);
+        if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+          addThresholds(
+            graph._svg,
+            graph._containers,
+            graph._activeUnit,
+            graph._xy.x.scale.range(),
+            graph._yPerUnit[graph._activeUnit].scale,
+            graph.transTime
+          );
+        }
       });
     }
     clickRect
       .attr('width', graph.dimensions.padding.left)
       .attr('height', graph.dimensions.height);
     setActiveAxis(graph, 0);
+    if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+      addThresholds(
+        graph._svg,
+        graph._containers,
+        graph._activeUnit,
+        graph._xy.x.scale.range(),
+        graph._yPerUnit[graph._activeUnit].scale,
+        graph.transTime
+      );
+    }
   };
 
   /**
