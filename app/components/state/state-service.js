@@ -133,8 +133,8 @@ angular.module('global-state')
 
     // Temporal
     var now = Date.now(),
-        INITIAL_START_FOR_EXTENT = now - 2 * UtilService.day,
-        INITIAL_END_FOR_EXTENT = now + 3 * UtilService.hour;
+        INITIAL_START_FOR_EXTENT = now + window.temporalBounds.start,
+        INITIAL_END_FOR_EXTENT = now + window.temporalBounds.end;
 
     state.temporal = {
       at: now,

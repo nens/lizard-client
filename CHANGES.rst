@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Use new portal temporal bounds instead of hardcoded defaults.
 
 
 Release 3.0.13 (2016-4-29)
