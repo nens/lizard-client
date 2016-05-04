@@ -2,8 +2,8 @@
  * Lizard-client global state object.
  */
 angular.module('global-state')
-  .service('State', ['dataLayers', 'UtilService',
-    function (dataLayers, UtilService) {
+  .service('State', ['dataLayers', 'UtilService', 'temporalBounds',
+    function (dataLayers, UtilService, temporalBounds) {
 
     var state = {};
 
@@ -133,8 +133,8 @@ angular.module('global-state')
 
     // Temporal
     var now = Date.now(),
-        INITIAL_START_FOR_EXTENT = now - 2 * UtilService.day,
-        INITIAL_END_FOR_EXTENT = now + 3 * UtilService.hour;
+        INITIAL_START_FOR_EXTENT = now + temporalBounds.start,
+        INITIAL_END_FOR_EXTENT = now + temporalBounds.end;
 
     state.temporal = {
       at: now,

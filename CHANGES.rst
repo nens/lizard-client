@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Use new portal temporal bounds instead of hardcoded defaults.
+
 - Add vertical scroll bar to omnibox.
 
 - Add interceptor to $http to throttle requests.
