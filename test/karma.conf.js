@@ -40,6 +40,8 @@ module.exports = function(config) {
       'vendor/dragula/dist/dragula.js',
       'vendor/angular-loading-bar/build/loading-bar.js',
       'vendor/classList.js/classList.min.js',
+      'vendor/perfect-scrollbar/js/perfect-scrollbar.jquery.js',
+      'vendor/perfect-scrollbar/js/perfect-scrollbar.js',
       // endbower
 
       'vendor/moment/locale/nl.js',

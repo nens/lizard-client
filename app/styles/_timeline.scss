@@ -10,11 +10,11 @@
 .timeline {
     background-color: rgba($silver, 0.9);
     transition:.3s;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 
     &.timeline-map {
-        margin-left: 15px;
-        margin-right: 15px;
+        margin-left: 10px;
+        margin-right: 10px;
     }
 
     &.timeline-dashboard {
