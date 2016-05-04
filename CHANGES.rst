@@ -6,6 +6,13 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Use new portal temporal bounds instead of hardcoded defaults.
 
+- Add vertical scroll bar to omnibox.
+
+- Add interceptor to $http to throttle requests.
+
+- Add thresholds to charts.
+
+- Speed up angular: set debugInfoEnabled of angular compiler to false.
 
 Release 3.0.13 (2016-4-29)
 ---------------------

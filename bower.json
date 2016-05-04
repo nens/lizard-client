@@ -41,7 +41,8 @@
     "raven-js": "~1.1.16",
     "dragula": "~3.6.6",
     "angular-loading-bar": "~0.9.0",
-    "classList.js": "https://github.com/nens/classList.js.git#master"
+    "classList.js": "https://github.com/nens/classList.js.git#master",
+    "perfect-scrollbar": "~0.6.11"
   },
   "overrides": {
     "leaflet.markercluster": {

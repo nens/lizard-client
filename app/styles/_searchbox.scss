@@ -4,7 +4,6 @@ $zoombutton-width: 30px;
 
 .searchbox {
     height: $searchbox-height;
-    margin-bottom: $searchbox-margins;
 
     .resize-wrapper {
         overflow: hidden;
@@ -90,6 +89,7 @@ $zoombutton-width: 30px;
 }
 
 .search-results {
+  margin-top: 5px;
     > h3 {
         background-color: $greenSea;
         font-size: 14px;

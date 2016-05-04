@@ -46,96 +46,93 @@ angular.module("lizard-nxt", [
   'timeseries',
   'lodash',
   'ui.bootstrap',
+  'lizard-http-throttler', // Add this $http interceptor befor the loading-bar.
   'angular-loading-bar'
 ])
+
 // Decorator for ngExceptionHandler to log exceptions to sentry
-  .config(function ($provide) {
+.config(function ($provide) {
   $provide.decorator("$exceptionHandler", function ($delegate) {
-      return function (exception, cause) {
-          $delegate(exception, cause);
-          window.Raven.captureException(exception, {
-            extra: {cause: cause}
-          });
-        };
-    });
-});
+    return function (exception, cause) {
+      $delegate(exception, cause);
+      window.Raven.captureException(exception, {
+        extra: {cause: cause}
+      });
+    };
+  });
+})
+
+.config(['$compileProvider', function ($compileProvider) {
+  $compileProvider.debugInfoEnabled(false);
+}])
 
 /**
  * Change default angular tags to prevent collision with Django tags.
  */
-angular.module('lizard-nxt')
-  .config(function ($interpolateProvider) {
+.config(function ($interpolateProvider) {
   //To prevent Django and Angular Template hell
   $interpolateProvider.startSymbol('<%');
   $interpolateProvider.endSymbol('%>');
-});
+})
 
 /**
  * Set url fragment behavior to HTML5 mode (without hash in url).
  */
-angular.module('lizard-nxt')
-  .config(function ($locationProvider) {
+.config(function ($locationProvider) {
   // We want to release to gh-pages for demo purposes or whatever
   // But github.io doesn't rewrite the urls beautifully like we do.
   var html5Mode = (window.location.host !== 'nens.github.io' &&
                    window.location.host !== 'lizard.sandbox.lizard.net');
   $locationProvider.html5Mode(html5Mode);
-});
+})
 
 // Configure loading indicator.
-angular.module('lizard-nxt')
-  .config(['cfpLoadingBarProvider', function (cfpLoadingBarProvider) {
-    // Only show bar, no spinner.
-    cfpLoadingBarProvider.includeSpinner = false;
-    // Default is 100, but Lizard is not for impatient teenagers, so 250 is ok.
-    cfpLoadingBarProvider.latencyThreshold = 250;
+.config(['cfpLoadingBarProvider', function (cfpLoadingBarProvider) {
+  // Only show bar, no spinner.
+  cfpLoadingBarProvider.includeSpinner = false;
+  // Default is 100, but Lizard is not for impatient teenagers, so 250 is ok.
+  cfpLoadingBarProvider.latencyThreshold = 250;
   }
-]);
+])
 
 /**
  * @name user
  * @memberOf app
  * @description User and auth stuff
  */
-angular.module('lizard-nxt')
-  .constant('user', window.user);
+.constant('user', window.user)
 
 /**
  * @name notie
  * @memberOf app
  * @description Notification service
  */
-angular.module('lizard-nxt')
-  .constant('notie', window.notie);
+.constant('notie', window.notie)
 
 /**
  * @name versioning
  * @memberOf app
  * @description User and auth stuff
  */
-angular.module('lizard-nxt')
-  .constant('versioning', window.versioning);
+.constant('versioning', window.versioning)
 
 /**
  * @name production backend
  * @memberOf app
  * @description subdomain of production backend.
  */
-angular.module('lizard-nxt')
-  .constant('backendDomain', 'https://demo.lizard.net');
+.constant('backendDomain', 'https://demo.lizard.net')
 
 /**
  * @name locale
  * @memberOf app
  * @description Portal's default locale.
  */
-angular.module('lizard-nxt')
-  .constant('defaultLocale', window.locale);
+.constant('defaultLocale', window.locale)
 
 /**
- * @name locale
+ * @name temporalBounds
  * @memberOf app
- * @description Portal's default locale.
+ * @description Portal's default temporal bounds.
  */
-angular.module('lizard-nxt')
-  .constant('temporalBounds', window.temporalBounds);
+.constant('temporalBounds', window.temporalBounds);

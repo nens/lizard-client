@@ -9,7 +9,8 @@ angular.module('timeseries')
   'notie',
   'UtilService',
   'DataService',
-  function ($q, State, $http, notie, UtilService, DataService) {
+  'WantedAttributes',
+  function ($q, State, $http, notie, UtilService, DataService, WantedAttributes) {
 
     var GRAPH_WIDTH = 320; // Width of drawing area of box graphs.
 
@@ -197,12 +198,14 @@ angular.module('timeseries')
      * @param {object} graphTimeseries timeseriesSerivce.timeseries timeseries
      *                                 object.
      */
-    var addColorAndOrderAndUnit = function (graphTimeseries) {
+    var addColorAndOrderAndUnitAndTresholds = function (graphTimeseries) {
       var EMPTY = '...';
       var ts; // initialize undefined and set when found.
+      var assetOfTs;
 
       _.forEach(DataService.assets, function (asset) {
         ts = _.find(asset.timeseries, { 'uuid': graphTimeseries.id });
+        assetOfTs = asset;
         return ts === undefined; // Break out early
       });
 
@@ -213,6 +216,29 @@ angular.module('timeseries')
         if (ts.reference_frame) {
           graphTimeseries.unit += ' (' + ts.reference_frame + ')';
         }
+        graphTimeseries.thresholds = [];
+      }
+
+      if (assetOfTs) {
+        var threshold = {value: null, name: ''};
+        _.forEach(
+          WantedAttributes[assetOfTs.entity_name].rows,
+          function (attr) {
+            if (attr.valueSuffix === ' (' + graphTimeseries.unit + ')') {
+              var value = parseFloat(assetOfTs[attr.attrName]);
+              if (!isNaN(value)) {
+
+                var name = assetOfTs.name === '' ? '...' : assetOfTs.name;
+
+                threshold = {
+                  value: value,
+                  name: name + ': ' + attr.keyName
+                };
+                graphTimeseries.thresholds.push(threshold);
+              }
+            }
+          }
+        );
       }
 
       var tsState = _.find(
@@ -251,7 +277,7 @@ angular.module('timeseries')
         graphTimeseries.data = ts.events;
         graphTimeseries.id = ts.uuid;
         graphTimeseries.valueType = ts.value_type;
-        graphTimeseries = addColorAndOrderAndUnit(graphTimeseries);
+        graphTimeseries = addColorAndOrderAndUnitAndTresholds(graphTimeseries);
         result.push(graphTimeseries);
       });
       return result;
