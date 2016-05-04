@@ -8,6 +8,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Add interceptor to $http to throttle requests.
 
+- Add thresholds to charts.
+
 
 Release 3.0.13 (2016-4-29)
 ---------------------
