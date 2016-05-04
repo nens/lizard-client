@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Add 'About' modal to user menu.
+
 - Add vertical scroll bar to omnibox.
 
 - Add interceptor to $http to throttle requests.

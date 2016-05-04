@@ -96,6 +96,15 @@
               </a>
             </li>
             <li>
+              <a title="<% 'About' | translate %>"
+                 target="_blank"
+                 class="clickable"
+                 ng-click="openAbout()">
+                <i class="fa fa-info"></i>
+                <span translate>About</span>
+              </a>
+            </li>
+            <li>
               <a href="http://sso.lizard.net/edit_profile/"
                  title="<% 'Edit profile' | translate %>">
                 <i class="fa fa-pencil"></i>
@@ -118,4 +127,19 @@
       </ul>
     </div>
   </div>
+
+  <script type="text/ng-template" id="about.html">
+    <div class="modal-header">
+      <h3 class="modal-title">About</h3>
+    </div>
+    <div class="modal-body">
+      <ng-include src="'/about/'"></ng-include>
+    </div>
+    <div class="modal-footer">
+      Version: <% versioning %>
+      <button class="btn btn-default" type="button" ng-click="$dismiss()">
+        Close
+      </button>
+    </div>
+  </script>
 </nav>
