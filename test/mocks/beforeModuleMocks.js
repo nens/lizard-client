@@ -4,6 +4,12 @@
 
 window.JS_DEBUG = false;
 
+
+window.temporalBounds = {
+  start: -172800000,
+  end: 10800000
+};
+
 window.data_layers = {
   'satellite': {
     'name': 'Satelliet',

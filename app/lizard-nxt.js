@@ -131,3 +131,11 @@ angular.module('lizard-nxt')
  */
 angular.module('lizard-nxt')
   .constant('defaultLocale', window.locale);
+
+/**
+ * @name locale
+ * @memberOf app
+ * @description Portal's default locale.
+ */
+angular.module('lizard-nxt')
+  .constant('temporalBounds', window.temporalBounds);
