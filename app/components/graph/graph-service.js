@@ -645,9 +645,20 @@ angular.module('lizard-nxt')
       createYValuesForCumulativeData, getDataSubset, updateYs, drawMultipleAxes,
       setActiveAxis, addPointsToGraph, addLineToGraph, addThresholds;
 
+  /**
+   * Draws and updates thresholds of charts.
+   *
+   * @param {svg}    svg        d3 svg.
+   * @param {array}  charts     charts in graph.
+   * @param {str}    activeUnit current active axis.
+   * @param {array}  xRange     min, max range of graph in px.
+   * @param {fn}     yScale     d3 scale for y axis.
+   * @param {int}    duration   transition duration.
+   */
   addThresholds = function (svg, charts, activeUnit, xRange, yScale, duration) {
-    var PADDING = 2;
+    var PADDING = 2; // px.
 
+    // Get or create group for thresholds.
     var tg = svg.select('#feature-group').select('.thresholds');
 
     if (tg.empty()) {
@@ -656,6 +667,7 @@ angular.module('lizard-nxt')
         .attr('class', 'thresholds');
     }
 
+    // Get unique list of thresholds.
     var thresholds = [];
 
     charts.forEach(function (chart) {
@@ -666,8 +678,11 @@ angular.module('lizard-nxt')
       }
     });
 
+    // Thresholds are a property of chart, but come from an asset, so multiple
+    // charts might have the same thresholds.
     thresholds = _.uniq(thresholds);
 
+    // Create, update and remove thresholds.
     var lines = tg.selectAll("line")
       .data(thresholds, function(d) { return d.name; });
 
@@ -685,6 +700,7 @@ angular.module('lizard-nxt')
       .style('stroke-width', 0)
       .remove();
 
+    // Create, update, remove labels on threshold.
     var labels = tg.selectAll("text")
       .data(thresholds, function(d) { return d.name; });
 
