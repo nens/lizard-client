@@ -53,7 +53,10 @@ angular.module('user-menu')
           animation: true,
           templateUrl: 'about.html',  // This is really the 'id' of the modal.
           size: size,
-          resolve: {versioning: versioning}
+          controller: function () {
+            this.versioning = versioning;
+          },
+          controllerAs: 'about'
         });
       };
 
