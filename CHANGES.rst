@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Add 'About' modal to user menu.
 
 
 Release 3.1.1 (2016-5-9)
