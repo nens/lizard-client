@@ -1,5 +1,12 @@
 // mocks.js
 
+// App is run with debugInfoEnabled(false), because it is faster. But it is
+// needed to do stuff like var scope = element.scope();
+angular.module('lizard-nxt')
+.config(['$compileProvider', function ($compileProvider) {
+  $compileProvider.debugInfoEnabled(true);
+}])
+
 // Contains data_layers as coming from the server, and a nxtMap object
 // that can be used as a mapState.
 
