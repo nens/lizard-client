@@ -3,6 +3,17 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 3.1.1 (2016-5-9)
+---------------------
+
+- Use new portal temporal bounds instead of hardcoded defaults.
+
+
+Release 3.0.14 (2016-5-9)
+---------------------
 
 - Add 'About' modal to user menu.
 
@@ -13,6 +24,7 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 - Add thresholds to charts.
 
 - Speed up angular: set debugInfoEnabled of angular compiler to false.
+
 
 Release 3.0.13 (2016-4-29)
 ---------------------

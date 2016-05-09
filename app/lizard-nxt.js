@@ -128,4 +128,11 @@ angular.module("lizard-nxt", [
  * @memberOf app
  * @description Portal's default locale.
  */
-.constant('defaultLocale', window.locale);
+.constant('defaultLocale', window.locale)
+
+/**
+ * @name temporalBounds
+ * @memberOf app
+ * @description Portal's default temporal bounds.
+ */
+.constant('temporalBounds', window.temporalBounds);
