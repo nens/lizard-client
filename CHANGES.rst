@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Add 'About' modal to user menu.
 
 
 Release 3.1.1 (2016-5-9)
@@ -14,8 +15,6 @@ Release 3.1.1 (2016-5-9)
 
 Release 3.0.14 (2016-5-9)
 ---------------------
-
-- Add 'About' modal to user menu.
 
 - Add vertical scroll bar to omnibox.
 
