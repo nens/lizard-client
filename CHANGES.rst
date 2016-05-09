@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 3.0.14 (2016-5-9)
+---------------------
 
 - Add vertical scroll bar to omnibox.
 
