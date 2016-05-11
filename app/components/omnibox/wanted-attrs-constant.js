@@ -11,7 +11,7 @@ angular.module('omnibox')
         ngBindValue:
           "asset.selectedAsset.capacity * 3.6 | niceNumberOrEllipsis: 2",
         valueSuffix: "  (m<sup>3</sup> / uur)",
-        defaultValue: "12"
+        defaultValue: ""
       },
       {
         /// Aanslagpeil
@@ -20,7 +20,7 @@ angular.module('omnibox')
         ngBindValue:
           "asset.selectedAsset.start_level | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
-        defaultValue: "-2.2"
+        defaultValue: ""
       },
       {
         /// Afslagpeil
@@ -29,7 +29,7 @@ angular.module('omnibox')
         ngBindValue:
           "asset.selectedAsset.stop_level | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
-        defaultValue: "-2.8"
+        defaultValue: ""
       }
     ]
   };
@@ -41,7 +41,7 @@ angular.module('omnibox')
         attrName: "type",
         ngBindValue: "waterchain.type",
         valueSuffix: "",
-        defaultValue: "Liggerbrug"
+        defaultValue: ""
       },
       {
         keyName: gettext("Width"),
@@ -49,7 +49,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.width | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
-        defaultValue: 8
+        defaultValue: ""
       },
       {
         keyName: gettext("Length"),
@@ -57,7 +57,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.length | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
-        defaultValue: 17
+        defaultValue: ""
       },
       {
         keyName: gettext("Height"),
@@ -65,7 +65,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.height | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
-        defaultValue: 2
+        defaultValue: ""
       }
     ]
   };
@@ -77,7 +77,7 @@ angular.module('omnibox')
         attrName: "name",
         ngBindValue: "waterchain.name",
         valueSuffix: "",
-        defaultValue: "Watergang"
+        defaultValue: ""
       },
       {
         keyName: gettext("Type"),
@@ -85,7 +85,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.type",
         valueSuffix: "",
-        defaultValue: "Boezem"
+        defaultValue: ""
       }
     ]
   };
@@ -98,7 +98,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.type | niceNumberOrEllipsis: 2",
         valueSuffix: "",
-        defaultValue: "Dwarsdoorsnede"
+        defaultValue: ""
       }
     ]
   };
@@ -111,7 +111,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.width | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
-        defaultValue: "2"
+        defaultValue: ""
       },
       {
         keyName: gettext("Length"),
@@ -119,7 +119,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.length | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
-        defaultValue: "8"
+        defaultValue: ""
       },
       {
         keyName: gettext("Height"),
@@ -127,7 +127,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.height | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
-        defaultValue: "1.5"
+        defaultValue: ""
       },
       {
         keyName: gettext("Material"),
@@ -135,7 +135,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.material | lookupCulvertMaterial",
         valueSuffix: "",
-        defaultValue: "beton"
+        defaultValue: ""
       },
       {
         keyName: gettext("Shape"),
@@ -143,7 +143,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.shape | lookupCulvertShape",
         valueSuffix: "",
-        defaultValue: "rechthoekig"
+        defaultValue: ""
       }
     ]
   };
@@ -237,7 +237,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.crest_height | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
-        defaultValue: "2"
+        defaultValue: ""
       },
       {
         /// Bekleding
@@ -246,7 +246,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.coating",
         valueSuffix: "",
-        defaultValue: "gras"
+        defaultValue: ""
       },
       {
         keyName: gettext("Material"),
@@ -254,7 +254,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.material",
         valueSuffix: "",
-        defaultValue: "zand"
+        defaultValue: ""
       }
     ]
   };
@@ -278,7 +278,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.type",
         valueSuffix: "",
-        defaultValue: "Referentiemeetpunt"
+        defaultValue: ""
       }
     ]
   };
@@ -291,7 +291,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.code",
         valueSuffix: "",
-        defaultValue: "0-7361"
+        defaultValue: ""
       },
       {
         keyName: gettext("Surface level"),
@@ -299,7 +299,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.surface_level | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
-        defaultValue: "0.42"
+        defaultValue: ""
       },
       {
         keyName: gettext("Material"),
@@ -307,7 +307,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.material",
         valueSuffix: "",
-        defaultValue: "beton"
+        defaultValue: ""
       },
       {
         keyName: gettext("Width"),
@@ -315,7 +315,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.width | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
-        defaultValue: "0.8"
+        defaultValue: ""
       },
       {
         keyName: gettext("Shape"),
@@ -323,7 +323,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.shape | lookupManholeShape",
         valueSuffix: "",
-        defaultValue: "vierkant"
+        defaultValue: ""
       },
       {
         /// Putbodem
@@ -332,7 +332,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.bottom_level | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
-        defaultValue: "-1.6"
+        defaultValue: ""
       }
     ],
   };
@@ -344,21 +344,21 @@ angular.module('omnibox')
         attrName: "name",
         ngBindValue: "waterchain.name",
         valueSuffix: "",
-        defaultValue: "KNMI"
+        defaultValue: ""
       },
       {
         keyName: gettext("Category"),
         attrName: "category",
         ngBindValue: "waterchain.category",
         valueSuffix: "",
-        defaultValue: "KNMI-AWS"
+        defaultValue: ""
       },
       {
         keyName: gettext("Frequency"),
         attrName: "frequency",
         ngBindValue: "waterchain.frequency",
         valueSuffix: "",
-        defaultValue: "1x per uur"
+        defaultValue: ""
       },
       {
         keyName: gettext("Code"),
@@ -366,7 +366,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.code",
         valueSuffix: "",
-        defaultValue: "6278"
+        defaultValue: ""
       }
     ]
   };
@@ -407,7 +407,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.code",
         valueSuffix: "",
-        defaultValue: "3105"
+        defaultValue: ""
       },
       {
         /// Overstortbreedte
@@ -416,7 +416,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.crest_width | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
-        defaultValue: "1"
+        defaultValue: ""
       },
       {
         /// Overstorthoogte
@@ -425,7 +425,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.crest_level | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
-        defaultValue: "0.2"
+        defaultValue: ""
       },
       {
         keyName: gettext("Shape"),
@@ -433,7 +433,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.shape | truncate: 20",
         valueSuffix: "",
-        defaultValue: "rechthoekig"
+        defaultValue: ""
       }
     ]
   };
@@ -446,7 +446,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.manhole_id | niceNumberOrEllipsis: 2",
         valueSuffix: "",
-        defaultValue: "6-549"
+        defaultValue: ""
       },
       {
         /// Buitenwaterstand (gemiddeld)
@@ -455,7 +455,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.open_water_level_average | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
-        defaultValue: "-0.1"
+        defaultValue: ""
       }
     ]
   };
@@ -468,7 +468,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.code",
         valueSuffix: "",
-        defaultValue: "12-72297"
+        defaultValue: ""
       },
       {
         /// Overstortbreedte
@@ -477,7 +477,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.crest_width",
         valueSuffix: " (m)",
-        defaultValue: "1"
+        defaultValue: ""
       },
       {
         /// Overstorthoogte
@@ -486,7 +486,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.crest_level",
         valueSuffix: " (mNAP)",
-        defaultValue: "0.2"
+        defaultValue: ""
       }
     ]
   };
@@ -499,7 +499,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.type | lookupPipeType",
         valueSuffix: "",
-        defaultValue: "gemengd stelsel"
+        defaultValue: ""
       },
       {
         /// BOB beginpunt
@@ -508,7 +508,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.invert_level_start_point | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
-        defaultValue: "-3.1"
+        defaultValue: ""
       },
       {
         /// BOB eindpunt
@@ -517,7 +517,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.invert_level_end_point | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
-        defaultValue: "-3.12"
+        defaultValue: ""
       },
       {
         keyName: gettext("Length"),
@@ -525,7 +525,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.length | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
-        defaultValue: "28"
+        defaultValue: ""
       },
       {
         keyName: gettext("Material"),
@@ -533,7 +533,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.material | pipeMaterialOrEllipsis",
         valueSuffix: "",
-        defaultValue: "beton"
+        defaultValue: ""
       },
       {
         keyName: gettext("Width"),
@@ -541,7 +541,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.width | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
-        defaultValue: "0.8"
+        defaultValue: ""
       },
       {
         keyName: gettext("Shape"),
@@ -549,7 +549,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.shape | lookupPipeShape",
         valueSuffix: "",
-        defaultValue: "rond"
+        defaultValue: ""
       },
       {
         keyName: gettext("Code"),
@@ -557,7 +557,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.code",
         valueSuffix: "",
-        defaultValue: "0-985-0-986"
+        defaultValue: ""
       }
     ]
   };
@@ -569,7 +569,7 @@ angular.module('omnibox')
         attrName: "name",
         ngBindValue: "waterchain.name",
         valueSuffix: "",
-        defaultValue: "onbekend"
+        defaultValue: ""
       },
       {
         keyName: gettext("Type"),
@@ -577,7 +577,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.type | lookupPressurePipeType",
         valueSuffix: "",
-        defaultValue: "transportleiding"
+        defaultValue: ""
       },
       {
         keyName: gettext("Construction year"),
@@ -585,7 +585,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.year_of_construction",
         valueSuffix: "",
-        defaultValue: "2006"
+        defaultValue: ""
       },
       {
         keyName: gettext("Code"),
@@ -593,7 +593,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.code",
         valueSuffix: "",
-        defaultValue: "776"
+        defaultValue: ""
       },
       {
         keyName: gettext("Diameter"),
@@ -601,7 +601,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.diameter | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
-        defaultValue: "1.6"
+        defaultValue: ""
       },
       {
         keyName: gettext("Shape"),
@@ -609,7 +609,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.shape",
         valueSuffix: "",
-        defaultValue: "rond"
+        defaultValue: ""
       },
       {
         keyName: gettext("Length"),
@@ -617,7 +617,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.length",
         valueSuffix: " (m)",
-        defaultValue: "154"
+        defaultValue: ""
       },
       {
         keyName: gettext("Material"),
@@ -625,7 +625,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.material | pipeMaterialOrEllipsis",
         valueSuffix: "",
-        defaultValue: "HDPE"
+        defaultValue: ""
       }
     ]
   };
@@ -637,7 +637,7 @@ angular.module('omnibox')
         attrName: "type",
         ngBindValue: "waterchain.type",
         valueSuffix: "",
-        defaultValue: "gemaal"
+        defaultValue: ""
       },
       {
         keyName: gettext("Capacity"),
@@ -645,14 +645,14 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.capacity * 3.6 | niceNumberOrEllipsis: 2",
         valueSuffix: "  (m<sup>3</sup> / uur)",
-        defaultValue: "54"
+        defaultValue: ""
       },
       {
         keyName: gettext("Name"),
         attrName: "name",
         ngBindValue: "waterchain.name",
         valueSuffix: "",
-        defaultValue: "onbekend"
+        defaultValue: ""
       },
       {
         keyName: gettext("Code"),
@@ -660,7 +660,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.code",
         valueSuffix: "",
-        defaultValue: "127"
+        defaultValue: ""
       },
       {
         /// Aanslagpeil
@@ -669,7 +669,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.start_level | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
-        defaultValue: "-2.2"
+        defaultValue: ""
       },
       {
         /// Afslagpeil
@@ -678,7 +678,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.stop_level | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
-        defaultValue: "-2.8"
+        defaultValue: ""
       }
     ]
   };
@@ -696,7 +696,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.name",
         valueSuffix: "",
-        defaultValue: 'onbekend'
+        defaultValue: ""
       }
     ]
   };
@@ -708,7 +708,7 @@ angular.module('omnibox')
         attrName: "name",
         ngBindValue: "waterchain.name",
         valueSuffix: "",
-        defaultValue: "onbekend"
+        defaultValue: ""
       },
     ]
   };
@@ -721,7 +721,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.code",
         valueSuffix: "",
-        defaultValue: "473"
+        defaultValue: ""
       },
       {
         keyName: gettext("Width"),
@@ -729,7 +729,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.crest_width | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
-        defaultValue: "1.6"
+        defaultValue: ""
       },
       {
         /// Niveau
@@ -738,7 +738,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.crest_level | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
-        defaultValue: "-0.3"
+        defaultValue: ""
       },
       {
         /// Bediening
@@ -747,7 +747,7 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.controlled | lookupWeirControl",
         valueSuffix: "",
-        defaultValue: "RTC"
+        defaultValue: ""
       },
     ]
   };
