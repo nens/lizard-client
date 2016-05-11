@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Reset Annotation form after successful submission.
 
 
 Release 3.1.2 (2016-5-9)

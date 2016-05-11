@@ -254,6 +254,7 @@ angular.module('annotations')
        */
       var createAnnotationSuccess = function(value, responseHeaders){
         scope.annotations.splice(0, 0, value);
+        scope.resetForm();
         AnnotationsService.refreshAnnotationLayer();
       };
 
