@@ -107,15 +107,61 @@ describe('Testing NxtD3', function () {
     }
   );
 
-  it('should return a path generator with linear interpolator', function () {
-    var keys = {x: 0, y: 1};
+  it('should generate an area path when data contains null', function () {
+
+    var data = [
+      {
+        max: null,
+        min: null,
+        timestamp: 0
+      },
+      {
+        max: 2,
+        min: 0,
+        timestamp: 1
+      },
+      {
+        max: null,
+        min: null,
+        timestamp: 3
+      }
+    ];
+
+    var keys = {
+      x: 'timestamp',
+      y: {
+        y0: 'min', y1: 'max'
+      }
+    };
     var xy = {
-      'x': { scale: function () {} },
-      'y': { scale: function () {} }
+      'x': { scale: function (v) { return v; } },
+      'y': { scale: function (v) { return v; } }
+    };
+
+    var pathGen = nxtD3._createArea(xy, keys);
+    var path = pathGen(data);
+    expect(path).toBe('M1,2L1,0ZM1,0L1,2Z');
+  });
+
+
+  it('should generate a line path when data contains null', function () {
+
+    var data = [
+      [3,null], [4, 3], [5, null]
+    ];
+
+    var keys = {
+      x: 0,
+      y: 1
+    };
+    var xy = {
+      'x': { scale: function (v) { return v; } },
+      'y': { scale: function (v) { return v; } }
     };
 
     var pathGen = nxtD3._createLine(xy, keys);
-    expect(pathGen.interpolate()).toBe('linear');
+    var path = pathGen(data);
+    expect(path).toBe('M4,3M4,3L4,3');
   });
 
 });

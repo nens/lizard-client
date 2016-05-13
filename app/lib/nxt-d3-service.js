@@ -16,7 +16,7 @@
 angular.module('lizard-nxt')
   .factory("NxtD3", ["$rootScope", "$location", function ($rootScope, $location) {
 
-  var createCanvas, createElementForAxis, resizeCanvas, createPathGenerator;
+  var createCanvas, createElementForAxis, resizeCanvas, extendPathGenerator;
 
   /**
    * @constructor
@@ -445,11 +445,13 @@ angular.module('lizard-nxt')
      * @return {object} d3 path generator for line.
      */
     _createLine: function (xy, keys) {
-      return createPathGenerator(d3.svg.line)
+      var lineGenerator = d3.svg.line()
         .y(function (d) { return xy.y.scale(d[keys.y]); })
         .x(function (d) { return xy.x.scale(d[keys.x]); })
         // interrupt the line when no data
         .defined(function (d) { return !isNaN(parseFloat(d[keys.y])); });
+
+      return extendPathGenerator(lineGenerator);
     },
 
 
@@ -463,7 +465,7 @@ angular.module('lizard-nxt')
      * @return {object} d3 path generator for area.
      */
     _createArea: function (xy, keys) {
-      return createPathGenerator(d3.svg.area)
+      var areaGenerator = d3.svg.area()
         .x(function(d) { return Math.round(xy.x.scale(d[keys.x]), 10); })
         .y0(function(d) { return Math.round(xy.y.scale(d[keys.y.y0]), 10); })
         .y1(function(d) { return Math.round(xy.y.scale(d[keys.y.y1]), 10); })
@@ -473,6 +475,8 @@ angular.module('lizard-nxt')
           var y1 = !isNaN(parseFloat(d[keys.y.y1]));
           return y0 && y1;
         });
+
+      return extendPathGenerator(areaGenerator);
     },
 
     /**
@@ -558,6 +562,20 @@ angular.module('lizard-nxt')
       .attr("transform", "translate(0 ," + transform + ")");
   };
 
+  var addPointToAreaPath = function (generator, path, d) {
+    var x = generator.x()(d);
+    var y0 = generator.y0()(d);
+    var y1 = generator.y1()(d);
+    if (y0 === y1) { y1 = y1 + 1; } // If same, make it visible by shifting it one pixel.
+    return path + 'M' + x + ',' + y0 + 'L' + x +',' + y1 + 'Z';
+  };
+
+  var addPointToLinePath = function (generator, path, d) {
+    var x = generator.x()(d);
+    var y = generator.y()(d);
+    return path + 'M' + x + ',' + y + 'L' + x +',' + y;
+  };
+
   /**
    * Returns a d3 path.
    *
@@ -565,14 +583,49 @@ angular.module('lizard-nxt')
    * line through datapoints, but it makes lines messy when data is missing.
    * Currently no interpolation is used.
    *
-   * @param  {object} d3Generator d3 [line|area] generator function.
+   * @param  {string} d3Generator [line|area].
    * @return {object}             d3 path generator.
    */
-  createPathGenerator = function (d3Generator) {
-    // Monotone line goes through all datapoints. Other options are 'basis'
-    // which looks nice but can give inaccurate results, or 'cardinal' which
-    // results in a line with a bigger domain/amplitute than the data.
-    return d3Generator();
+  extendPathGenerator = function (generator) {
+
+    var addSingleDataPoint = function () {};
+
+    if (generator.name === 'area') {
+      addSingleDataPoint = addPointToAreaPath;
+    } else {
+      addSingleDataPoint = addPointToLinePath;
+    }
+
+    var generatePath = function (data) {
+
+      var path = generator.apply(this, arguments);
+
+      data.forEach(function (d, i) {
+        var isFirst = i === 0;
+        var isLast = i === data.length - 1;
+        var defined = generator.defined();
+
+        if (defined(d)) {
+          var yPrevious = data[i - 1];
+          var yNext = data[i + 1];
+
+          if ((isLast && isFirst) ||
+            (isFirst && !defined(yNext)) ||
+            (isLast && !defined(yPrevious)) ||
+            (!isFirst && !isLast && !defined(yPrevious) && !defined(yNext))
+            ) {
+
+            path = addSingleDataPoint(generator, path, d);
+
+          }
+        }
+      });
+
+      return path;
+    };
+
+    return generatePath;
+
   };
 
 

@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Draw individual points in line charts.
+
 - Fix hovering over nodata.
 
 
