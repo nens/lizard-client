@@ -10,7 +10,7 @@ angular.module('omnibox')
         attrName: "capacity",
         ngBindValue:
           "asset.selectedAsset.capacity * 3.6 | niceNumberOrEllipsis: 2",
-        valueSuffix: "  (m<sup>3</sup> / uur)",
+        valueSuffix: "m<sup>3</sup> / uur",
         defaultValue: ""
       },
       {
@@ -19,7 +19,7 @@ angular.module('omnibox')
         attrName: "start_level",
         ngBindValue:
           "asset.selectedAsset.start_level | niceNumberOrEllipsis: 2",
-        valueSuffix: " (mNAP)",
+        valueSuffix: "m (NAP)",
         defaultValue: ""
       },
       {
@@ -28,7 +28,7 @@ angular.module('omnibox')
         attrName: "stop_level",
         ngBindValue:
           "asset.selectedAsset.stop_level | niceNumberOrEllipsis: 2",
-        valueSuffix: " (mNAP)",
+        valueSuffix: "m (NAP)",
         defaultValue: ""
       }
     ]
@@ -48,7 +48,7 @@ angular.module('omnibox')
         attrName: "width",
         ngBindValue:
           "waterchain.width | niceNumberOrEllipsis: 2",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
@@ -56,7 +56,7 @@ angular.module('omnibox')
         attrName: "length",
         ngBindValue:
           "waterchain.length | niceNumberOrEllipsis: 2",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
@@ -64,7 +64,7 @@ angular.module('omnibox')
         attrName: "height",
         ngBindValue:
           "waterchain.height | niceNumberOrEllipsis: 2",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       }
     ]
@@ -110,7 +110,7 @@ angular.module('omnibox')
         attrName: "width",
         ngBindValue:
           "waterchain.width | niceNumberOrEllipsis: 2",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
@@ -118,7 +118,7 @@ angular.module('omnibox')
         attrName: "length",
         ngBindValue:
           "waterchain.length | niceNumberOrEllipsis: 2",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
@@ -126,7 +126,7 @@ angular.module('omnibox')
         attrName: "height",
         ngBindValue:
           "waterchain.height | niceNumberOrEllipsis: 2",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
@@ -155,7 +155,7 @@ angular.module('omnibox')
         keyName: gettext("Filter top level"),
         attrName: "filter_top_level",
         ngBindValue: "asset.selectedAsset.filter_top_level | niceNumberOrEllipsis: 2",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
@@ -163,14 +163,14 @@ angular.module('omnibox')
         keyName: gettext("Filter bottom level"),
         attrName: "filter_bottom_level",
         ngBindValue: "asset.selectedAsset.filter_bottom_level | niceNumberOrEllipsis: 2",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
         keyName: gettext("Aquifer confinement"),
         attrName: "aquifer_confiment",
         ngBindValue: "asset.selectedAsset.aquifer_confiment",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
@@ -178,7 +178,7 @@ angular.module('omnibox')
         keyName: gettext("Litology"),
         attrName: "litology",
         ngBindValue: "asset.selectedAsset.litology",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
 
@@ -206,7 +206,7 @@ angular.module('omnibox')
         keyName: gettext("Surface level"),
         attrName: "surface_level",
         ngBindValue: "waterchain.surface_level",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
@@ -214,7 +214,7 @@ angular.module('omnibox')
         keyName: gettext("Top level"),
         attrName: "top_level",
         ngBindValue: "waterchain.top_level",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
@@ -222,7 +222,7 @@ angular.module('omnibox')
         keyName: gettext("Bottom level"),
         attrName: "bottom_level",
         ngBindValue: "waterchain.bottom_level",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       }
     ]
@@ -236,7 +236,7 @@ angular.module('omnibox')
         attrName: "crest_height",
         ngBindValue:
           "waterchain.crest_height | niceNumberOrEllipsis: 2",
-        valueSuffix: " (mNAP)",
+        valueSuffix: "m (NAP)",
         defaultValue: ""
       },
       {
@@ -298,7 +298,7 @@ angular.module('omnibox')
         attrName: "surface_level",
         ngBindValue:
           "waterchain.surface_level | niceNumberOrEllipsis: 2",
-        valueSuffix: " (mNAP)",
+        valueSuffix: "m (NAP)",
         defaultValue: ""
       },
       {
@@ -314,7 +314,7 @@ angular.module('omnibox')
         attrName: "width",
         ngBindValue:
           "waterchain.width | niceNumberOrEllipsis: 2",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
@@ -331,7 +331,7 @@ angular.module('omnibox')
         attrName: "bottom_level",
         ngBindValue:
           "waterchain.bottom_level | niceNumberOrEllipsis: 2",
-        valueSuffix: " (mNAP)",
+        valueSuffix: "m (NAP)",
         defaultValue: ""
       }
     ],
@@ -378,7 +378,7 @@ angular.module('omnibox')
         attrName: "distance_along_crosssection",
         ngBindValue:
           "waterchain.distance_along_crosssection | niceNumberOrEllipsis: 2",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
@@ -415,7 +415,7 @@ angular.module('omnibox')
         attrName: "crest_width",
         ngBindValue:
           "waterchain.crest_width | niceNumberOrEllipsis: 2",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
@@ -424,7 +424,7 @@ angular.module('omnibox')
         attrName: "crest_level",
         ngBindValue:
           "waterchain.crest_level | niceNumberOrEllipsis: 2",
-        valueSuffix: " (mNAP)",
+        valueSuffix: "m (NAP)",
         defaultValue: ""
       },
       {
@@ -454,7 +454,7 @@ angular.module('omnibox')
         attrName: "open_water_level_average",
         ngBindValue:
           "waterchain.open_water_level_average | niceNumberOrEllipsis: 2",
-        valueSuffix: " (mNAP)",
+        valueSuffix: "m (NAP)",
         defaultValue: ""
       }
     ]
@@ -476,7 +476,7 @@ angular.module('omnibox')
         attrName: "crest_width",
         ngBindValue:
           "waterchain.crest_width",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
@@ -485,7 +485,7 @@ angular.module('omnibox')
         attrName: "crest_level",
         ngBindValue:
           "waterchain.crest_level",
-        valueSuffix: " (mNAP)",
+        valueSuffix: "m (NAP)",
         defaultValue: ""
       }
     ]
@@ -507,7 +507,7 @@ angular.module('omnibox')
         attrName: "invert_level_start_point",
         ngBindValue:
           "waterchain.invert_level_start_point | niceNumberOrEllipsis: 2",
-        valueSuffix: " (mNAP)",
+        valueSuffix: "m (NAP)",
         defaultValue: ""
       },
       {
@@ -516,7 +516,7 @@ angular.module('omnibox')
         attrName: "invert_level_end_point",
         ngBindValue:
           "waterchain.invert_level_end_point | niceNumberOrEllipsis: 2",
-        valueSuffix: " (mNAP)",
+        valueSuffix: "m (NAP)",
         defaultValue: ""
       },
       {
@@ -524,7 +524,7 @@ angular.module('omnibox')
         attrName: "length",
         ngBindValue:
           "waterchain.length | niceNumberOrEllipsis: 2",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
@@ -540,7 +540,7 @@ angular.module('omnibox')
         attrName: "width",
         ngBindValue:
           "waterchain.width | niceNumberOrEllipsis: 2",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
@@ -600,7 +600,7 @@ angular.module('omnibox')
         attrName: "diameter",
         ngBindValue:
           "waterchain.diameter | niceNumberOrEllipsis: 2",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
@@ -616,7 +616,7 @@ angular.module('omnibox')
         attrName: "length",
         ngBindValue:
           "waterchain.length",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
@@ -644,7 +644,7 @@ angular.module('omnibox')
         attrName: "capacity",
         ngBindValue:
           "waterchain.capacity * 3.6 | niceNumberOrEllipsis: 2",
-        valueSuffix: "  (m<sup>3</sup> / uur)",
+        valueSuffix: "m<sup>3</sup> / uur",
         defaultValue: ""
       },
       {
@@ -668,7 +668,7 @@ angular.module('omnibox')
         attrName: "start_level",
         ngBindValue:
           "waterchain.start_level | niceNumberOrEllipsis: 2",
-        valueSuffix: " (mNAP)",
+        valueSuffix: "m (NAP)",
         defaultValue: ""
       },
       {
@@ -677,7 +677,7 @@ angular.module('omnibox')
         attrName: "stop_level",
         ngBindValue:
           "waterchain.stop_level | niceNumberOrEllipsis: 2",
-        valueSuffix: " (mNAP)",
+        valueSuffix: "m (NAP)",
         defaultValue: ""
       }
     ]
@@ -728,7 +728,7 @@ angular.module('omnibox')
         attrName: "crest_width",
         ngBindValue:
           "waterchain.crest_width | niceNumberOrEllipsis: 2",
-        valueSuffix: " (m)",
+        valueSuffix: "m",
         defaultValue: ""
       },
       {
@@ -737,7 +737,7 @@ angular.module('omnibox')
         attrName: "crest_level",
         ngBindValue:
           "waterchain.crest_level | niceNumberOrEllipsis: 2",
-        valueSuffix: " (mNAP)",
+        valueSuffix: "m (NAP)",
         defaultValue: ""
       },
       {
