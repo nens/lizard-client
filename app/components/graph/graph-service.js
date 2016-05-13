@@ -1277,6 +1277,7 @@ angular.module('lizard-nxt')
         .attr('x2', x2);
 
       values.forEach(function (v, i) {
+        var value = v.value.toFixed ? v.value.toFixed(2): '...';
         g.append('circle')
           .attr('r', 0)
           .attr('cx', v.x)
@@ -1304,7 +1305,7 @@ angular.module('lizard-nxt')
         var location = (v.location) ? '' + ' - ' + v.location : '';
         var tspan = valuebox.select('text')
           .append('tspan')
-            .text(v.value.toFixed(2) + ' ' + v.ylabel + v.unit + location)
+            .text(value + ' ' + v.ylabel + v.unit + location)
             .attr('class', 'graph-tooltip-y')
             .attr('x', 25)
             .attr('y', 15 + 15 * i);
