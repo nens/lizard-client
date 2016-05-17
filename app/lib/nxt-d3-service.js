@@ -562,14 +562,30 @@ angular.module('lizard-nxt')
       .attr("transform", "translate(0 ," + transform + ")");
   };
 
+  /**
+   * Adds a string representing a single data point to a path.
+   *
+   * @param {function}     generator d3 generaotr with x, y0 and y1 functions.
+   * @param {string}       path      path to add to.
+   * @param {array|object} d         single data point.
+   */
   var addPointToAreaPath = function (generator, path, d) {
     var x = generator.x()(d);
     var y0 = generator.y0()(d);
     var y1 = generator.y1()(d);
-    if (y0 === y1) { y1 = y1 + 1; } // If same, make it visible by shifting it one pixel.
+    if (y0 === y1) { y1 = y1 + 1; } // If same, make it visible by shifting it
+                                    // one pixel.
     return path + 'M' + x + ',' + y0 + 'L' + x +',' + y1 + 'Z';
   };
 
+
+  /**
+   * Adds a string representing a single data point to a path.
+   *
+   * @param {function}     generator d3 generaotr with x and y functions
+   * @param {string}       path      path to add to.
+   * @param {array|object} d         single data point.
+   */
   var addPointToLinePath = function (generator, path, d) {
     var x = generator.x()(d);
     var y = generator.y()(d);
@@ -577,14 +593,18 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * Returns a d3 path.
+   * Returns an d3 extended d3 path generator function.
    *
-   * The path used to have .interpolate('monotone') to create a smoothed
-   * line through datapoints, but it makes lines messy when data is missing.
+   * When the returned function is called with data it calls the original d3
+   * function and adds parts to the path to draw datapoints that are surrounded
+   * by undefined data.
+   *
+   * The path used to have .interpolate('monotone') to create a smoothed line
+   * through datapoints, but it makes lines messy when data is missing.
    * Currently no interpolation is used.
    *
-   * @param  {string} d3Generator [line|area].
-   * @return {object}             d3 path generator.
+   * @param  {function} d3Generator [line|area].
+   * @return {function}             d3 path generator.
    */
   extendPathGenerator = function (generator) {
 
@@ -598,8 +618,10 @@ angular.module('lizard-nxt')
 
     var generatePath = function (data) {
 
+      // Get path from d3
       var path = generator.apply(this, arguments);
 
+      // Look for data surrounded by undefined.
       data.forEach(function (d, i) {
         var isFirst = i === 0;
         var isLast = i === data.length - 1;
@@ -615,6 +637,7 @@ angular.module('lizard-nxt')
             (!isFirst && !isLast && !defined(yPrevious) && !defined(yNext))
             ) {
 
+            // Add a string to path.
             path = addSingleDataPoint(generator, path, d);
 
           }
