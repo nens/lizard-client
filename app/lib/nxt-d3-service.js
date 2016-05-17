@@ -621,13 +621,13 @@ angular.module('lizard-nxt')
       // Get path from d3
       var path = generator.apply(this, arguments);
 
+      var defined = generator.defined();
+
       // Look for data surrounded by undefined.
       data.forEach(function (d, i) {
-        var isFirst = i === 0;
-        var isLast = i === data.length - 1;
-        var defined = generator.defined();
-
         if (defined(d)) {
+          var isFirst = i === 0;
+          var isLast = i === data.length - 1;
           var yPrevious = data[i - 1];
           var yNext = data[i + 1];
 
