@@ -6,6 +6,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Removed default values from WantedAttributes.
 
+- Order nestedasset by filter_bottom_level.
+
 
 Release 3.0.14 (2016-5-9)
 ---------------------
