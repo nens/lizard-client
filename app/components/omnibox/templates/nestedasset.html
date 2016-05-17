@@ -23,7 +23,7 @@
             a.code !== '' ? a.code
             : a.serial !== '' ? a.serial
             : a.id
-            for a in list track by a.id">
+            for a in list | orderBy:'filter_bottom_level' track by a.id">
         </select>
 
       </div>

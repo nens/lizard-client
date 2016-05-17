@@ -3,7 +3,10 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Removed default values from WantedAttributes.
+
+- Order nestedasset by filter_bottom_level.
 
 
 Release 3.1.2 (2016-5-9)
