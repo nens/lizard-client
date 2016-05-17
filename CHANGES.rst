@@ -6,6 +6,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Removed default values from WantedAttributes.
 
+- Fix dashboard not emptying correctly when removing asset.
+
 
 Release 3.0.14 (2016-5-9)
 ---------------------
