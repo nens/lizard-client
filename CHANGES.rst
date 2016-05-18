@@ -12,6 +12,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Only allow lat-lng annotation creation when layer is active.
 
+- Make annotation text expandable.
+
 
 Release 3.1.2 (2016-5-9)
 ---------------------

@@ -95,6 +95,10 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    &.show-full-text {
+        white-space: normal;
+    }
 }
 
 .card table.fullwidth{

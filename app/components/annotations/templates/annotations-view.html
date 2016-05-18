@@ -7,7 +7,11 @@
     </colgroup>
     <tbody>
       <tr ng-repeat="obj in annotations track by obj.id">
-        <td><% obj.properties.text %></td>
+        <td ng-click="showFullText = !showFullText"
+            ng-class="{'show-full-text': showFullText}"
+            class="clickable">
+          <% obj.properties.text %>
+        </td>
         <td class="text-right">
           <span ng-bind="obj.properties.timestamp | date: formatDatetime()"></span>
         </td>
