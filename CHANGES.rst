@@ -8,6 +8,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Make annotations omnibox collapsed by default.
 
+- Request a confirmation when deleting an annotation.
+
 
 Release 3.1.2 (2016-5-9)
 ---------------------

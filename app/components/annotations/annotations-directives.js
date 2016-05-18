@@ -129,11 +129,24 @@ angular.module('annotations')
        * on error.
        * @param {object} annotation - The annotation to be deleted.
        */
-      scope.deleteAnnotation = function (annotation) {
+      var deleteAnnotation = function (annotation) {
         AnnotationsService.deleteAnnotation(
           annotation,
           deleteAnnotationSuccess.bind(undefined, annotation),
           deleteAnnotationError);
+      };
+
+      /**
+       * Delete a notification after request for confirmation.
+       * @param {object} annotation - The annotation to be deleted.
+       */
+      scope.deleteAnnotation = function (annotation) {
+        notie.confirm(
+            gettextCatalog.getString(
+              "Are you sure you want to delete this annotation?"),
+            gettextCatalog.getString("Yes"),
+            gettextCatalog.getString("No"),
+            deleteAnnotation.bind(undefined, annotation));
       };
     };
 
