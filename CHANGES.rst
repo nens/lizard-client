@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Graphs: enable zoom and pan on y-axes.
 
 
 Release 3.1.2 (2016-5-9)
