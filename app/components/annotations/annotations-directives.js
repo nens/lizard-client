@@ -227,9 +227,9 @@ angular.module('annotations')
 angular.module('annotations')
   .directive('annotationsMake',
              ['AnnotationsService', '$window', 'gettextCatalog', 'notie',
-              'user',
+              'user', 'State',
               function (AnnotationsService, $window, gettextCatalog, notie,
-                        user) {
+                        user, State) {
 
     var link = function (scope, element, attrs) {
 
@@ -287,17 +287,27 @@ angular.module('annotations')
 
       /**
        * Create a new annotation on an asset.
+       *
+       * Only add an annotation to a lat-lng location when layer is active,
+       * always add annotation to an object.
        */
       scope.createAnnotation = function () {
-        AnnotationsService.addAnnotationToObject(
-          scope.data,
-          scope.text,
-          scope.attachment,
-          scope.timelineat,
-          scope.selectedOrganisation,
-          createAnnotationSuccess,
-          createAnnotationError
-        );
+        if (scope.data.entity_name === undefined &&
+            State.layerGroups.active.indexOf('annotations') === -1) {
+          notie.alert(3, gettextCatalog.getString(
+            "Please turn on the annotations layer before adding an annotation."
+          ), 4);
+        } else {
+          AnnotationsService.addAnnotationToObject(
+            scope.data,
+            scope.text,
+            scope.attachment,
+            scope.timelineat,
+            scope.selectedOrganisation,
+            createAnnotationSuccess,
+            createAnnotationError
+          );
+        }
       };
 
       /**

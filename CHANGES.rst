@@ -10,6 +10,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Request a confirmation when deleting an annotation.
 
+- Only allow lat-lng annotation creation when layer is active.
+
 
 Release 3.1.2 (2016-5-9)
 ---------------------
