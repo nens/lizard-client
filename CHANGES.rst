@@ -6,6 +6,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Reset Annotation form after successful submission.
 
+- Make annotations omnibox collapsed by default.
+
 
 Release 3.1.2 (2016-5-9)
 ---------------------
