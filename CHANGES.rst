@@ -10,7 +10,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Request a confirmation when deleting an annotation.
 
-- Only allow lat-lng annotation creation when layer is active.
+- Only show annotation box when annotation layer is active or when an asset is
+  selected.
 
 - Make annotation text expandable.
 

@@ -132,7 +132,7 @@
   </div>
 
   <annotations
-    ng-if="header && geom.geometry.type === 'Point' && user.authenticated"
+    ng-if="showAnnotations && header && geom.geometry.type === 'Point'"
     data="geom"
     time-state="timeState">
   </annotations>
