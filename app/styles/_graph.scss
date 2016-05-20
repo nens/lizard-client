@@ -38,6 +38,8 @@ svg {
   fill: none;
   stroke: $greenSea;
   stroke-width: 2px;
+  stroke-linejoin: round; // makes line areas of one px visible
+  stroke-linecap: round; // makes lines of one px visible.
 }
 
 .thresholds line {
