@@ -11,10 +11,10 @@ Add the current portal state to your favourites!
       <col class="col-sm-2"></col>
     </colgroup>
     <tbody>
-      <tr ng-repeat="obj in favourites.data">
+      <tr ng-repeat="obj in favourites.data | orderBy : 'name'">
         <td ng-click="selectFavourite(obj)"
             class="clickable">
-          <i class="fa fa-star text-primary"></i>
+          <i class="fa text-primary" ng-class="obj.state.context === 'map' ? 'fa-globe': 'fa-bar-chart'"></i>
         </td>
         <td ng-click="selectFavourite(obj)"
             class="clickable">

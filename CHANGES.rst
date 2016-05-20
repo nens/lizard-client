@@ -8,6 +8,10 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Fix hovering over nodata.
 
+- Graphs: enable zoom and pan on y-axes.
+
+- Give favourite icon for chart or map.
+
 
 Release 3.1.2 (2016-5-9)
 ---------------------
