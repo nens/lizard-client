@@ -101,11 +101,4 @@ describe('Service: SearchService', function () {
       .toBe(ggResult.results[0].geometry.location.lat);
   });
 
-  xit('should set first API search result as selected on State', function () {
-    SearchService.zoomToSearchResult(endpointResult.results[0], State);
-    expect(State.selected.assets.length)
-      .toBe(1);
-    // Please check here if the selected asset on the State actually
-    // corresponds to the search result.
-  });
 });
