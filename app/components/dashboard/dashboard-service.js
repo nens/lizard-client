@@ -32,6 +32,8 @@ angular.module('dashboard')
    */
   this.buildGraphs = function (graphs, timeseries, assets, geometries) {
 
+    graphs = this._setAllContentToNotUpdated(graphs);
+
     timeseries.forEach(function (ts) {
       ts.updated = true;
       if (graphs[ts.order]) {
@@ -84,15 +86,34 @@ angular.module('dashboard')
       }
     });
 
-    // Remove all graphs that have not been updated or are empty.
+    return this._filterActiveGraphs(graphs);
+  };
+
+  /**
+   * Remove all graphs that have not been updated or are empty.
+   * @param  {array}  graphs
+   * @return {array}  filtered graphs.
+   */
+  this._filterActiveGraphs = function (graphs) {
+    var notEmptyUpdated = [];
     _.forEach(graphs, function (g, i) {
       g.content = _.filter(g.content, function (c) { return c.updated; });
-      _.forEach(g.content, function (c) { c.updated = false; });
-      if (g.content.length === 0) {
-        graphs.splice(i, 1);
+      if (g.content.length > 0) {
+        notEmptyUpdated.push(g);
       }
     });
+    return notEmptyUpdated;
+  };
 
+  /**
+   * Go over all graphs and graphs.content to set updated to false;
+   * @param {array}  graphs
+   * @return {array} graphs
+   */
+  this._setAllContentToNotUpdated = function (graphs) {
+    _.forEach(graphs, function (g, i) {
+      _.forEach(g.content, function (c) { c.updated = false; });
+    });
     return graphs;
   };
 
