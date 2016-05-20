@@ -14,6 +14,7 @@ Unreleased (2.9.0) (XXXX-XX-XX)
   selected.
 
 - Make annotation text expandable.
+
 - Draw individual points in line charts.
 
 - Fix hovering over nodata.
