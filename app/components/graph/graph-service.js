@@ -205,7 +205,8 @@ angular.module('lizard-nxt')
               0, // transition 0 ms when drawing while zooming.
               chart.path,
               lineAsArea ? chart.color : 'none',
-              chart.color
+              chart.color,
+              chart.unit
             );
           },
           DELAY
@@ -222,7 +223,8 @@ angular.module('lizard-nxt')
         chart.path,
         lineAsArea ? chart.color : 'none', // Set fill to 'none' for normal
                                    // lines.
-        chart.color
+        chart.color,
+        chart.unit
       );
 
     });
@@ -667,55 +669,58 @@ angular.module('lizard-nxt')
         .attr('class', 'thresholds');
     }
 
-    // Get unique list of thresholds.
-    var thresholds = [];
+    var lines = tg.selectAll("line");
+    var labels = tg.selectAll("text");
 
-    charts.forEach(function (chart) {
-      if (chart.unit === activeUnit) {
-        chart.thresholds.forEach(function (threshold) {
-          thresholds.push(threshold);
+    if (charts) {
+      // Get unique list of thresholds.
+      var thresholds = [];
+
+      charts.forEach(function (chart) {
+        if (chart.unit === activeUnit) {
+          chart.thresholds.forEach(function (threshold) {
+            thresholds.push(threshold);
+          });
+        }
+      });
+
+      // Thresholds are a property of chart, but come from an asset, so multiple
+      // charts might have the same thresholds.
+      thresholds = _.uniq(thresholds);
+
+      // Create, update and remove thresholds.
+      lines = lines.data(thresholds, function(d) { return d.name; });
+
+      lines.enter().append('line')
+        .attr('x1', 0)
+        .attr('x2', xRange[1]);
+
+      lines.exit().transition()
+        .duration(duration)
+        .style('stroke-width', 0)
+        .remove();
+
+      // Create, update, remove labels on threshold.
+      labels = labels.data(thresholds, function(d) { return d.name; });
+
+      labels.enter().append('text')
+        .attr('x', PADDING)
+        .text(function (d) {
+          return d.name + ' ' + d.value.toFixed(2) + ' ' + activeUnit;
         });
-      }
-    });
 
-    // Thresholds are a property of chart, but come from an asset, so multiple
-    // charts might have the same thresholds.
-    thresholds = _.uniq(thresholds);
-
-    // Create, update and remove thresholds.
-    var lines = tg.selectAll("line")
-      .data(thresholds, function(d) { return d.name; });
-
-    lines.enter().append('line')
-      .attr('x1', 0)
-      .attr('x2', xRange[1]);
+      labels.exit()
+        .remove();
+    }
 
     lines.transition()
       .duration(duration)
       .attr('y1', function (d) { return yScale(d.value); })
       .attr('y2', function (d) { return yScale(d.value); });
 
-    lines.exit().transition()
-      .duration(duration)
-      .style('stroke-width', 0)
-      .remove();
-
-    // Create, update, remove labels on threshold.
-    var labels = tg.selectAll("text")
-      .data(thresholds, function(d) { return d.name; });
-
-    labels.enter().append('text')
-      .attr('x', PADDING)
-      .text(function (d) {
-        return d.name + ' ' + d.value.toFixed(2) + ' ' + activeUnit;
-      });
-
     labels.transition()
       .duration(duration)
       .attr('y', function (d) { return yScale(d.value) - PADDING; });
-
-    labels.exit()
-      .remove();
   };
 
 
@@ -1173,13 +1178,13 @@ angular.module('lizard-nxt')
     return x;
   };
 
-  drawPath = function (svg, pathFn, data, duration, path, fill, color) {
+  drawPath = function (svg, pathFn, data, duration, path, fill, color, unit) {
     if (!path) {
       var fg = svg.select('g').select('#feature-group');
       // bring to front
       fg.node().parentNode.appendChild(fg.node());
       path = fg.append("path")
-        .attr("class", "line");
+        .attr("class", "line unit-" + UtilService.slugify(unit));
     }
     path.datum(data)
       .style('fill', fill)
@@ -1441,7 +1446,48 @@ angular.module('lizard-nxt')
     return el;
   };
 
-  drawAxes = function (svg, axis, dimensions, y, duration) {
+  /**
+   * Enables zoom and pan on y-axis.
+   *
+   * It transforms the position of paths on user scroll, pinch or pan.
+   * Elements with the line class and it explicitly redraws the thresholds. If
+   * specified with a string indicating the activeUnit, it only zooms the paths
+   * which have the unit in th class list and resets all other transforms.
+   *
+   * @param {d3 svg}  svg
+   * @param {d3 axis} axis
+   * @param {object}  dimensions
+   * @param {string}  activeUnit the currently active unit.
+   */
+  var addZoomToYaxis = function (svg, axis, dimensions, activeUnit) {
+    var selector = activeUnit
+      ? '.unit-' + UtilService.slugify(activeUnit)
+      : ['path', '.line'];
+
+    // Reset transforms on all paths and .lines.
+    svg.select('#feature-group').selectAll(['path', '.line'])
+      .attr("transform", "translate(0,0)scale(1)");
+
+    var zoomed = function () {
+      Graph.prototype._drawAxes(svg, axis, dimensions, true);
+      addThresholds(svg, null, null, null, axis.scale(), 0);
+      svg.select('#feature-group').selectAll(selector)
+        .attr(
+          "transform", "translate(0," + d3.event.translate[1] + ")" +
+          "scale(1, " + d3.event.scale + ")"
+        );
+    };
+
+    var zoom = d3.behavior.zoom()
+      .y(axis.scale())
+      .scaleExtent([0.2, 5])
+      .on("zoom", zoomed);
+
+    svg.select('#listeners').call(zoom);
+
+  };
+
+  drawAxes = function (svg, axis, dimensions, y, duration, activeUnit) {
     // Create elements and draw axis using nxtD3 method
     Graph.prototype._drawAxes(svg, axis, dimensions, y, duration);
     var axisEl;
@@ -1452,6 +1498,9 @@ angular.module('lizard-nxt')
         .selectAll("text")
           .style("text-anchor", "end")
           .attr('class', 'graph-text');
+
+      addZoomToYaxis(svg, axis, dimensions, activeUnit);
+
     } else {
       axisEl = svg.select('#xaxis')
         .attr("class", "x-axis x axis")
@@ -1462,6 +1511,7 @@ angular.module('lizard-nxt')
           .attr('class', 'graph-text')
           .attr("transform", "rotate(-25)");
     }
+
     return axisEl;
   };
 
@@ -1529,7 +1579,8 @@ angular.module('lizard-nxt')
       graph._yPerUnit[graph._activeUnit].axis,
       graph.dimensions,
       true,
-      graph.transTime
+      graph.transTime,
+      graph._activeUnit
     );
     var label = drawLabel(
       graph._svg,
