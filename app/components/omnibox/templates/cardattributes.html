@@ -16,25 +16,12 @@
         </td>
 
         <td class="lineout"
-            ng-if="waterchain[obj.attrName] !== undefined
-              && waterchain[obj.attrName] !== null
-              && waterchain[obj.attrName] !== ''
-              && waterchain[obj.attrName] !== 'pumps'
+            ng-if="waterchain[obj.attrName] !== 'pumps'
               && waterchain[obj.attrName] !== 'filters'">
-          <div class="attr-row-content" ng-bind-html="$eval(obj.ngBindValue) + obj.valueSuffix">
-          </div>
+          <span class="attr-row-content" ng-bind-html="$eval(obj.ngBindValue)">
+          </span>&nbsp;<span class="attr-row-content" ng-bind-html="obj.valueSuffix"></span>
         </td>
 
-        <td class="lineout"
-            ng-if="waterchain[obj.attrName] === undefined
-              || waterchain[obj.attrName] === null
-              || waterchain[obj.attrName] === ''"
-            rel="tooltip"
-            data-toggle="tooltip"
-            title="<% 'Example value' | translate %>">
-          <div class="attr-row-content dummy-attr-value" ng-bind-html="obj.defaultValue + obj.valueSuffix">
-          </div>
-        </td>
       </tr>
     </table>
 

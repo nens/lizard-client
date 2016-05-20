@@ -34,6 +34,13 @@ Release 3.1.1 (2016-5-9)
 ---------------------
 
 - Use new portal temporal bounds instead of hardcoded defaults.
+- Align pru with valueSuffix to make tresholds work.
+
+- Removed default values from WantedAttributes.
+
+- Order nestedasset by filter_bottom_level.
+
+- Fix dashboard not emptying correctly when removing asset.
 
 
 Release 3.0.14 (2016-5-9)

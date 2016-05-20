@@ -224,7 +224,7 @@ angular.module('timeseries')
         _.forEach(
           WantedAttributes[assetOfTs.entity_name].rows,
           function (attr) {
-            if (attr.valueSuffix === ' (' + graphTimeseries.unit + ')') {
+            if (attr.valueSuffix === graphTimeseries.unit) {
               var value = parseFloat(assetOfTs[attr.attrName]);
               if (!isNaN(value)) {
 
