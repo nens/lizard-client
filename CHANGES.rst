@@ -4,9 +4,13 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Align pru with valueSuffix to make tresholds work.
+
 - Removed default values from WantedAttributes.
 
 - Order nestedasset by filter_bottom_level.
+
+- Fix dashboard not emptying correctly when removing asset.
 
 
 Release 3.0.14 (2016-5-9)
