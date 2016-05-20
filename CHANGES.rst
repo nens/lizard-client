@@ -4,6 +4,17 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Reset Annotation form after successful submission.
+
+- Make annotations omnibox collapsed by default.
+
+- Request a confirmation when deleting an annotation.
+
+- Only show annotation box when annotation layer is active or when an asset is
+  selected.
+
+- Make annotation text expandable.
+
 - Draw individual points in line charts.
 
 - Fix hovering over nodata.

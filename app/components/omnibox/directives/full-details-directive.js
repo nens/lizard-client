@@ -17,6 +17,12 @@ angular.module('lizard-nxt')
         scope.fullDetails = true;
       }
 
+      if (attrs.default === "false") {
+        scope.fullDetails = false;
+      } else if (attrs.default === "true") {
+        scope.fullDetails = true;
+      }
+
       // FullDetails is set programmatically and by users. Do not set
       // programmatically when a user set it manually.
       var toggledByUser = false;
@@ -45,7 +51,7 @@ angular.module('lizard-nxt')
         if (!toggledByUser && boxLength > 2) {
           scope.fullDetails = false;
         }
-        else if (!toggledByUser) {
+        else if (!toggledByUser && attrs.default !== "false") {
           scope.fullDetails = true;
         }
       });

@@ -9,6 +9,15 @@ angular.module("omnibox")
      */
     link: function (scope, element) {
 
+      scope.showAnnotations = function () {
+        return (
+          user.authenticated &&
+          (State.selected.assets.length ||
+           State.layerGroups.active.indexOf('annotations') !== -1) &&
+          (scope.omnibox.data.geometries.length +
+           scope.omnibox.data.assets.length) < 2
+      )};
+
       // In pixels
       var SEARCHBAR_FROM_TOP = 60;
       var TIMLINE_BOTTOM_MARGIN = 10;
