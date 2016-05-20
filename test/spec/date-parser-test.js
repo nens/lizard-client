@@ -60,7 +60,7 @@ describe('Service: DateParser', function () {
     expect(d.calendar()).toBe('14-04-2012');
   });
 
-  xit('should return a valid moment when provided with a month name', function () {
+  it('should return a valid moment when provided with a month name', function () {
     var d = dateParser('April');
     var now = new Date();
     expect(d.isValid()).toBe(true);
