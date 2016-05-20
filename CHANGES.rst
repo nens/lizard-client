@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Align pru with valueSuffix to make tresholds work.
+
 - Removed default values from WantedAttributes.
 
 
