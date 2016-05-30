@@ -37,28 +37,20 @@
 
   <body ng-controller="UrlController">
 
+    <!-- show when map, but always initialize. -->
+    <datamenu ng-show="context === 'map'"></datamenu>
+
+    <!-- use ng-if to reiniatialize when context changes -->
     <div ng-if="context === 'map' || context === 'scenarios'">
       <map></map>
       <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
-      <datamenu></datamenu>
-      <timeline
-        class="
-          timeline
-          timeline-map
-          navbar-fixed-bottom
-          material-shadow">
-        </timeline>
+      <timeline class="timeline-map"></timeline>
     </div>
 
     <div ng-if="context === 'dashboard'">
       <dashboard></dashboard>
       <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
-      <timeline
-        class="
-          timeline
-          timeline-dashboard
-          navbar-fixed-bottom
-          material-shadow"></timeline>
+      <timeline class="timeline-dashboard"></timeline>
     </div>
 
     <user-menu></user-menu>
