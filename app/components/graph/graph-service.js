@@ -1246,6 +1246,7 @@ angular.module('lizard-nxt')
           location: chart.location,
           ylabel: chart.labels.y,
           unit: chart.unit,
+          name: chart.name,
           value: value,
           color: chart.color
         });
@@ -1308,9 +1309,10 @@ angular.module('lizard-nxt')
             .attr('fill', v.color);
 
         var location = (v.location) ? '' + ' - ' + v.location : '';
+        var name = (v.name) ? '' + ', ' + v.name : '';
         var tspan = valuebox.select('text')
           .append('tspan')
-            .text(value + ' ' + v.ylabel + v.unit + location)
+            .text(value + ' ' + v.ylabel + v.unit + location + name)
             .attr('class', 'graph-tooltip-y')
             .attr('x', 25)
             .attr('y', 15 + 15 * i);
