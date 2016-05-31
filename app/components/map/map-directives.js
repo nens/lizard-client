@@ -167,10 +167,14 @@ angular.module('map')
         }
       );
 
+      scope.$watchCollection('layers', function () {
+        MapService.updateLayers(scope.layers);
+      });
+
       /**
        * Watch state spatial view and update the whole shebang.
        */
-      scope.$watch(State.toString('spatial.view'), function (n, o) {
+      scope.$watchCollection('spatial.view', function (n, o) {
         if (n !== o && !mapSetsBounds) {
           MapService.setView(State.spatial.view);
           State.spatial.bounds = MapService.getBounds();
@@ -182,7 +186,7 @@ angular.module('map')
       /**
        * Watch bounds of state and update map bounds when state is changed.
        */
-      scope.$watch(State.toString('spatial.bounds'), function (n, o) {
+      scope.$watchCollection('spatial.bounds', function (n, o) {
         if (n !== o && !mapSetsBounds) {
           MapService.fitBounds(State.spatial.bounds);
           State.spatial.view = MapService.getView();
@@ -204,7 +208,7 @@ angular.module('map')
        *
        * Used for animation and clicks on timeline or changes from url-ctrl.
        */
-      scope.$watch(State.toString('temporal.at'), function (n, o) {
+      scope.$watch('temporal.at', function (n, o) {
         if (n === o) { return; }
         MapService.syncTime(State.temporal);
       });
@@ -214,7 +218,7 @@ angular.module('map')
        *
        * Used for drag of timeline or changes from url-ctrl.
        */
-      scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
+      scope.$watch('temporal.timelineMoving', function (n, o) {
         if (n === o) { return; }
         MapService.syncTime(State.temporal);
       });
@@ -224,19 +228,19 @@ angular.module('map')
        *
        * Used to turn maplayers to a none animating state. When animation stops.
        */
-      scope.$watch(function () { return State.temporal.playing; }, function (newValue) {
+      scope.$watch('temporal.playing', function (newValue) {
         if (newValue) { return; }
         MapService.syncTime(State.temporal);
       });
 
-      scope.$watch(State.toString('selected.geometries'), function (n, o) {
+      scope.$watchCollection('selected.geometries', function (n, o) {
         if (n === o) { return true; }
         if (State.box.type === 'line' && State.selected.geometries[0] === undefined) {
           lineCleanup();
         }
       });
 
-      scope.$watch(State.toString('box.type'), function (n, o) {
+      scope.$watch('box.type', function (n, o) {
         if (n === o) { return true; }
 
         if (n !== 'line' && o === 'line') {
@@ -291,6 +295,13 @@ angular.module('map')
     return {
       restrict: 'E',
       replace: true,
+      scope: {
+        spatial: '=',
+        temporal: '=',
+        selected: '=',
+        layers: '=',
+        box: '='
+      },
       template: '<div id="map" class="map"></div>',
       link: link
     };

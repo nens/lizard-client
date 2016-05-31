@@ -45,6 +45,8 @@ angular.module('lizard-nxt')
     $scope.tooltips = CabinetService.createTooltips();
   });
 
+  $scope.state = State;
+
   // CONTEXT
 
   /**

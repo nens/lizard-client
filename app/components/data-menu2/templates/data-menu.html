@@ -1,0 +1,75 @@
+<div class="material-shadow"
+   ng-class="{'slide-left': menu.enabled,
+    'layer-adder-wrapper': menu.layerAdderEnabled,
+    'layer-switcher-wrapper': !menu.layerAdderEnabled,}">
+
+  <baselayers layers="state.layers"></baselayers>
+
+  <assetlayer
+    ng-repeat="layer in state.layers.assets | orderBy 'order'"
+    asset="layer"
+    bootstrap-layer="dataLayers[layer.slug]">
+  </assetlayer>
+  <raster
+    ng-repeat="layer in state.layers.rasters | orderBy 'order'"
+    ng-if="!layer.scenario"
+    raster="layer"
+    bootstrap-layer="dataLayers[layer.slug]">
+  </raster>
+  <wmslayer
+    ng-repeat="layer in state.layers.wms | orderBy 'order'"
+    ng-if="!layer.scenario"
+    wms-layer="layer"
+    bootstrap-layer="dataLayers[layer.slug]">
+  </wmslayer>
+  <eventseries
+    ng-repeat="layer in state.layers.eventseries | orderBy 'order'"
+    eventseries="layer"
+    bootstrap-layer="dataLayers[layer.slug]">
+  </eventseries>
+
+  <annotations></annotations>
+
+  <layer-adder
+    menu="menu"
+    ng-if="menu.layerAdderEnabled">
+  </layer-adder>
+
+  <div class="button-list-container" ng-if="context === 'map' || context === 'scenarios'">
+    <div class="button-list-item compass"
+     ng-click="menu.enabled = !menu.enabled">
+      <span class="fa"
+        ng-class="{
+          'fa-spinner fa-spin': menu.state.gettingData,
+          'fa-compass': !menu.state.gettingData
+        }"
+        title="<% menu.enabled ? tooltips.closeMenu : tooltips.openMenu %>">
+      </span>
+    </div>
+    <datamenu-item
+      title="<% 'Point selection' | translate %>"
+      box-type="menu.box.type"
+      type="point" icon="map-marker">
+    </datamenu-item>
+    <datamenu-item
+      title="<% 'Select Multiple Points' | translate %>"
+      box-type="menu.box.type"
+      type="multi-point" icon="th">
+    </datamenu-item>
+    <datamenu-item
+      title="<% 'Line selection' | translate %>"
+      box-type="menu.box.type"
+      type="line" icon="expand">
+    </datamenu-item>
+    <datamenu-item
+      title="<% 'Region selection' | translate %>"
+      box-type="menu.box.type"
+      type="region" icon="lemon-o">
+    </datamenu-item>
+    <datamenu-item
+      title="<% 'View selection' | translate %>"
+      box-type="menu.box.type"
+      type="area" icon="square-o">
+    </datamenu-item>
+  </div>
+</div>

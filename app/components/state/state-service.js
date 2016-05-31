@@ -54,11 +54,13 @@ angular.module('global-state')
 
     // State of data layer groups, stores slugs of all layergroups and the
     // active layergroups.
-    state.layerGroups = {
-      all: [], // Immutable representation of all layergroups
-      active: [],
-      gettingData: false, // Making server requests through DataService
-      timeIsSyncing: false // Getting new layers and so on
+    state.layers = {
+      baselayer: 'topography', // slug of active baselayer, watched by
+                               // baselayers directive.
+      assets: [],
+      rasters: [],
+      wms: [],
+      eventseries: [],
     };
 
     // Combination of data and time syncing

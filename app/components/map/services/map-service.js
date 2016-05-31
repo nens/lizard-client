@@ -10,8 +10,8 @@
  */
 
 angular.module('map')
-.service('MapService', ['$rootScope', '$q', 'LeafletService', 'LeafletVectorService','CabinetService', 'DataService', 'NxtNonTiledWMSLayer', 'NxtRegionsLayer', 'NxtMapLayer', 'State',
-  function ($rootScope, $q, LeafletService, LeafletVectorService, CabinetService, DataService, NxtNonTiledWMSLayer, NxtRegionsLayer, NxtMapLayer, State) {
+.service('MapService', ['$rootScope', '$q', 'LeafletService', 'LeafletVectorService','CabinetService', 'DataService', 'temporalWmsLayer', 'NxtRegionsLayer', 'NxtMapLayer', 'State',
+  function ($rootScope, $q, LeafletService, LeafletVectorService, CabinetService, DataService, temporalWmsLayer, NxtRegionsLayer, NxtMapLayer, State) {
 
     var service = {
 
@@ -30,21 +30,34 @@ angular.module('map')
        */
       initializeMap: function (element, mapOptions, eventCallbackFns) {
         service._map = createLeafletMap(element, mapOptions);
-        this.initializeLayers(State.temporal);
-        this._initializeNxtMapEvents(eventCallbackFns);
-        // Map-services is dependant on the dataservice. This is to prevent
-        // a bunch of complicated and slow watches and still keep the data-
-        // service as the data authority.
-        DataService.eventCallbacks = {
-          onCreateLayerGroup: this.initializeLayer,
-          onToggleLayerGroup: this._toggleLayers,
-          onOpacityChange: this._setOpacity,
-          onDblClick: this._rescaleContinuousData
-        };
-        // Turn active layergroups on.
-        angular.forEach(State.layerGroups.active, function (lgSlug) {
-          this._toggleLayers(DataService.layerGroups[lgSlug]);
-        }, this);
+      },
+
+      _updateLayers: function (dataLayers, mapLayers, format) {
+        dataLayers.forEach(function (layer) {
+          if (layer.active) {
+            service.addLeafletLayer(mapLayers[layer.slug][format]);
+            mapLayers[layer.slug][format].setOpacity(layer.opacity);
+          } else {
+            service.removeLeafletLayer(mapLayers[layer.slug][format]);
+          }
+        });
+      },
+
+      updateLayers: function (layers) {
+
+        service._updateLayers(layers.rasters, service.rasters, 'wms');
+        service._updateLayers(layers.wms, service.wms, 'wms');
+        service._updateLayers(layers.eventseries, service.rasters, 'vector');
+        service._updateLayers(layers.assets, service.assets, 'tms');
+
+        layers.assets.forEach(function (assetLayer) {
+          if (assetLayer.active) {
+            service.addLeafletLayer(service.assets[assetLayer.slug].utf);
+          } else {
+            service.removeLeafletLayer(service.assets[assetLayer.slug].utf);
+          }
+        });
+
       },
 
       /**
@@ -240,7 +253,7 @@ angular.module('map')
           utfSlug = DataService.utfLayerGroup.slug;
         }
         if (State.box.type === 'point') {
-          if (State.layerGroups.active.indexOf(utfSlug) !== -1) {
+          if (State.layers.assets[0] && State.layers.assets[0].active) {
             this._setAssetOrGeomFromUtfOnState(latLng);
           }
           else {
@@ -249,7 +262,7 @@ angular.module('map')
         }
 
         else if (State.box.type === 'multi-point') {
-          if (State.layerGroups.active.indexOf(utfSlug) !== -1) {
+          if (State.layers.assets[0] && State.layers.assets[0].active) {
             service._addAssetOrGeomFromUtfOnState(latLng);
           }
           else {
@@ -622,22 +635,16 @@ angular.module('map')
 
       MAXZOOMLEVEL: 21,
 
-      TMS: function (nonLeafLayer) {
+      TMS: function (url) {
 
-        var layerUrl = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}{retina}.{ext}';
-
-        // Mapbox layers support retina tiles, our own do not yet. Check whether
-        // tiles are from mapbox source.
-        var retinaSupport = /tiles.mapbox/g.test(nonLeafLayer.url);
+        var layerUrl = url + '/{slug}/{z}/{x}/{y}{retina}.{ext}';
 
         var layer = LeafletService.tileLayer(
           layerUrl, {
-            retina: retinaSupport && L.Browser.retina ? '@2x' : '',
-            slug: nonLeafLayer.slug,
-            minZoom: nonLeafLayer.minZoom || 0,
-            maxZoom: nonLeafLayer.maxZoom || this.MAXZOOMLEVEL,
-            detectRetina: retinaSupport,
-            zIndex: nonLeafLayer.zIndex,
+            retina: L.Browser.retina ? '@2x' : '',
+            minZoom: 0,
+            maxZoom: this.MAXZOOMLEVEL,
+            detectRetina: true,
             ext: 'png'
           });
 
@@ -659,6 +666,22 @@ angular.module('map')
 
         return LeafletService.tileLayer.wms(nonLeafLayer.url, _options);
       },
+
+      TEMPORALWMS: function (options) {
+        var _options = {
+          layers: options.slug,
+          format: 'image/png',
+          version: '1.1.1',
+          minZoom: options.minZoom || 0,
+          maxZoom: options.maxZoom || this.MAXZOOMLEVEL,
+          crs: LeafletService.CRS.EPSG3857,
+          opacity: options.opacity,
+          zIndex: options.zIndex
+        };
+        _options = angular.extend(_options, options);
+
+        return LeafletService.tileLayer.wms(url, _options);
+      }
 
       UTFGrid: function (nonLeafLayer) {
 

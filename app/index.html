@@ -42,7 +42,13 @@
 
     <!-- use ng-if to reiniatialize when context changes -->
     <div ng-if="context === 'map' || context === 'scenarios'">
-      <map></map>
+      <map
+        spatial="state.spatial"
+        temporal="state.spatial"
+        selected="state.selected"
+        layers="state.layers"
+        box="state.box">
+      </map>
       <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
       <timeline class="timeline-map"></timeline>
     </div>
