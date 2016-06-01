@@ -66,7 +66,7 @@ angular.module('lizard-nxt')
 
   var temporalWmsLayer = LeafletService.Class.extend({
 
-    this.layer = {},
+    layer: {},
 
     initialize: function (options) {
 

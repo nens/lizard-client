@@ -22,6 +22,7 @@ angular.module('data-menu')
     '$q',
     'AssetService',
     'dataLayers',
+    'DataLayerGroup',
     'LayerAdderService',
     'State',
 
@@ -29,11 +30,68 @@ angular.module('data-menu')
       $q,
       AssetService,
       dataLayers,
+      DataLayerGroup,
       LayerAdderService,
       State
     ) {
 
+      // Attributes ////////////////////////////////////////////////////////////
+
+      // Event callbacks are used to performa actions on the map when the
+      // state of layergroups changes, may contain a onOpacityChange, OnDblClick
+      // and on layerGroupToggled callback functions.
+      Object.defineProperty(this, 'eventCallbacks', {
+        set: function (newCallBacks) {
+          DataLayerGroup.prototype.callbackFns = newCallBacks;
+        }
+      });
+
       var instance = this;
+
+      /**
+       * Creates a new layerGroup and adds to the layerGroups
+       * @param  {object} lgConfig config of layergroup
+       * @return {object} layerGroup instance
+       */
+      this.createLayerGroup = function (lgConfig) {
+        return this.layerGroups[lgConfig.slug] = new DataLayerGroup(lgConfig);
+      };
+
+      /**
+       * @function
+       * @memberof app.NxtMapService
+       * @param  {object} nonLeafLayers object from database
+       * @description Throw in layers as served from the backend
+       */
+      this._createLayerGroups = function (serverSideLayerGroups) {
+        var layerGroups = {};
+        angular.forEach(serverSideLayerGroups, function (sslg) {
+
+          var utf = false;
+
+          angular.forEach(sslg.layers, function (layer) {
+            if (layer.format === 'UTFGrid') {
+              utf = true;
+            }
+          }, this);
+
+          var lg = new DataLayerGroup(sslg);
+
+          if (utf) { this.utfLayerGroup = lg; }
+
+          this.layerGroups[lg.slug] = lg;
+
+        }, this);
+        return this.layerGroups;
+      };
+
+      this.layerGroups = {};
+
+      var layerGroups = this._createLayerGroups(dataLayers);
+
+      this.baselayerGroups = _.filter(layerGroups, function (lgValue, lgKey) {
+        return lgValue.baselayer;
+      });
 
       // Callback for when assets are being retrieved from api
       var assetChange = function (asset) {
@@ -203,6 +261,52 @@ angular.module('data-menu')
       this._dataDefers = {}; // Per callee a list with a defer for every time
                              // getData gets called before the last one
                              // resolves.
+
+
+      // Methods //////////////////////////////////////////////////////////////
+
+      /**
+       * @function
+       * @memberOf app.NxtMap
+       * @description Toggles a layergroup when layergroups should be toggled
+       *              takes into account that baselayers should toggle eachother
+       * @param  layerGroup layergroup that should be toggled
+       */
+      this.toggleLayerGroup = function (layerGroup) {
+        // turn layer group on
+        if (!(layerGroup.baselayer && layerGroup.isActive())) {
+          layerGroup.toggle();
+          instance.refreshSelected();
+        }
+        if (layerGroup.baselayer) {
+          angular.forEach(this.layerGroups, function (_layerGroup) {
+            if (_layerGroup.baselayer
+              && _layerGroup.isActive()
+              && _layerGroup.slug !== layerGroup.slug
+              )
+            {
+              _layerGroup.toggle();
+            }
+          });
+        }
+      };
+
+      /**
+       * Adds the provided layerGroups to the layerGroups
+       * @param {object} layerGroup instance
+       */
+      this.addLayergroup = function (layerGroup) {
+        return this.layerGroups[layerGroup.slug] = layerGroup;
+      };
+
+      /**
+       * Removes the provided layerGroups from nxt
+       * @param {object} layerGroup instance
+       */
+      this.removeLayerGroup = function (layerGroup) {
+        delete this.layerGroups[layerGroup.slug];
+        return this.layerGroups;
+      };
 
       /**
        * Gets data from all layergroups.
@@ -445,6 +549,23 @@ angular.module('data-menu')
 
         State.layerGroups.gettingData = true;
         return defer.promise;
+      };
+
+      /**
+       * @function
+       * @memberOf app.NxtMap
+       * @description Sets the layergroups to the state they came from the
+       *              server. Is called by the urlCtrl when no layergroup
+       *              info is found on the server
+       */
+      this.setLayerGoupsToDefault = function () {
+        angular.forEach(this.layerGroups, function (layerGroup) {
+          if (layerGroup.defaultActive && !layerGroup.isActive()) {
+            this.toggleLayerGroup(layerGroup);
+          } else if (!layerGroup.defaultActive && layerGroup.isActive()) {
+            this.toggleLayerGroup(layerGroup);
+          }
+        }, this);
       };
 
     }

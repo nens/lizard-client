@@ -55,7 +55,7 @@ angular.module('lizard-nxt')
         part: 'path', // Part of the url where this state is stored,
         index: 1, // Position of the state in the part
       },
-      layerGroups: {
+      layers: {
         part: 'path',
         index: 2,
       },
@@ -80,22 +80,18 @@ angular.module('lizard-nxt')
    /**
     * @function
     * @memberOf app.UrlController
-    * @summary Enables or disables layerGroups on the basis of the url.
-    * @description Takes the layerGroups as defined in the url to turn
-    *              layerGroups on afterwards it initializes all other
-    *              layerGroups. This is done here so MapService does not turn
-    *              on layerGroups which are turned of later by this controller.
-    * @param {string} String representation of layerGroups on url
+    * @summary Enables or disables layers on the basis of the url.
+    * @description Takes the layers as defined in the url to turn
+    *              layers on afterwards it initializes all other
+    *              layers. This is done here so MapService does not turn
+    *              on layers which are turned of later by this controller.
+    * @param {string} String representation of layers on url
     */
-    var enablelayerGroups = function (layerGroupString) {
-      if (layerGroupString) {
-        // Either layerGroups are on url
-        State.layerGroups.active = layerGroupString.split(',');
-        // Or layerGroups are not on url, turn default layerGroups on
-      } else if (State.layerGroups.active.length === 0){
-        DataService.setLayerGoupsToDefault();
+    var enablelayers = function (layerString) {
+      if (layerString) {
+        State.layers.active = layerString.split(',');
       }
-      UrlState.setlayerGroupsUrl(state, State.layerGroups.active);
+      UrlState.setlayersUrl(state, State.layers.active);
     };
 
    /**
@@ -108,11 +104,6 @@ angular.module('lizard-nxt')
     * @param {string} String representation of mapView on url
     */
     var enableMapView = function (mapView) {
-      var defaultBounds = LeafletService.latLngBounds(
-        L.latLng(dataBounds.south, dataBounds.east),
-        L.latLng(dataBounds.north, dataBounds.west)
-      );
-
       if (mapView) {
         var view = UrlState.parseMapView(mapView);
         if (view) {
@@ -121,11 +112,7 @@ angular.module('lizard-nxt')
             lng: view.latLng[1],
             zoom: view.zoom
           };
-        } else {
-          State.spatial.bounds = defaultBounds;
         }
-      } else {
-        State.spatial.bounds = defaultBounds;
       }
     };
 
@@ -164,10 +151,10 @@ angular.module('lizard-nxt')
     /**
      * set layer(s) when these change.
      */
-    $scope.$watch(State.toString('layerGroups.active'),
+    $scope.$watch(State.toString('layers.active'),
       function (n, o) {
         if (n === o) { return true; }
-        UrlState.setlayerGroupsUrl(state, State.layerGroups.active);
+        UrlState.setlayersUrl(state, State.layers.active);
       }
     );
 
@@ -274,7 +261,7 @@ angular.module('lizard-nxt')
       var language;
       var boxType;
       var geom;
-      var layerGroupsFromURL;
+      var layersFromURL;
       var mapView;
       var time;
       var context;
@@ -291,9 +278,9 @@ angular.module('lizard-nxt')
           state.geom.part,
           state.geom.index
         );
-        layerGroupsFromURL = LocationGetterSetter.getUrlValue(
-          state.layerGroups.part,
-          state.layerGroups.index
+        layersFromURL = LocationGetterSetter.getUrlValue(
+          state.layers.part,
+          state.layers.index
         );
         mapView = LocationGetterSetter.getUrlValue(
           state.mapView.part,
@@ -341,7 +328,7 @@ angular.module('lizard-nxt')
         }
       }
 
-      enablelayerGroups(layerGroupsFromURL);
+      enablelayers(layersFromURL);
       enableMapView(mapView);
 
       if (time) {

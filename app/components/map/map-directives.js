@@ -159,6 +159,10 @@ angular.module('map')
           maxZoom: 21,
           zoomControl: false,
           addZoomTitles: true,
+          lat: State.spatial.view.lat,
+          lng: State.spatial.view.lng,
+          zoom: State.spatial.view.zoom
+
         }, {
           onClick: _clicked,
           onMoveStart: _moveStarted,

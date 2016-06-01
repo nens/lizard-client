@@ -3,39 +3,43 @@
     'layer-adder-wrapper': menu.layerAdderEnabled,
     'layer-switcher-wrapper': !menu.layerAdderEnabled,}">
 
-  <baselayers layers="state.layers"></baselayers>
+  <div class="layer-switcher">
+    <ul class="list-group">
 
-  <assetlayer
-    ng-repeat="layer in state.layers.assets | orderBy 'order'"
-    asset="layer"
-    bootstrap-layer="dataLayers[layer.slug]">
-  </assetlayer>
-  <raster
-    ng-repeat="layer in state.layers.rasters | orderBy 'order'"
-    ng-if="!layer.scenario"
-    raster="layer"
-    bootstrap-layer="dataLayers[layer.slug]">
-  </raster>
-  <wmslayer
-    ng-repeat="layer in state.layers.wms | orderBy 'order'"
-    ng-if="!layer.scenario"
-    wms-layer="layer"
-    bootstrap-layer="dataLayers[layer.slug]">
-  </wmslayer>
-  <eventseries
-    ng-repeat="layer in state.layers.eventseries | orderBy 'order'"
-    eventseries="layer"
-    bootstrap-layer="dataLayers[layer.slug]">
-  </eventseries>
+      <baselayers layers="layers"></baselayers>
 
-  <annotations></annotations>
+      <assetlayer
+        ng-repeat="layer in layers.assets | orderBy:'order'"
+        asset="layer"
+        bootstrap-layer="dataLayers[layer.slug]">
+      </assetlayer>
+      <raster
+        ng-repeat="layer in layers.rasters | orderBy:'order'"
+        ng-if="!layer.scenario"
+        raster="layer"
+        bootstrap-layer="dataLayers[layer.slug]">
+      </raster>
+      <wmslayer
+        ng-repeat="layer in layers.wms | orderBy:'order'"
+        ng-if="!layer.scenario"
+        wms-layer="layer"
+        bootstrap-layer="dataLayers[layer.slug]">
+      </wmslayer>
+      <eventseries
+        ng-repeat="layer in layers.eventseries | orderBy:'order'"
+        eventseries="layer"
+        bootstrap-layer="dataLayers[layer.slug]">
+      </eventseries>
 
-  <layer-adder
-    menu="menu"
-    ng-if="menu.layerAdderEnabled">
-  </layer-adder>
+      <layer-adder
+        menu="menu"
+        ng-if="menu.layerAdderEnabled">
+      </layer-adder>
 
-  <div class="button-list-container" ng-if="context === 'map' || context === 'scenarios'">
+    </ul>
+  </div>
+
+  <div class="button-list-container">
     <div class="button-list-item compass"
      ng-click="menu.enabled = !menu.enabled">
       <span class="fa"
@@ -72,4 +76,5 @@
       type="area" icon="square-o">
     </datamenu-item>
   </div>
+
 </div>

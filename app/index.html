@@ -37,9 +37,6 @@
 
   <body ng-controller="UrlController">
 
-    <!-- show when map, but always initialize. -->
-    <datamenu ng-show="context === 'map'"></datamenu>
-
     <!-- use ng-if to reiniatialize when context changes -->
     <div ng-if="context === 'map' || context === 'scenarios'">
       <map
@@ -52,6 +49,9 @@
       <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
       <timeline class="timeline-map"></timeline>
     </div>
+
+    <!-- show when map, but always initialize. -->
+    <datamenu ng-show="context === 'map'"></datamenu>
 
     <div ng-if="context === 'dashboard'">
       <dashboard></dashboard>
@@ -133,6 +133,7 @@
     <script src="/lib/leaflet/leaflet-service.js"></script>
     <script src="/lib/leaflet/leaflet-utfgrid-lizard.js"></script>
     <script src="/lib/leaflet/leaflet-vector-service.js"></script>
+    <script src="/lib/leaflet/temporal-wms-layer.js"></script>
 
     <script src="/components/state/state.js"></script>
     <script src="/components/state/state-service.js"></script>
@@ -141,14 +142,18 @@
 
     <script src="/components/layer-chooser/layer-chooser-directives.js"></script>
 
-    <script src="/components/data-menu/services/layer-service.js"></script>
-    <script src="/components/data-menu/services/data-layer-service.js"></script>
-    <script src="/components/data-menu/services/data-layer-group-service.js"></script>
+    <script src="/components/data-menu/data-menu.js"></script>
     <script src="/components/data-menu/services/data-service.js"></script>
     <script src="/components/data-menu/services/asset-service.js"></script>
     <script src="/components/data-menu/services/layer-adder-service.js"></script>
     <script src="/components/data-menu/services/remove-assets-or-geom-service.js"></script>
-    <script src="/components/data-menu/data-menu-controller.js"></script>
+    <script src="/components/data-menu/layer-directives/assetlayer-directive.js"></script>
+    <script src="/components/data-menu/layer-directives/baselayers-directive.js"></script>
+    <script src="/components/data-menu/layer-directives/eventseries-directive.js"></script>
+    <script src="/components/data-menu/layer-directives/rasterlayer-directive.js"></script>
+    <script src="/components/data-menu/layer-directives/wmslayer-directive.js"></script>
+    <script src="/components/data-menu/tool-directive.js"></script>
+    <script src="/components/data-menu/data-layer-adder-directive.js"></script>
     <script src="/components/data-menu/data-menu-directive.js"></script>
 
     <script src="/components/url/url-controller.js"></script>

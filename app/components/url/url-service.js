@@ -263,12 +263,12 @@ angular.module('lizard-nxt')
        * @param {object} state config object
        * @param {object} layerGroups list
        */
-      setlayerGroupsUrl: function (state, layerGroups) {
-        if (layerGroups === undefined) { return; }
+      setlayersUrl: function (state, layers) {
+        if (layers === undefined) { return; }
         LocationGetterSetter.setUrlValue(
-          state.layerGroups.part,
-          state.layerGroups.index,
-          layerGroups.toString()
+          state.layers.part,
+          state.layers.index,
+          layers.toString()
         );
       },
       /**

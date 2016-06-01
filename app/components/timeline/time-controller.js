@@ -54,95 +54,95 @@ angular.module('lizard-nxt')
 
     this.state = State;
 
-    Object.defineProperty(this, 'showContextSwitch', {
-      get: function () {
-        return State.layerGroups.active.some(function (slug) {
-          return DataService.layerGroups[slug].temporal
-            && DataService.layerGroups[slug].isActive();
-        });
-      }
-    });
+    // Object.defineProperty(this, 'showContextSwitch', {
+    //   get: function () {
+    //     return State.layerGroups.active.some(function (slug) {
+    //       return DataService.layerGroups[slug].temporal
+    //         && DataService.layerGroups[slug].isActive();
+    //     });
+    //   }
+    // });
 
-    /**
-     * Keep an eye out for temporal layers that require the animation to go
-     * with a lower speed so wms requests can keep up and run more smooth if the
-     * temporalResolution equals or is a multiplication of  the stepSize.
-     */
-    $scope.$watch(State.toString('layerGroups.active'), angular.bind(this, function (n, o) {
-      if (n === o) { return; }
-      configAnimation.call(this);
-    }));
+    // /**
+    //  * Keep an eye out for temporal layers that require the animation to go
+    //  * with a lower speed so wms requests can keep up and run more smooth if the
+    //  * temporalResolution equals or is a multiplication of  the stepSize.
+    //  */
+    // $scope.$watch(State.toString('layers.active'), angular.bind(this, function (n, o) {
+    //   if (n === o) { return; }
+    //   configAnimation.call(this);
+    // }));
 
-    /**
-     * sync data layers to new timestate and redo the animation configuration
-     * since currentInterval has changed.
-     */
-    $scope.$watch(State.toString('temporal.timelineMoving'), angular.bind(this, function (n, o) {
-      if (n === o) { return true; }
-      if (!State.temporal.timelineMoving) {
-        configAnimation.call(this);
-      }
-    }));
+    // /**
+    //  * sync data layers to new timestate and redo the animation configuration
+    //  * since currentInterval has changed.
+    //  */
+    // $scope.$watch(State.toString('temporal.timelineMoving'), angular.bind(this, function (n, o) {
+    //   if (n === o) { return true; }
+    //   if (!State.temporal.timelineMoving) {
+    //     configAnimation.call(this);
+    //   }
+    // }));
 
-    /**
-     * Sync to new time and trigger a new step when animation.playing is true.
-     *
-     * Layergroups need a time synced to them before being toggled. Therefore, no
-     * n === o return here.
-     */
-    $scope.$watch(State.toString('temporal.at'), function (n, o) {
-      if (n === o) { return true; }
-      syncTimeWrapper(State.temporal);
-    });
+    // /**
+    //  * Sync to new time and trigger a new step when animation.playing is true.
+    //  *
+    //  * Layergroups need a time synced to them before being toggled. Therefore, no
+    //  * n === o return here.
+    //  */
+    // $scope.$watch(State.toString('temporal.at'), function (n, o) {
+    //   if (n === o) { return true; }
+    //   syncTimeWrapper(State.temporal);
+    // });
 
-    /**
-     * @description sets the timeStep and minLag on the basis of layergroups and
-     *              their temporalResolution. The temporal layer with the smallest
-     *              temporalResolution is leading.
-     */
-    var configAnimation = function () {
-      currentInterval = State.temporal.end - State.temporal.start;
-      timeStep = Infinity;
-      minLag = 0;
+    // *
+    //  * @description sets the timeStep and minLag on the basis of layergroups and
+    //  *              their temporalResolution. The temporal layer with the smallest
+    //  *              temporalResolution is leading.
 
-      var activeTemporalLgs = false;
+    // var configAnimation = function () {
+    //   currentInterval = State.temporal.end - State.temporal.start;
+    //   timeStep = Infinity;
+    //   minLag = 0;
 
-      angular.forEach(State.layerGroups.active, function (lgSlug) {
-        var lg = DataService.layerGroups[lgSlug];
+    //   var activeTemporalLgs = false;
 
-        if (lg.temporal) {
-          // add some empty stuff to determine
-          // whether animation is possible.
-          activeTemporalLgs = true;
-        }
+    //   angular.forEach(State.layerGroups.active, function (lgSlug) {
+    //     var lg = DataService.layerGroups[lgSlug];
 
-        if (lg.temporal && lg.temporalResolution !== 0 && lg.temporalResolution < timeStep) {
-          timeStep = lg.temporalResolution;
-          // To accomadate dynamic temporal resolutions check all maplayers and
-          // switch to coarser resolution if found. This is used by the rain.
-          angular.forEach(lg.mapLayers, function (layer) {
-            if (layer._temporalResolution > timeStep) {
-              timeStep = layer._temporalResolution;
-            }
-          });
-          // equals to 250 ms for 5 minutes, increases for larger timeSteps untill
-          // it reaches 1 second between frames for timeSteps of > 20 minutes.
-          minLag = timeStep / 1200 > 240 ? timeStep / 1200 : 250;
-          minLag = minLag > 1000 ? 1000 : minLag;
-        }
-      });
+    //     if (lg.temporal) {
+    //       // add some empty stuff to determine
+    //       // whether animation is possible.
+    //       activeTemporalLgs = true;
+    //     }
 
-      this.animatable = activeTemporalLgs;
-      // Do not continue animating when there is nothing to animate.
-      if (!this.animatable) {
-        State.temporal.playing  = false;
-      }
+    //     if (lg.temporal && lg.temporalResolution !== 0 && lg.temporalResolution < timeStep) {
+    //       timeStep = lg.temporalResolution;
+    //       // To accomadate dynamic temporal resolutions check all maplayers and
+    //       // switch to coarser resolution if found. This is used by the rain.
+    //       angular.forEach(lg.mapLayers, function (layer) {
+    //         if (layer._temporalResolution > timeStep) {
+    //           timeStep = layer._temporalResolution;
+    //         }
+    //       });
+    //       // equals to 250 ms for 5 minutes, increases for larger timeSteps untill
+    //       // it reaches 1 second between frames for timeSteps of > 20 minutes.
+    //       minLag = timeStep / 1200 > 240 ? timeStep / 1200 : 250;
+    //       minLag = minLag > 1000 ? 1000 : minLag;
+    //     }
+    //   });
 
-      // If no temporal layers were found, set to a default amount.
-      if (timeStep === Infinity) {
-        timeStep = currentInterval / DEFAULT_NUMBER_OF_STEPS;
-      }
-    };
+    //   this.animatable = activeTemporalLgs;
+    //   // Do not continue animating when there is nothing to animate.
+    //   if (!this.animatable) {
+    //     State.temporal.playing  = false;
+    //   }
+
+    //   // If no temporal layers were found, set to a default amount.
+    //   if (timeStep === Infinity) {
+    //     timeStep = currentInterval / DEFAULT_NUMBER_OF_STEPS;
+    //   }
+    // };
 
     /**
      * @function

@@ -13,7 +13,167 @@ angular.module('map')
 .service('MapService', ['$rootScope', '$q', 'LeafletService', 'LeafletVectorService','CabinetService', 'DataService', 'temporalWmsLayer', 'NxtRegionsLayer', 'NxtMapLayer', 'State',
   function ($rootScope, $q, LeafletService, LeafletVectorService, CabinetService, DataService, temporalWmsLayer, NxtRegionsLayer, NxtMapLayer, State) {
 
+
+    /**
+     * Initializers for every layer format
+     */
+    var initializers = {
+
+      MAXZOOMLEVEL: 21,
+
+      tms: function (url) {
+
+        var layerUrl = url + '/{z}/{x}/{y}{retina}.png';
+
+        var layer = LeafletService.tileLayer(
+          layerUrl, {
+            retina: L.Browser.retina ? '@2x' : '',
+            minZoom: 0,
+            maxZoom: this.MAXZOOMLEVEL,
+            detectRetina: true
+          });
+
+        return layer;
+      },
+
+      wms: function (nonLeafLayer) {
+        var _options = {
+          layers: nonLeafLayer.slug,
+          format: 'image/png',
+          version: '1.1.1',
+          minZoom: nonLeafLayer.minZoom || 0,
+          maxZoom: nonLeafLayer.maxZoom || this.MAXZOOMLEVEL,
+          crs: LeafletService.CRS.EPSG3857,
+          opacity: nonLeafLayer.opacity,
+          zIndex: nonLeafLayer.zIndex
+        };
+        _options = angular.extend(_options, nonLeafLayer.options);
+
+        return LeafletService.tileLayer.wms(nonLeafLayer.url, _options);
+      },
+
+      temporalwms: function (options) {
+        var _options = {
+          layers: options.slug,
+          format: 'image/png',
+          version: '1.1.1',
+          minZoom: options.minZoom || 0,
+          maxZoom: options.maxZoom || this.MAXZOOMLEVEL,
+          crs: LeafletService.CRS.EPSG3857,
+          opacity: options.opacity,
+          zIndex: options.zIndex
+        };
+        _options = angular.extend(_options, options);
+
+        return LeafletService.tileLayer.wms(url, _options);
+      },
+
+      utf: function (nonLeafLayer) {
+
+        var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
+
+        var layer = new LeafletService.UtfGrid(url, {
+          ext: 'grid',
+          slug: nonLeafLayer.slug,
+          name: nonLeafLayer.slug,
+          useJsonP: false,
+          minZoom: nonLeafLayer.minZoom || 0,
+          maxZoom: nonLeafLayer.maxZoom || this.MAXZOOMLEVEL,
+          order: nonLeafLayer.zIndex,
+          zIndex: nonLeafLayer.zIndex
+        });
+        return layer;
+      },
+
+      vector: function (nonLeafLayer) {
+        var options = {
+          layer: nonLeafLayer,
+          color: nonLeafLayer.color,
+          showCoverageOnHover: false,  // When you mouse over a cluster it shows
+                                       // the bounds of its markers.
+          zoomToBoundsOnClick: true,   // When you click a cluster we zoom to
+                                       // its bounds.
+          spiderfyOnMaxZoom: false,    // When you click a cluster at the bottom
+                                       // zoom level we  do not spiderfy it
+                                       // so you can see all of its markers.
+          maxClusterRadius: 80,        // The maximum radius that a cluster will
+                                       // cover from the central marker
+                                       // (in pixels). Default 80. Decreasing
+                                       // will make more and smaller clusters.
+                                       // Set to 1 for clustering only when
+                                       // events are on the same spot.
+          animateAddingMarkers: false, // Enable for cool animations but its
+                                       // too slow for > 1000 events.
+          iconCreateFunction: function (cluster) {
+            var size = cluster.getAllChildMarkers().length,
+                pxSize;
+
+            if (size > 1024) {
+              pxSize = 30;
+            } else if (size > 256) {
+              pxSize = 26;
+            } else if (size > 64) {
+              pxSize = 22;
+            } else if (size > 32) {
+              pxSize = 20;
+            } else if (size > 16) {
+              pxSize = 18;
+            } else if (size > 8) {
+              pxSize = 16;
+            } else if (size > 4) {
+              pxSize = 14;
+            } else {
+              pxSize = 12;
+            }
+
+            // Return two circles, an opaque big one with a smaller one on top
+            // and white text in the middle. With radius = pxSize.
+            return L.divIcon({
+              iconAnchor: [pxSize, pxSize],
+              html: '<svg height="' + (pxSize * 2) + '" width="' + (pxSize * 2)
+                    + '">'
+                    + '<circle cx="' + pxSize + '" cy="' + pxSize
+                    + '" r="' + pxSize + '" fill-opacity="0.4" fill="'
+                    + nonLeafLayer.color + '" />'
+                    + '<circle cx="' + pxSize + '" cy="' + pxSize + '" r="'
+                    + (pxSize - 2) + '" fill-opacity="1" fill="'
+                    + nonLeafLayer.color + '" />'
+                    + '<text x="' + pxSize + '" y="' + (pxSize + 5)
+                    + '" style="text-anchor: middle; fill: white;">'
+                    + size + '</text>'
+                    + '</svg>'
+            });
+          },
+          callbackClick: function (e, features) {
+            service.spatialSelect(e.latlng);
+          }
+        };
+
+        return new LeafletVectorService(options);
+      }
+
+    };
+
+    var topography = 'http://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa98k8k';
+    var sattelite = 'http://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa79205';
+    var neutral = 'http://{s}.tiles.mapbox.com/v3/nelenschuurmans.l15e647c';
+
     var service = {
+
+      BASELAYERS: [
+        {
+          name: 'Topography',
+          lLayer: initializers.tms(topography)
+        },
+        {
+          name: 'Sattelite',
+          lLayer: initializers.tms(sattelite)
+        },
+        {
+          name: 'Neutral',
+          lLayer: initializers.tms(neutral)
+        }
+      ],
 
       _map: {}, // exposure is legacy, we should not mingle with the leaflet
                 // map instance outside of the map component.
@@ -30,6 +190,7 @@ angular.module('map')
        */
       initializeMap: function (element, mapOptions, eventCallbackFns) {
         service._map = createLeafletMap(element, mapOptions);
+        this._initializeNxtMapEvents(eventCallbackFns);
       },
 
       _updateLayers: function (dataLayers, mapLayers, format) {
@@ -44,6 +205,13 @@ angular.module('map')
       },
 
       updateLayers: function (layers) {
+
+        _.forEach(service.BASELAYERS, function (layer, i) {
+          if (layer.name.toLowerCase() === layers.baselayer) {
+            service.addLeafletLayer(layer.lLayer);
+          }
+          else { service.removeLeafletLayer(layer.lLayer); }
+        });
 
         service._updateLayers(layers.rasters, service.rasters, 'wms');
         service._updateLayers(layers.wms, service.wms, 'wms');
@@ -69,30 +237,30 @@ angular.module('map')
        */
       syncTime: function (timeState) {
         var defer = $q.defer();
-        var promises = [];
-        angular.forEach(DataService.layerGroups, function (layerGroup) {
-          if (layerGroup.isActive()) {
-            angular.forEach(layerGroup.mapLayers, function (layer) {
-              var p = layer.syncTime(timeState, service._map);
-              if (p) {
-                promises.push(p);
-              }
-            });
-          } else {
-            angular.forEach(layerGroup.mapLayers, function (layer) {
-              layer.timeState = timeState;
-            });
-          }
-        });
-        var that = this;
-        $q.all(promises).then(function () {
-          State.layerGroups.timeIsSyncing = false;
-          defer.resolve();
-          return defer.promise;
-        });
-        if (promises.length > 0) {
-          State.layerGroups.timeIsSyncing = true;
-        }
+        // var promises = [];
+        // angular.forEach(DataService.layerGroups, function (layerGroup) {
+        //   if (layerGroup.isActive()) {
+        //     angular.forEach(layerGroup.mapLayers, function (layer) {
+        //       var p = layer.syncTime(timeState, service._map);
+        //       if (p) {
+        //         promises.push(p);
+        //       }
+        //     });
+        //   } else {
+        //     angular.forEach(layerGroup.mapLayers, function (layer) {
+        //       layer.timeState = timeState;
+        //     });
+        //   }
+        // });
+        // var that = this;
+        // $q.all(promises).then(function () {
+        //   State.layerGroups.timeIsSyncing = false;
+        //   defer.resolve();
+        //   return defer.promise;
+        // });
+        // if (promises.length > 0) {
+        //   State.layerGroups.timeIsSyncing = true;
+        // }
         return defer.promise;
       },
 
@@ -626,147 +794,6 @@ angular.module('map')
       var leafletMap = LeafletService.map(mapElem, options);
 
       return leafletMap;
-    };
-
-    /**
-     * Initializers for every layer format
-     */
-    var initializers = {
-
-      MAXZOOMLEVEL: 21,
-
-      TMS: function (url) {
-
-        var layerUrl = url + '/{slug}/{z}/{x}/{y}{retina}.{ext}';
-
-        var layer = LeafletService.tileLayer(
-          layerUrl, {
-            retina: L.Browser.retina ? '@2x' : '',
-            minZoom: 0,
-            maxZoom: this.MAXZOOMLEVEL,
-            detectRetina: true,
-            ext: 'png'
-          });
-
-        return layer;
-      },
-
-      WMS: function (nonLeafLayer) {
-        var _options = {
-          layers: nonLeafLayer.slug,
-          format: 'image/png',
-          version: '1.1.1',
-          minZoom: nonLeafLayer.minZoom || 0,
-          maxZoom: nonLeafLayer.maxZoom || this.MAXZOOMLEVEL,
-          crs: LeafletService.CRS.EPSG3857,
-          opacity: nonLeafLayer.opacity,
-          zIndex: nonLeafLayer.zIndex
-        };
-        _options = angular.extend(_options, nonLeafLayer.options);
-
-        return LeafletService.tileLayer.wms(nonLeafLayer.url, _options);
-      },
-
-      TEMPORALWMS: function (options) {
-        var _options = {
-          layers: options.slug,
-          format: 'image/png',
-          version: '1.1.1',
-          minZoom: options.minZoom || 0,
-          maxZoom: options.maxZoom || this.MAXZOOMLEVEL,
-          crs: LeafletService.CRS.EPSG3857,
-          opacity: options.opacity,
-          zIndex: options.zIndex
-        };
-        _options = angular.extend(_options, options);
-
-        return LeafletService.tileLayer.wms(url, _options);
-      }
-
-      UTFGrid: function (nonLeafLayer) {
-
-        var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
-
-        var layer = new LeafletService.UtfGrid(url, {
-          ext: 'grid',
-          slug: nonLeafLayer.slug,
-          name: nonLeafLayer.slug,
-          useJsonP: false,
-          minZoom: nonLeafLayer.minZoom || 0,
-          maxZoom: nonLeafLayer.maxZoom || this.MAXZOOMLEVEL,
-          order: nonLeafLayer.zIndex,
-          zIndex: nonLeafLayer.zIndex
-        });
-        return layer;
-      },
-
-      Vector: function (nonLeafLayer) {
-        var options = {
-          layer: nonLeafLayer,
-          color: nonLeafLayer.color,
-          showCoverageOnHover: false,  // When you mouse over a cluster it shows
-                                       // the bounds of its markers.
-          zoomToBoundsOnClick: true,   // When you click a cluster we zoom to
-                                       // its bounds.
-          spiderfyOnMaxZoom: false,    // When you click a cluster at the bottom
-                                       // zoom level we  do not spiderfy it
-                                       // so you can see all of its markers.
-          maxClusterRadius: 80,        // The maximum radius that a cluster will
-                                       // cover from the central marker
-                                       // (in pixels). Default 80. Decreasing
-                                       // will make more and smaller clusters.
-                                       // Set to 1 for clustering only when
-                                       // events are on the same spot.
-          animateAddingMarkers: false, // Enable for cool animations but its
-                                       // too slow for > 1000 events.
-          iconCreateFunction: function (cluster) {
-            var size = cluster.getAllChildMarkers().length,
-                pxSize;
-
-            if (size > 1024) {
-              pxSize = 30;
-            } else if (size > 256) {
-              pxSize = 26;
-            } else if (size > 64) {
-              pxSize = 22;
-            } else if (size > 32) {
-              pxSize = 20;
-            } else if (size > 16) {
-              pxSize = 18;
-            } else if (size > 8) {
-              pxSize = 16;
-            } else if (size > 4) {
-              pxSize = 14;
-            } else {
-              pxSize = 12;
-            }
-
-            // Return two circles, an opaque big one with a smaller one on top
-            // and white text in the middle. With radius = pxSize.
-            return L.divIcon({
-              iconAnchor: [pxSize, pxSize],
-              html: '<svg height="' + (pxSize * 2) + '" width="' + (pxSize * 2)
-                    + '">'
-                    + '<circle cx="' + pxSize + '" cy="' + pxSize
-                    + '" r="' + pxSize + '" fill-opacity="0.4" fill="'
-                    + nonLeafLayer.color + '" />'
-                    + '<circle cx="' + pxSize + '" cy="' + pxSize + '" r="'
-                    + (pxSize - 2) + '" fill-opacity="1" fill="'
-                    + nonLeafLayer.color + '" />'
-                    + '<text x="' + pxSize + '" y="' + (pxSize + 5)
-                    + '" style="text-anchor: middle; fill: white;">'
-                    + size + '</text>'
-                    + '</svg>'
-            });
-          },
-          callbackClick: function (e, features) {
-            service.spatialSelect(e.latlng);
-          }
-        };
-
-        return new LeafletVectorService(options);
-      }
-
     };
 
     return service;
