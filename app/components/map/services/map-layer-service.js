@@ -8,97 +8,117 @@
  * Additional methods used to extend nxtLayer with leaflet/map specific methods.
  */
 angular.module('map')
-  .factory('NxtMapLayer', ['$q', '$http', function ($q, $http) {
+.service('MapLayerService', ['LeafletService', 'LeafletVectorService',
+  function (LeafletService,LeafletVectorService) {
 
-      return {
+    this.MAXZOOMLEVEL = 21;
 
-        add: function (map) {
-          var defer = $q.defer();
-          if (this._leafletLayer) {
-            this._addLeafletLayer(map, this._leafletLayer);
-            this._leafletLayer.on('load', function () {
-              defer.resolve();
-            });
-          }
-          else {
-            defer.resolve();
-          }
-          return defer.promise;
-        },
+    this.createTmsLayer = function (options) {
+      var layerUrl = options.url + '/{z}/{x}/{y}{retina}.png';
 
-        remove: function (map) {
-          if (this._leafletLayer) {
-            this._removeLeafletLayer(map, this._leafletLayer);
-          }
-        },
-
-        /**
-         * @function
-         * @description rescales layer and updates url
-         */
-        rescale: function (bounds) {
-          if (this.rescalable) {
-            var url = this.url +
-              '?request=getlimits&layers=' + this.slug +
-              '&width=16&height=16&srs=epsg:4326&bbox=' +
-              bounds.toBBoxString();
-            var self = this;
-            $http.get(url).success(function (data) {
-              self.limits = ':' + data[0][0] + ':' + data[0][1];
-              // strip existing domain if already present.
-              self.options.styles = self.options.styles.split(':')[0];
-              self._leafletLayer.setParams({
-                styles: self.options.styles + self.limits
-              });
-              self._leafletLayer.redraw();
-            });
-          }
-        },
-
-        setOpacity: function (opacity) {
-          if (this._leafletLayer && this._leafletLayer.setOpacity) {
-            this._leafletLayer.setOpacity(opacity);
-          }
-        },
-
-        syncTime: function (timeState) {
-          if (this.format !== 'Vector') { return; }
-          this._leafletLayer.syncTime(timeState);
-          return;
-        },
-
-        /**
-         * @function
-         * @memberof app.layerService
-         * @param  {L.Class} Leaflet map
-         * @param  {L.Class} Leaflet layer
-         * @description Removes layer from map
-         */
-        _addLeafletLayer: function (map, leafletLayer) {
-          if (map.hasLayer(leafletLayer)) {
-            throw new Error(
-              'Attempted to add layer' + leafletLayer._id
-              + 'while it was already part of the map'
-            );
-          } else {
-            map.addLayer(leafletLayer);
-          }
-        },
-
-        /**
-         * @function
-         * @memberof app.layerService
-         * @param  {L.Class} Leaflet map
-         * @param  {L.Class} Leaflet layer
-         * @description Removes layer from map
-         */
-        _removeLeafletLayer: function (map, leafletLayer) { // Leaflet NxtLayer
-          if (map.hasLayer(leafletLayer)) {
-            map.removeLayer(leafletLayer);
-          }
+      return LeafletService.tileLayer(
+        layerUrl, {
+          retina: L.Browser.retina ? '@2x' : '',
+          minZoom: 0,
+          maxZoom: options.maxZoom,
+          detectRetina: true
         }
+      );
+    };
 
+    this.createUtfLayer = function (options) {
+      var url = options.url + '/{z}/{x}/{y}.{ext}';
+
+      return new LeafletService.UtfGrid(url, {
+        ext: 'grid',
+        useJsonP: false,
+        minZoom: options.minZoom || 0,
+        maxZoom: options.maxZoom || this.MAXZOOMLEVEL,
+        zIndex: options.zIndex
+      });
+    };
+
+
+    this.createWmsLayer = function (options) {
+      var _options = {
+        format: 'image/png',
+        version: '1.1.1',
+        minZoom: 0,
+        maxZoom: this.MAXZOOMLEVEL,
+        crs: LeafletService.CRS.EPSG3857,
       };
 
-    }
-  ]);
+      _options = angular.extend(_options, options);
+
+      return LeafletService.tileLayer.wms(options.url, _options);
+    };
+
+    this.createMarkerClusterLayer = function (options) {
+      options = {
+        layer: options,
+        color: options.color,
+        showCoverageOnHover: false,  // When you mouse over a cluster it shows
+                                     // the bounds of its markers.
+        zoomToBoundsOnClick: true,   // When you click a cluster we zoom to
+                                     // its bounds.
+        spiderfyOnMaxZoom: false,    // When you click a cluster at the bottom
+                                     // zoom level we  do not spiderfy it
+                                     // so you can see all of its markers.
+        maxClusterRadius: 80,        // The maximum radius that a cluster will
+                                     // cover from the central marker
+                                     // (in pixels). Default 80. Decreasing
+                                     // will make more and smaller clusters.
+                                     // Set to 1 for clustering only when
+                                     // events are on the same spot.
+        animateAddingMarkers: false, // Enable for cool animations but its
+                                     // too slow for > 1000 events.
+        iconCreateFunction: function (cluster) {
+          var size = cluster.getAllChildMarkers().length,
+              pxSize;
+
+          if (size > 1024) {
+            pxSize = 30;
+          } else if (size > 256) {
+            pxSize = 26;
+          } else if (size > 64) {
+            pxSize = 22;
+          } else if (size > 32) {
+            pxSize = 20;
+          } else if (size > 16) {
+            pxSize = 18;
+          } else if (size > 8) {
+            pxSize = 16;
+          } else if (size > 4) {
+            pxSize = 14;
+          } else {
+            pxSize = 12;
+          }
+
+          // Return two circles, an opaque big one with a smaller one on top
+          // and white text in the middle. With radius = pxSize.
+          return L.divIcon({
+            iconAnchor: [pxSize, pxSize],
+            html: '<svg height="' + (pxSize * 2) + '" width="' + (pxSize * 2)
+                  + '">'
+                  + '<circle cx="' + pxSize + '" cy="' + pxSize
+                  + '" r="' + pxSize + '" fill-opacity="0.4" fill="'
+                  + nonLeafLayer.color + '" />'
+                  + '<circle cx="' + pxSize + '" cy="' + pxSize + '" r="'
+                  + (pxSize - 2) + '" fill-opacity="1" fill="'
+                  + nonLeafLayer.color + '" />'
+                  + '<text x="' + pxSize + '" y="' + (pxSize + 5)
+                  + '" style="text-anchor: middle; fill: white;">'
+                  + size + '</text>'
+                  + '</svg>'
+          });
+        },
+        callbackClick: function (e, features) {
+          options.spatialSelect(e.latlng);
+        }
+      };
+
+      return new LeafletVectorService(options);
+    };
+
+  }]
+);

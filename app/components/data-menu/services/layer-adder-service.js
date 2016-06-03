@@ -9,7 +9,7 @@ angular.module('data-menu')
        *
        * Use a reconfigured 'query' so it actually returns an array of items.
        */
-      var layerGroups = $resource('/api/v2/layergroups/:slug/', {}, {
+      var layers = $resource('/api/v2/layers/:slug/', {}, {
         'query': {
           method:'GET',
           isArray:false
@@ -24,8 +24,8 @@ angular.module('data-menu')
        * @param {function} error - Execute this function on an unsuccessful
        *                           GET.
        */
-      this.fetchLayerGroups = function (params, success, error) {
-        layerGroups.query(params, success, error);
+      this.fetchLayers = function (params, success, error) {
+        layers.query(params, success, error);
       };
 
       /**
@@ -35,8 +35,8 @@ angular.module('data-menu')
        * @param {function} error - Execute this function on an unsuccessful
        *                           GET.
        */
-      this.fetchLayerGroup = function (slug, success, error) {
-        layerGroups.get({slug: slug}, success, error);
+      this.fetchLayer = function (slug, success, error) {
+        layers.get({slug: slug}, success, error);
       };
 
 
@@ -50,11 +50,11 @@ angular.module('data-menu')
        * @param  {array}  newActives list of slugs.
        * @param  {DataService} ds.
        */
-      this.getNonExistentActiveLayerGroups = function (newActives, ds) {
+      this.getNonExistentActiveLayers = function (newActives, ds) {
 
-        var addLayerFromURL = function (layerGroup) {
+        var addLayerFromURL = function (layer) {
           // Create the layergroup.
-          var newLayerGroup = ds.createLayerGroup(layerGroup);
+          var newLayerGroup = ds.createLayerGroup(layer);
           // Turn the layergroup on.
           ds.toggleLayerGroup(newLayerGroup);
         };
@@ -62,7 +62,7 @@ angular.module('data-menu')
         // Create a stub lg for every active layegroup. Layergroup.all will
         // ignore these.
         newActives.forEach(function (slug) {
-          ds.layerGroups[slug] = {
+          ds.layers[slug] = {
             stub: true,
             isActive: function () { return true; },
             getOpacity: function () { return 0; },
@@ -83,14 +83,14 @@ angular.module('data-menu')
       };
 
       /**
-       * Gets layergroups and adds to ds.layerGroups for lg slugs.
+       * Gets layergroups and adds to ds.layers for lg slugs.
        *
        * @param  {array}  newInactives list of slugs.
        * @param  {DataService} ds.
        */
-      this.getNonExistentLayerGroups = function (newInactives, ds) {
+      this.getNonExistentLayers = function (newInactives, ds) {
 
-        var addLayer = function (layergroup) {
+        var addLayer = function (layer) {
           ds.createLayerGroup(layergroup);
         };
 

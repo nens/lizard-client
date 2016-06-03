@@ -268,7 +268,7 @@ angular.module('lizard-nxt')
         LocationGetterSetter.setUrlValue(
           state.layers.part,
           state.layers.index,
-          layers.toString()
+          layers.join(',')
         );
       },
       /**

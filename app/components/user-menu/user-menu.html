@@ -63,7 +63,8 @@
           </a>
         </li>
         <li ng-if="!user.authenticated">
-          <a onclick="logIn()"
+          <a ng-click="logIn()"
+             href="/accounts/login/"
              title="<% tooltips.login %>"
              class="clickable">
             <div ng-cloak id="username">
@@ -106,9 +107,9 @@
             <li>
               <a ng-if="user.authenticated"
                  class="logout user"
-                 href="/accounts/logout/?next=/"
-                 title="<% tooltips.logout %>"
-                 onclick="return logOut()">
+                 ng-click="logOut()"
+                 href="/accounts/logout/"
+                 title="<% tooltips.logout %>">
                  <i id="" class="fa fa-power-off"></i>
                  <span translate>Log out</span>
               </a>

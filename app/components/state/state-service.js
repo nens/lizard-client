@@ -52,25 +52,44 @@ angular.module('global-state')
     // Default language.
     state.language = 'nl';
 
-    // State of data layer groups, stores slugs of all layergroups and the
-    // active layergroups.
-    state.layers = {
-      active: [], // slugs of actives with type prefix, set and get by
-                  // dataservice.
-      assets: [],
-      rasters: [],
-      wms: [],
-      eventseries: [],
-      annotations: []
-    };
+    // Collection of layers as:
+    state.layers = [
+      {
+        type: 'baselayer',
+        slug: 'Topography',
+        active: true,
+        order: 0,
+        opacity: 1
+      },
+      {
+        type: 'baselayer',
+        slug: 'Satellite',
+        active: false,
+        order: 0,
+        opacity: 1
+      },
+      {
+        type: 'baselayer',
+        slug: 'Neutral',
+        active: false,
+        order: 0,
+        opacity: 1
+      }
+    ];
 
     // slug of active baselayer, watched by baselayers directive. It is not
-    // enumarable to any iteratees only encounter arrays.
+    // enumarable iteratees only encounter arrays.
     Object.defineProperty(state.layers, 'baselayer', {
-      enumerable: false,
-      writable: true,
-      value: 'topography'
+      get: function () {
+        return _.find(state.layers, {type: 'baselayer', active: true}).slug;
+      },
+      set: function (str) {
+        var old = _.find(state.layers, {type: 'baselayer', active: true});
+        old.active = false;
+        _.find(state.layers, {type: 'baselayer', slug: str}).active = true;
+      }
     });
+
 
     var getLayerSlugs = function (stateLayers) {
       var slugs = ['baselayer' + '$' + stateLayers.baselayer];
@@ -90,13 +109,13 @@ angular.module('global-state')
 
         if (type === 'baselayer') { state.layers.baselayer = slug; }
 
-        else if (state.layers[type]) {
-          var layer = _.pick(state.layers[type], {slug: slug});
+        else {
+          var layer = _.find(state.layers, {slug: slug, type: type});
 
-          if (layer.slug) { layer.active = true; }
+          if (layer) { layer.active = true; }
 
           else {
-            state.layers[type].push({slug: slug, active: true});
+            state.layers.push({slug: slug, type: type, active: true});
           }
         }
 
@@ -106,21 +125,15 @@ angular.module('global-state')
     // List of slugs of active layers, two-way.
     Object.defineProperty(state.layers, 'active', {
       get: function () {
-        return getLayerSlugs(state.layers);
+        var actives = [];
+        _.forEach(state.layers, function (layer) {
+          if (layer.active) {
+            actives.push(layer.type + '$' + layer.slug);
+          }
+        });
+        return actives;
       },
       set: setActiveLayers,
-      enumerable: false
-    });
-
-    // All layers, read only.
-    Object.defineProperty(state.layers, 'all', {
-      get: function () {
-        var layers = [];
-        _.forEach(state.layers, function (type) {
-           layers.push(type);
-        });
-        return layers;
-      },
       enumerable: false
     });
 

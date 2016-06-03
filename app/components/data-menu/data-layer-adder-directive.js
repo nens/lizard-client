@@ -21,7 +21,7 @@ angular.module('data-menu')
        * @param {dict} httpResponse - The httpResponse headers returned by the
        *                              GET request.
        */
-      var fetchLayerGroupsError = function(httpResponse) {
+      var fetchLayersError = function(httpResponse) {
         notie.alert(
           3, gettextCatalog.getString(
             "Oops! Something went wrong while fetching the layers."));
@@ -35,14 +35,14 @@ angular.module('data-menu')
       /**
        * Fill the layer adder list with all the layer groups returned by the
        * GET request, existing layer groups in the portal excluded.
-       * @param {array} allLayerGroups - The array of layer group objects
+       * @param {array} allLayers - The array of layer group objects
        *                                 returned by the GET request.
        * @param {dict} responseHeaders - Not actually used but required
        *                                 by $resource.
        */
-      var fetchLayerGroupsSuccess = function (
-          allLayerGroups, responseHeaders) {
-        scope.availableLayerGroups = allLayerGroups;
+      var fetchLayersSuccess = function (
+          allLayers, responseHeaders) {
+        scope.availableLayers = allLayers;
       };
 
       /**
@@ -50,11 +50,10 @@ angular.module('data-menu')
        * @param {object} layerGroup - The layer group that was selected by the
        *                              user to be added to the portal.
        */
-      scope.addLayerGroupToPortal = function (layerGroup) {
-        // Create the layergroup.
-        var newLayerGroup = DataService.createLayerGroup(layerGroup);
+      scope.addLayer = function (layer) {
+        scope.state.layers.push({layer});
         // Turn the layergroup on.
-        scope.menu.toggleLayerGroup(newLayerGroup);
+        layer.active = true;
         // Go back to the layer chooser menu.
         scope.menu.layerAdderEnabled = !scope.menu.layerAdderEnabled;
       };
@@ -69,41 +68,32 @@ angular.module('data-menu')
        * @param {object} query - Optional parameter which accepts an object
        *                         with query parameters for the API request.
        */
-      var fetchLayerGroups = function (query) {
+      var fetchLayers = function (query) {
         if (typeof query === "undefined") {
           query = {};
         }
 
-        // Generate a list of currently selected layer groups.
-        var menuLayerGroupSlugs = _.join(
-          _.map(
-            _.values(scope.menu.layerGroups),
-            'slug'),
-          ',');
-
-        query.exclude_slugs = menuLayerGroupSlugs;
-
-        LayerAdderService.fetchLayerGroups(
+        LayerAdderService.fetchLayers(
           query,
-          fetchLayerGroupsSuccess,
-          fetchLayerGroupsError);
+          fetchLayersSuccess,
+          fetchLayersError);
       };
 
       /**
        * Fetch layer groups on initialization of the module.
        */
-      fetchLayerGroups();
+      fetchLayers();
 
       /**
        * Fire a layer groups query for every key entered in the filter/search
        * input.
        */
-      scope.$watch('searchLayerGroups', function(newValue, oldValue) {
-        fetchLayerGroups({'q': newValue});
+      scope.$watch('searchLayers', function(newValue, oldValue) {
+        fetchLayers({'q': newValue});
       });
 
-      scope.$watch('layerGroupsCurrentPage', function (currentPage) {
-        fetchLayerGroups({'q': scope.searchLayerGroups, 'page': currentPage});
+      scope.$watch('layersCurrentPage', function (currentPage) {
+        fetchLayers({'q': scope.searchLayers, 'page': currentPage});
       });
     };
 
@@ -111,7 +101,8 @@ angular.module('data-menu')
       link: link,
       restrict: 'E',
       scope: {
-        menu: '='
+        menu: '=',
+        state: '='
       },
       templateUrl: 'data-menu/templates/layer-adder.html'
     };

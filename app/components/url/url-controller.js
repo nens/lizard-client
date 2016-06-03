@@ -91,7 +91,11 @@ angular.module('lizard-nxt')
       if (layerString) {
         State.layers.active = layerString.split(',');
       }
-      UrlState.setlayersUrl(state, State.layers.active);
+
+      UrlState.setlayersUrl(
+        state,
+        State.layers.active
+      );
     };
 
    /**

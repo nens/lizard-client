@@ -171,9 +171,11 @@ angular.module('map')
         }
       );
 
-      scope.$watchCollection('layers', function () {
+      window.layers = scope.layers;
+
+      scope.$watch('layers', function () {
         MapService.updateLayers(scope.layers);
-      });
+      }, true);
 
       /**
        * Watch state spatial view and update the whole shebang.
@@ -212,30 +214,30 @@ angular.module('map')
        *
        * Used for animation and clicks on timeline or changes from url-ctrl.
        */
-      scope.$watch('temporal.at', function (n, o) {
-        if (n === o) { return; }
-        MapService.syncTime(State.temporal);
-      });
+      // scope.$watch('temporal.at', function (n, o) {
+      //   if (n === o) { return; }
+      //   MapService.syncTime(State.temporal);
+      // });
 
       /**
        * Watch timelineMoving to update maplayers to new time domain when.
        *
        * Used for drag of timeline or changes from url-ctrl.
        */
-      scope.$watch('temporal.timelineMoving', function (n, o) {
-        if (n === o) { return; }
-        MapService.syncTime(State.temporal);
-      });
+      // scope.$watch('temporal.timelineMoving', function (n, o) {
+      //   if (n === o) { return; }
+      //   MapService.syncTime(State.temporal);
+      // });
 
       /**
        * Watch timelineMoving to maplayers to time domain.
        *
        * Used to turn maplayers to a none animating state. When animation stops.
        */
-      scope.$watch('temporal.playing', function (newValue) {
-        if (newValue) { return; }
-        MapService.syncTime(State.temporal);
-      });
+      // scope.$watch('temporal.playing', function (newValue) {
+      //   if (newValue) { return; }
+      //   MapService.syncTime(State.temporal);
+      // });
 
       scope.$watchCollection('selected.geometries', function (n, o) {
         if (n === o) { return true; }

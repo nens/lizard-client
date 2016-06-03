@@ -3,41 +3,49 @@
     'layer-adder-wrapper': menu.layerAdderEnabled,
     'layer-switcher-wrapper': !menu.layerAdderEnabled,}">
 
-  <div class="layer-switcher">
+  <div ng-if="!menu.layerAdderEnabled" class="layer-switcher">
     <ul class="list-group">
 
       <baselayers layers="layers"></baselayers>
 
-      <assetlayer
-        ng-repeat="layer in layers.assets | orderBy:'order'"
-        asset="layer"
-        bootstrap-layer="dataLayers[layer.slug]">
-      </assetlayer>
-      <raster
-        ng-repeat="layer in layers.rasters | orderBy:'order'"
-        ng-if="!layer.scenario"
-        raster="layer"
-        bootstrap-layer="dataLayers[layer.slug]">
-      </raster>
-      <wmslayer
-        ng-repeat="layer in layers.wms | orderBy:'order'"
-        ng-if="!layer.scenario"
-        wms-layer="layer"
-        bootstrap-layer="dataLayers[layer.slug]">
-      </wmslayer>
-      <eventseries
-        ng-repeat="layer in layers.eventseries | orderBy:'order'"
-        eventseries="layer"
-        bootstrap-layer="dataLayers[layer.slug]">
-      </eventseries>
+      <div ng-repeat="layer in layers | orderBy:'order'">
+        <assetlayer
+          ng-if="layer.type === 'asset'"
+          asset="layer"
+          bootstrap-layer="dataLayers[layer.slug]">
+        </assetlayer>
+        <raster
+          ng-if="!layer.scenario && layer.type === 'raster'"
+          raster="layer"
+          bootstrap-layer="dataLayers[layer.slug]">
+        </raster>
+        <wmslayer
+          ng-if="!layer.scenario && layer.type === 'wmslayer'"
+          wms-layer="layer"
+          bootstrap-layer="dataLayers[layer.slug]">
+        </wmslayer>
+        <eventseries
+          ng-if="layer && layer.type === 'eventseries'"
+          eventseries="layer"
+          bootstrap-layer="dataLayers[layer.slug]">
+        </eventseries>
+      </div>
 
-      <layer-adder
-        menu="menu"
-        ng-if="menu.layerAdderEnabled">
-      </layer-adder>
+      <li>
+        <a class="layer-item add-data"
+           ng-click="menu.layerAdderEnabled = !menu.layerAdderEnabled"
+           translate>
+          Add data&hellip;
+          <div class="layer-chooser-tools">
+            <i class="fa fa-plus"></i>
+          </div>
+        </a>
+      </li>
 
     </ul>
   </div>
+
+  <layer-adder ng-if="menu.layerAdderEnabled" menu="menu"></layer-adder>
 
   <div class="button-list-container">
     <div class="button-list-item compass"
