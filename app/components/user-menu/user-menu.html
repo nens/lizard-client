@@ -83,7 +83,7 @@
              href="#">
             <div ng-cloak id="username">
               <i class="fa fa-user"></i>
-              <span ng-bind="user.firstName"></span>
+              <span ng-bind="user.first_name"></span>
               <span class="caret"></span>
             </div>
           </a>
@@ -128,7 +128,7 @@
       <ng-include src="'/about/'"></ng-include>
     </div>
     <div class="modal-footer">
-      <span class="pull-left text-muted">Version: <% about.versioning.version%></span>
+      <span class="pull-left text-muted">Version: <% about.version.version%></span>
       <button class="btn btn-default" type="button" ng-click="$dismiss()">
         Close
       </button>

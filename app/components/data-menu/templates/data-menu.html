@@ -11,23 +11,19 @@
       <div ng-repeat="layer in layers | orderBy:'order'">
         <assetlayer
           ng-if="layer.type === 'asset'"
-          asset="layer"
-          bootstrap-layer="dataLayers[layer.slug]">
+          asset="layer">
         </assetlayer>
         <raster
           ng-if="!layer.scenario && layer.type === 'raster'"
-          raster="layer"
-          bootstrap-layer="dataLayers[layer.slug]">
+          raster="layer">
         </raster>
         <wmslayer
           ng-if="!layer.scenario && layer.type === 'wmslayer'"
-          wms-layer="layer"
-          bootstrap-layer="dataLayers[layer.slug]">
+          wms-layer="layer">
         </wmslayer>
         <eventseries
           ng-if="layer && layer.type === 'eventseries'"
-          eventseries="layer"
-          bootstrap-layer="dataLayers[layer.slug]">
+          eventseries="layer">
         </eventseries>
       </div>
 

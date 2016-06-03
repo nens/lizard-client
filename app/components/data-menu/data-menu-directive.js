@@ -9,7 +9,7 @@
  * Defines the data menu.
  */
 angular.module('data-menu')
-  .directive('datamenu', ['dataLayers', 'DataService', 'State', function (dataLayers, DataService, State) {
+  .directive('datamenu', ['DataService', 'State', function (DataService, State) {
 
     var link = function (scope, element, attrs) {
 
@@ -22,10 +22,6 @@ angular.module('data-menu')
       // Layers can be an object which fully describes all state of a
       // datasource.
       scope.layers = State.layers;
-
-      // A layer in State.layers is part of dataLayers from the bootstrap object
-      // or will be requested from the server.
-      scope.dataLayers = dataLayers;
 
       var getActiveLayers = function (type) {
         return Object.keys(_.filter(scope.layers[type], 'active'));

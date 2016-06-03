@@ -21,14 +21,12 @@ angular.module('data-menu')
   .service('DataService', [
     '$q',
     'AssetService',
-    'dataLayers',
     'LayerAdderService',
     'State',
 
     function (
       $q,
       AssetService,
-      dataLayers,
       LayerAdderService,
       State
     ) {

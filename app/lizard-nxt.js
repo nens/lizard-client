@@ -47,7 +47,8 @@ angular.module("lizard-nxt", [
   'lodash',
   'ui.bootstrap',
   'lizard-http-throttler', // Add this $http interceptor befor the loading-bar.
-  'angular-loading-bar'
+  'angular-loading-bar',
+  'lizard-boostrap'
 ])
 
 // Decorator for ngExceptionHandler to log exceptions to sentry
@@ -96,13 +97,6 @@ angular.module("lizard-nxt", [
 ])
 
 /**
- * @name user
- * @memberOf app
- * @description User and auth stuff
- */
-.constant('user', window.user)
-
-/**
  * @name notie
  * @memberOf app
  * @description Notification service
@@ -110,29 +104,54 @@ angular.module("lizard-nxt", [
 .constant('notie', window.notie)
 
 /**
- * @name versioning
- * @memberOf app
- * @description User and auth stuff
- */
-.constant('versioning', window.versioning)
-
-/**
  * @name production backend
  * @memberOf app
  * @description subdomain of production backend.
  */
-.constant('backendDomain', 'https://demo.lizard.net')
+.constant('backendDomain', 'https://demo.lizard.net');
 
-/**
- * @name locale
- * @memberOf app
- * @description Portal's default locale.
- */
-.constant('defaultLocale', window.locale)
+angular.module('lizard-boostrap', ['favourites'])
+.run([
+  '$http', 'UrlService', 'FavouritesService', 'user', 'version', 'debug',
+  function ($http, UrlService, FavouritesService, user, version, debug) {
 
-/**
- * @name temporalBounds
- * @memberOf app
- * @description Portal's default temporal bounds.
- */
-.constant('temporalBounds', window.temporalBounds);
+    var getBootstrap = function (apply) {
+      $http.get('api/v2/bootstrap', {})
+      .then(
+        function (response) {
+          var bootstrap = response.data;
+          _.merge(user, bootstrap.user);
+          _.merge(version, bootstrap.version);
+          if (apply) {
+            var urlState = UrlService.getState();
+            FavouritesService.applyFavourite(bootstrap.state);
+            FavouritesService.applyFavourite(urlState);
+          }
+        },
+        function (response) {
+          // Show user facing error message
+        }
+      );
+    };
+
+    var urlFavourite = UrlService.getFavourite();
+
+    if (urlFavourite) {
+      FavouritesService.getFavourite(
+        urlFavourite,
+        function (favourite, getResponseHeaders) {
+          getBootstrap(false);
+          FavouritesService.applyFavourite(favourite);
+        },
+        function () {
+          // Show error facing message
+          getBootstrap(true);
+        }
+      );
+    }
+    else {
+      getBootstrap(true);
+    }
+
+  }
+]);

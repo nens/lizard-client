@@ -4,8 +4,8 @@
  */
 angular.module('user-menu')
   .directive('userMenu',
-             ['UtilService', '$location', 'user', '$uibModal', 'versioning', 'notie', 'gettextCatalog',
-              function (UtilService, $location, user, $uibModal, versioning, notie, gettextCatalog) {
+             ['UtilService', '$location', 'user', '$uibModal', 'version', 'notie', 'gettextCatalog',
+              function (UtilService, $location, user, $uibModal, version, notie, gettextCatalog) {
 
     var link = function (scope, element, attrs) {
 
@@ -54,7 +54,7 @@ angular.module('user-menu')
           templateUrl: 'about.html',  // This is really the 'id' of the modal.
           size: size,
           controller: function () {
-            this.versioning = versioning;
+            this.version = version;
           },
           controllerAs: 'about'
         });

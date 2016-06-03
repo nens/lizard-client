@@ -279,7 +279,9 @@ angular.module('lizard-nxt')
        * @param  {object} timeState nxt timeState
        * @return {object} nxt timeState
        */
-      parseTimeState: function (time, timeState) {
+      parseTimeState: function (time) {
+        if (!time) { return; }
+        var timeState = {};
         var times, msStartTime, msEndTime;
         if (time.split('Days').length > 1) {
           times = time.split('-')[1].split('+');
@@ -319,22 +321,23 @@ angular.module('lizard-nxt')
        *                               when not valid.
        */
       parseMapView: function (mapView) {
+        if (!mapView) { return; }
         var latlonzoom = mapView.split(',');
         if (latlonzoom.length === 3
           && parseFloat(latlonzoom[0])
           && parseFloat(latlonzoom[1])
           && parseFloat(latlonzoom[2])) {
           return {
-            latLng: [parseFloat(latlonzoom[0]), parseFloat(latlonzoom[1])],
-            zoom: parseFloat(latlonzoom[2]),
-            options: {reset: true, animate: true}
+            lat: parseFloat(latlonzoom[0]),
+            lng: parseFloat(latlonzoom[1]),
+            zoom: parseFloat(latlonzoom[2])
           };
-        } else {
-          return false;
         }
       },
 
-      parseSelection: function (geom, selection) {
+      parseSelection: function (geom) {
+        if (!geom) { return; }
+        var selection = {asets: [], geometries: []};
         var selections = geom.split('+');
         selections.forEach(function (selected) {
           if (selected.split('$').length === 2) {
@@ -382,19 +385,189 @@ angular.module('lizard-nxt')
         });
 
         return selection;
-      },
-      update: function (state) {
-        var u = true;
-        angular.forEach(state, function (value) {
-          if (!value.update) {
-            u = false;
-          }
-        });
-        return u;
       }
     };
 
     return service;
 
+  }
+]);
+
+
+/**
+ * @ngdoc service
+ * @class UrlState
+ * @name UrlState
+ * @description Higher level functions to parse and set URL.
+ */
+angular.module('lizard-nxt')
+.service("UrlService", ['UrlState', 'LocationGetterSetter', 'gettextCatalog', 'UtilService',
+  function (UrlState, LocationGetterSetter, gettextCatalog, UtilService) {
+
+    // Configuration object for url state.
+    var config = {
+      language: {
+        part: 'path',
+        index: 0
+      },
+      context: { // Locally used name for the state
+        value: 'map', // default
+        part: 'path', // Part of the url where this state is stored,
+        index: 1, // Position of the state in the part
+      },
+      layers: {
+        part: 'path',
+        index: 2,
+      },
+      boxType: {
+        part: 'path',
+        index: 3,
+      },
+      geom: {
+        part: 'path',
+        index: 4,
+      },
+      mapView: {
+        part: 'at',
+        index: 0,
+      },
+      timeState: {
+        part: 'at',
+        index: 1,
+      },
+    };
+
+    var getLanguage = function () {
+      var language = LocationGetterSetter.getUrlValue(
+        config.language.part,
+        config.language.index
+      );
+      if (language
+        && gettextCatalog.strings[language]
+        && language !== gettextCatalog.baseLanguage) {
+        return language;
+      }
+    };
+
+    var getContext = function () {
+      var context = LocationGetterSetter.getUrlValue(
+        config.context.part,
+        config.context.index
+      );
+      if (context) { return context; }
+    };
+
+    var getLayers = function () {
+      var layersFromURL = LocationGetterSetter.getUrlValue(
+        config.layers.part,
+        config.layers.index
+      );
+      if (layersFromURL) {
+        return layersFromURL.split(',');
+      }
+    };
+
+    var getBoxType = function () {
+      var boxType = LocationGetterSetter.getUrlValue(
+        config.boxType.part,
+        config.boxType.index
+      );
+      if (boxType) { return boxType; }
+    };
+
+    var getSelected = function () {
+      var selected = LocationGetterSetter.getUrlValue(
+        config.geom.part,
+        config.geom.index
+      );
+      return UrlState.parseSelection(selected);
+    };
+
+    var getView = function () {
+      var mapView = LocationGetterSetter.getUrlValue(
+        config.mapView.part,
+        config.mapView.index
+      );
+      return UrlState.parseMapView(mapView);
+    };
+
+    var getTemporal = function () {
+      var time = LocationGetterSetter.getUrlValue(
+        config.timeState.part,
+        config.timeState.index
+      );
+      return UrlState.parseTimeState(time);
+    };
+
+    return {
+      setUrl: function (state) {
+        UrlState.setSelectedUrl(config, state.selected);
+
+        LocationGetterSetter.setUrlValue(
+          config.context.part, config.context.index, state.context
+        );
+
+        if (['point', 'line', 'region', 'multi-point'].indexOf(getBoxType()) !== -1) {
+          // Remove geometry from url
+          LocationGetterSetter.setUrlValue(
+            config.geom.part, config.geom.index, undefined);
+        }
+
+        LocationGetterSetter.setUrlValue(
+          config.boxType.part, config.boxType.index, state.box.type
+        );
+
+        if (!state.temporal.timelineMoving) {
+          if (Date.now() - state.temporal.start > 7 * UtilService.day) {
+            state.temporal.relative = false;
+          } else {
+            state.temporal.relative = true;
+          }
+          UrlState.setTimeStateUrl(
+            config,
+            state.temporal.start,
+            state.temporal.end,
+            state.temporal.relative
+          );
+        }
+
+        UrlState.setCoordinatesUrl(
+          config,
+          state.spatial.view.lat,
+          state.spatial.view.lng,
+          state.spatial.view.zoom
+        );
+
+        UrlState.setlayersUrl(config, state.layers.active);
+
+      },
+
+      getState: function () {
+        return {
+          language: getLanguage(),
+          context: getContext(),
+          layers: {active: getLayers()},
+          box: {type: getBoxType()},
+          selected: getSelected(),
+          spatial: {view: getView()},
+          temporal: getTemporal()
+        };
+      },
+
+      getFavourite: function () {
+        var firstUrlPart = LocationGetterSetter.getUrlValue(
+          'path',
+          0
+        );
+        if (firstUrlPart === 'favourites') {
+          var favouriteUUID = LocationGetterSetter.getUrlValue(
+            'path',
+            1
+          );
+          return favouriteUUID;
+        }
+      }
+
+    };
   }
 ]);
