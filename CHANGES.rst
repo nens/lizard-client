@@ -5,6 +5,7 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
 - Add timeseries name to selection box, dashboard and graph hover.
+- Fix rain download in production.
 
 
 Release 3.2.1 (2016-5-20)
