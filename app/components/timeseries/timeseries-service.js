@@ -213,6 +213,7 @@ angular.module('timeseries')
         graphTimeseries.parameter = ts.parameter || EMPTY;
         graphTimeseries.unit = ts.unit || EMPTY;
         graphTimeseries.location = ts.location || EMPTY;
+        graphTimeseries.name = ts.name || EMPTY;
         if (ts.reference_frame) {
           graphTimeseries.unit += ' (' + ts.reference_frame + ')';
         }

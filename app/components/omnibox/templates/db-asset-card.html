@@ -47,8 +47,11 @@
               'fa-clock-o': getTsMetaData(ts.uuid).value_type !== 'image',
               'fa-file-image-o': getTsMetaData(ts.uuid).value_type === 'image'
             }"></i>
-            <span ng-class="{'text-primary bg-warning': ts.active}">
+            <span
+              title="<% getTsMetaData(ts.uuid).location %>, <% getTsMetaData(ts.uuid).name %>, <% getTsMetaData(ts.uuid).parameter %>"
+              ng-class="{'text-primary bg-warning': ts.active}">
               <% getTsMetaData(ts.uuid).location %>,
+              <% getTsMetaData(ts.uuid).name %>,
               <% getTsMetaData(ts.uuid).parameter %>
             </span>
           </div>
