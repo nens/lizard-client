@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 3.2.2 (2016-6-6)
+---------------------
 
 - Add timeseries name to selection box, dashboard and graph hover.
 - Fix rain download in production.
