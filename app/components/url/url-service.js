@@ -501,6 +501,13 @@ angular.module('lizard-nxt')
 
     return {
       setUrl: function (state) {
+
+        LocationGetterSetter.setUrlValue(
+          config.language.part,
+          config.language.index,
+          gettextCatalog.getCurrentLanguage()
+        );
+
         UrlState.setSelectedUrl(config, state.selected);
 
         LocationGetterSetter.setUrlValue(

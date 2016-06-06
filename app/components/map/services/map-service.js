@@ -38,7 +38,7 @@ angular.module('map')
        * @param  {object} mapOptions       passed to leaflet for the map
        * @param  {object} eventCallbackFns used on leaflet map events [onmove etc]
        */
-      initializeMap: function (element, mapOptions, eventCallbackFns) {
+      initializeMap: function (element, mapOptions, eventCallbackFns, layers) {
         service._map = createLeafletMap(element, mapOptions);
         this._initializeNxtMapEvents(eventCallbackFns);
       },

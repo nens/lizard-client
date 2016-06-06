@@ -115,16 +115,18 @@ angular.module('lizard-boostrap', ['favourites'])
   '$http', 'UrlService', 'FavouritesService', 'user', 'version', 'debug',
   function ($http, UrlService, FavouritesService, user, version, debug) {
 
-    var getBootstrap = function (apply) {
+    var urlState = UrlService.getState();
+
+    var getBootstrap = function (applyState) {
       $http.get('api/v2/bootstrap', {})
       .then(
         function (response) {
           var bootstrap = response.data;
           _.merge(user, bootstrap.user);
           _.merge(version, bootstrap.version);
-          if (apply) {
-            var urlState = UrlService.getState();
+          if (applyState) {
             FavouritesService.applyFavourite(bootstrap.state);
+            console.log(urlState);
             FavouritesService.applyFavourite(urlState);
           }
         },
