@@ -13,19 +13,19 @@ angular.module('data-menu')
 
     var wms;
 
-    if (scope.raster.temporal) {
+    if (scope.layer.temporal) {
       wms = MapService.initializers.temporalWms();
     } else {
       wms = MapService.initializers.wms();
     }
 
-    MapService.rasters[scope.raster.slug] = {
+    MapService.rasters[scope.layer.id] = {
       temporal: false,
       wms: wms,
     };
 
     scope.toggle = function () {
-      scope.raster.active = !scope.raster.active;
+      scope.layer.active = !scope.layer.active;
     };
 
     /**
@@ -40,11 +40,11 @@ angular.module('data-menu')
         throw new Error(newOpacity + "is not a valid opacity value, it is"
           + "either of the wrong type or not between 0 and 1");
       }
-      scope.raster.opacity = newOpacity;
+      scope.layer.opacity = newOpacity;
     };
 
     scope.$on('$destroy', function () {
-      delete MapService.rasters[scope.assets.slug];
+      delete MapService.rasters[scope.assets.id];
     });
 
   };
@@ -52,7 +52,7 @@ angular.module('data-menu')
   return {
     link: link,
     scope: {
-      raster: '=',
+      layer: '=',
       bootstrapLayer: '='
     },
     templateUrl: 'data-menu/templates/layer.html',

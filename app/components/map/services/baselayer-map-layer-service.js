@@ -17,7 +17,7 @@ angular.module('map')
 
       var tms = MapLayerService.createTmsLayer(options);
 
-      baselayer.slug = options.slug;
+      baselayer.id = options.id;
       baselayer.type = 'baselayer';
 
       baselayer.update = function (map, options) {

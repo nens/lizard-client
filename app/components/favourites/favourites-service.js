@@ -137,15 +137,23 @@ angular.module('favourites')
           );
         }
 
+        var baselayers = angular.copy(_.filter(State.layers, {'type': 'baselayer'}));_
+
         // Use _.mergeWith to set the whole array to trigger functions of
         // properties.
-        var arrayStates = ['all', 'active', 'timeseries', 'assets', 'geometries'];
+        var arrayStates = ['layers', 'timeseries', 'assets', 'geometries'];
         _.mergeWith(State, state, function (_state, favstate, key, parent) {
           if (arrayStates.indexOf(key) !== -1) {
             _state = favstate;
-            return _state;
           }
         });
+
+        _.forEach(baselayers, function (baselayer) {
+          if (!_.find(State.layers, {type: 'baselayer', id: baselayer.id})) {
+            State.layers.push(baselayer);
+          }
+        });
+
 
         UtilService.announceMovedTimeline(State);
 

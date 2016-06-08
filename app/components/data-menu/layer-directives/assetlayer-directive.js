@@ -4,20 +4,13 @@ angular.module('data-menu')
 .directive('assetlayer', ['MapService', function (MapService) {
   var link = function (scope) {
 
-
-    if (scope.bootstrapLayer) {
-      // set atributes to layer, create utf and tms layers.
-    } else {
-      // get layer config from api.
-    }
-
-    MapService.assets[scope.asset.slug] = {
+    MapService.assets[scope.layer.id] = {
       tms: MapService.initializers.tms(),
       utf: MapService.initializers.utf()
     };
 
     scope.toggle = function () {
-      scope.asset.active = !scope.asset.active;
+      scope.layer.active = !scope.layer.active;
     };
 
     /**
@@ -32,11 +25,11 @@ angular.module('data-menu')
         throw new Error(newOpacity + "is not a valid opacity value, it is"
           + "either of the wrong type or not between 0 and 1");
       }
-      scope.asset.opacity = newOpacity;
+      scope.layer.opacity = newOpacity;
     };
 
     scope.$on('$destroy', function () {
-      delete MapService.assets[scope.assets.slug];
+      delete MapService.assets[scope.layers.id];
     });
 
   };
@@ -44,7 +37,7 @@ angular.module('data-menu')
   return {
     link: link,
     scope: {
-      asset: '=',
+      layer: '=',
       bootstrapLayer: '='
     },
     templateUrl: 'data-menu/templates/layer.html',

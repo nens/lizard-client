@@ -20,9 +20,9 @@ angular.module('map')
     var service = {
 
       mapLayers: [
-        baselayer({ slug: 'Topography', url: topography }),
-        baselayer({ slug: 'Satellite', url: satellite }),
-        baselayer({ slug: 'Neutral', url: neutral }),
+        baselayer({ id: 'Topography', url: topography }),
+        baselayer({ id: 'Satellite', url: satellite }),
+        baselayer({ id: 'Neutral', url: neutral }),
       ],
 
       _map: {}, // exposure is legacy, we should not mingle with the leaflet
@@ -45,11 +45,13 @@ angular.module('map')
 
       updateLayers: function (layers) {
         layers.forEach(function (layer) {
-          var mapLayer = _.find(service.mapLayers, {type: layer.type, slug: layer.slug});
-          if (layer.active) {
-            mapLayer.update(service._map, layer);
-          } else {
-            mapLayer.remove(service._map);
+          var mapLayer = _.find(service.mapLayers, {type: layer.type, id: layer.id});
+          if (mapLayer) {
+            if (layer.active) {
+              mapLayer.update(service._map, layer);
+            } else {
+              mapLayer.remove(service._map);
+            }
           }
         });
       },

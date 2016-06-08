@@ -56,21 +56,21 @@ angular.module('global-state')
     state.layers = [
       {
         type: 'baselayer',
-        slug: 'Topography',
+        id: 'Topography',
         active: true,
         order: 0,
         opacity: 1
       },
       {
         type: 'baselayer',
-        slug: 'Satellite',
+        id: 'Satellite',
         active: false,
         order: 0,
         opacity: 1
       },
       {
         type: 'baselayer',
-        slug: 'Neutral',
+        id: 'Neutral',
         active: false,
         order: 0,
         opacity: 1
@@ -81,21 +81,21 @@ angular.module('global-state')
     // enumarable iteratees only encounter arrays.
     Object.defineProperty(state.layers, 'baselayer', {
       get: function () {
-        return _.find(state.layers, {type: 'baselayer', active: true}).slug;
+        return _.find(state.layers, {type: 'baselayer', active: true}).id;
       },
-      set: function (str) {
+      set: function (id) {
         var old = _.find(state.layers, {type: 'baselayer', active: true});
         old.active = false;
-        _.find(state.layers, {type: 'baselayer', slug: str}).active = true;
+        _.find(state.layers, {type: 'baselayer', id: id}).active = true;
       }
     });
 
 
     var getLayerSlugs = function (stateLayers) {
-      var slugs = ['baselayer' + '$' + stateLayers.baselayer];
+      var slugs = [];
       _.forEach(stateLayers, function (layers, type) {
         layers.forEach(function (layer) {
-          slugs.push(type + '$' + layer.slug);
+          slugs.push(type + '$' + layer.id);
         });
       });
       return slugs;
@@ -128,7 +128,7 @@ angular.module('global-state')
         var actives = [];
         _.forEach(state.layers, function (layer) {
           if (layer.active) {
-            actives.push(layer.type + '$' + layer.slug);
+            actives.push(layer.type + '$' + layer.id);
           }
         });
         return actives;

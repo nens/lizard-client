@@ -10,12 +10,12 @@ angular.module('data-menu')
       // get layer config from api.
     }
 
-    MapService.wms[scope.wms.slug] = {
+    MapService.wms[scope.layer.id] = {
       wms: MapService.initializers.wms(),
     };
 
     scope.toggle = function () {
-      scope.wms.active = !scope.wms.active;
+      scope.layer.active = !scope.layer.active;
     };
 
     /**
@@ -34,7 +34,7 @@ angular.module('data-menu')
     };
 
     scope.$on('$destroy', function () {
-      delete MapService.wms[scope.wms.slug];
+      delete MapService.wms[scope.layer.id];
     });
 
   };
@@ -42,7 +42,7 @@ angular.module('data-menu')
   return {
     link: link,
     scope: {
-      wms: '=',
+      layer: '=',
       bootstrapLayer: '='
     },
     templateUrl: 'data-menu/templates/layer.html',

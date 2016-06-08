@@ -6,18 +6,12 @@ angular.module('data-menu')
   var link = function (scope) {
 
 
-    if (scope.bootstrapLayer) {
-      // set atributes to layer, create utf and tms layers.
-    } else {
-      // get layer config from api.
-    }
-
-    MapService.eventseries[scope.raster.slug] = {
+    MapService.eventseries[scope.raster.id] = {
       vector: MapService.initializers.vector(),
     };
 
     scope.toggle = function () {
-      scope.eventseries.active = !scope.eventseries.active;
+      scope.layer.active = !scope.layer.active;
     };
 
     /**
@@ -32,11 +26,11 @@ angular.module('data-menu')
         throw new Error(newOpacity + "is not a valid opacity value, it is"
           + "either of the wrong type or not between 0 and 1");
       }
-      scope.eventseries.opacity = newOpacity;
+      scope.layer.opacity = newOpacity;
     };
 
     scope.$on('$destroy', function () {
-      delete MapService.eventseries[scope.eventseries.slug];
+      delete MapService.eventseries[scope.layer.id];
     });
 
   };
@@ -44,7 +38,7 @@ angular.module('data-menu')
   return {
     link: link,
     scope: {
-      eventseries: '=',
+      layer: '=',
       bootstrapLayer: '='
     },
     templateUrl: 'data-menu/templates/layer.html',

@@ -7,13 +7,13 @@ angular.module('data-menu')
     scope.next = function () {
 
       var currentLayer = _.find(MapService.BASELAYERS, function (layer) {
-        return layer.slug === scope.layers.baselayer;
+        return layer.id === scope.layers.baselayer;
       });
 
       var currentIndex = _.indexOf(MapService.BASELAYERS, currentLayer);
       var next = (currentIndex + 1) % (MapService.BASELAYERS.length);
 
-      scope.layers.baselayer = MapService.BASELAYERS[next].slug;
+      scope.layers.baselayer = MapService.BASELAYERS[next].id;
 
     };
 
