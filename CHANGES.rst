@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 3.2.3 (2016-6-10)
+---------------------
 
 - Replace 'remove' on dom elements, it is not supported on IE.
 
