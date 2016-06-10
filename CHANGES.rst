@@ -3,7 +3,10 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Replace 'remove' on dom elements, it is not supported on IE.
+
+- Remove another el.dataset in dragging of dashboard cards.
 
 
 Release 3.2.2 (2016-6-6)
