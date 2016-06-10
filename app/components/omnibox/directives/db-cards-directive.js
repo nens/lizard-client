@@ -10,7 +10,7 @@ angular.module('omnibox')
       var emulateClick = function (el) {
         // other plottable item. Toggle on drag to put element in their own
         // plot.
-        element.find('#' + el.dataset.uuid).click();
+        element.find('#' + el.getAttribute('data-uuid')).click();
       };
 
       var getTsMetaData = function (uuid) {
@@ -57,7 +57,7 @@ angular.module('omnibox')
         if (otherGraphTS === undefined) {
           // No other graph, just turn ts to active.
           emulateClick(el);
-          el.remove();
+          el.parentNode.removeChild(el);
           return;
         }
 
@@ -95,7 +95,7 @@ angular.module('omnibox')
         }
 
         // Remove drag element.
-        el.remove();
+        el.parentNode.removeChild(el);
 
       });
 
