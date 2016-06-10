@@ -2,10 +2,10 @@
  * Opacity slider for layer-chooser.
  */
 angular.module('data-menu')
-  .directive('opacitySlider', function () {
+  .directive('opacitySlider', ['MapService', function (MapService) {
 
   var link = function (scope, element, attrs) {
-    var opacity = scope.layergroup.getOpacity();
+    var opacity = scope.layer.opacity;
     scope.percOpacity = opacity * 100 + '%';
     var layerChooserWidth = 170; // chrome is the new IE
     var localClick;
@@ -15,7 +15,7 @@ angular.module('data-menu')
      * and calculates the percentage of the width.
      * @params {event} jQuery event.
      */
-    var adjustOpacity = function (e) {
+    scope.adjustOpacity = function (e) {
       e.preventDefault();
       localClick = (e.originalEvent.layerX < 0) ? e.offsetX : e.originalEvent.layerX;
       if (localClick === undefined) {
@@ -26,18 +26,17 @@ angular.module('data-menu')
         scope.percOpacity = newOpacity * 100 + '%';
       });
 
-      scope.layergroup.setOpacity(newOpacity);
-
+      scope.layer.opacity = newOpacity;
+      MapService.update();
     };
 
-    element.bind('click', adjustOpacity);
-    element.bind('touch', adjustOpacity);
   };
 
   return {
     link: link,
     templateUrl: 'opacity/opacity.html',
+    scope: { layer: '=' },
     restrict: 'E',
     replace: true
   };
-});
+}]);

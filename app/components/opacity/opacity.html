@@ -1,4 +1,5 @@
-<div class="ng-class: {inactive: !layergroup.isActive() || layergroup.baselayer || !showOpacitySlider}; progress">
+<div class="ng-class: {inactive: !layer.active || !showOpacitySlider}; progress"
+	ng-click="adjustOpacity" ng-touch="adjustOpacity">
     <div class="progress-bar" role="progressbar" ng-style="{ 'width': percOpacity }">
       <span class="sr-only"></span>
     </div>

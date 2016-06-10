@@ -10,18 +10,22 @@
 
       <div ng-repeat="layer in layers | orderBy:'order'">
         <assetlayer
+          ng-click="toggle()"
           ng-if="layer.type === 'asset'"
           layer="layer">
         </assetlayer>
-        <raster
+        <rasterlayer
+          ng-click="toggle()"
           ng-if="!layer.scenario && layer.type === 'raster'"
           layer="layer">
-        </raster>
+        </rasterlayer>
         <wmslayer
+          ng-click="toggle()"
           ng-if="!layer.scenario && layer.type === 'wmslayer'"
           layer="layer">
         </wmslayer>
         <eventseries
+          ng-click="toggle()"
           ng-if="layer && layer.type === 'eventseries'"
           layer="layer">
         </eventseries>

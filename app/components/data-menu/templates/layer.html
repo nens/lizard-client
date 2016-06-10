@@ -1,0 +1,18 @@
+<div class="noselect">
+  <label
+    single-click="layer.active = !layer.active"
+    ng-class ="{active: layer.active }"
+    class="layer-item layer-img"
+    title="<% layer.name || layer.type + ': ' + layer.id %>">
+      <span ng-bind="layer.name"></span>
+      <div class="layer-chooser-tools">
+        <i class="fa fa-close"
+           ng-click="removeLayer(layer); $event.stopPropagation()"></i>
+        <i ng-click="menu.zoomToBounds(layergroup.spatialBounds, layergroup.temporalBounds); $event.stopPropagation()"
+          class="fa fa-crosshairs">
+        </i>
+      </div>
+  </label>
+</div>
+
+<opacity-slider title="<% tooltips.transparency %>" layer="layer"></opacity-slider>
