@@ -8,24 +8,20 @@
 
       <baselayers layers="layers"></baselayers>
 
-      <div ng-repeat="layer in layers | orderBy:'order'">
+      <div ng-repeat="layer in layers | orderBy:'order' track by layer.uuid">
         <assetlayer
-          ng-click="toggle()"
-          ng-if="layer.type === 'asset'"
+          ng-if="layer.type === 'assetgroup'"
           layer="layer">
         </assetlayer>
         <rasterlayer
-          ng-click="toggle()"
           ng-if="!layer.scenario && layer.type === 'raster'"
           layer="layer">
         </rasterlayer>
         <wmslayer
-          ng-click="toggle()"
           ng-if="!layer.scenario && layer.type === 'wmslayer'"
           layer="layer">
         </wmslayer>
         <eventseries
-          ng-click="toggle()"
           ng-if="layer && layer.type === 'eventseries'"
           layer="layer">
         </eventseries>

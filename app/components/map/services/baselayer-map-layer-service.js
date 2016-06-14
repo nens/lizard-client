@@ -17,10 +17,10 @@ angular.module('map')
 
       var tms = MapLayerService.createTmsLayer(options);
 
-      baselayer.id = options.id;
+      baselayer.uuid = options.uuid;
       baselayer.type = 'baselayer';
 
-      baselayer.update = function (map, options) {
+      baselayer.update = function (map, timeState, options) {
         if (!map.hasLayer(tms)) {
           map.addLayer(tms);
         }

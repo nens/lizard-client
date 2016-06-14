@@ -56,21 +56,21 @@ angular.module('global-state')
     state.layers = [
       {
         type: 'baselayer',
-        id: 'Topography',
+        uuid: 'Topography',
         active: true,
         order: 0,
         opacity: 1
       },
       {
         type: 'baselayer',
-        id: 'Satellite',
+        uuid: 'Satellite',
         active: false,
         order: 0,
         opacity: 1
       },
       {
         type: 'baselayer',
-        id: 'Neutral',
+        uuid: 'Neutral',
         active: false,
         order: 0,
         opacity: 1
@@ -81,12 +81,12 @@ angular.module('global-state')
     // enumarable iteratees only encounter arrays.
     Object.defineProperty(state.layers, 'baselayer', {
       get: function () {
-        return _.find(state.layers, {type: 'baselayer', active: true}).id;
+        return _.find(state.layers, {type: 'baselayer', active: true}).uuid;
       },
-      set: function (id) {
+      set: function (uuid) {
         var old = _.find(state.layers, {type: 'baselayer', active: true});
         old.active = false;
-        _.find(state.layers, {type: 'baselayer', id: id}).active = true;
+        _.find(state.layers, {type: 'baselayer', uuid: uuid}).active = true;
       }
     });
 
@@ -95,7 +95,7 @@ angular.module('global-state')
       var slugs = [];
       _.forEach(stateLayers, function (layers, type) {
         layers.forEach(function (layer) {
-          slugs.push(type + '$' + layer.id);
+          slugs.push(type + '$' + layer.uuid);
         });
       });
       return slugs;
@@ -105,17 +105,17 @@ angular.module('global-state')
       layerSlugs.forEach(function (layerSlug) {
 
         var type = layerSlug.split('$')[0];
-        var slug = layerSlug.split('$')[1];
+        var uuid = layerSlug.split('$')[1];
 
-        if (type === 'baselayer') { state.layers.baselayer = slug; }
+        if (type === 'baselayer') { state.layers.baselayer = uuid; }
 
         else {
-          var layer = _.find(state.layers, {slug: slug, type: type});
+          var layer = _.find(state.layers, {uuid: uuid, type: type});
 
           if (layer) { layer.active = true; }
 
           else {
-            state.layers.push({slug: slug, type: type, active: true});
+            state.layers.push({uuid: uuid, type: type, active: true});
           }
         }
 
@@ -128,7 +128,7 @@ angular.module('global-state')
         var actives = [];
         _.forEach(state.layers, function (layer) {
           if (layer.active) {
-            actives.push(layer.type + '$' + layer.id);
+            actives.push(layer.type + '$' + layer.uuid);
           }
         });
         return actives;

@@ -1,26 +1,18 @@
 //layer-directive.js
 
 angular.module('data-menu')
-.directive('assetlayer', ['MapService', 'LayerAdderService', function (MapService, LayerAdderService) {
+.directive('assetlayer', ['MapService', 'LayerAdderService', 'assetMapLayer', function (MapService, LayerAdderService, assetMapLayer) {
   var link = function (scope) {
 
-    scope.toggle = function () {
-      scope.layer.active = !scope.layer.active;
-    };
+    scope.remove = LayerAdderService.remove;
 
-    var cancelFirstActive = scope.$watch('layer.active', function () {
-      if (scope.layer.active) {
-        LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.id)
-        .then(function () {
+    // Create maplayer, add maplayer to mapservice.
+    MapService.mapLayers.push(assetMapLayer({
+      uuid: scope.layer.uuid,
+      url: 'api/v2/tiles/' +scope.layer.uuid
+    }));
 
-          // Create maplayer, add maplayer to mapservice.
-
-          MapService.updateLayers([scope.layer]);
-        });
-
-        cancelFirstActive();
-      }
-    });
+    MapService.updateLayers([scope.layer]);
 
     scope.$on('$destroy', function () {
       // Remove layer from mapLayers and DataService

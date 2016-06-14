@@ -149,7 +149,7 @@ angular.module('favourites')
         });
 
         _.forEach(baselayers, function (baselayer) {
-          if (!_.find(State.layers, {type: 'baselayer', id: baselayer.id})) {
+          if (!_.find(State.layers, {type: 'baselayer', uuid: baselayer.uuid})) {
             State.layers.push(baselayer);
           }
         });

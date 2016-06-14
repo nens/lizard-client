@@ -2,7 +2,7 @@
  * Service to handle layer-group retrieval.
  */
 angular.module('data-menu')
-  .service("LayerAdderService", ['$http', function ($http) {
+  .service("LayerAdderService", ['$http', 'State', function ($http, State) {
 
       /**
        * Get layergroups from the API.
@@ -32,6 +32,12 @@ angular.module('data-menu')
         .then(function (response) {
           return response.data;
         });
+      };
+
+      this.remove = function (layer) {
+        console.log('remove', layer);
+        _.remove(State.layers, {uuid: layer.uuid});
+        console.log(State);
       };
 
       return this;

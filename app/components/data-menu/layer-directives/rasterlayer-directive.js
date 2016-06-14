@@ -4,14 +4,11 @@ angular.module('data-menu')
 .directive('rasterlayer', ['MapService', 'LayerAdderService', function (MapService, LayerAdderService) {
   var link = function (scope) {
 
-
-    scope.toggle = function () {
-      scope.layer.active = !scope.layer.active;
-    };
+    scope.remove = LayerAdderService.remove;
 
     var cancelFirstActive = scope.$watch('layer.active', function () {
       if (scope.layer.active) {
-        LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.id)
+        LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.uuid)
         .then(function () {
 
           // Create maplayer, add maplayer to mapservice.
@@ -24,6 +21,7 @@ angular.module('data-menu')
     });
 
     scope.$on('$destroy', function () {
+      console.log('destroy');
       // Remove layer from mapLayers and DataService
     });
 

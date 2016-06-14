@@ -3,12 +3,14 @@
     single-click="layer.active = !layer.active"
     ng-class ="{active: layer.active }"
     class="layer-item layer-img"
-    title="<% layer.name || layer.type + ': ' + layer.id %>">
+    title="<% layer.name || layer.type + ': ' + layer.uuid %>">
       <span ng-bind="layer.name"></span>
       <div class="layer-chooser-tools">
         <i class="fa fa-close"
-           ng-click="removeLayer(layer); $event.stopPropagation()"></i>
-        <i ng-click="menu.zoomToBounds(layergroup.spatialBounds, layergroup.temporalBounds); $event.stopPropagation()"
+           ng-click="remove(layer); $event.stopPropagation()"></i>
+        <i ng-if="layer.type === 'raster' || layer.type === 'eventseries'"
+          ng-click="zoomToBounds(); $event.stopPropagation()"
+          ng-show="layer.active"
           class="fa fa-crosshairs">
         </i>
       </div>

@@ -5,13 +5,11 @@ angular.module('data-menu')
 .directive('eventseries', ['MapService', 'LayerAdderService', function (MapService, LayerAdderService) {
   var link = function (scope) {
 
-    scope.toggle = function () {
-      scope.layer.active = !scope.layer.active;
-    };
+    scope.remove = LayerAdderService.remove;
 
     var cancelFirstActive = scope.$watch('layer.active', function () {
       if (scope.layer.active) {
-        LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.id)
+        LayerAdderService.fetchLayer(scope.layer.type, scope.layer.uuid)
         .then(function () {
 
           // Create maplayer, add maplayer to mapservice.
