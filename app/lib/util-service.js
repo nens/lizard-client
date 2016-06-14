@@ -364,7 +364,7 @@ angular.module('lizard-nxt')
    */
   this.geomToWkt = function (geom) {
     var coords = [];
-    if (geom instanceof L.LatLng) {
+    if (geom.lat && geom.lng) {
       // geom is a L.LatLng object
       return "POINT(" + geom.lng + " " + geom.lat + ")";
     }

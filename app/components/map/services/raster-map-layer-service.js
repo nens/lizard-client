@@ -31,17 +31,22 @@ angular.module('map')
       // Lookup to store which data correspond to which imageOverlay.
       rasterMapLayer._frameLookup = {};
 
+      rasterMapLayer._temporalResolution = options.temporalResolution;
+
       // Length of the buffer, set in the initialization. Ideally the buffer
       // is small to get up to speed fast, for slow connections or high
       // frequent images it should be large. When having a very sparse
       // resolution, animation will also move slowly, so there is no need
       // for a big buffer.
-      rasterMapLayer._bufferLength = options._temporalResolution >= 3600000 ? 2 : 6;
+      rasterMapLayer._bufferLength = options.temporalResolution >= 3600000 ? 2 : 6;
 
       // Number of rasters currently underway.
       rasterMapLayer._nLoadingRasters = 0;
 
+      console.log(rasterMapLayer);
+
       rasterMapLayer.update = function (map, timeState, options) {
+        console.log(rasterMapLayer);
         var promise;
 
         if (rasterMapLayer.temporal) {
@@ -95,13 +100,21 @@ angular.module('map')
           opacity: options.opacity,
           zIndex: options.zIndex,
           crs: LeafletService.CRS.EPSG3857,
-          time: rasterMapLayer._formatter(date)
+          time: _formatter(date)
         };
 
         options = angular.extend(opts, options);
 
+        var url = RasterService.buildURLforWMS(
+          rasterMapLayer._imageUrlBase,
+          rasterMapLayer.uuid,
+          map,
+          false,
+          options
+        );
+
         rasterMapLayer._imageOverlays = [
-          LeafletService.tileLayer.wms(rasterMapLayer.url, options)
+          LeafletService.tileLayer.wms(url, options)
         ];
 
         // defer is passed to loadlistener to be resolved when done.
@@ -258,9 +271,9 @@ angular.module('map')
           };
 
           rasterMapLayer._imageUrlBase = RasterService.buildURLforWMS(
-            this,
+            rasterMapLayer._imageUrlBase,
+            rasterMapLayer.uuid,
             map,
-            store.name,
             rasterMapLayer.timeState.playing,
             options
           );
@@ -379,33 +392,9 @@ angular.module('map')
        */
       rasterMapLayer._determineStore = function (timeState) {
 
-        if (rasterMapLayer.slug.split('/')[0] !== 'radar') {
-          return {
-            name: rasterMapLayer.slug,
-            resolution: rasterMapLayer._temporalResolution
-          };
-        }
-
-        var resolutionHours = (timeState.aggWindow) / 60 / 60 / 1000;
-
-        var aggType = rasterMapLayer.slug.split('/');
-
-        if (resolutionHours >= 24) {
-          aggType[1] = 'day';
-        } else if (resolutionHours >= 1 && resolutionHours < 24) {
-          aggType[1] = 'hour';
-        } else {
-          aggType[1] = '5min';
-        }
-        var resolutions = {
-          '5min': 300000,
-          'hour': 3600000,
-          'day': 86400000
-        };
-
         return {
-          name: aggType.join('/'),
-          resolution: resolutions[aggType[1]]
+          name: rasterMapLayer.uuid,
+          resolution: rasterMapLayer._temporalResolution
         };
 
       };
@@ -449,7 +438,7 @@ angular.module('map')
        *                      and _nLoadingRasters === 0.
        */
       rasterMapLayer._replaceUrlFromFrame = function (frameIndex, defer) {
-        var url = rasterMapLayer._imageUrlBase + rasterMapLayer._formatter(new Date(rasterMapLayer._nxtDate));
+        var url = rasterMapLayer._imageUrlBase + _formatter(new Date(rasterMapLayer._nxtDate));
         var frame = rasterMapLayer._imageOverlays[frameIndex];
         frame.off('load');
         frame.setOpacity(0);

@@ -7,10 +7,10 @@
  * @memberof app
  * @name NxtData
  * @requires $q, dataLayers, LayerGroup and State
- * @summary Encapsulates layergroups
- * @description NxtData service encapsulates layergroups from the server side
- *              configuration of layergroups. It enables to perform actions
- *              on all layergroups simultaneously. When provided with a string
+ * @summary Encapsulates dataLayers
+ * @description NxtData service encapsulates dataLayers from the server side
+ *              configuration of dataLayers. It enables to perform actions
+ *              on all dataLayers simultaneously. When provided with a string
  *              representation of the service containing the global map it
  *              it performs these actions on the map from this service, else
  *              it needs a map object when calling toggleLayerGroup and
@@ -32,6 +32,8 @@ angular.module('data-menu')
     ) {
 
       var instance = this;
+
+      instance.dataLayers = [];
 
       // Callback for when assets are being retrieved from api
       var assetChange = function (asset) {
@@ -202,94 +204,12 @@ angular.module('data-menu')
                              // getData gets called before the last one
                              // resolves.
 
-      /**
-       * Gets data from all layergroups.
-       *
-       * @param  {object} options
-       * @param  {str} callee that gets a list of defers for every time getdata
-       *                      is called before a request finishes.
-       * @param  {defer} recursiveDefer optional. When supplied is notified with
-       *                                data. Used for recursively calling get
-       *                                data with data from waterchain of a
-       *                                previous getData call.
-       * @return {object} notifies with data from layergroup and resolves when
-       *                   all layergroups and the timeseries returned data.
-       */
-      this.getData = function (callee, options, recursiveDefer) {
-        var defer = $q.defer();
-
-        if (recursiveDefer === undefined) {
-          this.reject(callee, this.REJECTION_REASONS.OVERRIDDEN);
-          if (!this._dataDefers[callee]) {
-            this._dataDefers[callee] = []; // It is a list because $q.all can not
-          }                                // be deregistered.
-          var defers = this._dataDefers[callee];
-          defers.push(defer); // add to list
-        }
-
-        var promises = [];
-        var instance = this;
-        angular.forEach(this.layerGroups, function (layerGroup) {
-          promises.push(
-            layerGroup.getData(callee, options).then(null, null, function (response) {
-
-              if (recursiveDefer) {
-                recursiveDefer.notify(response);
-              } else {
-                defer.notify(response);
-              }
-
-            })
-          );
-        });
-
-        $q.all(promises).then(function () {
-          finishDefers();
-        });
-
-        /**
-         * @function finishDefers
-         * @memberof DataService
-         * @summary Checks if current defer is the last one, if so resolves the
-         * defer and clears the defers
-         */
-        var finishDefers = function () {
-          // If this defer is the last one in the list of defers the getData
-          // is truly finished, otherwise the getData is still getting data for
-          // the callee.
-          if (recursiveDefer) {
-            defer.resolve();
-          }
-          else if (defers.indexOf(defer) === defers.length - 1) {
-            State.layerGroups.gettingData = false;
-            defer.resolve(); // Resolve the last one, the others have been
-                             // rejected.
-            defers.length = 0; // Clear the defers, by using .length = 0 the
-                               // reference to this._dataDefers persists.
-          }
-        };
-
-        State.layerGroups.gettingData = true;
-        return defer.promise;
-      };
-
-      /**
-       * Rejects call for data and sets loading to false.
-       */
-      this.reject = function (callee, reason) {
-        State.layerGroups.gettingData = false;
-        if (this._dataDefers[callee]) {
-          this._dataDefers[callee].forEach(function (defer) {
-            defer.reject(reason);
-          });
-        }
-      };
-
       this.refreshSelected = function () {
         this.geometries.forEach(function (geom) {
 
           angular.forEach(geom.properties, function (v, s) {
-            if (!this.layerGroups[s].isActive()) {
+            var layer = _.find(State.layers, {uuid: s});
+            if (!layer && !layer.active) {
               delete geom.properties[s];
             }
           }, this);

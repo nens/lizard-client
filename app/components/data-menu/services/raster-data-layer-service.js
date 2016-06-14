@@ -19,20 +19,8 @@ angular.module('data-menu')
 
       rasterDataLayer.type = 'raster';
 
-       /**
-        * @function
-        * @memberOf app.Layer
-        * @description Abstract method to be overridden by the layers that
-        *              implement Layer can return data (Store and vector).
-        * @param  {string} callee string of the callee to keep requests
-        *                         seperate.
-        * @param lgSlug slug of the layer.
-        * @param options options object with geom and time.
-        * @param deferred the defer to resolve when getting data.
-        */
       rasterDataLayer.getData = function (options) {
-
-
+        return RasterService.getData(_.merge(rasterDataLayer, options));
       };
 
       return rasterDataLayer;

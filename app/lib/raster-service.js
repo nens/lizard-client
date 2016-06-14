@@ -12,7 +12,7 @@ angular.module('lizard-nxt')
   var intensityData,
       cancelers = {};
 
-  var getData = function (callee, layer, options) {
+  var getData = function (options) {
 
     var srs = 'EPSG:4326',
         agg = options.agg || '',
@@ -40,15 +40,15 @@ angular.module('lizard-nxt')
     // if it doesn't have a deferrer in the options
     // use the layer slug..
     else {
-      if (cancelers[callee + '_' + layer.slug]) {
-        cancelers[callee + '_' + layer.slug].resolve();
+      if (cancelers[options.uuid]) {
+        cancelers[options.uuid].resolve();
       }
 
-      canceler = cancelers[callee + '_' + layer.slug] = $q.defer();
+      canceler = cancelers[options.uuid] = $q.defer();
     }
 
     var requestOptions = {
-      raster_names: layer.slug,
+      raster_names: options.uuid,
       srs: srs,
       start: startString,
       stop: endString,
@@ -89,10 +89,9 @@ angular.module('lizard-nxt')
    *                              otherwise just 256x256px.
    * @return {string}            url
    */
-  var buildURLforWMS = function (wmsLayer, map, store, singleTile, options) {
+  var buildURLforWMS = function (url, uuid, map, singleTile, options) {
     options = options || {};
-    var layerName = store || wmsLayer.slug,
-        bounds = options.bounds || map.getBounds(),
+    var bounds = options.bounds || map.getBounds(),
         DEFAULT_TILE_SIZE = 256; // in px
 
     var imgBounds = [
@@ -100,25 +99,23 @@ angular.module('lizard-nxt')
       LeafletService.CRS.EPSG3857.project(bounds.getNorthEast()),
     ],
 
-    wmsOpts = wmsLayer.options,
-
-    result = wmsLayer.url
+    result = url
       + '?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng'
-      + '&SRS=EPSG%3A3857&LAYERS=' + layerName
+      + '&SRS=EPSG%3A3857&LAYERS=' + uuid
       + '&BBOX=' + _buildBbox(imgBounds);
 
     if (singleTile) {
       var size = options.size || map.getPixelBounds().getSize();
-      wmsOpts.height = Math.round(size.y / size.x * DEFAULT_TILE_SIZE);
-      wmsOpts.width = Math.round(size.x / size.y  * DEFAULT_TILE_SIZE);
+      options.height = Math.round(size.y / size.x * DEFAULT_TILE_SIZE);
+      options.width = Math.round(size.x / size.y  * DEFAULT_TILE_SIZE);
     } else {
       // Serve square tiles
-      wmsOpts.height = DEFAULT_TILE_SIZE;
-      wmsOpts.width = DEFAULT_TILE_SIZE;
+      options.height = DEFAULT_TILE_SIZE;
+      options.width = DEFAULT_TILE_SIZE;
     }
 
 
-    angular.forEach(wmsOpts, function (v, k) {
+    angular.forEach(options, function (v, k) {
       result += UtilService.buildString('&', k.toUpperCase(), "=", v);
     });
 

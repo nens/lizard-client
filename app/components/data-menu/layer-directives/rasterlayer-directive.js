@@ -29,7 +29,7 @@ angular.module('data-menu')
           }));
 
           MapService.updateLayers([scope.layer]);
-          DataService.updateLayers([scope.layer]);
+          DataService.refreshSelected([scope.layer]);
         });
 
         cancelFirstActive();
