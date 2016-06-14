@@ -118,7 +118,7 @@ angular.module('lizard-boostrap', ['favourites'])
     var urlState = UrlService.getState();
 
     var getBootstrap = function (applyState) {
-      $http.get('bootstrap/lizard', {})
+      $http.get('bootstrap/lizard/', {})
       .then(
         function (response) {
           var bootstrap = response.data;

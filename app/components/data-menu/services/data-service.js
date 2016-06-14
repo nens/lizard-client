@@ -402,46 +402,45 @@ angular.module('data-menu')
           options.geom = L.geoJson(geo).getBounds();
         }
 
-        angular.forEach(this.layerGroups, function (layerGroup) {
+        angular.forEach(State.layers, function (layer) {
           if (
-
-            // UTF has a special status and is not queried in this loop.
-            (instance.utfLayerGroup && (layerGroup.slug === instance.utfLayerGroup.slug))
-
-            // One too many dimension
-            || (layerGroup.temporal && geo.geometry.type === 'LineString')
+            !layer.active
+            || (layer.temporal && geo.geometry.type === 'LineString')
 
           ) {
             return;
           }
 
-          promises.push(
-            layerGroup.getData('DataService', options).then(null, null, function (response) {
-              // async so remove anything obsolete.
-              geo.properties = geo.properties || {};
-              geo.properties[response.layerGroupSlug] = geo.properties[response.layerGroupSlug] || {};
-              // Replace data and merge everything with existing state of
-              // property.
-              geo.properties[response.layerGroupSlug].data = [];
-              _.merge(geo.properties[response.layerGroupSlug], response);
-              if (!instance.layerGroups[response.layerGroupSlug].isActive()
-                && layerGroup.slug in Object.keys(geo.properties)) {
+          var dataLayer = _.find(instance.dataLayers, {uuid: layer.uuid});
 
-                  geo.properties[layerGroup.slug] = null;
+          if (dataLayer) {
+            promises.push(
+              dataLayer.getData(options).then(function (response) {
+                // async so remove anything obsolete.
+                geo.properties = geo.properties || {};
+                geo.properties[response.uuid] = geo.properties[response.uuid] || {};
+                // Replace data and merge everything with existing state of
+                // property.
+                geo.properties[response.uuid].data = [];
+                _.merge(geo.properties[response.uuid], response);
+                if (!layer.active
+                  && layer.uuid in Object.keys(geo.properties)) {
 
-              }
-            })
-          );
+                    geo.properties[layer.uuid] = null;
+
+                }
+              })
+            );
+          }
+
         });
 
         $q.all(promises).then(function () {
             geo.properties = geo.properties || {};
-            State.layerGroups.gettingData = false;
             defer.resolve(geo);
             defer = undefined; // Clear the defer
         });
 
-        State.layerGroups.gettingData = true;
         return defer.promise;
       };
 

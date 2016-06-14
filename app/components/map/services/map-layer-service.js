@@ -18,7 +18,7 @@ angular.module('map')
 
       return LeafletService.tileLayer(
         layerUrl, {
-          retina: L.Browser.retina ? '@2x' : '',
+          retina: '',
           minZoom: 0,
           maxZoom: options.maxZoom,
           detectRetina: true

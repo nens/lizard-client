@@ -10,8 +10,8 @@
  */
 
 angular.module('map')
-.service('MapService', ['$rootScope', 'LeafletService', 'baselayer', 'State',
-  function ($rootScope, LeafletService, baselayer, State) {
+.service('MapService', ['$rootScope', 'LeafletService', 'UtfGridService', 'baselayer', 'State',
+  function ($rootScope, LeafletService, UtfGridService, baselayer, State) {
 
     var topography = 'http://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa98k8k';
     var satellite = 'http://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa79205';
@@ -122,25 +122,44 @@ angular.module('map')
         return service._map.latLngToLayerPoint(latlng);
       },
 
+      getDataFromUtfLayers: function (latLng, onResponse, onNoResponse) {
+        var assetGroups = _.filter(State.layers, {type: 'assetgroup', active: true});
+        var count = 0;
+        if (assetGroups.length === 0) {
+          onNoResponse();
+        }
+        else {
+          assetGroups.forEach(function (assetGroup) {
+            var utfLayer = _.find(service.mapLayers, {uuid: assetGroup.uuid}).utf;
+            UtfGridService.getData(utfLayer, {'geom': latLng})
+            .then(function (response) {
+              if (response) {
+                onResponse(response);
+              }
+              else if (count++ === assetGroups.length) {
+                onNoResponse();
+              }
+            });
+          });
+        }
+      },
+
       _setAssetOrGeomFromUtfOnState: function (latLng) {
         State.selected.assets = [];
         State.selected.geometries = [];
-        DataService.utfLayerGroup.getData('dataService', {'geom': latLng})
-        .then(null, null, function (response) {
-
-          var data = response.data;
-          if (response.data) {
+        service.getDataFromUtfLayers(
+          latLng,
+          function (data) {
             // Create one entry in selected.assets.
             var assetId = data.entity_name + '$' + data.id;
             State.selected.assets = [assetId];
             State.selected.geometries = [];
-          }
-
-          else {
+          },
+          function () {
             State.selected.assets = [];
             service._setGeomFromUtfToState(latLng);
           }
-        });
+        );
       },
 
       _setGeomFromUtfToState: function (latLng) {
@@ -173,23 +192,19 @@ angular.module('map')
       },
 
       _addAssetOrGeomFromUtfOnState: function (latLng) {
-
-        DataService.utfLayerGroup.getData('dataService', {'geom': latLng})
-        .then(null, null, function (response) {
-
-          var data = response.data;
-          if (data) {
+        service.getDataFromUtfLayersfunction(
+          latLng,
+          function (data) {
             // Create one entry in selected.assets.
             var assetId = data.entity_name + '$' + data.id;
             if (service._isUniqueAssetId(State.selected.assets, assetId)) {
               State.selected.assets.addAsset(assetId);
             }
-          }
-
-          else {
+          },
+          function () {
             service._addGeomFromUtfToState(latLng);
           }
-        });
+        );
       },
 
       _addGeomFromUtfToState: function (latLng) {
@@ -208,26 +223,13 @@ angular.module('map')
        * @return {[type]}        [description]
        */
       spatialSelect: function (latLng) {
-        var utfSlug;
-        if (DataService.utfLayerGroup){
-          utfSlug = DataService.utfLayerGroup.slug;
-        }
+        var assetGroups = _.filter(service.mapLayers, {type: 'assetgroup'});
         if (State.box.type === 'point') {
-          if (State.layers.assets[0] && State.layers.assets[0].active) {
-            this._setAssetOrGeomFromUtfOnState(latLng);
-          }
-          else {
-            this._setGeomFromUtfToState(latLng);
-          }
+          service._setAssetOrGeomFromUtfOnState(latLng);
         }
 
         else if (State.box.type === 'multi-point') {
-          if (State.layers.assets[0] && State.layers.assets[0].active) {
-            service._addAssetOrGeomFromUtfOnState(latLng);
-          }
-          else {
-            this._addGeomFromUtfToState(latLng);
-          }
+          service._addAssetOrGeomFromUtfOnState(latLng);
         }
         else if (State.box.type === 'line') {
           if (this.line.geometry.coordinates.length === 2
