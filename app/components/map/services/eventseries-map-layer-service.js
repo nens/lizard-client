@@ -17,10 +17,7 @@ angular.module('map')
 
       eventseriesMapLayer.uuid = options.uuid;
 
-      eventseriesMapLayer.type = 'eventseries';
-
       eventseriesMapLayer.cml = MapLayerService.createMarkerClusterLayer(options);
-
 
       eventseriesMapLayer.update = function (map, timeState, options) {
         var promise;

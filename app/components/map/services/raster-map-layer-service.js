@@ -17,8 +17,6 @@ angular.module('map')
 
       rasterMapLayer.uuid = options.uuid;
 
-      rasterMapLayer.type = 'raster';
-
       // Base of the image url without the time.
       rasterMapLayer._imageUrlBase = options.url;
 
@@ -42,8 +40,6 @@ angular.module('map')
 
       // Number of rasters currently underway.
       rasterMapLayer._nLoadingRasters = 0;
-
-      console.log(rasterMapLayer);
 
       rasterMapLayer.update = function (map, timeState, options) {
         console.log(rasterMapLayer);

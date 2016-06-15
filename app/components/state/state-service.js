@@ -74,7 +74,15 @@ angular.module('global-state')
         active: false,
         order: 0,
         opacity: 1
-      }
+      },
+      {
+        type: 'annotations',
+        uuid: 'Annotations',
+        active: false,
+        order: 0,
+        opacity: 1
+      },
+
     ];
 
     // slug of active baselayer, watched by baselayers directive. It is not

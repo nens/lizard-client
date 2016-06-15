@@ -2,7 +2,7 @@
 //layer-directive.js
 
 angular.module('data-menu')
-.directive('eventseries', ['MapService', 'eventseriesMapLayer', 'LayerAdderService', function (MapService, eventseriesMapLayer, LayerAdderService) {
+.directive('eventseries', ['MapService', 'DataService', 'eventseriesMapLayer', 'eventseriesDataLayer','LayerAdderService', function (MapService, DataService, eventseriesMapLayer, eventseriesDataLayer, LayerAdderService) {
   var link = function (scope) {
 
     scope.remove = LayerAdderService.remove;
@@ -14,6 +14,12 @@ angular.module('data-menu')
 
           MapService.mapLayers.push(eventseriesMapLayer({
             color: response.color,
+            uuid: scope.layer.uuid,
+            url: 'api/v2/events/?event_series=' + scope.layer.uuid,
+            spatialSelect: MapService.spatialSelect
+          }));
+
+          DataService.dataLayers.push(eventseriesDataLayer({
             uuid: scope.layer.uuid,
             url: 'api/v2/events/?event_series=' + scope.layer.uuid
           }));

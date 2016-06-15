@@ -10,20 +10,14 @@
  */
 
 angular.module('map')
-.service('MapService', ['$rootScope', 'CabinetService', 'LeafletService', 'NxtRegionsLayer', 'UtfGridService', 'baselayer', 'State',
-  function ($rootScope, CabinetService, LeafletService, NxtRegionsLayer, UtfGridService, baselayer, State) {
+.service('MapService', ['$rootScope', 'CabinetService', 'LeafletService', 'NxtRegionsLayer', 'UtfGridService', 'baselayer', 'eventseriesMapLayer', 'State',
+  function ($rootScope, CabinetService, LeafletService, NxtRegionsLayer, UtfGridService, baselayer, eventseriesMapLayer, State) {
 
     var topography = 'http://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa98k8k';
     var satellite = 'http://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa79205';
     var neutral = 'http://{s}.tiles.mapbox.com/v3/nelenschuurmans.l15e647c';
 
     var service = {
-
-      mapLayers: [
-        baselayer({ uuid: 'Topography', url: topography }),
-        baselayer({ uuid: 'Satellite', url: satellite }),
-        baselayer({ uuid: 'Neutral', url: neutral }),
-      ],
 
       _map: {}, // exposure is legacy, we should not mingle with the leaflet
                 // map instance outside of the map component.
@@ -45,7 +39,7 @@ angular.module('map')
 
       updateLayers: function (layers) {
         layers.forEach(function (layer) {
-          var mapLayer = _.find(service.mapLayers, {type: layer.type, uuid: layer.uuid});
+          var mapLayer = _.find(service.mapLayers, { uuid: layer.uuid });
           if (mapLayer) {
             if (layer.active) {
               mapLayer.update(service._map, State.temporal, layer);
@@ -346,6 +340,19 @@ angular.module('map')
       }
 
     };
+
+
+    service.mapLayers = [
+      baselayer({ uuid: 'Topography', url: topography }),
+      baselayer({ uuid: 'Satellite', url: satellite }),
+      baselayer({ uuid: 'Neutral', url: neutral }),
+      eventseriesMapLayer({ // This could be a dedicated annotationsMapLayer,
+        color: '#e67e22',   // but the functionality is the same as an event
+        uuid: 'Annotations',// series layers.
+        url: 'api/v2/annotations/',
+        spatialSelect: service.spatialSelect
+      })
+    ];
 
     Object.defineProperty(service, 'BASELAYERS', {
       get: function () {

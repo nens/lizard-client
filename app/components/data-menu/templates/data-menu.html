@@ -8,7 +8,7 @@
 
       <baselayers layers="layers"></baselayers>
 
-      <div ng-repeat="layer in layers | orderBy:'order' track by layer.uuid">
+      <div ng-repeat="layer in layers | orderBy:'order':reverse track by layer.uuid">
         <assetlayer
           ng-if="layer.type === 'assetgroup'"
           layer="layer">
@@ -25,6 +25,10 @@
           ng-if="!layer.scenario && layer.type === 'eventseries'"
           layer="layer">
         </eventseries>
+        <annotations-layer
+          ng-if="layer.type === 'annotations'"
+          layer="layer">
+        </annotations-layer>
       </div>
 
       <li>

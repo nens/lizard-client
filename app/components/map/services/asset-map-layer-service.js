@@ -17,8 +17,6 @@ angular.module('map')
 
       assetMapLayer.uuid = options.uuid;
 
-      assetMapLayer.type = 'assetgroup';
-
       assetMapLayer.tms = MapLayerService.createTmsLayer(options);
 
       assetMapLayer.utf = MapLayerService.createUtfLayer(options);

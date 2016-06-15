@@ -302,24 +302,10 @@ angular.module('data-menu')
           end: State.temporal.end
         };
 
-        if (geo.geometry.type === 'Point') {
-          options.geom = L.latLng(geo.geometry.coordinates[1], geo.geometry.coordinates[0]);
-        }
+        options.geom = geo.geometry;
 
-        else if (geo.geometry.type === 'LineString') {
-          var coords = geo.geometry.coordinates;
-          options.geom = [
-            L.latLng(coords[0][1], coords[0][0]),
-            L.latLng(coords[1][1], coords[1][0])
-          ];
-        }
-
-        else if (geo.geometry.type === 'Polygon' && geo.id) {
+        if (geo.geometry.type === 'Polygon' && geo.id) {
           options.id = geo.id;
-        }
-
-        if (geo.geometry.type === 'Polygon') {
-          options.geom = L.geoJson(geo).getBounds();
         }
 
         angular.forEach(State.layers, function (layer) {
@@ -338,13 +324,12 @@ angular.module('data-menu')
               dataLayer.getData(options).then(function (response) {
                 // async so remove anything obsolete.
                 geo.properties = geo.properties || {};
-                geo.properties[response.uuid] = geo.properties[response.uuid] || {};
+                geo.properties[layer.uuid] = geo.properties[layer.uuid] || {};
                 // Replace data and merge everything with existing state of
                 // property.
-                geo.properties[response.uuid].data = [];
-                _.merge(geo.properties[response.uuid], response);
-                if (!layer.active
-                  && layer.uuid in Object.keys(geo.properties)) {
+                geo.properties[layer.uuid].data = [];
+                _.merge(geo.properties[layer.uuid], response);
+                if (!layer.active && layer.uuid in Object.keys(geo.properties)) {
 
                     geo.properties[layer.uuid] = null;
 

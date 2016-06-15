@@ -54,7 +54,7 @@ angular.module('map')
     };
 
     this.createMarkerClusterLayer = function (options) {
-      options = {
+      var opts = {
         layer: options,
         color: options.color,
         showCoverageOnHover: false,  // When you mouse over a cluster it shows
@@ -117,7 +117,7 @@ angular.module('map')
         }
       };
 
-      return new LeafletVectorService(options);
+      return new LeafletVectorService(opts);
     };
 
   }]

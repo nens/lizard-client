@@ -13,10 +13,11 @@ angular.module("omnibox")
         return (
           user.authenticated &&
           (State.selected.assets.length ||
-           State.layerGroups.active.indexOf('annotations') !== -1) &&
+           State.layers.active.indexOf('Annotations') !== -1) &&
           (scope.omnibox.data.geometries.length +
            scope.omnibox.data.assets.length) < 2
-      )};
+        );
+      };
 
       // In pixels
       var SEARCHBAR_FROM_TOP = 60;

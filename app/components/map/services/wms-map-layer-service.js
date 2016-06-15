@@ -17,8 +17,6 @@ angular.module('map')
 
       wmsMapLayer.url = options.url;
 
-      wmsMapLayer.type = 'raster';
-
       wmsMapLayer.wms = MapLayerService.createWmsLayer(options);
 
       wmsMapLayer.update = function (map, timeState, options) {
