@@ -180,19 +180,19 @@ angular.module('map')
       /**
        * Watch state spatial view and update the whole shebang.
        */
-      scope.$watchCollection('spatial.view', function (n, o) {
+      scope.$watch('spatial.view', function (n, o) {
         if (n !== o && !mapSetsBounds) {
           MapService.setView(State.spatial.view);
           State.spatial.bounds = MapService.getBounds();
         } else {
           mapSetsView = false;
         }
-      });
+      }, true);
 
       /**
        * Watch bounds of state and update map bounds when state is changed.
        */
-      scope.$watchCollection('spatial.bounds', function (n, o) {
+      scope.$watch('spatial.bounds', function (n, o) {
         if (n !== o && !mapSetsBounds) {
           MapService.fitBounds(State.spatial.bounds);
           State.spatial.view = MapService.getView();
@@ -207,7 +207,7 @@ angular.module('map')
         else if (State.box.type === 'region') {
           MapService.getRegions(State.spatial.bounds);
         }
-      });
+      }, true);
 
       /**
        * Watch temporal.at of app and update maplayers accordingly.

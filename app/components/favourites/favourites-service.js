@@ -137,14 +137,15 @@ angular.module('favourites')
           );
         }
 
-        var baselayers = angular.copy(_.filter(State.layers, {'type': 'baselayer'}));_
+        var baselayers = angular.copy(_.filter(State.layers, {'type': 'baselayer'}));
 
-        // Use _.mergeWith to set the whole array to trigger functions of
+        // Use _.mergeWith to set the whole array to trigger setters of
         // properties.
-        var arrayStates = ['layers', 'timeseries', 'assets', 'geometries'];
+        var collections = ['active', 'timeseries', 'assets', 'geometries'];
         _.mergeWith(State, state, function (_state, favstate, key, parent) {
-          if (arrayStates.indexOf(key) !== -1) {
+          if (collections.indexOf(key) !== -1) {
             _state = favstate;
+            return _state;
           }
         });
 

@@ -126,7 +126,6 @@ angular.module('lizard-boostrap', ['favourites'])
           _.merge(version, bootstrap.version);
           if (applyState) {
             FavouritesService.applyFavourite(bootstrap.state);
-            console.log(urlState);
             FavouritesService.applyFavourite(urlState);
           }
         },

@@ -10,8 +10,8 @@
  */
 
 angular.module('map')
-.service('MapService', ['$rootScope', 'LeafletService', 'UtfGridService', 'baselayer', 'State',
-  function ($rootScope, LeafletService, UtfGridService, baselayer, State) {
+.service('MapService', ['$rootScope', 'CabinetService', 'LeafletService', 'NxtRegionsLayer', 'UtfGridService', 'baselayer', 'State',
+  function ($rootScope, CabinetService, LeafletService, NxtRegionsLayer, UtfGridService, baselayer, State) {
 
     var topography = 'http://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa98k8k';
     var satellite = 'http://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa79205';

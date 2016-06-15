@@ -102,14 +102,23 @@ angular.module('global-state')
     };
 
     var setActiveLayers = function (layerSlugs) {
+      state.layers.forEach(function (layer) {
+        if (layer.type !== 'baselayer') {
+          layer.active = false;
+        }
+      });
+
       layerSlugs.forEach(function (layerSlug) {
 
         var type = layerSlug.split('$')[0];
         var uuid = layerSlug.split('$')[1];
 
-        if (type === 'baselayer') { state.layers.baselayer = uuid; }
+        if (type === 'baselayer') {
+          state.layers.baselayer = uuid;
+        }
 
         else {
+
           var layer = _.find(state.layers, {uuid: uuid, type: type});
 
           if (layer) { layer.active = true; }
@@ -117,6 +126,7 @@ angular.module('global-state')
           else {
             state.layers.push({uuid: uuid, type: type, active: true});
           }
+
         }
 
       });

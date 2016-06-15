@@ -1,7 +1,7 @@
 //layer-directive.js
 
 angular.module('data-menu')
-.directive('wmslayer', ['MapService', 'LayerAdderService', function (MapService, LayerAdderService) {
+.directive('wmslayer', ['MapService', 'DataService', 'LayerAdderService', 'wmsMapLayer', 'wmsFeatureInfoDataLayer', function (MapService, DataService, LayerAdderService, wmsMapLayer, wmsFeatureInfoDataLayer) {
   var link = function (scope) {
 
     scope.remove = LayerAdderService.remove;
@@ -9,9 +9,17 @@ angular.module('data-menu')
     var cancelFirstActive = scope.$watch('layer.active', function () {
       if (scope.layer.active) {
         LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.uuid)
-        .then(function () {
+        .then(function (response) {
 
-          // Create maplayer, add maplayer to mapservice.
+          MapService.mapLayers.push(wmsMapLayer({
+            uuid: scope.layer.uuid,
+            wmsOptions: response.options,
+            url: response.url
+          }));
+
+          DataService.dataLayers.push(wmsFeatureInfoDataLayer({
+
+          }));
 
           MapService.updateLayers([scope.layer]);
         });

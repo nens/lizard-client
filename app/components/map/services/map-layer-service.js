@@ -9,7 +9,7 @@
  */
 angular.module('map')
 .service('MapLayerService', ['LeafletService', 'LeafletVectorService',
-  function (LeafletService,LeafletVectorService) {
+  function (LeafletService, LeafletVectorService) {
 
     this.MAXZOOMLEVEL = 21;
 
@@ -102,10 +102,10 @@ angular.module('map')
                   + '">'
                   + '<circle cx="' + pxSize + '" cy="' + pxSize
                   + '" r="' + pxSize + '" fill-opacity="0.4" fill="'
-                  + nonLeafLayer.color + '" />'
+                  + options.color + '" />'
                   + '<circle cx="' + pxSize + '" cy="' + pxSize + '" r="'
                   + (pxSize - 2) + '" fill-opacity="1" fill="'
-                  + nonLeafLayer.color + '" />'
+                  + options.color + '" />'
                   + '<text x="' + pxSize + '" y="' + (pxSize + 5)
                   + '" style="text-anchor: middle; fill: white;">'
                   + size + '</text>'

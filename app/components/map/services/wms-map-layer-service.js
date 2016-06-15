@@ -13,11 +13,13 @@ angular.module('map')
 
     return function (options) {
 
-      var wmsMapLayer = {};
+      var wmsMapLayer = options.wmsOptions;
 
-      wmsMapLayer.uuid = options.uuid;
+      wmsMapLayer.url = options.url;
 
       wmsMapLayer.type = 'raster';
+
+      wmsMapLayer.wms = MapLayerService.createWmsLayer(options);
 
       wmsMapLayer.update = function (map, timeState, options) {
         var promise;
@@ -25,21 +27,15 @@ angular.module('map')
         wmsMapLayer.wms.setOpacity(options.opacity);
 
         if (!map.hasLayer(wmsMapLayer.wms)) {
+          map.addLayer(wmsMapLayer.wms);
         }
 
         return promise;
       };
 
-
-      /**
-       * @description removes all _imageOverlays from the map. Removes
-       *              listeners from the _imageOverlays, the _imageOverlays
-       *              from this layer and removes the references to
-       *              the _imageOverlays.
-       */
       wmsMapLayer.remove = function (map) {
-        if (map.hasLayer(wmsMapLayer.cml)) {
-          map.removeLayer(wmsMapLayer.cml);
+        if (map.hasLayer(wmsMapLayer.wms)) {
+          map.removeLayer(wmsMapLayer.wms);
         }
       };
 
