@@ -3,7 +3,7 @@
     'layer-adder-wrapper': menu.layerAdderEnabled,
     'layer-switcher-wrapper': !menu.layerAdderEnabled,}">
 
-  <div ng-if="!menu.layerAdderEnabled" class="layer-switcher">
+  <div ng-show="!menu.layerAdderEnabled" class="layer-switcher">
     <ul class="list-group">
 
       <baselayers layers="layers"></baselayers>
@@ -22,7 +22,7 @@
           layer="layer">
         </wmslayer>
         <eventseries
-          ng-if="layer && layer.type === 'eventseries'"
+          ng-if="!layer.scenario && layer.type === 'eventseries'"
           layer="layer">
         </eventseries>
       </div>

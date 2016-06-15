@@ -136,7 +136,7 @@ angular.module('map')
               if (response) {
                 onResponse(response);
               }
-              else if (count++ === assetGroups.length) {
+              else if (count++ === assetGroups.length - 1) {
                 onNoResponse();
               }
             });
@@ -223,7 +223,6 @@ angular.module('map')
        * @return {[type]}        [description]
        */
       spatialSelect: function (latLng) {
-        var assetGroups = _.filter(service.mapLayers, {type: 'assetgroup'});
         if (State.box.type === 'point') {
           service._setAssetOrGeomFromUtfOnState(latLng);
         }

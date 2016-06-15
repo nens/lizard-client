@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module("omnibox")
-.directive("omnibox", ['$window', '$document', 'State',
-  function ($window, $document, State) { return {
+.directive("omnibox", ['$window', '$document', 'State', 'user',
+  function ($window, $document, State, user) { return {
 
     /**
      * Keeps omnibox size in check and creates and maintains a scrollbar.

@@ -40,9 +40,9 @@ angular.module('data-menu')
        * @param {dict} responseHeaders - Not actually used but required
        *                                 by $resource.
        */
-      var fetchLayersSuccess = function (
-          allLayers, responseHeaders) {
-        scope.availableLayers = allLayers;
+      var fetchLayersSuccess = function (response, responseHeaders) {
+        console.log(response.data);
+        scope.availableLayers = response.data;
       };
 
       /**
@@ -51,9 +51,7 @@ angular.module('data-menu')
        *                              user to be added to the portal.
        */
       scope.addLayer = function (layer) {
-        scope.state.layers.push({layer});
-        // Turn the layergroup on.
-        layer.active = true;
+        LayerAdderService.add(layer);
         // Go back to the layer chooser menu.
         scope.menu.layerAdderEnabled = !scope.menu.layerAdderEnabled;
       };
@@ -76,7 +74,8 @@ angular.module('data-menu')
         LayerAdderService.fetchLayers(
           query,
           fetchLayersSuccess,
-          fetchLayersError);
+          fetchLayersError
+        );
       };
 
       /**

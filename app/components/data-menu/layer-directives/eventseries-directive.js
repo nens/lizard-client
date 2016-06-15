@@ -2,7 +2,7 @@
 //layer-directive.js
 
 angular.module('data-menu')
-.directive('eventseries', ['MapService', 'LayerAdderService', function (MapService, LayerAdderService) {
+.directive('eventseries', ['MapService', 'eventseriesMapLayer', 'LayerAdderService', function (MapService, eventseriesMapLayer, LayerAdderService) {
   var link = function (scope) {
 
     scope.remove = LayerAdderService.remove;
@@ -10,9 +10,13 @@ angular.module('data-menu')
     var cancelFirstActive = scope.$watch('layer.active', function () {
       if (scope.layer.active) {
         LayerAdderService.fetchLayer(scope.layer.type, scope.layer.uuid)
-        .then(function () {
+        .then(function (response) {
 
-          // Create maplayer, add maplayer to mapservice.
+          MapService.mapLayers.push(eventseriesMapLayer({
+            color: response.color,
+            uuid: scope.layer.uuid,
+            url: 'api/v2/events/?event_series=' + scope.layer.uuid
+          }));
 
           MapService.updateLayers([scope.layer]);
         });

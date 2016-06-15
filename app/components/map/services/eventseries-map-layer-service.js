@@ -27,7 +27,8 @@ angular.module('map')
 
         eventseriesMapLayer.cml.syncTime(timeState);
 
-        if (!map.hasLayer(eventseriesMapLayer.cml) {
+        if (!map.hasLayer(eventseriesMapLayer.cml)) {
+          map.addLayer(eventseriesMapLayer.cml);
         }
 
         return promise;

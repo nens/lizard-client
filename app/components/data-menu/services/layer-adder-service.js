@@ -13,7 +13,10 @@ angular.module('data-menu')
        *                           GET.
        */
       this.fetchLayers = function (params, success, error) {
-        // layers.query(params, success, error);
+        params.type = 'assetgroup,eventseries,layer,rasterstore';
+        return $http.get('api/v2/search/', {
+          params: params
+        }).then(success, error);
       };
 
       /**
@@ -35,9 +38,16 @@ angular.module('data-menu')
       };
 
       this.remove = function (layer) {
-        console.log('remove', layer);
         _.remove(State.layers, {uuid: layer.uuid});
-        console.log(State);
+      };
+
+      this.add = function (searchLayer) {
+        State.layers.push({
+          active: true,
+          type: searchLayer.entity_name,
+          uuid: searchLayer.entity_uuid,
+          name: searchLayer.title
+        });
       };
 
       return this;
