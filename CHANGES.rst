@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix no attributes for nested assets
 
 
 Release 3.2.3 (2016-6-10)
