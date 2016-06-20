@@ -13,7 +13,7 @@ angular.module("omnibox")
         return (
           user.authenticated &&
           (State.selected.assets.length ||
-           State.layers.active.indexOf('Annotations') !== -1) &&
+           State.annotations.active) &&
           (scope.omnibox.data.geometries.length +
            scope.omnibox.data.assets.length) < 2
         );

@@ -6,14 +6,14 @@ angular.module('data-menu')
 
     scope.next = function () {
 
-      var currentLayer = _.find(MapService.BASELAYERS, function (layer) {
-        return layer.uuid === scope.layers.baselayer;
+      var currentLayer = _.find(MapService.baselayers, function (layer) {
+        return layer.id === scope.state.baselayer;
       });
 
-      var currentIndex = _.indexOf(MapService.BASELAYERS, currentLayer);
-      var next = (currentIndex + 1) % (MapService.BASELAYERS.length);
+      var currentIndex = _.indexOf(MapService.baselayers, currentLayer);
+      var next = (currentIndex + 1) % (MapService.baselayers.length);
 
-      scope.layers.baselayer = MapService.BASELAYERS[next].uuid;
+      scope.state.baselayer = MapService.baselayers[next].id;
 
     };
 
@@ -21,9 +21,7 @@ angular.module('data-menu')
 
   return {
     link: link,
-    scope: {
-      layers: '='
-    },
+    scope: { state: '=' },
     templateUrl: 'data-menu/templates/baselayers.html',
     restrict: 'E',
   };

@@ -48,7 +48,7 @@ angular.module('lizard-nxt')
     }
 
     var requestOptions = {
-      raster_names: options.uuid,
+      rasters: options.uuid,
       srs: srs,
       start: startString,
       stop: endString,
@@ -89,7 +89,7 @@ angular.module('lizard-nxt')
    *                              otherwise just 256x256px.
    * @return {string}            url
    */
-  var buildURLforWMS = function (url, uuid, map, singleTile, options) {
+  var buildURLforWMS = function (url, map, singleTile, options) {
     options = options || {};
     var bounds = options.bounds || map.getBounds(),
         DEFAULT_TILE_SIZE = 256; // in px
@@ -101,7 +101,7 @@ angular.module('lizard-nxt')
 
     result = url
       + '?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng'
-      + '&SRS=EPSG%3A3857&LAYERS=' + uuid
+      + '&SRS=EPSG%3A3857'
       + '&BBOX=' + _buildBbox(imgBounds);
 
     if (singleTile) {

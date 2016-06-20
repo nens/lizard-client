@@ -17,6 +17,8 @@ angular.module('map')
 
       assetMapLayer.uuid = options.uuid;
 
+      options.zIndex = 9999;
+
       assetMapLayer.tms = MapLayerService.createTmsLayer(options);
 
       assetMapLayer.utf = MapLayerService.createUtfLayer(options);

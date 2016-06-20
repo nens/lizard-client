@@ -63,8 +63,11 @@ angular.module("lizard-nxt", [
   });
 })
 
+// The internet says it is better to set debugInfoEnabled to false in production
+// but in dev it is still handy to have it set to true when compiling. No access
+// to anything from the server yet, so checking window.location.
 .config(['$compileProvider', function ($compileProvider) {
-  $compileProvider.debugInfoEnabled(false);
+  $compileProvider.debugInfoEnabled(window.location.host === 'localhost:9000');
 }])
 
 /**

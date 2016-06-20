@@ -26,6 +26,14 @@ angular.module('map')
         service._map.remove();
       },
 
+      mapLayers: [],
+
+      baselayers: [
+        baselayer({ id: 'topography', url: topography }),
+        baselayer({ id: 'satellite', url: satellite }),
+        baselayer({ id: 'neutral', url: neutral }),
+      ],
+
       /**
        * Initializes the map service
        * @param  {DOMelement} element      used by leaflet as the map container.
@@ -48,6 +56,24 @@ angular.module('map')
             }
           }
         });
+      },
+
+      updateBaselayers: function () {
+        service.baselayers.forEach(function (baselayer) {
+          if (baselayer.id === State.baselayer) {
+            baselayer.update(service._map);
+          } else {
+            baselayer.remove(service._map);
+          }
+        });
+      },
+
+      updateAnnotations: function () {
+        if (State.annotations.active) {
+          service.annotationsLayer.update(service._map, State.temporal);
+        } else {
+          service.annotationsLayer.remove(service._map);
+        }
       },
 
       /**
@@ -186,7 +212,7 @@ angular.module('map')
       },
 
       _addAssetOrGeomFromUtfOnState: function (latLng) {
-        service.getDataFromUtfLayersfunction(
+        service.getDataFromUtfLayers(
           latLng,
           function (data) {
             // Create one entry in selected.assets.
@@ -341,23 +367,13 @@ angular.module('map')
 
     };
 
-
-    service.mapLayers = [
-      baselayer({ uuid: 'Topography', url: topography }),
-      baselayer({ uuid: 'Satellite', url: satellite }),
-      baselayer({ uuid: 'Neutral', url: neutral }),
-      eventseriesMapLayer({ // This could be a dedicated annotationsMapLayer,
-        color: '#e67e22',   // but the functionality is the same as an event
-        uuid: 'Annotations',// series layers.
-        url: 'api/v2/annotations/',
-        spatialSelect: service.spatialSelect
-      })
-    ];
-
-    Object.defineProperty(service, 'BASELAYERS', {
-      get: function () {
-        return _.filter(service.mapLayers, {type: 'baselayer'});
-      }
+    // This could be a dedicated annotationsMapLayer, but the functionality is
+    // the same as an event series layers.
+    service.annotationsLayer = eventseriesMapLayer({
+      color: '#e67e22',
+      uuid: 'annotations',
+      url: 'api/v2/annotations/',
+      spatialSelect: service.spatialSelect
     });
 
     /**

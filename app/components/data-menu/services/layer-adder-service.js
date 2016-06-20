@@ -2,7 +2,7 @@
  * Service to handle layer-group retrieval.
  */
 angular.module('data-menu')
-  .service("LayerAdderService", ['$http', 'State', function ($http, State) {
+  .service("LayerAdderService", ['$http', 'UtilService', 'State', function ($http, UtilService, State) {
 
       /**
        * Get layergroups from the API.
@@ -48,6 +48,16 @@ angular.module('data-menu')
           uuid: searchLayer.entity_uuid,
           name: searchLayer.title
         });
+      };
+
+      this.zoomToBounds = function () {
+        State.spatial.bounds = L.latLngBounds(
+          L.latLng(this.bounds.south, this.bounds.west),
+          L.latLng(this.bounds.north, this.bounds.east)
+        );
+        State.temporal.start = this.first;
+        State.temporal.end = this.last;
+        UtilService.announceMovedTimeline(State);
       };
 
       return this;

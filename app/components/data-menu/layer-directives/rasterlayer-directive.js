@@ -6,6 +6,8 @@ angular.module('data-menu')
 
     scope.remove = LayerAdderService.remove;
 
+    if (!scope.layer.opacity) { scope.layer.opacity = 1; }
+
     var cancelFirstActive = scope.$watch('layer.active', function () {
       if (scope.layer.active) {
         LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.uuid)
@@ -13,9 +15,10 @@ angular.module('data-menu')
 
           MapService.mapLayers.push(rasterMapLayer({
             uuid: scope.layer.uuid,
-            url: '/api/v2/wms',
+            url: 'api/v2/wms',
             temporalResolution: 36000,
-            styles: {}
+            slug: response.slug,
+            wmsOptions: response.options
           }));
 
           DataService.dataLayers.push(rasterDataLayer({
@@ -30,6 +33,13 @@ angular.module('data-menu')
 
           MapService.updateLayers([scope.layer]);
           DataService.refreshSelected([scope.layer]);
+
+          scope.zoomToBounds = LayerAdderService.zoomToBounds.bind({
+            bounds: response.spatial_bounds,
+            first: response.first_value_timestamp,
+            last: response.last_value_timestamp
+          });
+
         });
 
         cancelFirstActive();

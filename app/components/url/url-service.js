@@ -263,11 +263,16 @@ angular.module('lizard-nxt')
        * @param {object} state config object
        * @param {object} layerGroups list
        */
-      setlayersUrl: function (state, layers) {
-        if (layers === undefined) { return; }
+      setlayersUrl: function (config, state) {
+        var layers = state.layers.active;
+        if (state.annotations.active) {
+          layers.unshift('annotations');
+        }
+        layers.unshift(state.baselayer);
+        if (state === undefined) { return; }
         LocationGetterSetter.setUrlValue(
-          state.layers.part,
-          state.layers.index,
+          config.layers.part,
+          config.layers.index,
           layers.join(',')
         );
       },
@@ -463,9 +468,40 @@ angular.module('lizard-nxt')
         config.layers.index
       );
       if (layersFromURL) {
-        return layersFromURL.split(',');
+        var actives = layersFromURL.split(',');
+        var layers = _.takeRightWhile(actives, function (layer) {
+          layer.includes('$');
+        });
+        return layers;
       }
     };
+
+    var getBaselayer = function () {
+      var layersFromURL = LocationGetterSetter.getUrlValue(
+        config.layers.part,
+        config.layers.index
+      );
+      if (layersFromURL) {
+        var actives = layersFromURL.split(',');
+        return actives[0];
+      }
+    };
+
+    var getAnnotations = function () {
+      var layersFromURL = LocationGetterSetter.getUrlValue(
+        config.layers.part,
+        config.layers.index
+      );
+      var present = false;
+      if (layersFromURL) {
+        var actives = layersFromURL.split(',');
+        if (actives.length > 1) {
+           present = actives[1].includes('annotations');
+        }
+      }
+      return present;
+    };
+
 
     var getBoxType = function () {
       var boxType = LocationGetterSetter.getUrlValue(
@@ -545,7 +581,7 @@ angular.module('lizard-nxt')
           state.spatial.view.zoom
         );
 
-        UrlState.setlayersUrl(config, state.layers.active);
+        UrlState.setlayersUrl(config, state);
 
       },
 
@@ -553,6 +589,8 @@ angular.module('lizard-nxt')
         return {
           language: getLanguage(),
           context: getContext(),
+          baselayer: getBaselayer(),
+          annotations: { active: getAnnotations() },
           layers: {active: getLayers()},
           box: {type: getBoxType()},
           selected: getSelected(),

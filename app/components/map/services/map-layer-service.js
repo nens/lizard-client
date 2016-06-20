@@ -14,14 +14,13 @@ angular.module('map')
     this.MAXZOOMLEVEL = 21;
 
     this.createTmsLayer = function (options) {
-      var layerUrl = options.url + '/{z}/{x}/{y}{retina}.png';
+      var layerUrl = options.url + '/{z}/{x}/{y}.png';
 
       return LeafletService.tileLayer(
         layerUrl, {
-          retina: '',
           minZoom: 0,
           maxZoom: options.maxZoom,
-          detectRetina: true
+          zIndex: options.zIndex
         }
       );
     };
@@ -34,7 +33,6 @@ angular.module('map')
         useJsonP: false,
         minZoom: options.minZoom || 0,
         maxZoom: options.maxZoom || this.MAXZOOMLEVEL,
-        zIndex: options.zIndex
       });
     };
 

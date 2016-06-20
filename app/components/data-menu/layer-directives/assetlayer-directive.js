@@ -6,6 +6,8 @@ angular.module('data-menu')
 
     scope.remove = LayerAdderService.remove;
 
+    if (!scope.layer.opacity) { scope.layer.opacity = 1; }
+
     // Create maplayer, add maplayer to mapservice.
     MapService.mapLayers.push(assetMapLayer({
       uuid: scope.layer.uuid,

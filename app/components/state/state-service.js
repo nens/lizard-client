@@ -52,52 +52,14 @@ angular.module('global-state')
     // Default language.
     state.language = 'nl';
 
-    // Collection of layers as:
-    state.layers = [
-      {
-        type: 'baselayer',
-        uuid: 'Topography',
-        active: true,
-        order: 0,
-        opacity: 1
-      },
-      {
-        type: 'baselayer',
-        uuid: 'Satellite',
-        active: false,
-        order: 0,
-        opacity: 1
-      },
-      {
-        type: 'baselayer',
-        uuid: 'Neutral',
-        active: false,
-        order: 0,
-        opacity: 1
-      },
-      {
-        type: 'annotations',
-        uuid: 'Annotations',
-        active: false,
-        order: 0,
-        opacity: 1
-      },
-
-    ];
-
     // slug of active baselayer, watched by baselayers directive. It is not
     // enumarable iteratees only encounter arrays.
-    Object.defineProperty(state.layers, 'baselayer', {
-      get: function () {
-        return _.find(state.layers, {type: 'baselayer', active: true}).uuid;
-      },
-      set: function (uuid) {
-        var old = _.find(state.layers, {type: 'baselayer', active: true});
-        old.active = false;
-        _.find(state.layers, {type: 'baselayer', uuid: uuid}).active = true;
-      }
-    });
+    state.baselayer = 'topography';
 
+    state.annotations = {present: true, active: false};
+
+    // Collection of layers
+    state.layers = [];
 
     var getLayerSlugs = function (stateLayers) {
       var slugs = [];
@@ -110,31 +72,19 @@ angular.module('global-state')
     };
 
     var setActiveLayers = function (layerSlugs) {
-      state.layers.forEach(function (layer) {
-        if (layer.type !== 'baselayer') {
-          layer.active = false;
-        }
-      });
+      _.forEach(state.layers, { active: false });
 
       layerSlugs.forEach(function (layerSlug) {
 
         var type = layerSlug.split('$')[0];
         var uuid = layerSlug.split('$')[1];
 
-        if (type === 'baselayer') {
-          state.layers.baselayer = uuid;
-        }
+        var layer = _.find(state.layers, {uuid: uuid, type: type});
+
+        if (layer) { layer.active = true; }
 
         else {
-
-          var layer = _.find(state.layers, {uuid: uuid, type: type});
-
-          if (layer) { layer.active = true; }
-
-          else {
-            state.layers.push({uuid: uuid, type: type, active: true});
-          }
-
+          state.layers.push({uuid: uuid, type: type, active: true});
         }
 
       });

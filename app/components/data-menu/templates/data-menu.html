@@ -6,9 +6,9 @@
   <div ng-show="!menu.layerAdderEnabled" class="layer-switcher">
     <ul class="list-group">
 
-      <baselayers layers="layers"></baselayers>
+      <baselayers state="state"></baselayers>
 
-      <div ng-repeat="layer in layers | orderBy:'order':reverse track by layer.uuid">
+      <div ng-repeat="layer in state.layers track by layer.uuid">
         <assetlayer
           ng-if="layer.type === 'assetgroup'"
           layer="layer">
@@ -25,11 +25,12 @@
           ng-if="!layer.scenario && layer.type === 'eventseries'"
           layer="layer">
         </eventseries>
-        <annotations-layer
-          ng-if="layer.type === 'annotations'"
-          layer="layer">
-        </annotations-layer>
       </div>
+
+      <annotations-layer
+        ng-if="state.annotations.present"
+        annotations="state.annotations">
+      </annotations-layer>
 
       <li>
         <a class="layer-item add-data"

@@ -340,6 +340,27 @@ angular.module('data-menu')
 
         });
 
+        if (State.annotations.active) {
+          var uuid = 'annotations';
+          var annotationsDataLayer = _.find(
+            instance.dataLayers,
+            {uuid: uuid}
+          );
+          promises.push(
+            annotationsDataLayer.getData(options).then(function (response) {
+              // async so remove anything obsolete.
+              geo.properties = geo.properties || {};
+              geo.properties[uuid] = geo.properties[uuid] || {};
+              // Replace data and merge everything with existing state of
+              // property.
+              geo.properties[uuid].data = response;
+              if (!State.annotations.active && uuid in Object.keys(geo.properties)) {
+                  geo.properties[uuid] = null;
+              }
+            })
+          );
+        }
+
         $q.all(promises).then(function () {
             geo.properties = geo.properties || {};
             defer.resolve(geo);

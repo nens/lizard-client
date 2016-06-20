@@ -6,6 +6,8 @@ angular.module('data-menu')
 
     scope.remove = LayerAdderService.remove;
 
+    if (!scope.layer.opacity) { scope.layer.opacity = 1; }
+
     var cancelFirstActive = scope.$watch('layer.active', function () {
       if (scope.layer.active) {
         LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.uuid)

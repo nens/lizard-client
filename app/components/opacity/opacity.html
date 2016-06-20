@@ -1,6 +1,6 @@
-<div class="ng-class: {inactive: !layer.active || !showOpacitySlider}; progress"
-	ng-click="adjustOpacity" ng-touch="adjustOpacity">
-    <div class="progress-bar" role="progressbar" ng-style="{ 'width': percOpacity }">
+<div class="ng-class: {inactive: !layer.active || layer.type === 'eventseries' || layer.type === 'annotations'}; progress"
+	ng-click="adjustOpacity($event)" ng-touch="adjustOpacity($event)">
+    <div class="progress-bar" role="progressbar" ng-style="{ 'width': getWidth(layer.opacity) }">
       <span class="sr-only"></span>
     </div>
 </div>

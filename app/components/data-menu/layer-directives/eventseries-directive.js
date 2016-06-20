@@ -25,6 +25,13 @@ angular.module('data-menu')
           }));
 
           MapService.updateLayers([scope.layer]);
+
+          scope.zoomToBounds = LayerAdderService.zoomToBounds.bind({
+            bounds: response.spatial_bounds,
+            first: response.first_value_timestamp,
+            last: response.last_value_timestamp
+          });
+
         });
 
         cancelFirstActive();

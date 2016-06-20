@@ -8,7 +8,7 @@
       <div class="layer-chooser-tools">
         <i class="fa fa-close"
            ng-click="remove(layer); $event.stopPropagation()"></i>
-        <i ng-if="layer.type === 'raster' || layer.type === 'eventseries'"
+        <i ng-if="zoomToBounds"
           ng-click="zoomToBounds(); $event.stopPropagation()"
           ng-show="layer.active"
           class="fa fa-crosshairs">

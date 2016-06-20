@@ -6,7 +6,7 @@ angular.module('data-menu')
 
     DataService.dataLayers.push(
       eventseriesDataLayer({
-        uuid: 'Annotations',
+        uuid: 'annotations',
         url: 'api/v2/annotations/'
       })
     );
@@ -16,7 +16,7 @@ angular.module('data-menu')
   return {
     link: link,
     scope: {
-      layer: '=',
+      annotations: '=',
     },
     templateUrl: 'data-menu/templates/annotations-layer.html',
     restrict: 'E',

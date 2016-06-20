@@ -1,10 +1,9 @@
 <div class="noselect">
   <label
-    single-click="layer.active = !layer.active"
-    ng-class ="{active: layer.active }"
+    single-click="annotations.active = !annotations.active"
+    ng-class ="{active: annotations.active }"
     class="layer-item layer-img"
-    title="<% layer.uuid %>">
-      <span ng-bind="layer.uuid"></span>
+    title="Annotations layer">
+      <span translate>Annotations</span>
   </label>
 </div>
-<opacity-slider title="<% tooltips.transparency %>" layer="layer"></opacity-slider>

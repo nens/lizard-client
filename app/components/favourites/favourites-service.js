@@ -137,9 +137,6 @@ angular.module('favourites')
           );
         }
 
-        var baselayers = angular.copy(_.filter(State.layers, {'type': 'baselayer'}));
-        var annnotationlayer = angular.copy(_.find(State.layers, {'type': 'annotations'}));
-
         // Use _.mergeWith to set the whole array to trigger setters of
         // properties.
         var collections = ['active', 'timeseries', 'assets', 'geometries'];
@@ -149,17 +146,6 @@ angular.module('favourites')
             return _state;
           }
         });
-
-        _.forEach(baselayers, function (baselayer) {
-          if (!_.find(State.layers, {type: 'baselayer', uuid: baselayer.uuid})) {
-            State.layers.push(baselayer);
-          }
-        });
-
-        if (!_.find(State.layers, {type: 'annotations', uuid: annnotationlayer.uuid})) {
-          State.layers.push(annnotationlayer);
-        }
-
 
         UtilService.announceMovedTimeline(State);
 

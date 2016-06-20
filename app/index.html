@@ -37,11 +37,7 @@
     <!-- use ng-if to reiniatialize when context changes -->
     <div ng-if="context === 'map' || context === 'scenarios'">
       <map
-        spatial="state.spatial"
-        temporal="state.spatial"
-        selected="state.selected"
-        layers="state.layers"
-        box="state.box">
+        state="state">
       </map>
       <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
       <timeline class="timeline-map"></timeline>
@@ -131,7 +127,6 @@
     <script src="/lib/leaflet/leaflet-service.js"></script>
     <script src="/lib/leaflet/leaflet-utfgrid-lizard.js"></script>
     <script src="/lib/leaflet/leaflet-vector-service.js"></script>
-    <script src="/lib/leaflet/temporal-wms-layer.js"></script>
 
     <script src="/components/state/state.js"></script>
     <script src="/components/state/state-service.js"></script>

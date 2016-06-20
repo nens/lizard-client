@@ -17,6 +17,8 @@ angular.module('map')
 
       rasterMapLayer.uuid = options.uuid;
 
+      rasterMapLayer.slug = options.slug
+
       // Base of the image url without the time.
       rasterMapLayer._imageUrlBase = options.url;
 
@@ -42,7 +44,6 @@ angular.module('map')
       rasterMapLayer._nLoadingRasters = 0;
 
       rasterMapLayer.update = function (map, timeState, options) {
-        console.log(rasterMapLayer);
         var promise;
 
         if (rasterMapLayer.temporal) {
@@ -99,18 +100,8 @@ angular.module('map')
           time: _formatter(date)
         };
 
-        options = angular.extend(opts, options);
-
-        var url = RasterService.buildURLforWMS(
-          rasterMapLayer._imageUrlBase,
-          rasterMapLayer.uuid,
-          map,
-          false,
-          options
-        );
-
         rasterMapLayer._imageOverlays = [
-          LeafletService.tileLayer.wms(url, options)
+          LeafletService.tileLayer.wms(rasterMapLayer._imageUrlBase, opts)
         ];
 
         // defer is passed to loadlistener to be resolved when done.
@@ -268,7 +259,6 @@ angular.module('map')
 
           rasterMapLayer._imageUrlBase = RasterService.buildURLforWMS(
             rasterMapLayer._imageUrlBase,
-            rasterMapLayer.uuid,
             map,
             rasterMapLayer.timeState.playing,
             options
@@ -389,7 +379,7 @@ angular.module('map')
       rasterMapLayer._determineStore = function (timeState) {
 
         return {
-          name: rasterMapLayer.uuid,
+          name: rasterMapLayer.slug,
           resolution: rasterMapLayer._temporalResolution
         };
 

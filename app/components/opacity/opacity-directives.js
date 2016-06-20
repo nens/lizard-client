@@ -5,10 +5,10 @@ angular.module('data-menu')
   .directive('opacitySlider', ['MapService', function (MapService) {
 
   var link = function (scope, element, attrs) {
-    var opacity = scope.layer.opacity;
-    scope.percOpacity = opacity * 100 + '%';
-    var layerChooserWidth = 170; // chrome is the new IE
-    var localClick;
+
+    scope.getWidth = function () {
+      return scope.layer.opacity * 100 + '%';
+    };
 
     /**
      * @description captures the location of click
@@ -17,17 +17,12 @@ angular.module('data-menu')
      */
     scope.adjustOpacity = function (e) {
       e.preventDefault();
-      localClick = (e.originalEvent.layerX < 0) ? e.offsetX : e.originalEvent.layerX;
-      if (localClick === undefined) {
-        localClick = e.originalEvent.changedTouches[0].offsetX;
-      }
-      var newOpacity = localClick / layerChooserWidth;
-      scope.$apply(function () {
-        scope.percOpacity = newOpacity * 100 + '%';
-      });
 
+      var localClick = e.offsetX;
+      var layerChooserWidth = element.width();
+      var newOpacity = localClick / layerChooserWidth;
       scope.layer.opacity = newOpacity;
-      MapService.update();
+      MapService.updateLayers([scope.layer]);
     };
 
   };
