@@ -376,6 +376,10 @@ angular.module('map')
       spatialSelect: service.spatialSelect
     });
 
+    Object.defineProperty(service, 'loading', {
+      get: function () { return _.some(service.mapLayers, {loading: true}); }
+    });
+
     /**
      * @function
      * @memberOf map.MapService

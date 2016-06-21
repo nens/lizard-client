@@ -51,6 +51,8 @@ angular.module('lizard-nxt')
   this.roundTimestamp = function (timestamp, coefficient, up) {
     var format;
 
+    if (!coefficient) { coefficient = 1; }
+
     if (up) {
       timestamp += coefficient / 2;
     }

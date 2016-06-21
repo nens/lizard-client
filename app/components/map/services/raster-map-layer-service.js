@@ -8,16 +8,14 @@
  * Additional methods used to extend nxtLayer with leaflet/map specific methods.
  */
 angular.module('map')
-.factory('rasterMapLayer', ['$q', 'LeafletService', 'MapLayerService', 'RasterService', 'UtilService',
-  function ($q, LeafletService, MapLayerService, RasterService, UtilService) {
+.factory('rasterMapLayer', ['$rootScope', 'LeafletService', 'MapLayerService', 'RasterService', 'UtilService',
+  function ($rootScope, LeafletService, MapLayerService, RasterService, UtilService) {
 
     return function (options) {
 
-      var rasterMapLayer = {};
+      var rasterMapLayer = options;
 
-      rasterMapLayer.uuid = options.uuid;
-
-      rasterMapLayer.slug = options.slug
+      rasterMapLayer.loading = false;
 
       // Base of the image url without the time.
       rasterMapLayer._imageUrlBase = options.url;
@@ -31,8 +29,6 @@ angular.module('map')
       // Lookup to store which data correspond to which imageOverlay.
       rasterMapLayer._frameLookup = {};
 
-      rasterMapLayer._temporalResolution = options.temporalResolution;
-
       // Length of the buffer, set in the initialization. Ideally the buffer
       // is small to get up to speed fast, for slow connections or high
       // frequent images it should be large. When having a very sparse
@@ -44,17 +40,22 @@ angular.module('map')
       rasterMapLayer._nLoadingRasters = 0;
 
       rasterMapLayer.update = function (map, timeState, options) {
-        var promise;
 
-        if (rasterMapLayer.temporal) {
-          promise = rasterMapLayer._syncTime();
+        rasterMapLayer._setOpacity(options.opacity);
+
+        if (rasterMapLayer.temporal && timeState.playing) {
+          rasterMapLayer._syncTime(timeState, map, options, options);
+        }
+
+        else if (rasterMapLayer.temporal) {
+          rasterMapLayer.remove(map);
+          rasterMapLayer._add(timeState, map, options);
         }
 
         else if (!map.hasLayer(rasterMapLayer._imageOverlays[0])) {
-          promise = rasterMapLayer._add(map, timeState, options);
+          rasterMapLayer._add(timeState, map, options);
         }
 
-        return promise;
       };
 
 
@@ -81,12 +82,12 @@ angular.module('map')
        * @return a promise that resolves when the image has loaded. Usefull
        *         for sequential loading of layers.
        */
-      rasterMapLayer._add = function (map, timeState, options, optionalDefer) {
+      rasterMapLayer._add = function (timeState, map, options) {
 
-        var defer = optionalDefer || $q.defer(),
-            opacity = options.opacity,
+        var opacity = options.opacity,
             date = new Date(rasterMapLayer._mkTimeStamp(timeState.at)),
             store = rasterMapLayer._determineStore(timeState);
+            rasterMapLayer.temporalResolution = store.resolution;
 
         var opts = {
           layers: store.name,
@@ -100,56 +101,18 @@ angular.module('map')
           time: _formatter(date)
         };
 
+        angular.extend(opts, rasterMapLayer.wmsOptions);
+        opts.styles.replace('/', '-');
+
         rasterMapLayer._imageOverlays = [
           LeafletService.tileLayer.wms(rasterMapLayer._imageUrlBase, opts)
         ];
 
-        // defer is passed to loadlistener to be resolved when done.
         rasterMapLayer._addLoadListener(
           rasterMapLayer._imageOverlays[0].addTo(map),
-          timeState.at,
-          defer
+          timeState.at
         );
 
-        return defer.promise;
-      };
-
-      /**
-       * @summary    Sets the new timeState on the layer. And updates the layer
-       *             to the new time.
-       *
-       * @parameter timeState nxt object containing current time on at.
-       * @parameter map leaflet map to add layers to.
-       *
-       * @return a promise that resolves when the layer has finished
-       *         syncing. It is considered finished when it finishes loading
-       *         a new buffer or when it was able to set a new frame from its
-       *         buffer.
-       */
-      rasterMapLayer._syncTime =  function (timeState, map) {
-        var defer = $q.defer();
-
-        // this only works for stores with different aggregation levels
-        // for now this is only for the radar stores
-        // change image url based on timestate.
-        var store = rasterMapLayer._determineStore(timeState);
-
-        rasterMapLayer._temporalResolution = store.resolution;
-
-        // This breaks styles with negative values
-        // and for the moment only applies to radar.
-        if (rasterMapLayer.slug.split('/')[0] === 'radar') {
-          rasterMapLayer.options.styles = rasterMapLayer.options.styles.split('-')[0]
-            + '-'
-            + store.name.split('/')[1];
-        }
-
-        // Continue when layers need to update to new time.
-        if (rasterMapLayer._imageOverlays.length) {
-          rasterMapLayer._syncToNewTime(timeState, map, defer);
-        }
-
-        return defer.promise;
       };
 
       /**
@@ -174,28 +137,10 @@ angular.module('map')
        * animation or non-animation.
        * @param  {object} map         leaflet map
        * @param  {int}    currentDate ms from epoch
-       * @param  {object} defer       defer to resolve when done
        */
-      rasterMapLayer._syncToNewTime = function (timeState, map, defer) {
+      rasterMapLayer._syncTime = function (timeState, map, wmsOptions) {
         var currentDate = rasterMapLayer._mkTimeStamp(timeState.at);
-        if (timeState.playing) {
-          rasterMapLayer._animateSyncTime(map, currentDate, defer);
-        }
-        else {
-          rasterMapLayer._tiledSyncTime(map, currentDate, defer);
-        }
-      };
-
-      /**
-       * syncToTime with a tiled layer. Simpy removes everything and uses
-       * add method to create a new tiled layer
-       * @param  {object} map         leaflet map
-       * @param  {int}    currentDate ms from epoch
-       * @param  {object} defer       defer to resolve when done
-       */
-      rasterMapLayer._tiledSyncTime = function (map, currentDate, defer) {
-        rasterMapLayer.remove(map);
-        rasterMapLayer._add(map, defer);
+        rasterMapLayer._animateSyncTime(timeState, map, currentDate, wmsOptions);
       };
 
       /**
@@ -236,9 +181,8 @@ angular.module('map')
        *
        * @param  {object} map         leaflet map
        * @param  {int}    currentDate ms from epoch
-       * @param  {object} defer       defer to resolve when done
        */
-      rasterMapLayer._animateSyncTime = function (map, currentDate, defer) {
+      rasterMapLayer._animateSyncTime = function (timeState, map, currentDate, wmsOptions) {
         var newBounds = rasterMapLayer._getAnimationBounds(map);
 
         if (rasterMapLayer._imageOverlays.length < rasterMapLayer._bufferLength
@@ -250,17 +194,22 @@ angular.module('map')
           // which depends on the bounds of the map and the layer and the
           // store that corresponds to the timeState.
 
-          var store = rasterMapLayer._determineStore(rasterMapLayer.timeState);
+          var store = rasterMapLayer._determineStore(timeState);
+          rasterMapLayer.temporalResolution = store.resolution;
 
           var options = {
             bounds: rasterMapLayer._animationBounds,
             size: rasterMapLayer._getImageSize(map, rasterMapLayer._animationBounds)
           };
 
-          rasterMapLayer._imageUrlBase = RasterService.buildURLforWMS(
+          rasterMapLayer.wmsOptions.layers = store.name;
+          rasterMapLayer.wmsOptions.styles = store.name.replace('/', '-');
+
+          rasterMapLayer.url = RasterService.buildURLforWMS(
             rasterMapLayer._imageUrlBase,
             map,
-            rasterMapLayer.timeState.playing,
+            timeState.playing,
+            rasterMapLayer.wmsOptions,
             options
           );
 
@@ -272,20 +221,17 @@ angular.module('map')
         }
 
         var currentOverlayIndex = rasterMapLayer._frameLookup[currentDate];
-
         if (currentOverlayIndex === undefined) {
           // Ran out of buffered frames
           rasterMapLayer._imageOverlays = rasterMapLayer._fetchNewFrames(
             currentDate,
-            rasterMapLayer._imageOverlays,
-            defer
+            rasterMapLayer._imageOverlays
           );
         }
 
         else {
-          rasterMapLayer._progressFrame(currentOverlayIndex);
+          rasterMapLayer._progressFrame(currentOverlayIndex, wmsOptions);
           // Done!
-          defer.resolve();
         }
 
       };
@@ -366,7 +312,7 @@ angular.module('map')
        * Local helper that returns a rounded timestamp
        */
       rasterMapLayer._mkTimeStamp = function (t) {
-        var result = UtilService.roundTimestamp(t, rasterMapLayer._temporalResolution, false);
+        var result = UtilService.roundTimestamp(t, rasterMapLayer.temporalResolution, false);
         return result;
       };
 
@@ -378,9 +324,34 @@ angular.module('map')
        */
       rasterMapLayer._determineStore = function (timeState) {
 
+        if (rasterMapLayer.slug !== 'radar/5min') {
+          return {
+            name: rasterMapLayer.slug,
+            resolution: rasterMapLayer.temporalResolution
+          };
+        }
+
+        var resolutionHours = (timeState.aggWindow) / 60 / 60 / 1000;
+
+        var aggType = [rasterMapLayer.slug.split('/')[0]];
+
+        if (resolutionHours >= 24) {
+          aggType[1] = 'day';
+        } else if (resolutionHours >= 1 && resolutionHours < 24) {
+          aggType[1] = 'hour';
+        } else {
+          aggType[1] = '5min';
+        }
+        var resolutions = {
+          '5min': 300000,
+          'hour': 3600000,
+          'day': 86400000
+        };
+
+
         return {
-          name: rasterMapLayer.slug,
-          resolution: rasterMapLayer._temporalResolution
+          name: aggType.join('/'),
+          resolution: resolutions[aggType[1]]
         };
 
       };
@@ -394,7 +365,7 @@ angular.module('map')
        * @param {int} currentOverlayIndex index of the overlay in
        *              _imageOverlays.
        */
-      rasterMapLayer._progressFrame = function (currentOverlayIndex) {
+      rasterMapLayer._progressFrame = function (currentOverlayIndex, wmsOptions) {
         angular.forEach(rasterMapLayer._frameLookup, function (frameIndex, key) {
 
           if (rasterMapLayer._imageOverlays[frameIndex].options.opacity !== 0
@@ -407,7 +378,7 @@ angular.module('map')
 
         var newFrame = rasterMapLayer._imageOverlays[currentOverlayIndex];
         // Turn on new frame
-        newFrame.setOpacity(rasterMapLayer._opacity);
+        newFrame.setOpacity(wmsOptions.opacity);
       };
 
       /**
@@ -423,13 +394,13 @@ angular.module('map')
        * @param {defer} defer <optional> gets resolved when image is loaded
        *                      and _nLoadingRasters === 0.
        */
-      rasterMapLayer._replaceUrlFromFrame = function (frameIndex, defer) {
-        var url = rasterMapLayer._imageUrlBase + _formatter(new Date(rasterMapLayer._nxtDate));
+      rasterMapLayer._replaceUrlFromFrame = function (frameIndex) {
+        var url = rasterMapLayer.url + _formatter(new Date(rasterMapLayer._nxtDate));
         var frame = rasterMapLayer._imageOverlays[frameIndex];
         frame.off('load');
         frame.setOpacity(0);
         if (url !== frame._url) {
-          rasterMapLayer._addLoadListener(frame, rasterMapLayer._nxtDate, defer);
+          rasterMapLayer._addLoadListener(frame, rasterMapLayer._nxtDate);
           frame.setUrl(url);
         }
         else {
@@ -439,7 +410,7 @@ angular.module('map')
             rasterMapLayer._imageOverlays[0].setOpacity(rasterMapLayer._opacity);
           }
         }
-        rasterMapLayer._nxtDate += rasterMapLayer._temporalResolution;
+        rasterMapLayer._nxtDate += rasterMapLayer.temporalResolution;
       };
 
       /**
@@ -452,13 +423,13 @@ angular.module('map')
        * @param {defer} defer that gets resolved when all frames finished
        *                      loading.
        */
-      rasterMapLayer._fetchNewFrames = function (currentDate, overlays, defer) {
+      rasterMapLayer._fetchNewFrames = function (currentDate, overlays) {
         rasterMapLayer._nxtDate = currentDate;
         rasterMapLayer._frameLookup = {};
         rasterMapLayer._nLoadingRasters = 0;
 
         angular.forEach(overlays, function (overlay, i) {
-          rasterMapLayer._replaceUrlFromFrame(i, defer);
+          rasterMapLayer._replaceUrlFromFrame(i);
         });
 
         return overlays;
@@ -474,17 +445,16 @@ angular.module('map')
        * @param {object} defer defer to resolve when all layers finished
        *                       loading.
        */
-      rasterMapLayer._addLoadListener = function (overlay, date, defer) {
+      rasterMapLayer._addLoadListener = function (overlay, date) {
         rasterMapLayer._nLoadingRasters++;
+        rasterMapLayer.loading = true;
         overlay.addOneTimeEventListener("load", function () {
           rasterMapLayer._nLoadingRasters--;
           var index = rasterMapLayer._imageOverlays.indexOf(overlay);
           rasterMapLayer._frameLookup[date] = index;
-          if (defer && index === 0) {
-            rasterMapLayer._imageOverlays[0].setOpacity(rasterMapLayer._opacity);
-          }
-          if (defer && rasterMapLayer._nLoadingRasters === 0) {
-            defer.resolve();
+          if (rasterMapLayer._nLoadingRasters === 0) {
+            rasterMapLayer.loading = false;
+            $rootScope.$digest();
           }
         });
       };

@@ -470,7 +470,7 @@ angular.module('lizard-nxt')
       if (layersFromURL) {
         var actives = layersFromURL.split(',');
         var layers = _.takeRightWhile(actives, function (layer) {
-          layer.includes('$');
+          return layer.includes('$');
         });
         return layers;
       }

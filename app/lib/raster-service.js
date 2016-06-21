@@ -89,7 +89,7 @@ angular.module('lizard-nxt')
    *                              otherwise just 256x256px.
    * @return {string}            url
    */
-  var buildURLforWMS = function (url, map, singleTile, options) {
+  var buildURLforWMS = function (url, map, singleTile, wmsOpts, options) {
     options = options || {};
     var bounds = options.bounds || map.getBounds(),
         DEFAULT_TILE_SIZE = 256; // in px
@@ -106,16 +106,16 @@ angular.module('lizard-nxt')
 
     if (singleTile) {
       var size = options.size || map.getPixelBounds().getSize();
-      options.height = Math.round(size.y / size.x * DEFAULT_TILE_SIZE);
-      options.width = Math.round(size.x / size.y  * DEFAULT_TILE_SIZE);
+      wmsOpts.height = Math.round(size.y / size.x * DEFAULT_TILE_SIZE);
+      wmsOpts.width = Math.round(size.x / size.y  * DEFAULT_TILE_SIZE);
     } else {
       // Serve square tiles
-      options.height = DEFAULT_TILE_SIZE;
-      options.width = DEFAULT_TILE_SIZE;
+      wmsOpts.height = DEFAULT_TILE_SIZE;
+      wmsOpts.width = DEFAULT_TILE_SIZE;
     }
 
 
-    angular.forEach(options, function (v, k) {
+    angular.forEach(wmsOpts, function (v, k) {
       result += UtilService.buildString('&', k.toUpperCase(), "=", v);
     });
 

@@ -14,9 +14,9 @@
           <span
             class="fa"
             ng-class="{
-              'fa-circle-o-notch fa-spin': timeline.state.layerGroups.timeIsSyncing,
+              'fa-circle-o-notch fa-spin': timeline.MapService.loading,
               'fa-pause active': timeline.state.temporal.playing,
-              'fa-play': !timeline.state.temporal.playing && !timeline.state.layerGroups.timeIsSyncing,
+              'fa-play': !timeline.state.temporal.playing && !timeline.MapService.loading,
               }">
           </span>
         </a>
