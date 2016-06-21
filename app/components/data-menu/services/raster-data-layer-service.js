@@ -13,14 +13,12 @@ angular.module('data-menu')
 
     return function (options) {
 
-      var rasterDataLayer = {};
-
-      rasterDataLayer.uuid = options.uuid;
+      var rasterDataLayer = options;
 
       rasterDataLayer.type = 'raster';
 
       rasterDataLayer.getData = function (options) {
-        return RasterService.getData(_.merge(rasterDataLayer, options));
+        return RasterService.getData(_.merge(options, rasterDataLayer));
       };
 
       return rasterDataLayer;

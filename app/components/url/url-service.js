@@ -342,11 +342,11 @@ angular.module('lizard-nxt')
 
       parseSelection: function (geom) {
         if (!geom) { return; }
-        var selection = {asets: [], geometries: []};
+        var selection = {assets: [], geometries: []};
         var selections = geom.split('+');
         selections.forEach(function (selected) {
           if (selected.split('$').length === 2) {
-            selection.assets.addAsset(selected);
+            selection.assets.push(selected);
           }
 
           else {
@@ -368,7 +368,7 @@ angular.module('lizard-nxt')
                 }
               });
               geometry.geometry.coordinates = coordinates;
-              selection.geometries.addGeometry(geometry);
+              selection.geometries.push(geometry);
             }
 
             else if (selected.split(',').length > 1) {
@@ -382,7 +382,7 @@ angular.module('lizard-nxt')
                   parseFloat(point[1])) {
                 coordinates = [Number(point[0]), Number(point[1])];
                 geometry.geometry.coordinates = coordinates;
-                selection.geometries.addGeometry(geometry);
+                selection.geometries.push(geometry);
               }
             }
 
@@ -549,12 +549,6 @@ angular.module('lizard-nxt')
         LocationGetterSetter.setUrlValue(
           config.context.part, config.context.index, state.context
         );
-
-        if (['point', 'line', 'region', 'multi-point'].indexOf(getBoxType()) !== -1) {
-          // Remove geometry from url
-          LocationGetterSetter.setUrlValue(
-            config.geom.part, config.geom.index, undefined);
-        }
 
         LocationGetterSetter.setUrlValue(
           config.boxType.part, config.boxType.index, state.box.type

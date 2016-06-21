@@ -11,7 +11,7 @@ angular.module('data-menu')
     // Create maplayer, add maplayer to mapservice.
     MapService.mapLayers.push(assetMapLayer({
       uuid: scope.layer.uuid,
-      url: 'api/v2/tiles/' +scope.layer.uuid
+      url: 'api/v2/tiles/' + scope.layer.uuid
     }));
 
     MapService.updateLayers([scope.layer]);

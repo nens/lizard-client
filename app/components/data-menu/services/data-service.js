@@ -324,7 +324,7 @@ angular.module('data-menu')
               dataLayer.getData(options).then(function (response) {
                 // async so remove anything obsolete.
                 geo.properties = geo.properties || {};
-                geo.properties[layer.uuid] = geo.properties[layer.uuid] || {};
+                geo.properties[layer.uuid] = geo.properties[layer.uuid] || dataLayer;
                 // Replace data and merge everything with existing state of
                 // property.
                 geo.properties[layer.uuid].data = [];
