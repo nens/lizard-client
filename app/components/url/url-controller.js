@@ -18,8 +18,6 @@ angular.module('lizard-nxt')
   'LocationGetterSetter',
   'UrlState',
   'UtilService',
-  'dataBounds',
-  'defaultLocale',
   'DataService',
   'MapService',
   'NxtRegionsLayer',
@@ -33,8 +31,6 @@ angular.module('lizard-nxt')
     LocationGetterSetter,
     UrlState,
     UtilService,
-    dataBounds,
-    defaultLocale,
     DataService,
     MapService,
     NxtRegionsLayer,
@@ -55,7 +51,7 @@ angular.module('lizard-nxt')
         part: 'path', // Part of the url where this state is stored,
         index: 1, // Position of the state in the part
       },
-      layerGroups: {
+      layers: {
         part: 'path',
         index: 2,
       },
@@ -80,22 +76,22 @@ angular.module('lizard-nxt')
    /**
     * @function
     * @memberOf app.UrlController
-    * @summary Enables or disables layerGroups on the basis of the url.
-    * @description Takes the layerGroups as defined in the url to turn
-    *              layerGroups on afterwards it initializes all other
-    *              layerGroups. This is done here so MapService does not turn
-    *              on layerGroups which are turned of later by this controller.
-    * @param {string} String representation of layerGroups on url
+    * @summary Enables or disables layers on the basis of the url.
+    * @description Takes the layers as defined in the url to turn
+    *              layers on afterwards it initializes all other
+    *              layers. This is done here so MapService does not turn
+    *              on layers which are turned of later by this controller.
+    * @param {string} String representation of layers on url
     */
-    var enablelayerGroups = function (layerGroupString) {
-      if (layerGroupString) {
-        // Either layerGroups are on url
-        State.layerGroups.active = layerGroupString.split(',');
-        // Or layerGroups are not on url, turn default layerGroups on
-      } else if (State.layerGroups.active.length === 0){
-        DataService.setLayerGoupsToDefault();
+    var enablelayers = function (layerString) {
+      if (layerString) {
+        State.layers.active = layerString.split(',');
       }
-      UrlState.setlayerGroupsUrl(state, State.layerGroups.active);
+
+      UrlState.setlayersUrl(
+        state,
+        State.layers.active
+      );
     };
 
    /**
@@ -108,11 +104,6 @@ angular.module('lizard-nxt')
     * @param {string} String representation of mapView on url
     */
     var enableMapView = function (mapView) {
-      var defaultBounds = LeafletService.latLngBounds(
-        L.latLng(dataBounds.south, dataBounds.east),
-        L.latLng(dataBounds.north, dataBounds.west)
-      );
-
       if (mapView) {
         var view = UrlState.parseMapView(mapView);
         if (view) {
@@ -121,11 +112,7 @@ angular.module('lizard-nxt')
             lng: view.latLng[1],
             zoom: view.zoom
           };
-        } else {
-          State.spatial.bounds = defaultBounds;
         }
-      } else {
-        State.spatial.bounds = defaultBounds;
       }
     };
 
@@ -141,10 +128,7 @@ angular.module('lizard-nxt')
     var setLanguage = function (lang) {
       var defaultLang = State.language;
 
-      if (lang === undefined && defaultLocale) {
-        lang = defaultLocale.slice(0,2); // language is the first 2 places of
-                                         // locale e.g.: nl_NL;
-      } else if (lang === undefined) {
+      if (lang === undefined) {
         lang = defaultLang;
       }
 
@@ -164,10 +148,10 @@ angular.module('lizard-nxt')
     /**
      * set layer(s) when these change.
      */
-    $scope.$watch(State.toString('layerGroups.active'),
+    $scope.$watch(State.toString('layers.active'),
       function (n, o) {
         if (n === o) { return true; }
-        UrlState.setlayerGroupsUrl(state, State.layerGroups.active);
+        UrlState.setlayersUrl(state, State.layers.active);
       }
     );
 
@@ -271,92 +255,92 @@ angular.module('lizard-nxt')
      * when the url is empty.
      */
     var setStateFromUrl = function (favouriteURL) {
-      var language;
-      var boxType;
-      var geom;
-      var layerGroupsFromURL;
-      var mapView;
-      var time;
-      var context;
-      if (!favouriteURL) {
-        language = LocationGetterSetter.getUrlValue(
-          state.language.part,
-          state.language.index
-        );
-        boxType = LocationGetterSetter.getUrlValue(
-          state.boxType.part,
-          state.boxType.index
-        );
-        geom = LocationGetterSetter.getUrlValue(
-          state.geom.part,
-          state.geom.index
-        );
-        layerGroupsFromURL = LocationGetterSetter.getUrlValue(
-          state.layerGroups.part,
-          state.layerGroups.index
-        );
-        mapView = LocationGetterSetter.getUrlValue(
-          state.mapView.part,
-          state.mapView.index
-        );
-        time = LocationGetterSetter.getUrlValue(
-          state.timeState.part,
-          state.timeState.index
-        );
-        context = LocationGetterSetter.getUrlValue(
-          state.context.part,
-          state.context.index
-        );
-      }
+      // var language;
+      // var boxType;
+      // var geom;
+      // var layersFromURL;
+      // var mapView;
+      // var time;
+      // var context;
+      // if (!favouriteURL) {
+      //   language = LocationGetterSetter.getUrlValue(
+      //     state.language.part,
+      //     state.language.index
+      //   );
+      //   boxType = LocationGetterSetter.getUrlValue(
+      //     state.boxType.part,
+      //     state.boxType.index
+      //   );
+      //   geom = LocationGetterSetter.getUrlValue(
+      //     state.geom.part,
+      //     state.geom.index
+      //   );
+      //   layersFromURL = LocationGetterSetter.getUrlValue(
+      //     state.layers.part,
+      //     state.layers.index
+      //   );
+      //   mapView = LocationGetterSetter.getUrlValue(
+      //     state.mapView.part,
+      //     state.mapView.index
+      //   );
+      //   time = LocationGetterSetter.getUrlValue(
+      //     state.timeState.part,
+      //     state.timeState.index
+      //   );
+      //   context = LocationGetterSetter.getUrlValue(
+      //     state.context.part,
+      //     state.context.index
+      //   );
+      // }
 
-      setLanguage(language);
+      // setLanguage(language);
 
-      LocationGetterSetter.setUrlValue(
-        state.language.part,
-        state.language.index,
-        gettextCatalog.getCurrentLanguage()
-      );
+      // LocationGetterSetter.setUrlValue(
+      //   state.language.part,
+      //   state.language.index,
+      //   gettextCatalog.getCurrentLanguage()
+      // );
 
-      // If language === 'favourites' something went wrong with the favourite
-      // ignore it and default.
-      if (context && language !== 'favourites') {
-        $scope.transitionToContext(context);
-      } else if (!favouriteURL) {
-        LocationGetterSetter.setUrlValue(
-          state.context.part, state.context.index, state.context.value);
-        $scope.transitionToContext(state.context.value);
-      }
+      // // If language === 'favourites' something went wrong with the favourite
+      // // ignore it and default.
+      // if (context && language !== 'favourites') {
+      //   $scope.transitionToContext(context);
+      // } else if (!favouriteURL) {
+      //   LocationGetterSetter.setUrlValue(
+      //     state.context.part, state.context.index, state.context.value);
+        // $scope.transitionToContext(state.context.value);
+      // }
 
-      if (boxType) {
-        State.box.type = boxType;
-      } else {
-        LocationGetterSetter.setUrlValue(
-          state.boxType.part, state.boxType.index, State.box.type);
-      }
+      // if (boxType) {
+      //   State.box.type = boxType;
+      // } else {
+      //   LocationGetterSetter.setUrlValue(
+      //     state.boxType.part, state.boxType.index, State.box.type);
+      // }
 
-      if (geom) {
-        State.selected = UrlState.parseSelection(geom, State.selected);
-        if (boxType === 'region') {
-          NxtRegionsLayer.setActiveRegion(parseInt(geom));
-        }
-      }
+      // if (geom) {
+      //   State.selected = UrlState.parseSelection(geom, State.selected);
+      //   if (boxType === 'region') {
+      //     NxtRegionsLayer.setActiveRegion(parseInt(geom));
+      //   }
+      // }
 
-      enablelayerGroups(layerGroupsFromURL);
-      enableMapView(mapView);
+      // enablelayers(layersFromURL);
+      // enableMapView(mapView);
 
-      if (time) {
-        State.temporal = UrlState.parseTimeState(time, State.temporal);
-      } else {
-        state.timeState.update = false;
-        UrlState.setTimeStateUrl(
-          state,
-          State.temporal.start,
-          State.temporal.end,
-          State.temporal.relative
-        );
-      }
+      // if (time) {
+      //   State.temporal = UrlState.parseTimeState(time, State.temporal);
+      // } else {
+      //   state.timeState.update = false;
+      //   UrlState.setTimeStateUrl(
+      //     state,
+      //     State.temporal.start,
+      //     State.temporal.end,
+      //     State.temporal.relative
+      //   );
+      // }
 
-      UtilService.announceMovedTimeline(State);
+      // UtilService.announceMovedTimeline(State);
 
     };
 
