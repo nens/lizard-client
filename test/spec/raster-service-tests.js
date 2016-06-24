@@ -18,20 +18,18 @@ describe('Testing raster service', function () {
   }));
 
   it('should return a CabinetService get promise', function () {
-    var geom = new L.LatLng(52.50995268098114, 4.961357116699219);
-    var result = RasterService.getData('spec', {'layer': 'layer'}, {'geom': geom});
+    var geom = {type: 'Point', coordinates: [52.5, 4.9]};
+    var result = RasterService.getData({'layer': 'layer', 'geom': geom});
     expect(!!result.then).toBe(true);
   });
 
   it('should create an image url with height and witdh of 256 when tiled', function () {
-    var layer = {options: {}, url: ''}, // mock wmslayer
-        store = 'test',
-        el = angular.element('<div style="height: 200px; width: 300px; position: absolute;"></div>')
+    var layer = {options: {}, url: 'api/raster/sdfsdfadf'}, // mock wmslayer
         map = window.L.map(angular.element('<div></div>')[0], {
           center: [1, 1],
           zoom: 13
         });
-    var url = RasterService.buildURLforWMS(layer, map, store, false);
+    var url = RasterService.buildURLforWMS(layer.url, map, false);
     expect(url.split('HEIGHT=')[1].split('&')[0]).toEqual(url.split('WIDTH=')[1].split('&')[0]);
     expect(Number(url.split('HEIGHT=')[1].split('&')[0])).toBe(256);
   });

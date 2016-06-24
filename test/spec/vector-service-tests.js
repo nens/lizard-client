@@ -1,11 +1,12 @@
 describe('Testing VectorService', function () {
-  var $scope, $rootScope, VectorService, LeafletService;
+  var $scope, $rootScope, VectorService, LeafletService, options;
 
   beforeEach(module('lizard-nxt'));
   beforeEach(inject(function ($injector, $compile) {
     $rootScope = $injector.get('$rootScope');
     VectorService = $injector.get('VectorService');
     LeafletService = $injector.get('LeafletService');
+    options = {uuid: 'sdf'};
   }));
 
   var geoJson = [
@@ -70,16 +71,9 @@ describe('Testing VectorService', function () {
     }
   ];
 
-  var nonLeaflayer = {
-    _leafletLayer: {
-      isLoading: false
-    },
-    slug: 'events'
-  };
-
   it('should set and get data', function () {
-    VectorService.setData(nonLeaflayer.slug, geoJson, 4);
-    VectorService.getData('spec', nonLeaflayer, {})
+    VectorService.setData(options.uuid, geoJson, 4);
+    VectorService.getData(options)
       .then(function (gotthis) {
         expect(gotthis[0].id).toBe(geoJson[0].id);
       });
@@ -87,8 +81,9 @@ describe('Testing VectorService', function () {
   });
 
   it('should get all data on AND after the start date', function () {
-    VectorService.setData('events', geoJson, 4);
-    VectorService.getData('spec', nonLeaflayer, {start: 20})
+    VectorService.setData(options.uuid, geoJson, 4);
+    options.start = 20
+    VectorService.getData(options)
       .then(function (gotthis) {
         expect(gotthis.length).toBe(1);
         expect(gotthis[0].id).toBe(geoJson[1].id);
@@ -97,9 +92,9 @@ describe('Testing VectorService', function () {
   });
 
   it('should get data of latLng', function () {
-    VectorService.setData('events', geoJson);
-    var latLng = new LeafletService.LatLng(50.000, 4.000);
-    VectorService.getData('spec', nonLeaflayer, {geom: latLng})
+    VectorService.setData(options.uuid, geoJson);
+    options.geom = {type: 'Point', coordinates: [4.000, 50.000]}
+    VectorService.getData(options)
       .then(function (gotthis) {
         expect(gotthis.length).toBe(2);
       });
@@ -107,9 +102,10 @@ describe('Testing VectorService', function () {
   });
 
   it('should get data within spatial and temporal extent', function () {
-    VectorService.setData('events', geoJson);
-    var latLng = new LeafletService.LatLng(50.000, 4.000);
-    VectorService.getData('spec', nonLeaflayer, {geom: latLng, start: 20})
+    VectorService.setData(options.uuid, geoJson);
+    options.geom = {type: 'Point', coordinates: [4.000, 50.000]}
+    options.start = 20
+    VectorService.getData(options)
       .then(function (gotthis) {
         expect(gotthis.length).toBe(1);
       });
@@ -118,17 +114,15 @@ describe('Testing VectorService', function () {
 
   it('should get data within spatial extent and for the related object',
     function () {
-      VectorService.setData('events', geoJson);
-      var latLng = new LeafletService.LatLng(40.000, 5.000);
-      var objectFilter = {
+      VectorService.setData(options.uuid, geoJson);
+      options.geom = {type: 'Point', coordinates: [4.000, 50.000]}
+      options.object = {
         id: 20,
         type: 'pumpstation'
       };
-      VectorService.getData('spec', nonLeaflayer, {
-        geom: latLng, object: objectFilter
-      }).then(function (gotthis) {
+      VectorService.getData(options).then(function (gotthis) {
           expect(gotthis[0].id).toBe(1); // Because it is related to the object.
-          expect(gotthis[1].id).toBe(3); // Because it matches the specified
+          expect(gotthis[1].id).toBe(2); // Because it matches the specified
                                          // geom.
         });
       $rootScope.$digest();

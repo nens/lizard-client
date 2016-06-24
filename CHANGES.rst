@@ -3,7 +3,34 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Remove LayerGroups, use dataLayers and mapLayers with layer directives in
+  data-menu.
+
+- Use bootstrap/lizard in json in favor of lizard-bs.js.
+
+- Use favouriteService.applyFavourite for bootstrapping and url state.
+
+
+Release 3.2.4 (2016-6-20)
+---------------------
+
+- Fix no attributes for nested assets
+
+
+Release 3.2.3 (2016-6-10)
+---------------------
+
+- Replace 'remove' on dom elements, it is not supported on IE.
+
+- Remove another el.dataset in dragging of dashboard cards.
+
+
+Release 3.2.2 (2016-6-6)
+---------------------
+
+- Add timeseries name to selection box, dashboard and graph hover.
+- Fix rain download in production.
 
 
 Release 3.2.1 (2016-5-20)

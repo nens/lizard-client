@@ -273,7 +273,7 @@ angular.module('omnibox')
 
       var setGraphContent = function () {
         scope.graphContent = [{
-          data: scope.rain.properties.rain.data,
+          data: scope.rain.data,
           keys: {x: 0, y: 1},
           labels: {y: 'mm'}
         }];
@@ -285,7 +285,7 @@ angular.module('omnibox')
       };
 
 
-      scope.$watchCollection("rain.properties.rain.data", function (n, o) {
+      scope.$watchCollection("rain.data", function (n, o) {
         setGraphContent();
         if (scope.rrc.active) {
           getRecurrenceTime();
@@ -296,7 +296,7 @@ angular.module('omnibox')
       var RAW_RAIN_RASTER_UUID = '730d6675-35dd-4a35-aa9b-bfb8155f9ca7';
 
       scope.getRawDataUrl = function (event) {
-        var coords = scope.rain.geometry.coordinates;
+        var coords = scope.geometry.coordinates;
         // hack to make it testable on staging :(
         return 'https://demo.lizard.net/api/v2/rasters/' +
           RAW_RAIN_RASTER_UUID + '/data/' +
@@ -331,7 +331,8 @@ angular.module('omnibox')
     restrict: 'E',
     scope: {
       rain: '=',
-      timeState: '='
+      timeState: '=',
+      geometry: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/rain.html'

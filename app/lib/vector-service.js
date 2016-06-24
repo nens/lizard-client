@@ -148,16 +148,20 @@ angular.module('lizard-nxt')
 
       // Second filter spatially but leave features in the set when related to
       // object.
-      if (spatial instanceof LeafletService.LatLngBounds
-        || spatial instanceof LeafletService.LatLng) {
-        filteredSet = filterSpatial(filteredSet, spatial, objectFilter);
-      } else if (spatial instanceof Array
-        && spatial[0] instanceof LeafletService.LatLng) {
-        // TODO: implement line intersect with vector data
+
+      var geom;
+      if (spatial && spatial.type === 'Point') {
+        geom = L.latLng(spatial.coordinates[1], spatial.coordinates[0]);
+        filteredSet = filterSpatial(filteredSet, geom, objectFilter);
+      }
+
+      else if (spatial && spatial.type === 'Polygon') {
+        geom = L.geoJson(spatial).getBounds();
+        filteredSet = filterSpatial(filteredSet, geom, objectFilter);
+      }
+
+      else if (spatial) {
         filteredSet = [];
-      } else if (spatial) {
-        throw new Error(
-          spatial + "is an invalid geometry to query VectorService");
       }
 
       return filteredSet;
@@ -177,19 +181,13 @@ angular.module('lizard-nxt')
      * @param  {object} time  start, stop object
      * @return {object}
      */
-    var getData = function (callee, nonLeafLayer, options) {
+    var getData = function (options) {
       var deferred = $q.defer(),
           layerSlug;
-
-      // leaflet knows nothing, so sends slug and leaflayer
-      if (typeof nonLeafLayer === 'string') {
-        layerSlug = nonLeafLayer;
-      } else {
-        layerSlug = nonLeafLayer.slug;
-      }
+      layerSlug = options.uuid;
 
       if (!vectorLayers[layerSlug] || vectorLayers[layerSlug].isLoading) {
-        getDataAsync(layerSlug, nonLeafLayer, options, deferred);
+        getDataAsync(options, deferred);
       } else {
         var set = filterSet(vectorLayers[layerSlug].data,
         options.geom, options.object, {
@@ -204,7 +202,7 @@ angular.module('lizard-nxt')
     };
 
     var invalidateData = function (nonLeafLayer) {
-      vectorLayers[nonLeafLayer.slug] = null;
+      vectorLayers[nonLeafLayer.uuid] = null;
     };
 
     /**
@@ -213,33 +211,33 @@ angular.module('lizard-nxt')
      * @param {options}
      * @param {object}
      */
-    var getDataAsync = function (layerSlug, layer, options, deferred) {
-      if (!vectorLayers[layerSlug]) {
+    var getDataAsync = function (options, deferred) {
+      if (!vectorLayers[options.uuid]) {
 
-        vectorLayers[layerSlug] = {
+        vectorLayers[options.uuid] = {
           data: [],
           isLoading: true,
           promise: {}
         };
 
-        vectorLayers[layerSlug].promise = $http({
-          url: layer.url,
+        vectorLayers[options.uuid].promise = $http({
+          url: options.url,
           method: 'GET',
           params: { page_size: 5000 }
         })
         .then(function (response) {
-          vectorLayers[layerSlug].isLoading = false;
+          vectorLayers[options.uuid].isLoading = false;
           var data = response.data.results;
           var geoData = data.filter(
             function (item) { return item.geometry !== null; }
           );
-          setData(layerSlug, geoData, 1);
+          setData(options.uuid, geoData, 1);
         });
 
       }
 
-      vectorLayers[layerSlug].promise.then(function () {
-        deferred.resolve(filterSet(vectorLayers[layerSlug].data,
+      vectorLayers[options.uuid].promise.then(function () {
+        deferred.resolve(filterSet(vectorLayers[options.uuid].data,
           options.geom, options.objectFilter, {
             start: options.start,
             end: options.end
@@ -253,8 +251,8 @@ angular.module('lizard-nxt')
      * @description sets data.
      *
      */
-    var setData = function (layerSlug, data, zoom) {
-      vectorLayers[layerSlug] = {
+    var setData = function (uuid, data, zoom) {
+      vectorLayers[uuid] = {
         data: data,
       };
     };

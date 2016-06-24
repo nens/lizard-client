@@ -16,7 +16,8 @@ describe('Testing State service', function () {
     expect(State.spatial).toBeDefined();
     expect(State.temporal).toBeDefined();
     expect(State.box).toBeDefined();
-    expect(State.layerGroups).toBeDefined();
+    expect(State.layers).toBeDefined();
+    expect(State.annotations).toBeDefined();
     expect(State.context).toBeDefined();
     expect(State.selected).toBeDefined();
   });

@@ -4,8 +4,8 @@
  */
 angular.module('user-menu')
   .directive('userMenu',
-             ['UtilService', '$location', 'user', '$uibModal', 'versioning',
-              function (UtilService, $location, user, $uibModal, versioning) {
+             ['UtilService', '$location', 'user', '$uibModal', 'version', 'notie', 'gettextCatalog',
+              function (UtilService, $location, user, $uibModal, version, notie, gettextCatalog) {
 
     var link = function (scope, element, attrs) {
 
@@ -54,10 +54,38 @@ angular.module('user-menu')
           templateUrl: 'about.html',  // This is really the 'id' of the modal.
           size: size,
           controller: function () {
-            this.versioning = versioning;
+            this.version = version;
           },
           controllerAs: 'about'
         });
+      };
+
+      var domain = location.protocol +
+        '//' +
+        location.host.replace(':9000', ':8000') ;
+
+      var setLogOutUrl = function () {
+        window.location = '/accounts/logout/?domain=' +
+          domain +
+          '/&next=' +
+          window.location.href;
+      };
+
+      scope.logOut = function () {
+        notie.confirm(
+          gettextCatalog.getString(
+            "Are you sure you want to log out?"),
+          gettextCatalog.getString("Yes"),
+          gettextCatalog.getString("No"),
+          setLogOutUrl
+        );
+      };
+
+      scope.logIn = function () {
+        window.location = '/accounts/login/?domain=' +
+          domain +
+          '/&next=' +
+          window.location.href;
       };
 
     };
