@@ -9,7 +9,7 @@ describe('Favourites', function () {
     State = $injector.get('State');
   }));
 
-  it('should restore relatvie time', function () {
+  it('should restore relative time', function () {
     // Set state to the past
     State.temporal.start = 100000;
     State.temporal.end = 150000;
@@ -30,7 +30,7 @@ describe('Favourites', function () {
       }
     };
 
-    FavService.applyFavourite(angular.copy(favourite));
+    FavService.applyFavourite(angular.copy(favourite.state));
 
     // Divide by 100 to use ToBeCloseTo to give js 100 ms to execute
     // FavService.applyFavourite.

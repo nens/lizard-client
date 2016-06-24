@@ -209,7 +209,7 @@ angular.module('data-menu')
 
           angular.forEach(geom.properties, function (v, s) {
             var layer = _.find(State.layers, {uuid: s});
-            if (!layer && !layer.active) {
+            if (!layer || !layer.active) {
               delete geom.properties[s];
             }
           }, this);
@@ -341,13 +341,9 @@ angular.module('data-menu')
         });
 
         if (State.annotations.active) {
-          var uuid = 'annotations';
-          var annotationsDataLayer = _.find(
-            instance.dataLayers,
-            {uuid: uuid}
-          );
+          var uuid = instance.annotationsLayer.uuid;
           promises.push(
-            annotationsDataLayer.getData(options).then(function (response) {
+            instance.annotationsLayer.getData(options).then(function (response) {
               // async so remove anything obsolete.
               geo.properties = geo.properties || {};
               geo.properties[uuid] = geo.properties[uuid] || {};

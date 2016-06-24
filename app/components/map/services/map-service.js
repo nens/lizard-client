@@ -103,7 +103,7 @@ angular.module('map')
       fitBounds: function (bounds) {
         if (service._map instanceof LeafletService.Map) {
           if (bounds instanceof LeafletService.LatLngBounds) {
-            service._map.fitBounds(bounds);
+            service._map.fitBounds.apply(service._map, arguments);
           }
           else if (bounds.hasOwnProperty('south')
             && bounds.hasOwnProperty('north')
@@ -368,7 +368,7 @@ angular.module('map')
     };
 
     // This could be a dedicated annotationsMapLayer, but the functionality is
-    // the same as an event series layers.
+    // the same as an event series layer.
     service.annotationsLayer = eventseriesMapLayer({
       color: '#e67e22',
       uuid: 'annotations',

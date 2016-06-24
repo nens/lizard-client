@@ -470,7 +470,7 @@ angular.module('lizard-nxt')
       if (layersFromURL) {
         var actives = layersFromURL.split(',');
         var layers = _.takeRightWhile(actives, function (layer) {
-          return layer.includes('$');
+          return layer.indexOf('$') !== -1;
         });
         return layers;
       }
@@ -496,7 +496,7 @@ angular.module('lizard-nxt')
       if (layersFromURL) {
         var actives = layersFromURL.split(',');
         if (actives.length > 1) {
-           present = actives[1].includes('annotations');
+           present = actives[1].indexOf('annotations') !== -1;
         }
       }
       return present;

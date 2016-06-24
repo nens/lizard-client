@@ -58,224 +58,60 @@ describe('Testing LocationGetterSetter', function () {
 });
 
 
-describe('Testing UrlState', function () {
-  var $location,
-    service;
-
-  var state = {
-    layerGroups: {
-      part: 'path',
-      index: 1,
-      update: true
-    },
-    boxType: {
-      part: 'path',
-      index: 2,
-      update: true
-    },
-    geom: {
-      part: 'path',
-      index: 3,
-      update: true
-    },
-    mapView: {
-      part: 'at',
-      index: 0,
-      update: true
-    },
-    timeState: {
-      part: 'at',
-      index: 1,
-      update: true
-    }
-  };
+describe('Testing UrlService', function () {
+  var $location, State, service;
 
   beforeEach(module('lizard-nxt'));
 
   beforeEach(inject(function ($injector) {
     $location = $injector.get('$location');
-    service = $injector.get('UrlState');
+    State = $injector.get('State');
+    service = $injector.get('UrlService');
+
+    State.layers.push(
+      {
+        'active': false,
+        'type': 'raster',
+        'uuid': 'd053078',
+        'name': 'dem'
+      },
+      {
+        'active': true,
+        'type': 'assetgroup',
+        'uuid': '0037b5f',
+        'name': 'Water'
+      }
+    );
+    State.language = 'en';
   }));
 
-  it('should set the geom on the url', function () {
-    var here = {
-      lat: {
-        toFixed: function () { return 51.7; }
+  it('should set the url', function () {
+    var url = '/en/map/topography,assetgroup$0037b5f/point/@0.0000,0.0000,0/' +
+      '-2Days0Hours+0Days2Hours';
+    service.setUrl(State);
+    expect($location.path()).toEqual(url);
+  });
+
+  it('should get the state', function () {
+    var url = '/en/dashboard/neutral,annotations,assetgroup$0037b5f/region/@4,6,8/' +
+      'Jan,04,2008-Jul,14,2016';
+    $location.path(url);
+    var expectedUrlState = {
+      language: undefined, // no languages in catalog so, it returns undefined.
+      context: 'dashboard',
+      baselayer: 'neutral',
+      annotations: {active: true},
+      layers: {active : ['assetgroup$0037b5f']},
+      box: {type : 'region'},
+      selected: undefined,
+      spatial: {
+        view: { lat: 4, lng: 6, zoom: 8 }
       },
-      lng: {
-        toFixed: function () { return 6.2; }
-      }
+      temporal: { start :1199401200000, end :1468447200000 }
     };
-    service.setgeomUrl(state, 'point', here);
-    expect($location.path()).toEqual('////51.7,6.2');
+    var state = service.getState();
+
+    expect(state).toEqual(expectedUrlState);
   });
-
-  it('should set an array of points on the url', function () {
-    var here = {
-      lat: {
-        toFixed: function () { return 51.7; }
-      },
-      lng: {
-        toFixed: function () { return 6.2; }
-      }
-    };
-    var points = [here, here, here];
-    service.setgeomUrl(state, 'line', here, points);
-    expect($location.path()).toEqual('////51.7,6.2-51.7,6.2-51.7,6.2');
-  });
-
-  it('should set an array of points on the url', function () {
-    var here = {
-      lat: {
-        toFixed: function () { return 51.7; }
-      },
-      lng: {
-        toFixed: function () { return 6.2; }
-      }
-    };
-    var points = [here, here, here];
-    service.setgeomUrl(state, 'line', here, points);
-    expect($location.path()).toEqual('////51.7,6.2-51.7,6.2-51.7,6.2');
-  });
-
-  it('should set timeState on the url', function () {
-    var start = 1234;
-    var end = 5678000000;
-    service.setTimeStateUrl(state, start, end);
-    expect($location.path()).toEqual('/@/Jan,01,1970-Mar,07,1970');
-  });
-
-  it('should set layers on the url', function () {
-    var layergroups = "topo,satte";
-    service.setlayerGroupsUrl(state, layergroups);
-    expect($location.path()).toEqual('//topo,satte');
-  });
-
-  it('should parse mapview', function () {
-    var mapView = '52.1263,5.3100,8';
-    var latLonZoom = service.parseMapView(mapView);
-    expect(latLonZoom.latLng[0]).toEqual(52.1263);
-    expect(latLonZoom.latLng[1]).toEqual(5.3100);
-    expect(latLonZoom.zoom).toEqual(8);
-    expect(latLonZoom.options.reset).toBe(true);
-    expect(latLonZoom.options.animate).toBe(true);
-  });
-
-  it('should return false when invalid', function () {
-    var InvalidMapView = 'Purmerend,8';
-    var latLonZoom = service.parseMapView(InvalidMapView);
-    expect(latLonZoom).toBe(false);
-  });
-
-  it('should give update when no changes', function () {
-    expect(service.update(state)).toBe(true);
-  });
-
-  it('should not update when one state says no', function () {
-    state.timeState.update = false;
-    expect(service.update(state)).toBe(false);
-  });
-
-  it('should set temporal.end to start plus half a day when end is in the past',
-    function () {
-      var timeStr = 'Mar,30,2015-Mar,30,2014',
-          halfDayMs = 43200000,
-          temporal = {};
-
-      temporal = service.parseTimeState(timeStr, temporal);
-      expect(temporal.end - temporal.start).toEqual(halfDayMs);
-  });
-
-});
-
-describe('Testing hash controller', function () {
-  var $scope,
-      $location,
-      $rootScope,
-      $controller,
-      $browser,
-      createController,
-      LocationGetterSetter,
-      DataService,
-      State,
-      gettextCatalog;
-
-  beforeEach(module('lizard-nxt'));
-
-  beforeEach(inject(function ($injector) {
-    $location = $injector.get('$location');
-    $rootScope = $injector.get('$rootScope');
-    $controller = $injector.get('$controller');
-    $scope = $rootScope.$new();
-    State = $injector.get('State')
-    DataService = $injector.get('DataService');
-    LocationGetterSetter = $injector.get('LocationGetterSetter');
-    gettextCatalog = $injector.get('gettextCatalog');
-
-    // Mock MapService
-    var mapState = {
-      center: {
-        lat: 51.12345,
-        lng: 6.12
-      },
-      points: [],
-      toggleLayerGroup: function (layerGroup) { layerGroup._active = !layerGroup._active; },
-      fitBounds: function () {},
-      activeLayersChanged: false,
-      layerGroups: {
-        'testlayer': {
-          _active: true
-        },
-        'testlayer2': {
-          _active: false
-        }
-      }
-    };
-
-    mapState.setView = function (latlng, zoom, options) {
-      $scope.mapState.center.lat = latlng.lat;
-    };
-
-    // Mock initial time
-    $scope.timeState = {start: 10};
-
-    // Mock the box
-    $scope.box = {type: 'area'};
-
-    $scope.transitionToContext = function () {};
-
-    createController = function (scope) {
-
-      return $controller('UrlController', {
-        '$scope': $scope,
-        'LocationGetterSetter': LocationGetterSetter
-      });
-    };
-  }));
-
-  it('should activate layer when layer is defined on the url', function () {
-    $location.path('/en/map/satellite');
-    var controller = createController();
-    expect(DataService.layerGroups.satellite.isActive()).toBe(true);
-  });
-
-  it(
-    'should set language on url to nl when no language is specified',
-    function () {
-      $location.path('');
-      var controller = createController();
-      expect($location.path().slice(0, 3)).toBe('/nl');
-    }
-  );
-
-  it(
-    'should set language to nl when no language is specified',
-    function () {
-      $location.path('');
-      var controller = createController();
-      expect(gettextCatalog.getCurrentLanguage()).toBe('nl');
-    }
-  );
-
 
 });

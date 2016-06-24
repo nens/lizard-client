@@ -120,7 +120,7 @@ angular.module('favourites')
         favtime.start += change;
         favtime.at  += change;
         favtime.end += change;
-        favtime.now = null;
+        favtime.now = null; // Set when creating favourite
         favtime.relative = false; // Set relative back to default.
         return favtime;
       };
