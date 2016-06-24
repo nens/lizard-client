@@ -33,6 +33,7 @@ angular.module('lizard-nxt')
     this.unit = chartContent.unit;
     this.thresholds = chartContent.thresholds;
     this.location = chartContent.location;
+    this.name = chartContent.name;
     this.labels = chartContent.labels;
     this.setContentUpdateY(chartContent);
 

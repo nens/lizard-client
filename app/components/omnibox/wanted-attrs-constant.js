@@ -9,7 +9,7 @@ angular.module('omnibox')
         keyName: gettext("Capacity"),
         attrName: "capacity",
         ngBindValue:
-          "asset.selectedAsset.capacity * 3.6 | niceNumberOrEllipsis: 2",
+          "waterchain.capacity * 3.6 | niceNumberOrEllipsis: 2",
         valueSuffix: "m<sup>3</sup> / uur"
       },
       {
@@ -17,7 +17,7 @@ angular.module('omnibox')
         keyName: gettext("Start level"),
         attrName: "start_level",
         ngBindValue:
-          "asset.selectedAsset.start_level | niceNumberOrEllipsis: 2",
+          "waterchain.start_level | niceNumberOrEllipsis: 2",
         valueSuffix: "m (NAP)"
       },
       {
@@ -25,7 +25,7 @@ angular.module('omnibox')
         keyName: gettext("Stop level"),
         attrName: "stop_level",
         ngBindValue:
-          "asset.selectedAsset.stop_level | niceNumberOrEllipsis: 2",
+          "waterchain.stop_level | niceNumberOrEllipsis: 2",
         valueSuffix: "m (NAP)"
       }
     ]
@@ -139,27 +139,27 @@ angular.module('omnibox')
         /// Bovenkant filter
         keyName: gettext("Filter top level"),
         attrName: "filter_top_level",
-        ngBindValue: "asset.selectedAsset.filter_top_level | niceNumberOrEllipsis: 2",
+        ngBindValue: "waterchain.filter_top_level | niceNumberOrEllipsis: 2",
         valueSuffix: "m"
       },
       {
         /// Onderkant filter
         keyName: gettext("Filter bottom level"),
         attrName: "filter_bottom_level",
-        ngBindValue: "asset.selectedAsset.filter_bottom_level | niceNumberOrEllipsis: 2",
+        ngBindValue: "waterchain.filter_bottom_level | niceNumberOrEllipsis: 2",
         valueSuffix: "m"
       },
       {
         keyName: gettext("Aquifer confinement"),
         attrName: "aquifer_confiment",
-        ngBindValue: "asset.selectedAsset.aquifer_confiment",
+        ngBindValue: "waterchain.aquifer_confiment",
         valueSuffix: "m"
       },
       {
         /// bodemsoort
         keyName: gettext("Litology"),
         attrName: "litology",
-        ngBindValue: "asset.selectedAsset.litology",
+        ngBindValue: "waterchain.litology",
         valueSuffix: "m"
       },
 
