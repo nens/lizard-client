@@ -132,17 +132,20 @@ angular.module('data-menu')
       var setGeometries = function (geometriesIn) {
         // Dedupe geometries in selection synchronous.
         var geometries = _.uniqWith(geometriesIn, isDuplicateGeometry);
+
         instance._updateGeometries(_geometries, angular.copy(geometries))
-        .then(function (geometries) {
-          // Dedupe instance.geometries asynchronous.
-          instance.geometries = _.uniqWith(geometries, isDuplicateGeometry);
-          console.log('DataService.geometries:', instance.geometries);
+        .forEach(function (promise) {
+          promise.then(function (geometries) {
+            // Dedupe instance.geometries asynchronous.
+            instance.geometries = _.uniqWith(geometries, isDuplicateGeometry);
+            console.log('DataService.geometries:', instance.geometries);
 
-          if (instance.onGeometriesChange) {
-            instance.onGeometriesChange();
-          }
-
+            if (instance.onGeometriesChange) {
+              instance.onGeometriesChange();
+            }
+          });
         });
+
         _geometries = geometries;
         console.log('State.selected.geometries:', State.selected.geometries);
         State.selected.geometries.addGeometry = addGeometry;
@@ -251,28 +254,34 @@ angular.module('data-menu')
           }).length;
         });
 
+        var promises = [] ;
         if (newGeoms.length > 0) {
-          return this.getGeomData(newGeoms[newGeoms.length -1])
-          .then(function(newGeo) {
-            var dupe = false;
-            instance.geometries.forEach(function (old, i) {
-              if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
-                dupe = true;
-                instance.geometries[i] = newGeo;
+          // Get data for all the new geometries by slicing it with the old
+          // ones.
+          newGeoms = _.slice(newGeoms, oldGeoms.length, newGeoms.length);
+          _.forEach(newGeoms, function (newGeom) {
+            promises.push(instance.getGeomData(newGeom)
+            .then(function(newGeo) {
+              var dupe = false;
+              instance.geometries.forEach(function (old, i) {
+                if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
+                  dupe = true;
+                  instance.geometries[i] = newGeo;
+                }
+              });
+              if (!dupe) {
+                instance.geometries.push(newGeo);
               }
-            });
-            if (!dupe) {
-              instance.geometries.push(newGeo);
-            }
-            return instance.geometries;
+              return instance.geometries;
+            }));
           });
         }
         else {
           var defer = $q.defer();
           defer.resolve(instance.geometries);
-          return defer.promise;
+          promises.push(defer.promise);
         }
-
+        return promises;
       };
 
       this.getGeomDataForAssets = function (oldAssets, assets) {
@@ -324,7 +333,7 @@ angular.module('data-menu')
               dataLayer.getData(options).then(function (response) {
                 // async so remove anything obsolete.
                 geo.properties = geo.properties || {};
-                geo.properties[layer.uuid] = geo.properties[layer.uuid] || dataLayer;
+                geo.properties[layer.uuid] = geo.properties[layer.uuid] || _.clone(dataLayer);
                 // Replace data and merge everything with existing state of
                 // property.
                 geo.properties[layer.uuid].data = [];

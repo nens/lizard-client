@@ -28,11 +28,11 @@ angular.module('data-menu')
             uuid: scope.layer.uuid,
             slug: response.slug,
             temporalResolution: 36000, // TODO
-            aggType: response.aggType,
-            scale: response.scale,
+            aggType: response.aggregation_type,
+            scale: 'ratio',
             type: response.type,
             quantity: response.quantity,
-            unit: response.unit
+            unit: response.observation_type.referenced_unit_short_display_name
           }));
 
           scope.layer.active = true;
