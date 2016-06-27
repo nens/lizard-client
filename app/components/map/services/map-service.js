@@ -22,7 +22,20 @@ angular.module('map')
       _map: {}, // exposure is legacy, we should not mingle with the leaflet
                 // map instance outside of the map component.
 
+      /**
+       * Removes all layers from map and calls remove on map which detaches all
+       * events.
+       */
       remove: function () {
+        service.mapLayers.forEach(
+          function (mapLayer) { mapLayer.remove(service._map); }
+        );
+        service.baselayers.forEach(
+          function (baselayer) { baselayer.remove(service._map); }
+        );
+        if (service.annotationsLayer) {
+          service.annotationsLayer.remove(service._map);
+        }
         service._map.remove();
       },
 
@@ -69,6 +82,7 @@ angular.module('map')
       },
 
       updateAnnotations: function () {
+        if (!service.annotationsLayer) { return; }
         if (State.annotations.active) {
           service.annotationsLayer.update(service._map, State.temporal);
         } else {
@@ -366,15 +380,6 @@ angular.module('map')
       }
 
     };
-
-    // This could be a dedicated annotationsMapLayer, but the functionality is
-    // the same as an event series layer.
-    service.annotationsLayer = eventseriesMapLayer({
-      color: '#e67e22',
-      uuid: 'annotations',
-      url: 'api/v2/annotations/',
-      spatialSelect: service.spatialSelect
-    });
 
     Object.defineProperty(service, 'loading', {
       get: function () { return _.some(service.mapLayers, {loading: true}); }

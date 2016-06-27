@@ -36,6 +36,25 @@ angular.module('map')
        * Alligns state with map.
        */
       var init = function () {
+
+        MapService.initializeMap(element[0], {
+            attributionControl: false,
+            minZoom: 2,
+            maxZoom: 21,
+            zoomControl: false,
+            addZoomTitles: true,
+            lat: State.spatial.view.lat,
+            lng: State.spatial.view.lng,
+            zoom: State.spatial.view.zoom
+
+          }, {
+            onClick: _clicked,
+            onMoveStart: _moveStarted,
+            onMoveEnd: _moveEnded,
+            onMouseMove: _mouseMove
+          }
+        );
+
         if (Object.keys(State.spatial.view).length !== 0) {
           mapSetsView = true;
           MapService.setView(State.spatial.view);
@@ -44,6 +63,11 @@ angular.module('map')
           mapSetsBounds = true;
           MapService.fitBounds(State.spatial.bounds);
         }
+
+        MapService.updateBaselayers(scope.state.baselayer);
+        MapService.updateLayers(scope.state.layers);
+        MapService.updateAnnotations(scope.state.annotations);
+
       };
 
        /**
@@ -152,24 +176,6 @@ angular.module('map')
           State.spatial.view = MapService.getView();
         }
       };
-
-      MapService.initializeMap(element[0], {
-          attributionControl: false,
-          minZoom: 2,
-          maxZoom: 21,
-          zoomControl: false,
-          addZoomTitles: true,
-          lat: State.spatial.view.lat,
-          lng: State.spatial.view.lng,
-          zoom: State.spatial.view.zoom
-
-        }, {
-          onClick: _clicked,
-          onMoveStart: _moveStarted,
-          onMoveEnd: _moveEnded,
-          onMouseMove: _mouseMove
-        }
-      );
 
       scope.$watch('state.layers', function () {
         MapService.updateLayers(scope.state.layers);
