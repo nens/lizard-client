@@ -90,6 +90,15 @@ angular.module('map')
         }
       },
 
+      rescaleLayers: function (layers) {
+        var bounds = service._map.getBounds();
+        var rasters = _.filter(layers, {type: 'raster'});
+        angular.forEach(rasters, function (layer) {
+          var mapLayer = _.find(service.mapLayers, { uuid: layer.uuid });
+          mapLayer.rescale(bounds);
+        });
+      },
+
       /**
        * @function
        * @memberOf map.MapService

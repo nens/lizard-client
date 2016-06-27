@@ -55,8 +55,10 @@ angular.module('data-menu')
           L.latLng(this.bounds.south, this.bounds.west),
           L.latLng(this.bounds.north, this.bounds.east)
         );
-        State.temporal.start = this.first;
-        State.temporal.end = this.last;
+        if (this.temporal) {
+          State.temporal.start = this.first;
+          State.temporal.end = this.last;
+        }
         UtilService.announceMovedTimeline(State);
       };
 

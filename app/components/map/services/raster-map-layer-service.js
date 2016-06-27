@@ -8,8 +8,8 @@
  * Additional methods used to extend nxtLayer with leaflet/map specific methods.
  */
 angular.module('map')
-.factory('rasterMapLayer', ['$rootScope', 'LeafletService', 'MapLayerService', 'RasterService', 'UtilService',
-  function ($rootScope, LeafletService, MapLayerService, RasterService, UtilService) {
+.factory('rasterMapLayer', ['$rootScope', '$http', 'LeafletService', 'MapLayerService', 'RasterService', 'UtilService',
+  function ($rootScope, $http, LeafletService, MapLayerService, RasterService, UtilService) {
 
     return function (options) {
 
@@ -75,6 +75,24 @@ angular.module('map')
         rasterMapLayer._nLoadingRasters = 0;
         rasterMapLayer._imageOverlays = [];
         rasterMapLayer._frameLookup = {};
+      };
+
+      rasterMapLayer.rescale = function (bounds) {
+        if (!rasterMapLayer.temporal) {
+          var url = rasterMapLayer._imageUrlBase +
+            '?request=getlimits&layers=' + rasterMapLayer.slug +
+            '&width=16&height=16&srs=epsg:4326&bbox=' +
+            bounds.toBBoxString();
+          $http.get(url).success(function (data) {
+            var limits = ':' + data[0][0] + ':' + data[0][1];
+            // strip existing domain if already present.
+            rasterMapLayer.wmsOptions.styles = rasterMapLayer.wmsOptions.styles.split(':')[0];
+            rasterMapLayer._imageOverlays[0].setParams({
+              styles: rasterMapLayer.wmsOptions.styles + limits
+            });
+            rasterMapLayer._imageOverlays[0].redraw();
+          });
+        }
       };
 
       /**

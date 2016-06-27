@@ -27,7 +27,7 @@ angular.module('data-menu')
           DataService.dataLayers.push(rasterDataLayer({
             uuid: scope.layer.uuid,
             slug: response.slug,
-            temporalResolution: 36000,
+            temporalResolution: 36000, // TODO
             aggType: response.aggType,
             scale: response.scale,
             type: response.type,
@@ -37,8 +37,11 @@ angular.module('data-menu')
 
           scope.layer.active = true;
 
+          scope.rescale = MapService.rescaleLayers;
+
           scope.zoomToBounds = LayerAdderService.zoomToBounds.bind({
             bounds: response.spatial_bounds,
+            temporal: response.temporal,
             first: response.first_value_timestamp,
             last: response.last_value_timestamp
           });
@@ -48,6 +51,7 @@ angular.module('data-menu')
         cancelFirstActive();
       }
     });
+
 
     scope.$on('$destroy', function () {
       console.log('destroy');
