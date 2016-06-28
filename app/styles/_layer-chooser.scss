@@ -26,7 +26,7 @@
 }
 
 %layer-base {
-    float: right;
+    float: left;
     min-height: 300px;
     max-height: 450px;
     overflow-y: auto;
@@ -38,7 +38,7 @@
 
 .layer-adder {
     @extend %layer-base;
-    width: 500px;
+    width: calc(100% - 50px);
     right: -550px;  // Necessary to make the resizing animation smooth.
 
     input {
@@ -71,7 +71,7 @@
 
 .layer-switcher {
     @extend %layer-base;
-    width: 200px;
+    width: calc(100% - 50px);
     right: -250px;  // Necessary to make the resizing animation smooth.
 
     .layer-item {
@@ -144,6 +144,13 @@
         list-style-type: none;
         user-select: none;
     }
+}
+
+.layer-switcher-full-width {
+}
+
+.button-list-container {
+    float: left;
 }
 
 .eventLGIndicator {
