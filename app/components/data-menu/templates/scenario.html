@@ -1,0 +1,86 @@
+<div>
+
+  <div ng-if="!layer.active">
+    <div class="noselect">
+      <label
+        ng-click="layer.active = !layer.active"
+        ng-class ="{active: layer.active }"
+        class="layer-item layer-img"
+        title="<% layer.name || layer.type + ': ' + layer.uuid %>">
+          <span ng-bind="layer.name"></span>
+          <div class="layer-chooser-tools">
+            <i class="fa fa-close"
+               ng-click="remove(layer); $event.stopPropagation()">
+           </i>
+          </div>
+      </label>
+    </div>
+
+    <opacity-slider title="<% tooltips.transparency %>" layer="{active: false}"></opacity-slider>
+  </div>
+
+  <div ng-if="layer.active">
+    <div class="noselect panel panel-default">
+      <div
+        ng-click="layer.active = !layer.active"
+        class="panel-heading layer-item layer-img"
+        title="<% layer.name || layer.type + ': ' + layer.uuid %>">
+          <% layer.name  || layer.type + ': ' + layer.uuid %>
+          <div class="layer-chooser-tools">
+            <i class="fa fa-close"
+               ng-click="remove(layer); $event.stopPropagation()">
+           </i>
+          </div>
+      </div>
+
+      <table class="table">
+        <tr>
+          <td>
+            <span translate>Start (simulation time)</span>
+          </td>
+          <td>
+            <span><% scenario.start_time_sim | date: 'M/d/y HH:mm:ss' %></span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span translate>End (simulation time)</span>
+          </td>
+          <td>
+            <span><% scenario.end_time_sim | date: 'M/d/y HH:mm:ss' %></span>
+          </td>
+        </tr>
+        <tr ng-repeat="result in scenario.results">
+          <td ng-if="result.layer">
+            <assetlayer
+              ng-if="result.layer.type === 'assetgroup'"
+              layer="result.layer">
+            </assetlayer>
+            <rasterlayer
+              ng-if="result.layer.type === 'raster'"
+              layer="result.layer">
+            </rasterlayer>
+            <wmslayer
+              ng-if="result.layer.type === 'wmslayer'"
+              layer="result.layer">
+            </wmslayer>
+            <eventseries
+              ng-if="result.layer.type === 'eventseries'"
+              layer="result.layer">
+            </eventseries>
+          </td>
+          <td>
+            <span ng-repeat="attachment in result.attachments">
+              <a href="<% attachment.url %>" target="_blank" translate>
+                 <% RESULT_TYPES[result.type] %>.<% attachment.format %></a>
+            </span>
+          </td>
+          <td ng-if="!result.layer"></td>
+
+        </tr>
+
+      </table>
+
+    </div>
+
+</div>

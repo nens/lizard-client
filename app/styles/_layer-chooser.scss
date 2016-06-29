@@ -76,6 +76,7 @@
 
     .layer-item {
         display: block;
+        background: $clouds;
         width: $width19;
         position: relative;
         margin-bottom: 0;
@@ -104,7 +105,7 @@
             top: 0;
             bottom: 0;
             padding: 8px;
-            background: rgba($clouds, 0.6);
+            background: transparent;
             transition: .3s ease;
 
             &:hover {

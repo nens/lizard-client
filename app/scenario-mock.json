@@ -1,0 +1,112 @@
+{
+  "url": "https://demo.lizard.net/api/v2/scenarios/730/",
+  "name": "Amstelmeerboezem",
+  "created": "2016-06-21T17:54:14.276201Z",
+  "start_time_sim": "2013-12-31T23:00:00Z",
+  "end_time_sim": "2014-01-01T11:46:00Z",
+  "username": "wouter.vanesse",
+  "for_icms": false,
+  "model_url": null,
+  "model_revision": "90",
+  "model_name": "delfland_1d_boezem-delfland_stress_test_lateralen",
+  "total_size": 90235879,
+  "results": [
+    {
+      "type": "water_level",
+      "layer": {
+        "type": "raster",
+        "uuid": "d0530781"
+      },
+      "attachments": [
+        {
+          "format": "tiff",
+          "url": "isilon/omde/hoek/tweekeerlinkseenkeerrecht/water_level_interpolated.tiff"
+        }
+      ]
+    },
+    {
+      "type": "arrival",
+      "layer": {
+        "type": "raster",
+        "uuid": "d0530782"
+      },
+      "attachments": [
+        {
+          "format": "tiff",
+          "url": "isilon/omde/hoek/tweekeerlinkseenkeerrecht/arrival_interpolated.tiff"
+        }
+      ]
+    },
+    {
+      "type": "maxwdepth",
+      "layer": {
+        "type": "raster",
+        "uuid": "d0530783"
+      },
+      "attachments": [
+        {
+          "format": "tiff",
+          "url": "isilon/omde/hoek/tweekeerlinkseenkeerrecht/max_water_level_interpolated.tiff"
+        }
+      ]
+    },
+    {
+      "type": "damage",
+      "layer": {
+        "type": "raster",
+        "uuid": "d05307845"
+      },
+      "attachments": [
+        {
+          "format": "tiff",
+          "url": "isilon/omde/hoek/tweekeerlinkseenkeerrecht/damage_interpolated.tiff"
+        },
+        {
+          "format": "csv",
+          "url": "isilon/omde/hoek/tweekeerlinkseenkeerrecht/damage_sum.csv"
+        }
+      ],
+      "sum": 1942504191.9901
+    },
+    {
+      "type": "casualties",
+      "layer": {
+        "type": "raster",
+        "uuid": "d0530785"
+      },
+      "sum": 5
+    },
+    {
+      "type": "roads",
+      "attachments": [
+        {
+          "format": "zip",
+          "url": "isilon/omde/hoek/tweekeerlinkseenkeerrecht/watereddownroadsgoingnowhere.zip"
+        }
+      ]
+    },
+    {
+      "type": "buildings",
+      "attachments": [
+        {
+          "format": "zip",
+          "url": "isilon/omde/hoek/tweekeerlinkseenkeerrecht/floodedhospitals.zip"
+        }
+      ]
+    }
+  ],
+  "input": [
+    {
+      "type": "elevation",
+      "layer": {
+        "type": "raster", "uuid": "d0530786"
+      },
+      "attachments": [
+        {
+          "format": "zip",
+          "url": "isilon/omde/hoek/tweekeerlinkseenkeerrecht/watereddownroadsgoingnowhere.zip"
+        }
+      ]
+    }
+  ]
+}
