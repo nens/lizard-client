@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix not showing timeseries for timeseries of nested assets.
 
 
 Release 3.2.4 (2016-6-20)
