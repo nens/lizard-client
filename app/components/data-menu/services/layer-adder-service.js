@@ -14,6 +14,7 @@ angular.module('data-menu')
        */
       this.fetchLayers = function (params, success, error) {
         params.type = 'assetgroup,eventseries,layer,rasterstore';
+        params.page_size = 8;
         return $http.get('api/v2/search/', {
           params: params
         }).then(success, error);
@@ -60,6 +61,13 @@ angular.module('data-menu')
           State.temporal.end = this.last;
         }
         UtilService.announceMovedTimeline(State);
+      };
+
+      this.getActiveScenarios = function () {
+        return _.filter(State.layers, {
+          type: 'scenario',
+          active: true
+        });
       };
 
       return this;
