@@ -15,7 +15,7 @@
       "type": "water_level",
       "layer": {
         "type": "raster",
-        "uuid": "d0530781"
+        "uuid": "d053078"
       },
       "attachments": [
         {
@@ -91,6 +91,15 @@
         {
           "format": "zip",
           "url": "isilon/omde/hoek/tweekeerlinkseenkeerrecht/floodedhospitals.zip"
+        }
+      ]
+    },
+    {
+      "type": "raw",
+      "attachments": [
+        {
+          "format": "nc",
+          "url": "isilon/omde/hoek/tweekeerlinkseenkeerrecht/watereddownroadsgoingnowhere.nc"
         }
       ]
     }
