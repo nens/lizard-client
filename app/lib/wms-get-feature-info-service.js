@@ -29,10 +29,10 @@ angular.module('lizard-nxt')
    *                            not a leaflet LatLng or undefined.
    *
    */
-  var getData = function (callee, layer, options) {
+  var getData = function (layer, options) {
 
     if (options.geom === undefined
-      || !(options.geom instanceof LeafletService.LatLng)
+      || !(options.geom.lat && options.geom.lng)
       || !(layer._leafletLayer)
       || !(layer._leafletLayer._map)) {
       var defer = $q.defer();
@@ -45,7 +45,7 @@ angular.module('lizard-nxt')
 
     var size = map.getSize(),
         bbox = map.getBounds().toBBoxString(),
-        point = map.latLngToContainerPoint(options.geom);
+        point = map.latLngToContainerPoint(L.latLng(options.geom));
 
     var params = {
       SERVICE: 'WMS',
@@ -65,10 +65,10 @@ angular.module('lizard-nxt')
 
     var url = layer.url + '/?';
     for (var key in params) {
-        if (url !== "") {
-            url += "&";
-        }
-        url += key + "=" + params[key];
+      if (url !== "") {
+          url += "&";
+      }
+      url += key + "=" + params[key];
     }
 
     return CabinetService.wmsGetFeatureInfo.get({url:url});

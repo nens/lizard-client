@@ -4,6 +4,17 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Remove LayerGroups, use dataLayers and mapLayers with layer directives in
+  data-menu.
+
+- Use bootstrap/lizard in json in favor of lizard-bs.js.
+
+- Use favouriteService.applyFavourite for bootstrapping and url state.
+
+
+Release 3.2.4 (2016-6-20)
+---------------------
+
 - Fix no attributes for nested assets
 
 

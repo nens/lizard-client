@@ -51,6 +51,8 @@ angular.module('lizard-nxt')
   this.roundTimestamp = function (timestamp, coefficient, up) {
     var format;
 
+    if (!coefficient) { coefficient = 1; }
+
     if (up) {
       timestamp += coefficient / 2;
     }
@@ -359,46 +361,48 @@ angular.module('lizard-nxt')
 
 
   /**
-   * @function geomToWkt
-   * @memberOf UtilService
+   * Stringifies a GeoJSON object into WKT
    */
-  this.geomToWkt = function (geom) {
-    var coords = [];
-    if (geom instanceof L.LatLng) {
-      // geom is a L.LatLng object
-      return "POINT(" + geom.lng + " " + geom.lat + ")";
+  this.geomToWkt = function (gj) {
+    if (gj.type === 'Feature') {
+      gj = gj.geometry;
     }
 
-    else if (checkForLine(geom)) {
-      // geom represents a line
-      angular.forEach(geom, function (latLng) {
-        coords.push(latLng.lng + " " + latLng.lat);
-      });
-      return "LINESTRING(" + coords.join(',') + ")";
+    function pairWKT (c) {
+      return c.join(' ');
     }
 
-    else if (geom.type === 'Polygon') {
-      var lng, lat;
-      var cs = geom.coordinates[0];
-      for (var i = 0; i < cs.length; i++) {
-        coords.push(cs[i][0] + " " + cs[i][1]);
-        if (i === 0) {
-          lng = cs[i][0];
-          lat = cs[i][1];
-        }
-      }
-      return "POLYGON((" + coords.join(",") + "," + lng + " " + lat + "))";
+    function ringWKT (r) {
+      return r.map(pairWKT).join(', ');
     }
 
-    else {
-      // geom is a L.Bounds object
-      return "POLYGON(("
-            + geom.getWest() + " " + geom.getSouth() + ", "
-            + geom.getEast() + " " + geom.getSouth() + ", "
-            + geom.getEast() + " " + geom.getNorth() + ", "
-            + geom.getWest() + " " + geom.getNorth() + ", "
-            + geom.getWest() + " " + geom.getSouth()
-            + "))";
+    function ringsWKT (r) {
+      return r.map(ringWKT).map(wrapParens).join(', ');
+    }
+
+    function multiRingsWKT (r) {
+      return r.map(ringsWKT).map(wrapParens).join(', ');
+    }
+
+    function wrapParens (s) { return '(' + s + ')'; }
+
+    switch (gj.type) {
+      case 'Point':
+        return 'POINT (' + pairWKT(gj.coordinates) + ')';
+      case 'LineString':
+        return 'LINESTRING (' + ringWKT(gj.coordinates) + ')';
+      case 'Polygon':
+        return 'POLYGON (' + ringsWKT(gj.coordinates) + ')';
+      case 'MultiPoint':
+        return 'MULTIPOINT (' + ringWKT(gj.coordinates) + ')';
+      case 'MultiPolygon':
+        return 'MULTIPOLYGON (' + multiRingsWKT(gj.coordinates) + ')';
+      case 'MultiLineString':
+        return 'MULTILINESTRING (' + ringsWKT(gj.coordinates) + ')';
+      case 'GeometryCollection':
+        return 'GEOMETRYCOLLECTION (' + gj.geometries.map(stringify).join(', ') + ')';
+      default:
+        throw new Error('geomToWkt requires a valid GeoJSON Feature or geometry object as input');
     }
   };
 

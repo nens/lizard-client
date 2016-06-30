@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module("omnibox")
-.directive("omnibox", ['$window', '$document', 'State',
-  function ($window, $document, State) { return {
+.directive("omnibox", ['$window', '$document', 'State', 'user',
+  function ($window, $document, State, user) { return {
 
     /**
      * Keeps omnibox size in check and creates and maintains a scrollbar.
@@ -13,10 +13,11 @@ angular.module("omnibox")
         return (
           user.authenticated &&
           (State.selected.assets.length ||
-           State.layerGroups.active.indexOf('annotations') !== -1) &&
+           State.annotations.active) &&
           (scope.omnibox.data.geometries.length +
            scope.omnibox.data.assets.length) < 2
-      )};
+        );
+      };
 
       // In pixels
       var SEARCHBAR_FROM_TOP = 60;

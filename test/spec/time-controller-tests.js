@@ -5,15 +5,17 @@ describe('Testing time controller', function () {
       $rootScope,
       timeScope,
       State,
-      DataService;
+      rasterMapLayer,
+      MapService;
 
   beforeEach(module('lizard-nxt'));
 
   beforeEach(inject(function ($injector) {
     $controller = $injector.get('$controller');
+    rasterMapLayer = $injector.get('rasterMapLayer');
     $rootScope = $injector.get('$rootScope');
     State = $injector.get('State');
-    DataService = $injector.get('DataService');
+    MapService = $injector.get('MapService');
 
     timeScope = $controller('TimeCtrl', {$scope: $rootScope.$new()});
 
@@ -21,10 +23,22 @@ describe('Testing time controller', function () {
 
   it('should set animatable to true when temporal layers', function () {
     State.temporal.timelineMoving = true;
-    DataService.toggleLayerGroup(DataService.layerGroups['alarm']);
     $rootScope.$digest();
-    expect(timeScope.animatable).not.toBeDefined();
-    State.temporal.timelineMoving = false;
+    expect(timeScope.animatable).toBe(false);
+
+    var uuid = 'asdfsadf';
+
+    State.layers = [{active: true, uuid: uuid}];
+
+    var temporalLayer = rasterMapLayer({
+      uuid: uuid,
+      slug: 'rain',
+      temporalResolution: 36000,
+      temporal: true
+    });
+
+    MapService.mapLayers.push(temporalLayer);
+
     $rootScope.$digest(); // triggers configAnimation
     expect(timeScope.animatable).toBe(true);
     // There are animatable layers
