@@ -1,52 +1,7 @@
 <div class="material-shadow"
    ng-class="{'slide-left': menu.enabled,
-    'layer-adder-wrapper': menu.layerAdderEnabled,
-    'layer-switcher-wrapper': !menu.layerAdderEnabled,}">
-
-  <div ng-show="!menu.layerAdderEnabled" class="layer-switcher">
-    <ul class="list-group">
-
-      <baselayers state="state"></baselayers>
-
-      <div ng-repeat="layer in state.layers track by layer.uuid">
-        <assetlayer
-          ng-if="layer.type === 'assetgroup'"
-          layer="layer">
-        </assetlayer>
-        <rasterlayer
-          ng-if="!layer.scenario && layer.type === 'raster'"
-          layer="layer">
-        </rasterlayer>
-        <wmslayer
-          ng-if="!layer.scenario && layer.type === 'wmslayer'"
-          layer="layer">
-        </wmslayer>
-        <eventseries
-          ng-if="!layer.scenario && layer.type === 'eventseries'"
-          layer="layer">
-        </eventseries>
-      </div>
-
-      <annotations-layer
-        ng-if="state.annotations.present"
-        annotations="state.annotations">
-      </annotations-layer>
-
-      <li>
-        <a class="layer-item add-data"
-           ng-click="menu.layerAdderEnabled = !menu.layerAdderEnabled"
-           translate>
-          Add data&hellip;
-          <div class="layer-chooser-tools">
-            <i class="fa fa-plus"></i>
-          </div>
-        </a>
-      </li>
-
-    </ul>
-  </div>
-
-  <layer-adder ng-if="menu.layerAdderEnabled" menu="menu"></layer-adder>
+    'layer-adder-wrapper': menu.fullMenu,
+    'layer-switcher-wrapper': !menu.fullMenu,}">
 
   <div class="button-list-container">
     <div class="button-list-item compass"
@@ -85,5 +40,54 @@
       type="area" icon="square-o">
     </datamenu-item>
   </div>
+
+  <div ng-show="!menu.layerAdderEnabled" class="layer-switcher">
+    <ul class="list-group">
+
+      <baselayers state="state"></baselayers>
+
+      <div ng-repeat="layer in state.layers track by layer.uuid">
+        <assetlayer
+          ng-if="layer.type === 'assetgroup'"
+          layer="layer">
+        </assetlayer>
+        <rasterlayer
+          ng-if="!layer.scenario && layer.type === 'raster'"
+          layer="layer">
+        </rasterlayer>
+        <wmslayer
+          ng-if="!layer.scenario && layer.type === 'wmslayer'"
+          layer="layer">
+        </wmslayer>
+        <eventseries
+          ng-if="!layer.scenario && layer.type === 'eventseries'"
+          layer="layer">
+        </eventseries>
+        <scenario
+          ng-if="layer.type === 'scenario'"
+          layer="layer">
+        </scenario>
+      </div>
+
+      <annotations-layer
+        ng-if="state.annotations.present"
+        annotations="state.annotations">
+      </annotations-layer>
+
+      <li>
+        <a class="layer-item add-data"
+           ng-click="menu.layerAdderEnabled = !menu.layerAdderEnabled"
+           translate>
+          Add data&hellip;
+          <div class="layer-chooser-tools">
+            <i class="fa fa-plus"></i>
+          </div>
+        </a>
+      </li>
+
+    </ul>
+  </div>
+
+  <layer-adder ng-if="menu.layerAdderEnabled" menu="menu"></layer-adder>
 
 </div>

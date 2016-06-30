@@ -9,6 +9,11 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 - Add pumped drainage area attributes.
 
 - Fix click feedback for polygons.
+- Add scenario item in data-menu.
+
+- Add scenario mock for testing/demo purposes.
+
+- Remove old scenario code.
 
 - Remove LayerGroups, use dataLayers and mapLayers with layer directives in
   data-menu.

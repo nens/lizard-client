@@ -5,7 +5,7 @@
     ng-class ="{active: layer.active }"
     class="layer-item layer-img"
     title="<% layer.name || layer.type + ': ' + layer.uuid %>">
-      <span ng-bind="layer.name"></span>
+      <span ng-bind="layer.name | capitalize"></span>
       <div class="layer-chooser-tools">
         <i class="fa fa-close"
            ng-click="remove(layer); $event.stopPropagation()"></i>

@@ -36,7 +36,6 @@ angular.module("lizard-nxt", [
   'map',
   'omnibox',
   'dashboard',
-  'scenarios',
   'user-menu',
   'favourites',
   'global-state',
