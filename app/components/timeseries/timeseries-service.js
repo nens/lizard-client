@@ -203,11 +203,22 @@ angular.module('timeseries')
       var ts; // initialize undefined and set when found.
       var assetOfTs;
 
-      _.forEach(DataService.assets, function (asset) {
-        ts = _.find(asset.timeseries, { 'uuid': graphTimeseries.id });
-        assetOfTs = asset;
+      /**
+       * Recursively search asset and nested asset for timeseries and set
+       * variables ts and assetOfTs.
+       **/
+      var setAssetAndTs = function (asset) {
+        if (asset.selectedAsset) { return setAssetAndTs(asset.selectedAsset); }
+
+        else {
+          ts = _.find(asset.timeseries, { 'uuid': graphTimeseries.id });
+          if (ts) { assetOfTs = asset; }
+        }
+
         return ts === undefined; // Break out early
-      });
+      };
+
+      _.forEach(DataService.assets, setAssetAndTs);
 
       if (ts) {
         graphTimeseries.parameter = ts.parameter || EMPTY;
