@@ -33,6 +33,10 @@ angular.module('omnibox')
        * @param  {DOM}    target  Plot in drop.
        */
       DragService.on('drop', function (el, target) {
+        if (target === null) {
+          // Dropping outside of dropzone
+          return;
+        }
         var order = Number(target.getAttribute('data-order'));
         var uuid = el.getAttribute('data-uuid');
 
