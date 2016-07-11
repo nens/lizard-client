@@ -17,6 +17,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Use favouriteService.applyFavourite for bootstrapping and url state.
 
+- Force login when requesting favourite unauthenticated.
+
 
 Release 3.2.4 (2016-6-20)
 ---------------------
