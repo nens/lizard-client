@@ -117,7 +117,8 @@ angular.module('lizard-boostrap', ['favourites'])
   '$http', 'UrlService', 'FavouritesService', 'user', 'version', 'debug',
   function ($http, UrlService, FavouritesService, user, version, debug) {
 
-    var urlState = UrlService.getState();
+
+
 
     var showErrorModal = function () {
       var overlay = document.getElementById('dark-overlay');
@@ -143,9 +144,12 @@ angular.module('lizard-boostrap', ['favourites'])
       );
     };
 
+    var urlState = UrlService.getState();
+
     var urlFavourite = UrlService.getFavourite();
 
     if (urlFavourite) {
+
       FavouritesService.getFavourite(
         urlFavourite,
         function (favourite, getResponseHeaders) {
@@ -153,8 +157,7 @@ angular.module('lizard-boostrap', ['favourites'])
           FavouritesService.applyFavourite(favourite);
         },
         function () {
-          // Show error facing message
-          getBootstrap(true);
+          getBootstrap(false);
         }
       );
     }
