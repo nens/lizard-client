@@ -19,6 +19,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Force login when requesting favourite unauthenticated.
 
+- Change notie colors to flatui.
+
 
 Release 3.2.4 (2016-6-20)
 ---------------------
