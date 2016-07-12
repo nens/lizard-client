@@ -120,6 +120,12 @@ angular.module('lizard-boostrap', ['favourites'])
 
 
 
+    var showErrorModal = function () {
+      var overlay = document.getElementById('dark-overlay');
+      overlay.style.display = 'inline';
+      throw new Error('No lizard/bootstrap.json lizard is down or malfunctioning');
+    };
+
     var getBootstrap = function (applyState) {
       $http.get('bootstrap/lizard/', {})
       .then(
@@ -133,7 +139,7 @@ angular.module('lizard-boostrap', ['favourites'])
           }
         },
         function (response) {
-          // Show user facing error message
+          showErrorModal();
         }
       );
     };
