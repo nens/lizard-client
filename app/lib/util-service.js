@@ -400,7 +400,7 @@ angular.module('lizard-nxt')
       case 'MultiLineString':
         return 'MULTILINESTRING (' + ringsWKT(gj.coordinates) + ')';
       case 'GeometryCollection':
-        return 'GEOMETRYCOLLECTION (' + gj.geometries.map(stringify).join(', ') + ')';
+        return 'GEOMETRYCOLLECTION (' + gj.geometries.map(this.geomToWkt).join(', ') + ')';
       default:
         throw new Error('geomToWkt requires a valid GeoJSON Feature or geometry object as input');
     }
