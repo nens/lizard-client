@@ -4,6 +4,12 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Add scenario item in data-menu.
+
+- Add scenario mock for testing/demo purposes.
+
+- Remove old scenario code.
+
 - Remove LayerGroups, use dataLayers and mapLayers with layer directives in
   data-menu.
 
