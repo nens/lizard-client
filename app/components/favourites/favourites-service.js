@@ -87,13 +87,15 @@ angular.module('favourites')
               gettextCatalog.getString('Whoops: favourite has been removed'),
               3
             );
+            error();
           }
           else if (err.status === 401) { // Not authenticated.
             notie.confirm(
               gettextCatalog.getString('You need to be logged in for this favourite, do you want to log in now?'),
               gettextCatalog.getString('Yes'),
               gettextCatalog.getString('Never mind'),
-              confirmCb
+              confirmCb,
+              error()
             );
           }
           else {
@@ -104,8 +106,8 @@ angular.module('favourites')
               ),
               3
             );
+            error();
           }
-          error();
         });
       };
 

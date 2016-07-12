@@ -117,9 +117,6 @@ angular.module('lizard-boostrap', ['favourites'])
   '$http', 'UrlService', 'FavouritesService', 'user', 'version', 'debug',
   function ($http, UrlService, FavouritesService, user, version, debug) {
 
-
-
-
     var showErrorModal = function () {
       var overlay = document.getElementById('dark-overlay');
       overlay.style.display = 'inline';
@@ -157,7 +154,7 @@ angular.module('lizard-boostrap', ['favourites'])
           FavouritesService.applyFavourite(favourite);
         },
         function () {
-          getBootstrap(false);
+          getBootstrap(true);
         }
       );
     }
