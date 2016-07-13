@@ -85,7 +85,8 @@ angular.module('lizard-nxt')
       invalid: isDropContainerOrDescendant,
 
       copy: true, // Keep original in place.
-      revertOnSpill: true // Spilling puts element back where it was dragged from.
+      revertOnSpill: false // Spilling puts element back where it was dragged
+                           // from, but cannot be true together with copy.
 
     });
 
