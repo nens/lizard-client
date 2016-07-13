@@ -1,5 +1,0 @@
-deploy_type: development
-project_path: "/vagrant"
-
-sitename: "localhost"
-build_user: vagrant
