@@ -4,8 +4,9 @@
     ng-dblclick="rescale && rescale([layer])"
     ng-class ="{active: layer.active }"
     class="layer-item layer-img"
-    title="<% layer.name || layer.type + ': ' + layer.uuid %>">
-      <span ng-bind="layer.name | capitalize"></span>
+    title="<% layer.name || layer.type + ':' + layer.uuid %>">
+      <span ng-show="layer.name" ng-bind="layer.name | capitalize"></span>
+      <span ng-hide="layer.name" translate>erroneous layer</span>
       <div class="layer-chooser-tools">
         <i class="fa fa-close"
            ng-click="remove(layer); $event.stopPropagation()"></i>
