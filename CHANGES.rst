@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Add pumped drainage area to asset names.
+
 - Add pumped drainage area attributes.
 
 - Fix click feedback for polygons.

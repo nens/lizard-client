@@ -505,6 +505,7 @@ angular.module('lizard-nxt-filters')
       'overflow': gettext('Overflow'),
       'pipe': gettext('Pipe'),
       'pumpstation': gettext('Pump station'),
+      'pumpeddrainagearea': gettext('Pump drainage area'),
       'weir': gettext('Weir'),
       'pressurepipe': gettext('Pressure pipe'),
       'sluice':gettext('Sluice'),
