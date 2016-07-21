@@ -3,7 +3,10 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Add pumped drainage area attributes.
+
+- Fix click feedback for polygons.
 
 
 Release 3.2.5 (2016-7-13)
