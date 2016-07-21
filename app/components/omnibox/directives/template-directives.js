@@ -42,7 +42,6 @@ angular.module('omnibox')
               type: asset.type || ''
             }
           };
-
           clickId = ClickFeedbackService.drawGeometry(
             MapService,
             feature
@@ -52,9 +51,10 @@ angular.module('omnibox')
 
         }
 
+        cancelAssetWatch();
       };
 
-      scope.$watch('asset', setAsset);
+      var cancelAssetWatch = scope.$watch('asset', setAsset);
 
       element.on('$destroy', function () {
         if (clickId) {
@@ -297,7 +297,7 @@ angular.module('omnibox')
 
       scope.getRawDataUrl = function (event) {
         var coords = scope.rain.geometry.coordinates;
-        // hack to make it testable on staging :( and gets the correct hostname 
+        // hack to make it testable on staging :( and gets the correct hostname
         // on production
         var hostname = window.location.hostname.replace('nxt.staging', 'demo');
         return 'https://' + hostname + '/api/v2/rasters/' +
