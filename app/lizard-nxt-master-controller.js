@@ -21,10 +21,11 @@ angular.module('lizard-nxt')
    'CabinetService',
    'UtilService',
    'ClickFeedbackService',
-   'versioning',
+   'version',
    'State',
    'MapService',
    'rmAllButLastAssetAndGeometry',
+   'UrlService',
 
   function ($scope,
             $rootScope,
@@ -32,18 +33,25 @@ angular.module('lizard-nxt')
             CabinetService,
             UtilService,
             ClickFeedbackService,
-            versioning,
+            version,
             State,
             MapService,
-            rmAllButLastAssetAndGeometry) {
+            rmAllButLastAssetAndGeometry,
+            UrlService) {
 
-  $scope.versioning = versioning;
+  $scope.version = version;
   $scope.tooltips = CabinetService.createTooltips();
 
   // When the language changes we remake the tooltips for the current language.
   $scope.$on('gettextLanguageChanged', function () {
     $scope.tooltips = CabinetService.createTooltips();
   });
+
+  $scope.state = State;
+
+  $scope.$watch('state', function () {
+    UrlService.setUrl($scope.state);
+  }, true);
 
   // CONTEXT
 

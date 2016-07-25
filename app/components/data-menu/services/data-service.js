@@ -7,10 +7,10 @@
  * @memberof app
  * @name NxtData
  * @requires $q, dataLayers, LayerGroup and State
- * @summary Encapsulates layergroups
- * @description NxtData service encapsulates layergroups from the server side
- *              configuration of layergroups. It enables to perform actions
- *              on all layergroups simultaneously. When provided with a string
+ * @summary Encapsulates dataLayers
+ * @description NxtData service encapsulates dataLayers from the server side
+ *              configuration of dataLayers. It enables to perform actions
+ *              on all dataLayers simultaneously. When provided with a string
  *              representation of the service containing the global map it
  *              it performs these actions on the map from this service, else
  *              it needs a map object when calling toggleLayerGroup and
@@ -21,77 +21,19 @@ angular.module('data-menu')
   .service('DataService', [
     '$q',
     'AssetService',
-    'dataLayers',
-    'DataLayerGroup',
     'LayerAdderService',
     'State',
 
     function (
       $q,
       AssetService,
-      dataLayers,
-      DataLayerGroup,
       LayerAdderService,
       State
     ) {
 
-      // Attributes ////////////////////////////////////////////////////////////
-
-      // Event callbacks are used to performa actions on the map when the
-      // state of layergroups changes, may contain a onOpacityChange, OnDblClick
-      // and on layerGroupToggled callback functions.
-      Object.defineProperty(this, 'eventCallbacks', {
-        set: function (newCallBacks) {
-          DataLayerGroup.prototype.callbackFns = newCallBacks;
-        }
-      });
-
       var instance = this;
 
-      /**
-       * Creates a new layerGroup and adds to the layerGroups
-       * @param  {object} lgConfig config of layergroup
-       * @return {object} layerGroup instance
-       */
-      this.createLayerGroup = function (lgConfig) {
-        return this.layerGroups[lgConfig.slug] = new DataLayerGroup(lgConfig);
-      };
-
-      /**
-       * @function
-       * @memberof app.NxtMapService
-       * @param  {object} nonLeafLayers object from database
-       * @description Throw in layers as served from the backend
-       */
-      this._createLayerGroups = function (serverSideLayerGroups) {
-        var layerGroups = {};
-        angular.forEach(serverSideLayerGroups, function (sslg) {
-
-          var utf = false;
-
-          angular.forEach(sslg.layers, function (layer) {
-            if (layer.format === 'UTFGrid') {
-              utf = true;
-            }
-          }, this);
-
-          var lg = new DataLayerGroup(sslg);
-
-          if (utf) { this.utfLayerGroup = lg; }
-
-          this.layerGroups[lg.slug] = lg;
-
-        }, this);
-        return this.layerGroups;
-      };
-
-      this.layerGroups = {};
-
-      var layerGroups = this._createLayerGroups(dataLayers);
-
-      this.baselayerGroups = _.filter(layerGroups, function (lgValue, lgKey) {
-        return lgValue.baselayer;
-      });
+      instance.dataLayers = [];
 
       // Callback for when assets are being retrieved from api
       var assetChange = function (asset) {
@@ -190,17 +132,20 @@ angular.module('data-menu')
       var setGeometries = function (geometriesIn) {
         // Dedupe geometries in selection synchronous.
         var geometries = _.uniqWith(geometriesIn, isDuplicateGeometry);
+
         instance._updateGeometries(_geometries, angular.copy(geometries))
-        .then(function (geometries) {
-          // Dedupe instance.geometries asynchronous.
-          instance.geometries = _.uniqWith(geometries, isDuplicateGeometry);
-          console.log('DataService.geometries:', instance.geometries);
+        .forEach(function (promise) {
+          promise.then(function (geometries) {
+            // Dedupe instance.geometries asynchronous.
+            instance.geometries = _.uniqWith(geometries, isDuplicateGeometry);
+            console.log('DataService.geometries:', instance.geometries);
 
-          if (instance.onGeometriesChange) {
-            instance.onGeometriesChange();
-          }
-
+            if (instance.onGeometriesChange) {
+              instance.onGeometriesChange();
+            }
+          });
         });
+
         _geometries = geometries;
         console.log('State.selected.geometries:', State.selected.geometries);
         State.selected.geometries.addGeometry = addGeometry;
@@ -237,37 +182,6 @@ angular.module('data-menu')
       State.selected.geometries.addGeometry = addGeometry;
       State.selected.geometries.removeGeometry = removeGeometry;
 
-      // Immutable representation of all layergroups set on State.layerGroups
-      Object.defineProperty(State.layerGroups, 'all', {
-        get: function () {
-          return Object.keys(layerGroups);
-        },
-        set: function (newLayerGroups) {
-
-          // Remove layergroups not in newLayergroups
-          _.forEach(
-            instance.layerGroups,
-            function (lg, slug) {
-              if (newLayerGroups.indexOf(slug) === -1) {
-                instance.removeLayerGroup(lg);
-              }
-            }
-          );
-
-          // Request new layegroups from server.
-          var nonExistent = _.difference(
-            newLayerGroups,
-            Object.keys(instance.layerGroups)
-          );
-
-          LayerAdderService.getNonExistentLayerGroups(
-            nonExistent,
-            instance
-          );
-
-        }
-      });
-
       this.REJECTION_REASONS = {};
 
       Object.defineProperty(this.REJECTION_REASONS, 'OVERRIDDEN', {
@@ -276,36 +190,6 @@ angular.module('data-menu')
         configurable: false
       });
 
-      // List of slugs of active layerGroups, two-way.
-      Object.defineProperty(State.layerGroups, 'active', {
-        get: function () {
-          return Object.keys(layerGroups).filter(function (layerGroup) {
-            return layerGroups[layerGroup].isActive();
-          });
-        },
-        set: function (newActivelayerGroups) {
-
-          angular.forEach(layerGroups, function (_lg, slug) {
-            // Turn layers on or off.
-            if (newActivelayerGroups.indexOf(slug) !== -1 && !_lg.isActive()) {
-              this.toggleLayerGroup(_lg);
-            } else if (newActivelayerGroups.indexOf(slug) === -1 && _lg.isActive()) {
-              this.toggleLayerGroup(_lg);
-            }
-          }, instance);
-
-          var nonExistent = _.difference(
-            newActivelayerGroups,
-            Object.keys(instance.layerGroups)
-          );
-
-          LayerAdderService.getNonExistentActiveLayerGroups(
-            nonExistent,
-            instance
-          );
-
-        }
-      });
 
       // Define temporal here so DataService can update assets, geometries etc.
       var _timelineMoving = State.temporal.timelineMoving;
@@ -323,140 +207,12 @@ angular.module('data-menu')
                              // getData gets called before the last one
                              // resolves.
 
-
-      // Methods //////////////////////////////////////////////////////////////
-
-      /**
-       * @function
-       * @memberOf app.NxtMap
-       * @description Toggles a layergroup when layergroups should be toggled
-       *              takes into account that baselayers should toggle eachother
-       * @param  layerGroup layergroup that should be toggled
-       */
-      this.toggleLayerGroup = function (layerGroup) {
-        // turn layer group on
-        if (!(layerGroup.baselayer && layerGroup.isActive())) {
-          layerGroup.toggle();
-          instance.refreshSelected();
-        }
-        if (layerGroup.baselayer) {
-          angular.forEach(this.layerGroups, function (_layerGroup) {
-            if (_layerGroup.baselayer
-              && _layerGroup.isActive()
-              && _layerGroup.slug !== layerGroup.slug
-              )
-            {
-              _layerGroup.toggle();
-            }
-          });
-        }
-      };
-
-      /**
-       * Adds the provided layerGroups to the layerGroups
-       * @param {object} layerGroup instance
-       */
-      this.addLayergroup = function (layerGroup) {
-        return this.layerGroups[layerGroup.slug] = layerGroup;
-      };
-
-      /**
-       * Removes the provided layerGroups from nxt
-       * @param {object} layerGroup instance
-       */
-      this.removeLayerGroup = function (layerGroup) {
-        delete this.layerGroups[layerGroup.slug];
-        return this.layerGroups;
-      };
-
-      /**
-       * Gets data from all layergroups.
-       *
-       * @param  {object} options
-       * @param  {str} callee that gets a list of defers for every time getdata
-       *                      is called before a request finishes.
-       * @param  {defer} recursiveDefer optional. When supplied is notified with
-       *                                data. Used for recursively calling get
-       *                                data with data from waterchain of a
-       *                                previous getData call.
-       * @return {object} notifies with data from layergroup and resolves when
-       *                   all layergroups and the timeseries returned data.
-       */
-      this.getData = function (callee, options, recursiveDefer) {
-        var defer = $q.defer();
-
-        if (recursiveDefer === undefined) {
-          this.reject(callee, this.REJECTION_REASONS.OVERRIDDEN);
-          if (!this._dataDefers[callee]) {
-            this._dataDefers[callee] = []; // It is a list because $q.all can not
-          }                                // be deregistered.
-          var defers = this._dataDefers[callee];
-          defers.push(defer); // add to list
-        }
-
-        var promises = [];
-        var instance = this;
-        angular.forEach(this.layerGroups, function (layerGroup) {
-          promises.push(
-            layerGroup.getData(callee, options).then(null, null, function (response) {
-
-              if (recursiveDefer) {
-                recursiveDefer.notify(response);
-              } else {
-                defer.notify(response);
-              }
-
-            })
-          );
-        });
-
-        $q.all(promises).then(function () {
-          finishDefers();
-        });
-
-        /**
-         * @function finishDefers
-         * @memberof DataService
-         * @summary Checks if current defer is the last one, if so resolves the
-         * defer and clears the defers
-         */
-        var finishDefers = function () {
-          // If this defer is the last one in the list of defers the getData
-          // is truly finished, otherwise the getData is still getting data for
-          // the callee.
-          if (recursiveDefer) {
-            defer.resolve();
-          }
-          else if (defers.indexOf(defer) === defers.length - 1) {
-            State.layerGroups.gettingData = false;
-            defer.resolve(); // Resolve the last one, the others have been
-                             // rejected.
-            defers.length = 0; // Clear the defers, by using .length = 0 the
-                               // reference to this._dataDefers persists.
-          }
-        };
-
-        State.layerGroups.gettingData = true;
-        return defer.promise;
-      };
-
-      /**
-       * Rejects call for data and sets loading to false.
-       */
-      this.reject = function (callee, reason) {
-        State.layerGroups.gettingData = false;
-        if (this._dataDefers[callee]) {
-          this._dataDefers[callee].forEach(function (defer) {
-            defer.reject(reason);
-          });
-        }
-      };
-
       this.refreshSelected = function () {
         this.geometries.forEach(function (geom) {
 
           angular.forEach(geom.properties, function (v, s) {
-            if (!this.layerGroups[s].isActive()) {
+            var layer = _.find(State.layers, {uuid: s});
+            if (!layer || !layer.active) {
               delete geom.properties[s];
             }
           }, this);
@@ -498,28 +254,34 @@ angular.module('data-menu')
           }).length;
         });
 
+        var promises = [] ;
         if (newGeoms.length > 0) {
-          return this.getGeomData(newGeoms[newGeoms.length -1])
-          .then(function(newGeo) {
-            var dupe = false;
-            instance.geometries.forEach(function (old, i) {
-              if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
-                dupe = true;
-                instance.geometries[i] = newGeo;
+          // Get data for all the new geometries by slicing it with the old
+          // ones.
+          newGeoms = _.slice(newGeoms, oldGeoms.length, newGeoms.length);
+          _.forEach(newGeoms, function (newGeom) {
+            promises.push(instance.getGeomData(newGeom)
+            .then(function(newGeo) {
+              var dupe = false;
+              instance.geometries.forEach(function (old, i) {
+                if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
+                  dupe = true;
+                  instance.geometries[i] = newGeo;
+                }
+              });
+              if (!dupe) {
+                instance.geometries.push(newGeo);
               }
-            });
-            if (!dupe) {
-              instance.geometries.push(newGeo);
-            }
-            return instance.geometries;
+              return instance.geometries;
+            }));
           });
         }
         else {
           var defer = $q.defer();
           defer.resolve(instance.geometries);
-          return defer.promise;
+          promises.push(defer.promise);
         }
-
+        return promises;
       };
 
       this.getGeomDataForAssets = function (oldAssets, assets) {
@@ -549,84 +311,68 @@ angular.module('data-menu')
           end: State.temporal.end
         };
 
-        if (geo.geometry.type === 'Point') {
-          options.geom = L.latLng(geo.geometry.coordinates[1], geo.geometry.coordinates[0]);
-        }
+        options.geom = geo.geometry;
 
-        else if (geo.geometry.type === 'LineString') {
-          var coords = geo.geometry.coordinates;
-          options.geom = [
-            L.latLng(coords[0][1], coords[0][0]),
-            L.latLng(coords[1][1], coords[1][0])
-          ];
-        }
-
-        else if (geo.geometry.type === 'Polygon' && geo.id) {
+        if (geo.geometry.type === 'Polygon' && geo.id) {
           options.id = geo.id;
         }
 
-        if (geo.geometry.type === 'Polygon') {
-          options.geom = L.geoJson(geo).getBounds();
-        }
-
-        angular.forEach(this.layerGroups, function (layerGroup) {
+        angular.forEach(State.layers, function (layer) {
           if (
-
-            // UTF has a special status and is not queried in this loop.
-            (instance.utfLayerGroup && (layerGroup.slug === instance.utfLayerGroup.slug))
-
-            // One too many dimension
-            || (layerGroup.temporal && geo.geometry.type === 'LineString')
+            !layer.active
+            || (layer.temporal && geo.geometry.type === 'LineString')
 
           ) {
             return;
           }
 
+          var dataLayer = _.find(instance.dataLayers, {uuid: layer.uuid});
+
+          if (dataLayer) {
+            promises.push(
+              dataLayer.getData(options).then(function (response) {
+                // async so remove anything obsolete.
+                geo.properties = geo.properties || {};
+                geo.properties[layer.uuid] = geo.properties[layer.uuid] || _.clone(dataLayer);
+                // Replace data and merge everything with existing state of
+                // property.
+                geo.properties[layer.uuid].data = [];
+                _.merge(geo.properties[layer.uuid], response);
+                if (!layer.active && layer.uuid in Object.keys(geo.properties)) {
+
+                    geo.properties[layer.uuid] = null;
+
+                }
+              })
+            );
+          }
+
+        });
+
+        if (State.annotations.active) {
+          var uuid = instance.annotationsLayer.uuid;
           promises.push(
-            layerGroup.getData('DataService', options).then(null, null, function (response) {
+            instance.annotationsLayer.getData(options).then(function (response) {
               // async so remove anything obsolete.
               geo.properties = geo.properties || {};
-              geo.properties[response.layerGroupSlug] = geo.properties[response.layerGroupSlug] || {};
+              geo.properties[uuid] = geo.properties[uuid] || {};
               // Replace data and merge everything with existing state of
               // property.
-              geo.properties[response.layerGroupSlug].data = [];
-              _.merge(geo.properties[response.layerGroupSlug], response);
-              if (!instance.layerGroups[response.layerGroupSlug].isActive()
-                && layerGroup.slug in Object.keys(geo.properties)) {
-
-                  geo.properties[layerGroup.slug] = null;
-
+              geo.properties[uuid].data = response;
+              if (!State.annotations.active && uuid in Object.keys(geo.properties)) {
+                  geo.properties[uuid] = null;
               }
             })
           );
-        });
+        }
 
         $q.all(promises).then(function () {
             geo.properties = geo.properties || {};
-            State.layerGroups.gettingData = false;
             defer.resolve(geo);
             defer = undefined; // Clear the defer
         });
 
-        State.layerGroups.gettingData = true;
         return defer.promise;
-      };
-
-      /**
-       * @function
-       * @memberOf app.NxtMap
-       * @description Sets the layergroups to the state they came from the
-       *              server. Is called by the urlCtrl when no layergroup
-       *              info is found on the server
-       */
-      this.setLayerGoupsToDefault = function () {
-        angular.forEach(this.layerGroups, function (layerGroup) {
-          if (layerGroup.defaultActive && !layerGroup.isActive()) {
-            this.toggleLayerGroup(layerGroup);
-          } else if (!layerGroup.defaultActive && layerGroup.isActive()) {
-            this.toggleLayerGroup(layerGroup);
-          }
-        }, this);
       };
 
     }

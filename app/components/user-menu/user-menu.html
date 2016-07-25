@@ -63,7 +63,8 @@
           </a>
         </li>
         <li ng-if="!user.authenticated">
-          <a onclick="logIn()"
+          <a ng-click="logIn()"
+             href="/accounts/login/"
              title="<% tooltips.login %>"
              class="clickable">
             <div ng-cloak id="username">
@@ -82,7 +83,7 @@
              href="#">
             <div ng-cloak id="username">
               <i class="fa fa-user"></i>
-              <span ng-bind="user.firstName"></span>
+              <span ng-bind="user.first_name"></span>
               <span class="caret"></span>
             </div>
           </a>
@@ -106,9 +107,9 @@
             <li>
               <a ng-if="user.authenticated"
                  class="logout user"
-                 href="/accounts/logout/?next=/"
-                 title="<% tooltips.logout %>"
-                 onclick="return logOut()">
+                 ng-click="logOut()"
+                 href="/accounts/logout/"
+                 title="<% tooltips.logout %>">
                  <i id="" class="fa fa-power-off"></i>
                  <span translate>Log out</span>
               </a>
@@ -127,7 +128,7 @@
       <ng-include src="'/about/'"></ng-include>
     </div>
     <div class="modal-footer">
-      <span class="pull-left text-muted">Version: <% about.versioning.version%></span>
+      <span class="pull-left text-muted">Version: <% about.version.version%></span>
       <button class="btn btn-default" type="button" ng-click="$dismiss()">
         Close
       </button>

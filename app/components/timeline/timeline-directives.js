@@ -113,7 +113,7 @@ angular.module('lizard-nxt')
 
 
     // keep track of events in this scope
-    scope.events = {nEvents: 0, slugs: []};
+    var events = {nEvents: 0, slugs: []};
 
     // Initialise timeline
     var timeline = new Timeline(el[0], dimensions, start, end, interaction);
@@ -137,7 +137,7 @@ angular.module('lizard-nxt')
         + dimensions.padding.top
         + nEventTypes * dimensions.events;
 
-      if (getTimelineLayers(DataService.layerGroups).rain) {
+      if (getTimelineLayers(State.layers).rain) {
         newDim.height += dimensions.bars;
       }
 
@@ -174,26 +174,25 @@ angular.module('lizard-nxt')
      * @param {object} layerGroups - NXT layerGroups object.
      * @returns {object} with: events (list of layers) and rain (nxtLayer).
      */
-    var getTimelineLayers = function (layerGroups) {
-      var timelineLayers = {events: {layers: [], slugs: []},
-                            rasterStore: {layers: []},
+    var getTimelineLayers = function (layers) {
+      var timelineLayers = {eventseries: {layers: []},
+                            rasters: {layers: []},
                             rain: undefined};
 
       if (State.context !== 'dashboard') {
-        angular.forEach(layerGroups, function (layergroup) {
-          if (layergroup.isActive()) {
-            angular.forEach(layergroup._dataLayers, function (layer) {
-              if (layer.format === "Vector") {
-                timelineLayers.events.layers.push(layer);
-                timelineLayers.events.slugs.push(layer.slug);
-              } else if (layer.format === "Store" && State.context !== 'dashboard') {
-                if (layer.slug !== "rain") {
-                  timelineLayers.rasterStore.layers.push(layer);
-                } else if (layer.slug === "rain") {
-                  timelineLayers.rain = layer;
-                }
-             }
-            });
+        angular.forEach(layers, function (layer) {
+          if (layer.active) {
+            var dataLayer = _.find(DataService.dataLayers, {uuid: layer.uuid});
+            if (dataLayer && layer.type === 'eventseries') {
+              timelineLayers.eventseries.layers.push(dataLayer);
+            }
+            else if (dataLayer && layer.type === "raster" && State.context !== 'dashboard') {
+              if (dataLayer.slug !== "rain") {
+                timelineLayers.rasters.layers.push(dataLayer);
+              } else if (dataLayer.slug === "rain") {
+                timelineLayers.rain = dataLayer;
+              }
+            }
           }
         });
       }
@@ -214,51 +213,50 @@ angular.module('lizard-nxt')
     var getTimeLineData = function () {
       // NOTE: remember which layers *were* active? So we can do stuff with
       // turning off data (eg tickmarks).
-      var timelineLayers = getTimelineLayers(DataService.layerGroups),
+      var timelineLayers = getTimelineLayers(State.layers),
           context = {eventOrder: 1,
-                     nEvents: scope.events.nEvents};
+                     nEvents: events.nEvents};
 
-      // vector data (for now only events)
-      if (timelineLayers.events.layers.length > 0 &&
+      if (timelineLayers.eventseries.length > 0 &&
         State.spatial.bounds.isValid()) {
-        scope.events.nEvents = timelineLayers.events.layers.length;
 
         // update inactive groups with nodata so update function is called
         // appropriately.
-        angular.forEach(scope.events.slugs, function (slug) {
-          if (timelineLayers.events.slugs.indexOf(slug) === -1) {
-            timeline.drawCircles([], scope.events.nEvents, slug);
+        angular.forEach(events.uuids, function (uuid) {
+          if (!_.find(timelineLayers.eventseries, {uuid: uuid})) {
+            timeline.drawCircles([], events.nEvents, uuid);
           }
         });
 
+        events.nEvents = timelineLayers.eventseries.length;
         // update slugs on scope for housekeeping
-        scope.events.slugs = timelineLayers.events.slugs;
-        getEventData();
+        events.uuids = _.flatMap(timelineLayers.eventseries, 'uuid');
+        getEventData(timelineLayers.eventseries);
       } else {
-        scope.events.nEvents = 0;
-        timeline.drawCircles(undefined, scope.events.nEvents);
+        events.nEvents = 0;
+        timeline.drawCircles(undefined, events.nEvents);
       }
 
       if (State.spatial.bounds.isValid()) { // no business here when invalid
                                             // bounds.
 
         if (timelineLayers.rain !== undefined) {
-          getTemporalRasterData(timelineLayers.rain,
-                                timelineLayers.events.length);
+          getTemporalRasterData(
+            timelineLayers.rain,
+            timelineLayers.eventseries.length
+          );
         } else {
           timeline.removeBars();
         }
-        if (timelineLayers.rasterStore.layers.length > 0) {
-          angular.forEach(timelineLayers.rasterStore.layers, function (layer) {
-            getTemporalRasterDates(layer);
-          });
+        if (timelineLayers.rasters.length > 0) {
+          getTemporalRasterDates(timelineLayers.rasters);
         } else {
           timeline.drawTickMarks([]);
         }
 
       }
 
-      updateTimelineSize(scope.events.nEvents);
+      updateTimelineSize(events.nEvents);
     };
 
     /**
@@ -266,12 +264,12 @@ angular.module('lizard-nxt')
      * @summary get data for event layers and update timeline.
      * @description get data for event layers and update timeline.
      */
-    var getEventData = function () {
+    var getEventData = function (eventseries) {
       // create context for callback function, reset eventOrder to 1.
       var context = {
         eventOrder: 1,
-        nEvents: scope.events.nEvents,
-        slugs: scope.events.slugs
+        nEvents: events.nEvents,
+        slugs: events.slugs
       };
 
       var draw = function (response) {
@@ -293,13 +291,14 @@ angular.module('lizard-nxt')
           context.eventOrder++;
         }
       };
-      // Get data with type === 'Event'
-      DataService.getData('timeline', {
-        geom: State.spatial.bounds,
-        start: State.temporal.start,
-        end: State.temporal.end,
-        type: 'Event'
-      }).then(null, null, draw);
+      angular.forEach(eventseries, function (_eventseries) {
+        // Get data with type === 'eventseries'
+        eventseries.getData({
+          geom: UtilService.geomToWKT(State.spatial.bounds),
+          start: State.temporal.start,
+          end: State.temporal.end,
+        }).then(draw);
+      });
     };
 
 
@@ -315,23 +314,16 @@ angular.module('lizard-nxt')
 
       var start = State.temporal.start,
           stop = State.temporal.end,
-          bounds = State.spatial.bounds;
+          bounds = UtilService.geomToWKT(State.spatial.bounds);
 
       // Has it's own deferrer to not conflict with
       // other deferrers with the same layerSlug
-      RasterService.getData(
-        'timelineData',
-        rasterLayer,
+      rasterLayer.getData(
         {
           geom: bounds,
           start: start,
           end: stop,
-          agg: rasterLayer.aggregationType,
           aggWindow: State.temporal.aggWindow,
-          deferrer: {
-            origin: 'timeline_' + rasterLayer.slug,
-            deferred: $q.defer()
-          }
         }
       )
       .then(
@@ -354,7 +346,7 @@ angular.module('lizard-nxt')
      *
      * @param {object} rasterLayer - rasterLayer object.
      */
-    var getTemporalRasterDates = function (rasterLayer) {
+    var getTemporalRasterDates = function (rasterLayers) {
 
       var start = State.temporal.start,
           stop = State.temporal.end,
@@ -365,16 +357,18 @@ angular.module('lizard-nxt')
         timeline.drawTickMarks(dates);
       };
 
-      DataService.getData('timelineDates', {
-        start: State.temporal.start,
-        end: State.temporal.end,
-        geom: State.spatial.bounds.getCenter(),
-        truncate: true,
-        exclude: 'rain'
-      }).then(draw, null, function (response) {
-        if (response && response !== 'null') {
-          dates = dates.concat(response.data);
-        }
+      rasterLayers.forEach(function (raster) {
+        raster.getData({
+          start: State.temporal.start,
+          end: State.temporal.end,
+          geom: UtilService.geomToWKT(State.spatial.bounds.getCenter()),
+          truncate: true,
+        }).then(function (response) {
+          if (response && response !== 'null') {
+            dates = dates.concat(response.data);
+          }
+        });
+
       });
 
     };
@@ -470,7 +464,7 @@ angular.module('lizard-nxt')
           timeline.dimensions,
           State.temporal.at,
           State.temporal.aggWindow,
-          scope.events.nEvents // TODO: get nEvents from somewhere
+          events.nEvents // TODO: get nEvents from somewhere
         );
       });
     };

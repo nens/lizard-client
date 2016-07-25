@@ -46,7 +46,6 @@ module.exports = function(config) {
 
       'vendor/moment/locale/nl.js',
       // application
-      'test/mocks/beforeModuleMocks.js',
       'app/components/state/state.js', // Load these first to prevent dep clash
       'app/components/data-menu/data-menu.js', // Load these first to prevent dep clash
       'app/components/map/map.js', // Load these first to prevent dep clash

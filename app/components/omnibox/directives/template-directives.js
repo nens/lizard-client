@@ -273,7 +273,7 @@ angular.module('omnibox')
 
       var setGraphContent = function () {
         scope.graphContent = [{
-          data: scope.rain.properties.rain.data,
+          data: scope.rain.data,
           keys: {x: 0, y: 1},
           labels: {y: 'mm'}
         }];
@@ -285,7 +285,7 @@ angular.module('omnibox')
       };
 
 
-      scope.$watchCollection("rain.properties.rain.data", function (n, o) {
+      scope.$watchCollection("rain.data", function (n, o) {
         setGraphContent();
         if (scope.rrc.active) {
           getRecurrenceTime();
@@ -333,7 +333,8 @@ angular.module('omnibox')
     restrict: 'E',
     scope: {
       rain: '=',
-      timeState: '='
+      timeState: '=',
+      geometry: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/rain.html'

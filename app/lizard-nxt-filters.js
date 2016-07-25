@@ -31,6 +31,15 @@ angular.module('lizard-nxt-filters')
   };
 });
 
+/**
+ * Filter to capitalize first letter of string.
+ */
+angular.module('lizard-nxt-filters')
+  .filter('capitalize', function () {
+  return function (string) {
+    return _.capitalize(string);
+  };
+});
 
 /**
  * Returns a rounded number or a '...' based on input type.

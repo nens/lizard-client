@@ -1,3 +1,4 @@
 angular.module('data-menu', [
-  'global-state'
+  'global-state',
+  'map'
 ]);
