@@ -17,6 +17,7 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Use favouriteService.applyFavourite for bootstrapping and url state.
 
+- Do not post annotations geometry when attaching annotation to asset.
 
 Release 3.2.5 (2016-7-13)
 ---------------------
