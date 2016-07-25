@@ -2,8 +2,8 @@
  * Lizard-client global state object.
  */
 angular.module('global-state')
-  .service('State', ['dataLayers', 'UtilService', 'temporalBounds',
-    function (dataLayers, UtilService, temporalBounds) {
+  .service('State', ['UtilService',
+    function (UtilService) {
 
     var state = {};
 
@@ -30,7 +30,7 @@ angular.module('global-state')
 
     // Context. State.context returns 'map' or 'db', it can only be set with
     // either one of those values.
-    var _context = ''; // Set on init from url or defaults to map.
+    var _context = 'map'; // Set on init from url or defaults to map.
     var CONTEXT_VALUES = ['map', 'dashboard', 'scenarios'];
     Object.defineProperty(state, 'context', {
       get: function () { return _context; },
@@ -52,20 +52,56 @@ angular.module('global-state')
     // Default language.
     state.language = 'nl';
 
-    // State of data layer groups, stores slugs of all layergroups and the
-    // active layergroups.
-    state.layerGroups = {
-      all: [], // Immutable representation of all layergroups
-      active: [],
-      gettingData: false, // Making server requests through DataService
-      timeIsSyncing: false // Getting new layers and so on
+    // slug of active baselayer, watched by baselayers directive. It is not
+    // enumarable iteratees only encounter arrays.
+    state.baselayer = 'topography';
+
+    state.annotations = {present: true, active: false};
+
+    // Collection of layers
+    state.layers = [];
+
+    var getLayerSlugs = function (stateLayers) {
+      var slugs = [];
+      _.forEach(stateLayers, function (layers, type) {
+        layers.forEach(function (layer) {
+          slugs.push(type + '$' + layer.uuid);
+        });
+      });
+      return slugs;
     };
 
-    // Combination of data and time syncing
-    Object.defineProperty(state.layerGroups, 'isLoading', {
+    var setActiveLayers = function (layerSlugs) {
+      _.forEach(state.layers, { active: false });
+
+      layerSlugs.forEach(function (layerSlug) {
+
+        var type = layerSlug.split('$')[0];
+        var uuid = layerSlug.split('$')[1];
+
+        var layer = _.find(state.layers, {uuid: uuid, type: type});
+
+        if (layer) { layer.active = true; }
+
+        else {
+          state.layers.push({uuid: uuid, type: type, active: true});
+        }
+
+      });
+    };
+
+    // List of slugs of active layers, two-way.
+    Object.defineProperty(state.layers, 'active', {
       get: function () {
-        return state.layerGroups.timeIsSyncing || state.layerGroups.gettingData;
+        var actives = [];
+        _.forEach(state.layers, function (layer) {
+          if (layer.active) {
+            actives.push(layer.type + '$' + layer.uuid);
+          }
+        });
+        return actives;
       },
+      set: setActiveLayers,
       enumerable: false
     });
 
@@ -97,7 +133,7 @@ angular.module('global-state')
                 // function.
         isValid: function () { return false; }
       },
-      view: {}, // { lat: <int>, lng:<int>, zoom:<int> }
+      view: {lat: 0, lng: 0, zoom: 0}, // { lat: <int>, lng:<int>, zoom:<int> }
       userHere: {}, // Geographical location of the users mouse only set by
                     // map-directive when box type is 'line'
       mapMoving: false
@@ -133,8 +169,8 @@ angular.module('global-state')
 
     // Temporal
     var now = Date.now(),
-        INITIAL_START_FOR_EXTENT = now + temporalBounds.start,
-        INITIAL_END_FOR_EXTENT = now + temporalBounds.end;
+        INITIAL_START_FOR_EXTENT = now - 2 * UtilService.day,
+        INITIAL_END_FOR_EXTENT = now + 3 * UtilService.hour;
 
     state.temporal = {
       at: now,

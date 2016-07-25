@@ -62,7 +62,7 @@ angular.module('lizard-nxt')
       // this is lost. For now leaflet-vector-service depends on global state,
       // but really this whole async business should go somewhere else, like
       // map-service.
-      VectorService.getData('leaflet', this.options.layer, {})
+      VectorService.getData(this.options.layer)
       .then(function (response) {
         layer.clearLayers();
         layer.markers = [];

@@ -16,8 +16,8 @@ angular.module('favourites')
      * @param {object} $event - Click event object.
      */
     scope.toggleFavourites = function($event) {
-      scope.favourites.enabled = !scope.favourites.enabled;
       $event.stopPropagation();
+      scope.favourites.enabled = !scope.favourites.enabled;
     };
 
     /**
@@ -57,6 +57,7 @@ angular.module('favourites')
               function (FavouritesService, notie, gettextCatalog, State) {
 
   var link = function (scope, element, attrs) {
+
     /**
      * Fill the favourites list with all the favourites returned by the
      * GET request.
@@ -138,7 +139,7 @@ angular.module('favourites')
     };
 
     scope.selectFavourite = function (favourite) {
-      FavouritesService.applyFavourite(favourite);
+      FavouritesService.applyFavourite(favourite.state);
     };
   };
 

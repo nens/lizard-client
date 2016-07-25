@@ -3,7 +3,7 @@
  */
 
 .error-message {
-    height: $height20;
+    height: 130px ;
     left: 50%;
     margin-left: -250px;
     margin-top: -175px;
@@ -29,6 +29,7 @@
     }
 
 }
+
 
 .error-bg {
     background-color: $deprecated-gray1;
@@ -61,34 +62,6 @@ to {
     animation: bounce 10s linear 0s infinite;
 }
 
-
-.error-message {
-    height: $height20;
-    left: 50%;
-    margin-left: -250px;
-    margin-top: -175px;
-    padding: 2em;
-    position:absolute;
-    top: 50%;
-    width: 500px;
-    z-index: 1;
-}
-
-.error-text {
-    background-color: $greenSea;
-    border-color: $turquoise;
-    border-color: rgba($turquoise, 0.6);
-    color: $deprecated-gray2;
-    font-family: $font-family;
-    font-size: 1.5em;
-    padding: 1em;
-    text-shadow: none;
-    text-transform: none;
-    a {
-        color: $amethyst;
-    }
-
-}
 
 .error-bg {
     background-color: $deprecated-gray1;

@@ -1,7 +1,7 @@
 <div class="card active">
-  <div ng-switch="content.format">
+  <div ng-switch="content.type">
 
-    <div ng-switch-when="Store">
+    <div ng-switch-when="raster">
       <div ng-if="!content.temporal">
         <table ng-if="content.scale === 'interval' || content.scale === 'ratio' "
           class="table table-condensed table-hover single-row-table">
@@ -38,7 +38,7 @@
       </graph>
     </div>
 
-    <div ng-switch-when="WMS"
+    <div ng-switch-when="wms"
          ng-if="content.data.features && content.data.features.length">
       <div class="card-content">
 
@@ -71,7 +71,7 @@
     </div>
 
 
-    <div ng-switch-when="Vector" ng-if="content.data.length">
+    <div ng-switch-when="eventseries" ng-if="content.data.length">
       <div class="card-content">
 
         <span class="card-title">

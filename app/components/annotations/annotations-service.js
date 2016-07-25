@@ -2,8 +2,8 @@
  * Service to handle annotations retrieval and creation.
  */
 angular.module('annotations')
-  .service("AnnotationsService", ['$resource', 'State',
-    function ($resource, State) {
+  .service("AnnotationsService", ['$resource', 'State', 'MapService',
+    function ($resource, State, MapService) {
 
       /**
        * Date formatter that formats the date based on the timeline window.
@@ -146,18 +146,11 @@ angular.module('annotations')
        * turned off. So turn off and on.
        */
       this.refreshAnnotationLayer = function () {
-        var ANNOTATION_LG_SLUG = 'annotations';
-        var annotationLgIndex = State.layerGroups.active.indexOf(ANNOTATION_LG_SLUG);
-        if (annotationLgIndex !== -1) {
-          var oldLgs = angular.copy(State.layerGroups.active);
-          var newLgs = State.layerGroups.active.filter(function (lgslug) {
-            if (lgslug !== ANNOTATION_LG_SLUG) {
-              return true;
-            } else { return false ;}
-          });
-
-          State.layerGroups.active = newLgs;
-          State.layerGroups.active = oldLgs;
+        if (State.annotations.active) {
+          State.annotations.active = false;
+          MapService.updateAnnotations();
+          State.annotations.active = true;
+          MapService.updateAnnotations();
         }
       };
 

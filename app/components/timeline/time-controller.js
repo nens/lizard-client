@@ -20,7 +20,7 @@ angular.module('lizard-nxt')
   "$scope",
   "$q",
   'UtilService',
-  'DataService',
+  'MapService',
   'State',
 
   function (
@@ -29,7 +29,7 @@ angular.module('lizard-nxt')
     $scope,
     $q,
     UtilService,
-    DataService,
+    MapService,
     State) {
 
     window.requestAnimationFrame = window.requestAnimationFrame ||
@@ -54,28 +54,19 @@ angular.module('lizard-nxt')
 
     this.state = State;
 
-    Object.defineProperty(this, 'showContextSwitch', {
-      get: function () {
-        return State.layerGroups.active.some(function (slug) {
-          return DataService.layerGroups[slug].temporal
-            && DataService.layerGroups[slug].isActive();
-        });
-      }
-    });
+    this.MapService = MapService;
 
     /**
      * Keep an eye out for temporal layers that require the animation to go
      * with a lower speed so wms requests can keep up and run more smooth if the
      * temporalResolution equals or is a multiplication of  the stepSize.
      */
-    $scope.$watch(State.toString('layerGroups.active'), angular.bind(this, function (n, o) {
-      if (n === o) { return; }
+    $scope.$watch(State.toString('layers.active'), angular.bind(this, function (n, o) {
       configAnimation.call(this);
     }));
 
     /**
-     * sync data layers to new timestate and redo the animation configuration
-     * since currentInterval has changed.
+     * Redo the animation configuration since currentInterval has changed.
      */
     $scope.$watch(State.toString('temporal.timelineMoving'), angular.bind(this, function (n, o) {
       if (n === o) { return true; }
@@ -95,36 +86,28 @@ angular.module('lizard-nxt')
       syncTimeWrapper(State.temporal);
     });
 
-    /**
-     * @description sets the timeStep and minLag on the basis of layergroups and
-     *              their temporalResolution. The temporal layer with the smallest
-     *              temporalResolution is leading.
-     */
+    // *
+    //  * @description sets the timeStep and minLag on the basis of layergroups and
+    //  *              their temporalResolution. The temporal layer with the smallest
+    //  *              temporalResolution is leading.
     var configAnimation = function () {
       currentInterval = State.temporal.end - State.temporal.start;
       timeStep = Infinity;
       minLag = 0;
 
-      var activeTemporalLgs = false;
+      var activeTemporalLs = false;
 
-      angular.forEach(State.layerGroups.active, function (lgSlug) {
-        var lg = DataService.layerGroups[lgSlug];
+      angular.forEach(State.layers, function (layer) {
+        if (!layer.active) { return; }
 
-        if (lg.temporal) {
-          // add some empty stuff to determine
-          // whether animation is possible.
-          activeTemporalLgs = true;
+        var mapLayer = _.find(MapService.mapLayers, {uuid: layer.uuid});
+
+        if (mapLayer && layer.active && mapLayer.temporal) {
+          activeTemporalLs = true;
         }
 
-        if (lg.temporal && lg.temporalResolution !== 0 && lg.temporalResolution < timeStep) {
-          timeStep = lg.temporalResolution;
-          // To accomadate dynamic temporal resolutions check all maplayers and
-          // switch to coarser resolution if found. This is used by the rain.
-          angular.forEach(lg.mapLayers, function (layer) {
-            if (layer._temporalResolution > timeStep) {
-              timeStep = layer._temporalResolution;
-            }
-          });
+        if (activeTemporalLs && mapLayer.temporalResolution !== 0 && mapLayer.temporalResolution < timeStep) {
+          timeStep = mapLayer.temporalResolution;
           // equals to 250 ms for 5 minutes, increases for larger timeSteps untill
           // it reaches 1 second between frames for timeSteps of > 20 minutes.
           minLag = timeStep / 1200 > 240 ? timeStep / 1200 : 250;
@@ -132,7 +115,7 @@ angular.module('lizard-nxt')
         }
       });
 
-      this.animatable = activeTemporalLgs;
+      this.animatable = activeTemporalLs;
       // Do not continue animating when there is nothing to animate.
       if (!this.animatable) {
         State.temporal.playing  = false;
@@ -155,6 +138,7 @@ angular.module('lizard-nxt')
       if (State.temporal.playing || toggle === "off") {
         State.temporal.playing = false;
       } else {
+        configAnimation.call(this);
         State.temporal.playing = true;
         window.requestAnimationFrame(step);
       }
@@ -196,9 +180,9 @@ angular.module('lizard-nxt')
       if (timeState.playing) {
         progressAnimation(defer.promise);
       }
-      if (State.layerGroups.timeIsSyncing) {
+      if (MapService.loading) {
         var watch = $scope.$watch(
-          function () { return State.layerGroups.timeIsSyncing; },
+          function () { return MapService.loading; },
           function (loading) {
             if (loading === false) {
               defer.resolve();
