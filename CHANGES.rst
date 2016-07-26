@@ -3,6 +3,21 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 3.2.5 (2016-7-13)
+---------------------
+
+- Fix dashboard element sticking to pointer when dropping outside of drop area.
+
+- Fix not showing timeseries for timeseries of nested assets.
+
+- Fix timeseries of parent assets not having thresholds.
+
+
+Release 3.2.4 (2016-6-20)
+---------------------
 
 - Add scenario item in data-menu.
 
