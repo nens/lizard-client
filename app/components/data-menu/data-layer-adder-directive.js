@@ -51,11 +51,6 @@ angular.module('data-menu')
        */
       scope.addLayer = function (layer) {
         LayerAdderService.add(layer);
-        notie.alert(
-          4,
-          gettextCatalog.getString("Added layer " + layer.title),
-          2
-        );
       };
 
       /**
