@@ -42,5 +42,35 @@ describe('Favourites', function () {
     expect(State.temporal.end / 100).toBeCloseTo(favEnd, 1);
     expect(State.temporal.at / 100).toBeCloseTo(favAt, 1);
   });
+});
+
+
+describe('Favourite login', function () {
+
+  var $window, FavService;
+
+  beforeEach(module('lizard-nxt'));
+
+  beforeEach(module(function($provide) {
+    $window = {
+      location: {host: 'localhost:9000', protocol: 'http'},
+    };
+
+    $provide.constant('$window', $window);
+  }));
+
+  beforeEach(inject(function ($injector) {
+    FavService = $injector.get('FavouritesService');
+  }));
+
+  it('should login without favourite on next parameter', function () {
+    FavService.logIn();
+    expect($window.location).toBe('/accounts/login/?domain=http//localhost:8000/&next=http//localhost:9000');
+  });
+
+  it('should login with favourite on next parameter', function () {
+    FavService.logIn.bind({favourite: 'test'})();
+    expect($window.location).toBe('/accounts/login/?domain=http//localhost:8000/&next=http//localhost:9000/favourites/test');
+  });
 
 });
