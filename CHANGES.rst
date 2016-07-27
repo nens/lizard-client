@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 4.0.1 (2016-7-27)
+---------------------
 
 - Add pumped drainage area to asset names.
 
