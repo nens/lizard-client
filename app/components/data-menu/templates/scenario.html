@@ -25,7 +25,7 @@
         ng-click="layer.active = !layer.active"
         class="panel-heading layer-item layer-img"
         title="<% layer.name || layer.type + ': ' + layer.uuid %>">
-          <% layer.name  || layer.type + ': ' + layer.uuid %>
+          <% layer.name  || 'raster' + ': ' + layer.uuid %>
           <div class="layer-chooser-tools">
             <i class="fa fa-close"
                ng-click="remove(layer); $event.stopPropagation()">
@@ -61,26 +61,14 @@
 
         <tr ng-if="result.layer" ng-repeat="result in scenario.results">
           <td colspan="2">
-            <assetlayer
-              ng-if="result.layer.type === 'assetgroup'"
-              layer="result.layer">
-            </assetlayer>
             <rasterlayer
-              ng-if="result.layer.type === 'raster'"
+              ng-if="result.raster"
               layer="result.layer">
             </rasterlayer>
-            <wmslayer
-              ng-if="result.layer.type === 'wmslayer'"
-              layer="result.layer">
-            </wmslayer>
-            <eventseries
-              ng-if="result.layer.type === 'eventseries'"
-              layer="result.layer">
-            </eventseries>
           </td>
 
           <td>
-            <div ng-if="result.sum">
+            <div ng-if="result.value">
               <span translate>Total:</span>
               <span ng-if="result.type === 'damage'">
                   €<% result.sum | number: 0%>
@@ -91,8 +79,8 @@
             </div>
             <div>
               <span ng-repeat="attachment in result.attachments">
-                <a href="<% attachment.url %>" target="_blank">
-                   <% result.name %>.<% attachment.format %></a>
+                <a href="<% attachment.attachment_url %>" target="_blank">
+                   <% result.layer.name %></a>
               </span>
             </div>
           </td>
@@ -101,10 +89,10 @@
       </table>
 
       <div class="panel-footer">
-        <span ng-if="!result.layer" ng-repeat="result in scenario.results">
-          <span ng-repeat="attachment in result.attachments">
-            <a href="<% attachment.url %>" target="_blank" translate>
-               <% result.name %>.<% attachment.format %></a>
+        <span ng-if="!result.raster" ng-repeat="result in scenario.result_set">
+          <span>
+            <a href="<% result.attachment_url %>" target="_blank" translate>
+               <% result.layer.name %></a>
           </span>
         </span>
         <span class="pull-right faded">size: <% scenario.total_size / 1000000 | number : 2 %>mb</span>

@@ -46,29 +46,20 @@ angular.module('data-menu')
       if (scope.layer.active && first) {
         first = false;
         scope.layer.active = false;
-        // TODO: uncommet when backend is implemented
-        // LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.uuid)
 
-        // Mock
-        scope.layer.name = 'Amstelmeerboezem';
-        $http({
-          url: 'scenario-mock.json',
-          method: 'GET'
-        })
-        .then(function (response) {
-          return response.data;
-        })
-        // End mock
+        LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.uuid, scope.layer.name)
+
         .then(function (scenario) {
           scope.layer.active = true;
 
+          scope.layer.name = scenario.name;
+
           scope.scenario = scenario;
 
-          scenario.results.forEach(function (result) {
-            if (result.layer) {
-              result.layer = getOrCreateLayer(result.layer, result.type);
+          scenario.result_set.forEach(function (result) {
+            if (result.raster) {
+              result.layer = getOrCreateLayer(result.raster, result.result_type.code);
             }
-            result.name = RESULT_TYPES[result.type];
           });
         });
       }

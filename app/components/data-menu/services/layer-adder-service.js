@@ -2,7 +2,7 @@
  * Service to handle layer-group retrieval.
  */
 angular.module('data-menu')
-  .service("LayerAdderService", ['$http', 'UtilService', 'State', function ($http, UtilService, State) {
+  .service("LayerAdderService", ['$http', 'UtilService', 'State', 'notie', 'gettextCatalog', function ($http, UtilService, State, notie, gettextCatalog) {
 
       /**
        * Get layergroups from the API.
@@ -27,15 +27,27 @@ angular.module('data-menu')
        * @param {function} error - Execute this function on an unsuccessful
        *                           GET.
        */
-      this.fetchLayer = function (entity, id) {
+      this.fetchLayer = function (entity, id, name, error) {
+        var onError = function (err) {
+          var type = entity === 'eventseries' ?
+            'eventseries' :
+            entity.slice(0, -1);
+          var msg = ['Failed', 'to fetch', type, name || id];
+          notie.alert(
+            3,
+            gettextCatalog.getString(msg.join(' ')),
+            3
+          );
+          if (error) { error(); }
+        };
+
         return $http({
           url: 'api/v2/' + entity + '/' + id + '/',
           method: 'GET'
         })
 
-        .then(function (response) {
-          return response.data;
-        });
+        .then(function (response) { return response.data;})
+        .catch(onError);
       };
 
       this.remove = function (layer) {
@@ -49,6 +61,11 @@ angular.module('data-menu')
           uuid: searchLayer.entity_uuid,
           name: searchLayer.title
         });
+        notie.alert(
+          4,
+          gettextCatalog.getString("Added layer " + searchLayer.title),
+          2
+        );
       };
 
       this.zoomToBounds = function () {

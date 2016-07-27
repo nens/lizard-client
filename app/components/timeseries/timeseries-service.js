@@ -9,8 +9,8 @@ angular.module('timeseries')
   'notie',
   'UtilService',
   'DataService',
-  'WantedAttributes',
-  function ($q, State, $http, notie, UtilService, DataService, WantedAttributes) {
+  'TimeseriesUtilService',
+  function ($q, State, $http, notie, UtilService, DataService, TsUService) {
 
     var GRAPH_WIDTH = 320; // Width of drawing area of box graphs.
 
@@ -155,8 +155,8 @@ angular.module('timeseries')
         return response.data.results;
       }, errorFn)
 
-      .then(filterTimeseries, errorFn)
-      .then(formatTimeseriesForGraph, null);
+      .then(TsUService.filterTimeseries, errorFn)
+      .then(TsUService.formatTimeseriesForGraph, null);
     };
 
     var errorFn = function (err) {
@@ -190,6 +190,18 @@ angular.module('timeseries')
       return asset;
     };
 
+  }
+
+]);
+
+
+/**
+ * Service to handle timeseries retrieval.
+ */
+angular.module('timeseries')
+.service('TimeseriesUtilService', ['WantedAttributes', 'DataService', 'State',
+  function (WantedAttributes, DataService, State) {
+
     /**
      * Looks up timeseries in State.selected.timeseries and copies color and order.
      * TimeseriesService.timeseries are not persistent when toggled.
@@ -203,11 +215,19 @@ angular.module('timeseries')
       var ts; // initialize undefined and set when found.
       var assetOfTs;
 
-      _.forEach(DataService.assets, function (asset) {
+      /**
+       * Recursively search asset and nested asset for timeseries and set
+       * variables ts and assetOfTs.
+       **/
+      var setAssetAndTs = function (asset) {
         ts = _.find(asset.timeseries, { 'uuid': graphTimeseries.id });
-        assetOfTs = asset;
+        if (ts) { assetOfTs = asset; }
+
+        if (!ts && asset.selectedAsset) { return setAssetAndTs(asset.selectedAsset); }
         return ts === undefined; // Break out early
-      });
+      };
+
+      _.forEach(DataService.assets, setAssetAndTs);
 
       if (ts) {
         graphTimeseries.parameter = ts.parameter || EMPTY;
@@ -320,6 +340,12 @@ angular.module('timeseries')
       });
 
       return filteredResult;
+    };
+
+    return {
+      filterTimeseries: filterTimeseries,
+      formatTimeseriesForGraph: formatTimeseriesForGraph,
+      addColorAndOrderAndUnitAndTresholds: addColorAndOrderAndUnitAndTresholds
     };
 
   }

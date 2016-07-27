@@ -4,6 +4,24 @@ Changelog of lizard-nxt client
 Unreleased (2.9.0) (XXXX-XX-XX)
 -------------------------------
 
+- Add pumped drainage area to asset names.
+
+- Add pumped drainage area attributes.
+
+- Fix click feedback for polygons.
+
+- Remove LayerGroups, use dataLayers and mapLayers with layer directives in
+  data-menu.
+
+- Use bootstrap/lizard in json in favor of lizard-bs.js.
+
+- Use favouriteService.applyFavourite for bootstrapping and url state.
+
+- Do not post annotations geometry when attaching annotation to asset.
+
+Release 3.2.5 (2016-7-13)
+---------------------
+
 - Add scenario item in data-menu.
 
 - Add scenario mock for testing/demo purposes.
@@ -12,10 +30,25 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Remove LayerGroups, use dataLayers and mapLayers with layer directives in
   data-menu.
+- Fix dashboard element sticking to pointer when dropping outside of drop area.
 
-- Use bootstrap/lizard in json in favor of lizard-bs.js.
+- Fix not showing timeseries for timeseries of nested assets.
 
-- Use favouriteService.applyFavourite for bootstrapping and url state.
+- Fix timeseries of parent assets not having thresholds.
+
+- Force login when requesting favourite unauthenticated.
+
+- Change notie colors to flatui.
+
+
+Release 3.2.5 (2016-7-13)
+-------------------------
+
+- Fix dashboard element sticking to pointer when dropping outside of drop area.
+
+- Fix not showing timeseries for timeseries of nested assets.
+
+- Fix timeseries of parent assets not having thresholds.
 
 
 Release 3.2.4 (2016-6-20)

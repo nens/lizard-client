@@ -51,7 +51,6 @@ angular.module('data-menu')
        */
       scope.addLayer = function (layer) {
         LayerAdderService.add(layer);
-        // Go back to the layer chooser menu.
       };
 
       /**

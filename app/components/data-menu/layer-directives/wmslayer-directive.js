@@ -10,7 +10,7 @@ angular.module('data-menu')
 
     var cancelFirstActive = scope.$watch('layer.active', function () {
       if (scope.layer.active) {
-        LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.uuid)
+        LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.uuid, scope.layer.name)
         .then(function (response) {
 
           MapService.mapLayers.push(wmsMapLayer({
