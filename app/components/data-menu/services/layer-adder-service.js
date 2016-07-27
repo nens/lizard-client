@@ -2,7 +2,13 @@
  * Service to handle layer-group retrieval.
  */
 angular.module('data-menu')
-  .service("LayerAdderService", ['$http', 'UtilService', 'State', 'notie', 'gettextCatalog', function ($http, UtilService, State, notie, gettextCatalog) {
+.service("LayerAdderService", [
+  '$http',
+  'UtilService',
+  'State',
+  'notie',
+  'gettextCatalog',
+  function ($http, UtilService, State, notie, gettextCatalog) {
 
       /**
        * Get layergroups from the API.

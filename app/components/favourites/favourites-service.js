@@ -91,7 +91,9 @@ angular.module('favourites')
           }
           else if (err.status === 401) { // Not authenticated.
             notie.confirm(
-              gettextCatalog.getString('You need to be logged in for this favourite, do you want to log in now?'),
+              gettextCatalog.getString('You need to be logged in for this' +
+                ' favourite, do you want to log in now?'
+              ),
               gettextCatalog.getString('Yes'),
               gettextCatalog.getString('Never mind'),
               confirmCb,

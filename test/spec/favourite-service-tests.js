@@ -65,12 +65,14 @@ describe('Favourite login', function () {
 
   it('should login without favourite on next parameter', function () {
     FavService.logIn();
-    expect($window.location).toBe('/accounts/login/?domain=http//localhost:8000/&next=http//localhost:9000');
+    expect($window.location).toBe('/accounts/login/?' +
+      'domain=http//localhost:8000/&next=http//localhost:9000');
   });
 
   it('should login with favourite on next parameter', function () {
     FavService.logIn.bind({favourite: 'test'})();
-    expect($window.location).toBe('/accounts/login/?domain=http//localhost:8000/&next=http//localhost:9000/favourites/test');
+    expect($window.location).toBe('/accounts/login/?' +
+     'domain=http//localhost:8000/&next=http//localhost:9000/favourites/test');
   });
 
 });

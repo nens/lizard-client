@@ -9,7 +9,8 @@
  * Defines the data menu.
  */
 angular.module('data-menu')
-  .directive('datamenu', ['DataService', 'State', 'LayerAdderService', function (DataService, State, LayerAdderService) {
+.directive('datamenu', ['DataService', 'State', 'LayerAdderService',
+  function (DataService, State, LayerAdderService) {
 
     var link = function (scope, element, attrs) {
 

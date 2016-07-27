@@ -1,48 +1,61 @@
 //layer-directive.js
 
 angular.module('data-menu')
-.directive('wmslayer', ['MapService', 'DataService', 'LayerAdderService', 'wmsMapLayer', 'wmsFeatureInfoDataLayer', function (MapService, DataService, LayerAdderService, wmsMapLayer, wmsFeatureInfoDataLayer) {
-  var link = function (scope) {
+.directive('wmslayer', [
+  'MapService',
+  'DataService',
+  'LayerAdderService',
+  'wmsMapLayer',
+  'wmsFeatureInfoDataLayer',
+  function (
+    MapService,
+    DataService,
+    LayerAdderService,
+    wmsMapLayer,
+    wmsFeatureInfoDataLayer
+  ) {
+    var link = function (scope) {
 
-    scope.remove = LayerAdderService.remove;
+      scope.remove = LayerAdderService.remove;
 
-    if (!scope.layer.opacity) { scope.layer.opacity = 1; }
+      if (!scope.layer.opacity) { scope.layer.opacity = 1; }
 
-    var cancelFirstActive = scope.$watch('layer.active', function () {
-      if (scope.layer.active) {
-        LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.uuid, scope.layer.name)
-        .then(function (response) {
+      var cancelFirstActive = scope.$watch('layer.active', function () {
+        if (scope.layer.active) {
+          LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.uuid, scope.layer.name)
+          .then(function (response) {
 
-          MapService.mapLayers.push(wmsMapLayer({
-            uuid: scope.layer.uuid,
-            wmsOptions: response.options,
-            url: response.url
-          }));
+            MapService.mapLayers.push(wmsMapLayer({
+              uuid: scope.layer.uuid,
+              wmsOptions: response.options,
+              url: response.url
+            }));
 
-          DataService.dataLayers.push(wmsFeatureInfoDataLayer({
+            DataService.dataLayers.push(wmsFeatureInfoDataLayer({
 
-          }));
+            }));
 
-          MapService.updateLayers([scope.layer]);
-        });
+            MapService.updateLayers([scope.layer]);
+          });
 
-        cancelFirstActive();
-      }
-    });
+          cancelFirstActive();
+        }
+      });
 
-    scope.$on('$destroy', function () {
-      // Remove layer from mapLayers and DataService
-    });
+      scope.$on('$destroy', function () {
+        // Remove layer from mapLayers and DataService
+      });
 
-  };
+    };
 
-  return {
-    link: link,
-    scope: {
-      layer: '=',
-    },
-    templateUrl: 'data-menu/templates/layer.html',
-    restrict: 'E',
-  };
+    return {
+      link: link,
+      scope: {
+        layer: '=',
+      },
+      templateUrl: 'data-menu/templates/layer.html',
+      restrict: 'E',
+    };
 
-}]);
+  }
+]);
