@@ -5,8 +5,8 @@ angular.module('favourites')
   // NOTE: inject TimeseriesService even though it is not used.
   // TimeseriesService defines State.selected.timeseries which may be restored
   // from favourite.
-  .service("FavouritesService", ['$resource', 'State', 'gettextCatalog', 'UtilService', 'notie', 'TimeseriesService',
-    function ($resource, State, gettextCatalog, UtilService, notie) {
+  .service("FavouritesService", ['$resource', 'State', 'gettextCatalog', 'UtilService', 'notie', '$window', 'TimeseriesService',
+    function ($resource, State, gettextCatalog, UtilService, notie, $window) {
 
       /* Create a resource for interacting with the favourites endpoint of the
        * API.
@@ -41,7 +41,34 @@ angular.module('favourites')
         return Favourites.query(params, success, error);
       };
 
+
+      /**
+       * Sets $window.location to login url. Reroutes to favourite url if called
+       * on an object with a favourite. Uses $window for testing purposes.
+       */
+      this.logIn = function () {
+
+        var domain = $window.location.protocol +
+          '//' +
+          $window.location.host.replace(':9000', ':8000') ;
+
+        var loginUrl = [
+          '/accounts/login/?domain=' + domain,
+          '&next=' + $window.location.protocol + '//' + $window.location.host,
+        ];
+
+        if (this.favourite) {
+          loginUrl.push('favourites', this.favourite);
+        }
+
+        $window.location = loginUrl.join('/');
+      };
+
       this.getFavourite = function(uuid, success, error) {
+        // Bind login function tot uuid here, otherwise it is done
+        // asynchronously to the last requested favourite.
+        var confirmCb = this.logIn.bind({favourite: uuid});
+
         return Favourites.get(
           {'uuid': uuid},
           function (response) {
@@ -54,23 +81,35 @@ angular.module('favourites')
             success(response);
           },
           function (err) {
-          if (err.status === 404) {
+          if (err.status === 404) { // Removed.
             notie.alert(
               3,
               gettextCatalog.getString('Whoops: favourite has been removed'),
               3
             );
+            error();
+          }
+          else if (err.status === 401) { // Not authenticated.
+            notie.confirm(
+              gettextCatalog.getString('You need to be logged in for this' +
+                ' favourite, do you want to log in now?'
+              ),
+              gettextCatalog.getString('Yes'),
+              gettextCatalog.getString('Never mind'),
+              confirmCb,
+              error()
+            );
           }
           else {
-            notie.alert(
+            notie.alert( // Something else.
               3,
               gettextCatalog.getString(
                 'Ay ay: Lizard could not retrieve your favourite'
               ),
               3
             );
+            error();
           }
-          error();
         });
       };
 
@@ -129,23 +168,25 @@ angular.module('favourites')
        * Replace the current portal state with the favourite state.
        * @param {object} favourite - The favourite to apply.
        */
-      this.applyFavourite = function (state) {
+      this.applyFavourite = function (favourite) {
 
-        if (state.temporal && state.temporal.relative) {
-          state.temporal = adhereTemporalStateToInterval(
-            state.temporal
+        if (favourite.state.temporal && favourite.state.temporal.relative) {
+          favourite.state.temporal = adhereTemporalStateToInterval(
+            favourite.state.temporal
           );
         }
 
         // Use _.mergeWith to set the whole array to trigger setters of
         // properties.
         var collections = ['active', 'timeseries', 'assets', 'geometries'];
-        _.mergeWith(State, state, function (_state, favstate, key, parent) {
-          if (collections.indexOf(key) !== -1) {
-            _state = favstate;
-            return _state;
+        _.mergeWith(State, favourite.state,
+          function (_state, favstate, key, parent) {
+            if (collections.indexOf(key) !== -1) {
+              _state = favstate;
+              return _state;
+            }
           }
-        });
+        );
 
         UtilService.announceMovedTimeline(State);
 

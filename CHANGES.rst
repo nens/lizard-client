@@ -10,6 +10,10 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Fix click feedback for polygons.
 
+- Add scenario item in data-menu.
+
+- Remove old scenario code.
+
 - Remove LayerGroups, use dataLayers and mapLayers with layer directives in
   data-menu.
 
@@ -19,14 +23,19 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Do not post annotations geometry when attaching annotation to asset.
 
-Release 3.2.5 (2016-7-13)
----------------------
+- Force login when requesting favourite unauthenticated.
 
-- Fix dashboard element sticking to pointer when dropping outside of drop area.
+- Change notie colors to flatui.
+
+
+Release 3.2.5 (2016-7-13)
+-------------------------
 
 - Fix not showing timeseries for timeseries of nested assets.
 
 - Fix timeseries of parent assets not having thresholds.
+
+- Fix dashboard element sticking to pointer when dropping outside of drop area.
 
 
 Release 3.2.4 (2016-6-20)

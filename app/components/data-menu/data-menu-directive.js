@@ -9,7 +9,8 @@
  * Defines the data menu.
  */
 angular.module('data-menu')
-  .directive('datamenu', ['DataService', 'State', function (DataService, State) {
+.directive('datamenu', ['DataService', 'State', 'LayerAdderService',
+  function (DataService, State, LayerAdderService) {
 
     var link = function (scope, element, attrs) {
 
@@ -18,6 +19,13 @@ angular.module('data-menu')
         box: State.box,
         enabled: false
       };
+
+      Object.defineProperty(scope.menu, 'fullMenu', {
+        get: function () {
+          return scope.menu.layerAdderEnabled
+          || LayerAdderService.getActiveScenarios().length > 0;
+        }
+      });
 
       scope.state = State;
 

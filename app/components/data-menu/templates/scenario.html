@@ -1,0 +1,103 @@
+<div>
+
+  <div ng-if="!layer.active">
+    <div class="noselect">
+      <label
+        ng-click="layer.active = !layer.active"
+        ng-class ="{active: layer.active }"
+        class="layer-item layer-img"
+        title="<% layer.name || layer.type + ': ' + layer.uuid %>">
+          <span ng-bind="layer.name"></span>
+          <div class="layer-chooser-tools">
+            <i class="fa fa-close"
+               ng-click="remove(layer); $event.stopPropagation()">
+           </i>
+          </div>
+      </label>
+    </div>
+
+    <opacity-slider title="<% tooltips.transparency %>" layer="{active: false}"></opacity-slider>
+  </div>
+
+  <div ng-if="layer.active">
+    <div class="noselect panel panel-default">
+      <div
+        ng-click="layer.active = !layer.active"
+        class="panel-heading layer-item layer-img"
+        title="<% layer.name || layer.type + ': ' + layer.uuid %>">
+          <% layer.name  || 'raster' + ': ' + layer.uuid %>
+          <div class="layer-chooser-tools">
+            <i class="fa fa-close"
+               ng-click="remove(layer); $event.stopPropagation()">
+           </i>
+          </div>
+      </div>
+
+      <table class="table">
+
+        <tr>
+          <td colspan="3">
+            <span translate>Model:</span>
+            <a href="<% scenario.model_url %>" target="_blank" title="<% 'Go to modelbank' | translate %>">
+              <span><% scenario.model_name %>#<% scenario.model_revision %></span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <span translate>Start (simulation time)</span>
+          </td>
+          <td>
+            <span><% scenario.start_time_sim | date: 'M/d/y HH:mm:ss' %></span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <span translate>End (simulation time)</span>
+          </td>
+          <td>
+            <span><% scenario.end_time_sim | date: 'M/d/y HH:mm:ss' %></span>
+          </td>
+        </tr>
+
+        <tr ng-if="result.layer" ng-repeat="result in scenario.results">
+          <td colspan="2">
+            <rasterlayer
+              ng-if="result.raster"
+              layer="result.layer">
+            </rasterlayer>
+          </td>
+
+          <td>
+            <div ng-if="result.value">
+              <span translate>Total:</span>
+              <span ng-if="result.type === 'damage'">
+                  €<% result.sum | number: 0%>
+              </span>
+              <span ng-if="result.type !== 'damage'">
+                  <% result.sum | number: 0%>
+              </span>
+            </div>
+            <div>
+              <span ng-repeat="attachment in result.attachments">
+                <a href="<% attachment.attachment_url %>" target="_blank">
+                   <% result.layer.name %></a>
+              </span>
+            </div>
+          </td>
+        </tr>
+
+      </table>
+
+      <div class="panel-footer">
+        <span ng-if="!result.raster" ng-repeat="result in scenario.result_set">
+          <span>
+            <a href="<% result.attachment_url %>" target="_blank" translate>
+               <% result.layer.name %></a>
+          </span>
+        </span>
+        <span class="pull-right faded">size: <% scenario.total_size / 1000000 | number : 2 %>mb</span>
+      </div>
+
+    </div>
+
+</div>
