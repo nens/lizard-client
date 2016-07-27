@@ -56,7 +56,6 @@ module.exports = function(config) {
       'app/components/dashboard/dashboard.js',
       'app/components/timeseries/timeseries.js',
       'app/components/image-carousel/image-carousel.js',
-      'app/components/scenarios/scenarios.js',
       'app/components/user-menu/user-menu.js',
       'app/components/favourites/favourites.js',
       'app/lizard-nxt.js',

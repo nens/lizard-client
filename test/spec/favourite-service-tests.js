@@ -30,7 +30,7 @@ describe('Favourites', function () {
       }
     };
 
-    FavService.applyFavourite(angular.copy(favourite.state));
+    FavService.applyFavourite(angular.copy(favourite));
 
     // Divide by 100 to use ToBeCloseTo to give js 100 ms to execute
     // FavService.applyFavourite.

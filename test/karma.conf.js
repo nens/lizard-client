@@ -52,7 +52,6 @@ module.exports = function(config) {
       'app/templates.js',
       'app/components/omnibox/omnibox.js',
       'app/components/state/state.js',
-      'app/components/scenarios/scenarios.js',
       'app/components/timeseries/timeseries.js',
       'app/components/image-carousel/image-carousel.js',
       'app/components/annotations/annotations.js',
