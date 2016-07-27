@@ -126,16 +126,17 @@ angular.module('annotations')
         if (file) {
           fd.append('attachment', file);
         }
-        if (asset.entity_name) {
+        if (asset.entity_name && asset.id) {
           fd.append('object_type', asset.entity_name);
-        }
-        if (asset.id) {
           fd.append('object_id', asset.id);
         }
+        else {
+          fd.append('location', JSON.stringify(asset.geometry));
+        }
+
         fd.append('text', text);
         fd.append('timestamp', timelineat);
         fd.append('organisation', organisation.unique_id);
-        fd.append('location', JSON.stringify(asset.geometry));
 
         return Annotations.save(fd, success, error);
       };

@@ -180,13 +180,7 @@ angular.module('lizard-nxt')
        */
       this.vibrateOnce = function (geojson, layerId) {
         var sel = this._selection = this._getSelection(this.clickLayer, layerId);
-        var remove = false;
-        if (geojson) {
-          sel = this._getSelection(this.clickLayer, this.drawFeature(geojson));
-          //sel = this._selection = this._getSelection(this.clickLayer);
-          remove = true;
-        }
-        this.vibrate(sel, remove);
+        this.vibrate(sel);
       };
 
       /**
