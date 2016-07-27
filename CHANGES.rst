@@ -26,15 +26,33 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 Release 3.2.5 (2016-7-13)
 ---------------------
+- Add scenario item in data-menu.
+
+- Remove old scenario code.
+
+- Remove LayerGroups, use dataLayers and mapLayers with layer directives in
+  data-menu.
 
 - Fix dashboard element sticking to pointer when dropping outside of drop area.
+
+- Force login when requesting favourite unauthenticated.
+
+- Change notie colors to flatui.
+
+
+Release 3.2.5 (2016-7-13)
+-------------------------
 
 - Fix not showing timeseries for timeseries of nested assets.
 
 - Fix timeseries of parent assets not having thresholds.
 - Force login when requesting favourite unauthenticated.
 
-- Change notie colors to flatui.
+- Fix dashboard element sticking to pointer when dropping outside of drop area.
+
+- Fix not showing timeseries for timeseries of nested assets.
+
+- Fix timeseries of parent assets not having thresholds.
 
 
 Release 3.2.4 (2016-6-20)

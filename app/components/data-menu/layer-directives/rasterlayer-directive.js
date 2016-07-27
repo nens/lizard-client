@@ -32,7 +32,8 @@ angular.module('data-menu')
             scale: 'ratio',
             type: response.type,
             quantity: response.quantity,
-            unit: response.observation_type.referenced_unit_short_display_name
+            unit: response.observation_type
+              && response.observation_type.referenced_unit_short_display_name
           }));
 
           scope.layer.active = true;
