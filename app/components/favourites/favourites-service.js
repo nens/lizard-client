@@ -166,23 +166,25 @@ angular.module('favourites')
        * Replace the current portal state with the favourite state.
        * @param {object} favourite - The favourite to apply.
        */
-      this.applyFavourite = function (state) {
+      this.applyFavourite = function (favourite) {
 
-        if (state.temporal && state.temporal.relative) {
-          state.temporal = adhereTemporalStateToInterval(
-            state.temporal
+        if (favourite.state.temporal && favourite.state.temporal.relative) {
+          favourite.state.temporal = adhereTemporalStateToInterval(
+            favourite.state.temporal
           );
         }
 
         // Use _.mergeWith to set the whole array to trigger setters of
         // properties.
         var collections = ['active', 'timeseries', 'assets', 'geometries'];
-        _.mergeWith(State, state, function (_state, favstate, key, parent) {
-          if (collections.indexOf(key) !== -1) {
-            _state = favstate;
-            return _state;
+        _.mergeWith(State, favourite.state,
+          function (_state, favstate, key, parent) {
+            if (collections.indexOf(key) !== -1) {
+              _state = favstate;
+              return _state;
+            }
           }
-        });
+        );
 
         UtilService.announceMovedTimeline(State);
 
