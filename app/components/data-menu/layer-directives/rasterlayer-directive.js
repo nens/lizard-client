@@ -31,7 +31,8 @@ angular.module('data-menu')
             aggType: response.aggregation_type,
             scale: 'ratio',
             type: response.type,
-            quantity: response.quantity,
+            quantity: response.observation_type
+              && response.observation_type.parameter_short_display_name,
             unit: response.observation_type
               && response.observation_type.referenced_unit_short_display_name
           }));

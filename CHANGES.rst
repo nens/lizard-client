@@ -10,6 +10,8 @@ Unreleased (4.0.2) (XXXX-XX-XX)
 
 - Fix panning around the world and messing up all coordinates.
 
+- Fix not showing quantity in omnibox.
+
 
 Release 4.0.1 (2016-7-27)
 ---------------------
