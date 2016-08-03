@@ -8,6 +8,8 @@ Unreleased (4.0.2) (XXXX-XX-XX)
 
 - Fix request background tiles over https.
 
+- Fix panning around the world and messing up all coordinates.
+
 
 Release 4.0.1 (2016-7-27)
 ---------------------
