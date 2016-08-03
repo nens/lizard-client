@@ -6,6 +6,8 @@ Unreleased (4.0.2) (XXXX-XX-XX)
 
 - Fix: apply favourite when applying favourite, not state of favourite.
 
+- Fix request background tiles over https.
+
 
 Release 4.0.1 (2016-7-27)
 ---------------------

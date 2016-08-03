@@ -13,9 +13,9 @@ angular.module('map')
 .service('MapService', ['$rootScope', 'CabinetService', 'LeafletService', 'NxtRegionsLayer', 'UtfGridService', 'baselayer', 'eventseriesMapLayer', 'State',
   function ($rootScope, CabinetService, LeafletService, NxtRegionsLayer, UtfGridService, baselayer, eventseriesMapLayer, State) {
 
-    var topography = 'http://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa98k8k';
-    var satellite = 'http://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa79205';
-    var neutral = 'http://{s}.tiles.mapbox.com/v3/nelenschuurmans.l15e647c';
+    var topography = 'https://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa98k8k';
+    var satellite = 'https://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa79205';
+    var neutral = 'https://{s}.tiles.mapbox.com/v3/nelenschuurmans.l15e647c';
 
     var service = {
 
