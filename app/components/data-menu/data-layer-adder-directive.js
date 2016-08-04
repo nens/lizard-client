@@ -51,6 +51,7 @@ angular.module('data-menu')
        */
       scope.addLayer = function (layer) {
         LayerAdderService.add(layer);
+        fetchLayers({'q': scope.searchLayers, 'page': scope.layersCurrentPage});
       };
 
       /**
@@ -67,6 +68,8 @@ angular.module('data-menu')
         if (typeof query === "undefined") {
           query = {};
         }
+
+        query.exclude = _.map(scope.state.layers, 'uuid').join(',');
 
         LayerAdderService.fetchLayers(
           query,

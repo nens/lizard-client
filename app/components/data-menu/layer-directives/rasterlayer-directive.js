@@ -6,12 +6,16 @@ angular.module('data-menu')
 
     scope.remove = LayerAdderService.remove;
 
+    // Set defaults.
     if (!scope.layer.opacity) { scope.layer.opacity = 1; }
+    if (!scope.layer.name) {
+      scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid
+    }
 
     var cancelFirstActive = scope.$watch('layer.active', function () {
       if (scope.layer.active) {
         scope.layer.active = false;
-        LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.uuid)
+        LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.uuid, scope.layer.name)
         .then(function (response) {
 
           MapService.mapLayers.push(rasterMapLayer({
@@ -29,13 +33,19 @@ angular.module('data-menu')
             slug: response.slug,
             temporalResolution: 36000, // TODO
             aggType: response.aggregation_type,
-            scale: 'ratio',
+            scale: response.scale,
             type: response.type,
             quantity: response.observation_type
               && response.observation_type.parameter_short_display_name,
             unit: response.observation_type
               && response.observation_type.referenced_unit_short_display_name
           }));
+
+          // If the layer did not have a name, check if the backend has one.
+          if (scope.layer.name === scope.layer.type + ' ' + scope.layer.uuid
+            && response.name) {
+            scope.layer.name = response.name;
+          }
 
           scope.layer.active = true;
 
@@ -48,6 +58,9 @@ angular.module('data-menu')
             last: response.last_value_timestamp
           });
 
+        })
+        .catch(function () {
+          scope.invalid = true;
         });
 
         cancelFirstActive();

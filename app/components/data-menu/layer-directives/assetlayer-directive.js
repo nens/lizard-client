@@ -7,7 +7,11 @@ angular.module('data-menu')
 
       scope.remove = LayerAdderService.remove;
 
+      // Set defaults.
       if (!scope.layer.opacity) { scope.layer.opacity = 1; }
+      if (!scope.layer.name) {
+        scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid
+      }
 
       var cancelFirstActive = scope.$watch('layer.active', function () {
         if (scope.layer.active) {
@@ -17,7 +21,11 @@ angular.module('data-menu')
           )
           .then(function (response) {
 
-            if (!scope.layer.name) { scope.layer.name = response.name; }
+            // If the layer did not have a name, check if the backend has one.
+            if (scope.layer.name === scope.layer.type + ' ' + scope.layer.uuid
+              && response.name) {
+              scope.layer.name = response.name;
+            }
 
             // Create maplayer, add maplayer to mapservice.
             MapService.mapLayers.push(assetMapLayer({
@@ -27,6 +35,9 @@ angular.module('data-menu')
 
             MapService.updateLayers([scope.layer]);
 
+          })
+          .catch(function () {
+            scope.invalid = true;
           });
 
           cancelFirstActive();

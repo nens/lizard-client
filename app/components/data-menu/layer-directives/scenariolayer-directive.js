@@ -26,6 +26,11 @@ angular.module('data-menu')
 
       scope.scenario = {};
 
+      // Set defaults.
+      if (!scope.layer.name) {
+        scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid
+      }
+
       var getOrCreateLayer = function (layerConf, resultType) {
         var layer = _.find(State.layers, {uuid: layerConf.uuid});
         if (!layer) {
@@ -60,7 +65,11 @@ angular.module('data-menu')
           .then(function (scenario) {
             scope.layer.active = true;
 
-            scope.layer.name = scenario.name;
+            // If the scenario did not have a name, check if the backend has one
+            if (scope.layer.name === scope.layer.type + ' ' + scope.layer.uuid
+              && scenario.name) {
+              scope.layer.name = scenario.name;
+            }
 
             scope.scenario = scenario;
 
@@ -72,6 +81,10 @@ angular.module('data-menu')
                 );
               }
             });
+          })
+
+          .catch(function () {
+            scope.invalid = true;
           });
         }
 
