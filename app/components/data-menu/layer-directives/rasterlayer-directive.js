@@ -31,10 +31,10 @@ angular.module('data-menu')
           DataService.dataLayers.push(rasterDataLayer({
             uuid: scope.layer.uuid,
             slug: response.slug,
-            temporalResolution: 36000, // TODO
+            temporalResolution: response.frequency,
             aggType: response.aggregation_type,
-            scale: response.scale,
-            type: response.type,
+            scale: response.observation_type
+              && response.observation_type.scale,
             quantity: response.observation_type
               && response.observation_type.parameter_short_display_name,
             unit: response.observation_type

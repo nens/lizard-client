@@ -32,7 +32,14 @@ angular.module('data-menu')
 
           DataService.dataLayers.push(eventseriesDataLayer({
             uuid: scope.layer.uuid,
-            url: 'api/v2/events/?event_series=' + scope.layer.uuid
+            url: 'api/v2/events/?event_series=' + scope.layer.uuid,
+            aggType: response.aggregation_type,
+            scale: response.observation_type
+              && response.observation_type.scale,
+            quantity: response.observation_type
+              && response.observation_type.parameter_short_display_name,
+            unit: response.observation_type
+              && response.observation_type.referenced_unit_short_display_name
           }));
 
           MapService.updateLayers([scope.layer]);
