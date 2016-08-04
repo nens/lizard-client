@@ -19,7 +19,7 @@ angular.module('data-menu')
        *                           GET.
        */
       this.fetchLayers = function (params, success, error) {
-        params.type = 'assetgroup,eventseries,layer,rasterstore';
+        params.type = 'assetgroup,eventseries,layer,rasterstore,scenario';
         params.page_size = 8;
         return $http.get('api/v2/search/', {
           params: params
@@ -33,7 +33,7 @@ angular.module('data-menu')
        * @param {function} error - Execute this function on an unsuccessful
        *                           GET.
        */
-      this.fetchLayer = function (entity, id, name, error) {
+      this.fetchLayer = function (entity, id, name) {
         var onError = function (err) {
           var type = entity === 'eventseries' ?
             'eventseries' :
@@ -44,7 +44,8 @@ angular.module('data-menu')
             gettextCatalog.getString(msg.join(' ')),
             3
           );
-          if (error) { error(); }
+          // Explicitly throw error to break promise chaining.
+          throw new Error(msg.join(' '));
         };
 
         return $http({
@@ -52,7 +53,7 @@ angular.module('data-menu')
           method: 'GET'
         })
 
-        .then(function (response) { return response.data;})
+        .then(function (response) { return response.data; })
         .catch(onError);
       };
 
@@ -62,9 +63,12 @@ angular.module('data-menu')
 
       this.add = function (searchLayer) {
         State.layers.push({
-          active: true,
+          active: false, // Add layer as non-active to menu. So when users
+                         // activate it they can get a clear message whether
+                         // this succeeds.
           type: searchLayer.entity_name,
-          uuid: searchLayer.entity_uuid,
+          uuid: searchLayer.entity_uuid.slice(0, 7), // Add layer with short
+                                                     // uuid.
           name: searchLayer.title
         });
         notie.alert(

@@ -7,10 +7,21 @@ angular.module('data-menu')
 
     scope.remove = LayerAdderService.remove;
 
+    // Set defaults.
+    if (!scope.layer.name) {
+      scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid;
+    }
+
     var cancelFirstActive = scope.$watch('layer.active', function () {
       if (scope.layer.active) {
         LayerAdderService.fetchLayer(scope.layer.type, scope.layer.uuid, scope.layer.name)
         .then(function (response) {
+
+          // If the layer did not have a name, check if the backend has one.
+          if (scope.layer.name === scope.layer.type + ' ' + scope.layer.uuid
+            && response.name) {
+            scope.layer.name = response.name;
+          }
 
           MapService.mapLayers.push(eventseriesMapLayer({
             color: response.color,
@@ -21,7 +32,14 @@ angular.module('data-menu')
 
           DataService.dataLayers.push(eventseriesDataLayer({
             uuid: scope.layer.uuid,
-            url: 'api/v2/events/?event_series=' + scope.layer.uuid
+            url: 'api/v2/events/?event_series=' + scope.layer.uuid,
+            aggType: response.aggregation_type,
+            scale: response.observation_type
+              && response.observation_type.scale,
+            quantity: response.observation_type
+              && response.observation_type.parameter_short_display_name,
+            unit: response.observation_type
+              && response.observation_type.referenced_unit_short_display_name
           }));
 
           MapService.updateLayers([scope.layer]);
@@ -32,6 +50,9 @@ angular.module('data-menu')
             last: response.last_value_timestamp
           });
 
+        })
+        .catch(function () {
+          scope.invalid = true;
         });
 
         cancelFirstActive();
@@ -39,7 +60,8 @@ angular.module('data-menu')
     });
 
     scope.$on('$destroy', function () {
-      // Remove layer from mapLayers and DataService
+      _.pull(DataService.dataLayers, {uuid: scope.layer.uuid });
+      _.pull(MapService.mapLayers, {uuid: scope.layer.uuid });
     });
 
   };

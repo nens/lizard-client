@@ -139,7 +139,7 @@ angular.module('favourites')
     };
 
     scope.selectFavourite = function (favourite) {
-      FavouritesService.applyFavourite(favourite.state);
+      FavouritesService.applyFavourite(favourite);
     };
   };
 
