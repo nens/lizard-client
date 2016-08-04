@@ -53,7 +53,8 @@ angular.module('data-menu')
     });
 
     scope.$on('$destroy', function () {
-      // Remove layer from mapLayers and DataService
+      _.pull(DataService.dataLayers, {uuid: scope.layer.uuid });
+      _.pull(MapService.mapLayers, {uuid: scope.layer.uuid });
     });
 
   };
