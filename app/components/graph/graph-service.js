@@ -1184,10 +1184,7 @@ angular.module('lizard-nxt')
       .duration(duration)
       .attr("d", function (d) {
         // Prevent returning invalid values for d
-        var t0 = Date.now();
-        var p = pathFn(d) || "M0, 0";
-        console.log(Date.now() - t0, p.length);
-        return p;
+        return pathFn(d) || "M0, 0";
       });
     return path;
   };
