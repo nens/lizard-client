@@ -9,7 +9,7 @@ angular.module('lizard-nxt')
 
   var defaultKeys = {
     x: 'timestamp',
-    y: { 'y0': 'min', 'y1': 'max' }
+    y: 'value'
   };
 
   /**

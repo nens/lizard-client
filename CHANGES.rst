@@ -12,11 +12,14 @@ Unreleased (4.0.2) (XXXX-XX-XX)
 
 - Fix not showing quantity in omnibox.
 
-- Fix adding layer which could not be fetched from api, catch and display error.
+- Fix adding layer which could not be fetched from api: catch and display error.
 
 - Include exclude parameter in layer-add request to filter out existing layers.
 
 - Include scenarios in layer adder.
+
+- Adapt graphs and timeseries to draw new flattened timeseries response as lines
+  instead of polygons.
 
 
 Release 4.0.1 (2016-7-27)
