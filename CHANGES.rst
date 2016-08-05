@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (4.0.2) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 4.0.2 (2016-8-5)
+---------------------
 
 - Fix: apply favourite when applying favourite, not state of favourite.
 
