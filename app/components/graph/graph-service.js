@@ -182,12 +182,7 @@ angular.module('lizard-nxt')
           keys = chart.keys,
           labels = chart.labels;
 
-      var lineAsArea = chart.keys.y.hasOwnProperty('y0')
-        && chart.keys.y.hasOwnProperty('y1');
-
-      chart.pathFn = lineAsArea
-        ? graph._createArea(graph._xy, keys)
-        : graph._createLine(graph._xy, keys);
+      chart.pathFn = graph._createLine(graph._xy, keys);
 
       var MIN_POINTS_FOR_SUBSET = 15,
           DELAY = 100, // ms
@@ -204,7 +199,6 @@ angular.module('lizard-nxt')
               fullData,
               0, // transition 0 ms when drawing while zooming.
               chart.path,
-              lineAsArea ? chart.color : 'none',
               chart.color,
               chart.unit
             );
@@ -221,8 +215,6 @@ angular.module('lizard-nxt')
         temporal ? 0 : graph.transTime, // Do not transition line graphs
                                        // when temporal.
         chart.path,
-        lineAsArea ? chart.color : 'none', // Set fill to 'none' for normal
-                                   // lines.
         chart.color,
         chart.unit
       );
@@ -1178,7 +1170,7 @@ angular.module('lizard-nxt')
     return x;
   };
 
-  drawPath = function (svg, pathFn, data, duration, path, fill, color, unit) {
+  drawPath = function (svg, pathFn, data, duration, path, color, unit) {
     if (!path) {
       var fg = svg.select('g').select('#feature-group');
       // bring to front
@@ -1187,13 +1179,14 @@ angular.module('lizard-nxt')
         .attr("class", "line unit-" + UtilService.slugify(unit));
     }
     path.datum(data)
-      .style('fill', fill)
       .style('stroke', color)
       .transition()
       .duration(duration)
       .attr("d", function (d) {
         // Prevent returning invalid values for d
+        var t0 = Date.now();
         var p = pathFn(d) || "M0, 0";
+        console.log(Date.now() - t0, p.length);
         return p;
       });
     return path;

@@ -289,7 +289,7 @@ angular.module('timeseries')
           x: '',
           y: ''
         },
-        keys: { x: 'timestamp', y: { y0: 'min', y1: 'max' } }
+        keys: { x: 'timestamp', y: 'value' }
       };
 
       var result = [];
