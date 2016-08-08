@@ -296,6 +296,7 @@ angular.module('map')
          * @param  {object} leaflet ILayer that recieved the click.
          */
         var clickCb = function (layer) {
+          State.selected.geometries = [];
           for (var key in layer.feature.properties) {
             var newkey = key === 'type' ? 'regionType' : key;
             layer.feature[newkey] = layer.feature.properties[key];

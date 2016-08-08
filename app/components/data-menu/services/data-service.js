@@ -338,9 +338,10 @@ angular.module('data-menu')
                 // property.
                 geo.properties[layer.uuid].data = [];
                 _.merge(geo.properties[layer.uuid], response);
-                if (!layer.active && layer.uuid in Object.keys(geo.properties)) {
+                if ((!layer.active && layer.uuid in Object.keys(geo.properties))
+                  || geo.properties[layer.uuid].data === null) {
 
-                    geo.properties[layer.uuid] = null;
+                    delete geo.properties[layer.uuid];
 
                 }
               })
