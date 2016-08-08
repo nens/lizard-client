@@ -14,3 +14,20 @@ tmp
 .tmp/
 templates.js
 doc/
+
+# internationalization
+# generate using grunt nggettext_compile
+app/translations.js
+
+# vi
+*.swp
+
+# pycharm
+.idea/
+
+#ctags
+.tags*
+
+# ansible host files
+deploy/hosts
+deploy/production_hosts
