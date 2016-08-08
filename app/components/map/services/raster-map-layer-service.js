@@ -109,6 +109,7 @@ angular.module('map')
 
         var opts = {
           layers: store.name,
+          styles: store.styles,
           format: 'image/png',
           version: '1.1.1',
           minZoom: 0,
@@ -120,7 +121,6 @@ angular.module('map')
         };
 
         angular.extend(opts, rasterMapLayer.wmsOptions);
-        opts.styles.replace('/', '-');
 
         rasterMapLayer._imageOverlays = [
           LeafletService.tileLayer.wms(rasterMapLayer._imageUrlBase, opts)
@@ -221,7 +221,7 @@ angular.module('map')
           };
 
           rasterMapLayer.wmsOptions.layers = store.name;
-          rasterMapLayer.wmsOptions.styles = store.name.replace('/', '-');
+          rasterMapLayer.wmsOptions.styles = store.styles;
 
           rasterMapLayer.url = RasterService.buildURLforWMS(
             rasterMapLayer._imageUrlBase,
@@ -338,13 +338,13 @@ angular.module('map')
        * @description based on the temporal window. The time between
        * timestate.start and timestate.end determines which store is to be used.
        * This only works for radar stuff.
-       *
        */
       rasterMapLayer._determineStore = function (timeState) {
 
         if (rasterMapLayer.slug !== 'radar/5min') {
           return {
             name: rasterMapLayer.slug,
+            styles: rasterMapLayer.wmsOptions.styles,
             resolution: rasterMapLayer.temporalResolution
           };
         }
@@ -366,8 +366,8 @@ angular.module('map')
           'day': 86400000
         };
 
-
         return {
+          styles: aggType.join('-'),
           name: aggType.join('/'),
           resolution: resolutions[aggType[1]]
         };
