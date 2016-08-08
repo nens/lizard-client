@@ -296,7 +296,7 @@ angular.module('omnibox')
       var RAW_RAIN_RASTER_UUID = '730d6675-35dd-4a35-aa9b-bfb8155f9ca7';
 
       scope.getRawDataUrl = function (event) {
-        var coords = scope.rain.geometry.coordinates;
+        var coords = scope.geometry.coordinates;
         // hack to make it testable on staging :( and gets the correct hostname
         // on production
         var hostname = window.location.hostname.replace('nxt.staging', 'demo');
