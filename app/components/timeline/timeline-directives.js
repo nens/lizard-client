@@ -175,8 +175,8 @@ angular.module('lizard-nxt')
      * @returns {object} with: events (list of layers) and rain (nxtLayer).
      */
     var getTimelineLayers = function (layers) {
-      var timelineLayers = {eventseries: {layers: []},
-                            rasters: {layers: []},
+      var timelineLayers = {eventseries: [],
+                            rasters: [],
                             rain: undefined};
 
       if (State.context !== 'dashboard') {
@@ -184,11 +184,11 @@ angular.module('lizard-nxt')
           if (layer.active) {
             var dataLayer = _.find(DataService.dataLayers, {uuid: layer.uuid});
             if (dataLayer && layer.type === 'eventseries') {
-              timelineLayers.eventseries.layers.push(dataLayer);
+              timelineLayers.eventseries.push(dataLayer);
             }
             else if (dataLayer && layer.type === "raster" && State.context !== 'dashboard') {
               if (dataLayer.slug !== "rain") {
-                timelineLayers.rasters.layers.push(dataLayer);
+                timelineLayers.rasters.push(dataLayer);
               } else if (dataLayer.slug === "rain") {
                 timelineLayers.rain = dataLayer;
               }
@@ -291,10 +291,13 @@ angular.module('lizard-nxt')
           context.eventOrder++;
         }
       };
+
+      var boundsGj = UtilService.lLatLngBoundsToGJ(State.spatial.bounds);
+
       angular.forEach(eventseries, function (_eventseries) {
         // Get data with type === 'eventseries'
         eventseries.getData({
-          geom: UtilService.geomToWKT(State.spatial.bounds),
+          geom: boundsGj,
           start: State.temporal.start,
           end: State.temporal.end,
         }).then(draw);
@@ -314,13 +317,13 @@ angular.module('lizard-nxt')
 
       var start = State.temporal.start,
           stop = State.temporal.end,
-          bounds = UtilService.geomToWKT(State.spatial.bounds);
+          boundsGj = UtilService.lLatLngBoundsToGJ(State.spatial.bounds);
 
       // Has it's own deferrer to not conflict with
       // other deferrers with the same layerSlug
       rasterLayer.getData(
         {
-          geom: bounds,
+          geom: boundsGj,
           start: start,
           end: stop,
           aggWindow: State.temporal.aggWindow,
@@ -357,16 +360,19 @@ angular.module('lizard-nxt')
         timeline.drawTickMarks(dates);
       };
 
+      var geom = UtilService.lLatLngToGJ(State.spatial.bounds.getCenter());
+
       rasterLayers.forEach(function (raster) {
         raster.getData({
           start: State.temporal.start,
           end: State.temporal.end,
-          geom: UtilService.geomToWKT(State.spatial.bounds.getCenter()),
+          geom: geom,
           truncate: true,
         }).then(function (response) {
           if (response && response !== 'null') {
             dates = dates.concat(response.data);
           }
+          draw(dates);
         });
 
       });
@@ -393,7 +399,7 @@ angular.module('lizard-nxt')
     /**
      * Updates area when users changes layers.
      */
-    scope.$watch(State.toString('layerGroups.active'), function (n, o) {
+    scope.$watch(State.toString('layers.active'), function (n, o) {
       if (n === o) { return true; }
       getTimeLineData();
     });

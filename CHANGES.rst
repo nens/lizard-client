@@ -12,6 +12,8 @@ Unreleased (4.0.2) (XXXX-XX-XX)
 
 - Fix raster request not including geometry id.
 
+- Fix no tickmarks, draw tickmarks.
+
 
 Release 4.0.2 (2016-8-5)
 ---------------------
