@@ -359,6 +359,24 @@ angular.module('lizard-nxt')
     }
   };
 
+  this.lLatLngBoundsToGJ = function (bounds) {
+    return {
+      'type': 'Polygon',
+      'coordinates': [
+        [bounds.getWest(), bounds.getNorth()],
+        [bounds.getEast(), bounds.getNorth()],
+        [bounds.getEast(), bounds.getSouth()],
+        [bounds.getWest(), bounds.getSouth()]
+      ]
+    };
+  };
+
+  this.lLatLngToGJ = function (latLng) {
+    return {
+      'type': 'Point',
+      'coordinates': [latLng.lng, latLng.lat]
+    };
+  };
 
   /**
    * Stringifies a GeoJSON object into WKT
