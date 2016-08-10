@@ -13,9 +13,7 @@ angular.module('map')
 
     return function (options) {
 
-      var wmsMapLayer = options.wmsOptions;
-
-      wmsMapLayer.url = options.url;
+      var wmsMapLayer = options;
 
       wmsMapLayer.wms = MapLayerService.createWmsLayer(options);
 

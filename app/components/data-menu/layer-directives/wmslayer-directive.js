@@ -21,7 +21,7 @@ angular.module('data-menu')
       // Set defaults.
       if (!scope.layer.opacity) { scope.layer.opacity = 1; }
       if (!scope.layer.name) {
-        scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid
+        scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid;
       }
 
       var cancelFirstActive = scope.$watch('layer.active', function () {
@@ -37,13 +37,22 @@ angular.module('data-menu')
 
             MapService.mapLayers.push(wmsMapLayer({
               uuid: scope.layer.uuid,
+              slug: response.slug,
+              minZoom: response.min_zoom,
+              maxZoom: response.max_zoom,
+              zIndex: response.z_index,
               wmsOptions: response.options,
               url: response.url
             }));
 
-            DataService.dataLayers.push(wmsFeatureInfoDataLayer({
-
-            }));
+            if (response.get_feature_info) {
+              DataService.dataLayers.push(wmsFeatureInfoDataLayer({
+                uuid: scope.layer.uuid,
+                name: scope.layer.name,
+                slug: response.slug,
+                url: response.url
+              }));
+            }
 
             MapService.updateLayers([scope.layer]);
           })

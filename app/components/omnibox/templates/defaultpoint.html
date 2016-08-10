@@ -39,19 +39,19 @@
     </div>
 
     <div ng-switch-when="wms"
-         ng-if="content.data.features && content.data.features.length">
+         ng-if="content.data && content.data.length">
       <div class="card-content">
 
         <span id="title-holder"
               class="card-title-text kunstwerk-title-text">
-          <% content.layerGroupName %>
+          <% content.name %>
         </span>
         <full-details></full-details>
       </div>
 
       <table ng-if="fullDetails" class="table table-condensed table-hover">
 
-        <tr ng-repeat="(key, val) in content.data.features[0].properties">
+        <tr ng-repeat="(key, val) in content.data[0].properties">
 
           <td>
             <span class="attr-row-content">

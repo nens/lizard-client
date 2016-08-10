@@ -13,14 +13,20 @@ angular.module('data-menu')
 
     return function (options) {
 
-      var wmsFeatureInfoDataLayer = {};
+      var wmsFeatureInfoDataLayer = options;
 
-      wmsFeatureInfoDataLayer.uuid = options.uuid;
-
-      wmsFeatureInfoDataLayer.type = 'raster';
+      wmsFeatureInfoDataLayer.type = 'wms';
 
       wmsFeatureInfoDataLayer.getData = function (options) {
-        return WmsGetFeatureInfoService.getData(_.merge(wmsFeatureInfoDataLayer, options));
+        return WmsGetFeatureInfoService
+        .getData(wmsFeatureInfoDataLayer, options)
+        .then(function (response) {
+          if (response.type === 'FeatureCollection') {
+            response.data = response.features;
+            response.type = wmsFeatureInfoDataLayer.type;
+          }
+          return response;
+        });
       };
 
       return wmsFeatureInfoDataLayer;

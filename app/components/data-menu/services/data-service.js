@@ -341,7 +341,7 @@ angular.module('data-menu')
                 if ((!layer.active && layer.uuid in Object.keys(geo.properties))
                   || geo.properties[layer.uuid].data === null) {
 
-                    delete geo.properties[layer.uuid];
+                  delete geo.properties[layer.uuid];
 
                 }
               })

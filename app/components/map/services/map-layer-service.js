@@ -41,12 +41,14 @@ angular.module('map')
       var _options = {
         format: 'image/png',
         version: '1.1.1',
-        minZoom: 0,
-        maxZoom: this.MAXZOOMLEVEL,
+        layers: options.slug,
+        minZoom: options.minZoom || 0,
+        maxZoom: options.maxZoom || this.MAXZOOMLEVEL,
+        zIndex: options.zIndex,
         crs: LeafletService.CRS.EPSG3857,
       };
 
-      _options = angular.extend(_options, options);
+      _options = angular.extend(_options, options.wmsOptions);
 
       return LeafletService.tileLayer.wms(options.url, _options);
     };

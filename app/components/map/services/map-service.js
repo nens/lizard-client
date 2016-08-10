@@ -151,6 +151,21 @@ angular.module('map')
         return service._map.getBounds();
       },
 
+      getSize: function () {
+        return service._map.getSize();
+      },
+
+      gJPointToMapPoint: function (gj) {
+        if (gj.geometry) {
+          gj = gj.geometry;
+        }
+        if (gj.type === 'Point') {
+          return service._map.latLngToContainerPoint(
+            L.latLng(gj.coordinates[1], gj.coordinates[0])
+          );
+        }
+      },
+
       line: {
         geometry: {
           type: 'LineString',
