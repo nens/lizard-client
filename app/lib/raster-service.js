@@ -64,7 +64,6 @@ angular.module('lizard-nxt')
     } else {
       requestOptions.geom = UtilService.geomToWkt(options.geom);
     }
-    console.log(CabinetService.raster(canceler).get(requestOptions));
     return CabinetService.raster(canceler).get(requestOptions);
   };
 
