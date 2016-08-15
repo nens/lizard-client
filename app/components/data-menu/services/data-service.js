@@ -341,6 +341,8 @@ angular.module('data-menu')
                 if ((!layer.active && layer.uuid in Object.keys(geo.properties))
                   || geo.properties[layer.uuid].data === null) {
 
+                  // Use delete to remove the key and the value and the omnibox
+                  // can show a nodata message.
                   delete geo.properties[layer.uuid];
 
                 }

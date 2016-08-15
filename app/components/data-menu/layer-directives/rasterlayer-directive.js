@@ -9,7 +9,7 @@ angular.module('data-menu')
     // Set defaults.
     if (!scope.layer.opacity) { scope.layer.opacity = 1; }
     if (!scope.layer.name) {
-      scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid
+      scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid;
     }
 
     var cancelFirstActive = scope.$watch('layer.active', function () {
@@ -21,17 +21,15 @@ angular.module('data-menu')
           MapService.mapLayers.push(rasterMapLayer({
             uuid: scope.layer.uuid,
             url: 'api/v2/wms/',
-            temporalResolution: response.frequency,
-            slug: response.slug,
             bounds: response.spatial_bounds,
             temporal: response.temporal,
-            wmsOptions: response.options
+            minFrequency: response.frequency,
+            complexWmsOptions: response.options
           }));
 
           DataService.dataLayers.push(rasterDataLayer({
             uuid: scope.layer.uuid,
             slug: response.slug,
-            temporalResolution: response.frequency,
             aggType: response.aggregation_type,
             scale: response.observation_type
               && response.observation_type.scale,

@@ -976,7 +976,7 @@ angular.module('lizard-nxt')
       .attr("x", function (d) { return xScale(d[0]) - barWidth; })
       .attr('width', barWidth)
       .attr("height", getBarHeight)
-      .attr("y", function (d) { return height - yScale(d[1]); });
+      .attr("y", function (d) { return height - getBarHeight(d); });
 
     // ENTER
     // Create new elements as needed.
@@ -992,7 +992,7 @@ angular.module('lizard-nxt')
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
       .attr("height", getBarHeight)
-      .attr("y", function (d) { return height - yScale(d[1]); });
+      .attr("y", function (d) { return height - getBarHeight(d); });
 
     // EXIT
     // Remove old elements as needed.

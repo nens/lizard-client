@@ -92,6 +92,11 @@ angular.module('lizard-nxt')
   var buildURLforWMS = function (url, map, singleTile, wmsOpts, options) {
     options = options || {};
     wmsOpts = wmsOpts || {};
+    var wmsParams = getWmsParameters(
+      wmsOpts,
+      State.spatial.view,
+      State.temporal
+    );
     var bounds = options.bounds || map.getBounds(),
         DEFAULT_TILE_SIZE = 256; // in px
 
@@ -107,16 +112,16 @@ angular.module('lizard-nxt')
 
     if (singleTile) {
       var size = options.size || map.getPixelBounds().getSize();
-      wmsOpts.height = Math.round(size.y / size.x * DEFAULT_TILE_SIZE);
-      wmsOpts.width = Math.round(size.x / size.y  * DEFAULT_TILE_SIZE);
+      wmsParams.height = Math.round(size.y / size.x * DEFAULT_TILE_SIZE);
+      wmsParams.width = Math.round(size.x / size.y  * DEFAULT_TILE_SIZE);
     } else {
       // Serve square tiles
-      wmsOpts.height = DEFAULT_TILE_SIZE;
-      wmsOpts.width = DEFAULT_TILE_SIZE;
+      wmsParams.height = DEFAULT_TILE_SIZE;
+      wmsParams.width = DEFAULT_TILE_SIZE;
     }
 
 
-    angular.forEach(wmsOpts, function (v, k) {
+    angular.forEach(wmsParams, function (v, k) {
       result += UtilService.buildString('&', k.toUpperCase(), "=", v);
     });
 
@@ -127,9 +132,52 @@ angular.module('lizard-nxt')
     return result;
   };
 
+
+  /**
+   * Returns the current relevant styles wms parameter.
+   * styles can be a string or an object with styles per
+   * temporalzoom per spatialzoom.
+   *
+   * @param  {object} wmsOptions
+   * @param  {mapView} mapView
+   * @param  {timeState} timeState
+   *
+   * @return {string}              current relevant style.
+   */
+  var getWmsParameters = function (wmsOptions, zoom, aggWindow) {
+    var params = {};
+
+    var getStringForZoomlevel = function (param, key) {
+      if (!_.isObject(param)) {
+        params[key] = param;
+      }
+      else {
+        var zoomStyles = Object.keys(param);
+        var i = _.findLastIndex(zoomStyles, function (zoomStyle) {
+          return _.gte(zoom, zoomStyle);
+        });
+        if (!_.isObject(param[zoomStyles[i]])) {
+          params[key] = param[zoomStyles[i]];
+        }
+        else {
+          var timeStyles = Object.keys(param[zoomStyles[i]]);
+          var j = _.findLastIndex(timeStyles, function (timeStyle) {
+            return _.gte(aggWindow, timeStyle);
+          });
+          params[key] = param[zoomStyles[i]][timeStyles[j]];
+        }
+      }
+    };
+
+    _.forEach(wmsOptions, getStringForZoomlevel);
+
+    return params;
+  };
+
   return {
     buildURLforWMS: buildURLforWMS,
     getData: getData,
+    getWmsParameters: getWmsParameters
   };
 
 }]);

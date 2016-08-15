@@ -363,10 +363,13 @@ angular.module('lizard-nxt')
     return {
       'type': 'Polygon',
       'coordinates': [
-        [bounds.getWest(), bounds.getNorth()],
-        [bounds.getEast(), bounds.getNorth()],
-        [bounds.getEast(), bounds.getSouth()],
-        [bounds.getWest(), bounds.getSouth()]
+        [
+          [bounds.getWest(), bounds.getNorth()],
+          [bounds.getEast(), bounds.getNorth()],
+          [bounds.getEast(), bounds.getSouth()],
+          [bounds.getWest(), bounds.getSouth()],
+          [bounds.getWest(), bounds.getNorth()]
+        ]
       ]
     };
   };
@@ -395,6 +398,7 @@ angular.module('lizard-nxt')
     }
 
     function ringsWKT (r) {
+      console.log(r.map(ringWKT).map(wrapParens).join(', '));
       return r.map(ringWKT).map(wrapParens).join(', ');
     }
 

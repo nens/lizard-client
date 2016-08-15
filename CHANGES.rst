@@ -16,6 +16,8 @@ Unreleased (4.0.2) (XXXX-XX-XX)
 
 - Fix wmslayers not drawing and wmslayers not returning getFeatureInfo.
 
+- Enable complex dynamic wms styles.
+
 
 Release 4.0.2 (2016-8-5)
 ---------------------

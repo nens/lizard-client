@@ -151,10 +151,16 @@ angular.module('map')
         return service._map.getBounds();
       },
 
+      /**
+       * Returns pixel size of map.
+       */
       getSize: function () {
         return service._map.getSize();
       },
 
+      /**
+       * Convert GeoJson geometry to pixel position on the map.
+       */
       gJPointToMapPoint: function (gj) {
         if (gj.geometry) {
           gj = gj.geometry;

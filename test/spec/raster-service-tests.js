@@ -48,5 +48,52 @@ describe('Testing raster service', function () {
       '667925.8624129414,6800124.675105345,667925.8624129414,6800124.675105345');
   });
 
+  it('should parse dynamic wms parameters', function () {
+    var options = {
+      'layers': {
+        '0': {
+          '0': 'radar:5min',
+          '3600000': 'radar:hour',
+          '86400000': 'radar:day'
+        },
+        '8': {
+          '0': 'radar:5min',
+          '86400000': 'radar:day'
+        }
+      },
+      'styles': {
+        '0': {
+          '0': 'radar-5min',
+          '3600000': 'radar-hour',
+          '86400000': 'radar-day'
+        }
+      },
+      'height': 497,
+      'zindex': 20,
+      'width': 525,
+      'transparent': false
+    };
+    var zoom = 8;
+    var aggWindow = 3600000 + 1;
+    var params = RasterService.getWmsParameters(options, zoom, aggWindow);
+    expect(params.styles).toBe('radar-hour');
+    expect(params.layers).toBe('radar:5min');
+  });
+
+  it('should parse static wms parameters', function () {
+    var options = {
+      'layers': 'radar:5min',
+      'styles': 'radar-5min',
+      'height': 497,
+      'zindex': 20,
+      'width': 525,
+      'transparent': false
+    };
+    var zoom = 8;
+    var aggWindow = 3600000 + 1;
+    var params = RasterService.getWmsParameters(options, zoom, aggWindow);
+    expect(params.layers).toBe('radar:5min');
+  });
+
 
 });

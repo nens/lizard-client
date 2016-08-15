@@ -36,7 +36,13 @@ angular.module('map')
       });
     };
 
-
+    /**
+     * Creates a leaflet wms layer with default wms options.
+     *
+     * @param  {object} options passed directly to leaflet, might overwrite
+     *                          defaults.
+     * @return {TileLayer.WMS}
+     */
     this.createWmsLayer = function (options) {
       var _options = {
         format: 'image/png',
@@ -48,7 +54,7 @@ angular.module('map')
         crs: LeafletService.CRS.EPSG3857,
       };
 
-      _options = angular.extend(_options, options.wmsOptions);
+      _options = angular.extend(_options, options);
 
       return LeafletService.tileLayer.wms(options.url, _options);
     };

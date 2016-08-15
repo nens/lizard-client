@@ -21,6 +21,9 @@ angular.module('data-menu')
         return WmsGetFeatureInfoService
         .getData(wmsFeatureInfoDataLayer, options)
         .then(function (response) {
+          // If it is not a featureCollection it will probably not render in the
+          // omnibox. But who knows, it might be plain json with a data
+          // attribute.
           if (response.type === 'FeatureCollection') {
             response.data = response.features;
             response.type = wmsFeatureInfoDataLayer.type;

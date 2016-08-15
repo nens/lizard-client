@@ -41,7 +41,7 @@ angular.module('data-menu')
               minZoom: response.min_zoom,
               maxZoom: response.max_zoom,
               zIndex: response.z_index,
-              wmsOptions: response.options,
+              complexWmsOptions: response.options,
               url: response.url
             }));
 
