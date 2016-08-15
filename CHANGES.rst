@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (4.0.2) (XXXX-XX-XX)
 -------------------------------
 
+- Adds Jenkinsfile
+
 - Zap timing console statement.
 
 - Fix rain download href.
