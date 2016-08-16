@@ -332,10 +332,7 @@ angular.module('lizard-nxt')
       .then(
         function (response) {
           if (response && response !== 'null' && response.data !== null) {
-            console.log('\n');
-            response.data.forEach(function (d) { console.log(new Date(d[0]), d[1]); });
             timeline.drawBars(response.data);
-            console.log('\n');
           }
         }
       );

@@ -413,7 +413,8 @@ angular.module('map')
     };
 
     Object.defineProperty(service, 'loading', {
-      get: function () { return _.some(service.mapLayers, {loading: true}); }
+      get: function () {
+        return _.some(service.mapLayers, {loading: true}); }
     });
 
     /**

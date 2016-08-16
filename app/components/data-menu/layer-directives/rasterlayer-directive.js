@@ -23,7 +23,7 @@ angular.module('data-menu')
             url: 'api/v2/wms/',
             bounds: response.spatial_bounds,
             temporal: response.temporal,
-            minFrequency: response.frequency,
+            frequency: response.frequency,
             complexWmsOptions: response.options
           }));
 

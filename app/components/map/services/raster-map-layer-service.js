@@ -34,7 +34,7 @@ angular.module('map')
       // frequent images it should be large. When having a very sparse
       // resolution, animation will also move slowly, so there is no need
       // for a big buffer.
-      rasterMapLayer._bufferLength = options.temporalResolution >= 3600000 ? 2 : 6;
+      rasterMapLayer._bufferLength = options.frequency >= 3600000 ? 2 : 6;
 
       // Number of rasters currently underway.
       rasterMapLayer._nLoadingRasters = 0;
@@ -86,11 +86,11 @@ angular.module('map')
           $http.get(url).success(function (data) {
             var limits = ':' + data[0][0] + ':' + data[0][1];
             // strip existing domain if already present.
-            // rasterMapLayer.complexWmsOptions.styles = rasterMapLayer.wmsOptions.styles.split(':')[0];
-            // rasterMapLayer._imageOverlays[0].setParams({
-            //   styles: rasterMapLayer.wmsOptions.styles + limits
-            // });
-            // rasterMapLayer._imageOverlays[0].redraw();
+            rasterMapLayer.complexWmsOptions.styles = rasterMapLayer.wmsOptions.styles.split(':')[0];
+            rasterMapLayer._imageOverlays[0].setParams({
+              styles: rasterMapLayer.complexWmsOptions.styles + limits
+            });
+            rasterMapLayer._imageOverlays[0].redraw();
           });
         }
       };
@@ -104,10 +104,6 @@ angular.module('map')
 
         var opacity = options.opacity,
             date = new Date(rasterMapLayer._mkTimeStamp(timeState.at));
-
-        // Set temporalResolution for time-controller.
-        rasterMapLayer.temporalResolution = rasterMapLayer
-          .getTemporalResolution(timeState);
 
         var defaultOptions = {
           format: 'image/png',
@@ -166,10 +162,6 @@ angular.module('map')
       rasterMapLayer._syncTime = function (timeState, map, wmsOptions) {
         var currentDate = rasterMapLayer._mkTimeStamp(timeState.at);
 
-        // Set temporalResolution for time-controller.
-        rasterMapLayer.temporalResolution = rasterMapLayer
-          .getTemporalResolution(timeState);
-
         rasterMapLayer._animateSyncTime(timeState, map, currentDate, wmsOptions);
 
       };
@@ -227,7 +219,8 @@ angular.module('map')
 
           var options = {
             bounds: rasterMapLayer._animationBounds,
-            size: rasterMapLayer._getImageSize(map, rasterMapLayer._animationBounds)
+            size: rasterMapLayer._getImageSize(map, rasterMapLayer._animationBounds),
+            frequency: rasterMapLayer.frequency
           };
 
           rasterMapLayer.url = RasterService.buildURLforWMS(
@@ -337,13 +330,8 @@ angular.module('map')
        * Local helper that returns a rounded timestamp
        */
       rasterMapLayer._mkTimeStamp = function (t) {
-        var result = UtilService.roundTimestamp(t, rasterMapLayer.getTemporalResolution(), false);
+        var result = UtilService.roundTimestamp(t, rasterMapLayer.frequency, false);
         return result;
-      };
-
-      rasterMapLayer.getTemporalResolution = function (timeState) {
-        var resolution = rasterMapLayer.minFrequency;
-        return resolution;
       };
 
       /**
@@ -399,7 +387,7 @@ angular.module('map')
             rasterMapLayer._imageOverlays[0].setOpacity(rasterMapLayer._opacity);
           }
         }
-        rasterMapLayer._nxtDate += rasterMapLayer.temporalResolution;
+        rasterMapLayer._nxtDate += rasterMapLayer.frequency;
       };
 
       /**
@@ -436,7 +424,13 @@ angular.module('map')
        */
       rasterMapLayer._addLoadListener = function (overlay, date) {
         rasterMapLayer._nLoadingRasters++;
-        rasterMapLayer.loading = true;
+
+        // Only set raster is loading to true when it is truly very loading,
+        // not when it is just keeping up with animation.
+        if (rasterMapLayer._nLoadingRasters > 1) {
+          rasterMapLayer.loading = true;
+        }
+
         overlay.addOneTimeEventListener("load", function () {
           rasterMapLayer._nLoadingRasters--;
           var index = rasterMapLayer._imageOverlays.indexOf(overlay);

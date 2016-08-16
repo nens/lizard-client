@@ -92,11 +92,13 @@ angular.module('lizard-nxt')
   var buildURLforWMS = function (url, map, singleTile, wmsOpts, options) {
     options = options || {};
     wmsOpts = wmsOpts || {};
+
     var wmsParams = getWmsParameters(
       wmsOpts,
-      State.spatial.view,
-      State.temporal
+      State.spatial.view.zoom,
+      options.frequency || State.temporal.aggWindow
     );
+
     var bounds = options.bounds || map.getBounds(),
         DEFAULT_TILE_SIZE = 256; // in px
 

@@ -158,9 +158,6 @@ angular.module('lizard-nxt')
    */
   this.getAggWindow = function (start, stop, drawingWidth) {
 
-    // TODO: Called both by omnibox and timeline, should be called only by
-    // timeline, while omnibox subsequently syncs to timeState.aggWindow
-
     var aggWindow;
     var MIN_PX = 3; // Minimum width of a bar
 
@@ -398,7 +395,6 @@ angular.module('lizard-nxt')
     }
 
     function ringsWKT (r) {
-      console.log(r.map(ringWKT).map(wrapParens).join(', '));
       return r.map(ringWKT).map(wrapParens).join(', ');
     }
 
