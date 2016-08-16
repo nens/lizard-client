@@ -114,8 +114,11 @@ angular.module('map')
           time: _formatter(date)
         };
 
+        // Overwrite defaults with configured wms options. They might be nested
+        // for dynamic options per zoomlevel.
         var opts = _.merge(defaultOptions, rasterMapLayer.complexWmsOptions);
 
+        // Rasterservic will flatten complex options by zoom and aggWindow.
         var params = RasterService.getWmsParameters(
           opts,
           map.getZoom(),
@@ -161,9 +164,7 @@ angular.module('map')
        */
       rasterMapLayer._syncTime = function (timeState, map, wmsOptions) {
         var currentDate = rasterMapLayer._mkTimeStamp(timeState.at);
-
         rasterMapLayer._animateSyncTime(timeState, map, currentDate, wmsOptions);
-
       };
 
       /**

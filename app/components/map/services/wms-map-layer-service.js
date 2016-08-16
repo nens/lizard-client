@@ -19,6 +19,8 @@ angular.module('map')
 
       var wmsMapLayer = options;
 
+      // ComplexWmsOptions might have options per zoom and aggWindow. Add layer
+      // with default options.
       var params = RasterService.getWmsParameters(
         wmsMapLayer.complexWmsOptions,
         0,
@@ -34,6 +36,7 @@ angular.module('map')
 
         wmsMapLayer.wms.setOpacity(options.opacity);
 
+        // Wms options might be different for current zoom and aggWindow.
         var params = RasterService.getWmsParameters(
           wmsMapLayer.complexWmsOptions,
           map.getZoom(),
