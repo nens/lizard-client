@@ -318,17 +318,14 @@ angular.module('data-menu')
         }
 
         angular.forEach(State.layers, function (layer) {
-          if (
-            !layer.active
-            || (layer.temporal && geo.geometry.type === 'LineString')
 
-          ) {
-            return;
-          }
+          if (!layer.active) { return; }
 
           var dataLayer = _.find(instance.dataLayers, {uuid: layer.uuid});
 
-          if (dataLayer) {
+          if (dataLayer
+            && !(dataLayer.temporal && geo.geometry.type === 'LineString')
+          ) {
             promises.push(
               dataLayer.getData(options).then(function (response) {
                 // async so remove anything obsolete.

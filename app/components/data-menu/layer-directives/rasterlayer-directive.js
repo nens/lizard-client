@@ -18,14 +18,16 @@ angular.module('data-menu')
         LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.uuid, scope.layer.name)
         .then(function (response) {
 
-          MapService.mapLayers.push(rasterMapLayer({
+          var mapLayer = rasterMapLayer({
             uuid: scope.layer.uuid,
             url: 'api/v2/wms/',
             bounds: response.spatial_bounds,
             temporal: response.temporal,
             frequency: response.frequency,
             complexWmsOptions: response.options
-          }));
+          });
+
+          MapService.mapLayers.push(mapLayer);
 
           DataService.dataLayers.push(rasterDataLayer({
             uuid: scope.layer.uuid,
@@ -47,7 +49,9 @@ angular.module('data-menu')
 
           scope.layer.active = true;
 
-          scope.rescale = MapService.rescaleLayers;
+          if (response.rescalable) {
+            scope.rescale = MapService.rescaleLayer;
+          }
 
           scope.zoomToBounds = LayerAdderService.zoomToBounds.bind({
             bounds: response.spatial_bounds,

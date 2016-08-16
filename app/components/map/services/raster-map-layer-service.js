@@ -80,13 +80,14 @@ angular.module('map')
       rasterMapLayer.rescale = function (bounds) {
         if (!rasterMapLayer.temporal) {
           var url = rasterMapLayer._imageUrlBase +
-            '?request=getlimits&layers=' + rasterMapLayer.slug +
+            '?request=getlimits&layers=' +
+            rasterMapLayer.complexWmsOptions.layers +
             '&width=16&height=16&srs=epsg:4326&bbox=' +
             bounds.toBBoxString();
           $http.get(url).success(function (data) {
             var limits = ':' + data[0][0] + ':' + data[0][1];
             // strip existing domain if already present.
-            rasterMapLayer.complexWmsOptions.styles = rasterMapLayer.wmsOptions.styles.split(':')[0];
+            rasterMapLayer.complexWmsOptions.styles = rasterMapLayer.complexWmsOptions.styles.split(':')[0];
             rasterMapLayer._imageOverlays[0].setParams({
               styles: rasterMapLayer.complexWmsOptions.styles + limits
             });

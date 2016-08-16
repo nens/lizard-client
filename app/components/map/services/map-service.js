@@ -90,13 +90,10 @@ angular.module('map')
         }
       },
 
-      rescaleLayers: function (layers) {
+      rescaleLayer: function (layer) {
         var bounds = service._map.getBounds();
-        var rasters = _.filter(layers, {type: 'raster'});
-        angular.forEach(rasters, function (layer) {
-          var mapLayer = _.find(service.mapLayers, { uuid: layer.uuid });
-          mapLayer.rescale(bounds);
-        });
+        var mapLayer = _.find(service.mapLayers, { uuid: layer.uuid });
+        mapLayer.rescale(bounds);
       },
 
       /**
