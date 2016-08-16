@@ -406,8 +406,8 @@ angular.module('lizard-nxt')
  * @description Higher level functions to parse and set URL.
  */
 angular.module('lizard-nxt')
-.service("UrlService", ['UrlState', 'LocationGetterSetter', 'gettextCatalog', 'UtilService',
-  function (UrlState, LocationGetterSetter, gettextCatalog, UtilService) {
+.service("UrlService", ['UrlState', 'LocationGetterSetter', 'UtilService',
+  function (UrlState, LocationGetterSetter, UtilService) {
 
     // Configuration object for url state.
     var config = {
@@ -443,15 +443,10 @@ angular.module('lizard-nxt')
     };
 
     var getLanguage = function () {
-      var language = LocationGetterSetter.getUrlValue(
+      return LocationGetterSetter.getUrlValue(
         config.language.part,
         config.language.index
       );
-      if (language
-        && gettextCatalog.strings[language]
-        && language !== gettextCatalog.baseLanguage) {
-        return language;
-      }
     };
 
     var getContext = function () {
@@ -541,7 +536,7 @@ angular.module('lizard-nxt')
         LocationGetterSetter.setUrlValue(
           config.language.part,
           config.language.index,
-          gettextCatalog.getCurrentLanguage()
+          state.language
         );
 
         UrlState.setSelectedUrl(config, state.selected);

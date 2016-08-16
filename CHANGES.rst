@@ -20,6 +20,8 @@ Unreleased (4.0.2) (XXXX-XX-XX)
 
 - Enable complex dynamic wms styles.
 
+- Fix language not changing, compute property from angular gettext.
+
 
 Release 4.0.2 (2016-8-5)
 ---------------------

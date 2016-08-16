@@ -2,8 +2,8 @@
  * Lizard-client global state object.
  */
 angular.module('global-state')
-  .service('State', ['UtilService',
-    function (UtilService) {
+  .service('State', ['UtilService', 'gettextCatalog',
+    function (UtilService, gettextCatalog) {
 
     var state = {};
 
@@ -47,6 +47,12 @@ angular.module('global-state')
         }
       },
       enumerable: true
+    });
+
+    // Language.
+    Object.defineProperty(state, 'language', {
+      get: gettextCatalog.getCurrentLanguage.bind(gettextCatalog),
+      set: gettextCatalog.setCurrentLanguage.bind(gettextCatalog)
     });
 
     // Default language.
