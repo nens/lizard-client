@@ -296,7 +296,7 @@ angular.module('lizard-nxt')
 
       angular.forEach(eventseries, function (_eventseries) {
         // Get data with type === 'eventseries'
-        eventseries.getData({
+        _eventseries.getData({
           geom: boundsGj,
           start: State.temporal.start,
           end: State.temporal.end,
