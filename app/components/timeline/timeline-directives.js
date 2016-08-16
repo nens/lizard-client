@@ -274,18 +274,18 @@ angular.module('lizard-nxt')
 
       var draw = function (response) {
 
-        if (response && response.data) {
+        if (response) {
           // Add it to the timeline
           var data = EventAggregateService.aggregate(
-            response.data,
+            response,
             State.temporal.aggWindow
           );
 
           timeline.drawCircles(
             data,
             context.eventOrder,
-            response.layerGroupSlug,
-            response.color,
+            this.name,
+            this.color,
             State.temporal.aggWindow
           );
           context.eventOrder++;
@@ -300,7 +300,7 @@ angular.module('lizard-nxt')
           geom: boundsGj,
           start: State.temporal.start,
           end: State.temporal.end,
-        }).then(draw);
+        }).then(draw.bind(_eventseries));
       });
     };
 

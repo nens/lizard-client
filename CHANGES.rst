@@ -22,6 +22,8 @@ Unreleased (4.0.2) (XXXX-XX-XX)
 
 - Fix language not changing, compute property from angular gettext.
 
+- Fix eventseries in timeline and on map.
+
 
 Release 4.0.2 (2016-8-5)
 ---------------------
