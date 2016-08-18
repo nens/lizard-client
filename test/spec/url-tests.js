@@ -93,11 +93,12 @@ describe('Testing UrlService', function () {
   });
 
   it('should get the state', function () {
-    var url = '/en/dashboard/neutral,annotations,assetgroup$0037b5f/region/@4,6,8/' +
+    var url = '/vi/dashboard/neutral,annotations,assetgroup$0037b5f/region/@4,6,8/' +
       'Jan,04,2008-Jul,14,2016';
     $location.path(url);
     var expectedUrlState = {
-      language: undefined, // no languages in catalog so, it returns undefined.
+      language: 'vi', // url-service makes no assumptions on available
+                      // languages, it returns the first part of the path.
       context: 'dashboard',
       baselayer: 'neutral',
       annotations: {active: true},

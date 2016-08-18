@@ -52,7 +52,11 @@ angular.module('global-state')
     // Language.
     Object.defineProperty(state, 'language', {
       get: gettextCatalog.getCurrentLanguage.bind(gettextCatalog),
-      set: gettextCatalog.setCurrentLanguage.bind(gettextCatalog)
+      set: function (language) {
+        if (gettextCatalog.strings[language]) {
+          gettextCatalog.setCurrentLanguage(language);
+        }
+      }
     });
 
     // Default language.
