@@ -103,6 +103,8 @@ angular.module('data-menu')
        * Remove all scenario layers.
        */
       scope.$on('$destroy', function () {
+        scope.layer.active = false;
+        MapService.updateLayers([scope.layer]);
 
         var scenarioLayers = [];
 

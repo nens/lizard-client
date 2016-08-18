@@ -26,6 +26,8 @@ Unreleased (4.0.2) (XXXX-XX-XX)
 
 - Fix rain statisctics.
 
+- De-activate layer on removal.
+
 
 Release 4.0.2 (2016-8-5)
 ---------------------

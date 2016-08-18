@@ -45,6 +45,8 @@ angular.module('data-menu')
       });
 
       scope.$on('$destroy', function () {
+        scope.layer.active = false;
+        MapService.updateLayers([scope.layer]);
         _.pull(MapService.mapLayers, {uuid: scope.layer.uuid });
       });
 
