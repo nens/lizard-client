@@ -16,6 +16,18 @@ Unreleased (4.0.2) (XXXX-XX-XX)
 
 - Fix no tickmarks, draw tickmarks.
 
+- Fix wmslayers not drawing and wmslayers not returning getFeatureInfo.
+
+- Enable complex dynamic wms styles.
+
+- Fix language not changing, compute property from angular gettext.
+
+- Fix eventseries in timeline and on map.
+
+- Fix rain statisctics.
+
+- De-activate layer on removal.
+
 
 Release 4.0.2 (2016-8-5)
 ---------------------

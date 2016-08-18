@@ -316,11 +316,10 @@ angular.module('omnibox')
         scope.rrc.data = null;
 
         RasterService.getData(
-          'RainController',
-          {slug: 'rain'},
           {
+            uuid: scope.rain.uuid,
             agg: 'rrc',
-            geom: L.latLng(scope.rain.geometry.coordinates[1], scope.rain.geometry.coordinates[0]),
+            geom: scope.geometry,
             start: State.temporal.start,
             end: State.temporal.end
           }

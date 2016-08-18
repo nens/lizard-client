@@ -13,14 +13,23 @@ angular.module('data-menu')
 
     return function (options) {
 
-      var wmsFeatureInfoDataLayer = {};
+      var wmsFeatureInfoDataLayer = options;
 
-      wmsFeatureInfoDataLayer.uuid = options.uuid;
-
-      wmsFeatureInfoDataLayer.type = 'raster';
+      wmsFeatureInfoDataLayer.type = 'wms';
 
       wmsFeatureInfoDataLayer.getData = function (options) {
-        return WmsGetFeatureInfoService.getData(_.merge(wmsFeatureInfoDataLayer, options));
+        return WmsGetFeatureInfoService
+        .getData(wmsFeatureInfoDataLayer, options)
+        .then(function (response) {
+          // If it is not a featureCollection it will probably not render in the
+          // omnibox. But who knows, it might be plain json with a data
+          // attribute.
+          if (response.type === 'FeatureCollection') {
+            response.data = response.features;
+            response.type = wmsFeatureInfoDataLayer.type;
+          }
+          return response;
+        });
       };
 
       return wmsFeatureInfoDataLayer;

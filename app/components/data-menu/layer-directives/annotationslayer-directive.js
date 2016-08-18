@@ -24,7 +24,7 @@ angular.module('data-menu')
       annotations: '=',
     },
     templateUrl: 'data-menu/templates/annotations-layer.html',
-    restrict: 'E',
+    restrict: 'E'
   };
 
 }]);

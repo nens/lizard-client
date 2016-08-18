@@ -1,7 +1,7 @@
 <div class="noselect">
   <label
     single-click="layer.active = !layer.active"
-    ng-dblclick="rescale && rescale([layer])"
+    ng-dblclick="rescale && rescale(layer)"
     ng-class ="{active: layer.active }"
     class="layer-item layer-img"
     ng-title="layer.name | capitalize">

@@ -34,7 +34,7 @@ angular.module('map')
       // frequent images it should be large. When having a very sparse
       // resolution, animation will also move slowly, so there is no need
       // for a big buffer.
-      rasterMapLayer._bufferLength = options.temporalResolution >= 3600000 ? 2 : 6;
+      rasterMapLayer._bufferLength = options.frequency >= 3600000 ? 2 : 6;
 
       // Number of rasters currently underway.
       rasterMapLayer._nLoadingRasters = 0;
@@ -80,15 +80,16 @@ angular.module('map')
       rasterMapLayer.rescale = function (bounds) {
         if (!rasterMapLayer.temporal) {
           var url = rasterMapLayer._imageUrlBase +
-            '?request=getlimits&layers=' + rasterMapLayer.slug +
+            '?request=getlimits&layers=' +
+            rasterMapLayer.complexWmsOptions.layers +
             '&width=16&height=16&srs=epsg:4326&bbox=' +
             bounds.toBBoxString();
           $http.get(url).success(function (data) {
             var limits = ':' + data[0][0] + ':' + data[0][1];
             // strip existing domain if already present.
-            rasterMapLayer.wmsOptions.styles = rasterMapLayer.wmsOptions.styles.split(':')[0];
+            rasterMapLayer.complexWmsOptions.styles = rasterMapLayer.complexWmsOptions.styles.split(':')[0];
             rasterMapLayer._imageOverlays[0].setParams({
-              styles: rasterMapLayer.wmsOptions.styles + limits
+              styles: rasterMapLayer.complexWmsOptions.styles + limits
             });
             rasterMapLayer._imageOverlays[0].redraw();
           });
@@ -103,27 +104,32 @@ angular.module('map')
       rasterMapLayer._add = function (timeState, map, options) {
 
         var opacity = options.opacity,
-            date = new Date(rasterMapLayer._mkTimeStamp(timeState.at)),
-            store = rasterMapLayer._determineStore(timeState);
-            rasterMapLayer.temporalResolution = store.resolution;
+            date = new Date(rasterMapLayer._mkTimeStamp(timeState.at));
 
-        var opts = {
-          layers: store.name,
-          styles: store.styles,
+        var defaultOptions = {
           format: 'image/png',
           version: '1.1.1',
           minZoom: 0,
           maxZoom: 21,
-          opacity: options.opacity,
-          zIndex: options.zIndex,
           crs: LeafletService.CRS.EPSG3857,
           time: _formatter(date)
         };
 
-        angular.extend(opts, rasterMapLayer.wmsOptions);
+        // Overwrite defaults with configured wms options. They might be nested
+        // for dynamic options per zoomlevel.
+        var opts = _.merge(defaultOptions, rasterMapLayer.complexWmsOptions);
+
+        // Rasterservic will flatten complex options by zoom and aggWindow.
+        var params = RasterService.getWmsParameters(
+          opts,
+          map.getZoom(),
+          timeState.aggWindow
+        );
+
+        params.opacity = options.opacity;
 
         rasterMapLayer._imageOverlays = [
-          LeafletService.tileLayer.wms(rasterMapLayer._imageUrlBase, opts)
+          LeafletService.tileLayer.wms(rasterMapLayer._imageUrlBase, params)
         ];
 
         rasterMapLayer._addLoadListener(
@@ -147,6 +153,7 @@ angular.module('map')
             rasterMapLayer._imageOverlays[frameIndex].setOpacity(opacity);
           }
         });
+        rasterMapLayer._opacity = opacity;
         return;
       };
 
@@ -212,22 +219,17 @@ angular.module('map')
           // which depends on the bounds of the map and the layer and the
           // store that corresponds to the timeState.
 
-          var store = rasterMapLayer._determineStore(timeState);
-          rasterMapLayer.temporalResolution = store.resolution;
-
           var options = {
             bounds: rasterMapLayer._animationBounds,
-            size: rasterMapLayer._getImageSize(map, rasterMapLayer._animationBounds)
+            size: rasterMapLayer._getImageSize(map, rasterMapLayer._animationBounds),
+            frequency: rasterMapLayer.frequency
           };
-
-          rasterMapLayer.wmsOptions.layers = store.name;
-          rasterMapLayer.wmsOptions.styles = store.styles;
 
           rasterMapLayer.url = RasterService.buildURLforWMS(
             rasterMapLayer._imageUrlBase,
             map,
             timeState.playing,
-            rasterMapLayer.wmsOptions,
+            rasterMapLayer.complexWmsOptions,
             options
           );
 
@@ -330,50 +332,9 @@ angular.module('map')
        * Local helper that returns a rounded timestamp
        */
       rasterMapLayer._mkTimeStamp = function (t) {
-        var result = UtilService.roundTimestamp(t, rasterMapLayer.temporalResolution, false);
+        var result = UtilService.roundTimestamp(t, rasterMapLayer.frequency, false);
         return result;
       };
-
-      /**
-       * @description based on the temporal window. The time between
-       * timestate.start and timestate.end determines which store is to be used.
-       * This only works for radar stuff.
-       */
-      rasterMapLayer._determineStore = function (timeState) {
-
-        if (rasterMapLayer.slug !== 'radar/5min') {
-          return {
-            name: rasterMapLayer.slug,
-            styles: rasterMapLayer.wmsOptions.styles,
-            resolution: rasterMapLayer.temporalResolution
-          };
-        }
-
-        var resolutionHours = (timeState.aggWindow) / 60 / 60 / 1000;
-
-        var aggType = [rasterMapLayer.slug.split('/')[0]];
-
-        if (resolutionHours >= 24) {
-          aggType[1] = 'day';
-        } else if (resolutionHours >= 1 && resolutionHours < 24) {
-          aggType[1] = 'hour';
-        } else {
-          aggType[1] = '5min';
-        }
-        var resolutions = {
-          '5min': 300000,
-          'hour': 3600000,
-          'day': 86400000
-        };
-
-        return {
-          styles: aggType.join('-'),
-          name: aggType.join('/'),
-          resolution: resolutions[aggType[1]]
-        };
-
-      };
-
 
       /**
        * @description Removes old frame by looking for a frame that has an
@@ -396,7 +357,7 @@ angular.module('map')
 
         var newFrame = rasterMapLayer._imageOverlays[currentOverlayIndex];
         // Turn on new frame
-        newFrame.setOpacity(wmsOptions.opacity);
+        newFrame.setOpacity(rasterMapLayer._opacity);
       };
 
       /**
@@ -428,7 +389,7 @@ angular.module('map')
             rasterMapLayer._imageOverlays[0].setOpacity(rasterMapLayer._opacity);
           }
         }
-        rasterMapLayer._nxtDate += rasterMapLayer.temporalResolution;
+        rasterMapLayer._nxtDate += rasterMapLayer.frequency;
       };
 
       /**
@@ -465,7 +426,13 @@ angular.module('map')
        */
       rasterMapLayer._addLoadListener = function (overlay, date) {
         rasterMapLayer._nLoadingRasters++;
-        rasterMapLayer.loading = true;
+
+        // Only set raster is loading to true when it is truly very loading,
+        // not when it is just keeping up with animation.
+        if (rasterMapLayer._nLoadingRasters > 1) {
+          rasterMapLayer.loading = true;
+        }
+
         overlay.addOneTimeEventListener("load", function () {
           rasterMapLayer._nLoadingRasters--;
           var index = rasterMapLayer._imageOverlays.indexOf(overlay);

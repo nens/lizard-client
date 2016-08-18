@@ -11,14 +11,14 @@
   <div ng-repeat="(uuid, properties) in geom.properties">
 
     <rain
-      ng-if="properties.slug === 'radar/5min' && (geom.id || geom.geometry.type !== 'Polygon')"
+      ng-if="properties.slug === 'rain' && (geom.id || geom.geometry.type !== 'Polygon')"
       rain="properties"
       geometry="geom.geometry"
       time-state="timeState">
     </rain>
 
     <defaultpoint
-      ng-if="geom.geometry.type === 'Point' && properties.slug !== 'radar/5min' && uuid !== 'annotations'"
+      ng-if="geom.geometry.type === 'Point' && properties.slug !== 'rain' && uuid !== 'annotations'"
       content="properties"
       name="uuid"
       time-state="timeState">
@@ -53,7 +53,7 @@
     <div
       ng-if="content.data
       && (geom.geometry.type === 'Polygon' || geom.geometry.type === 'MultiPolygon')
-      && properties.slug !== 'radar/5min'"
+      && properties.slug !== 'rain'"
       class="card active">
 
       <div class="card-content">

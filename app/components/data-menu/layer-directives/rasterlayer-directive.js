@@ -9,7 +9,7 @@ angular.module('data-menu')
     // Set defaults.
     if (!scope.layer.opacity) { scope.layer.opacity = 1; }
     if (!scope.layer.name) {
-      scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid
+      scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid;
     }
 
     var cancelFirstActive = scope.$watch('layer.active', function () {
@@ -18,20 +18,20 @@ angular.module('data-menu')
         LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.uuid, scope.layer.name)
         .then(function (response) {
 
-          MapService.mapLayers.push(rasterMapLayer({
+          var mapLayer = rasterMapLayer({
             uuid: scope.layer.uuid,
             url: 'api/v2/wms/',
-            temporalResolution: response.frequency,
-            slug: response.slug,
             bounds: response.spatial_bounds,
             temporal: response.temporal,
-            wmsOptions: response.options
-          }));
+            frequency: response.frequency,
+            complexWmsOptions: response.options
+          });
+
+          MapService.mapLayers.push(mapLayer);
 
           DataService.dataLayers.push(rasterDataLayer({
             uuid: scope.layer.uuid,
             slug: response.slug,
-            temporalResolution: response.frequency,
             aggType: response.aggregation_type,
             scale: response.observation_type
               && response.observation_type.scale,
@@ -49,7 +49,9 @@ angular.module('data-menu')
 
           scope.layer.active = true;
 
-          scope.rescale = MapService.rescaleLayers;
+          if (response.rescalable) {
+            scope.rescale = MapService.rescaleLayer;
+          }
 
           scope.zoomToBounds = LayerAdderService.zoomToBounds.bind({
             bounds: response.spatial_bounds,
@@ -69,6 +71,8 @@ angular.module('data-menu')
 
 
     scope.$on('$destroy', function () {
+      scope.layer.active = false;
+      MapService.updateLayers([scope.layer]);
       _.pull(DataService.dataLayers, {uuid: scope.layer.uuid });
       _.pull(MapService.mapLayers, {uuid: scope.layer.uuid });
     });
