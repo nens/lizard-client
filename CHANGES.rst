@@ -24,6 +24,8 @@ Unreleased (4.0.2) (XXXX-XX-XX)
 
 - Fix eventseries in timeline and on map.
 
+- Fix rain statisctics.
+
 
 Release 4.0.2 (2016-8-5)
 ---------------------
