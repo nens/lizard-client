@@ -30,6 +30,8 @@ Unreleased (4.0.2) (XXXX-XX-XX)
 
 - Add 10% buffer when zooming to temporal bounds of eventseries.
 
+- Fix increase size of annotation-select-box.
+
 
 Release 4.0.2 (2016-8-5)
 ---------------------
