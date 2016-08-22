@@ -28,6 +28,8 @@ Unreleased (4.0.2) (XXXX-XX-XX)
 
 - De-activate layer on removal.
 
+- Add 10% buffer when zooming to temporal bounds of eventseries.
+
 
 Release 4.0.2 (2016-8-5)
 ---------------------

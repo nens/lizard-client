@@ -45,10 +45,16 @@ angular.module('data-menu')
 
           MapService.updateLayers([scope.layer]);
 
+          // Zoom to more than the temporal bounds, to at least see all events
+          // in the timeline.
+          var interval = response.last_value_timestamp
+            - response.first_value_timestamp;
+          var buffer = interval * 0.1;
+
           scope.zoomToBounds = LayerAdderService.zoomToBounds.bind({
             bounds: response.spatial_bounds,
-            first: response.first_value_timestamp,
-            last: response.last_value_timestamp
+            first: response.first_value_timestamp - buffer,
+            last: response.last_value_timestamp + buffer
           });
 
         })
