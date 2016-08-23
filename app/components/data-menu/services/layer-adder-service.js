@@ -28,7 +28,7 @@ angular.module('data-menu')
      * @return {int}    to be used as leaflet zIndex.
      */
     this.getZIndex = function (layer) {
-      var i = _.findIndex(State.layers, layer);
+      var i = _.findIndex(State.layers, {'uuid': layer.uuid});
       return Z_INDICES[layer.type] + i;
     };
 
