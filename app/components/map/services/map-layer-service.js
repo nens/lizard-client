@@ -36,13 +36,21 @@ angular.module('map')
       });
     };
 
-
+    /**
+     * Creates a leaflet wms layer with default wms options.
+     *
+     * @param  {object} options passed directly to leaflet, might overwrite
+     *                          defaults.
+     * @return {TileLayer.WMS}
+     */
     this.createWmsLayer = function (options) {
       var _options = {
         format: 'image/png',
         version: '1.1.1',
-        minZoom: 0,
-        maxZoom: this.MAXZOOMLEVEL,
+        layers: options.slug,
+        minZoom: options.minZoom || 0,
+        maxZoom: options.maxZoom || this.MAXZOOMLEVEL,
+        zIndex: options.zIndex,
         crs: LeafletService.CRS.EPSG3857,
       };
 

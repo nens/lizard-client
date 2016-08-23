@@ -13,9 +13,7 @@ angular.module('data-menu')
 
     return function (options) {
 
-      var eventseriesDataLayer = {};
-
-      eventseriesDataLayer.uuid = options.uuid;
+      var eventseriesDataLayer = options;
 
       eventseriesDataLayer.getData = function (options) {
         return VectorService.getData(_.merge(options, eventseriesDataLayer));

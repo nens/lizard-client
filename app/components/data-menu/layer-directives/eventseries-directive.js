@@ -34,6 +34,7 @@ angular.module('data-menu')
             uuid: scope.layer.uuid,
             url: 'api/v2/events/?event_series=' + scope.layer.uuid,
             aggType: response.aggregation_type,
+            color: response.color,
             scale: response.observation_type
               && response.observation_type.scale,
             quantity: response.observation_type
@@ -60,6 +61,8 @@ angular.module('data-menu')
     });
 
     scope.$on('$destroy', function () {
+      scope.layer.active = false;
+      MapService.updateLayers([scope.layer]);
       _.pull(DataService.dataLayers, {uuid: scope.layer.uuid });
       _.pull(MapService.mapLayers, {uuid: scope.layer.uuid });
     });

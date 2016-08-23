@@ -90,13 +90,10 @@ angular.module('map')
         }
       },
 
-      rescaleLayers: function (layers) {
+      rescaleLayer: function (layer) {
         var bounds = service._map.getBounds();
-        var rasters = _.filter(layers, {type: 'raster'});
-        angular.forEach(rasters, function (layer) {
-          var mapLayer = _.find(service.mapLayers, { uuid: layer.uuid });
-          mapLayer.rescale(bounds);
-        });
+        var mapLayer = _.find(service.mapLayers, { uuid: layer.uuid });
+        mapLayer.rescale(bounds);
       },
 
       /**
@@ -149,6 +146,27 @@ angular.module('map')
 
       getBounds: function () {
         return service._map.getBounds();
+      },
+
+      /**
+       * Returns pixel size of map.
+       */
+      getSize: function () {
+        return service._map.getSize();
+      },
+
+      /**
+       * Convert GeoJson geometry to pixel position on the map.
+       */
+      gJPointToMapPoint: function (gj) {
+        if (gj.geometry) {
+          gj = gj.geometry;
+        }
+        if (gj.type === 'Point') {
+          return service._map.latLngToContainerPoint(
+            L.latLng(gj.coordinates[1], gj.coordinates[0])
+          );
+        }
       },
 
       line: {

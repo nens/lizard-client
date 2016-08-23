@@ -4,12 +4,13 @@
 angular.module('lizard-nxt')
 .service("WmsGetFeatureInfoService", [
 
+  "MapService",
   "LeafletService",
   "CabinetService",
   "$q",
   'State',
 
-  function (LeafletService, CabinetService, $q, State) {
+  function (MapService, LeafletService, CabinetService, $q, State) {
 
   /**
    * Gets data from wmsGetFeatureInfo resource of cabinetService.
@@ -32,20 +33,15 @@ angular.module('lizard-nxt')
   var getData = function (layer, options) {
 
     if (options.geom === undefined
-      || !(options.geom.lat && options.geom.lng)
-      || !(layer._leafletLayer)
-      || !(layer._leafletLayer._map)) {
+      || options.geom.coordinates.length !== 2) {
       var defer = $q.defer();
       defer.reject();
       return defer.promise;
     }
 
-    // NOTE: its ugly we know. See description above.
-    var map = layer._leafletLayer._map;
-
-    var size = map.getSize(),
-        bbox = map.getBounds().toBBoxString(),
-        point = map.latLngToContainerPoint(L.latLng(options.geom));
+    var size = MapService.getSize(),
+        bbox = MapService.getBounds().toBBoxString(),
+        point = MapService.gJPointToMapPoint(options.geom);
 
     var params = {
       SERVICE: 'WMS',

@@ -102,16 +102,18 @@ angular.module('lizard-nxt')
 
         var mapLayer = _.find(MapService.mapLayers, {uuid: layer.uuid});
 
-        if (mapLayer && layer.active && mapLayer.temporal) {
+        if (mapLayer && mapLayer.temporal) {
           activeTemporalLs = true;
-        }
 
-        if (activeTemporalLs && mapLayer.temporalResolution !== 0 && mapLayer.temporalResolution < timeStep) {
-          timeStep = mapLayer.temporalResolution;
-          // equals to 250 ms for 5 minutes, increases for larger timeSteps untill
-          // it reaches 1 second between frames for timeSteps of > 20 minutes.
-          minLag = timeStep / 1200 > 240 ? timeStep / 1200 : 250;
-          minLag = minLag > 1000 ? 1000 : minLag;
+          var resolution = mapLayer.frequency;
+          if (activeTemporalLs && resolution !== 0 && resolution < timeStep) {
+            timeStep = resolution;
+            // equals to 250 ms for 5 minutes, increases for larger timeSteps untill
+            // it reaches 1 second between frames for timeSteps of > 20 minutes.
+            minLag = timeStep / 1200 > 240 ? timeStep / 1200 : 250;
+            minLag = minLag > 1000 ? 1000 : minLag;
+          }
+
         }
       });
 

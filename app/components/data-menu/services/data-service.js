@@ -318,17 +318,14 @@ angular.module('data-menu')
         }
 
         angular.forEach(State.layers, function (layer) {
-          if (
-            !layer.active
-            || (layer.temporal && geo.geometry.type === 'LineString')
 
-          ) {
-            return;
-          }
+          if (!layer.active) { return; }
 
           var dataLayer = _.find(instance.dataLayers, {uuid: layer.uuid});
 
-          if (dataLayer) {
+          if (dataLayer
+            && !(dataLayer.temporal && geo.geometry.type === 'LineString')
+          ) {
             promises.push(
               dataLayer.getData(options).then(function (response) {
                 // async so remove anything obsolete.
@@ -341,7 +338,9 @@ angular.module('data-menu')
                 if ((!layer.active && layer.uuid in Object.keys(geo.properties))
                   || geo.properties[layer.uuid].data === null) {
 
-                    delete geo.properties[layer.uuid];
+                  // Use delete to remove the key and the value and the omnibox
+                  // can show a nodata message.
+                  delete geo.properties[layer.uuid];
 
                 }
               })

@@ -158,9 +158,6 @@ angular.module('lizard-nxt')
    */
   this.getAggWindow = function (start, stop, drawingWidth) {
 
-    // TODO: Called both by omnibox and timeline, should be called only by
-    // timeline, while omnibox subsequently syncs to timeState.aggWindow
-
     var aggWindow;
     var MIN_PX = 3; // Minimum width of a bar
 
@@ -363,10 +360,13 @@ angular.module('lizard-nxt')
     return {
       'type': 'Polygon',
       'coordinates': [
-        [bounds.getWest(), bounds.getNorth()],
-        [bounds.getEast(), bounds.getNorth()],
-        [bounds.getEast(), bounds.getSouth()],
-        [bounds.getWest(), bounds.getSouth()]
+        [
+          [bounds.getWest(), bounds.getNorth()],
+          [bounds.getEast(), bounds.getNorth()],
+          [bounds.getEast(), bounds.getSouth()],
+          [bounds.getWest(), bounds.getSouth()],
+          [bounds.getWest(), bounds.getNorth()]
+        ]
       ]
     };
   };
