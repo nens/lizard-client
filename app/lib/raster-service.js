@@ -7,7 +7,8 @@ angular.module('lizard-nxt')
                              "CabinetService",
                              "LeafletService",
                              "$q",
-  function (State, UtilService, CabinetService, LeafletService, $q) {
+                             "$http",
+  function (State, UtilService, CabinetService, LeafletService, $q, $http) {
 
   var intensityData,
       cancelers = {};
@@ -63,12 +64,15 @@ angular.module('lizard-nxt')
     } else {
       requestOptions.geom = UtilService.geomToWkt(options.geom);
     }
-
-    if (options.truncate === true) {
-      requestOptions.truncate = options.truncate;
-    }
-
     return CabinetService.raster(canceler).get(requestOptions);
+  };
+
+  var getTimesteps = function (options) {
+    return $http({
+        method: 'GET',
+        url: 'api/v2/rasters/' + options.uuid + '/timesteps/',
+        params: {start: options.start, end: options.end}
+      });
   };
 
   /**
@@ -179,6 +183,7 @@ angular.module('lizard-nxt')
   return {
     buildURLforWMS: buildURLforWMS,
     getData: getData,
+    getTimesteps: getTimesteps,
     getWmsParameters: getWmsParameters
   };
 

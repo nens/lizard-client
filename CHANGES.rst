@@ -4,6 +4,9 @@ Changelog of lizard-nxt client
 Unreleased (4.0.2) (XXXX-XX-XX)
 -------------------------------
 
+- Fix bug in timeline. It doesn't use api/v2/raster-aggregates to draw ticks
+  anymore, but api/v2/rasters/[uuid]/timesteps.
+
 - Adds Jenkinsfile
 
 - Zap timing console statement.

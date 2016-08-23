@@ -351,26 +351,19 @@ angular.module('lizard-nxt')
      */
     var getTemporalRasterDates = function (rasterLayers) {
 
-      var start = State.temporal.start,
-          stop = State.temporal.end,
-          bounds = State.spatial.bounds,
-          dates = [];
+      var dates = [];
 
       var draw = function () {
         timeline.drawTickMarks(dates);
       };
 
-      var geom = UtilService.lLatLngToGJ(State.spatial.bounds.getCenter());
-
       rasterLayers.forEach(function (raster) {
-        raster.getData({
+        raster.getTimesteps({
           start: State.temporal.start,
-          end: State.temporal.end,
-          geom: geom,
-          truncate: true,
+          end: State.temporal.end
         }).then(function (response) {
           if (response && response !== 'null') {
-            dates = dates.concat(response.data);
+            dates = dates.concat(response.data.steps);
           }
           draw(dates);
         });
