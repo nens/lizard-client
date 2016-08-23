@@ -32,6 +32,8 @@ Unreleased (4.0.2) (XXXX-XX-XX)
 
 - Fix increase size of annotation-select-box.
 
+- Determine z-index by layer type and place in data-menu.
+
 
 Release 4.0.2 (2016-8-5)
 ---------------------

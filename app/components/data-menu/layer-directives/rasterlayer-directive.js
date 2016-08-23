@@ -24,7 +24,8 @@ angular.module('data-menu')
             bounds: response.spatial_bounds,
             temporal: response.temporal,
             frequency: response.frequency,
-            complexWmsOptions: response.options
+            complexWmsOptions: response.options,
+            zIndex: LayerAdderService.getZIndex(scope.layer)
           });
 
           MapService.mapLayers.push(mapLayer);

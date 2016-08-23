@@ -27,7 +27,8 @@ angular.module('data-menu')
             color: response.color,
             uuid: scope.layer.uuid,
             url: 'api/v2/events/?event_series=' + scope.layer.uuid,
-            spatialSelect: MapService.spatialSelect
+            spatialSelect: MapService.spatialSelect,
+            zIndex: LayerAdderService.getZIndex(scope.layer)
           }));
 
           DataService.dataLayers.push(eventseriesDataLayer({

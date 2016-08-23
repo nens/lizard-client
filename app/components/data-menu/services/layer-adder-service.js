@@ -10,6 +10,28 @@ angular.module('data-menu')
   'gettextCatalog',
   function ($http, UtilService, State, notie, gettextCatalog) {
 
+    // Baselayers are 0, raster and wmslayers are equal and above baselayer,
+    // assetgroups are above and eventseries are on top.
+    var Z_INDICES = {
+      'raster': 1000,
+      'wmslayer': 1000,
+      'assetgroup': 10000,
+      'eventseries': 100000,
+    };
+
+    /**
+     * Checks the type of the layer and the location of the layer in the menu.
+     * Layers lower in the menu are drawn on top of layers of the same type
+     * above it.
+     *
+     * @param  {object} layer object as in State.layers.
+     * @return {int}    to be used as leaflet zIndex.
+     */
+    this.getZIndex = function (layer) {
+      var i = _.findIndex(State.layers, layer);
+      return Z_INDICES[layer.type] + i;
+    };
+
     /**
      * Get layergroups from the API.
      * @param {dict} params - A dictionary of request params (e.g.
