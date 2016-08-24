@@ -59,7 +59,7 @@
           </td>
         </tr>
 
-        <tr ng-if="result.layer" ng-repeat="result in scenario.results">
+        <tr ng-if="result.layer" ng-repeat="result in scenario.result_set">
           <td colspan="2">
             <rasterlayer
               ng-if="result.raster"
@@ -70,15 +70,15 @@
           <td>
             <div ng-if="result.value">
               <span translate>Total:</span>
-              <span ng-if="result.type === 'damage'">
-                  €<% result.sum | number: 0%>
+              <span ng-if="result.result_type.code === 'damage'">
+                  €<% result.value | number: 0%>
               </span>
-              <span ng-if="result.type !== 'damage'">
-                  <% result.sum | number: 0%>
+              <span ng-if="result.result_type.code !== 'damage'">
+                  <% result.value | number: 0%>
               </span>
             </div>
             <div>
-              <span ng-repeat="attachment in result.attachments">
+              <span ng-if="result.attachment_url">
                 <a href="<% attachment.attachment_url %>" target="_blank">
                    <% result.layer.name %></a>
               </span>

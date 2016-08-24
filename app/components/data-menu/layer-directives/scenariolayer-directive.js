@@ -5,8 +5,9 @@ angular.module('data-menu')
   '$http',
   'State',
   'LayerAdderService',
+  'MapService',
   'gettextCatalog',
-  function ($http, State, LayerAdderService, gettextCatalog) {
+  function ($http, State, LayerAdderService, MapService, gettextCatalog) {
     var link = function (scope) {
 
       var RESULT_TYPES = {
@@ -28,13 +29,13 @@ angular.module('data-menu')
 
       // Set defaults.
       if (!scope.layer.name) {
-        scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid
+        scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid;
       }
 
       var getOrCreateLayer = function (layerConf, resultType) {
         var layer = _.find(State.layers, {uuid: layerConf.uuid});
         if (!layer) {
-          layer = layerConf;
+          layer = {uuid: layerConf.uuid, type: 'raster'};
           State.layers.push(layer);
         }
         layer.scenario = scope.layer.uuid;
@@ -81,6 +82,7 @@ angular.module('data-menu')
                 );
               }
             });
+
           })
 
           .catch(function () {
