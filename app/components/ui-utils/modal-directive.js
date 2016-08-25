@@ -69,10 +69,6 @@ angular.module('ui-utils').directive('uiModal', [
         oldScope = newScope;
 
         return true;
-      }).
-      then(function () {
-        var mode = (State.modal.active) ? 'show' : 'hide';
-        $(element).modal(mode);
       });
     };
 
@@ -88,15 +84,19 @@ angular.module('ui-utils').directive('uiModal', [
 
     var link = function (scope, el) {
       scope.$watch(State.toString('modal.templateBody'),
-      function () {
-        var templateBodyUrl = '/components/' + State.modal.templateBody + '.html';
-        replaceTemplate(templateBodyUrl, $(el).find('.modal-body'), scope);
+      function (n) {
+        if (n) {
+          var templateBodyUrl = '/components/' + State.modal.templateBody + '.html';
+          replaceTemplate(templateBodyUrl, $(el).find('.modal-body'), scope);
+        }
       });
-      
+
       scope.$watch(State.toString('modal.templateFooter'),
-      function () {
-        var templateFooterUrl = '/components/' + State.modal.templateFooter + '.html';
-        replaceTemplate(templateFooterUrl, $(el).find('.modal-footer'), scope);
+      function (n) {
+        if (n) {
+          var templateFooterUrl = '/components/' + State.modal.templateFooter + '.html';
+          replaceTemplate(templateFooterUrl, $(el).find('.modal-footer'), scope);
+        }
       });
 
       scope.$watch(State.toString('modal.title'),
@@ -113,7 +113,7 @@ angular.module('ui-utils').directive('uiModal', [
 
       scope.closeModal = function () {
         State.modal.active = false;
-      }
+      };
 
       // ensures there is no conflict between Bootstrap set state and ng internals
       el.on('hide.bs.modal', function () {

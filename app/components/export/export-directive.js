@@ -1,14 +1,21 @@
 
 angular.module('export')
-.directive('exportSelector', ['ExportService', function (ExportService) {
+.directive('exportSelector', ['DataService', function (DataService) {
   var link = function (scope) {
-    scope.exportables = ExportService.getExportables();
+
+    scope.assets = DataService.assets;
+
+  scope.export = function (assets) {
+    console.log(assets);
+  };
+
   };
 
   return {
     link: link,
+    scope: {},
     templateUrl: 'export/export-selector.html',
     replace: true,
     restrict: 'E'
-  }
+  };
 }]);
