@@ -58,6 +58,8 @@ module.exports = function(config) {
       'app/components/user-menu/user-menu.js',
       'app/components/dashboard/dashboard.js',
       'app/components/favourites/favourites.js',
+      'app/components/export/export.js',
+      'app/components/ui-utils/ui-utils.js',
       'app/lizard-nxt.js',
       'test/mocks/**/*.js',
       'app/lib/**/*.js',

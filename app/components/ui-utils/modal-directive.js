@@ -60,7 +60,7 @@ angular.module('ui-utils').directive('uiModal', [
         // is used to replace the current content
         snippet = response;
         $templateCache.put(templateUrl, response);
-        $(element).find('.modal-body').html(snippet);
+        $(element).html(snippet);
 
         // newly created scope for this particular piece of html
         // needs 'compilation' for it to be picked up by ng
@@ -87,10 +87,16 @@ angular.module('ui-utils').directive('uiModal', [
     };
 
     var link = function (scope, el) {
-      scope.$watch(State.toString('modal.templateName'),
+      scope.$watch(State.toString('modal.templateBody'),
       function () {
-        var templateUrl = '/components/' + State.modal.templateName + '.html';
-        replaceTemplate(templateUrl, el, scope);
+        var templateBodyUrl = '/components/' + State.modal.templateBody + '.html';
+        replaceTemplate(templateBodyUrl, $(el).find('.modal-body'), scope);
+      });
+      
+      scope.$watch(State.toString('modal.templateFooter'),
+      function () {
+        var templateFooterUrl = '/components/' + State.modal.templateFooter + '.html';
+        replaceTemplate(templateFooterUrl, $(el).find('.modal-footer'), scope);
       });
 
       scope.$watch(State.toString('modal.title'),

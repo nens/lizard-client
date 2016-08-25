@@ -139,7 +139,8 @@ angular.module('global-state')
 
     state.modal = {
       active: false,
-      templateName: '',
+      templateBody: '',
+      templateFooter: '',
       title: '',
     }
 

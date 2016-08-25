@@ -94,7 +94,8 @@ angular.module('lizard-nxt')
 
   $scope.toggleExport = function () {
     State.modal.active = true;
-    State.modal.templateName = 'export/export';
+    State.modal.templateBody = 'export/export-body';
+    State.modal.templateFooter = 'export/export-footer';
     State.modal.title = 'Export';
   };
 
