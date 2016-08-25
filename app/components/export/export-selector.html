@@ -28,6 +28,14 @@
         </div>
       </div>
     </div>
+    <div ng-if="taskInfo.downloadUrl === '' && taskInfo.url !== ''">
+      <i class="fa fa-3x fa-spinner fa-spin"></i>
+    </div>
+    <div ng-if="taskInfo.downloadUrl !== ''">
+      <a ng-href="taskInfo.downloadUrl">
+        <i class="fa fa-2x fa-download"></i>
+      </a>
+    </div>
   </div>
   <div class="modal-footer footer-left">
     <button class="btn btn-primary" ng-click="startExport()" translate>Start Export</button>
