@@ -16,6 +16,17 @@ angular.module('export')
       downloadUrl: ''
     };
 
+    scope.timestate = {
+      start: new Date() - 10000,
+      end: new Date() - 100
+    };
+
+    scope.taskInfo = {
+      url: '',
+      id: '',
+      downloadUrl: ''
+    };
+
     scope.toExport = {};
 
     scope.startExport = function () {
