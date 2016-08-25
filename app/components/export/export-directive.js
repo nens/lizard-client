@@ -8,7 +8,7 @@ angular.module('export')
 
     scope.toExport = {};
 
-    scope.export = function () {
+    scope.startExport = function () {
       var uuids =_.map(scope.toExport, function (yes, uuid) {
         if (yes) { return uuid; }
       }).join(',');
