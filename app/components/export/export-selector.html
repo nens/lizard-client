@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div>
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -16,6 +17,18 @@
       wait here, but we're not sure how long it will take to piece everything
       together
     </p>
+    <div ng-repeat="asset in assets">
+      <div ng-repeat="ts in asset.timeseries">
+        <input ng-model="toExport[ts.uuid]" type="checkbox">
+        <span><% ts.location %>, <% ts.name %>, <% ts.parameter %></span>
+      </div>
+      <div ng-repeat="filter in asset.filters">
+        <div ng-repeat="fts in filter.timeseries">
+          <input ng-model="toExport[fts.uuid]" type="checkbox">
+          <span><% fts.location %>, <% fts.name %>, <% fts.parameter %></span>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="modal-footer footer-left">
     <button class="btn btn-primary" ng-click="startExport()" translate>Start Export</button>

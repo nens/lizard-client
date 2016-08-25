@@ -5,7 +5,7 @@ angular.module('export').service('ExportService', [
   function (DataService, AssetService, TimeseriesService) {
     var ExportService = {};
 
-    ExportService.getExportables = function () {
+    ExportService.getExportables = function (selected) {
       var _exportables = []
 
       angular.forEach(DataService.geometries, function (item, name) {
