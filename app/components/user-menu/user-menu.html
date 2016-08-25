@@ -21,9 +21,9 @@
              href="">
           </a>
         </li>
-        <li ng-if="context == 'map'">
+        <li>
           <a ng-click="toggleExport()"
-             title="<% 'All the things' | translate %>"
+             title="<% 'Export all selected things' | translate %>"
              href="">
             <i class="fa fa-space-shuttle"></i>
             <span translate>Export</span>
@@ -131,4 +131,8 @@
       </button>
     </div>
   </script>
+
+  <div ng-if="modal.active">
+    <ui-modal active="modal.active"></ui-modal>
+  </div>
 </nav>

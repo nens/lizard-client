@@ -1,3 +1,23 @@
-<div class="bla">
-  <div ng-repeat="exportable in exportables">{{ exportable }}</div>
+<div>
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title" translate>
+      Export timeseries
+    </h4>
+  </div>
+  <div class="modal-body">
+    <p aria-label="Help Text" class="help-text" translate>
+      You can select multiple timeseries to download. Once selected, press the
+      <i>"Start Export"</i> button and the exporter will fetch the timeseries
+      behind the scenes.
+    </p>
+    <p translate>
+      We will let you know when your download is ready. You're welcome to
+      wait here, but we're not sure how long it will take to piece everything
+      together
+    </p>
+  </div>
+  <div class="modal-footer footer-left">
+    <button class="btn btn-primary" ng-click="startExport()" translate>Start Export</button>
+  </div>
 </div>
