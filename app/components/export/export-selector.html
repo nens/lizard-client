@@ -1,14 +1,15 @@
 <div class="bla">
   <div ng-repeat="asset in assets">
     <div ng-repeat="ts in asset.timeseries">
-      <input ng-model="ts.toExport" type="checkbox">
+      <input ng-model="toExport[ts.uuid]" type="checkbox">
       <span><% ts.location %>, <% ts.name %>, <% ts.parameter %></span>
     </div>
     <div ng-repeat="filter in asset.filters">
       <div ng-repeat="fts in filter.timeseries">
-        <input ng-model="fts.toExport" type="checkbox">
+        <input ng-model="toExport[fts.uuid]" type="checkbox">
         <span><% fts.location %>, <% fts.name %>, <% fts.parameter %></span>
       </div>
     </div>
   </div>
+  <button ng-click="export()" class="btn btn-primary">Bla</button>
 </div>
