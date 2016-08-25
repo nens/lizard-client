@@ -27,8 +27,6 @@ angular.module('data-menu')
               scope.layer.name = response.name;
             }
 
-            var nthLayer =
-
             // Create maplayer, add maplayer to mapservice.
             MapService.mapLayers.push(assetMapLayer({
               uuid: scope.layer.uuid,
