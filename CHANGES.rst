@@ -31,6 +31,15 @@ Unreleased (4.0.2) (XXXX-XX-XX)
 
 - De-activate layer on removal.
 
+- Add 10% buffer when zooming to temporal bounds of eventseries.
+
+- Fix increase size of annotation-select-box.
+
+- Determine leaflet z-index by layer type and place in data-menu.
+
+- Show scenarios in layer-adder with 3di icon.
+
+- Fix scenario, match api response.
 
 Release 4.0.2 (2016-8-5)
 ---------------------

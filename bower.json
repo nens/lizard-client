@@ -33,7 +33,7 @@
     "d3-comparator": "~0.1.0",
     "leaflet": "0.7.7",
     "leaflet.markercluster": "~0.4.0",
-    "lizard-iconfont": "0.1",
+    "lizard-iconfont": "1.2.0",
     "lodash": "~4.2.1",
     "moment": "~2.10.2",
     "ng-csv": "~0.3.6",

@@ -10,7 +10,7 @@ angular.module('data-menu')
       // Set defaults.
       if (!scope.layer.opacity) { scope.layer.opacity = 1; }
       if (!scope.layer.name) {
-        scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid
+        scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid;
       }
 
       var cancelFirstActive = scope.$watch('layer.active', function () {
@@ -30,7 +30,8 @@ angular.module('data-menu')
             // Create maplayer, add maplayer to mapservice.
             MapService.mapLayers.push(assetMapLayer({
               uuid: scope.layer.uuid,
-              url: 'api/v2/tiles/' + scope.layer.uuid
+              url: 'api/v2/tiles/' + scope.layer.uuid,
+              zIndex: LayerAdderService.getZIndex(scope.layer)
             }));
 
             MapService.updateLayers([scope.layer]);
