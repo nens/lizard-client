@@ -92,6 +92,12 @@ angular.module('lizard-nxt')
     $scope.transitionToContext(($scope.context === 'map') ? 'dashboard' : 'map');
   };
 
+  $scope.toggleExport = function () {
+    State.modal.active = true;
+    State.modal.templateName = 'export/export';
+    State.modal.title = 'Export';
+  };
+
   // END CONTEXT
 
   $scope.toggleVersionVisibility = function () {

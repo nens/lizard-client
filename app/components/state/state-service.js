@@ -137,6 +137,12 @@ angular.module('global-state')
       enumerable: true
     });
 
+    state.modal = {
+      active: false,
+      templateName: '',
+      title: '',
+    }
+
     // Spatial
     state.spatial = {
       bounds: { // leaflet bounds object, initialized with a validity check

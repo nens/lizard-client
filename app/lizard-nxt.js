@@ -47,7 +47,9 @@ angular.module("lizard-nxt", [
   'ui.bootstrap',
   'lizard-http-throttler', // Add this $http interceptor befor the loading-bar.
   'angular-loading-bar',
-  'lizard-boostrap'
+  'lizard-boostrap',
+  'ui-utils',
+  'export'
 ])
 
 // Decorator for ngExceptionHandler to log exceptions to sentry

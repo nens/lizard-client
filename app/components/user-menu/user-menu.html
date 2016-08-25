@@ -22,6 +22,14 @@
           </a>
         </li>
         <li ng-if="context == 'map'">
+          <a ng-click="toggleExport()"
+             title="<% 'All the things' | translate %>"
+             href="">
+            <i class="fa fa-space-shuttle"></i>
+            <span translate>Export</span>
+          </a>
+        </li>
+        <li>
           <a ng-click="toggleDashboard()"
              title="<% 'Switch to dashboard' | translate %>"
              target="_blank"
@@ -29,17 +37,6 @@
              href="">
             <i class="fa fa-bar-chart"></i>
             <span translate>Dashboard</span>
-          </a>
-        </li>
-        <li ng-if="context == 'dashboard'">
-          <a class="hidden-xs"
-             ng-click="toggleDashboard()"
-             title="<% 'Switch to map' | translate %>"
-             target="_blank"
-             accesskey="m"
-             href="">
-            <i class="fa fa-globe"></i>
-            <span translate>Map</span>
           </a>
         </li>
         <li ng-if="user.authenticated"
