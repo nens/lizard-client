@@ -10,7 +10,6 @@
 
 angular.module('ui-utils').directive('uiModal', [
   function () {
-
     var link = function (scope, el) {
       var mode = (scope.active) ? 'show' : 'hide';
       $(el).modal(mode);
@@ -19,14 +18,16 @@ angular.module('ui-utils').directive('uiModal', [
         scope.active = false;
         var mode = (scope.active) ? 'show' : 'hide';
         $(el).modal(mode);
-      }
+      };
 
       // ensures there is no conflict between Bootstrap set state and ng internals
       el.on('hide.bs.modal', function () {
-        console.log('bla')
         if (scope.active) {
           scope.active = false;
         }
+
+        // justin kees
+        $('.modal-backdrop').remove();
       });
     };
 

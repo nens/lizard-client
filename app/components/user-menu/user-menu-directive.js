@@ -14,7 +14,7 @@ angular.module('user-menu')
 
       scope.modal = {
         active: false,
-      }
+      };
 
       /**
        * Turn off either favourites or apps when click the on or the other
