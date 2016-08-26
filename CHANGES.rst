@@ -1,9 +1,10 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (4.0.2) (XXXX-XX-XX)
+Unreleased (4.1.1) (XXXX-XX-XX)
 -------------------------------
--
+
+- Add export screen, with date picker
 
 
 Release 4.0.4 (2016-8-26)
@@ -17,8 +18,6 @@ Release 4.0.3 (2016-8-26)
 
 - Fix bug in timeline. It doesn't use api/v2/raster-aggregates to draw ticks
   anymore, but api/v2/rasters/[uuid]/timesteps.
-
-- Add export screen, with date picker
 
 - Adds Jenkinsfile
 
