@@ -42,11 +42,11 @@
       </p>
       <p class="text-center" translate>We're piecing stuff together, you can either wait
         patiently or see if it's ready yourself by following
-        <a ng-href="<% taskInfo.url %>">this link</a>
+        <a ng-href="<% taskInfo.url %>" translate>this link</a>
       </p>
     </div>
-    <div ng-if="taskInfo.downloadUrl !== ''">
-      <a ng-href="taskInfo.downloadUrl">
+    <div ng-if="taskInfo.downloadUrl !== ''">It is finished:
+      <a ng-href="<% taskInfo.downloadUrl %>" translate>Donwload
         <i class="fa fa-2x fa-download"></i>
       </a>
     </div>

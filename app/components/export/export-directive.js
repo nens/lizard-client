@@ -63,12 +63,12 @@ angular.module('export')
         if (status === 'PENDING') {
           // do nothing yet
           console.log(status);
-        } else if (status === 'DONE') {
+        } else if (status === 'SUCCESS') {
           scope.loading = false;
           scope.taskInfo.downloadUrl = response.data.result_url;
           taskDone();
-        };
-      })
+        }
+      });
     };
 
     var updateDates = function (e) {
