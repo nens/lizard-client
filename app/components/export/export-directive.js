@@ -5,11 +5,9 @@ angular.module('export')
   var link = function (scope) {
     scope.assets = DataService.assets;
 
-    var start = moment(State.temporal.start);
-    var end =  moment(State.temporal.end);
     scope.timestate = {
-      start: start.format('L'),
-      end: end.format('L')
+      start: new Date(State.temporal.start),
+      end: new Date(State.temporal.end)
     };
 
     scope.taskInfo = {
@@ -73,7 +71,12 @@ angular.module('export')
 
     var dateEl = $('#datepicker-export.input-daterange');
     dateEl.datepicker({
-      format: 'dd-mm-yyyy'
+      format: 'dd-mm-yyyy',
+      defaultViewDate: {
+        year: scope.timestate.start.getFullYear(),
+        month: scope.timestate.start.getMonth(),
+        day: scope.timestate.start.getDay()
+      }
     });
     dateEl.on('hide', updateDates);
 
