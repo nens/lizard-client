@@ -23,14 +23,18 @@
   "dependencies": {
     "angular": "~1.5.0",
     "angular-animate": "~1.5.0",
+    "angular-bootstrap": "1.2.5",
     "angular-gettext": "~2.1.0",
+    "angular-loading-bar": "~0.9.0",
     "angular-mocks": "~1.5.0",
     "angular-resource": "~1.5.0",
     "bootstrap": "~3.1.1",
-    "angular-bootstrap": "1.2.5",
+    "bootstrap-datepicker": "~1.6.4",
+    "classList.js": "https://github.com/nens/classList.js.git#master",
     "components-font-awesome": "~4.5.0",
     "d3": "~3.4.11",
     "d3-comparator": "~0.1.0",
+    "dragula": "~3.6.6",
     "leaflet": "0.7.7",
     "leaflet.markercluster": "~0.4.0",
     "lizard-iconfont": "0.1",
@@ -38,11 +42,8 @@
     "moment": "~2.10.2",
     "ng-csv": "~0.3.6",
     "notie": "~3.2.0",
-    "raven-js": "~1.1.16",
-    "dragula": "~3.6.6",
-    "angular-loading-bar": "~0.9.0",
-    "classList.js": "https://github.com/nens/classList.js.git#master",
-    "perfect-scrollbar": "~0.6.11"
+    "perfect-scrollbar": "~0.6.11",
+    "raven-js": "~1.1.16"
   },
   "overrides": {
     "leaflet.markercluster": {

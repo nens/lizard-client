@@ -71,6 +71,20 @@ angular.module('export')
       })
     };
 
+    var updateDates = function (e) {
+      if (e.target.name === 'end') {
+        scope.timestate.end = Date.parse(e.date);
+      }
+      if (e.target.name === 'start') {
+        scope.timestate.start = Date.parse(e.date);
+      }
+    };
+
+    var dateEl = $('#datepicker-export.input-daterange');
+    dateEl.datepicker({});
+    dateEl.on('hide', updateDates);
+
+
   };
 
   return {

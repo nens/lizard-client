@@ -16,6 +16,14 @@
       wait here, but we're not sure how long it will take to piece everything
       together
     </p>
+    <p translate>
+      Pick the date range:
+    </p>
+    <div class="input-daterange input-group" id="datepicker-export">
+      <input type="text" class="input-sm form-control" name="start" />
+      <span class="input-group-addon">to</span>
+      <input type="text" class="input-sm form-control" name="end" />
+    </div>
     <div ng-repeat="asset in assets">
       <div ng-repeat="ts in asset.timeseries">
         <input ng-model="toExport[ts.uuid]" type="checkbox">

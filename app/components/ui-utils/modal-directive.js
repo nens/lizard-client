@@ -21,13 +21,16 @@ angular.module('ui-utils').directive('uiModal', [
       };
 
       // ensures there is no conflict between Bootstrap set state and ng internals
-      el.on('hide.bs.modal', function () {
-        if (scope.active) {
-          scope.active = false;
-        }
+      el.on('hide.bs.modal', function (e) {
 
-        // justin kees
-        $('.modal-backdrop').remove();
+        // check if the modal is triggering the hide, not the datepicker
+        if (e.target.id === el[0].id){
+          if (scope.active) {
+            scope.active = false;
+          }
+          // justin kees
+          $('.modal-backdrop').remove();
+        }
       });
     };
 
