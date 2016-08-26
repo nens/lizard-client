@@ -18,6 +18,8 @@ Release 4.0.3 (2016-8-26)
 - Fix bug in timeline. It doesn't use api/v2/raster-aggregates to draw ticks
   anymore, but api/v2/rasters/[uuid]/timesteps.
 
+- Add export screen, with date picker
+
 - Adds Jenkinsfile
 
 - Zap timing console statement.

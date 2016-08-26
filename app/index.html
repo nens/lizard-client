@@ -13,13 +13,14 @@
 
     <!-- build:css(.) /styles/vendor.css -->
     <!-- bower:css -->
+    <link rel="stylesheet" href="/vendor/angular-loading-bar/build/loading-bar.css" />
     <link rel="stylesheet" href="/vendor/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="/vendor/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css" />
     <link rel="stylesheet" href="/vendor/components-font-awesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="/vendor/dragula/dist/dragula.css" />
     <link rel="stylesheet" href="/vendor/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="/vendor/lizard-iconfont/dist/lizard-icons.css" />
     <link rel="stylesheet" href="/vendor/notie/dist/notie.css" />
-    <link rel="stylesheet" href="/vendor/dragula/dist/dragula.css" />
-    <link rel="stylesheet" href="/vendor/angular-loading-bar/build/loading-bar.css" />
     <link rel="stylesheet" href="/vendor/perfect-scrollbar/css/perfect-scrollbar.css" />
     <!-- endbower -->
     <!-- endbuild -->
@@ -69,6 +70,7 @@
         <ul>
           <li><a href="http://www.google.com/chrome/">Google Chrome</a></li>
           <li><a href="https://www.mozilla.org/nl/firefox/new/">Mozilla Firefox</a></li>
+        </ul>
       </div>
     </div>
 
@@ -77,13 +79,17 @@
     <script src="/vendor/jquery/dist/jquery.js"></script>
     <script src="/vendor/angular/angular.js"></script>
     <script src="/vendor/angular-animate/angular-animate.js"></script>
+    <script src="/vendor/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="/vendor/angular-gettext/dist/angular-gettext.js"></script>
+    <script src="/vendor/angular-loading-bar/build/loading-bar.js"></script>
     <script src="/vendor/angular-mocks/angular-mocks.js"></script>
     <script src="/vendor/angular-resource/angular-resource.js"></script>
     <script src="/vendor/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="/vendor/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="/vendor/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="/vendor/classList.js/classList.min.js"></script>
     <script src="/vendor/d3/d3.js"></script>
     <script src="/vendor/d3-comparator/d3-comparator.js"></script>
+    <script src="/vendor/dragula/dist/dragula.js"></script>
     <script src="/vendor/leaflet/dist/leaflet-src.js"></script>
     <script src="/vendor/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
     <script src="/vendor/lodash/lodash.js"></script>
@@ -91,12 +97,9 @@
     <script src="/vendor/angular-sanitize/angular-sanitize.js"></script>
     <script src="/vendor/ng-csv/build/ng-csv.min.js"></script>
     <script src="/vendor/notie/dist/notie.js"></script>
-    <script src="/vendor/raven-js/dist/raven.js"></script>
-    <script src="/vendor/dragula/dist/dragula.js"></script>
-    <script src="/vendor/angular-loading-bar/build/loading-bar.js"></script>
-    <script src="/vendor/classList.js/classList.min.js"></script>
     <script src="/vendor/perfect-scrollbar/js/perfect-scrollbar.jquery.js"></script>
     <script src="/vendor/perfect-scrollbar/js/perfect-scrollbar.js"></script>
+    <script src="/vendor/raven-js/dist/raven.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -215,6 +218,12 @@
 
     <script src="/components/user-menu/user-menu.js"></script>
     <script src="/components/user-menu/user-menu-directive.js"></script>
+
+    <script src="/components/export/export.js"></script>
+    <script src="/components/export/export-directive.js"></script>
+
+    <script src="/components/ui-utils/ui-utils.js"></script>
+    <script src="/components/ui-utils/modal-directive.js"></script>
 
     <script src="/components/favourites/favourites.js"></script>
     <script src="/components/favourites/favourites-service.js"></script>

@@ -12,6 +12,10 @@ angular.module('user-menu')
       scope.user = user;
       scope.showApps = false;
 
+      scope.modal = {
+        active: false,
+      };
+
       /**
        * Turn off either favourites or apps when click the on or the other
        */
@@ -86,6 +90,10 @@ angular.module('user-menu')
           domain +
           '/&next=' +
           window.location.href;
+      };
+
+      scope.toggleExport = function () {
+        scope.modal.active = true;
       };
 
     };

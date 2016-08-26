@@ -21,7 +21,15 @@
              href="">
           </a>
         </li>
-        <li ng-if="context == 'map'">
+        <li>
+          <a ng-click="toggleExport()"
+             title="<% 'Export all selected timeseries' | translate %>"
+             href="">
+            <i class="fa fa-space-shuttle"></i>
+            <span translate>Export</span>
+          </a>
+        </li>
+        <li>
           <a ng-click="toggleDashboard()"
              title="<% 'Switch to dashboard' | translate %>"
              target="_blank"
@@ -29,17 +37,6 @@
              href="">
             <i class="fa fa-bar-chart"></i>
             <span translate>Dashboard</span>
-          </a>
-        </li>
-        <li ng-if="context == 'dashboard'">
-          <a class="hidden-xs"
-             ng-click="toggleDashboard()"
-             title="<% 'Switch to map' | translate %>"
-             target="_blank"
-             accesskey="m"
-             href="">
-            <i class="fa fa-globe"></i>
-            <span translate>Map</span>
           </a>
         </li>
         <li ng-if="user.authenticated"
@@ -134,4 +131,8 @@
       </button>
     </div>
   </script>
+
+  <div ng-if="modal.active">
+    <ui-modal active="modal.active"></ui-modal>
+  </div>
 </nav>
