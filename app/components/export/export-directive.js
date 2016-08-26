@@ -3,38 +3,46 @@ var ASYNC_FORMAT = 'csvzip';
 angular.module('export')
 .directive('exportSelector', ['$http', 'DataService', 'State', function ($http, DataService, State) {
   var link = function (scope) {
+    // bind the assets with the selected things from the DataService
     scope.assets = DataService.assets;
 
-    scope.timestate = {
+    // Start and end of data
+    timeState = {
       start: new Date(State.temporal.start),
       end: new Date(State.temporal.end)
     };
 
+    // Will be populated with the startExport function
     scope.taskInfo = {
       url: '',
       id: '',
       downloadUrl: ''
     };
 
+    // Contains the selected timeseries to export
     scope.toExport = {};
 
     var pollInterval;
 
+    /**
+     * startExport - Finds all the timeseries and gets the uuids
+     * requests a csvzip task to be setup for these uuids. The API returns a
+     * link to see status updates of the task
+     */
     scope.startExport = function () {
       var uuids = _.map(scope.toExport, function (yes, uuid) {
         if (yes) { return uuid; }
       }).join(',');
 
+      // spinner
       scope.loading = true;
 
-
       // Request timeseries/data/ with uuids and format=csvzip and async=true
-
       $http.get('/api/v2/timeseries/data/', {
         params: {
           uuid: uuids,
-          start: scope.timestate.start ? parseInt(scope.timestate.start, 10): undefined,
-          end: scope.timestate.end ? parseInt(scope.timestate.end, 10): undefined,
+          start: timeState.start ? parseInt(timeState.start, 10): undefined,
+          end: timeState.end ? parseInt(timeState.end, 10): undefined,
           format: ASYNC_FORMAT,
           async: 'true'
         }
@@ -44,7 +52,11 @@ angular.module('export')
       });
     };
 
-
+    /**
+     * pollForChange - Checks if the task is done: 'SUCCES', waiting: 'PENDING',
+     * or failed: 'FAILED'
+     *
+     */
     var pollForChange = function () {
       $http.get(scope.taskInfo.url).then(function (response) {
         var status = response.data.task_status;
@@ -57,29 +69,36 @@ angular.module('export')
         if (status !== 'PENDING') {
           clearInterval(pollInterval);
         }
-
       });
     };
 
+    /**
+     * updateDates - updates the start and end according to the datepicker
+     *
+     * @param  {object} e eventObject that the datepicker sends
+     */
     var updateDates = function (e) {
       if (e.target.name === 'end') {
-        scope.timestate.end = Date.parse(e.date);
+        timeState.end = Date.parse(e.date);
       }
       if (e.target.name === 'start') {
-        scope.timestate.start = Date.parse(e.date);
+        timeState.start = Date.parse(e.date);
       }
     };
 
+    // initialize the datepicker
     var dateEl = $('#datepicker-export.input-daterange');
     dateEl.datepicker({
       format: 'dd-mm-yyyy'
     });
+    // bind the hide event to updateDates
     dateEl.on('hide', updateDates);
 
-    dateEl.find('#datepicker-export-start').datepicker('setDate', scope.timestate.start);
-    dateEl.find('#datepicker-export-end').datepicker('setDate', scope.timestate.end);
-
-
+    // initialize the datepicker with the right dates
+    dateEl.find('#datepicker-export-start').datepicker(
+      'setDate', timeState.start);
+    dateEl.find('#datepicker-export-end').datepicker(
+      'setDate', timeState.end);
   };
 
   return {

@@ -1,11 +1,8 @@
 /**
  * Wrapper around bootstrap modal.
  * There is a MotherModal that provides a skeleton.
- * The skeleton is now supplemented with the right contents if you
- * start the following directive:
  * <ui-modal></ui-modal>
- * The state as well as the templateName are in the
- * state service.
+ * For now it always contains the export-selector directive
  */
 
 angular.module('ui-utils').directive('uiModal', [
@@ -14,6 +11,11 @@ angular.module('ui-utils').directive('uiModal', [
       var mode = (scope.active) ? 'show' : 'hide';
       $(el).modal(mode);
 
+
+      /**
+       * closeModal - close the modal with an angular click.
+       *
+       */
       scope.closeModal = function () {
         scope.active = false;
         var mode = (scope.active) ? 'show' : 'hide';

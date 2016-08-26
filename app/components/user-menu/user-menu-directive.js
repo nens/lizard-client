@@ -94,9 +94,6 @@ angular.module('user-menu')
 
       scope.toggleExport = function () {
         scope.modal.active = true;
-        scope.modal.templateBody = 'export/export-body';
-        scope.modal.templateFooter = 'export/export-footer';
-        scope.modal.title = 'Export';
       };
 
     };

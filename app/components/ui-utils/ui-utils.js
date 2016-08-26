@@ -1,1 +1,1 @@
-angular.module('ui-utils', ['global-state']);
+angular.module('ui-utils', []);
