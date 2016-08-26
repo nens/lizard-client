@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (4.1.1) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 4.1.1 (2016-8-26)
+---------------------
 
 - Add export screen, with date picker
 
