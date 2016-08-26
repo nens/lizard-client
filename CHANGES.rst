@@ -3,6 +3,20 @@ Changelog of lizard-nxt client
 
 Unreleased (4.0.2) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 4.0.4 (2016-8-26)
+---------------------
+
+- Include lizard-iconfont in copy step of build.
+
+
+Release 4.0.3 (2016-8-26)
+---------------------
+
+- Fix bug in timeline. It doesn't use api/v2/raster-aggregates to draw ticks
+  anymore, but api/v2/rasters/[uuid]/timesteps.
 
 - Add export screen, with date picker
 
@@ -30,6 +44,15 @@ Unreleased (4.0.2) (XXXX-XX-XX)
 
 - De-activate layer on removal.
 
+- Add 10% buffer when zooming to temporal bounds of eventseries.
+
+- Fix increase size of annotation-select-box.
+
+- Determine leaflet z-index by layer type and place in data-menu.
+
+- Show scenarios in layer-adder with 3di icon.
+
+- Fix scenario, match api response.
 
 Release 4.0.2 (2016-8-5)
 ---------------------

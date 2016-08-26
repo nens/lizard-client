@@ -5,19 +5,32 @@ angular.module('data-menu')
   '$http',
   'State',
   'LayerAdderService',
+  'MapService',
   'gettextCatalog',
-  function ($http, State, LayerAdderService, gettextCatalog) {
+  function ($http, State, LayerAdderService, MapService, gettextCatalog) {
     var link = function (scope) {
 
       var RESULT_TYPES = {
-        water_level: gettextCatalog.getString('water level'),
-        arrival: gettextCatalog.getString('arrival times'),
-        maxwdepth: gettextCatalog.getString('max water depth'),
-        damage: gettextCatalog.getString('damage'),
-        casualties: gettextCatalog.getString('casualties'),
-        roads: gettextCatalog.getString('roads'),
-        buildings: gettextCatalog.getString('buildings'),
-        raw: gettextCatalog.getString('raw')
+        'arrival': gettextCatalog.getString('arrival times'),
+        'maxwdepth': gettextCatalog.getString('max water depth'),
+        'roads': gettextCatalog.getString('roads'),
+        'vulnerable_buildings':
+          gettextCatalog.getString('vulnerable buildings'),
+        'damage_estimation_grid': gettextCatalog.getString('damage'),
+        'damage_estimation_json': gettextCatalog.getString('damage.json'),
+        'rise_velocity_grid': gettextCatalog.getString('rise velocity'),
+        'water_velocity_grid': gettextCatalog.getString('velocity'),
+        'hisssm_ozb': gettextCatalog.getString('HISSSM OZB'),
+        'hisssm_damage': gettextCatalog.getString('damage'),
+        'hisssm_casualties': gettextCatalog.getString('casualties'),
+        'hisssm_csv': gettextCatalog.getString('HISSSM.csv'),
+        'dem': gettextCatalog.getString('elevation'),
+        's1-dtri': gettextCatalog.getString('water level'),
+        'depth-dtri': gettextCatalog.getString('water depth'),
+        'subgrid_map': gettextCatalog.getString('raw output'),
+        'logfiles': gettextCatalog.getString('log files'),
+        'flow-aggregate': gettextCatalog.getString('aggregated output'),
+        'id-mapping': gettextCatalog.getString('id mapping'),
       };
 
       scope.state = State;
@@ -28,13 +41,13 @@ angular.module('data-menu')
 
       // Set defaults.
       if (!scope.layer.name) {
-        scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid
+        scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid;
       }
 
       var getOrCreateLayer = function (layerConf, resultType) {
         var layer = _.find(State.layers, {uuid: layerConf.uuid});
         if (!layer) {
-          layer = layerConf;
+          layer = {uuid: layerConf.uuid, type: 'raster'};
           State.layers.push(layer);
         }
         layer.scenario = scope.layer.uuid;
@@ -81,6 +94,7 @@ angular.module('data-menu')
                 );
               }
             });
+
           })
 
           .catch(function () {

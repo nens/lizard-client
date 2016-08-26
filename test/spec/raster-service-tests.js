@@ -1,19 +1,10 @@
 // raster-service-tests.js
 
 describe('Testing raster service', function () {
-  var $scope, $rootScope, RasterService, mapState;
-
-  mapState = {
-    getActiveTemporalLayerGroup: function () {
-      return {
-        'slug': 'rain'
-      };
-    }
-  };
+  var RasterService;
 
   beforeEach(module('lizard-nxt'));
   beforeEach(inject(function ($injector) {
-    $rootScope = $injector.get('$rootScope');
     RasterService = $injector.get('RasterService');
   }));
 
