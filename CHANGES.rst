@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (4.0.2) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 4.0.4 (2016-8-26)
+---------------------
 
 - Include lizard-iconfont in copy step of build.
 
