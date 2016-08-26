@@ -40,9 +40,9 @@ angular.module('data-menu')
               slug: response.slug,
               minZoom: response.min_zoom,
               maxZoom: response.max_zoom,
-              zIndex: response.z_index,
               complexWmsOptions: response.options,
-              url: response.url
+              url: response.url,
+              zIndex: LayerAdderService.getZIndex(scope.layer)
             }));
 
             if (response.get_feature_info) {

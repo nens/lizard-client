@@ -1,6 +1,6 @@
 {
   "name": "lizard-client",
-  "version": "4.0.2",
+  "version": "4.0.4",
   "homepage": "https://lizard.net",
   "authors": [],
   "description": "Client for Lizard-NxT",
@@ -37,7 +37,7 @@
     "dragula": "~3.6.6",
     "leaflet": "0.7.7",
     "leaflet.markercluster": "~0.4.0",
-    "lizard-iconfont": "0.1",
+    "lizard-iconfont": "1.2.0",
     "lodash": "~4.2.1",
     "moment": "~2.10.2",
     "ng-csv": "~0.3.6",

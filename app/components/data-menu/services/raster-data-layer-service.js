@@ -20,6 +20,9 @@ angular.module('data-menu')
       rasterDataLayer.getData = function (options) {
         return RasterService.getData(_.merge(options, rasterDataLayer));
       };
+      rasterDataLayer.getTimesteps = function (options) {
+        return RasterService.getTimesteps(_.merge(options, rasterDataLayer));
+      };
 
       return rasterDataLayer;
 
