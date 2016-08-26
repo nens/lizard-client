@@ -71,14 +71,12 @@ angular.module('export')
 
     var dateEl = $('#datepicker-export.input-daterange');
     dateEl.datepicker({
-      format: 'dd-mm-yyyy',
-      defaultViewDate: {
-        year: scope.timestate.start.getFullYear(),
-        month: scope.timestate.start.getMonth(),
-        day: scope.timestate.start.getDay()
-      }
+      format: 'dd-mm-yyyy'
     });
     dateEl.on('hide', updateDates);
+
+    dateEl.find('#datepicker-export-start').datepicker('setDate', scope.timestate.start);
+    dateEl.find('#datepicker-export-end').datepicker('setDate', scope.timestate.end);
 
 
   };
