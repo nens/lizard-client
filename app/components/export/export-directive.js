@@ -1,24 +1,15 @@
 var ASYNC_FORMAT = 'csvzip';
 
 angular.module('export')
-.directive('exportSelector', ['$http', 'DataService', function ($http, DataService) {
+.directive('exportSelector', ['$http', 'DataService', 'State', function ($http, DataService, State) {
   var link = function (scope) {
     scope.assets = DataService.assets;
 
+    var start = moment(State.temporal.start);
+    var end =  moment(State.temporal.end);
     scope.timestate = {
-      start: new Date() - 10000,
-      end: new Date() - 100
-    };
-
-    scope.taskInfo = {
-      url: '',
-      id: '',
-      downloadUrl: ''
-    };
-
-    scope.timestate = {
-      start: new Date() - 10000,
-      end: new Date() - 100
+      start: start.format('L'),
+      end: end.format('L')
     };
 
     scope.taskInfo = {
@@ -81,7 +72,9 @@ angular.module('export')
     };
 
     var dateEl = $('#datepicker-export.input-daterange');
-    dateEl.datepicker({});
+    dateEl.datepicker({
+      format: 'dd-mm-yyyy'
+    });
     dateEl.on('hide', updateDates);
 
 

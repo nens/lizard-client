@@ -20,9 +20,9 @@
       Pick the date range:
     </p>
     <div class="input-daterange input-group" id="datepicker-export">
-      <input type="text" class="input-sm form-control" name="start" />
+      <input type="text" class="input-sm form-control" name="start" ng-value="timestate.start" />
       <span class="input-group-addon">to</span>
-      <input type="text" class="input-sm form-control" name="end" />
+      <input type="text" class="input-sm form-control" name="end" ng-value="timestate.end" />
     </div>
     <div ng-repeat="asset in assets">
       <div ng-repeat="ts in asset.timeseries">
