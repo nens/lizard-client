@@ -20,12 +20,15 @@ angular.module('export')
 
     scope.toExport = {};
 
+    var pollInterval;
+
     scope.startExport = function () {
       var uuids = _.map(scope.toExport, function (yes, uuid) {
         if (yes) { return uuid; }
       }).join(',');
 
       scope.loading = true;
+
 
       // Request timeseries/data/ with uuids and format=csvzip and async=true
 
@@ -39,26 +42,24 @@ angular.module('export')
         }
       }).then(function (response) {
         scope.taskInfo.url = response.data.task_url;
+        pollInterval = setInterval(pollForChange, 500);
       });
     };
 
-    var taskDone = scope.$watch('taskInfo.url', function (n) {
-      if (n) {
-        setInterval(pollForChange, 500);
-      }
-    });
 
     var pollForChange = function () {
       $http.get(scope.taskInfo.url).then(function (response) {
         var status = response.data.task_status;
-        if (status === 'PENDING') {
-          // do nothing yet
-          console.log(status);
-        } else if (status === 'SUCCESS') {
+
+        if (status === 'SUCCESS') {
           scope.loading = false;
           scope.taskInfo.downloadUrl = response.data.result_url;
-          taskDone();
         }
+
+        if (status !== 'PENDING') {
+          clearInterval(pollInterval);
+        }
+
       });
     };
 
