@@ -7,7 +7,7 @@ angular.module('export')
     scope.assets = DataService.assets;
 
     // Start and end of data
-    timeState = {
+    var timeState = {
       start: new Date(State.temporal.start),
       end: new Date(State.temporal.end)
     };
@@ -41,8 +41,8 @@ angular.module('export')
       $http.get('/api/v2/timeseries/data/', {
         params: {
           uuid: uuids,
-          start: timeState.start ? parseInt(timeState.start, 10): undefined,
-          end: timeState.end ? parseInt(timeState.end, 10): undefined,
+          start: timeState.start.getTime(),
+          end: timeState.end.getTime(),
           format: ASYNC_FORMAT,
           async: 'true'
         }
@@ -79,10 +79,10 @@ angular.module('export')
      */
     var updateDates = function (e) {
       if (e.target.name === 'end') {
-        timeState.end = Date.parse(e.date);
+        timeState.end = new Date(e.date);
       }
       if (e.target.name === 'start') {
-        timeState.start = Date.parse(e.date);
+        timeState.start = new Date(e.date);
       }
     };
 
