@@ -36,6 +36,9 @@
         </div>
       </div>
     </div>
+  </div>
+  <div class="modal-footer footer-left">
+    <button ng-if="taskInfo.downloadUrl === '' && taskInfo.url === ''"class="btn btn-primary" ng-click="startExport()" translate>Start Export</button>
     <div ng-if="taskInfo.downloadUrl === '' && taskInfo.url !== ''">
       <p class="text-center">
         <i class="fa fa-3x fa-spinner fa-spin"></i>
@@ -50,8 +53,5 @@
         <i class="fa fa-2x fa-download"></i>
       </a>
     </div>
-  </div>
-  <div class="modal-footer footer-left">
-    <button class="btn btn-primary" ng-click="startExport()" translate>Start Export</button>
   </div>
 </div>
