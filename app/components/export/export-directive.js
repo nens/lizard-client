@@ -33,8 +33,8 @@ angular.module('export')
       $http.get('/api/v2/timeseries/data/', {
         params: {
           uuid: uuids,
-          start: scope.timestate.start ? parseInt(scope.timestate.start, 10): undefined,
-          end: scope.timestate.end ? parseInt(scope.timestate.end, 10): undefined,
+          start: scope.timestate.start.getTime(),
+          end: scope.timestate.end.getTime(),
           format: ASYNC_FORMAT,
           async: 'true'
         }
@@ -63,10 +63,10 @@ angular.module('export')
 
     var updateDates = function (e) {
       if (e.target.name === 'end') {
-        scope.timestate.end = Date.parse(e.date);
+        scope.timestate.end = new Date(e.date);
       }
       if (e.target.name === 'start') {
-        scope.timestate.start = Date.parse(e.date);
+        scope.timestate.start = new Date(e.date);
       }
     };
 
