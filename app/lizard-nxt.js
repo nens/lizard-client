@@ -136,3 +136,8 @@ angular.module("lizard-nxt", [
  * @description Portal's default temporal bounds.
  */
 .constant('temporalBounds', window.temporalBounds);
+
+// Only for ddsc...
+if (window.location.host === 'portal.ddsc.nl') {
+  window.document.title = 'DDSC';
+}
