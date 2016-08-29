@@ -69,3 +69,14 @@ $grid-float-breakpoint-max: 768px;
         color: $white;
     }
 }
+
+.badge-notify{
+   background: $alizarin;
+   position: relative;
+   top: -15px;
+   left: -32px;
+}
+
+.user-name {
+  margin-left: -10px;
+}
