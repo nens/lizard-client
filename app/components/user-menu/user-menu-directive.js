@@ -126,9 +126,9 @@ angular.module('user-menu')
       var archiveMessage = function (id) {
         $http.post('/api/v2/inbox/{id}/read/'.replace(/\{id\}/g, id));
         scope.inbox = scope.inbox.filter(function (message) {
-          return message.id !== id
-        })
-      }
+          return message.id !== id;
+        });
+      };
 
 
       /**
@@ -156,9 +156,9 @@ angular.module('user-menu')
           gettextCatalog.getString("Download"),
           gettextCatalog.getString("Archive Message"),
           function () {
-            goToMessageUrl(message)
+            goToMessageUrl(message);
           }, function () {
-            archiveMessage(message.id)
+            archiveMessage(message.id);
           },
         ]);
       };
