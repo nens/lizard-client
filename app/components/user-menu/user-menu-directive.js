@@ -3,9 +3,24 @@
  * Shows user-menu and has logout login buttons
  */
 angular.module('user-menu')
-  .directive('userMenu',
-             ['UtilService', '$location', 'user', '$uibModal', 'version', 'notie', 'gettextCatalog',
-              function (UtilService, $location, user, $uibModal, version, notie, gettextCatalog) {
+  .directive('userMenu',[
+    '$http',
+    'UtilService',
+    '$location',
+    'user',
+    '$uibModal',
+    'version',
+    'notie',
+    'gettextCatalog',
+    function (
+      $http,
+      UtilService,
+      $location,
+      user,
+      $uibModal,
+      version,
+      notie,
+      gettextCatalog) {
 
     var link = function (scope, element, attrs) {
 
@@ -15,6 +30,8 @@ angular.module('user-menu')
       scope.modal = {
         active: false,
       };
+
+      scope.inbox = [];
 
       /**
        * Turn off either favourites or apps when click the on or the other
@@ -92,9 +109,76 @@ angular.module('user-menu')
           window.location.href;
       };
 
+
+      /**
+       * toggleExport - start the modal with export stuff
+       */
       scope.toggleExport = function () {
         scope.modal.active = true;
       };
+
+
+      /**
+       * archiveMessage - archives a stored message based on id
+       *
+       * @param  {any} id string or integer representing the id e.g. "1"
+       */
+      var archiveMessage = function (id) {
+        $http.post('/api/v2/inbox/{id}/read/'.replace(/\{id\}/g, id));
+        scope.inbox = scope.inbox.filter(function (message) {
+          return message.id !== id;
+        });
+      };
+
+
+      /**
+       * goToMessageUrl - opens the URL that the message contains and archives
+       * the message subsequently
+       *
+       * @param  {object} message as it comes from the server
+       */
+      var goToMessageUrl = function (message) {
+        window.open(message.url, '_blank');
+        archiveMessage(message.id);
+      };
+
+
+      /**
+       * showMessage - show the message as a notie notification
+       * with the question: download or archive message
+       *
+       * @param  {object} message as it is retrieved from the server
+       */
+      scope.showMessage = function (message) {
+        notie.confirm.apply(
+          message, [
+          message.message,
+          gettextCatalog.getString("Download"),
+          gettextCatalog.getString("Archive Message"),
+          function () {
+            goToMessageUrl(message);
+          }, function () {
+            archiveMessage(message.id);
+          },
+        ]);
+      };
+
+      /**
+       * getMessages - retrieves messages from the server /inbox/ endpoint
+       * and put the messages on the scope.
+       */
+      var getMessages = function () {
+        $http.get('/api/v2/inbox/').then(function (response) {
+          scope.inbox = response.data;
+        }, function (response) {
+          console.error(response.data);
+        });
+      };
+
+      // do initial call
+      getMessages();
+      // poll for more messages
+      var messageInterval = setInterval(getMessages, 10000);
 
     };
 

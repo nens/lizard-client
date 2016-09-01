@@ -3,7 +3,7 @@ Changelog of lizard-nxt client
 
 Unreleased (4.1.1) (XXXX-XX-XX)
 -------------------------------
--
+- Add inbox to the frontend. Messages contain async downloads
 
 
 Release 4.1.1 (2016-8-26)

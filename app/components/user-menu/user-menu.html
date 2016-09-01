@@ -80,11 +80,24 @@
              href="#">
             <div ng-cloak id="username">
               <i class="fa fa-user"></i>
+              <span
+                ng-if="inbox.length > 0"
+                class="badge badge-notify"
+                ng-bind="inbox.length">
+              </span>
+              <span class="caret" ng-class="{'user-name': inbox.length > 0}"></span>
               <span ng-bind="user.first_name"></span>
-              <span class="caret"></span>
             </div>
           </a>
           <ul class="dropdown-menu">
+            <li>
+              <a title="<% 'Show Messages' | translate %>"
+                 class="clickable"
+                 ng-click="showMessage(inbox[0])">
+                <i class="fa fa-envelope"></i>
+                <span translate>Messages <span class="badge" ng-bind="inbox.length"></span></span>
+              </a>
+            </li>
             <li>
               <a title="<% 'Question and manual' | translate %>"
                  class="clickable"
