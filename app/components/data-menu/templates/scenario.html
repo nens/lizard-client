@@ -59,7 +59,7 @@
           </td>
         </tr>
 
-        <tr ng-if="result.layer" ng-repeat="result in scenario.result_set">
+        <tr ng-if="result.raster" ng-repeat="result in scenario.result_set">
           <td colspan="2">
             <rasterlayer
               ng-if="result.raster"
@@ -77,9 +77,9 @@
                   <% result.value | number: 0%>
               </span>
             </div>
-            <div>
-              <span ng-if="result.attachment_url">
-                <a href="<% attachment.attachment_url %>" target="_blank">
+            <div ng-if="result.attachment_url">
+              <span>
+                <a href="<% result.attachment_url %>" target="_blank">
                    <% result.layer.name %></a>
               </span>
             </div>
@@ -89,10 +89,10 @@
       </table>
 
       <div class="panel-footer">
-        <span ng-if="!result.raster" ng-repeat="result in scenario.result_set">
+        <span ng-repeat="result in scenario.result_set">
           <span>
             <a href="<% result.attachment_url %>" target="_blank" translate>
-               <% result.layer.name %></a>
+               <% result.result_type.name %></a>
           </span>
         </span>
         <span class="pull-right faded">size: <% scenario.total_size / 1000000 | number : 2 %>mb</span>

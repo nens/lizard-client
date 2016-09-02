@@ -3,6 +3,9 @@ Changelog of lizard-nxt client
 
 Unreleased (4.1.1) (XXXX-XX-XX)
 -------------------------------
+
+- Set the right display names for the changed scenarios
+
 - Add inbox to the frontend. Messages contain async downloads
 
 
