@@ -140,14 +140,14 @@ angular.module('omnibox')
         keyName: gettext("Filter top level"),
         attrName: "filter_top_level",
         ngBindValue: "waterchain.filter_top_level | niceNumberOrEllipsis: 2",
-        valueSuffix: "m"
+        valueSuffix: "mNAP"
       },
       {
         /// Onderkant filter
         keyName: gettext("Filter bottom level"),
         attrName: "filter_bottom_level",
         ngBindValue: "waterchain.filter_bottom_level | niceNumberOrEllipsis: 2",
-        valueSuffix: "m"
+        valueSuffix: "mNAP"
       },
       {
         keyName: gettext("Aquifer confinement"),

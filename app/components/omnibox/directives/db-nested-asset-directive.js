@@ -14,6 +14,7 @@ angular.module('omnibox')
       var nestedAssets = getNestedAssets(scope.asset);
 
       nestedAssets.forEach(function (asset) {
+        asset.name = scope.asset.name;
         State.selected.assets.addAsset(asset.entity_name + '$' + asset.id);
       });
 
@@ -40,4 +41,3 @@ angular.module('omnibox')
     };
 
   }]);
-
