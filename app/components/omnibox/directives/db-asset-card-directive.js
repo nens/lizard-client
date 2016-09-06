@@ -80,7 +80,8 @@ angular.module('omnibox')
     restrict: 'E',
     scope: {
       asset: '=',
-      timeState: '='
+      timeState: '=',
+      assets: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/db-asset-card.html'

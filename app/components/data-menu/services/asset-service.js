@@ -61,6 +61,15 @@ angular.module('data-menu')
        * @param  {array}  oldSelection old array of assetId of selected assets
        * @param  {array}  newSelection new array of assetId of selected assets
        */
+      /**
+       * anonymous function - description
+       *
+       * @param  {type} assets       description
+       * @param  {type} oldSelection description
+       * @param  {type} newSelection description
+       * @return {type}              description
+       */
+
       this.updateAssets = function (assets, oldSelection, newSelection) {
 
         var newAssets = newSelection.filter(function (assetId) {

@@ -5,6 +5,9 @@ Unreleased (4.1.1) (XXXX-XX-XX)
 -------------------------------
 - Add inbox to the frontend. Messages contain async downloads
 
+- Nested Assets are now shown as nested assets in dashboard. They also show
+  the info and thresholds in the graphs.
+
 
 Release 4.1.1 (2016-8-26)
 ---------------------

@@ -10,13 +10,25 @@ angular.module('omnibox')
   function (getNestedAssets, State) {
 
     var link = function (scope, element, attrs) {
-
       var nestedAssets = getNestedAssets(scope.asset);
+      // console.log(nestedAssets, 'moet toch filters bevattten?', scope.asset.filters)
 
       nestedAssets.forEach(function (asset) {
         asset.name = scope.asset.name;
         State.selected.assets.addAsset(asset.entity_name + '$' + asset.id);
       });
+
+      scope.$watch('asset', function () {
+        scope.list = getNestedAssets(scope.asset);
+        scope.asset.selectedAsset = scope.list[0];
+
+        scope.list = scope.list.map(function (asset) {
+          asset.name = scope.asset.name;
+          console.log(scope.asset.name, asset.name)
+          State.selected.assets.addAsset(asset.entity_name + '$' + asset.id);
+          return asset;
+        });
+      })
 
       scope.$on('$destroy', function () {
         nestedAssets.forEach(function (asset) {
@@ -38,6 +50,7 @@ angular.module('omnibox')
         asset: '=',
         timeState: '='
       },
+      templateUrl: 'omnibox/templates/db-nested-asset-card.html'
     };
 
   }]);
