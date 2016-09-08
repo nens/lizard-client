@@ -41,8 +41,9 @@ angular.module('omnibox')
         nestedAssets = [];
       }
 
-      nestedAssets.forEach(function (asset) {
-        asset.entity_name = attr; // Store to remove asset from selection.
+      nestedAssets.forEach(function (nestedAsset) {
+        nestedAsset.name = asset.name;
+        nestedAsset.entity_name = attr; // Store to remove asset from selection.
       });
 
       return nestedAssets;

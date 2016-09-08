@@ -6,7 +6,7 @@
  * @class NxtData /
  * @memberof app
  * @name NxtData
- * @requires $q, dataLayers, LayerGroup and State
+ * @requires $q, dataLayers, LayerGroup, getNestedAssets and State
  * @summary Encapsulates dataLayers
  * @description NxtData service encapsulates dataLayers from the server side
  *              configuration of dataLayers. It enables to perform actions
@@ -23,12 +23,14 @@ angular.module('data-menu')
     'AssetService',
     'LayerAdderService',
     'State',
+    'getNestedAssets',
 
     function (
       $q,
       AssetService,
       LayerAdderService,
-      State
+      State,
+      getNestedAssets
     ) {
 
       var instance = this;
@@ -47,6 +49,7 @@ angular.module('data-menu')
         // Deduplicate instance.assets asynchronous.
         instance.assets = _.uniqWith(instance.assets, _.isEqual);
 
+        // instantes
         instance.getGeomDataForAssets(instance.oldAssets, instance.assets);
 
         if (instance.onAssetsChange) {
@@ -313,7 +316,7 @@ angular.module('data-menu')
 
         options.geom = geo.geometry;
 
-        if (geo.geometry.type === 'Polygon' && geo.id) {
+        if (geo.geometry && geo.geometry.type === 'Polygon' && geo.id) {
           options.id = geo.id;
         }
 
