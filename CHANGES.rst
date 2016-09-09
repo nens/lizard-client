@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (4.1.1) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 4.1.2 (2016-9-9)
+---------------------
 
 - Set the right display names for the changed scenarios
 
