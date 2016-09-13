@@ -11,6 +11,8 @@ Unreleased (4.1.1) (XXXX-XX-XX)
 - Nested Assets are now shown as nested assets in dashboard. They also show
   the info and thresholds in the graphs.
 
+- Renamed `layer` into `wmslayer` to match a (Django) model name change.
+
 
 Release 4.1.1 (2016-8-26)
 ---------------------
