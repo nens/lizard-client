@@ -157,7 +157,7 @@ angular.module('omnibox')
       },
       {
         /// bodemsoort
-        keyName: gettext("Litology"),
+        keyName: gettext("Lithology"),
         attrName: "litology",
         ngBindValue: "waterchain.litology",
         valueSuffix: "m"

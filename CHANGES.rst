@@ -6,6 +6,8 @@ Unreleased (2.9.0) (XXXX-XX-XX)
 
 - Document.title DDSC if ddsc.
 
+- Renamed litology to lithology.
+
 
 Release 3.2.5 (2016-7-13)
 ---------------------
