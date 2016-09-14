@@ -8,6 +8,8 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 
 Release 4.1.10 (2016-10-7)
 ---------------------
+- Renamed litology to lithology.
+
 
 - Fix rain statistics.
 
