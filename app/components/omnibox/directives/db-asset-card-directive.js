@@ -43,13 +43,12 @@ angular.module('omnibox')
        * view (screen no longer shows up blank..)
        */
       if (!scope.noTimeseries) {
-        var ts;
-        TimeseriesService.initializeTimeseriesOfAsset(scope.asset);
-        for (var i=0; i<State.selected.timeseries.length; i++) {
-          ts = State.selected.timeseries[i];
-          TimeseriesService.timeseries.push(scope.asset.timeseries[i]);
+        _.forEach(State.selected.timeseries, function (ts) {
+          // de volgordes zijn niet altijd hetzelfde, dus uuid maaakt het 100% certain
+          var assetTS = _.find(scope.asset.timeseries, {uuid: ts.uuid});
+          TimeseriesService.timeseries.push(assetTS);
           scope.toggleTimeseries(ts);
-        }
+        });
       }
 
       /**
