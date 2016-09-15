@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (4.1.1) (XXXX-XX-XX)
 -------------------------------
 
+- Fix nens/lizard-nxt#1955. Raster wms tiles now respect the slug.
+
 - Set the right display names for the changed scenarios
 
 - Add inbox to the frontend. Messages contain async downloads

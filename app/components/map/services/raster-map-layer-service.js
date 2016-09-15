@@ -107,6 +107,7 @@ angular.module('map')
             date = new Date(rasterMapLayer._mkTimeStamp(timeState.at));
 
         var defaultOptions = {
+          layers: rasterMapLayer.slug,
           format: 'image/png',
           version: '1.1.1',
           minZoom: 0,
