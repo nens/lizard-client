@@ -21,6 +21,7 @@ angular.module('data-menu')
           var mapLayer = rasterMapLayer({
             uuid: scope.layer.uuid,
             url: 'api/v2/wms/',
+            slug: response.slug,
             bounds: response.spatial_bounds,
             temporal: response.temporal,
             frequency: response.frequency,
