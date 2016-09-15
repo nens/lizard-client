@@ -1,14 +1,14 @@
 <div>
   <div class="modal-body">
     <p aria-label="Help Text" class="help-text" translate>
-      You can select multiple timeseries to download. Once selected, press the
-      <i>"Start Export"</i> button and the exporter will fetch the timeseries
+      You can select multiple time series to download. Once selected, press the
+      <i>"Start Export"</i> button and the exporter will fetch the time series
       behind the scenes.
     </p>
     <p translate>
       We will let you know when your download is ready. You're welcome to
       wait here, but we're not sure how long it will take to piece everything
-      together
+      together.
     </p>
     <p translate>
       Pick the date range:
@@ -42,8 +42,8 @@
         <a ng-href="<% taskInfo.url %>" translate>this link</a>
       </p>
     </div>
-    <div ng-if="taskInfo.downloadUrl !== ''">It is finished:
-      <a ng-href="<% taskInfo.downloadUrl %>" translate>Donwload
+    <div ng-if="taskInfo.downloadUrl !== ''">The export has finished:
+      <a ng-href="<% taskInfo.downloadUrl %>" translate target="_self">download
         <i class="fa fa-2x fa-download"></i>
       </a>
     </div>
