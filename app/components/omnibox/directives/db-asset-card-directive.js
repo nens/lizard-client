@@ -13,8 +13,6 @@ angular.module('omnibox')
         });
       };
 
-      scope.noTimeseries = scope.asset.timeseries.length === 0;
-
       scope.toggleTimeseries = function (timeseries) {
 
         if (!timeseries.active) {
@@ -37,6 +35,22 @@ angular.module('omnibox')
         TimeseriesService.syncTime();
 
       };
+
+      scope.noTimeseries = scope.asset.timeseries.length === 0;
+
+      /**
+       * Render all timeseries for selected asset when switching to dashboard
+       * view (screen no longer shows up blank..)
+       */
+      if (!scope.noTimeseries) {
+        var ts;
+        TimeseriesService.initializeTimeseriesOfAsset(scope.asset);
+        for (var i=0; i<State.selected.timeseries.length; i++) {
+          ts = State.selected.timeseries[i];
+          TimeseriesService.timeseries.push(scope.asset.timeseries[i]);
+          scope.toggleTimeseries(ts);
+        }
+      }
 
       /**
        * Specific toggle for crosssection
