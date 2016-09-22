@@ -499,6 +499,7 @@ angular.module('lizard-nxt-filters')
   return function (input) {
 
     return {
+      'building': gettext('Building'),
       'bridge': gettext('Bridge'),
       'channel': gettext('Channel'),
       /// Boezemkanaal
@@ -506,25 +507,26 @@ angular.module('lizard-nxt-filters')
       'channel_Primair': gettext('Primary channel'),
       'crossprofile': gettext('Crossprofile'),
       'culvert': gettext('Culvert'),
+      'filter': gettext('Filter'),
       'groundwaterstation': gettext('Groundwater station'),
+      'levee': gettext('Levee'),
+      'leveecrosssection': gettext('Levee cross section'),
+      'leveereferencepoint': gettext('Levee reference point'),
       'manhole': gettext('Manhole'),
       'measuringstation': gettext('Measuring station'),
+      'monitoringwell': gettext('Monitoring well'),
       'orifice': gettext('Orifice'),
       'outlet': gettext('Outlet'),
       'overflow': gettext('Overflow'),
       'pipe': gettext('Pipe'),
+      'pressurepipe': gettext('Pressure pipe'),
+      'pump': gettext('Pump'),
       'pumpstation': gettext('Pump station'),
       'pumpeddrainagearea': gettext('Pumped drainage area'),
-      'weir': gettext('Weir'),
-      'pressurepipe': gettext('Pressure pipe'),
+      'road': gettext('Road'),
       'sluice':gettext('Sluice'),
       'wastewatertreatmentplant': gettext('Wastewater treatment plant'),
-      'levee': gettext('Levee'),
-      'leveecrosssection': gettext('Levee cross section'),
-      'leveereferencepoint': gettext('Levee reference point'),
-      'monitoringwell': gettext('Monitoring well'),
-      'pump': gettext('Pump'),
-      'filter': gettext('Filter')
+      'weir': gettext('Weir')
     }[input] || input;
   };
 
