@@ -31,12 +31,12 @@
         </li>
         <li>
           <a ng-click="toggleDashboard()"
-             title="<% 'Switch to dashboard' | translate %>"
+             title="<% 'Switch to ' + getContextComplement() | translate %>"
              target="_blank"
              accesskey="d"
              href="">
             <i class="fa fa-bar-chart"></i>
-            <span translate>Dashboard</span>
+            <span translate><% getContextComplement() %></span>
           </a>
         </li>
         <li ng-if="user.authenticated"
