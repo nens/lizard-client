@@ -9,7 +9,8 @@
       <span class="fa"
         ng-class="{
           'fa-spinner fa-spin': menu.state.gettingData,
-          'fa-compass': !menu.state.gettingData
+          'fa-caret-left': !menu.state.gettingData && !menu.enabled,
+          'fa-caret-right': !menu.state.gettingData && menu.enabled
         }"
         title="<% menu.enabled ? tooltips.closeMenu : tooltips.openMenu %>">
       </span>
@@ -43,7 +44,7 @@
 
   <div ng-show="!menu.layerAdderEnabled" class="layer-switcher">
     <ul class="list-group">
-
+      <div class="layer-menu-explanation">Selecteer kaartlagen:</div>
       <baselayers state="state"></baselayers>
 
       <div ng-repeat="layer in state.layers track by layer.uuid">

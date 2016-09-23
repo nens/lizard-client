@@ -63,6 +63,59 @@ angular.module('omnibox')
     ]
   };
 
+  this.building = {
+    rows: [
+      {
+        keyName: gettext("Function"),
+        attrName: "function",
+        ngBindValue: "waterchain.function[0].name",
+        valueSuffix: ""
+      },
+      {
+        keyName: gettext("Address"),
+        attrName: "address",
+        ngBindValue: "waterchain.addresses[0].street + ' ' + "
+          + "waterchain.addresses[0].house_number",
+        valueSuffix: ""
+      },
+      {
+        keyName: gettext("Zipcode"),
+        attrName: "zipcode",
+        ngBindValue: "waterchain.addresses[0].zipcode",
+        valueSuffix: ""
+      },
+      {
+        keyName: gettext("City"),
+        attrName: "city",
+        ngBindValue: "waterchain.addresses[0].city",
+        valueSuffix: ""
+      }
+    ]
+  };
+
+  this.road = {
+    rows: [
+      {
+        keyName: gettext("Name"),
+        attrName: "name",
+        ngBindValue: "waterchain.name",
+        valueSuffix: ""
+      },
+      {
+        keyName: gettext("Type"),
+        attrName: "type",
+        ngBindValue: "waterchain.type",
+        valueSuffix: ""
+      },
+      {
+        keyName: gettext("Use"),
+        attrName: "use",
+        ngBindValue: "waterchain.use",
+        valueSuffix: ""
+      }
+    ]
+  };
+
   this.channel_Boezem = {
     rows: [
       {

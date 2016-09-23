@@ -92,6 +92,10 @@ angular.module('lizard-nxt')
     $scope.transitionToContext(($scope.context === 'map') ? 'dashboard' : 'map');
   };
 
+  $scope.getContextComplement = function () {
+    return $scope.context === 'map' ? 'Dashboard' : 'Map';
+  };
+
   // END CONTEXT
 
   $scope.toggleVersionVisibility = function () {
