@@ -302,7 +302,7 @@ angular.module('omnibox')
         var hostname = window.location.hostname.replace('nxt.staging', 'demo');
         return 'https://' + hostname + '/api/v2/rasters/' +
           RAW_RAIN_RASTER_UUID + '/data/' +
-          '?format=xslx' +
+          '?format=csv' +
           '&start=' +
           new Date(State.temporal.start).toISOString().split('.')[0] +
           '&stop=' +
