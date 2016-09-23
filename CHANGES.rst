@@ -3,7 +3,7 @@ Changelog of lizard-nxt client
 
 Unreleased (4.1.1) (XXXX-XX-XX)
 -------------------------------
--
+- Change the export to retrieve XLSX instead of CSV
 
 
 Release 4.1.2 (2016-9-9)
