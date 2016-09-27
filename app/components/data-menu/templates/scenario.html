@@ -26,6 +26,7 @@
         class="panel-heading layer-item layer-img"
         title="<% layer.name || layer.type + ': ' + layer.uuid %>">
           <% layer.name  || 'raster' + ': ' + layer.uuid %>
+          <span class="pull-right filesize"><% scenario.total_size / 1000000 | number : 2 %>mb</span>
           <div class="layer-chooser-tools">
             <i class="fa fa-close"
                ng-click="remove(layer); $event.stopPropagation()">
@@ -43,61 +44,56 @@
           </td>
         </tr>
         <tr>
-          <td colspan="2">
+          <td colspan="3">
             <span translate>Start (simulation time)</span>
           </td>
           <td>
             <span><% scenario.start_time_sim | date: 'M/d/y HH:mm:ss' %></span>
           </td>
+          <td/>
         </tr>
         <tr>
-          <td colspan="2">
+          <td colspan="3">
             <span translate>End (simulation time)</span>
           </td>
           <td>
             <span><% scenario.end_time_sim | date: 'M/d/y HH:mm:ss' %></span>
           </td>
+          <td/>
         </tr>
 
-        <tr ng-if="result.raster" ng-repeat="result in scenario.result_set">
-          <td colspan="2">
+        <tr ng-repeat="result in scenario.result_set">
+          <td colspan="3" title="<% result.result_type.name %>">
+            <span ng-if="!result.result_type.has_raster">
+              <% result.result_type.name %>
+            </span>
             <rasterlayer
-              ng-if="result.raster"
+              ng-if="result.result_type.has_raster"
               layer="result.layer">
             </rasterlayer>
           </td>
-
           <td>
-            <div ng-if="result.value">
-              <span translate>Total:</span>
-              <span ng-if="result.result_type.code === 'damage'">
-                  €<% result.value | number: 0%>
-              </span>
-              <span ng-if="result.result_type.code !== 'damage'">
-                  <% result.value | number: 0%>
-              </span>
-            </div>
-            <div ng-if="result.attachment_url">
+            <span ng-if="result.result_type.has_value">
               <span>
-                <a href="<% result.attachment_url %>" target="_blank">
-                   <% result.layer.name %></a>
+                {{ result.result_type.code === 'damage' ? '&euro;' : '' }}
+                <% result.value | number: 0 %>
               </span>
+            </span>
+          </td>
+          <td>
+            <div ng-if="result.result_type.has_attachment">
+              <a target="_blank"
+                 href="<% result.attachment_url %>"
+                 class="btn btn-default btn-xs"
+                 title="Exporteer scenario data">
+                <i class="fa fa-share-square-o"></i>
+                <span translate="">
+                  <span translate>Exporteer</span>
+                </span>
+              </a>
             </div>
           </td>
         </tr>
-
       </table>
-
-      <div class="panel-footer">
-        <span ng-repeat="result in scenario.result_set">
-          <span>
-            <a href="<% result.attachment_url %>" target="_blank" translate>
-               <% result.result_type.name %></a>
-          </span>
-        </span>
-        <span class="pull-right faded">size: <% scenario.total_size / 1000000 | number : 2 %>mb</span>
-      </div>
-
     </div>
-
 </div>

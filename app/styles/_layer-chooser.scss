@@ -90,6 +90,13 @@
         transition: .3s ease;
         cursor: pointer;
         color: $asbestos;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        .filesize {
+          margin-right: 25px;
+        }
 
         span {
             // To improve text on background color readability.
