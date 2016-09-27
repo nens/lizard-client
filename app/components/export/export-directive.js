@@ -1,4 +1,4 @@
-var ASYNC_FORMAT = 'csvzip';
+var ASYNC_FORMAT = 'xlsx';
 
 angular.module('export')
 .directive('exportSelector', ['$http', 'DataService', 'State', function ($http, DataService, State) {
@@ -26,7 +26,7 @@ angular.module('export')
 
     /**
      * startExport - Finds all the timeseries and gets the uuids
-     * requests a csvzip task to be setup for these uuids. The API returns a
+     * requests a ASYNC_FORMAT task to be setup for these uuids. The API returns a
      * link to see status updates of the task
      */
     scope.startExport = function () {
@@ -37,7 +37,7 @@ angular.module('export')
       // spinner
       scope.loading = true;
 
-      // Request timeseries/data/ with uuids and format=csvzip and async=true
+      // Request timeseries/data/ with uuids and format=ASYNC_FORMAT and async=true
       $http.get('/api/v2/timeseries/data/', {
         params: {
           uuid: uuids,
