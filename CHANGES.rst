@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 4.1.3 (2016-9-27)
+---------------------
 
 - Added titles and attributes for Buildings and Roads.
 
