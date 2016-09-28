@@ -1,4 +1,4 @@
-//layer-directive.js
+//rasterlayer-directive.js
 
 angular.module('data-menu')
 .directive('rasterlayer', ['MapService', 'DataService', 'LayerAdderService', 'rasterMapLayer', 'rasterDataLayer', function (MapService, DataService, LayerAdderService, rasterMapLayer, rasterDataLayer) {
@@ -85,6 +85,7 @@ angular.module('data-menu')
     link: link,
     scope: {
       layer: '=',
+      closebutton: '=',
     },
     templateUrl: 'data-menu/templates/layer.html',
     restrict: 'E',
