@@ -90,6 +90,13 @@
         transition: .3s ease;
         cursor: pointer;
         color: $asbestos;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        .filesize {
+          margin-right: 25px;
+        }
 
         span {
             // To improve text on background color readability.
@@ -176,6 +183,7 @@
 
         td {
             vertical-align: middle;
+            width: 130px;
         }
 
         .progress {

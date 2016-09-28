@@ -2,7 +2,7 @@
   <label
     single-click="layer.active = !layer.active"
     ng-dblclick="rescale && rescale(layer)"
-    ng-class ="{active: layer.active }"
+    ng-class="{ active: layer.active }"
     class="layer-item layer-img"
     ng-title="layer.name | capitalize">
       <span ng-show="!invalid" ng-bind="layer.name | capitalize"></span>
@@ -14,6 +14,7 @@
       </del>
       <div class="layer-chooser-tools">
         <i class="fa fa-close"
+           ng-hide="closebutton === false"
            ng-click="remove(layer); $event.stopPropagation()"></i>
         <i ng-if="zoomToBounds"
           ng-click="zoomToBounds(); $event.stopPropagation()"
