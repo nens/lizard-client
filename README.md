@@ -47,8 +47,8 @@ Create dist files (optional) and templates (compulsory):
 
     grunt serve
 
-Point you browser to index.html for a client demo. By deafult lizard is in
-English to enable other language run:
+Point you browser to index.html for a client demo. By default, lizard is in
+English. To enable other languages run:
 
     grunt translate --txusername=<transifex username> --txpassword=<transifex password>
 
@@ -93,7 +93,7 @@ Workflow:
 
     git pull origin
     git checkout master
-    
+
     grunt release --txusername=<transifex username> --txpassword=<transifex password>
 
 This creates a staging release of master.
@@ -173,29 +173,6 @@ To create a new string that requires translation:
 4. Get yourself a language wizard and get some coffee.
 5. Run `grunt translate --txusername=<transifex username> --txpassword=<transifex password>` to get the newest translations or run `grunt release --txusername=<transifex username> --txpassword=<transifex password>` to make a release with the newest translations.
 
-
-## Browser compatibility chart
-
-Lizard NXT may not work as expected in every browser, which is why we attempt to track compatibility using the following table.
-If you experience errors, bugs or visual inconsistency, please `create <https://github.com/nens/lizard-nxt/issues/new>`_ a new issue, and update this table (or contact us).
-
-+---------------------------------------------------------------------------------------------------------------+----------+
-| Browser compatibility chart  *(blank: not tested, X: broken, V: success)*                                     |          |
-+-------------------+-----+-----+-----+------+----------+----------+--------------+--------------+--------------+----------+
-|                   | IE7 | IE8 | IE9 | IE10 | FF (Win) | FF (Mac) | Safari (Mac) | Chrome (Win) | Chrome (Mac) | iPad 2/3 |
-+===================+=====+=====+=====+======+==========+==========+==============+==============+==============+==========+
-| Omnibox           |     |     |     |      |          |     V    |      V       |              |     V        |          |
-+-------------------+-----+-----+-----+------+----------+----------+--------------+--------------+--------------+----------+
-| Layer selector    |     |     |     |      |          |     V    |      V       |              |     V        |          |
-+-------------------+-----+-----+-----+------+----------+----------+--------------+--------------+--------------+----------+
-| Map controls      |     |     |     |      |          |     V    |      V       |              |     V        |          |
-+-------------------+-----+-----+-----+------+----------+----------+--------------+--------------+--------------+----------+
-| KPI tool          |     |     |     |      |          |     V    |      V       |              |     V        |          |
-+-------------------+-----+-----+-----+------+----------+----------+--------------+--------------+--------------+----------+
-| Profile tool      |     |     |     |      |          |     V    |      V       |              |     V        |          |
-+-------------------+-----+-----+-----+------+----------+----------+--------------+--------------+--------------+----------+
-| Styling / layout  |     |     |     |      |          |     V    |      V       |              |     V        |          |
-+-------------------+-----+-----+-----+------+----------+----------+--------------+--------------+--------------+----------+
 
 
 ## Angular coding guidelines

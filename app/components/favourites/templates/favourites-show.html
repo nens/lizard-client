@@ -16,7 +16,7 @@ Add the current portal state to your favourites!
             class="clickable">
           <i class="fa text-primary" ng-class="obj.state.context === 'map' ? 'fa-globe': 'fa-bar-chart'"></i>
         </td>
-        <td ng-click="selectFavourite(obj)"
+        <td ng-click="selectFavourite(obj);toggleFavourites($event);"
             class="clickable">
           <% obj.name %>
         </td>

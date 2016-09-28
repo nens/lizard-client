@@ -35,7 +35,6 @@
       </div>
 
       <table class="table">
-
         <tr>
           <td colspan="3">
             <span translate>Model:</span>
@@ -50,7 +49,12 @@
             <span translate>Start (simulation time)</span>
           </td>
           <td>
-            <span><% scenario.start_time_sim | date: 'M/d/y HH:mm:ss' %></span>
+            <span ng-if="scenario.start_time_sim">
+              <% scenario.start_time_sim | date: 'M/d/y HH:mm:ss' %>
+            </span>
+            <span ng-if="!scenario.start_time_sim">
+              --:--:--
+            </span>
           </td>
           <td/>
         </tr>
@@ -59,18 +63,21 @@
             <span translate>End (simulation time)</span>
           </td>
           <td>
-            <span><% scenario.end_time_sim | date: 'M/d/y HH:mm:ss' %></span>
+            <span ng-if="scenario.start_time_sim"><% scenario.end_time_sim | date: 'M/d/y HH:mm:ss' %></span>
+            <span ng-if="!scenario.end_time_sim">
+              --:--:--
+            </span>
           </td>
           <td/>
         </tr>
 
         <tr ng-repeat="result in scenario.result_set">
           <td colspan="3" title="<% result.result_type.name %>">
-            <span ng-if="!result.result_type.has_raster">
+            <span ng-if="!result.raster">
               <% result.result_type.name %>
             </span>
             <rasterlayer
-              ng-if="result.result_type.has_raster"
+              ng-if="result.raster"
               layer="result.layer">
             </rasterlayer>
           </td>

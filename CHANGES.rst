@@ -1,12 +1,25 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (4.1.1) (XXXX-XX-XX)
+Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
+- Change the export to retrieve XLSX instead of CSV
+
+
+Release 4.1.2 (2016-9-9)
+---------------------
 
 - Added titles and attributes for Buildings and Roads.
 
 - Fix nens/lizard-nxt#1955. Raster wms tiles now respect the slug.
+
+- Renamed `layer` into `wmslayer` to match a (Django) model name change.
+
+- Fixed download link of time series export.
+
+
+Release 4.1.2 (2016-9-9)
+---------------------
 
 - Set the right display names for the changed scenarios
 
@@ -14,10 +27,6 @@ Unreleased (4.1.1) (XXXX-XX-XX)
 
 - Nested Assets are now shown as nested assets in dashboard. They also show
   the info and thresholds in the graphs.
-
-- Renamed `layer` into `wmslayer` to match a (Django) model name change.
-
-- Fixed download link of time series export.
 
 
 Release 4.1.1 (2016-8-26)
