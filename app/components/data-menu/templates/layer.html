@@ -14,6 +14,7 @@
       </del>
       <div class="layer-chooser-tools">
         <i class="fa fa-close"
+           ng-hide="closebutton === false"
            ng-click="remove(layer); $event.stopPropagation()"></i>
         <i ng-if="zoomToBounds"
           ng-click="zoomToBounds(); $event.stopPropagation()"

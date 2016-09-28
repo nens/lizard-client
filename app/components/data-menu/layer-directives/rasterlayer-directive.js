@@ -85,6 +85,7 @@ angular.module('data-menu')
     link: link,
     scope: {
       layer: '=',
+      closebutton: '=',
     },
     templateUrl: 'data-menu/templates/layer.html',
     restrict: 'E',
