@@ -54,6 +54,7 @@
         <tr ng-if="result.raster" ng-repeat="result in scenario.result_set">
           <td colspan="2">
             <rasterlayer
+              closebutton="false"
               ng-if="result.raster"
               layer="result.layer">
             </rasterlayer>
