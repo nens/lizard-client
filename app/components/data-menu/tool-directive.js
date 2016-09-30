@@ -24,9 +24,7 @@ angular.module('data-menu')
       }
       scope.boxType = scope.type;
     };
-
     scope.lzIcons = ['multi-point-tool', 'line-tool', 'region-tool'];
-
   };
 
   return {
