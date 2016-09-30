@@ -4,6 +4,9 @@ Changelog of lizard-nxt client
 Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
 
+- Use 3 new icons for (i) multiple point selection, (ii) line selection and
+  (iii) area selection.
+
 - Fine tuning of layout of scenarios in layer menu.
 
 - Change the export to retrieve XLSX instead of CSV.
