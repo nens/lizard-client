@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 4.1.4 (2016-9-30)
+---------------------
 
 - Use 3 new icons for (i) multiple point selection, (ii) line selection and
   (iii) area selection.
