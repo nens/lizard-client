@@ -3,10 +3,13 @@ Changelog of lizard-nxt client
 
 Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
-- Change the export to retrieve XLSX instead of CSV
+
+- Fine tuning of layout of scenarios in layer menu.
+
+- Change the export to retrieve XLSX instead of CSV.
 
 
-Release 4.1.2 (2016-9-9)
+Release 4.1.3 (2016-9-27)
 ---------------------
 
 - Added titles and attributes for Buildings and Roads.
