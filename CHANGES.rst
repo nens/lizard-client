@@ -3,11 +3,13 @@ Changelog of lizard-nxt client
 
 Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix missing agg request parameter.
 
 
 Release 4.1.5 (2016-9-30)
 ---------------------
+
 -
 
 

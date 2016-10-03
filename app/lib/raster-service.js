@@ -16,7 +16,7 @@ angular.module('lizard-nxt')
   var getData = function (options) {
 
     var srs = 'EPSG:4326',
-        agg = options.agg || '',
+        agg = options.aggType || '',
         startString,
         endString,
         aggWindow;
