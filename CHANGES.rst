@@ -3,7 +3,7 @@ Changelog of lizard-nxt client
 
 Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
--
+- Fix graphs for raster aggregate data.
 
 
 Release 4.1.8 (2016-10-4)

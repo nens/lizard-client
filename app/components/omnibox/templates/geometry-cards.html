@@ -51,7 +51,7 @@
     </div>
 
     <div
-      ng-if="content.data
+      ng-if="properties.data
       && (geom.geometry.type === 'Polygon' || geom.geometry.type === 'MultiPolygon')
       && properties.slug !== 'rain'"
       class="card active">
@@ -90,7 +90,7 @@
         </div>
 
         <graph
-          ng-if="properties.aggType === 'curve'"
+          ng-if="properties.agg === 'curve'"
           line
           xlabel="'[%]'"
           ylabel="properties.unit"
@@ -99,7 +99,7 @@
         </graph>
 
         <graph
-          ng-if="properties.aggType === 'histogram'"
+          ng-if="properties.agg === 'histogram'"
           bar-chart
           quantity="'linear'"
           ylabel="'[%]'"
@@ -109,7 +109,7 @@
         </graph>
 
         <graph
-          ng-if="properties.aggType === 'counts'"
+          ng-if="properties.agg === 'counts'"
           horizontal-stack
           data="properties.data"
           keys="{x: 'data', y: 'label'}"
