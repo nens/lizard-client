@@ -90,7 +90,7 @@
         </div>
 
         <graph
-          ng-if="properties.agg === 'curve'"
+          ng-if="properties.aggType === 'curve'"
           line
           xlabel="'[%]'"
           ylabel="properties.unit"
@@ -99,7 +99,7 @@
         </graph>
 
         <graph
-          ng-if="properties.agg === 'histogram'"
+          ng-if="properties.aggType === 'histogram'"
           bar-chart
           quantity="'linear'"
           ylabel="'[%]'"
@@ -109,7 +109,7 @@
         </graph>
 
         <graph
-          ng-if="properties.agg === 'counts'"
+          ng-if="properties.aggType === 'counts'"
           horizontal-stack
           data="properties.data"
           keys="{x: 'data', y: 'label'}"

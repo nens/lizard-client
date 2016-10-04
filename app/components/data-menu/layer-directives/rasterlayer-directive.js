@@ -40,7 +40,8 @@ angular.module('data-menu')
             quantity: response.observation_type
               && response.observation_type.parameter_short_display_name,
             unit: response.observation_type
-              && response.observation_type.referenced_unit_short_display_name
+              && response.observation_type.referenced_unit_short_display_name,
+            styles: response.options.styles
           }));
 
           // If the layer did not have a name, check if the backend has one.

@@ -5,6 +5,10 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
 - Fix graphs for raster aggregate data.
 
+- Fix missing styles parameter.
+
+- Fix agg => aggType.
+
 
 Release 4.1.8 (2016-10-4)
 ---------------------
