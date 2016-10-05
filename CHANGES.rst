@@ -6,6 +6,8 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 
 - Fix rain statistics.
 
+- Fix empty graphs (Hoogte, Dem).
+
 
 Release 4.1.9 (2016-10-4)
 ---------------------
