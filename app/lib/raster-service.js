@@ -58,7 +58,7 @@ angular.module('lizard-nxt')
     };
 
     if (agg == 'counts') {
-      requestOptions[styles] = options.styles;
+      requestOptions['styles'] = options.styles;
     }
 
     if (options.id) {
