@@ -69,7 +69,8 @@ angular.module('timeseries')
         });
 
         TimeseriesService.syncTime().then(getContentForAsset);
-
+        TimeseriesService.selectedTimeseriesUuid =
+          scope.timeseries.selected.uuid;
       };
 
 
