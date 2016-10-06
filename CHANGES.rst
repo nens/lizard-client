@@ -10,6 +10,9 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 
 - Minor translation issue: Select datalayers.
 
+- Only show a single TS when switching to dashboard view.
+
+
 
 Release 4.1.9 (2016-10-4)
 ---------------------
