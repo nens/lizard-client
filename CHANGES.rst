@@ -8,6 +8,8 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 
 - Fix icon to switch from dashboard to map is incorrect.
 
+- Minor translation issue: Select datalayers.
+
 
 Release 4.1.9 (2016-10-4)
 ---------------------
