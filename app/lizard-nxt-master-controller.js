@@ -96,6 +96,10 @@ angular.module('lizard-nxt')
     return $scope.context === 'map' ? 'Dashboard' : 'Map';
   };
 
+  $scope.getContextComplementIcon = function () {
+    return $scope.context === 'map' ? 'fa-bar-chart' : 'fa-globe';
+  };
+
   // END CONTEXT
 
   $scope.toggleVersionVisibility = function () {
