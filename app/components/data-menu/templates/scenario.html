@@ -26,7 +26,6 @@
         class="panel-heading layer-item layer-img"
         title="<% layer.name || layer.type + ': ' + layer.uuid %>">
           <% layer.name  || 'raster' + ': ' + layer.uuid %>
-          <span class="pull-right filesize"><% scenario.total_size / 1000000 | number : 2 %>mb</span>
           <div class="layer-chooser-tools">
             <i class="fa fa-close"
                ng-click="remove(layer); $event.stopPropagation()">
@@ -34,63 +33,68 @@
           </div>
       </div>
 
-      <table class="table">
+      <table class="table" border="0">
         <tr>
           <td colspan="3">
             <span translate>Model:</span>
-            <a href="<% scenario.model_url %>" target="_blank" title="<% 'Go to modelbank' | translate %>">
-              <span><% scenario.model_name %>#<% scenario.model_revision %></span>
+              <span>
+                <% scenario.model_name %>#<% scenario.model_revision %>
+              </span>
           </td>
-          <td/>
-          <td/>
         </tr>
         <tr>
-          <td colspan="3">
+          <td>
             <span translate>Start (simulation time)</span>
           </td>
-          <td>
+          <td colspan="2">
             <span ng-if="scenario.start_time_sim">
               <% scenario.start_time_sim | date: 'M/d/y HH:mm:ss' %>
             </span>
             <span ng-if="!scenario.start_time_sim">
-              --:--:--
+              --/--/---- --:--:--
             </span>
           </td>
-          <td/>
         </tr>
         <tr>
-          <td colspan="3">
+          <td>
             <span translate>End (simulation time)</span>
           </td>
-          <td>
-            <span ng-if="scenario.start_time_sim"><% scenario.end_time_sim | date: 'M/d/y HH:mm:ss' %></span>
+          <td colspan="2">
+            <span ng-if="scenario.start_time_sim">
+              <% scenario.end_time_sim | date: 'M/d/y HH:mm:ss' %>
+            </span>
             <span ng-if="!scenario.end_time_sim">
-              --:--:--
+              --/--/---- --:--:--
             </span>
           </td>
-          <td/>
         </tr>
 
         <tr ng-repeat="result in scenario.result_set">
-          <td colspan="3" title="<% result.result_type.name %>">
-            <span ng-if="!result.raster">
-              <% result.result_type.name %>
+          <td class="col-md-6" title="<% result.result_type.name %>" ng-hide="!result.value">
+            <span ng-if="!result.result_type.has_raster">
+              <small><% result.result_type.name %></small>
             </span>
             <rasterlayer
               closebutton="false"
-              ng-if="result.raster"
+              ng-if="result.result_type.has_raster"
               layer="result.layer">
             </rasterlayer>
           </td>
-          <td>
+          <td class="col-md-3" ng-hide="!result.value">
             <span ng-if="result.result_type.has_value">
               <span>
-                {{ result.result_type.code === 'damage' ? '&euro;' : '' }}
+                <small ng-if="!result.result_type.has_raster">
+                {{ result.result_type.code === 'damage_estimation_json' ? '&euro;' : '' }}
                 <% result.value | number: 0 %>
+                </small>
+                <span ng-if="result.result_type.has_raster">
+                {{ result.result_type.code === 'damage_estimation_json' ? '&euro;' : '' }}
+                <% result.value | number: 0 %>
+              </span>
               </span>
             </span>
           </td>
-          <td>
+          <td class="col-md-3" ng-hide="!result.value">
             <div ng-if="result.result_type.has_attachment">
               <a target="_blank"
                  href="<% result.attachment_url %>"
