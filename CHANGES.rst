@@ -3,11 +3,15 @@ Changelog of lizard-nxt client
 
 Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix rain statistics.
+
+- Fix icon to switch from dashboard to map is incorrect.
 
 
 Release 4.1.9 (2016-10-4)
 ---------------------
+
 - Fix graphs for raster aggregate data.
 
 - Fix missing styles parameter.
