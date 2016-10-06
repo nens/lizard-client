@@ -95,6 +95,15 @@ angular.module('data-menu')
               }
             });
 
+            // Custom sort to get rasters on top
+            scenario.result_set.sort(function(a, b) {
+              if(a.result_type.has_raster === false) {
+                return 1;
+              } else {
+                return -1;
+              }
+            });
+
           })
 
           .catch(function () {
