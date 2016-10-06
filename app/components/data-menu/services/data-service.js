@@ -316,7 +316,7 @@ angular.module('data-menu')
 
         options.geom = geo.geometry;
 
-        if (geo.geometry && geo.geometry.type === 'Polygon' && geo.id) {
+        if (geo.geometry && (geo.geometry.type === 'Polygon' || geo.geometry.type === 'MultiPolygon') && geo.id) {
           options.id = geo.id;
         }
 
