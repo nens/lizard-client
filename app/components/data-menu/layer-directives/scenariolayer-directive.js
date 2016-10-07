@@ -47,7 +47,7 @@ angular.module('data-menu')
       var getOrCreateLayer = function (layerConf, resultType) {
         var layer = _.find(State.layers, {uuid: layerConf.uuid});
         if (!layer) {
-          layer = {uuid: layerConf.uuid, type: 'raster'};
+          layer = {uuid: layerConf.uuid.slice(0, 7), type: 'raster'};
           State.layers.push(layer);
         }
         layer.scenario = scope.layer.uuid;
