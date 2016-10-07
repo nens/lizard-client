@@ -8,6 +8,8 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 
 - Fix base layers hiding other layers (#1998).
 
+- Do not poll inbox for anonymous users.
+
 
 Release 4.1.10 (2016-10-7)
 ---------------------
