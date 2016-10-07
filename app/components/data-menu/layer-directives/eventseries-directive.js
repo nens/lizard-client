@@ -34,7 +34,7 @@ angular.module('data-menu')
           DataService.dataLayers.push(eventseriesDataLayer({
             uuid: scope.layer.uuid,
             url: 'api/v2/events/?event_series=' + scope.layer.uuid,
-            aggType: response.aggregation_type,
+            agg: response.aggregation_type,
             color: response.color,
             scale: response.observation_type
               && response.observation_type.scale,

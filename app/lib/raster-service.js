@@ -16,7 +16,7 @@ angular.module('lizard-nxt')
   var getData = function (options) {
 
     var srs = 'EPSG:4326',
-        agg = options.agg || options.aggType || '',
+        agg = options.agg || '',
         startString,
         endString,
         aggWindow;
@@ -54,9 +54,12 @@ angular.module('lizard-nxt')
       start: startString,
       stop: endString,
       agg: agg,
-      styles: options.styles,
       window: aggWindow
     };
+
+    if (agg == 'counts') {
+      requestOptions['styles'] = options.styles;
+    }
 
     if (options.id) {
       requestOptions.geom_id = options.id;
