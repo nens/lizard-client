@@ -54,25 +54,32 @@ angular.module('timeseries')
   return {
     link: function (scope) {
 
+      var buildTimeseriesURL = function (selectedTimeseriesUuid) {
+        var url = window.location.protocol
+          + '//' + window.location.host
+          + '/api/v2/timeseries/'
+          + selectedTimeseriesUuid
+          + '/data/?format=csv&start='
+          + Math.round(scope.timeState.start)
+          + '&end='
+          + Math.round(scope.timeState.end);
+        return url;
+      }
+
       var selectTimeseries = function () {
-        var selectedTimeseries = scope.timeseries.selected.uuid;
+        var selectedTimeseriesUuid = scope.timeseries.selected.uuid;
 
-        scope.timeseries.selected.url = window.location.protocol + '//'
-            + window.location.host + '/api/v2/timeseries/' + selectedTimeseries
-            + '/data/?format=csv&start=' + Math.round(scope.timeState.start)
-            + '&end=' + Math.round(scope.timeState.end);
-
+        scope.timeseries.selected.url = buildTimeseriesURL(
+          selectedTimeseriesUuid);
         State.selected.timeseries.forEach(function (ts) {
           if (_.find(scope.asset.timeseries, {uuid: ts.uuid})) {
-            ts.active = ts.uuid === selectedTimeseries;
+            ts.active = ts.uuid === selectedTimeseriesUuid;
           }
         });
 
         TimeseriesService.syncTime().then(getContentForAsset);
-        TimeseriesService.selectedTimeseriesUuid =
-          scope.timeseries.selected.uuid;
+        TimeseriesService.selectedTimeseriesUuid = selectedTimeseriesUuid;
       };
-
 
       var getContentForAsset = function (timeseries) {
         scope.content = timeseries.filter(function (ts) {
@@ -121,6 +128,8 @@ angular.module('timeseries')
       scope.$watch('timeState.timelineMoving', function (newValue, oldValue) {
         if (!newValue && newValue !== oldValue) {
           TimeseriesService.syncTime().then(getContentForAsset);
+          scope.timeseries.selected.url = buildTimeseriesURL(
+            scope.timeseries.selected.uuid);
         }
       });
 
