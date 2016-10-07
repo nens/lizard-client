@@ -70,17 +70,17 @@
         </tr>
 
         <tr ng-repeat="result in scenario.result_set">
-          <td class="col-md-6" title="<% result.result_type.name %>" ng-hide="!result.value">
+          <td class="col-md-6" title="<% result.result_type.name %>">
             <span ng-if="!result.result_type.has_raster">
               <small><% result.result_type.name %></small>
             </span>
             <rasterlayer
               closebutton="false"
               ng-if="result.result_type.has_raster"
-              layer="result.layer">
+              layer="result.raster">
             </rasterlayer>
           </td>
-          <td class="col-md-3" ng-hide="!result.value">
+          <td class="col-md-3" >
             <span ng-if="result.result_type.has_value">
               <span>
                 <small ng-if="!result.result_type.has_raster">
@@ -94,7 +94,7 @@
               </span>
             </span>
           </td>
-          <td class="col-md-3" ng-hide="!result.value">
+          <td class="col-md-3">
             <div ng-if="result.result_type.has_attachment">
               <a target="_blank"
                  href="<% result.attachment_url %>"
