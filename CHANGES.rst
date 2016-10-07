@@ -3,7 +3,12 @@ Changelog of lizard-nxt client
 
 Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Renamed litology to lithology.
+
+- Fix base layers hiding other layers (#1998).
+
+- Do not poll inbox for anonymous users.
 
 
 Release 4.1.11 (2016-10-7)
