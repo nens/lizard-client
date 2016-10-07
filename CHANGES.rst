@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix base layers hiding other layers (#1998).
 
 
 Release 4.1.10 (2016-10-7)
