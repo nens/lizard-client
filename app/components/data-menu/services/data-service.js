@@ -336,8 +336,12 @@ angular.module('data-menu')
                 geo.properties[layer.uuid] = geo.properties[layer.uuid] || _.clone(dataLayer);
                 // Replace data and merge everything with existing state of
                 // property.
-                geo.properties[layer.uuid].data = [];
-                _.merge(geo.properties[layer.uuid], response);
+                if (response.data) {
+                  geo.properties[layer.uuid].data = [];
+                  _.merge(geo.properties[layer.uuid], response);
+                } else {
+                  geo.properties[layer.uuid].data = response
+                }
                 if ((!layer.active && layer.uuid in Object.keys(geo.properties))
                   || geo.properties[layer.uuid].data === null) {
 
