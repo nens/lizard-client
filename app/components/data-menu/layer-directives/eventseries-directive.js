@@ -36,6 +36,7 @@ angular.module('data-menu')
             url: 'api/v2/events/?event_series=' + scope.layer.uuid,
             agg: response.aggregation_type,
             color: response.color,
+            type: "eventseries",
             scale: response.observation_type
               && response.observation_type.scale,
             quantity: response.observation_type
