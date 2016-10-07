@@ -7,13 +7,14 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 - Fix rain statistics.
 
 - Fix empty graphs (Hoogte, Dem).
+
 - Fix icon to switch from dashboard to map is incorrect.
 
 - Fix landuse graph not working for multipolygons (#1942).
+
 - Minor translation issue: Select datalayers.
 
 - Only show a single TS when switching to dashboard view.
-
 
 
 Release 4.1.9 (2016-10-4)
