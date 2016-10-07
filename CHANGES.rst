@@ -10,6 +10,7 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 
 - Do not poll inbox for anonymous users.
 
+- Fix zoomToBounds() for events.
 
 Release 4.1.10 (2016-10-7)
 ---------------------

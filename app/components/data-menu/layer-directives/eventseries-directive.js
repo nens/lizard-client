@@ -55,7 +55,8 @@ angular.module('data-menu')
           scope.zoomToBounds = LayerAdderService.zoomToBounds.bind({
             bounds: response.spatial_bounds,
             first: response.first_value_timestamp - buffer,
-            last: response.last_value_timestamp + buffer
+            last: response.last_value_timestamp + buffer,
+            temporal: true
           });
 
         })
