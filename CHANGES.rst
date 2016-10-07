@@ -13,6 +13,7 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 
 - Only show a single TS when switching to dashboard view.
 
+- Timeseries CSV export uses correct temporal interval.
 
 
 Release 4.1.9 (2016-10-4)
