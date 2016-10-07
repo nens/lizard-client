@@ -5,6 +5,7 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
 
 - Renamed litology to lithology.
+- Fix base layers hiding other layers (#1998).
 
 
 Release 4.1.10 (2016-10-7)

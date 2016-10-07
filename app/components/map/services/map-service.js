@@ -42,9 +42,9 @@ angular.module('map')
       mapLayers: [],
 
       baselayers: [
-        baselayer({ id: 'topography', url: topography }),
-        baselayer({ id: 'satellite', url: satellite }),
-        baselayer({ id: 'neutral', url: neutral }),
+        baselayer({ id: 'topography', url: topography, zIndex: -1 }),
+        baselayer({ id: 'satellite', url: satellite, zIndex: -1 }),
+        baselayer({ id: 'neutral', url: neutral, zIndex: -1 }),
       ],
 
       /**
