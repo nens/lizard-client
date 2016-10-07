@@ -13,7 +13,8 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 
 Release 4.1.11 (2016-10-7)
 ---------------------
--
+
+- Show scenario rasters again.
 
 
 Release 4.1.10 (2016-10-7)
