@@ -15,7 +15,6 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 - Timeseries CSV export uses correct temporal interval.
 
 
-
 Release 4.1.9 (2016-10-4)
 ---------------------
 
