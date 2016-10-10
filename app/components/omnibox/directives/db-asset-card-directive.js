@@ -39,24 +39,6 @@ angular.module('omnibox')
       scope.noTimeseries = scope.asset.timeseries.length === 0;
 
       /**
-       * Render all timeseries for selected asset when switching to dashboard
-       * view (screen no longer shows up blank..)
-       */
-      if (!scope.noTimeseries) {
-        TimeseriesService.initializeTimeseriesOfAsset(scope.asset);
-
-        var tsViaAsset = _.find(scope.asset.timeseries, {
-          uuid: TimeseriesService.selectedTimeseriesUuid
-        })
-        TimeseriesService.timeseries.push(tsViaAsset);
-
-        var tsViaState = _.find(State.selected.timeseries, {
-          uuid: TimeseriesService.selectedTimeseriesUuid
-        });
-        scope.toggleTimeseries(tsViaState);
-      }
-
-      /**
        * Specific toggle for crosssection
        *
        * @param  {object} asset with entity_name crossection and a crossection

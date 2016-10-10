@@ -5,6 +5,7 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
 
 - Fix rescale, send raster-store slug as layers parameter to wms getLimits.
+- Undo changes to add timeseries to dashboard when switching from map.
 
 
 Release 4.1.14 (2016-10-10)
