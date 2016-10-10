@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html ng-app="lizard-nxt" ng-controller="MasterCtrl" ng-keydown="keyPress($event)" >
+  <head>
+
+    <base href="/">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Lizard</title>
+
+    <link rel="icon" href="/static/client/images/favicon.7a9ab954.png" />
+
+    <link rel="stylesheet" href="/static/client/styles/vendor.6754b585.css">
+
+    <link href='//fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="/static/client/styles/main.a45ee156.css">
+
+  </head>
+
+  <body>
+
+    <!-- use ng-if to reiniatialize when context changes -->
+    <div ng-if="context === 'map' || context === 'scenarios'">
+      <map
+        state="state">
+      </map>
+      <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
+      <timeline class="timeline-map"></timeline>
+    </div>
+
+    <!-- show when map, but always initialize. -->
+    <datamenu ng-show="context === 'map'"></datamenu>
+
+    <div ng-if="context === 'dashboard'">
+      <dashboard></dashboard>
+      <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
+      <timeline class="timeline-dashboard"></timeline>
+    </div>
+
+    <user-menu></user-menu>
+    <favourites></favourites>
+
+    <div id="context-transition-overlay"></div>
+
+    <div id="dark-overlay">
+      <div class="error-message error-text">
+        <span translate>Oops, lizard servers are down.</span>
+        <span translate>If you have any questions, please contact us: </span>
+        <a href="mailto:servicedesk@nelen-schuurmans.nl?subject=Lizard">servicedesk@nelen-schuurmans.nl</a>
+      </div>
+      <div id="mymodal">
+        <p translate>You are using an obsolete browser which is no longer supported by Lizard.</p>
+        <p translate>To view lizard you have to use Internet explorer 10 or up, or use one of the below mentioned alternatives.</p>
+        <ul>
+          <li><a href="http://www.google.com/chrome/">Google Chrome</a></li>
+          <li><a href="https://www.mozilla.org/nl/firefox/new/">Mozilla Firefox</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <script src="/static/client/scripts/vendor.be06f5ea.js"></script>
+
+    <script src="/static/client/scripts/scripts.6425eb80.js"></script>
+  </body>
+</html>
