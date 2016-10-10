@@ -44,16 +44,12 @@ angular.module('omnibox')
        */
       if (!scope.noTimeseries) {
         TimeseriesService.initializeTimeseriesOfAsset(scope.asset);
-
-        var tsViaAsset = _.find(scope.asset.timeseries, {
-          uuid: TimeseriesService.selectedTimeseriesUuid
-        })
-        TimeseriesService.timeseries.push(tsViaAsset);
-
-        var tsViaState = _.find(State.selected.timeseries, {
-          uuid: TimeseriesService.selectedTimeseriesUuid
+        _.forEach(State.selected.timeseries, function (ts) {
+          // de volgordes zijn niet altijd hetzelfde, dus uuid maakt het 100% certain
+          var assetTS = _.find(scope.asset.timeseries, {uuid: ts.uuid});
+          TimeseriesService.timeseries.push(assetTS);
+          scope.toggleTimeseries(ts);
         });
-        scope.toggleTimeseries(tsViaState);
       }
 
       /**
