@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 4.1.14 (2016-10-10)
+---------------------
 
 - Undo "do not poll inbox for anonymous users".
 
