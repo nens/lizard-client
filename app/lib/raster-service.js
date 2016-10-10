@@ -57,8 +57,8 @@ angular.module('lizard-nxt')
       window: aggWindow
     };
 
-    if (agg == 'counts') {
-      requestOptions['styles'] = options.styles;
+    if (agg === 'counts') {
+      requestOptions.styles = options.styles;
     }
 
     if (options.id) {
