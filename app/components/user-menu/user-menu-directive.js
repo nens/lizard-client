@@ -168,13 +168,11 @@ angular.module('user-menu')
        * and put the messages on the scope.
        */
       var getMessages = function () {
-        if (window.user && window.user.authenticated) {
-          $http.get('/api/v2/inbox/').then(function (response) {
-            scope.inbox = response.data;
-          }, function (response) {
-            console.error(response.data);
-          });
-        }
+        $http.get('/api/v2/inbox/').then(function (response) {
+          scope.inbox = response.data;
+        }, function (response) {
+          console.error(response.data);
+        });
       };
 
       // do initial call
