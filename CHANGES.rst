@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix rescale, send raster-store slug as layers parameter to wms getLimits.
 
 
 Release 4.1.14 (2016-10-10)
