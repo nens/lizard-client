@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Undo changes to add timeseries to dashboard when switching from map.
 
 
 Release 4.1.14 (2016-10-10)
