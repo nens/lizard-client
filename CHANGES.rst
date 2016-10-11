@@ -3,13 +3,16 @@ Changelog of lizard-nxt client
 
 Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Annotation default not present in portal, if present and active: add and turn
+  on.
 
 
 Release 4.1.15 (2016-10-10)
 ---------------------
 
 - Fix rescale, send raster-store slug as layers parameter to wms getLimits.
+
 - Undo changes to add timeseries to dashboard when switching from map.
 
 

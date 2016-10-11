@@ -579,7 +579,10 @@ angular.module('lizard-nxt')
           language: getLanguage(),
           context: getContext(),
           baselayer: getBaselayer(),
-          annotations: { active: getAnnotations() },
+          // If active return an object with active, otherwise leave it. The url
+          // does not contain inactive layers. This is consistent with other
+          // layers.
+          annotations: getAnnotations() ? { active: true } : undefined,
           layers: {active: getLayers()},
           box: {type: getBoxType()},
           selected: getSelected(),
