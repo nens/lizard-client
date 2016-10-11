@@ -18,6 +18,7 @@ angular.module('lizard-nxt')
   ['$scope',
    '$rootScope',
    '$timeout',
+   '$window',
    'CabinetService',
    'UtilService',
    'ClickFeedbackService',
@@ -30,6 +31,7 @@ angular.module('lizard-nxt')
   function ($scope,
             $rootScope,
             $timeout,
+            $window,
             CabinetService,
             UtilService,
             ClickFeedbackService,
@@ -104,6 +106,19 @@ angular.module('lizard-nxt')
 
   $scope.toggleVersionVisibility = function () {
     $('.navbar-version').toggle();
+  };
+
+  /**
+   * Returns Lizard || DDSC + the Subdomain.
+   */
+  $scope.getDocumentTitle = function () {
+    var application = 'Lizard';
+    if ($window.location.host === 'portal.ddsc.nl') {
+      application = 'DDSC';
+    }
+    var portal = $window.location.host.split('.')[0]
+    portal = portal.charAt(0).toUpperCase() + portal.slice(1);
+    return application + ' ' + portal;
   };
 
   UtilService.preventOldIEUsage();
