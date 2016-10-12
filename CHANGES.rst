@@ -12,6 +12,8 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 - Fix multiple eventseries messup: use uuid to select svg elements
   and prepend with non-numbers to prevent breaking css selectors.
 
+- Pass temporal to data-service so omnibox can draw graphs for temporal data.
+
 
 Release 4.1.15 (2016-10-10)
 ---------------------
