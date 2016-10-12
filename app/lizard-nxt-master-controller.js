@@ -63,10 +63,8 @@ angular.module('lizard-nxt')
   $scope.transitionToContext = function (context) {
     if (context !== State.context) {
       State.context = context;
-      if (State.context === 'map' && State.box.type === 'point') {
-        rmAllButLastAssetAndGeometry();
-      }
     }
+
     var overlay = angular.element('#context-transition-overlay')[0];
     overlay.style.transition = null;
     overlay.style.minHeight = window.innerHeight + 'px';
