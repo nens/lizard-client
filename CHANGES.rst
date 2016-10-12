@@ -9,6 +9,9 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 
 - Document.title DDSC if ddsc.
 
+- Fix multiple eventseries messup: use uuid to select svg elements
+  and prepend with non-numbers to prevent breaking css selectors.
+
 
 Release 4.1.15 (2016-10-10)
 ---------------------

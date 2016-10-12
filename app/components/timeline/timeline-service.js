@@ -275,11 +275,11 @@ angular.module('lizard-nxt')
      *     properties.event_series_id: event_series id,
      *     geometry.coordinates: [lat, lon]}]
      * @param {integer} order - Order of events.
-     * @param {string} slug - Slug of event layer.
+     * @param {string} id - Id of event layer.
      * @param {string} color - Hex color code.
      */
     drawCircles: {
-      value: function (data, order, slug, color, aggWindow) {
+      value: function (data, order, id, color, aggWindow) {
         circles = drawCircleElements(
           this._svg,
           this.dimensions,
@@ -287,7 +287,7 @@ angular.module('lizard-nxt')
           ordinalYScale,
           data,
           order,
-          slug,
+          id,
           color,
           aggWindow
         );
@@ -867,11 +867,11 @@ angular.module('lizard-nxt')
    *     properties.event_series_id: event_series id,
    *     geometry.coordinates: [lat, lon]}]
    * @param {int} order - Order of data (which level to draw in timeline).
-   * @param {string} slug - slug of event series.
+   * @param {string} id - id of event series.
    * @param {string} color - Hex color code.
    */
   var drawCircleElements = function (
-    svg, dimensions, xScale, yScale, data, order, slug, color, aggWindow) {
+    svg, dimensions, xScale, yScale, data, order, id, color, aggWindow) {
 
     var MIN_CIRCLE_SIZE = 3,
         MAX_COUNT = 100;
@@ -893,10 +893,10 @@ angular.module('lizard-nxt')
       var group = svg
                     .select("g")
                     .select("#circle-group")
-                    .select("#" + slug);
+                    .select("#event" + id);
       if (!group[0][0]) {
         group = svg.select("g").select("#circle-group").append("g")
-          .attr("id", slug);
+          .attr("id", 'event' + id);
       }
 
       // DATA JOIN

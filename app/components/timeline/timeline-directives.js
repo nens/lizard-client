@@ -113,7 +113,7 @@ angular.module('lizard-nxt')
 
 
     // keep track of events in this scope
-    var events = {nEvents: 0, slugs: []};
+    var events = {nEvents: 0, uuids: []};
 
     // Initialise timeline
     var timeline = new Timeline(el[0], dimensions, start, end, interaction);
@@ -146,7 +146,6 @@ angular.module('lizard-nxt')
       if (showTimeline) {
         element[0].style.height = newDim.height + 5 + 'px'; // 5px margins
       }
-
 
       timeline.resize(
         newDim,
@@ -229,7 +228,7 @@ angular.module('lizard-nxt')
         });
 
         events.nEvents = timelineLayers.eventseries.length;
-        // update slugs on scope for housekeeping
+        // update uuids on scope for housekeeping
         events.uuids = _.flatMap(timelineLayers.eventseries, 'uuid');
         getEventData(timelineLayers.eventseries);
       } else {
@@ -269,7 +268,7 @@ angular.module('lizard-nxt')
       var context = {
         eventOrder: 1,
         nEvents: events.nEvents,
-        slugs: events.slugs
+        uuids: events.uuids
       };
 
       var draw = function (response) {
@@ -284,7 +283,7 @@ angular.module('lizard-nxt')
           timeline.drawCircles(
             data,
             context.eventOrder,
-            this.name,
+            this.uuid,
             this.color,
             State.temporal.aggWindow
           );
