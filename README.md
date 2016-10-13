@@ -110,28 +110,7 @@ This creates a staging release of master.
 
 
 ### Deployment
-
-Deployment is done with `ansible`. Make sure to install ansible with eg:
-
-    pip install ansible
-
-Copy `hosts.example` to `hosts` and `production_hosts.example` to `production_hosts` and edit to match your server layout.
-
-    cp hosts.example hosts
-    cp production_hosts.example production_hosts
-
-Deploy to integration:
-
-    ansible-playbook -i deploy/hosts --limit=integration -K deploy/deploy.yml
-
-Deploy to staging:
-
-    ansible-playbook -i deploy/hosts --limit=staging -K deploy/deploy.yml --extra-vars="version=2.7.1"
-
-Deploy to production:
-
-    ansible-playbook -i deploy/production_hosts -K deploy/deploy.yml --extra-vars="version=2.7.1"
-
+Check out the client deployment repository https://github.com/nens/client-deployment
 
 ## Source files
 
