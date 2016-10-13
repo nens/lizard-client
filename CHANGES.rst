@@ -7,16 +7,64 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 - When user switches back to map context after having selected more
   than one asset while in db context, the box.type and tool switch to
   'multi-point'.
+- Annotation default not present in portal, if present and active: add and turn
+  on.
+
+- Document.title DDSC if ddsc.
+
+
+Release 4.1.15 (2016-10-10)
+---------------------
+
+- Fix rescale, send raster-store slug as layers parameter to wms getLimits.
+
+- Undo changes to add timeseries to dashboard when switching from map.
+
+
+Release 4.1.14 (2016-10-10)
+---------------------
+
+- Undo "do not poll inbox for anonymous users".
+
+
+Release 4.1.13 (2016-10-7)
+---------------------
+-
+
+
+Release 4.1.12 (2016-10-7)
+---------------------
+
+- Renamed litology to lithology.
+
+- Fix base layers hiding other layers (#1998).
+
+- Do not poll inbox for anonymous users.
+
+- Fix zoomToBounds() for events.
+
+Release 4.1.11 (2016-10-7)
+---------------------
+
+- Show scenario rasters again.
+
+
+Release 4.1.10 (2016-10-7)
+---------------------
 
 - Fix rain statistics.
 
+- Fix empty graphs (Hoogte, Dem).
+
 - Fix icon to switch from dashboard to map is incorrect.
+
+- Fix landuse graph not working for multipolygons (#1942).
 
 - Minor translation issue: Select datalayers.
 
 - Only show a single TS when switching to dashboard view.
 
-
+- Timeseries CSV export uses correct temporal interval.
 
 Release 4.1.9 (2016-10-4)
 ---------------------

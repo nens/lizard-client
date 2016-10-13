@@ -16,6 +16,10 @@ angular.module('data-menu')
       url: 'api/v2/annotations/'
     });
 
+    // If annotations are active, turn it on after creating it. Only once, map-
+    // directive will watch changes.
+    MapService.updateAnnotations();
+
   };
 
   return {

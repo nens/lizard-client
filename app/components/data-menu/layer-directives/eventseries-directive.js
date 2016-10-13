@@ -34,8 +34,10 @@ angular.module('data-menu')
           DataService.dataLayers.push(eventseriesDataLayer({
             uuid: scope.layer.uuid,
             url: 'api/v2/events/?event_series=' + scope.layer.uuid,
-            aggType: response.aggregation_type,
+            agg: response.aggregation_type,
+            format: 'Vector',
             color: response.color,
+            type: "eventseries",
             scale: response.observation_type
               && response.observation_type.scale,
             quantity: response.observation_type
@@ -55,7 +57,8 @@ angular.module('data-menu')
           scope.zoomToBounds = LayerAdderService.zoomToBounds.bind({
             bounds: response.spatial_bounds,
             first: response.first_value_timestamp - buffer,
-            last: response.last_value_timestamp + buffer
+            last: response.last_value_timestamp + buffer,
+            temporal: true
           });
 
         })

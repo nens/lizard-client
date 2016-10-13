@@ -66,7 +66,7 @@ angular.module('global-state')
     // enumarable iteratees only encounter arrays.
     state.baselayer = 'topography';
 
-    state.annotations = {present: true, active: false};
+    state.annotations = {present: false, active: false};
 
     // Collection of layers
     state.layers = [];
