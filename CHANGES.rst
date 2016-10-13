@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 4.1.16 (2016-10-13)
+---------------------
 
 - Annotation default not present in portal, if present and active: add and turn
   on.
