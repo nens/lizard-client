@@ -39,7 +39,24 @@ angular.module('map')
       // Number of rasters currently underway.
       rasterMapLayer._nLoadingRasters = 0;
 
+      // ComplexWmsOptions might have options per zoom and aggWindow. Add layer
+      // with default options.
+      var params = RasterService.getWmsParameters(
+        options.complexWmsOptions,
+        0,
+        0
+      );
+
       rasterMapLayer.update = function (map, timeState, options) {
+
+        // Wms options might be different for current zoom and aggWindow.
+        // Redraw when wms parameters are different for temporal or spatial
+        // zoom.
+        var newParams = RasterService.getWmsParameters(
+          rasterMapLayer.complexWmsOptions,
+          map.getZoom(),
+          timeState.aggWindow
+        );
 
         rasterMapLayer._setOpacity(options.opacity);
 
@@ -47,7 +64,7 @@ angular.module('map')
           rasterMapLayer._syncTime(timeState, map, options, options);
         }
 
-        else if (rasterMapLayer.temporal) {
+        else if (rasterMapLayer.temporal || !_.isEqual(newParams, params)) {
           rasterMapLayer.remove(map);
           rasterMapLayer._add(timeState, map, options);
         }
@@ -124,13 +141,6 @@ angular.module('map')
         // Overwrite defaults with configured wms options. They might be nested
         // for dynamic options per zoomlevel.
         var opts = _.merge(defaultOptions, rasterMapLayer.complexWmsOptions);
-
-        // Rasterservic will flatten complex options by zoom and aggWindow.
-        var params = RasterService.getWmsParameters(
-          opts,
-          map.getZoom(),
-          timeState.aggWindow
-        );
 
         params.opacity = options.opacity;
 

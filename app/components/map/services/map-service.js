@@ -361,7 +361,8 @@ angular.module('map')
         map.on('click',     function (e) { conditionalApply(cbs.onClick, e); });
         map.on('movestart', function (e) { conditionalApply(cbs.onMoveStart, e); });
         map.on('mousemove', function (e) { conditionalApply(cbs.onMouseMove, e); });
-        map.on('moveend',   function (e) { conditionalApply(cbs.onMoveEnd, e); });
+        map.on('moveend', function (e) { conditionalApply(cbs.onMoveEnd, e); });
+        map.on('zoomend', function (e) { conditionalApply(cbs.onZoomEnd, e); });
       },
 
       /**

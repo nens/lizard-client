@@ -34,6 +34,7 @@ angular.module('data-menu')
           DataService.dataLayers.push(rasterDataLayer({
             uuid: scope.layer.uuid,
             slug: response.slug,
+            temporal: response.temporal,
             agg: response.aggregation_type,
             scale: response.observation_type
               && response.observation_type.scale,
