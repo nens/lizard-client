@@ -121,7 +121,7 @@ angular.module('lizard-nxt')
     if ($window.location.host === 'portal.ddsc.nl') {
       application = 'DDSC';
     }
-    var portal = $window.location.host.split('.')[0]
+    var portal = $window.location.host.split('.')[0];
     portal = portal.charAt(0).toUpperCase() + portal.slice(1);
     return application + ' ' + portal;
   };
