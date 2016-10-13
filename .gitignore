@@ -32,3 +32,4 @@ app/translations.js
 # ansible host files
 deploy/hosts
 deploy/production_hosts
+deploy/auth.json

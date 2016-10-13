@@ -1,5 +1,0 @@
-version: master
-deploy_type: integration
-
-sitename: "integration.nxt.lizard.net"
-project_path: "/srv/{{ sitename }}"

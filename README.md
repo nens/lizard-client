@@ -15,8 +15,10 @@ For more than demo purposes Lizard client depends on:
 
 
 ## Requirements
+Install Node and npm (as per: https://github.com/nodesource/distributions#installation-instructions)
 
-    sudo apt-get install git npm nodejs-legacy
+    curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+    sudo apt-get install -y nodejs
 
 
 ## Install
