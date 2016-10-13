@@ -14,6 +14,9 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 
 - Pass temporal to data-service so omnibox can draw graphs for temporal data.
 
+- Only poll messages for authenticated users and when browser tab is active and
+  not busy.
+
 
 Release 4.1.15 (2016-10-10)
 ---------------------
