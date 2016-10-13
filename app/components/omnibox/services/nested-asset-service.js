@@ -47,8 +47,6 @@ angular.module('omnibox')
       });
 
       return nestedAssets;
-
     };
-
   }
 ]);

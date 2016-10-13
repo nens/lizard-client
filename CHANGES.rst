@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
 
+- When user switches back to map context after having selected more
+  than one asset while in db context, the box.type and tool switch to
+  'multi-point'.
+
 - Fix rain statistics.
 
 - Fix icon to switch from dashboard to map is incorrect.

@@ -77,7 +77,6 @@ angular.module('data-menu')
         rebindAssetFunctions();
       };
 
-
       // Rebind add and remove because selected.assets might have been
       // redefined when calling state.selected.assets = []
       var rebindAssetFunctions = function () {
