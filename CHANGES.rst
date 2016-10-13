@@ -17,6 +17,8 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 - Only poll messages for authenticated users and when browser tab is active and
   not busy.
 
+- On zoom change, update layers to reflect complex wms options.
+
 
 Release 4.1.15 (2016-10-10)
 ---------------------
