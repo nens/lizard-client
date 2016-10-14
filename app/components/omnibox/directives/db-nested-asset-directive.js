@@ -28,7 +28,7 @@ angular.module('omnibox')
           State.selected.assets.addAsset(asset.entity_name + '$' + asset.id);
           return asset;
         });
-      })
+      });
 
       scope.$on('$destroy', function () {
         nestedAssets.forEach(function (asset) {

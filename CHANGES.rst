@@ -9,6 +9,9 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 Release 4.1.16 (2016-10-13)
 ---------------------
 
+- When user switches back to map context after having selected more
+  than one asset while in db context, the box.type and tool switch to
+  'multi-point'.
 - Annotation default not present in portal, if present and active: add and turn
   on.
 

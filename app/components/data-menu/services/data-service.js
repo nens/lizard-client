@@ -23,14 +23,12 @@ angular.module('data-menu')
     'AssetService',
     'LayerAdderService',
     'State',
-    'getNestedAssets',
 
     function (
       $q,
       AssetService,
       LayerAdderService,
-      State,
-      getNestedAssets
+      State
     ) {
 
       var instance = this;
@@ -78,7 +76,6 @@ angular.module('data-menu')
 
         rebindAssetFunctions();
       };
-
 
       // Rebind add and remove because selected.assets might have been
       // redefined when calling state.selected.assets = []
