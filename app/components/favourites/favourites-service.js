@@ -202,7 +202,7 @@ angular.module('favourites')
           'selected.geometries',
           'selected.timeseries',
           'context',
-          'box',
+          'box.type',
           'language',
           'baselayer',
           'annotations.active',
