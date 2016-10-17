@@ -3,7 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix favourite layer application. Overhaul Favourite.applyFavourite function:
+  replace layers in array.
+
+- Fix animate zoom to bounds.
 
 
 Release 4.1.16 (2016-10-13)

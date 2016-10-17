@@ -125,13 +125,11 @@ angular.module('map')
           if (bounds instanceof LeafletService.LatLngBounds) {
             service._map.fitBounds.apply(service._map, arguments);
           }
-          else if (bounds.hasOwnProperty('south')
-            && bounds.hasOwnProperty('north')
-            && bounds.hasOwnProperty('east')
-            && bounds.hasOwnProperty('west')) {
+          else if (bounds.hasOwnProperty('_southWest')
+            && bounds.hasOwnProperty('_northEast')) {
             service._map.fitBounds(L.latLngBounds(
-              L.latLng(bounds.south, bounds.east),
-              L.latLng(bounds.north, bounds.west)));
+              L.latLng(bounds._southWest),
+              L.latLng(bounds._northEast)));
           }
         }
       },

@@ -165,31 +165,61 @@ angular.module('favourites')
       };
 
       /**
-       * Replace the current portal state with the favourite state.
-       * @param {object} favourite - The favourite to apply.
+       * Merges State and favourite.state.
+       *
+       * It loops over ATTRIBUTES and replaces State[ATTRIBUTE] with
+       * favourite.state[ATTRIBUTE] if defined in favourite.state.
+       * Two exceptions: 1. State.temporal can be restored relative to
+       * Date.now(). 2. State.layers is defined in State-service as an array
+       * with a computed property *active* which will be lost if replaced. So
+       * the array is emptied and filled with favourite.state.layers if
+       * favourite.state.layers is defined as an array.
+       *
+       * @param {object} favourite - The favourite to apply with a state.
        */
       this.applyFavourite = function (favourite) {
-
         if (favourite.state.temporal && favourite.state.temporal.relative) {
           favourite.state.temporal = adhereTemporalStateToInterval(
             favourite.state.temporal
           );
         }
 
-        // Use _.mergeWith to set the whole array to trigger setters of
-        // properties.
-        var collections = ['active', 'timeseries', 'assets', 'geometries'];
-        _.mergeWith(State, favourite.state,
-          function (_state, favstate, key, parent) {
-            if (collections.indexOf(key) !== -1) {
-              _state = favstate;
-              return _state;
+        if (_.isArray(favourite.state.layers)) {
+          _.remove(State.layers, undefined); // empties array by mutation.
+
+          favourite.state.layers.forEach(
+            function (l) {
+              State.layers.push(l);
             }
+          );
+        }
+
+        var ATTRIBUTES = [
+          'temporal.start',
+          'temporal.end',
+          'temporal.at',
+          'selected.assets',
+          'selected.geometries',
+          'selected.timeseries',
+          'context',
+          'box',
+          'language',
+          'baselayer',
+          'annotations.active',
+          'annotations.present',
+          'spatial.bounds',
+          'spatial.view',
+          'layers.active'
+        ];
+
+        ATTRIBUTES.forEach(function (key) {
+          var favState = _.get(favourite.state, key);
+          if (!_.isUndefined(favState)) {
+            _.set(State, key, favState);
           }
-        );
+        });
 
         UtilService.announceMovedTimeline(State);
-
       };
 
       return this;
