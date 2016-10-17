@@ -6,10 +6,30 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 -
 
 
+Release 4.1.16 (2016-10-13)
+---------------------
+
+- Annotation default not present in portal, if present and active: add and turn
+  on.
+
+- Document.title DDSC if ddsc.
+
+- Fix multiple eventseries messup: use uuid to select svg elements
+  and prepend with non-numbers to prevent breaking css selectors.
+
+- Pass temporal to data-service so omnibox can draw graphs for temporal data.
+
+- Only poll messages for authenticated users and when browser tab is active and
+  not busy.
+
+- On zoom change, update layers to reflect complex wms options.
+
+
 Release 4.1.15 (2016-10-10)
 ---------------------
 
 - Fix rescale, send raster-store slug as layers parameter to wms getLimits.
+
 - Undo changes to add timeseries to dashboard when switching from map.
 
 

@@ -51,7 +51,8 @@ angular.module('map')
             onClick: _clicked,
             onMoveStart: _moveStarted,
             onMoveEnd: _moveEnded,
-            onMouseMove: _mouseMove
+            onMouseMove: _mouseMove,
+            onZoomEnd: _zoomEnd
           }
         );
 
@@ -95,6 +96,14 @@ angular.module('map')
        */
       var _moveStarted = function (e) {
         State.spatial.mapMoving = true;
+      };
+
+      /**
+       * Update layers when zoomlevel changes. Some layers have different
+       * styles or wms layers per zoomlevel.
+       */
+      var _zoomEnd = function (e) {
+        MapService.updateLayers(scope.state.layers);
       };
 
       var circleAlongLine;
@@ -194,7 +203,7 @@ angular.module('map')
        */
       scope.$watch('state.spatial.view', function (n, o) {
         if (n !== o && !mapSetsBounds) {
-          MapService.setView(State.spatial.view, {anitmate: true});
+          MapService.setView(State.spatial.view);
           State.spatial.bounds = MapService.getBounds();
         } else {
           mapSetsView = false;
@@ -206,7 +215,7 @@ angular.module('map')
        */
       scope.$watch('state.spatial.bounds', function (n, o) {
         if (n !== o && !mapSetsBounds) {
-          MapService.fitBounds(State.spatial.bounds, {anitmate: true});
+          MapService.fitBounds(State.spatial.bounds);
           State.spatial.view = MapService.getView();
         } else {
           mapSetsBounds = false;

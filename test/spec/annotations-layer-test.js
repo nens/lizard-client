@@ -10,6 +10,14 @@ describe('Testing annotations layer', function () {
     DataService = $injector.get('DataService');
     MapService = $injector.get('MapService');
     var $rootScope = $injector.get('$rootScope');
+    var State = $injector.get('State');
+
+    // Leaflet's map.hasLayer is called when adding annotations.
+    var mapScope = $rootScope.$new();
+    mapScope.state = State;
+    var mapElement = angular.element('<map state="state"></map>');
+    $compile(mapElement)(mapScope);
+
     $compile('<annotations-layer></annotations-layer>')($rootScope);
     $rootScope.$digest();
   }));
