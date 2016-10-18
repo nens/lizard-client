@@ -674,74 +674,12 @@ angular.module('omnibox')
         valueSuffix: ""
       },
       {
-        keyName: gettext("Sanitary load"),
-        attrName: "sanitary_load",
+        /// Type stelsel
+        keyName: gettext("Sewer system"),
+        attrName: "sewer_system ",
         ngBindValue:
-          "waterchain.sanitary_load | niceNumberOrEllipsis: 2",
-        valueSuffix: "m3/h"
-      },
-      {
-        keyName: gettext("Upstream load"),
-        attrName: "upstream_load",
-        ngBindValue:
-          "waterchain.upstream_load | niceNumberOrEllipsis: 2",
-        valueSuffix: "m3/h"
-      },
-      {
-        keyName: gettext("Inhabitants"),
-        attrName: "inhabitants",
-        ngBindValue:
-          "waterchain.inhabitants | niceNumberOrEllipsis: 2",
+          "waterchain.sewer_system",
         valueSuffix: ""
-      },
-      {
-        keyName: gettext("Water consumption"),
-        attrName: "water_consumption",
-        ngBindValue:
-          "waterchain.water_consumption | niceNumberOrEllipsis: 2",
-        valueSuffix: "m3/h"
-      },
-      {
-        keyName: gettext("Population equivalent"),
-        attrName: "population_equivalent",
-        ngBindValue:
-          "waterchain.population_equivalent | niceNumberOrEllipsis: 2",
-        valueSuffix: ""
-      },
-      {
-        keyName: gettext("Pollution equivalent"),
-        attrName: "pollution_equivalent",
-        ngBindValue:
-          "waterchain.pollution_equivalent | niceNumberOrEllipsis: 2",
-        valueSuffix: ""
-      },
-      {
-        keyName: gettext("Minimum overflow crest level"),
-        attrName: "minimum_overflow_crest_level",
-        ngBindValue:
-          "waterchain.minimum_overflow_crest_level | niceNumberOrEllipsis: 2",
-        valueSuffix: "m"
-      },
-      {
-        keyName: gettext("Connected impervious surface"),
-        attrName: "connected_impervious_surface",
-        ngBindValue:
-          "waterchain.connected_impervious_surface | niceNumberOrEllipsis: 2",
-        valueSuffix: "ha"
-      },
-      {
-        keyName: gettext("Water retention capacity"),
-        attrName: "water_retention_capacity",
-        ngBindValue:
-          "waterchain.water_retention_capacity | niceNumberOrEllipsis: 2",
-        valueSuffix: "mm"
-      },
-      {
-        keyName: gettext("Extraneous water"),
-        attrName: "extraneous_water",
-        ngBindValue:
-          "waterchain.extraneous_water | niceNumberOrEllipsis: 2",
-        valueSuffix: "m3/h"
       },
       {
         keyName: gettext("Pump station"),
@@ -758,11 +696,81 @@ angular.module('omnibox')
         valueSuffix: "m3/h"
       },
       {
+        keyName: gettext("Inhabitants"),
+        attrName: "inhabitants",
+        ngBindValue:
+          "waterchain.inhabitants | niceNumberOrEllipsis: 2",
+        valueSuffix: ""
+      },
+      {
+        keyName: gettext("Population equivalent"),
+        attrName: "population_equivalent",
+        ngBindValue:
+          "waterchain.population_equivalent | niceNumberOrEllipsis: 2",
+        valueSuffix: ""
+      },
+      {
+        keyName: gettext("Water consumption"),
+        attrName: "water_consumption",
+        ngBindValue:
+          "waterchain.water_consumption | niceNumberOrEllipsis: 2",
+        valueSuffix: "m3/h"
+      },
+      {
+        keyName: gettext("Pollution equivalent"),
+        attrName: "pollution_equivalent",
+        ngBindValue:
+          "waterchain.pollution_equivalent | niceNumberOrEllipsis: 2",
+        valueSuffix: ""
+      },
+      {
+        keyName: gettext("Sanitary load"),
+        attrName: "sanitary_load",
+        ngBindValue:
+          "waterchain.sanitary_load | niceNumberOrEllipsis: 2",
+        valueSuffix: "m3/h"
+      },
+      {
+        keyName: gettext("Connected impervious surface"),
+        attrName: "connected_impervious_surface",
+        ngBindValue:
+          "waterchain.connected_impervious_surface | niceNumberOrEllipsis: 2",
+        valueSuffix: "ha"
+      },
+      {
+        keyName: gettext("Water retention capacity"),
+        attrName: "water_retention_capacity",
+        ngBindValue:
+          "waterchain.water_retention_capacity | niceNumberOrEllipsis: 2",
+        valueSuffix: "mm"
+      },
+      {
+        keyName: gettext("Minimum overflow crest level"),
+        attrName: "minimum_overflow_crest_level",
+        ngBindValue:
+          "waterchain.minimum_overflow_crest_level | niceNumberOrEllipsis: 2",
+        valueSuffix: "m"
+      },
+      {
+        keyName: gettext("Upstream load"),
+        attrName: "upstream_load",
+        ngBindValue:
+          "waterchain.upstream_load | niceNumberOrEllipsis: 2",
+        valueSuffix: "m3/h"
+      },
+      {
         keyName: gettext("Down stream area"),
         attrName: "downstream_pumped_drainage_area.name",
         ngBindValue:
           "waterchain.downstream_pumped_drainage_area.name",
         valueSuffix: ""
+      },
+      {
+        keyName: gettext("Extraneous water"),
+        attrName: "extraneous_water",
+        ngBindValue:
+          "waterchain.extraneous_water | niceNumberOrEllipsis: 2",
+        valueSuffix: "m3/h"
       },
     ]
   };
