@@ -33,3 +33,6 @@ app/translations.js
 deploy/hosts
 deploy/production_hosts
 deploy/auth.json
+
+#dist
+dist
