@@ -8,7 +8,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/nens/lizard-client.git"
+    "url": "git://github.com/nens/lizard-client.git",
+    "name": "nens/lizard-client"
   },
   "keywords": [
     "water",
@@ -66,7 +67,7 @@
   },
   "dependencies": {
     "angular-loading-bar": "^0.9.0",
-    "buck-trap": "^1.0.8",
+    "buck-trap": "^1.0.9",
     "chalk": "^1.1.1"
   }
 }
