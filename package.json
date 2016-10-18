@@ -62,11 +62,11 @@
   },
   "scripts": {
     "test": "grunt test",
-    "buck-trap": "buck-trap -a -t ./deploy/auth.json -af ./dist/"
+    "buck-trap": "buck-trap -a"
   },
   "dependencies": {
     "angular-loading-bar": "^0.9.0",
-    "buck-trap": "^1.0.7",
+    "buck-trap": "^1.0.8",
     "chalk": "^1.1.1"
   }
 }
