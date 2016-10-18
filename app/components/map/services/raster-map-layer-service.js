@@ -39,6 +39,12 @@ angular.module('map')
       // Number of rasters currently underway.
       rasterMapLayer._nLoadingRasters = 0;
 
+      // Support pre layergroup refactored rasters. Use slug if no layers in
+      // options
+      if (!rasterMapLayer.complexWmsOptions.layers) {
+        rasterMapLayer.complexWmsOptions.layers = rasterMapLayer.slug;
+      }
+
       // ComplexWmsOptions might have options per zoom and aggWindow. Add layer
       // with default options.
       var params = RasterService.getWmsParameters(
@@ -129,7 +135,6 @@ angular.module('map')
             date = new Date(rasterMapLayer._mkTimeStamp(timeState.at));
 
         var defaultOptions = {
-          layers: rasterMapLayer.slug,
           format: 'image/png',
           version: '1.1.1',
           minZoom: 0,
@@ -142,10 +147,10 @@ angular.module('map')
         // for dynamic options per zoomlevel.
         var opts = _.merge(defaultOptions, rasterMapLayer.complexWmsOptions);
 
-        params.opacity = options.opacity;
+        opts.opacity = opacity;
 
         rasterMapLayer._imageOverlays = [
-          LeafletService.tileLayer.wms(rasterMapLayer._imageUrlBase, params)
+          LeafletService.tileLayer.wms(rasterMapLayer._imageUrlBase, opts)
         ];
 
         rasterMapLayer._addLoadListener(
