@@ -23,7 +23,7 @@
     "url": "https://github.com/nens/lizard-nxt/issues"
   },
   "devDependencies": {
-    "buck-trap": "^1.0.5",
+    "buck-trap": "^1.0.11",
     "connect-modrewrite": "~0.7.9",
     "grunt": "^0.4.1",
     "grunt-angular-gettext": "^2.1.0",
@@ -67,7 +67,6 @@
   },
   "dependencies": {
     "angular-loading-bar": "^0.9.0",
-    "buck-trap": "^1.0.9",
     "chalk": "^1.1.1"
   }
 }
