@@ -9,6 +9,8 @@ Unreleased (4.2.0) (XXXX-XX-XX)
 
 - Fix animate zoom to bounds.
 
+- Change order of pumpeddrainageareas attributes.
+
 
 Release 4.1.16 (2016-10-13)
 ---------------------
