@@ -89,28 +89,72 @@ Doing a release for your package is easy(-ish). There is a grunt task to tag and
 
 **NOTE: make sure you are not running `grunt serve` in a different session**
 
-Change the package.json / bower.json for a major version release. Check for a fixes branch.
-
 Workflow:
 
     git pull origin
     git checkout master
 
-    grunt release --txusername=<transifex username> --txpassword=<transifex password>
+    grunt --txusername=<transifex username> --txpassword=<transifex password>
 
-This creates a staging release of master.
+This creates a build in the `dist/` folder.
 
-**NOTE:** grunt release expects:
+To tag this as a new release and to add the `dist` folder to the release
+attachments you we use nens/buck-trap. It versions your repo and changes the changelog for you.
 
-* There is a CHANGES.rst with `Unreleased ()` as a header.
+	npm run buck-trap
+
+**NOTE:** buck-trap assumes:
+
 * There is a package.json.
-* There is a bower.json.
 * You release from `master` branch.
-* There is a `dist` folder where the build will be released.
+* There is a `dist` folder which will be attached to the release on github
+
+#### Releasing hotfixes or patches
+If a stable release is coming out release it and start a new branch for the 
+stable release e.g.:
+
+	git checkout -b release4.0 
+
+If stuff is fixed on this branch, the fixes can be rolled out as patches without 
+affecting the mainline release track.
+To run buck-trap from this branch and to release the branch with its `CHANGELOG.md`
+
+	npm run buck-trap -- -b release4.0
+
+The fixes and the `CHANGELOG.md` would have to be merged with master, which might 
+give some merge conflicts. C'est la vie.
 
 
 ### Deployment
-Check out the client deployment repository https://github.com/nens/client-deployment
+For the deployment on frontend repositories we make use of the the client 
+deployment repository https://github.com/nens/client-deployment. It is already
+included as a gitsubmodule in this repo.
+
+To update the git submodule:
+	git pull --recurse-submodules
+	git submodule update --remote
+
+Deployment is done with `ansible`. Make sure to install ansible with eg:
+
+    pip install ansible
+
+Copy `hosts.example` to `hosts` and `production_hosts.example` to `production_hosts` and edit to match your server layout.
+
+    cp hosts.example hosts
+    cp production_hosts.example production_hosts
+
+Deploy to integration:
+
+    ansible-playbook -i deploy/hosts --limit=integration -K deploy/deploy.yml
+
+Deploy to staging:
+
+    ansible-playbook -i deploy/hosts --limit=staging -K deploy/deploy.yml --extra-vars="version=2.7.1"
+
+Deploy to production:
+
+    ansible-playbook -i deploy/production_hosts -K deploy/deploy.yml --extra-vars="version=2.7.1"
+
 
 ## Source files
 
