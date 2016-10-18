@@ -37,7 +37,7 @@ angular.module('map')
         wmsMapLayer.wms.setOpacity(options.opacity);
 
         // Wms options might be different for current zoom and aggWindow.
-        var params = RasterService.getWmsParameters(
+        var newParams = RasterService.getWmsParameters(
           wmsMapLayer.complexWmsOptions,
           map.getZoom(),
           timeState.aggWindow
@@ -47,7 +47,10 @@ angular.module('map')
           map.addLayer(wmsMapLayer.wms);
         }
 
-        wmsMapLayer.wms.setParams(params);
+        if (!_.isEqual(newParams, params)) {
+          params = newParams;
+          wmsMapLayer.wms.setParams(params);
+        }
 
         return promise;
       };

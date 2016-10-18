@@ -51,17 +51,18 @@ angular.module('map')
             onClick: _clicked,
             onMoveStart: _moveStarted,
             onMoveEnd: _moveEnded,
-            onMouseMove: _mouseMove
+            onMouseMove: _mouseMove,
+            onZoomEnd: _zoomEnd
           }
         );
 
         if (Object.keys(State.spatial.view).length !== 0) {
           mapSetsView = true;
-          MapService.setView(State.spatial.view);
+          MapService.setView(State.spatial.view, {animate: true});
         }
         else if (Object.keys(State.spatial.bounds).length !== 0) {
           mapSetsBounds = true;
-          MapService.fitBounds(State.spatial.bounds);
+          MapService.fitBounds(State.spatial.bounds, {animate: true});
         }
 
         MapService.updateBaselayers(scope.state.baselayer);
@@ -95,6 +96,14 @@ angular.module('map')
        */
       var _moveStarted = function (e) {
         State.spatial.mapMoving = true;
+      };
+
+      /**
+       * Update layers when zoomlevel changes. Some layers have different
+       * styles or wms layers per zoomlevel.
+       */
+      var _zoomEnd = function (e) {
+        MapService.updateLayers(scope.state.layers);
       };
 
       var circleAlongLine;
@@ -193,8 +202,9 @@ angular.module('map')
        * Watch state spatial view and update the whole shebang.
        */
       scope.$watch('state.spatial.view', function (n, o) {
-        if (n !== o && !mapSetsBounds) {
-          MapService.setView(State.spatial.view, {anitmate: true});
+        if (n !== o && !mapSetsView) {
+          MapService.setView(State.spatial.view, {animate: true});
+          mapSetsBounds = true;
           State.spatial.bounds = MapService.getBounds();
         } else {
           mapSetsView = false;
@@ -206,7 +216,8 @@ angular.module('map')
        */
       scope.$watch('state.spatial.bounds', function (n, o) {
         if (n !== o && !mapSetsBounds) {
-          MapService.fitBounds(State.spatial.bounds, {anitmate: true});
+          MapService.fitBounds(State.spatial.bounds, {animate: true});
+          mapSetsView = true;
           State.spatial.view = MapService.getView();
         } else {
           mapSetsBounds = false;

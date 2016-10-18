@@ -163,24 +163,45 @@ angular.module('user-menu')
         ]);
       };
 
+      var requestAnimationFrame = window.requestAnimationFrame
+      || window.mozRequestAnimationFrame
+      || window.webkitRequestAnimationFrame
+      || window.msRequestAnimationFrame;
+
+      var cancelAnimationFrame = window.cancelAnimationFrame
+      || window.mozCancelAnimationFrame;
+
       /**
-       * getMessages - retrieves messages from the server /inbox/ endpoint
-       * and put the messages on the scope.
+       * Retrieves messages from the server /inbox/ endpoint and put the
+       * messages on the scope without being in the way of the browsers
+       * rendering and only when the browser tab is active.
+       */
+      var poll = requestAnimationFrame.bind(null, function () {
+        $http.get('/api/v2/inbox/')
+        .then(
+          function (response) { scope.inbox = response.data; },
+          function (response) { console.error(response.data); }
+        );
+      });
+
+      // do initial call
+      var pollFrame = poll();
+
+      /**
+       * getMessages - if user is authenticated, cancel previous request for
+       * poll and request browser to schedule another poll.
        */
       var getMessages = function () {
-        if (window.user && window.user.authenticated) {
-          $http.get('/api/v2/inbox/').then(function (response) {
-            scope.inbox = response.data;
-          }, function (response) {
-            console.error(response.data);
-          });
+        if (user.authenticated) {
+          cancelAnimationFrame(pollFrame);
+          pollFrame = poll();
         }
       };
 
-      // do initial call
-      getMessages();
+      var POLL_INTERVAL = 10000; // in milliseconds
+
       // poll for more messages
-      var messageInterval = setInterval(getMessages, 10000);
+      setInterval(getMessages, POLL_INTERVAL);
 
     };
 

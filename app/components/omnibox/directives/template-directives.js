@@ -30,7 +30,7 @@ angular.module('omnibox')
           removeAsset(clickId);
         }
 
-        // Child assets (filters from grounwater stations) do not always have
+        // Child assets (filters from groundwater stations) do not always have
         // a geometry.
         if (asset.geometry) {
 

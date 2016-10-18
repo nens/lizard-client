@@ -20,16 +20,13 @@ angular.module('timeseries')
 
     this.minPoints = GRAPH_WIDTH; // default
 
-    // Save the UUID for the ts rendered in the omnibox, so we can auto-render
-    // it when switching to the Dashboard context.
-    this.selectedTimeseriesUuid = null;
-
     var service = this;
 
     var _timeseries = [];
     Object.defineProperty(State.selected, 'timeseries', {
       get: function () { return _timeseries; },
       set: function (timeseries) {
+        console.log('State.selected.timeseries:', timeseries);
         _timeseries = timeseries;
         service.syncTime(timeseries);
       },
@@ -60,6 +57,7 @@ angular.module('timeseries')
 
       promise.then(function (ts) {
         service.timeseries = ts;
+        console.log('TimeseriesService.timeseries:', service.timeseries);
       })
 
 

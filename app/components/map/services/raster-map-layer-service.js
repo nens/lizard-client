@@ -39,7 +39,24 @@ angular.module('map')
       // Number of rasters currently underway.
       rasterMapLayer._nLoadingRasters = 0;
 
+      // ComplexWmsOptions might have options per zoom and aggWindow. Add layer
+      // with default options.
+      var params = RasterService.getWmsParameters(
+        options.complexWmsOptions,
+        0,
+        0
+      );
+
       rasterMapLayer.update = function (map, timeState, options) {
+
+        // Wms options might be different for current zoom and aggWindow.
+        // Redraw when wms parameters are different for temporal or spatial
+        // zoom.
+        var newParams = RasterService.getWmsParameters(
+          rasterMapLayer.complexWmsOptions,
+          map.getZoom(),
+          timeState.aggWindow
+        );
 
         rasterMapLayer._setOpacity(options.opacity);
 
@@ -47,7 +64,7 @@ angular.module('map')
           rasterMapLayer._syncTime(timeState, map, options, options);
         }
 
-        else if (rasterMapLayer.temporal) {
+        else if (rasterMapLayer.temporal || !_.isEqual(newParams, params)) {
           rasterMapLayer.remove(map);
           rasterMapLayer._add(timeState, map, options);
         }
@@ -78,16 +95,21 @@ angular.module('map')
       };
 
       rasterMapLayer.rescale = function (bounds) {
+        // The wms "layers" parameter should be the slug, but some raster-stores
+        // have multiple layers (i.e. rain) for different zoomlevels. Ideally
+        // we only use the uuid to identify the raster-store. This code works
+        // for elevation, but is a problematic solution.
         if (!rasterMapLayer.temporal) {
           var url = rasterMapLayer._imageUrlBase +
             '?request=getlimits&layers=' +
-            rasterMapLayer.complexWmsOptions.layers +
+            rasterMapLayer.slug +
             '&width=16&height=16&srs=epsg:4326&bbox=' +
             bounds.toBBoxString();
           $http.get(url).success(function (data) {
             var limits = ':' + data[0][0] + ':' + data[0][1];
             // strip existing domain if already present.
-            rasterMapLayer.complexWmsOptions.styles = rasterMapLayer.complexWmsOptions.styles.split(':')[0];
+            rasterMapLayer.complexWmsOptions.styles = rasterMapLayer
+            .complexWmsOptions.styles.split(':')[0];
             rasterMapLayer._imageOverlays[0].setParams({
               styles: rasterMapLayer.complexWmsOptions.styles + limits
             });
@@ -119,13 +141,6 @@ angular.module('map')
         // Overwrite defaults with configured wms options. They might be nested
         // for dynamic options per zoomlevel.
         var opts = _.merge(defaultOptions, rasterMapLayer.complexWmsOptions);
-
-        // Rasterservic will flatten complex options by zoom and aggWindow.
-        var params = RasterService.getWmsParameters(
-          opts,
-          map.getZoom(),
-          timeState.aggWindow
-        );
 
         params.opacity = options.opacity;
 

@@ -1,6 +1,6 @@
 {
   "name": "lizard-client",
-  "version": "4.1.12",
+  "version": "4.1.17",
   "description": "Front-end of lizard-nxt, a Geographic Web Application that connects water data to locations",
   "main": "",
   "directories": {
@@ -8,7 +8,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/nens/lizard-client.git"
+    "url": "git://github.com/nens/lizard-client.git",
+    "name": "nens/lizard-client"
   },
   "keywords": [
     "water",
@@ -22,6 +23,7 @@
     "url": "https://github.com/nens/lizard-nxt/issues"
   },
   "devDependencies": {
+    "buck-trap": "^1.0.11",
     "connect-modrewrite": "~0.7.9",
     "grunt": "^0.4.1",
     "grunt-angular-gettext": "^2.1.0",
@@ -38,7 +40,6 @@
     "grunt-google-cdn": "^0.4.0",
     "grunt-html2js": "~0.2.9",
     "grunt-karma": "~0.12",
-    "grunt-lizard-release": "git://github.com/nens/grunt-lizard-release",
     "grunt-mrdoc": "~0.1.9",
     "grunt-newer": "^0.7.0",
     "grunt-ng-annotate": "^0.3.0",
@@ -61,7 +62,8 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "buck-trap": "buck-trap -a"
   },
   "dependencies": {
     "angular-loading-bar": "^0.9.0",

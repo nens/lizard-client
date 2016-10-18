@@ -3,6 +3,69 @@ Changelog of lizard-nxt client
 
 Unreleased (4.2.0) (XXXX-XX-XX)
 -------------------------------
+
+- Fix favourite layer application. Overhaul Favourite.applyFavourite function:
+  replace layers in array.
+
+- Fix animate zoom to bounds.
+
+- Change order of pumpeddrainageareas attributes.
+
+
+Release 4.1.16 (2016-10-13)
+---------------------
+
+- Annotation default not present in portal, if present and active: add and turn
+  on.
+
+- Document.title DDSC if ddsc.
+
+- Fix multiple eventseries messup: use uuid to select svg elements
+  and prepend with non-numbers to prevent breaking css selectors.
+
+- Pass temporal to data-service so omnibox can draw graphs for temporal data.
+
+- Only poll messages for authenticated users and when browser tab is active and
+  not busy.
+
+- On zoom change, update layers to reflect complex wms options.
+
+
+Release 4.1.16 (2016-10-13)
+---------------------
+
+- Annotation default not present in portal, if present and active: add and turn
+  on.
+
+- Document.title DDSC if ddsc.
+
+- Fix multiple eventseries messup: use uuid to select svg elements
+  and prepend with non-numbers to prevent breaking css selectors.
+
+- Pass temporal to data-service so omnibox can draw graphs for temporal data.
+
+- Only poll messages for authenticated users and when browser tab is active and
+  not busy.
+
+- On zoom change, update layers to reflect complex wms options.
+
+
+Release 4.1.15 (2016-10-10)
+---------------------
+
+- Fix rescale, send raster-store slug as layers parameter to wms getLimits.
+
+- Undo changes to add timeseries to dashboard when switching from map.
+
+
+Release 4.1.14 (2016-10-10)
+---------------------
+
+- Undo "do not poll inbox for anonymous users".
+
+
+Release 4.1.13 (2016-10-7)
+---------------------
 -
 
 
@@ -15,6 +78,7 @@ Release 4.1.12 (2016-10-7)
 
 - Do not poll inbox for anonymous users.
 
+- Fix zoomToBounds() for events.
 
 Release 4.1.11 (2016-10-7)
 ---------------------
