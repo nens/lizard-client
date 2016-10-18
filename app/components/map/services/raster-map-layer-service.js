@@ -142,10 +142,10 @@ angular.module('map')
         // for dynamic options per zoomlevel.
         var opts = _.merge(defaultOptions, rasterMapLayer.complexWmsOptions);
 
-        params.opacity = options.opacity;
+        opts.opacity = opacity;
 
         rasterMapLayer._imageOverlays = [
-          LeafletService.tileLayer.wms(rasterMapLayer._imageUrlBase, params)
+          LeafletService.tileLayer.wms(rasterMapLayer._imageUrlBase, opts)
         ];
 
         rasterMapLayer._addLoadListener(
