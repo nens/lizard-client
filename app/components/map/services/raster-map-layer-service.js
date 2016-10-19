@@ -76,7 +76,7 @@ angular.module('map')
 
         // flattened parameters an be different per zoomlevel in space and time.
         // only update layer when changed to prevent flickering.
-        else if (!_.isEqual(newParams, params)) {
+        else if (rasterMapLayer.temporal || !_.isEqual(newParams, params)) {
           // Keep track of changes to paramaters for next update.
           params = newParams;
           rasterMapLayer.remove(map);
