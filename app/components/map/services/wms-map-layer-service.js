@@ -19,6 +19,12 @@ angular.module('map')
 
       var wmsMapLayer = options;
 
+      // Support pre layergroup refactored layers. Use slug if no layers in
+      // options
+      if (!wmsMapLayer.complexWmsOptions.layers) {
+        wmsMapLayer.complexWmsOptions.layers = wmsMapLayer.slug;
+      }
+
       // ComplexWmsOptions might have options per zoom and aggWindow. Add layer
       // with default options.
       var params = RasterService.getWmsParameters(

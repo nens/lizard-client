@@ -34,7 +34,8 @@ describe('Testing time controller', function () {
       uuid: uuid,
       slug: 'rain',
       temporalResolution: 36000,
-      temporal: true
+      temporal: true,
+      complexWmsOptions: {}
     });
 
     MapService.mapLayers.push(temporalLayer);

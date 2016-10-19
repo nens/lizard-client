@@ -236,23 +236,18 @@ angular.module('lizard-nxt')
         timeline.drawCircles(undefined, events.nEvents);
       }
 
-      if (State.spatial.bounds.isValid()) { // no business here when invalid
-                                            // bounds.
-
-        if (timelineLayers.rain !== undefined) {
-          getTemporalRasterData(
-            timelineLayers.rain,
-            timelineLayers.eventseries.length
-          );
-        } else {
-          timeline.removeBars();
-        }
-        if (timelineLayers.rasters.length > 0) {
-          getTemporalRasterDates(timelineLayers.rasters);
-        } else {
-          timeline.drawTickMarks([]);
-        }
-
+      if (timelineLayers.rain !== undefined) {
+        getTemporalRasterData(
+          timelineLayers.rain,
+          timelineLayers.eventseries.length
+        );
+      } else {
+        timeline.removeBars();
+      }
+      if (timelineLayers.rasters.length > 0) {
+        getTemporalRasterDates(timelineLayers.rasters);
+      } else {
+        timeline.drawTickMarks([]);
       }
 
       updateTimelineSize(events.nEvents);

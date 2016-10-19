@@ -1,16 +1,57 @@
-Changelog of lizard-nxt client
-==============================
+# Change Log
 
-Unreleased (4.2.0) (XXXX-XX-XX)
--------------------------------
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+
+
+
+* **docs:** docs are up to date with buck-trap changes ([c917cb0](https://github.com/nens/lizard-client/commit/c917cb0))
+* **favourites:** favourites are restored correctly nens/lizard-nxt[#2036](https://github.com/nens/lizard-client/issues/2036) ([#729](https://github.com/nens/lizard-client/issues/729)) ([dff9f3f](https://github.com/nens/lizard-client/commit/dff9f3f))
+* **release:** add name of repo for buck-trap ([b0f6c48](https://github.com/nens/lizard-client/commit/b0f6c48))
+* **release:** fix release scripts, clean up package.json ([837103e](https://github.com/nens/lizard-client/commit/837103e))
+* **release-scripts:** remove some flags etc ([ee9f46a](https://github.com/nens/lizard-client/commit/ee9f46a))
+
+---------------------
+This is where we changed the way we do changelogs. First we did this by hand. We now
+use nens/buck-trap. It uses the commit messages to create a changelog.
+
+The changelogs for the releases 4.1.16 and 4.2.0 (and everything in between) might suffer
+because of it. Because we didn't merge everything properly. After this all should be fine
+and fixed.
+
+---------------------
 
 - When user switches back to map context after having selected more
   than one asset while in db context, the box.type and tool switch to
   'multi-point'.
 
+- Fix favourite layer application. Overhaul Favourite.applyFavourite function:
+  replace layers in array.
+
+- Fix animate zoom to bounds.
+
 
 Release 4.1.16 (2016-10-13)
----------------------------
+---------------------
+
+- Annotation default not present in portal, if present and active: add and turn
+  on.
+
+- Document.title DDSC if ddsc.
+
+- Fix multiple eventseries messup: use uuid to select svg elements
+  and prepend with non-numbers to prevent breaking css selectors.
+
+- Pass temporal to data-service so omnibox can draw graphs for temporal data.
+
+- Only poll messages for authenticated users and when browser tab is active and
+  not busy.
+
+- On zoom change, update layers to reflect complex wms options.
+
+
+Release 4.1.16 (2016-10-13)
+---------------------
 
 - Annotation default not present in portal, if present and active: add and turn
   on.

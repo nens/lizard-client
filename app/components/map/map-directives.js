@@ -58,11 +58,11 @@ angular.module('map')
 
         if (Object.keys(State.spatial.view).length !== 0) {
           mapSetsView = true;
-          MapService.setView(State.spatial.view);
+          MapService.setView(State.spatial.view, {animate: true});
         }
         else if (Object.keys(State.spatial.bounds).length !== 0) {
           mapSetsBounds = true;
-          MapService.fitBounds(State.spatial.bounds);
+          MapService.fitBounds(State.spatial.bounds, {animate: true});
         }
 
         MapService.updateBaselayers(scope.state.baselayer);
@@ -202,8 +202,9 @@ angular.module('map')
        * Watch state spatial view and update the whole shebang.
        */
       scope.$watch('state.spatial.view', function (n, o) {
-        if (n !== o && !mapSetsBounds) {
-          MapService.setView(State.spatial.view);
+        if (n !== o && !mapSetsView) {
+          MapService.setView(State.spatial.view, {animate: true});
+          mapSetsBounds = true;
           State.spatial.bounds = MapService.getBounds();
         } else {
           mapSetsView = false;
@@ -215,7 +216,8 @@ angular.module('map')
        */
       scope.$watch('state.spatial.bounds', function (n, o) {
         if (n !== o && !mapSetsBounds) {
-          MapService.fitBounds(State.spatial.bounds);
+          MapService.fitBounds(State.spatial.bounds, {animate: true});
+          mapSetsView = true;
           State.spatial.view = MapService.getView();
         } else {
           mapSetsBounds = false;
