@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.2.1"></a>
+## [4.2.1](https://github.com/nens/lizard-client/compare/v4.2.0...v4.2.1) (2016-10-19)
+
+
+### Bug Fixes
+
+* **raster:** use params when adding raster. ([4158d78](https://github.com/nens/lizard-client/commit/4158d78))
+
+
+
 <a name="4.2.0"></a>
 # [4.2.0](https://github.com/nens/lizard-client/compare/4.0.1...v4.2.0) (2016-10-19)
 
