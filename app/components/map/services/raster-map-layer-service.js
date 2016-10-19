@@ -64,15 +64,23 @@ angular.module('map')
           timeState.aggWindow
         );
 
+        // Use opacity of lizard-client-layer as defined in favourite or altered
+        // by user through opacity-slider and passed through options object by
+        // mapservice.
+        newParams.opacity = options.opacity;
         rasterMapLayer._setOpacity(options.opacity);
 
         if (rasterMapLayer.temporal && timeState.playing) {
           rasterMapLayer._syncTime(timeState, map, options, options);
         }
 
-        else if (rasterMapLayer.temporal || !_.isEqual(newParams, params)) {
+        // flattened parameters an be different per zoomlevel in space and time.
+        // only update layer when changed to prevent flickering.
+        else if (!_.isEqual(newParams, params)) {
+          // Keep track of changes to paramaters for next update.
+          params = newParams;
           rasterMapLayer.remove(map);
-          rasterMapLayer._add(timeState, map, options);
+          rasterMapLayer._add(timeState, map, params);
         }
 
         else if (!map.hasLayer(rasterMapLayer._imageOverlays[0])) {
@@ -131,8 +139,7 @@ angular.module('map')
        */
       rasterMapLayer._add = function (timeState, map, options) {
 
-        var opacity = options.opacity,
-            date = new Date(rasterMapLayer._mkTimeStamp(timeState.at));
+        var date = new Date(rasterMapLayer._mkTimeStamp(timeState.at));
 
         var defaultOptions = {
           format: 'image/png',
@@ -143,11 +150,8 @@ angular.module('map')
           time: _formatter(date)
         };
 
-        // Overwrite defaults with configured wms options. They might be nested
-        // for dynamic options per zoomlevel.
-        var opts = _.merge(defaultOptions, rasterMapLayer.complexWmsOptions);
-
-        opts.opacity = opacity;
+        // Overwrite defaults with configured and user defined wms options.
+        var opts = _.merge(defaultOptions, options);
 
         rasterMapLayer._imageOverlays = [
           LeafletService.tileLayer.wms(rasterMapLayer._imageUrlBase, opts)
