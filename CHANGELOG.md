@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.2.0"></a>
+# [4.2.0](https://github.com/nens/lizard-client/compare/4.0.1...v4.2.0) (2016-10-19)
+
+
+### Bug Fixes
+
+* **favourites:** favourites are restored correctly nens/lizard-nxt[#2036](https://github.com/nens/lizard-client/issues/2036) ([#729](https://github.com/nens/lizard-client/issues/729)) ([dff9f3f](https://github.com/nens/lizard-client/commit/dff9f3f))
+* **layers:** add slug as layers to wmsOptions if not explicitly defined in wms or raster layer, fixes nens/lizard-nxt[#2019](https://github.com/nens/lizard-client/issues/2019) ([4fb13b6](https://github.com/nens/lizard-client/commit/4fb13b6))
+* **pda:** changed order of pumped drainage area attributes in omnibox ([#732](https://github.com/nens/lizard-client/issues/732)) ([1a98428](https://github.com/nens/lizard-client/commit/1a98428))
+* **rasters:** be compatible with user defined, complex and flat wms options ([#735](https://github.com/nens/lizard-client/issues/735)) ([47f45b4](https://github.com/nens/lizard-client/commit/47f45b4))
+* **rasters:** pass opts to leaflet ([2000dd5](https://github.com/nens/lizard-client/commit/2000dd5))
+
+
+### Features
+
+* **apps:** Reintroduces the app labels below the app icons ([#731](https://github.com/nens/lizard-client/issues/731)) ([03a1673](https://github.com/nens/lizard-client/commit/03a1673))
+* **release:** add better release scripts and structure that can be reused ([#730](https://github.com/nens/lizard-client/issues/730)) ([008f254](https://github.com/nens/lizard-client/commit/008f254))
+
+
+
+# Change Log
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
 
 
 
