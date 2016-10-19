@@ -84,7 +84,7 @@ angular.module('map')
         }
 
         else if (!map.hasLayer(rasterMapLayer._imageOverlays[0])) {
-          rasterMapLayer._add(timeState, map, options);
+          rasterMapLayer._add(timeState, map, params);
         }
 
       };
