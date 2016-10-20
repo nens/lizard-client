@@ -258,6 +258,8 @@ angular.module('lizard-nxt')
     var graph = this;
 
     var content = barData[0];
+    graph._activeUnit = content.unit;
+
     var data, keys, labels;
     data = content.data;
     keys = content.keys;
@@ -310,7 +312,8 @@ angular.module('lizard-nxt')
       keys,
       data,
       graph.transTime,
-      graph._xDomain
+      graph._xDomain,
+      graph._activeUnit
     );
 
     if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
@@ -320,9 +323,16 @@ angular.module('lizard-nxt')
         graph._xy,
         keys,
         labels,
-        graph.transTime
+        graph._activeUnit
       );
     }
+
+    addZoomToYaxis(
+      graph._svg,
+      graph._xy.y.axis,
+      graph.dimensions,
+      graph._activeUnit
+    );
 
     // Object reference, put it back.
     keys.y = originalKey;
@@ -798,7 +808,6 @@ angular.module('lizard-nxt')
       unitY.scale = Graph.prototype._makeScale(unitY.maxMin, unitY.range, options);
       unitY.axis = Graph.prototype._makeAxis(unitY.scale, options, dimensions);
     });
-
     return yPerUnit;
   };
 
@@ -975,7 +984,7 @@ angular.module('lizard-nxt')
     });
   };
 
-  drawVerticalRects = function (svg, dimensions, xy, keys, data, duration, xDomain) {
+  drawVerticalRects = function (svg, dimensions, xy, keys, data, duration, xDomain, activeUnit) {
 
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
@@ -1001,7 +1010,7 @@ angular.module('lizard-nxt')
                 return d[keys.x];
               }
             }
-          );
+          ).attr("class", "bar unit-" + UtilService.slugify(activeUnit));
 
     // Aggregated events explicitly have an interval property which correspond
     // to a pixel size when parsed by scale function.
@@ -1035,7 +1044,7 @@ angular.module('lizard-nxt')
     // ENTER
     // Create new elements as needed.
     bar.enter().append("rect")
-      .attr("class", "bar")
+      .attr("class", "bar unit-" + UtilService.slugify(activeUnit))
       .attr("x", function (d) { return x.scale(d[keys.x]) - widthFn(d); })
       .attr('width', widthFn)
       .attr("y", function (d) { return y.scale(0); })
@@ -1081,14 +1090,15 @@ angular.module('lizard-nxt')
   };
 
 
-  addInteractionToRects = function (svg, dimensions, xy, keys, labels, duration) {
+  addInteractionToRects = function (svg, dimensions, xy, keys, labels, activeUnit) {
+    var unitClass = "unit-" + UtilService.slugify(activeUnit);
     var height = Graph.prototype._getHeight(dimensions),
       width = Graph.prototype._getWidth(dimensions),
         fg = svg.select('#feature-group');
 
     var cb = function (d) {
       removeAllSelection();
-      d3.select(this).attr('class', 'selected bar');
+      d3.select(this).attr('class', 'selected bar ' + unitClass);
       var g = fg.append('g').attr('class', 'interaction-group');
 
 
@@ -1140,7 +1150,7 @@ angular.module('lizard-nxt')
     };
 
     var removeAllSelection = function () {
-      fg.selectAll('.bar').attr('class', 'bar');
+      fg.selectAll('.bar').attr('class', "bar " + unitClass);
       fg.select('.interaction-group').remove();
     };
 
@@ -1453,12 +1463,13 @@ angular.module('lizard-nxt')
    * @param {string}  activeUnit the currently active unit.
    */
   var addZoomToYaxis = function (svg, axis, dimensions, activeUnit) {
+    var DEFAULT_SELECTOR = ['path', '.line', '.bar'];
     var selector = activeUnit
       ? '.unit-' + UtilService.slugify(activeUnit)
-      : ['path', '.line'];
+      : DEFAULT_SELECTOR;
 
     // Reset transforms on all paths and .lines.
-    svg.select('#feature-group').selectAll(['path', '.line'])
+    svg.select('#feature-group').selectAll(DEFAULT_SELECTOR)
       .attr("transform", "translate(0,0)scale(1)");
 
     var zoomed = function () {
