@@ -149,7 +149,8 @@ angular.module('dashboard')
    * @param {object} properties asset or geometries properties.
    */
   var addPropertyData = function (graphs, properties) {
-    _.forEach(properties, function (property, slug) {
+    _.forEach(properties, function (property) {
+      var slug = property.slug;
       if (property.active) {
         var type = '';
         var item = {};
