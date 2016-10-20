@@ -40,7 +40,6 @@ angular.module('map')
       wmsMapLayer.update = function (map, timeState, options) {
         var promise;
 
-        wmsMapLayer.wms.setOpacity(options.opacity);
 
         // Wms options might be different for current zoom and aggWindow.
         var newParams = RasterService.getWmsParameters(
@@ -48,6 +47,12 @@ angular.module('map')
           map.getZoom(),
           timeState.aggWindow
         );
+
+        // Use opacity of lizard-client-layer as defined in favourite or altered
+        // by user through opacity-slider and passed through options object by
+        // mapservice.
+        newParams.opacity = options.opacity;
+        wmsMapLayer.wms.setOpacity(options.opacity);
 
         if (!map.hasLayer(wmsMapLayer.wms)) {
           map.addLayer(wmsMapLayer.wms);
