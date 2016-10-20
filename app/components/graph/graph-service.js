@@ -642,13 +642,6 @@ angular.module('lizard-nxt')
   };
 
 
-
-  var drawAxes, drawLabel, needToRescale, drawPath, setupLineGraph, createDonut,
-      addInteractionToPath, getBarWidth, drawVerticalRects,
-      addInteractionToRects, drawHorizontalRects, createXGraph, rescale,
-      createYValuesForCumulativeData, getDataSubset, updateYs, drawMultipleAxes,
-      setActiveAxis, addPointsToGraph, addLineToGraph, addThresholds;
-
   /**
    * Draws and updates thresholds of charts.
    *
@@ -659,7 +652,7 @@ angular.module('lizard-nxt')
    * @param {fn}     yScale     d3 scale for y axis.
    * @param {int}    duration   transition duration.
    */
-  addThresholds = function (svg, charts, activeUnit, xRange, yScale, duration) {
+  var addThresholds = function (svg, charts, activeUnit, xRange, yScale, duration) {
     var PADDING = 2; // px.
 
     // Get or create group for thresholds.
@@ -733,7 +726,7 @@ angular.module('lizard-nxt')
    * @param  {object} keys mapping between x, y and keys in the data.
    * @return {array} with added y0 value and cumulative y value.
    */
-  createYValuesForCumulativeData = function (data, keys) {
+  var createYValuesForCumulativeData = function (data, keys) {
     var cumulativeData = [];
     // Group by x value
     d3.nest().key(function (d) {
@@ -754,7 +747,7 @@ angular.module('lizard-nxt')
     return cumulativeData;
   };
 
-  needToRescale = function (data, key, limit, old, xDomain) {
+  var needToRescale = function (data, key, limit, old, xDomain) {
     var newDomain;
     if (key === "y") {
       newDomain = Graph.prototype._maxMin(data, "y");
@@ -782,7 +775,7 @@ angular.module('lizard-nxt')
    * @param {object} - dimensions - object describing the size of the graph
    * @param {boolean}  drawGrid    to draw a grid or not.
    */
-  updateYs = function (charts, yPerUnit, dimensions, drawGrid) {
+  var updateYs = function (charts, yPerUnit, dimensions, drawGrid) {
     var width = Graph.prototype._getWidth(dimensions);
     var options = {
       scale: 'linear',
@@ -811,7 +804,7 @@ angular.module('lizard-nxt')
     return yPerUnit;
   };
 
-  rescale = function (svg, dimensions, xy, data, keys, origin, xDomain) {
+  var rescale = function (svg, dimensions, xy, data, keys, origin, xDomain) {
     // Sensible limits to rescale. If the max
     // of the y values is smaller than 0.2 (or 20 %) of the max of the scale,
     // update domain of the scale and redraw the axis.
@@ -844,7 +837,7 @@ angular.module('lizard-nxt')
     return xy;
   };
 
-  addPointsToGraph = function (svg, duration, points, xy) {
+  var addPointsToGraph = function (svg, duration, points, xy) {
     var xScale = xy.x.scale;
     var yScale = xy.y.scale;
 
@@ -882,7 +875,7 @@ angular.module('lizard-nxt')
    * Adds a line to a graph. Assumes xy contains d3 scales and className
    * describes a unique line.
    */
-  addLineToGraph = function (svg, duration, data, keys, xy, className) {
+  var addLineToGraph = function (svg, duration, data, keys, xy, className) {
     var xScale = xy.x.scale;
     var yScale = xy.y.scale;
 
@@ -909,7 +902,7 @@ angular.module('lizard-nxt')
       .attr("d", path);
   };
 
-  drawHorizontalRects = function (svg, dimensions, duration, scale, data, keys, labels) {
+  var drawHorizontalRects = function (svg, dimensions, duration, scale, data, keys, labels) {
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
         DEFAULT_BAR_COLOR = "#7f8c8d", // $asbestos is the default color for bars
@@ -984,7 +977,7 @@ angular.module('lizard-nxt')
     });
   };
 
-  drawVerticalRects = function (svg, dimensions, xy, keys, data, duration, xDomain, activeUnit) {
+  var drawVerticalRects = function (svg, dimensions, xy, keys, data, duration, xDomain, activeUnit) {
 
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
@@ -1070,7 +1063,7 @@ angular.module('lizard-nxt')
       .remove();
   };
 
-  getBarWidth = function (scale, data, keys, dimensions, xDomain) {
+  var getBarWidth = function (scale, data, keys, dimensions, xDomain) {
 
     if (data.length === 0) {
       // Apparently, no data is present: return a dummy value since nothing
@@ -1090,7 +1083,7 @@ angular.module('lizard-nxt')
   };
 
 
-  addInteractionToRects = function (svg, dimensions, xy, keys, labels, activeUnit) {
+  var addInteractionToRects = function (svg, dimensions, xy, keys, labels, activeUnit) {
     var unitClass = "unit-" + UtilService.slugify(activeUnit);
     var height = Graph.prototype._getHeight(dimensions),
       width = Graph.prototype._getWidth(dimensions),
@@ -1161,7 +1154,7 @@ angular.module('lizard-nxt')
     });
   };
 
-  createXGraph = function (svg, dimensions, labels, options) {
+  var createXGraph = function (svg, dimensions, labels, options) {
     var x = {};
     if (!options) {
       options = {
@@ -1180,7 +1173,7 @@ angular.module('lizard-nxt')
     return x;
   };
 
-  drawPath = function (svg, pathFn, data, duration, path, color, unit) {
+  var drawPath = function (svg, pathFn, data, duration, path, color, unit) {
     if (!path) {
       var fg = svg.select('g').select('#feature-group');
       // bring to front
@@ -1337,7 +1330,7 @@ angular.module('lizard-nxt')
 
   };
 
-  addInteractionToPath = function (svg, dimensions, data, keys, labels, path, xy, duration) {
+  var addInteractionToPath = function (svg, dimensions, data, keys, labels, path, xy, duration) {
     var bisect = d3.bisector(function (d) { return d[keys.x]; }).right,
         height = Graph.prototype._getHeight(dimensions),
         fg = svg.select('#feature-group'),
@@ -1413,7 +1406,7 @@ angular.module('lizard-nxt')
    * @param  {string}       (optional) label, if undefined uupdates current.
    * @param  {boolean}      draw on y axis, else x-axis.
    */
-  drawLabel = function (svg, dimensions, label, y) {
+  var drawLabel = function (svg, dimensions, label, y) {
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
         mv,
@@ -1491,7 +1484,7 @@ angular.module('lizard-nxt')
 
   };
 
-  drawAxes = function (svg, axis, dimensions, y, duration, activeUnit) {
+  var drawAxes = function (svg, axis, dimensions, y, duration, activeUnit) {
     // Create elements and draw axis using nxtD3 method
     Graph.prototype._drawAxes(svg, axis, dimensions, y, duration);
     var axisEl;
@@ -1529,7 +1522,7 @@ angular.module('lizard-nxt')
    * @param  {string}       unit (e.g. mNAP)
    * @param  {object}       axes - keeps track of active axis.
    */
-  drawMultipleAxes = function (graph) {
+  var drawMultipleAxes = function (graph) {
     var clickRect = graph._svg.select('.click-axis');
     if (clickRect.empty()) {
       clickRect = graph._svg.append('rect')
@@ -1571,7 +1564,7 @@ angular.module('lizard-nxt')
    * @param  {Graph}        Graph instance.
    * @param  {int}          integer 0 to keep current unit, 1 for next.
    */
-  setActiveAxis = function (graph, up) {
+  var setActiveAxis = function (graph, up) {
     var units = Object.keys(graph._yPerUnit);
     var indexOfUnit = units.indexOf(graph._activeUnit) + up;
     if (indexOfUnit >= units.length || indexOfUnit === -1) {
@@ -1651,7 +1644,7 @@ angular.module('lizard-nxt')
    * @return {array}               subset of data with lenght data.length /
    *                               subsetFactor.
    */
-  getDataSubset = function (data, subsetFactor) {
+  var getDataSubset = function (data, subsetFactor) {
     return data.filter(function (item, index) {
       return index % subsetFactor === 0; // returns true for every subsetFactor
                                          // th item;
