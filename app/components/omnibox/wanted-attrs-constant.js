@@ -492,7 +492,7 @@ angular.module('omnibox')
         valueSuffix: "m (NAP)"
       },
       {
-        /// Overstortsensorhoogte
+        /// Sensorhoogte
         keyName: gettext("Sensor level"),
         attrName: "sensor_level",
         ngBindValue:
@@ -500,7 +500,7 @@ angular.module('omnibox')
         valueSuffix: "m (NAP)"
       },
       {
-        /// Overstortmaaiveldhoogte
+        /// Maaiveldhoogte
         keyName: gettext("Surface level"),
         attrName: "surface_level",
         ngBindValue:
