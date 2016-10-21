@@ -21,10 +21,6 @@ and fixed.
 
 ---------------------
 
-- When user switches back to map context after having selected more
-  than one asset while in db context, the box.type and tool switch to
-  'multi-point'.
-
 - Fix favourite layer application. Overhaul Favourite.applyFavourite function:
   replace layers in array.
 

@@ -100,7 +100,7 @@ angular.module('data-menu')
        *
        * @return {array} Names of currently selected assets that are nested.
        */
-      this.getNestedAssets = function () {
+      this.getAllNestedAssetNames = function () {
         var nestedAssetPrefixes = this.NESTED_ASSET_PREFIXES,
             nestedAssetNames = [];
         State.selected.assets.forEach(function (assetName) {
@@ -119,8 +119,9 @@ angular.module('data-menu')
        *
        * @return {array} Names of currently selected assets that aren't nested.
        */
-      this.getNonNestedAssets = function () {
-        return _.difference(State.selected.assets, this.getNestedAssets());
+      this.getAllNonNestedAssetNames = function () {
+        return _.difference(State.selected.assets,
+          this.getAllNestedAssetNames());
       };
   }
 ]);

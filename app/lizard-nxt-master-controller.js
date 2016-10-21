@@ -67,7 +67,8 @@ angular.module('lizard-nxt')
   $scope.transitionToContext = function (context) {
     if (context !== State.context) {
       State.context = context;
-      if (context === 'map' && AssetService.getNonNestedAssets().length > 1) {
+      if (context === 'map' &&
+        AssetService.getAllNonNestedAssetNames().length > 1) {
         // If more than one asset became selected when user was in db context,
         // we switch the box-type/tool to 'multi-point':
         State.box.type = 'multi-point';
