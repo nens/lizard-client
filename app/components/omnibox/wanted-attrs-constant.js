@@ -490,6 +490,22 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.crest_level",
         valueSuffix: "m (NAP)"
+      },
+      {
+        /// Sensorhoogte
+        keyName: gettext("Sensor level"),
+        attrName: "sensor_level",
+        ngBindValue:
+          "waterchain.sensor_level",
+        valueSuffix: "m (NAP)"
+      },
+      {
+        /// Maaiveldhoogte
+        keyName: gettext("Surface level"),
+        attrName: "surface_level",
+        ngBindValue:
+          "waterchain.surface_level",
+        valueSuffix: "m (NAP)"
       }
     ]
   };
