@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.3.0"></a>
+# [4.3.0](https://github.com/nens/lizard-client/compare/v4.2.1...v4.3.0) (2016-10-24)
+
+
+### Bug Fixes
+
+* **graph:** The slug is taken from each property itself (not the property identifier: since the layerrefactoring properties are identified by uuid not a slug). ([a8e72a6](https://github.com/nens/lizard-client/commit/a8e72a6))
+
+
+### Features
+
+* **graph:** Zoomable barchart along y-axis. ([27951da](https://github.com/nens/lizard-client/commit/27951da))
+* **overflow:** Adds sensor level and surface level to overflow omnibox ([#738](https://github.com/nens/lizard-client/issues/738)) ([0139503](https://github.com/nens/lizard-client/commit/0139503))
+
+
+
 <a name="4.2.1"></a>
 ## [4.2.1](https://github.com/nens/lizard-client/compare/v4.2.0...v4.2.1) (2016-10-19)
 
