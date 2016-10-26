@@ -126,9 +126,9 @@ give some merge conflicts. C'est la vie.
 
 
 ### Deployment
-For the deployment of frontend repositories we make use of the the client 
+For the deployment of frontend repositories we make use of the client 
 deployment repository https://github.com/nens/client-deployment. It is already
-included as a gitsubmodule in this repo.
+included as a git submodule in this repo.
 
 Init the git submodule if you haven't done so:
 
@@ -143,7 +143,7 @@ Deployment is done with `ansible`. Make sure to install ansible with eg:
 
     pip install ansible
 
-Copy `hosts.example` to `hosts` and `production_hosts.example` to `production_hosts` and edit to match your server layout.
+Copy `hosts.example` to `hosts` and `production_hosts.example` to `production_hosts` and edit to match your server layout:
 
     cp hosts.example hosts
     cp production_hosts.example production_hosts
