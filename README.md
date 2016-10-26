@@ -131,9 +131,11 @@ deployment repository https://github.com/nens/client-deployment. It is already
 included as a gitsubmodule in this repo.
 
 Init the git submodule if you haven't done so:
+
     git submodule init
 
 To update the git submodule:
+
     git pull --recurse-submodules
     git submodule update --remote
 
