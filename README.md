@@ -126,7 +126,7 @@ give some merge conflicts. C'est la vie.
 
 
 ### Deployment
-For the deployment on frontend repositories we make use of the the client 
+For the deployment of frontend repositories we make use of the the client 
 deployment repository https://github.com/nens/client-deployment. It is already
 included as a gitsubmodule in this repo.
 
@@ -134,8 +134,8 @@ Init the git submodule if you haven't done so:
     git submodule init
 
 To update the git submodule:
-	git pull --recurse-submodules
-	git submodule update --remote
+    git pull --recurse-submodules
+    git submodule update --remote
 
 Deployment is done with `ansible`. Make sure to install ansible with eg:
 
