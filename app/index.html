@@ -47,6 +47,8 @@
     <!-- show when map, but always initialize. -->
     <datamenu ng-show="context === 'map'"></datamenu>
 
+    <legend ng-controller="LegendCtrl"></legend>
+
     <div ng-if="context === 'dashboard'">
       <dashboard></dashboard>
       <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
@@ -231,6 +233,10 @@
 
     <script src="/components/single-click/single-click-directive.js"></script>
     <script src="/components/opacity/opacity-directives.js"></script>
+
+    <script src="/components/legend/legend.js"></script>
+    <script src="/components/legend/legend-directive.js"></script>
+    <script src="/components/legend/legend-controller.js"></script>
 
     <script src="/templates.js"></script>
     <!-- endbuild -->
