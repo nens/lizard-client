@@ -82,6 +82,42 @@ adding the --save option. Always check your bower.json afterwards. e.g.:
     bin/bower search leaflet-dist
     bin/bower install leaflet-dist --save
 
+## Commit Message Convention, at a Glance
+(this section is copied from https://github.com/conventional-changelog/standard-version#commit-message-convention-at-a-glance)
+
+_patches:_
+
+```sh
+git commit -a -m "fix(parsing): fixed a bug in our parser"
+```
+
+_features:_
+
+```sh
+git commit -a -m "feat(parser): we now have a parser \o/"
+```
+
+_breaking changes:_
+
+```sh
+git commit -a -m "feat(new-parser): introduces a new parsing library
+BREAKING CHANGE: new library does not support foo-construct"
+```
+
+_other changes:_
+
+You decide, e.g., docs, chore, etc.
+
+```sh
+git commit -a -m "docs: fixed up the docs a bit"
+```
+
+_but wait, there's more!_
+
+Github usernames (`@bcoe`) and issue references (#133) will be swapped out for the
+appropriate URLs in your CHANGELOG.
+
+The commits made are reflected in the Changelog. See the (changelog)[CHANGELOG.md] for an example.
 
 ### Release
 
