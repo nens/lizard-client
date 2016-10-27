@@ -143,14 +143,15 @@ Deployment is done with `ansible`. Make sure to install ansible with eg:
 
     pip install ansible
 
-Copy `hosts.example` to `hosts` and `production_hosts.example` to `production_hosts` and edit to match your server layout:
+Copy `deploy/hosts.example` to `deploy/hosts` and `deploy/production_hosts.example` to `deploy/production_hosts` and edit to match your server layout. Also copy the `deploy/group_vars\all.example` to `deploy/group_vars/all`:
 
-    cp hosts.example hosts
-    cp production_hosts.example production_hosts
+    cp deploy/hosts.example deploy/hosts
+    cp deploy/production_hosts.example deploy/production_hosts
+    cp deploy/group_vars/all.example deploy/group_vars/all
 
-Deploy to integration:
+Adjust the variables to reflect your layout. E.g. fill in build_user: `build_user: 'jeanjacquesmarieantoinette'`
 
-    ansible-playbook -i deploy/hosts --limit=integration -K deploy/deploy.yml
+Deployment to integration is done by Jenkins. All it does for deployment is check out the client repo in the right place and build project. Meanwhile the tests are being run and the JavaScript checked for syntax errors or style errors with JSHint.
 
 Deploy to staging:
 
