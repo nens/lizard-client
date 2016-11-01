@@ -25,7 +25,6 @@ angular.module('lizard-nxt')
    'version',
    'State',
    'MapService',
-   'rmAllButLastAssetAndGeometry',
    'UrlService',
    'AssetService',
 
