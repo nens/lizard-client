@@ -49,17 +49,17 @@ angular.module('timeseries')
   }])
 
 
-.directive('timeseriesSingleSelect', ['State', 'TimeseriesService',
-  function (State, TimeseriesService) {
+.directive('timeseriesSingleSelect', ['$http', 'State', 'TimeseriesService',
+  function ($http, State, TimeseriesService) {
   return {
     link: function (scope) {
 
       var buildTimeseriesURL = function (selectedTimeseriesUuid) {
         var url = window.location.protocol
           + '//' + window.location.host
-          + '/api/v2/timeseries/'
+          + '/api/v2/timeseries/data/?async=true&format=xlsx&uuid='
           + selectedTimeseriesUuid
-          + '/data/?format=csv&start='
+          + '&start='
           + Math.round(scope.timeState.start)
           + '&end='
           + Math.round(scope.timeState.end);
@@ -130,7 +130,25 @@ angular.module('timeseries')
           TimeseriesService.syncTime().then(getContentForAsset);
           scope.timeseries.selected.url = buildTimeseriesURL(
             scope.timeseries.selected.uuid);
-        }
+          scope.startDownload = function(){
+            $http.get('/api/v2/timeseries/data/', {
+                params: {
+                  uuid: scope.timeseries.selected.uuid,
+                  start: Math.round(scope.timeState.start),
+                  end: Math.round(scope.timeState.end),
+                  format: 'xlsx',
+                  async: 'true'
+                }
+              }).then(function(response) {
+                console.log(response);
+                notie.alert(
+                  4,
+                  "Downloading timeseries " + scope.timeseries.selected.name,
+                  3
+                );
+              });
+            };
+          }
       });
 
     },
