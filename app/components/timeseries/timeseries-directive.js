@@ -54,23 +54,9 @@ angular.module('timeseries')
   return {
     link: function (scope) {
 
-      var buildTimeseriesURL = function (selectedTimeseriesUuid) {
-        var url = window.location.protocol
-          + '//' + window.location.host
-          + '/api/v2/timeseries/data/?async=true&format=xlsx&uuid='
-          + selectedTimeseriesUuid
-          + '&start='
-          + Math.round(scope.timeState.start)
-          + '&end='
-          + Math.round(scope.timeState.end);
-        return url;
-      };
-
       var selectTimeseries = function () {
         var selectedTimeseriesUuid = scope.timeseries.selected.uuid;
 
-        scope.timeseries.selected.url = buildTimeseriesURL(
-          selectedTimeseriesUuid);
         State.selected.timeseries.forEach(function (ts) {
           if (_.find(scope.asset.timeseries, {uuid: ts.uuid})) {
             ts.active = ts.uuid === selectedTimeseriesUuid;
@@ -128,8 +114,7 @@ angular.module('timeseries')
       scope.$watch('timeState.timelineMoving', function (newValue, oldValue) {
         if (!newValue && newValue !== oldValue) {
           TimeseriesService.syncTime().then(getContentForAsset);
-          scope.timeseries.selected.url = buildTimeseriesURL(
-            scope.timeseries.selected.uuid);
+
           scope.startDownload = function(){
             $http.get('/api/v2/timeseries/data/', {
                 params: {
