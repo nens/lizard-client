@@ -340,7 +340,7 @@ angular.module('data-menu')
                   geo.properties[layer.uuid].data = [];
                   _.merge(geo.properties[layer.uuid], response);
                 } else {
-                  geo.properties[layer.uuid].data = response
+                  geo.properties[layer.uuid].data = response;
                 }
                 if ((!layer.active && layer.uuid in Object.keys(geo.properties))
                   || geo.properties[layer.uuid].data === null) {
@@ -350,7 +350,9 @@ angular.module('data-menu')
                   delete geo.properties[layer.uuid];
 
                 }
-              })
+              // Catch rejections, otherwise $.all(promises) is never resolved.
+              }, _.noop
+              )
             );
           }
 
