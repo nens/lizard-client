@@ -18,8 +18,6 @@
 angular.module('lizard-nxt')
   .directive('graph', ["Graph", function (Graph) {
 
-  var graphCtrl, preCompile, link;
-
   /**
    * @function
    * @memberOf graph
@@ -33,7 +31,7 @@ angular.module('lizard-nxt')
    *                    that may be partially overwritten by setting
    *                    the dimensions attribute of the graph.
    */
-  preCompile = function (scope, element, attrs, graphCtrl) {
+  var preCompile = function (scope, element, attrs, graphCtrl) {
     /*
                        dimensions.width
                                |
@@ -91,7 +89,7 @@ angular.module('lizard-nxt')
    *                    on the graphs. Suddirectives only have to implement
    *                    an update function on their controller.
    */
-  link = function (scope, element, attrs, graphCtrl) {
+  var link = function (scope, element, attrs, graphCtrl) {
 
     var graphUpdateHelper = function () {
       if (scope.content) {
@@ -188,7 +186,7 @@ angular.module('lizard-nxt')
    * @param {Graph}     Graph     graph service
    * @description       Stores the graph directives data and update functions
    */
-  graphCtrl = function ($scope, Graph) {
+  var graphCtrl = function ($scope, Graph) {
 
     this.setData = function (scope) {
       // Provide defaults for backwards compatability
