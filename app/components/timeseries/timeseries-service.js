@@ -72,7 +72,6 @@ angular.module('timeseries')
       .then(function (barsAndLinesTimeseries) {
         // Called asynchronously, so check if timeseries is still in state and
         // active.
-        console.log(barsAndLinesTimeseries);
         service.timeseries = _.filter(
           barsAndLinesTimeseries,
           function (ts) { return _.some(
@@ -81,7 +80,6 @@ angular.module('timeseries')
               return ts.id === stateTs.uuid && stateTs.active;
             });
           });
-        console.log(service.timeseries);
         return service.timeseries;
       })
 
