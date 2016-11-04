@@ -125,7 +125,6 @@ angular.module('timeseries')
                   async: 'true'
                 }
               }).then(function(response) {
-                console.log(response);
                 notie.alert(
                   4,
                   "Downloading timeseries " + scope.timeseries.selected.name,
