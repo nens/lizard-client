@@ -17,8 +17,7 @@ angular.module('lizard-nxt')
       var url = window.location.protocol
         + '//' + window.location.host
         + '/api/v2/colormaps/';
-      // return url.replace("9000", "8000"); // Applicable for dev environment only..
-      return url;
+      return url.replace("9000", "8000"); // Applicable for dev environment only..
     };
 
     var resetDiscreteRasterData = function (name) {
