@@ -38,7 +38,8 @@
     <!-- use ng-if to reiniatialize when context changes -->
     <div ng-if="context === 'map' || context === 'scenarios'">
       <map
-        state="state">
+        state="state"
+        legend>
       </map>
       <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
       <timeline class="timeline-map"></timeline>
@@ -46,8 +47,6 @@
 
     <!-- show when map, but always initialize. -->
     <datamenu ng-show="context === 'map'"></datamenu>
-
-    <legend ng-controller="LegendCtrl"></legend>
 
     <div ng-if="context === 'dashboard'">
       <dashboard></dashboard>
@@ -236,7 +235,7 @@
 
     <script src="/components/legend/legend.js"></script>
     <script src="/components/legend/legend-directive.js"></script>
-    <script src="/components/legend/legend-controller.js"></script>
+    <script src="/components/legend/legend-service.js"></script>
 
     <script src="/templates.js"></script>
     <!-- endbuild -->

@@ -79,7 +79,6 @@ angular.module('data-menu')
         rebindAssetFunctions();
       };
 
-
       // Rebind add and remove because selected.assets might have been
       // redefined when calling state.selected.assets = []
       var rebindAssetFunctions = function () {
@@ -141,8 +140,6 @@ angular.module('data-menu')
           promise.then(function (geometries) {
             // Dedupe instance.geometries asynchronous.
             instance.geometries = _.uniqWith(geometries, isDuplicateGeometry);
-            console.log('DataService.geometries:', instance.geometries);
-
             if (instance.onGeometriesChange) {
               instance.onGeometriesChange();
             }
@@ -225,7 +222,6 @@ angular.module('data-menu')
             instance.geometries.forEach(function (old, i) {
               if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
                 instance.geometries[i] = newGeo;
-                console.log('DataService.geometries:', instance.geometries);
               }
             });
           });
@@ -303,7 +299,42 @@ angular.module('data-menu')
         }, this);
       };
 
+      this.updateLayerData = function (geo, layer, options, promises) {
+
+        if (!layer.active) { return; }
+
+        var dataLayer = _.find(instance.dataLayers, {uuid: layer.uuid});
+
+        if (dataLayer
+          && !(dataLayer.temporal && geo.geometry.type === 'LineString')
+        ) {
+          promises.push(
+            dataLayer.getData(options).then(function (response) {
+              // async so remove anything obsolete.
+              geo.properties = geo.properties || {};
+              geo.properties[layer.uuid] = geo.properties[layer.uuid] || _.clone(dataLayer);
+              // Replace data and merge everything with existing state of
+              // property.
+              if (response.data) {
+                geo.properties[layer.uuid].data = [];
+                _.merge(geo.properties[layer.uuid], response);
+              } else {
+                geo.properties[layer.uuid].data = response;
+              }
+              if ((!layer.active && layer.uuid in Object.keys(geo.properties))
+                || geo.properties[layer.uuid].data === null) {
+
+                // Use delete to remove the key and the value and the omnibox
+                // can show a nodata message.
+                delete geo.properties[layer.uuid];
+              }
+            })
+          );
+        }
+      };
+
       this.getGeomData = function (geo) {
+
         var defer = $q.defer();
 
         var promises = [];
@@ -321,39 +352,7 @@ angular.module('data-menu')
         }
 
         angular.forEach(State.layers, function (layer) {
-
-          if (!layer.active) { return; }
-
-          var dataLayer = _.find(instance.dataLayers, {uuid: layer.uuid});
-
-          if (dataLayer
-            && !(dataLayer.temporal && geo.geometry.type === 'LineString')
-          ) {
-            promises.push(
-              dataLayer.getData(options).then(function (response) {
-                // async so remove anything obsolete.
-                geo.properties = geo.properties || {};
-                geo.properties[layer.uuid] = geo.properties[layer.uuid] || _.clone(dataLayer);
-                // Replace data and merge everything with existing state of
-                // property.
-                if (response.data) {
-                  geo.properties[layer.uuid].data = [];
-                  _.merge(geo.properties[layer.uuid], response);
-                } else {
-                  geo.properties[layer.uuid].data = response
-                }
-                if ((!layer.active && layer.uuid in Object.keys(geo.properties))
-                  || geo.properties[layer.uuid].data === null) {
-
-                  // Use delete to remove the key and the value and the omnibox
-                  // can show a nodata message.
-                  delete geo.properties[layer.uuid];
-
-                }
-              })
-            );
-          }
-
+          instance.updateLayerData(geo, layer, options, promises);
         });
 
         if (State.annotations.active) {

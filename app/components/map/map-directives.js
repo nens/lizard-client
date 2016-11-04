@@ -222,12 +222,7 @@ angular.module('map')
         } else {
           mapSetsBounds = false;
         }
-        if (State.box.type === 'area') {
-          var b = State.spatial.bounds;
-          State.selected.geometries = [];
-          State.selected.geometries.addGeometry(L.rectangle(b).toGeoJSON());
-        }
-        else if (State.box.type === 'region') {
+        if (State.box.type === 'region') {
           MapService.getRegions(State.spatial.bounds);
         }
       }, true);
@@ -299,13 +294,6 @@ angular.module('map')
         case "region":
           selector = "";
           MapService.getRegions(State.spatial.bounds);
-          break;
-        case "area":
-          selector = "#map * {cursor: -webkit-grab; cursor: -moz-grab; cursor: grab; cursor: hand;}";
-          MapService.removeRegions();
-          State.selected.geometries = [];
-          var b = State.spatial.bounds;
-          State.selected.geometries.addGeometry(L.rectangle(b).toGeoJSON());
           break;
         default:
           return;

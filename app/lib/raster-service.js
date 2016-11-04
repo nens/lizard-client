@@ -15,8 +15,6 @@ angular.module('lizard-nxt')
 
   var getData = function (options) {
 
-    console.log("[F] RasterService.getData; options =", options);
-
     var srs = 'EPSG:4326',
         agg = options.agg || '',
         startString,
@@ -69,6 +67,7 @@ angular.module('lizard-nxt')
     } else {
       requestOptions.geom = UtilService.geomToWkt(options.geom);
     }
+
     return CabinetService.raster(canceler).get(requestOptions);
   };
 
