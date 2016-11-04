@@ -51,6 +51,22 @@ angular.module('data-menu')
        */
       scope.addLayer = function (layer) {
         LayerAdderService.add(layer);
+        /**
+         * Function below is a fix for old Edge versions. In some cases when
+         * adding a layer Edge cannot handle clickevents. It gets out of this
+         * state by clicking an input field. Which we do here.
+        */
+        var oldEdgeFix = function(){
+          var isEdge = navigator.appVersion.indexOf("Edge") > -1;
+          $rootScope.$on('$stateChangeSuccess', function(){
+            if (isEdge) {
+               $('#layer-adder-edge-fix').click();
+               $('#layer-adder-edge-fix')[0].focus();
+            }
+          });
+        };
+        oldEdgeFix();
+
         fetchLayers({'q': scope.searchLayers, 'page': scope.layersCurrentPage});
       };
 

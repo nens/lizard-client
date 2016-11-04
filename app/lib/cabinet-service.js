@@ -5,13 +5,6 @@ angular.module('lizard-nxt')
            "$q", "Resource", "backendDomain", "gettextCatalog",
   function ($q, Resource, backendDomain, gettextCatalog) {
 
-  var geocodeResource,
-      searchResource,
-      timeseriesResource,
-      locationsResource,
-      regions,
-      wmsGetFeatureInfo;
-
   // for the wizard demo's
   if (window.location.host === 'nens.github.io' ||
       window.location.host === 'lizard.sandbox.lizard.net') {
@@ -19,13 +12,13 @@ angular.module('lizard-nxt')
     Resource.setDefaultHttpFields({withCredentials: true});
   }
 
-  timeseriesResource = new Resource.Endpoint('api/v2/timeseries/');
-  regions = new Resource.Endpoint('api/v2/regions/?page_size=500');
+  var timeseriesResource = new Resource.Endpoint('api/v2/timeseries/');
+  var regions = new Resource.Endpoint('api/v2/regions/?page_size=500');
 
   // Wms getFeatureInfo goes through a proxy. Specify url as a param.
-  wmsGetFeatureInfo = new Resource.Endpoint('proxy/');
+  var wmsGetFeatureInfo = new Resource.Endpoint('proxy/');
 
-  geocodeResource = new Resource.Endpoint('api/geocode/json')
+  var geocodeResource = new Resource.Endpoint('api/geocode/json')
     // Use a different base url, go directly to our friends at google.
     // They don't mind.
     .setBaseUrl('https://maps.googleapis.com/maps/');
@@ -51,6 +44,8 @@ angular.module('lizard-nxt')
     }
     return new Resource.Endpoint('api/v2/raster-aggregates/');
   };
+
+  var rasterInfoResource = new Resource.Endpoint('api/v2/rasters/?page_size=500');
 
   /**
    * Create tooltips for the current language.
@@ -93,6 +88,7 @@ angular.module('lizard-nxt')
     createTooltips: createTooltips,
     geocode: geocodeResource,
     raster: rasterResource,
+    rasterInfo: rasterInfoResource,
     timeseries: timeseriesResource,
     wmsGetFeatureInfo: wmsGetFeatureInfo,
     regions: regions
