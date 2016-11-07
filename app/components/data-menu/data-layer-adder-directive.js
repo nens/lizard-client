@@ -61,7 +61,6 @@ angular.module('data-menu')
         */
         if (isEdge) {
         var oldEdgeFix = function(){
-          console.log('edgefix');
           $rootScope.$on('$stateChangeSuccess', function(){
                $('#layer-adder-edge-fix').click();
                $('#layer-adder-edge-fix')[0].focus();
