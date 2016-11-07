@@ -23,14 +23,12 @@ angular.module('data-menu')
     'AssetService',
     'LayerAdderService',
     'State',
-    'getNestedAssets',
 
     function (
       $q,
       AssetService,
       LayerAdderService,
-      State,
-      getNestedAssets
+      State
     ) {
 
       var instance = this;
