@@ -5,6 +5,8 @@ angular.module('data-menu')
   .service("AssetService", ['State', '$q', '$http',
     function (State, $q, $http) {
 
+      this.NESTED_ASSET_PREFIXES = ['pump', 'filter', 'monitoring_well'];
+
       /**
        * Removes all the ts from the selection of the asset. It should not be
        * possible to select ts of assets.
@@ -90,9 +92,36 @@ angular.module('data-menu')
           defer.resolve();
           return [defer.promise];
         }
-
       };
 
-  }
+      /**
+       * Given State.selected.assets, get the names for the assets that are
+       * nested within other assets (e.g. 'filter$23').
+       *
+       * @return {array} Names of currently selected assets that are nested.
+       */
+      this.getAllNestedAssetNames = function () {
+        var nestedAssetPrefixes = this.NESTED_ASSET_PREFIXES,
+            nestedAssetNames = [];
+        State.selected.assets.forEach(function (assetName) {
+          nestedAssetPrefixes.forEach(function (nestedAssetPrefix) {
+            if (assetName.startsWith(nestedAssetPrefix)) {
+              nestedAssetNames.push(assetName);
+            }
+          });
+        });
+        return nestedAssetNames;
+      };
 
+      /**
+       * Given State.selected.assets, get the names for the assets that are not
+       * nested within other assets (e.g. 'pumpstation$303').
+       *
+       * @return {array} Names of currently selected assets that aren't nested.
+       */
+      this.getAllNonNestedAssetNames = function () {
+        return _.difference(State.selected.assets,
+          this.getAllNestedAssetNames());
+      };
+  }
 ]);

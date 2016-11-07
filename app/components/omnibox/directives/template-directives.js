@@ -214,8 +214,6 @@ angular.module('omnibox')
       scope.wanted = WantedAttributes;
       scope.longFormat = false;
 
-      var NESTED_ASSETS = ['pumps', 'filters', 'monitoring_wells'];
-
       /**
        * Watch asset unpack json string, add entity name and select first child
        * asset.
