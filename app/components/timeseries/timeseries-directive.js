@@ -49,28 +49,15 @@ angular.module('timeseries')
   }])
 
 
-.directive('timeseriesSingleSelect', ['State', 'TimeseriesService',
-  function (State, TimeseriesService) {
+.directive('timeseriesSingleSelect', ['$http', 'State', 'TimeseriesService',
+  'gettextCatalog',
+  function ($http, State, TimeseriesService, gettextCatalog) {
   return {
     link: function (scope) {
-
-      var buildTimeseriesURL = function (selectedTimeseriesUuid) {
-        var url = window.location.protocol
-          + '//' + window.location.host
-          + '/api/v2/timeseries/'
-          + selectedTimeseriesUuid
-          + '/data/?format=csv&start='
-          + Math.round(scope.timeState.start)
-          + '&end='
-          + Math.round(scope.timeState.end);
-        return url;
-      };
 
       var selectTimeseries = function () {
         var selectedTimeseriesUuid = scope.timeseries.selected.uuid;
 
-        scope.timeseries.selected.url = buildTimeseriesURL(
-          selectedTimeseriesUuid);
         State.selected.timeseries.forEach(function (ts) {
           if (_.find(scope.asset.timeseries, {uuid: ts.uuid})) {
             ts.active = ts.uuid === selectedTimeseriesUuid;
@@ -128,9 +115,38 @@ angular.module('timeseries')
       scope.$watch('timeState.timelineMoving', function (newValue, oldValue) {
         if (!newValue && newValue !== oldValue) {
           TimeseriesService.syncTime().then(getContentForAsset);
-          scope.timeseries.selected.url = buildTimeseriesURL(
-            scope.timeseries.selected.uuid);
-        }
+
+          scope.startDownload = function(){
+            $http.get('/api/v2/timeseries/data/', {
+                params: {
+                  uuid: scope.timeseries.selected.uuid,
+                  start: Math.round(scope.timeState.start),
+                  end: Math.round(scope.timeState.end),
+                  format: 'xlsx',
+                  async: 'true'
+                }
+              }).then(function(response) {
+                notie.alert(
+                  4,
+                  gettextCatalog.getString(
+                    "Preparing xlsx for timeseries " +
+                    scope.timeseries.selected.name +
+                    ". You will be notified when ready."),
+                  3
+                );
+              },
+              function(error) {
+                notie.alert(
+                  3,
+                  gettextCatalog.getString(
+                    "Oops! Something went wrong while preparing the " +
+                    "xlsx for the timeseries " +
+                    scope.timeseries.selected.name + "."),
+                  3
+                );
+              });
+            };
+          }
       });
 
     },
