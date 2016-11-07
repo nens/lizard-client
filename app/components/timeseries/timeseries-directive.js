@@ -50,7 +50,8 @@ angular.module('timeseries')
 
 
 .directive('timeseriesSingleSelect', ['$http', 'State', 'TimeseriesService',
-  function ($http, State, TimeseriesService) {
+  'gettextCatalog',
+  function ($http, State, TimeseriesService, gettextCatalog) {
   return {
     link: function (scope) {
 
@@ -127,7 +128,20 @@ angular.module('timeseries')
               }).then(function(response) {
                 notie.alert(
                   4,
-                  "Downloading timeseries " + scope.timeseries.selected.name,
+                  gettextCatalog.getString(
+                    "Preparing xlsx for timeseries " +
+                    scope.timeseries.selected.name +
+                    ". You will be notified when ready."),
+                  3
+                );
+              },
+              function(error) {
+                notie.alert(
+                  3,
+                  gettextCatalog.getString(
+                    "Oops! Something went wrong while preparing the " +
+                    "xlsx for the timeseries " +
+                    scope.timeseries.selected.name + "."),
                   3
                 );
               });
