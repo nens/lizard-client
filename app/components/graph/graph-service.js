@@ -260,10 +260,9 @@ angular.module('lizard-nxt')
     var content = barData[0];
     graph._activeUnit = content.unit;
 
-    var data, keys, labels;
-    data = content.data;
-    keys = content.keys;
-    labels = { x: content.xLabel, y: content.unit };
+    var data = content.data;
+    var keys = content.keys;
+    var labels = { x: content.xLabel, y: content.unit };
     var originalKey = keys.y;
     if (keys.category) {
       // Create data for stacked bars.
@@ -313,7 +312,8 @@ angular.module('lizard-nxt')
       data,
       graph.transTime,
       graph._xDomain,
-      graph._activeUnit
+      graph._activeUnit,
+      content.color
     );
 
     if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
@@ -977,7 +977,7 @@ angular.module('lizard-nxt')
     });
   };
 
-  var drawVerticalRects = function (svg, dimensions, xy, keys, data, duration, xDomain, activeUnit) {
+  var drawVerticalRects = function (svg, dimensions, xy, keys, data, duration, xDomain, activeUnit, color) {
 
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
@@ -1027,7 +1027,7 @@ angular.module('lizard-nxt')
     bar
       .transition()
       .duration(duration)
-        .style("fill", function (d) { return d[keys.color] || ''; })
+        .style("fill", function (d) { return color || ''; })
         .attr("height", function (d) {
           return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
         })
@@ -1042,7 +1042,7 @@ angular.module('lizard-nxt')
       .attr('width', widthFn)
       .attr("y", function (d) { return y.scale(0); })
       .attr("height", 0)
-      .style("fill", function (d) { return d[keys.color] || ''; })
+      .style("fill", function (d) { return color || ''; })
       .attr("stroke-width", strokeWidth)
       .transition()
       .duration(duration)

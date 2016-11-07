@@ -25,7 +25,7 @@
     </graph>
 
     <graph
-      ng-if="item.type === 'rain'"
+      ng-if="item.type === 'rain' || item.type === 'temporalBar'"
       bar-chart
       content="item.content"
       type="temporal"

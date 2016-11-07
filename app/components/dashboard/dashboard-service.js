@@ -55,8 +55,8 @@ angular.module('dashboard')
         graphs[ts.order] = { 'content': content };
       }
 
-      graphs[ts.order].type = ts.valueType === 'image' ? 'image' : 'temporalLine';
-
+      graphs[ts.order].type = ts.valueType === 'image' ? 'image' :
+          ts.measureScale === 'ratio'? 'temporalBar': 'temporalLine';
     });
 
     assets.forEach(function (asset) {
@@ -166,7 +166,11 @@ angular.module('dashboard')
           if (slug === 'rain') {
             type = 'rain';
           } else if (property.temporal) {
-            type = 'temporalLine';
+            if (property.measureScale === 'ratio'){
+              type = 'temporalBar';
+            } else {
+              type = 'temporalLine';
+            }
           } else {
             type = 'distance';
           }
