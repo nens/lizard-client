@@ -330,7 +330,6 @@ angular.module('timeseries')
         if (graphTimeseries.data && graphTimeseries.data.length > 0) {
           // The y key is not always 'value' for bar charts. We get the y key
           // from the data.
-          console.log("graphTimeseries.data", graphTimeseries.data);
           var yKey = _.filter(
               Object.keys(graphTimeseries.data[0]),
               function(x){ return x !== graphTimeseries.keys.x }

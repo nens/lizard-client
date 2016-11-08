@@ -977,7 +977,25 @@ angular.module('lizard-nxt')
     });
   };
 
-  var drawVerticalRects = function (svg, dimensions, xy, keys, data, duration, xDomain, activeUnit, color) {
+    /**
+     * @function
+     * @memberOf Graph
+     * @description Draws the vertival rectangles of a barchart.
+     * @param {svg}    svg    d3 svg.
+     * @param {Object} dimensions   object with graph size and padding.
+     * @param {Object} xy     d3 scales
+     * @param {array} data    array of objects.
+     * @param {object} keys   mapping between x, y and keys in the data.
+     * @param {int}    duration   transition duration.
+     * @param {object} xDomain - override the domain for the graphs.
+     * @param {str}    activeUnit current active axis.
+     * @param {string} color  Barchart color. This color is overruled by the
+     *                        color for each datapoint if this is available in
+     *                        data. When this color is not set and no color is
+     *                        defined a datapoint that bar will remain gray.
+     */
+  var drawVerticalRects = function (svg, dimensions, xy, keys, data, duration,
+                                    xDomain, activeUnit, color) {
 
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
@@ -1027,7 +1045,7 @@ angular.module('lizard-nxt')
     bar
       .transition()
       .duration(duration)
-        .style("fill", function (d) { return color || ''; })
+        .style("fill", function (d) { return d[keys.color] || color || ''; })
         .attr("height", function (d) {
           return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
         })
@@ -1042,7 +1060,7 @@ angular.module('lizard-nxt')
       .attr('width', widthFn)
       .attr("y", function (d) { return y.scale(0); })
       .attr("height", 0)
-      .style("fill", function (d) { return color || ''; })
+      .style("fill", function (d) { return  d[keys.color] || color || ''; })
       .attr("stroke-width", strokeWidth)
       .transition()
       .duration(duration)
