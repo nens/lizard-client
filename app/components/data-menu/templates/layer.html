@@ -4,13 +4,13 @@
     ng-dblclick="rescale && rescale(layer)"
     ng-class="{ active: layer.active }"
     class="layer-item layer-img"
-    ng-title="layer.name | capitalize">
-      <span ng-show="!invalid" ng-bind="layer.name | capitalize"></span>
+    ng-title="layer.name">
+      <span ng-show="!invalid" ng-bind="layer.name"></span>
       <del
         ng-show="invalid"
         class="text-muted"
         title="<% 'Layer could not be added' | translate %>"
-        ng-bind="layer.name | capitalize">
+        ng-bind="layer.name">
       </del>
       <div class="layer-chooser-tools">
         <i class="fa fa-close"

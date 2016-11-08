@@ -25,8 +25,8 @@ angular.module('lizard-nxt')
    'version',
    'State',
    'MapService',
-   'rmAllButLastAssetAndGeometry',
    'UrlService',
+   'AssetService',
 
   function ($scope,
             $rootScope,
@@ -38,8 +38,8 @@ angular.module('lizard-nxt')
             version,
             State,
             MapService,
-            rmAllButLastAssetAndGeometry,
-            UrlService) {
+            UrlService,
+            AssetService) {
 
   $scope.version = version;
   $scope.tooltips = CabinetService.createTooltips();
@@ -65,8 +65,11 @@ angular.module('lizard-nxt')
   $scope.transitionToContext = function (context) {
     if (context !== State.context) {
       State.context = context;
-      if (State.context === 'map' && State.box.type === 'point') {
-        rmAllButLastAssetAndGeometry();
+      if (context === 'map' &&
+        AssetService.getAllNonNestedAssetNames().length > 1) {
+        // If more than one asset became selected when user was in db context,
+        // we switch the box-type/tool to 'multi-point':
+        State.box.type = 'multi-point';
       }
     }
     var overlay = angular.element('#context-transition-overlay')[0];

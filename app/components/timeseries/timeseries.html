@@ -40,7 +40,7 @@
       <div ng-if="content[0].valueType !== 'image'">
         <div class="timeseries-graph-container"
             ng-class="{hidden: !fullDetails}"
-            ng-if="content[0].type === 'bar-chart'">
+            ng-if="content[0].measureScale === 'ratio'">
            <graph
               bar-chart
               type="temporal"
@@ -52,7 +52,7 @@
 
         <div class="timeseries-graph-container"
           ng-class="{hidden: !fullDetails}"
-            ng-if="content[0].type !== 'bar-chart'">
+            ng-if="content[0].measureScale !== 'ratio'">
           <graph
             line
             type="temporal"
@@ -65,8 +65,7 @@
         <div class="card-tools"
           ng-class="{hidden: !fullDetails}">
           <a
-            target="_blank"
-            href="<% timeseries.selected.url %>"
+            ng-click="startDownload()"
             class="btn btn-default btn-xs"
             title="<% 'Export info card data' | translate %>">
             <i class="fa fa-share-square-o"></i>

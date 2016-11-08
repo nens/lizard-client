@@ -82,6 +82,42 @@ adding the --save option. Always check your bower.json afterwards. e.g.:
     bin/bower search leaflet-dist
     bin/bower install leaflet-dist --save
 
+## Commit Message Convention, at a Glance
+(this section is copied from https://github.com/conventional-changelog/standard-version#commit-message-convention-at-a-glance)
+
+_patches:_
+
+```sh
+git commit -a -m "fix(parsing): fixed a bug in our parser"
+```
+
+_features:_
+
+```sh
+git commit -a -m "feat(parser): we now have a parser \o/"
+```
+
+_breaking changes:_
+
+```sh
+git commit -a -m "feat(new-parser): introduces a new parsing library
+BREAKING CHANGE: new library does not support foo-construct"
+```
+
+_other changes:_
+
+You decide, e.g., docs, chore, etc.
+
+```sh
+git commit -a -m "docs: fixed up the docs a bit"
+```
+
+_but wait, there's more!_
+
+Github usernames (`@bcoe`) and issue references (#133) will be swapped out for the
+appropriate URLs in your CHANGELOG.
+
+The commits made are reflected in the Changelog. See the (changelog)[CHANGELOG.md] for an example.
 
 ### Release
 
@@ -126,29 +162,32 @@ give some merge conflicts. C'est la vie.
 
 
 ### Deployment
-For the deployment on frontend repositories we make use of the the client 
+For the deployment of frontend repositories we make use of the client 
 deployment repository https://github.com/nens/client-deployment. It is already
-included as a gitsubmodule in this repo.
+included as a git submodule in this repo.
 
 Init the git submodule if you haven't done so:
+
     git submodule init
 
 To update the git submodule:
-	git pull --recurse-submodules
-	git submodule update --remote
+
+    git pull --recurse-submodules
+    git submodule update --remote
 
 Deployment is done with `ansible`. Make sure to install ansible with eg:
 
     pip install ansible
 
-Copy `hosts.example` to `hosts` and `production_hosts.example` to `production_hosts` and edit to match your server layout.
+Copy `deploy/hosts.example` to `deploy/hosts` and `deploy/production_hosts.example` to `deploy/production_hosts` and edit to match your server layout. Also copy the `deploy/group_vars\all.example` to `deploy/group_vars/all`:
 
-    cp hosts.example hosts
-    cp production_hosts.example production_hosts
+    cp deploy/hosts.example deploy/hosts
+    cp deploy/production_hosts.example deploy/production_hosts
+    cp deploy/group_vars/all.example deploy/group_vars/all
 
-Deploy to integration:
+Adjust the variables to reflect your layout. E.g. fill in build_user: `build_user: 'jeanjacquesmarieantoinette'`
 
-    ansible-playbook -i deploy/hosts --limit=integration -K deploy/deploy.yml
+Deployment to integration is done by Jenkins. All it does for deployment is check out the client repo in the right place and build project. Meanwhile the tests are being run and the JavaScript checked for syntax errors or style errors with JSHint.
 
 Deploy to staging:
 

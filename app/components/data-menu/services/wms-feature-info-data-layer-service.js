@@ -8,8 +8,8 @@
  * Factory in the lizard-nxt.
  */
 angular.module('data-menu')
-.factory('wmsFeatureInfoDataLayer', ['WmsGetFeatureInfoService',
-  function (WmsGetFeatureInfoService) {
+.factory('wmsFeatureInfoDataLayer', ['WmsGetFeatureInfoService', '$q',
+  function (WmsGetFeatureInfoService, $q) {
 
     return function (options) {
 
@@ -18,6 +18,14 @@ angular.module('data-menu')
       wmsFeatureInfoDataLayer.type = 'wms';
 
       wmsFeatureInfoDataLayer.getData = function (options) {
+
+        // WMS getFeatureInfo only supports points.
+        if (options.geom.type !== 'Point') {
+          var emptyPromise = $q.defer();
+          emptyPromise.reject();
+          return emptyPromise.promise;
+        }
+
         return WmsGetFeatureInfoService
         .getData(wmsFeatureInfoDataLayer, options)
         .then(function (response) {
