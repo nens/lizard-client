@@ -46,14 +46,20 @@ angular.module('lizard-nxt')
       });
     };
 
+    var responseIsEmpty = function (data) {
+      return data.length === 1 && data[0] == null;
+    };
+
     var setDiscreteRasterData = function (geoProperties) {
       var rasterName;
       angular.forEach(geoProperties, function (obj, uuid) {
-        _.orderBy(obj.data, function (datum) {
-          return datum.data;
-        });
         rasterName = uuidMapping[uuid];
-        self.rasterData.discrete[rasterName] = obj.data;
+        if (!responseIsEmpty(obj.data)) {
+          _.orderBy(obj.data, function (datum) {
+            return datum.data;
+          });
+          self.rasterData.discrete[rasterName] = obj.data;
+        };
       });
     };
 
@@ -144,5 +150,7 @@ angular.module('lizard-nxt')
           setDiscreteRasterData(geo.properties);
         });
       }
+
+      return self.rasterData;
     };
 }]);

@@ -1,19 +1,21 @@
 angular.module('lizard-nxt')
 .directive('legend', ["LegendService", "State", function(LegendService, State) {
 
-  var _updateData = function (bounds, layers) {
-    LegendService.updateLegendData(bounds, layers);
-    console.log("LegendService.rasterData:", LegendService.rasterData);
-  };
+  // When using this directive to actually draw the legend in the browser, you
+  // only need to read from scope.legendData.
 
   var link = function (scope, element, attrs) {
     scope.$watch(State.toString('layers.active'), function (n, o) {
       if (n === o) { return; }
-      _updateData(scope.state.spatial.bounds, scope.state.layers);
+      scope.legendData = LegendService.updateLegendData(
+        State.spatial.bounds,
+        scope.state.layers);
+      console.log("legendData:", scope.legendData);
     });
     scope.$watch('state.spatial.bounds', function (n, o) {
       if (n === o) { return; }
-      _updateData(n, scope.state.layers);
+      scope.legendData = LegendService.updateLegendData(n, scope.state.layers);
+      console.log("legendData:", scope.legendData);
     });
   };
 
