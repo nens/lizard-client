@@ -1,4 +1,4 @@
-angular.module('lizard-nxt')
+angular.module('legend')
   .service('LegendService', [
   'DataService', 'UtilService', 'RasterService', 'State', '$q', '$http',
   function (DataService, UtilService, RasterService, State, $q, $http) {

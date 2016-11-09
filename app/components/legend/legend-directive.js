@@ -1,4 +1,4 @@
-angular.module('lizard-nxt')
+angular.module('legend')
 .directive('legend', ["LegendService", "State", function(LegendService, State) {
 
   // When using this directive to actually draw the legend in the browser, you
@@ -21,7 +21,8 @@ angular.module('lizard-nxt')
 
   return {
     link: link,
-    restrict: 'A',
+    restrict: 'E',
+    // templateUrl: "../../legend/templates/legend.html",
     replace: true
   };
 }]);

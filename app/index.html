@@ -37,9 +37,7 @@
 
     <!-- use ng-if to reiniatialize when context changes -->
     <div ng-if="context === 'map' || context === 'scenarios'">
-      <map
-        state="state"
-        legend>
+      <map state="state">
       </map>
       <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
       <timeline class="timeline-map"></timeline>
