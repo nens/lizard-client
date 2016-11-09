@@ -1,3 +1,4 @@
+'use strict';
 
 /**
  * @module
@@ -7,13 +8,15 @@
 angular.module('data-menu')
   .directive('layerAdder',
              ['LayerAdderService', 'DataService', 'notie', 'gettextCatalog',
+               '$rootScope',
               function (LayerAdderService,
                         DataService,
                         notie,
-                        gettextCatalog) {
+                        gettextCatalog,
+                        $rootScope) {
 
     var link = function (scope, element, attrs) {
-
+      var isEdge = navigator.appVersion.indexOf("Edge") > -1;
 
       /**
        * Throw an alert and error when something went wrong with fetching the
@@ -56,17 +59,15 @@ angular.module('data-menu')
          * adding a layer Edge cannot handle clickevents. It gets out of this
          * state by clicking an input field. Which we do here.
         */
+        if (isEdge) {
         var oldEdgeFix = function(){
-          var isEdge = navigator.appVersion.indexOf("Edge") > -1;
           $rootScope.$on('$stateChangeSuccess', function(){
-            if (isEdge) {
                $('#layer-adder-edge-fix').click();
                $('#layer-adder-edge-fix')[0].focus();
-            }
-          });
-        };
-        oldEdgeFix();
-
+            });
+          };
+          oldEdgeFix();
+        }
         fetchLayers({'q': scope.searchLayers, 'page': scope.layersCurrentPage});
       };
 
