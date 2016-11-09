@@ -130,4 +130,8 @@ angular.module('lizard-nxt')
   window.addEventListener("load", function () {
     window.loaded = true;
   });
+
+  window.debug = function () {
+    console.log("Currently, the State object looks like:", State);
+  };
 }]);
