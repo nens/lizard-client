@@ -204,26 +204,26 @@ angular.module('map')
       },
 
       _setAssetOrGeomFromUtfOnState: function (latLng) {
-        State.selected.assets = [];
-        State.selected.geometries = [];
+        State.assets = [];
+        State.geometries = [];
         service.getDataFromUtfLayers(
           latLng,
           function (data) {
-            // Create one entry in selected.assets.
+            // Create one entry in state.assets.
             var assetId = data.entity_name + '$' + data.id;
-            State.selected.assets = [assetId];
-            State.selected.geometries = [];
+            State.assets = [assetId];
+            State.geometries = [];
           },
           function () {
-            State.selected.assets = [];
+            State.assets = [];
             service._setGeomFromUtfToState(latLng);
           }
         );
       },
 
       _setGeomFromUtfToState: function (latLng) {
-        // Create one entry in selected.geometries.
-        State.selected.geometries = [{
+        // Create one entry in State.geometries.
+        State.geometries = [{
           geometry: {
             type: 'Point',
             coordinates: [latLng.lng, latLng.lat]
@@ -254,10 +254,10 @@ angular.module('map')
         service.getDataFromUtfLayers(
           latLng,
           function (data) {
-            // Create one entry in selected.assets.
+            // Create one entry in state.assets.
             var assetId = data.entity_name + '$' + data.id;
-            if (service._isUniqueAssetId(State.selected.assets, assetId)) {
-              State.selected.assets.addAsset(assetId);
+            if (service._isUniqueAssetId(State.assets, assetId)) {
+              State.assets.addAsset(assetId);
             }
           },
           function () {
@@ -267,8 +267,8 @@ angular.module('map')
       },
 
       _addGeomFromUtfToState: function (latLng) {
-        // Create one entry in selected.geometries.
-        State.selected.geometries.addGeometry({
+        // Create one entry in State.geometries.
+        State.geometries.addGeometry({
           geometry: {
             type: 'Point',
             coordinates: [latLng.lng, latLng.lat]
@@ -291,15 +291,15 @@ angular.module('map')
         }
         else if (State.box.type === 'line') {
           if (this.line.geometry.coordinates.length === 2
-            || State.selected.geometries.length > 0) {
-            State.selected.geometries = [];
+            || State.geometries.length > 0) {
+            State.geometries = [];
             this.line.geometry.coordinates = [];
           }
           if (this.line.geometry.coordinates.length < 2) {
             this.line.geometry.coordinates.push([latLng.lng, latLng.lat]);
           }
           if (this.line.geometry.coordinates.length === 2) {
-            State.selected.geometries.addGeometry(this.line);
+            State.geometries.addGeometry(this.line);
           }
         }
       },
@@ -312,13 +312,13 @@ angular.module('map')
          * @param  {object} leaflet ILayer that recieved the click.
          */
         var clickCb = function (layer) {
-          State.selected.geometries = [];
+          State.geometries = [];
           for (var key in layer.feature.properties) {
             var newkey = key === 'type' ? 'regionType' : key;
             layer.feature[newkey] = layer.feature.properties[key];
           }
           layer.feature.properties = {};
-          State.selected.geometries = [layer.feature];
+          State.geometries = [layer.feature];
         };
 
        CabinetService.regions.get({

@@ -19,7 +19,9 @@ describe('Testing State service', function () {
     expect(State.layers).toBeDefined();
     expect(State.annotations).toBeDefined();
     expect(State.context).toBeDefined();
-    expect(State.selected).toBeDefined();
+    expect(State.assets).toBeDefined();
+    expect(State.geometries).toBeDefined();
+    expect(State.timeseries).toBeDefined();
   });
 
   it('should set temporal.end to the max when set with a futuristic timestamp',
@@ -48,10 +50,10 @@ describe('Testing State service', function () {
   });
 
   it('should reset the selected field', function () {
-    State.selected.assets.push('bogus$1');
-    expect(State.selected.assets.length).toBe(1);
-    State.selected.reset();
-    expect(State.selected.assets.length).toBe(0);
+    State.assets.push('bogus$1');
+    expect(State.assets.length).toBe(1);
+    State.resetObjects();
+    expect(State.assets.length).toBe(0);
   });
 
 });

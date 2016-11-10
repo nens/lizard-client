@@ -224,8 +224,8 @@ angular.module('omnibox')
       });
 
       var removeTSofAsset = function (asset) {
-        State.selected.timeseries = _.differenceBy(
-          State.selected.timeseries,
+        State.timeseries = _.differenceBy(
+          State.timeseries,
           asset.timeseries,
           'uuid'
         );

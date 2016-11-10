@@ -17,7 +17,7 @@ angular.module('omnibox')
     var actives = 0;
 
     _.forEach(
-      State.selected.timeseries,
+      State.timeseries,
       function (ts) {
         if (ts.active) {
           actives++;
@@ -74,7 +74,7 @@ angular.module('omnibox')
     if (uuid) {
       // Check if it was the last timeseries in the chart.
       otherItems += _.filter(
-        State.selected.timeseries,
+        State.timeseries,
         function (ts) {
           return ts.active && ts.uuid !== uuid && ts.order === order;
         }
@@ -82,7 +82,7 @@ angular.module('omnibox')
     }
 
     if (otherItems === 0) {
-      State.selected.timeseries.forEach(function (ts) {
+      State.timeseries.forEach(function (ts) {
         if (ts.order > order) {
           ts.order--;
 

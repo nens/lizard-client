@@ -112,15 +112,15 @@ angular.module('map')
           ClickFeedbackService.removeLeafletLayerWithId(MapService, circleAlongLine);
           circleAlongLine = undefined;
         }
-        State.selected.mouseOnLine = null;
+        State.mouseOnLine = null;
         if (origin !== 'click') {
           MapService.line.geometry.coordinates = [];
         }
       };
 
       var feedbackBulb = function (mouseHover) {
-        if (!State.selected.geometries[0]) { return; }
-        var coords = State.selected.geometries[0].geometry.coordinates;
+        if (!State.geometries[0]) { return; }
+        var coords = State.geometries[0].geometry.coordinates;
         if (coords.length === 2) {
           var point = UtilService.pointAlongLine(
             mouseHover,
@@ -130,7 +130,7 @@ angular.module('map')
           if (circleAlongLine) {
             ClickFeedbackService.updateCircle(MapService, point, circleAlongLine);
             // fugly. sorry, not sorry.
-            State.selected.mouseOnLine = L.latLng(
+            State.mouseOnLine = L.latLng(
               coords[0][1],
               coords[0][0])
             .distanceTo(point);
@@ -148,9 +148,9 @@ angular.module('map')
       var _mouseMove = function (e) {
         if (State.box.type === 'line') {
           var coords = MapService.line.geometry.coordinates;
-          if (coords.length === 0 && State.selected.geometries.length !== 0) {
+          if (coords.length === 0 && State.geometries.length !== 0) {
             // Line is the first and only geometry.
-            coords = State.selected.geometries[0].geometry.coordinates;
+            coords = State.geometries[0].geometry.coordinates;
           }
 
           var start = (coords.length > 0) ? L.latLng(coords[0][1], coords[0][0]) : null;
@@ -224,8 +224,8 @@ angular.module('map')
         }
         if (State.box.type === 'area') {
           var b = State.spatial.bounds;
-          State.selected.geometries = [];
-          State.selected.geometries.addGeometry(L.rectangle(b).toGeoJSON());
+          State.geometries = [];
+          State.geometries.addGeometry(L.rectangle(b).toGeoJSON());
         }
         else if (State.box.type === 'region') {
           MapService.getRegions(State.spatial.bounds);
@@ -267,9 +267,9 @@ angular.module('map')
         MapService.updateAnnotations(State.layers);
       });
 
-      scope.$watchCollection('state.selected.geometries', function (n, o) {
+      scope.$watchCollection('state.geometries', function (n, o) {
         if (n === o) { return true; }
-        if (State.box.type === 'line' && State.selected.geometries[0] === undefined) {
+        if (State.box.type === 'line' && State.geometries[0] === undefined) {
           lineCleanup();
         }
       });
@@ -303,9 +303,9 @@ angular.module('map')
         case "area":
           selector = "#map * {cursor: -webkit-grab; cursor: -moz-grab; cursor: grab; cursor: hand;}";
           MapService.removeRegions();
-          State.selected.geometries = [];
+          State.geometries = [];
           var b = State.spatial.bounds;
-          State.selected.geometries.addGeometry(L.rectangle(b).toGeoJSON());
+          State.geometries.addGeometry(L.rectangle(b).toGeoJSON());
           break;
         default:
           return;

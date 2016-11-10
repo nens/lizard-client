@@ -154,28 +154,23 @@ angular.module('global-state')
     // This is only relevant for drawing an intersection line in the map.
     // The location and the distance of the location to the first point of the
     // is being calculated and set on mouseOnLine for the graph.
-    state.selected = {
-      assets: [], // hydra-core asset id <entity>$<id>,
-                  // is defined in DataService use state.selected.asset.addAsset
-                  // to add and state.selected.assetremoveAsset to remove
-                  // asset, or reset by calling state.selected.reset()
-      geometries: [], // geojson with points, lines, polygons. Same as asset,
-                      // is redefined in dataservice. use addGeometry and
-                      // removegeometry on state.selected.geometries to add or
-                      // remove individual geometries or use reset function.
-      timeseries: [], // {<uuid>, <active>, <order>, <color>}
-                      // Redefined in timeseriesService. mirrored asynchronously
-                      // by timeseriesService.timeseries. Array contains all
-                      // timeseries of all assets in a flat list.
-      reset: function () {
-        // Selected items
-        state.selected.assets = [];
-        state.selected.geometries = [];
-        state.selected.timeseries = [];
-      }
+    state.resetObjects = function () {
+      // Selected items
+      state.assets = []; // hydra-core asset id <entity>$<id>,
+                // is defined in DataService use state.selected.asset.addAsset
+                // to add and state.asset.removeAsset to remove
+                // asset, or reset by calling state.resetObjects()
+      state.geometries = []; // geojson with points, lines, polygons. Same as
+                // asset, is redefined in dataservice. use addGeometry and
+                // removegeometry on state.geometries to add or
+                // remove individual geometries or use reset function.
+      state.timeseries = [];  // {<uuid>, <active>, <order>, <color>}
+                // Redefined in timeseriesService. mirrored asynchronously
+                // by timeseriesService.timeseries. Array contains all
+                // timeseries of all assets in a flat list.
     };
 
-    state.selected.reset();
+    state.resetObjects();
 
     // Temporal
     var now = Date.now(),

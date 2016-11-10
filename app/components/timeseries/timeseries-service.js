@@ -24,10 +24,10 @@ angular.module('timeseries')
     var service = this;
 
     var _timeseries = [];
-    Object.defineProperty(State.selected, 'timeseries', {
+    Object.defineProperty(State, 'timeseries', {
       get: function () { return _timeseries; },
       set: function (timeseries) {
-        console.log('State.selected.timeseries:', timeseries);
+        console.log('State.timeseries:', timeseries);
         _timeseries = timeseries;
         service.syncTime(timeseries);
       },
@@ -37,7 +37,7 @@ angular.module('timeseries')
     this.syncTime = function (timeseries) {
 
       var groupedTimeseries = {temporalBars: [], temporalLines: []};
-      _.forEach(State.selected.timeseries, function(ts){
+      _.forEach(State.timeseries, function(ts){
         if(ts.active){
           var scale = ts.measureScale == "ratio" ? "temporalBars" :
             "temporalLines";
@@ -75,7 +75,7 @@ angular.module('timeseries')
         service.timeseries = _.filter(
           barsAndLinesTimeseries,
           function (ts) { return _.some(
-            State.selected.timeseries,
+            State.timeseries,
             function (stateTs) {
               return ts.id === stateTs.uuid && stateTs.active;
             });
@@ -205,8 +205,8 @@ angular.module('timeseries')
 
     this.initializeTimeseriesOfAsset = function (asset) {
       var colors = UtilService.GRAPH_COLORS;
-      State.selected.timeseries = _.unionBy(
-        State.selected.timeseries,
+      State.timeseries = _.unionBy(
+        State.timeseries,
         asset.timeseries.map(function (ts, i) {
           return {
             uuid: ts.uuid,
@@ -234,7 +234,7 @@ angular.module('timeseries')
   function (WantedAttributes, DataService, State) {
 
     /**
-     * Looks up timeseries in State.selected.timeseries and copies color and order.
+     * Looks up timeseries in State.timeseries and copies color and order.
      * TimeseriesService.timeseries are not persistent when toggled.
      * asset.timeseries is persistent till a user removes it from selection.
      *
@@ -294,7 +294,7 @@ angular.module('timeseries')
       }
 
       var tsState = _.find(
-        State.selected.timeseries,
+        State.timeseries,
         { 'uuid': graphTimeseries.id }
       );
 

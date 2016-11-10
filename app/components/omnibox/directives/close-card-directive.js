@@ -24,14 +24,14 @@ angular.module('omnibox')
        */
       scope.rmAssetOrGeometry = function () {
         if (scope.geometry) {
-          State.selected.geometries.removeGeometry(scope.geometry);
+          State.geometries.removeGeometry(scope.geometry);
         }
 
         else if (scope.asset) {
 
           var assetId = scope.asset.entity_name + '$' + scope.asset.id;
           // Remove the asset from the selection.
-          var selectedAssets = State.selected.assets;
+          var selectedAssets = State.assets;
           if (selectedAssets.indexOf(assetId) >= 0) {
             selectedAssets.removeAsset(assetId);
           }

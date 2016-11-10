@@ -14,8 +14,8 @@ angular.module('data-menu')
        * @param  {object} asset
        */
       var removeTSofAsset = function (asset) {
-        State.selected.timeseries = _.differenceBy(
-          State.selected.timeseries,
+        State.timeseries = _.differenceBy(
+          State.timeseries,
           asset.timeseries,
           'uuid'
         );
@@ -41,7 +41,7 @@ angular.module('data-menu')
       /**
        * Removes assets from service when not selected.
        *
-       * @param  {array}  selectedAssets State.selected.asssets.
+       * @param  {array}  selectedAssets State.asssets.
        * @param  {array}  currentAssets  DataService.assets
        * @return {array}                 Updated DataService.assets.
        */
@@ -95,7 +95,7 @@ angular.module('data-menu')
       };
 
       /**
-       * Given State.selected.assets, get the names for the assets that are
+       * Given State.assets, get the names for the assets that are
        * nested within other assets (e.g. 'filter$23').
        *
        * @return {array} Names of currently selected assets that are nested.
@@ -103,7 +103,7 @@ angular.module('data-menu')
       this.getAllNestedAssetNames = function () {
         var nestedAssetPrefixes = this.NESTED_ASSET_PREFIXES,
             nestedAssetNames = [];
-        State.selected.assets.forEach(function (assetName) {
+        State.assets.forEach(function (assetName) {
           nestedAssetPrefixes.forEach(function (nestedAssetPrefix) {
             if (assetName.startsWith(nestedAssetPrefix)) {
               nestedAssetNames.push(assetName);
@@ -114,13 +114,13 @@ angular.module('data-menu')
       };
 
       /**
-       * Given State.selected.assets, get the names for the assets that are not
+       * Given State.assets, get the names for the assets that are not
        * nested within other assets (e.g. 'pumpstation$303').
        *
        * @return {array} Names of currently selected assets that aren't nested.
        */
       this.getAllNonNestedAssetNames = function () {
-        return _.difference(State.selected.assets,
+        return _.difference(State.assets,
           this.getAllNestedAssetNames());
       };
   }

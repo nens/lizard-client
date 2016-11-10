@@ -35,7 +35,7 @@
 
       <!-- use ng-show, so div is present and can be added to drag containers -->
       <div id="drag-container">
-        <div ng-repeat="ts in selected.timeseries"
+        <div ng-repeat="ts in timeseries"
              ng-if="getTsMetaData(ts.uuid)"
              data-uuid="<% ts.uuid %>"
              class="draggable-ts">

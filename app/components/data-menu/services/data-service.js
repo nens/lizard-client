@@ -72,17 +72,17 @@ angular.module('data-menu')
         });
         _assets = assets;
 
-        console.log('State.selected.assets:', State.selected.assets);
+        console.log('State.assets:', State.assets);
 
         rebindAssetFunctions();
       };
 
 
-      // Rebind add and remove because selected.assets might have been
-      // redefined when calling state.selected.assets = []
+      // Rebind add and remove because state.assets might have been
+      // redefined when calling state.assets = []
       var rebindAssetFunctions = function () {
-        State.selected.assets.addAsset = addAsset;
-        State.selected.assets.removeAsset = removeAsset;
+        State.assets.addAsset = addAsset;
+        State.assets.removeAsset = removeAsset;
       };
 
       var addAsset = function (asset) {
@@ -99,14 +99,14 @@ angular.module('data-menu')
 
       instance.assets = instance.oldAssets = [];
       var _assets = [];
-      Object.defineProperty(State.selected, 'assets', {
+      Object.defineProperty(State, 'assets', {
         get: function () { return _assets; },
         set: setAssets,
         enumerable: true
       });
 
-      State.selected.assets.addAsset = addAsset;
-      State.selected.assets.removeAsset = removeAsset;
+      State.assets.addAsset = addAsset;
+      State.assets.removeAsset = removeAsset;
 
       /**
        * Return true if geometry is of same type (point, line etc) and has the
@@ -148,9 +148,9 @@ angular.module('data-menu')
         });
 
         _geometries = geometries;
-        console.log('State.selected.geometries:', State.selected.geometries);
-        State.selected.geometries.addGeometry = addGeometry;
-        State.selected.geometries.removeGeometry = removeGeometry;
+        console.log('State.geometries:', State.geometries);
+        State.geometries.addGeometry = addGeometry;
+        State.geometries.removeGeometry = removeGeometry;
       };
 
       var addGeometry = function (geometry) {
@@ -175,13 +175,13 @@ angular.module('data-menu')
 
       instance.geometries = [];
       var _geometries = [];
-      Object.defineProperty(State.selected, 'geometries', {
+      Object.defineProperty(State, 'geometries', {
         get: function () { return _geometries; },
         set: setGeometries
       });
 
-      State.selected.geometries.addGeometry = addGeometry;
-      State.selected.geometries.removeGeometry = removeGeometry;
+      State.geometries.addGeometry = addGeometry;
+      State.geometries.removeGeometry = removeGeometry;
 
       this.REJECTION_REASONS = {};
 

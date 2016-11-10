@@ -12,7 +12,7 @@ angular.module("omnibox")
       scope.showAnnotations = function () {
         return (
           user.authenticated &&
-          (State.selected.assets.length ||
+          (State.assets.length ||
            State.annotations.active) &&
           (scope.omnibox.data.geometries.length +
            scope.omnibox.data.assets.length) < 2

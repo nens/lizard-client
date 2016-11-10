@@ -86,12 +86,12 @@ angular.module('omnibox')
         var ts, otherGraphTS, otherCompatibleGraph;
 
         // timeseries representend by el.
-        ts = _.find(State.selected.timeseries, function (ts) {
+        ts = _.find(State.timeseries, function (ts) {
           return ts.uuid === uuid;
         });
 
         // Possible other graph in target.
-        otherGraphTS = _.find(State.selected.timeseries, function (ts) {
+        otherGraphTS = _.find(State.timeseries, function (ts) {
           return ts.order === order && ts.active;
         });
 
@@ -106,7 +106,7 @@ angular.module('omnibox')
         // dashboard, then continue adding it to the dragged plot.
         if (ts.active) {
           var otherTSInOrigninalPlot = _.find(
-            State.selected.timeseries,
+            State.timeseries,
             function (_ts) {
               return _ts.active
                 && _ts.order === ts.order

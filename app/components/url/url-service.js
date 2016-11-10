@@ -539,7 +539,8 @@ angular.module('lizard-nxt')
           state.language
         );
 
-        UrlState.setSelectedUrl(config, state.selected);
+        UrlState.setSelectedUrl(
+            config, {assets: state.assets, geometries: state.geometries});
 
         LocationGetterSetter.setUrlValue(
           config.context.part, config.context.index, state.context

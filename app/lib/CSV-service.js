@@ -137,7 +137,7 @@ angular.module('lizard-nxt')
      *                     the line.
      */
     var _getLineCoordinates = function () {
-      var lineGeom = State.selected.geometries[0].geometry;
+      var lineGeom = State.geometries[0].geometry;
       return {
 
         startLat: UtilService.formatNumber(UtilService.round(

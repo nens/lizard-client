@@ -64,9 +64,9 @@ describe('Directives: Search with mocked CabinetService', function () {
 
   it('should not remove assets only search results from box when calling cleanInput', function () {
     scope.omnibox.searchResults = {harry: 'bertenernie'};
-    State.selected.assets = ['gemaalomdehoe$666'];
+    State.assets = ['gemaalomdehoe$666'];
     scope.cleanInput();
-    expect(State.selected.assets.length).toEqual(1);
+    expect(State.assets.length).toEqual(1);
     expect(scope.omnibox.searchResults.harry).toBeUndefined();
   });
 
