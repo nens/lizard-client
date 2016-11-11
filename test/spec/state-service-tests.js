@@ -21,7 +21,7 @@ describe('Testing State service', function () {
     expect(State.context).toBeDefined();
     expect(State.assets).toBeDefined();
     expect(State.geometries).toBeDefined();
-    expect(State.timeseries).toBeDefined();
+    expect(State.selections).toBeDefined();
   });
 
   it('should set temporal.end to the max when set with a futuristic timestamp',

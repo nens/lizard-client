@@ -10,7 +10,7 @@ angular.module('omnibox')
       scope.colorPicker = {
         enabled: false,
         availableColors: UtilService.GRAPH_COLORS,
-        selectedColor: scope.ts.color
+        selectedColor: scope.selection.color
       };
 
       var toggleColorPicker = function () {
@@ -25,8 +25,8 @@ angular.module('omnibox')
       };
 
       scope.$watch('colorPicker.selectedColor', function() {
-        scope.ts.color = scope.colorPicker.selectedColor;
-        TimeseriesService.onColorChange(scope.ts);
+        scope.selection.color = scope.colorPicker.selectedColor;
+        TimeseriesService.onColorChange(scope.selection);
       });
     };
 

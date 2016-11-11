@@ -5,7 +5,7 @@ angular.module('omnibox')
   return {
     link: function (scope, element) {
 
-      scope.timeseries = State.timeseries;
+      scope.selections = State.selections;
 
       scope.getTsMetaData = function (uuid) {
         return _.find(scope.asset.timeseries, function (ts) {

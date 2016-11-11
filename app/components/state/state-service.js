@@ -164,7 +164,7 @@ angular.module('global-state')
                 // asset, is redefined in dataservice. use addGeometry and
                 // removegeometry on state.geometries to add or
                 // remove individual geometries or use reset function.
-      state.timeseries = [];  // {<uuid>, <active>, <order>, <color>}
+      state.selections = [];  // {<uuid>, <active>, <order>, <color>}
                 // Redefined in timeseriesService. mirrored asynchronously
                 // by timeseriesService.timeseries. Array contains all
                 // timeseries of all assets in a flat list.

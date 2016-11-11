@@ -24,10 +24,10 @@ angular.module('timeseries')
     var service = this;
 
     var _timeseries = [];
-    Object.defineProperty(State, 'timeseries', {
+    Object.defineProperty(State, 'selections', {
       get: function () { return _timeseries; },
       set: function (timeseries) {
-        console.log('State.timeseries:', timeseries);
+        console.log('State.timeseries:', timeseries); // TODO: Timeseries or selections?
         _timeseries = timeseries;
         service.syncTime(timeseries);
       },
@@ -36,12 +36,20 @@ angular.module('timeseries')
 
     this.syncTime = function (timeseries) {
 
-      var groupedTimeseries = {temporalBars: [], temporalLines: []};
-      _.forEach(State.timeseries, function(ts){
-        if(ts.active){
-          var scale = ts.measureScale == "ratio" ? "temporalBars" :
+      var groupedSelections = {
+        temporalBars: {timeseries: [], rasters: []},
+        temporalLines: {timeseries: [], rasters: []}
+      };
+
+      _.forEach(State.selections, function(selection){
+        if(selection.active){
+          var scale = selection.measureScale == "ratio" ? "temporalBars" :
             "temporalLines";
-          groupedTimeseries[scale].push(ts.uuid)
+          if (selection.timeseries) {
+            groupedSelections[scale].timeseries.push(selection.timeseries)
+          } else if (selection.rasters) {
+            groupedSelections[scale].rasters.push(selection.timeseries)
+          }
         }
       });
 
@@ -62,8 +70,8 @@ angular.module('timeseries')
       };
 
       var promise = $q.all([
-        activeTimeseries(groupedTimeseries.temporalLines, true),
-        activeTimeseries(groupedTimeseries.temporalBars, false, true)
+        activeTimeseries(groupedSelections.temporalLines.timeseries, true),
+        activeTimeseries(groupedSelections.temporalBars.timeseries, false, true)
       ]).then(function (response) {
         var barsAndLinesTimeseries = _.concat(response[0], response[1]);
         console.log('TimeseriesService.timeseries:', service.timeseries);
@@ -75,9 +83,9 @@ angular.module('timeseries')
         service.timeseries = _.filter(
           barsAndLinesTimeseries,
           function (ts) { return _.some(
-            State.timeseries,
+            State.selections,
             function (stateTs) {
-              return ts.id === stateTs.uuid && stateTs.active;
+              return ts.id === stateTs.timeseries && stateTs.active;
             });
           });
         return service.timeseries;
@@ -106,7 +114,7 @@ angular.module('timeseries')
      */
     this.onColorChange = function (changedTS) {
       var ts = _.find(service.timeseries, function (o) {
-        return o.id === changedTS.uuid;
+        return o.id === changedTS.timeseries;
       });
       if (ts) {
         ts.color = changedTS.color;
@@ -205,18 +213,18 @@ angular.module('timeseries')
 
     this.initializeTimeseriesOfAsset = function (asset) {
       var colors = UtilService.GRAPH_COLORS;
-      State.timeseries = _.unionBy(
-        State.timeseries,
+      State.selections = _.unionBy(
+        State.selections,
         asset.timeseries.map(function (ts, i) {
           return {
-            uuid: ts.uuid,
+            timeseries: ts.uuid,
             active: false,
             order: 0,
             color: colors[i % (colors.length - 1)],
             measureScale: ts.scale
           };
         }),
-        'uuid'
+        'timeseries'
       );
       return asset;
     };
@@ -234,7 +242,7 @@ angular.module('timeseries')
   function (WantedAttributes, DataService, State) {
 
     /**
-     * Looks up timeseries in State.timeseries and copies color and order.
+     * Looks up timeseries in State.selections and copies color and order.
      * TimeseriesService.timeseries are not persistent when toggled.
      * asset.timeseries is persistent till a user removes it from selection.
      *
@@ -294,8 +302,8 @@ angular.module('timeseries')
       }
 
       var tsState = _.find(
-        State.timeseries,
-        { 'uuid': graphTimeseries.id }
+        State.selections,
+        { 'timeseries': graphTimeseries.id }
       );
 
       // In db with crosssections it is possible to not have state of a ts.

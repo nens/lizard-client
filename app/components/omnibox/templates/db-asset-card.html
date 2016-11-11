@@ -35,28 +35,28 @@
 
       <!-- use ng-show, so div is present and can be added to drag containers -->
       <div id="drag-container">
-        <div ng-repeat="ts in timeseries"
-             ng-if="getTsMetaData(ts.uuid)"
-             data-uuid="<% ts.uuid %>"
+        <div ng-repeat="selection in selections"
+             ng-if="getTsMetaData(selection.timeseries)"
+             data-uuid="<% selection.timeseries %>"
              class="draggable-ts">
           <div
-            id="<% ts.uuid %>"
-            ng-click="toggleTimeseries(ts)"
+            id="<% selection.timeseries %>"
+            ng-click="toggleTimeseries(selection)"
             class="card-content-list clickable">
             <i class="fa" ng-class="{
-              'fa-clock-o': getTsMetaData(ts.uuid).value_type !== 'image',
-              'fa-file-image-o': getTsMetaData(ts.uuid).value_type === 'image'
+              'fa-clock-o': getTsMetaData(selection.timeseries).value_type !== 'image',
+              'fa-file-image-o': getTsMetaData(selection.timeseries).value_type === 'image'
             }"></i>
             <span
-              title="<% getTsMetaData(ts.uuid).location %>, <% getTsMetaData(ts.uuid).name %>, <% getTsMetaData(ts.uuid).parameter %>"
-              ng-class="{'text-primary bg-warning': ts.active}">
-              <% getTsMetaData(ts.uuid).location %>,
-              <% getTsMetaData(ts.uuid).name %>,
-              <% getTsMetaData(ts.uuid).parameter %>
+              title="<% getTsMetaData(selection.timeseries).location %>, <% getTsMetaData(selection.timeseries).name %>, <% getTsMetaData(selection.timeseries).parameter %>"
+              ng-class="{'text-primary bg-warning': selection.active}">
+              <% getTsMetaData(selection.timeseries).location %>,
+              <% getTsMetaData(selection.timeseries).name %>,
+              <% getTsMetaData(selection.timeseries).parameter %>
             </span>
           </div>
           <div class="circle pull-right"
-               ng-style="{'background-color': ts.color}"
+               ng-style="{'background-color': selection.color}"
                ng-click="toggleColorPicker()">
           </div>
           <color-picker></color-picker>

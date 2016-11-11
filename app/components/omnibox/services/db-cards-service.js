@@ -17,11 +17,11 @@ angular.module('omnibox')
     var actives = 0;
 
     _.forEach(
-      State.timeseries,
-      function (ts) {
-        if (ts.active) {
+      State.selections,
+      function (selection) {
+        if (selection.active) {
           actives++;
-          orders.push(ts.order);
+          orders.push(selection.order);
         }
       }
     );
@@ -66,35 +66,35 @@ angular.module('omnibox')
 
   var removeItemFromPlot = function (item) {
     var order = item.order;
-    var uuid = item.uuid; // Timeseries have a uuid. Other plottable items do
-                          // not.
+    var uuid = item.timeseries; // Timeseries have a uuid. Other plottable items do
+                                // not.
 
     var otherItems = 0;
 
     if (uuid) {
       // Check if it was the last timeseries in the chart.
       otherItems += _.filter(
-        State.timeseries,
-        function (ts) {
-          return ts.active && ts.uuid !== uuid && ts.order === order;
+        State.selections,
+        function (selection) {
+          return selection.active && selection.timeseries !== uuid && selection.order === order;
         }
       ).length;
     }
 
     if (otherItems === 0) {
-      State.timeseries.forEach(function (ts) {
-        if (ts.order > order) {
-          ts.order--;
+      State.selections.forEach(function (selection) {
+        if (selection.order > order) {
+          selection.order--;
 
           // TimeseriesService.timeseries get an order when fetched. Set
           // this when changing order of timeseries in
           // TimeseriesService.timeseries.
           var fetchedTimeseries = _.find(
             TimeseriesService.timeseries,
-            function (fts) { return fts.id === ts.uuid; }
+            function (fts) { return fts.id === selection.uuid; }
           );
           if (fetchedTimeseries) {
-            fetchedTimeseries.order = ts.order;
+            fetchedTimeseries.order = selection.order;
           }
 
         }

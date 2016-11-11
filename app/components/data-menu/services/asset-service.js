@@ -14,8 +14,8 @@ angular.module('data-menu')
        * @param  {object} asset
        */
       var removeTSofAsset = function (asset) {
-        State.timeseries = _.differenceBy(
-          State.timeseries,
+        State.selections = _.differenceBy(
+          State.selections,
           asset.timeseries,
           'uuid'
         );

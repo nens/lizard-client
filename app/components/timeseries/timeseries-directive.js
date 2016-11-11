@@ -21,8 +21,8 @@ angular.module('timeseries')
       scope.$on('$destroy', function () {
 
         if (State.assets.length > 1 && State.context === 'map') {
-          _.forEach(State.timeseries, function (ts) {
-            ts.active = false;
+          _.forEach(State.selections, function (selection) {
+            selection.active = false;
           });
           TimeseriesService.syncTime();
         }
@@ -58,9 +58,9 @@ angular.module('timeseries')
       var selectTimeseries = function () {
         var selectedTimeseriesUuid = scope.timeseries.selected.uuid;
 
-        State.timeseries.forEach(function (ts) {
-          if (_.find(scope.asset.timeseries, {uuid: ts.uuid})) {
-            ts.active = ts.uuid === selectedTimeseriesUuid;
+        State.selections.forEach(function (selection) {
+          if (_.find(scope.asset.timeseries, {uuid: selection.timeseries})) {
+            selection.active = selection.timeseries === selectedTimeseriesUuid;
           }
         });
 
@@ -88,11 +88,11 @@ angular.module('timeseries')
           scope.timeseries.selected = scope.asset.timeseries[0];
         };
 
-        var activeTs = _.find(State.timeseries, {active: true});
-        if (activeTs) {
+        var activeSelections = _.find(State.selections, {active: true});
+        if (activeSelections) {
            var tsInAsset = _.find(
             scope.asset.timeseries,
-            function (ts) { return ts.uuid === activeTs.uuid;}
+            function (selection) { return selection.timeseries === activeSelections.timeseries;}
           );
           if (tsInAsset) {
             scope.timeseries.selected = tsInAsset;
