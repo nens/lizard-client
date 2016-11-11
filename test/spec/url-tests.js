@@ -104,10 +104,11 @@ describe('Testing UrlService', function () {
       annotations: {active: true},
       layers: {active : ['assetgroup$0037b5f']},
       box: {type : 'region'},
-      selected: undefined,
       spatial: {
         view: { lat: 4, lng: 6, zoom: 8 }
       },
+      assets: [],
+      geometries: [],
       temporal: { start :1199401200000, end :1468447200000 }
     };
     var state = service.getState();

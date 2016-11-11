@@ -4,6 +4,7 @@ angular.module('omnibox')
   function (State, DBCardsService, DataService) {
     return {
       link: function (scope) {
+        console.log("dbGeometryCards", State);
 
         scope.noData = true;
 
