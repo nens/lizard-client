@@ -13,13 +13,13 @@ angular.module('omnibox')
         });
       };
 
-      scope.toggleTimeseries = function (timeseries) {
+      scope.toggleSelection = function (selection) {
 
-        if (!timeseries.active) {
+        if (!selection.active) {
 
           var plots = DBCardsService.getActiveCountAndOrder();
 
-          timeseries.order = plots.count > 0
+          selection.order = plots.count > 0
             ? plots.order + 1
             : 0;
 
@@ -27,11 +27,11 @@ angular.module('omnibox')
 
         else {
 
-          DBCardsService.removeItemFromPlot(timeseries);
+          DBCardsService.removeItemFromPlot(selection);
 
         }
 
-        timeseries.active = !timeseries.active;
+        selection.active = !selection.active;
         TimeseriesService.syncTime();
 
       };

@@ -23,13 +23,13 @@ angular.module('timeseries')
 
     var service = this;
 
-    var _timeseries = [];
+    var _selections = [];
     Object.defineProperty(State, 'selections', {
-      get: function () { return _timeseries; },
-      set: function (timeseries) {
-        console.log('State.timeseries:', timeseries); // TODO: Timeseries or selections?
-        _timeseries = timeseries;
-        service.syncTime(timeseries);
+      get: function () { return _selections; },
+      set: function (selections) {
+        console.log('State.selections:', selections); // TODO: Timeseries or selections?
+        _selections = selections;
+        service.syncTime(selections);
       },
       enumerable: true
     });
@@ -147,7 +147,7 @@ angular.module('timeseries')
         }
 
         localPromise = $q.defer();
-      };
+      }
       var id = uuids.join(',');
       var params = {
         uuid: id,

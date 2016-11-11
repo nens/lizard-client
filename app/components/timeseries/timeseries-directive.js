@@ -17,7 +17,6 @@ angular.module('timeseries')
 
       });
 
-
       scope.$on('$destroy', function () {
 
         if (State.assets.length > 1 && State.context === 'map') {

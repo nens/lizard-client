@@ -13,9 +13,7 @@
 angular.module('lizard-nxt')
   .service('LocationGetterSetter', ['$location', function ($location) {
 
-    var _getPath, _getPathParts,
-
-    service = {
+    var service = {
 
      /**
       * @function
@@ -74,14 +72,12 @@ angular.module('lizard-nxt')
     * @param {str} part, part url looking for currently <path | @>
     * @return {str} the part the path.
     */
-    _getPath = function (part) {
+    var _getPath = function (part) {
 
-      var paths,
-          pathPart,
-          path = $location.path();
+      var path = $location.path();
 
-      paths = path.split('@'); //splits path in two at the @.
-      pathPart = paths[part === 'path' ? 0 : 1] || ''; //gets before @ when 'path' after when 'at'
+      var paths = path.split('@'); //splits path in two at the @.
+      var pathPart = paths[part === 'path' ? 0 : 1] || ''; //gets before @ when 'path' after when 'at'
       // we do not want the first slash
       pathPart = part === 'path' ? pathPart.slice(1) : pathPart;
       return pathPart;
@@ -95,7 +91,7 @@ angular.module('lizard-nxt')
     * @param {str} part of the path without first slash.
     * @return {array} the values in the part of the path.
     */
-    _getPathParts = function (part) {
+    var _getPathParts = function (part) {
       var pathPart = _getPath(part);
       if (!pathPart) { return []; }
       return pathPart.split('/');
@@ -219,13 +215,14 @@ angular.module('lizard-nxt')
        * @memberOf UrlState
        * @description Sets the selected items part of the url
        * @param {object} state config object
-       * @param {object} selected object (containing, assets, and geoms)
+       * @param {object} assets selected asset objects
+       * @param {object} geoms selected geoms
        */
-      setSelectedUrl: function (state, selected) {
-        var newHash = angular.copy(selected.assets);
+      setSelectedUrl: function (state, assets, geometries) {
+        var newHash = angular.copy(assets);
         var n = Math.pow(10, COORD_PRECISION);
         var coords;
-        angular.forEach(selected.geometries, function (geom) {
+        angular.forEach(geometries, function (geom) {
           if (geom.geometry.type === 'Point') {
             coords = angular.copy(geom.geometry.coordinates);
             coords.forEach(function (point, i) {
@@ -511,7 +508,7 @@ angular.module('lizard-nxt')
         config.geom.part,
         config.geom.index
       );
-      return UrlState.parseSelection(selected);
+      return UrlState.parseSelection(selected) || {assets: [], geometries: []};
     };
 
     var getView = function () {
@@ -539,8 +536,7 @@ angular.module('lizard-nxt')
           state.language
         );
 
-        UrlState.setSelectedUrl(
-            config, {assets: state.assets, geometries: state.geometries});
+        UrlState.setSelectedUrl(config, state.assets, state.geometries);
 
         LocationGetterSetter.setUrlValue(
           config.context.part, config.context.index, state.context
@@ -576,6 +572,7 @@ angular.module('lizard-nxt')
       },
 
       getState: function () {
+        var selected = getSelected();
         return {
           language: getLanguage(),
           context: getContext(),
@@ -586,9 +583,10 @@ angular.module('lizard-nxt')
           annotations: getAnnotations() ? { active: true } : undefined,
           layers: {active: getLayers()},
           box: {type: getBoxType()},
-          selected: getSelected(),
           spatial: {view: getView()},
-          temporal: getTemporal()
+          temporal: getTemporal(),
+          assets: selected.assets,
+          geometries: selected.geometries
         };
       },
 

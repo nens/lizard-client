@@ -10,9 +10,9 @@ angular.module('dashboard')
 
 
   /**
-   * Combines timeseries, with other chartable active data to dashboard data.
+   * Combines selections, with other chartable active data to dashboard data.
    *
-   * Graphs are an array of graph-directive objects representing timeseries
+   * Graphs are an array of graph-directive objects representing selections
    * and raster data.
    * {
    *   'type': 'type',
@@ -25,19 +25,19 @@ angular.module('dashboard')
    * }
    *
    * @param  {array} graphs     Currently plotted graphs.
-   * @param  {array} timeseries Data source timeseries from timseriesService.
+   * @param  {array} selections Data source selections from timseriesService.
    * @param  {array} assets     Data source DataService.assets.
    * @param  {array} geometries Data source DataService.geometries.
    * @return {array} graph
    */
-  this.buildGraphs = function (graphs, timeseries, assets, geometries) {
+  this.buildGraphs = function (graphs, selections, assets, geometries) {
 
     graphs = this._setAllContentToNotUpdated(graphs);
 
-    timeseries.forEach(function (ts) {
+    selections.forEach(function (ts) {
       ts.updated = true;
       if (graphs[ts.order]) {
-        // Check if timeseries is already in the plot, if so replace data.
+        // Check if selections is already in the plot, if so replace data.
         var partOfContent =_.find(graphs[ts.order].content, function (c) {
           return c.id === ts.id;
         });
@@ -63,7 +63,7 @@ angular.module('dashboard')
       graphs = addPropertyData(graphs, asset.properties);
 
       // Specific logic to add crosssections. We could abstract this to all
-      // assets with children that have timeseries.
+      // assets with children that have selections.
       if (asset.entity_name === 'leveecrosssection'
         && asset.crosssection && asset.crosssection.active) {
         graphs[asset.crosssection.order] = {
