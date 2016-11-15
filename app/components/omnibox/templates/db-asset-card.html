@@ -35,39 +35,52 @@
 
       <!-- use ng-show, so div is present and can be added to drag containers -->
       <div id="drag-container">
-        <div ng-repeat="selection in state.selections"
-             ng-if="getTsMetaData(selection.timeseries)"
-             data-uuid="<% selection.timeseries %>"
-             class="draggable-ts">
-          <div
-            id="<% selection.timeseries %>"
-            ng-click="toggleSelection(selection)"
-            class="card-content-list clickable">
-            <i class="fa" ng-class="{
-              'fa-clock-o': getTsMetaData(selection.timeseries).value_type !== 'image',
-              'fa-file-image-o': getTsMetaData(selection.timeseries).value_type === 'image'
-            }"></i>
-            <span
-              title="<% getTsMetaData(selection.timeseries).location %>, <% getTsMetaData(selection.timeseries).name %>, <% getTsMetaData(selection.timeseries).parameter %>"
-              ng-class="{'text-primary bg-warning': selection.active}">
-              <% getTsMetaData(selection.timeseries).location %>,
-              <% getTsMetaData(selection.timeseries).name %>,
-              <% getTsMetaData(selection.timeseries).parameter %>
-            </span>
+        <div ng-repeat="selection in state.selections | orderBy : 'type' : true"
+             ng-init="metaData = getSelectionMetaData(selection)"
+             ng-if="getSelectionMetaData(selection).assetMatch">
+          <div data-uuid="<% selection.$$hashKey %>"
+               class="draggable-ts">
+            <div
+              ng-if="metaData.type === 'timeseries'"
+              id="<% selection.timeseries %>"
+              ng-click="toggleSelection(selection)"
+              class="card-content-list clickable">
+              <i class="fa" ng-class="{
+                'fa-clock-o': metaData.value_type !== 'image',
+                'fa-file-image-o': metaData.value_type === 'image'
+              }"></i>
+              <span
+                title="<% metaData.location %>, <% metaData.name %>, <% metaData.parameter %>"
+                ng-class="{'text-primary bg-warning': selection.active}">
+                <% metaData.location %>,
+                <% metaData.name %>,
+                <% metaData.parameter %>
+              </span>
+            </div>
+            <div
+              ng-if="metaData.type === 'raster'"
+              id="<% selection.raster %>"
+              ng-click="toggleSelection(selection)"
+              class="card-content-list clickable">
+              <i class="fa fa-line-chart"></i>
+              <span ng-class="{'text-primary bg-warning': metaData.active}">
+                <% metaData.quantity %>, (<% metaData.unit %>)
+              </span>
+            </div>
+            <div class="circle pull-right"
+                 ng-style="{'background-color': selection.color}"
+                 ng-click="toggleColorPicker()">
+            </div>
+            <color-picker></color-picker>
           </div>
-          <div class="circle pull-right"
-               ng-style="{'background-color': selection.color}"
-               ng-click="toggleColorPicker()">
-          </div>
-          <color-picker></color-picker>
         </div>
       </div>
 
-      <db-geometry-cards
-        time-state="timeState"
-        geom="asset"
-        header="false">
-      </db-geometry-cards>
+      <!--<db-geometry-cards-->
+        <!--time-state="timeState"-->
+        <!--geom="asset"-->
+        <!--header="false">-->
+      <!--</db-geometry-cards>-->
 
     </div>
 

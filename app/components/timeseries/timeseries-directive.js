@@ -10,6 +10,7 @@ angular.module('timeseries')
 
       scope.$watch('asset', function () {
         TimeseriesService.initializeTimeseriesOfAsset(scope.asset);
+        TimeseriesService.initializeRasterTimeseriesOfAsset(scope.asset);
 
         if (State.context === 'map') {
           scope.timeseries.change();

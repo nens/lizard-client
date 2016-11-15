@@ -6,10 +6,29 @@ angular.module('omnibox')
     link: function (scope, element) {
 
       scope.state = State;
-      scope.getTsMetaData = function (uuid) {
-        return _.find(scope.asset.timeseries, function (ts) {
-          return ts.uuid === uuid;
-        });
+      scope.getSelectionMetaData = function (selection) {
+        if (selection.timeseries) {
+          var assetTs = _.find(scope.asset.timeseries, function (ts) {
+            return ts.uuid === selection.timeseries;
+          });
+          if (assetTs === undefined) { assetTs = {assetMatch: false} } else {
+            assetTs.assetMatch = true
+          }
+          assetTs.type = 'timeseries';
+          return assetTs;
+        } else if (selection.raster) {
+          var assetRaster = _.find(DataService.assets, function (asset) {
+            return asset.entity_name + "$" + asset.id === selection.asset;
+          });
+          var props = { assetMatch: false };
+          if (assetRaster !== undefined) {
+            var assetProps = assetRaster.properties[selection.raster];
+            if (assetProps) {
+              props = assetProps; props.assetMatch = true
+            }
+          }
+          return props;
+        }
       };
 
       scope.toggleSelection = function (selection) {

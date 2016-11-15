@@ -27,7 +27,7 @@ angular.module('timeseries')
     Object.defineProperty(State, 'selections', {
       get: function () { return _selections; },
       set: function (selections) {
-        console.log('State.selections:', selections); // TODO: Timeseries or selections?
+        console.log('State.selections:', selections);
         _selections = selections;
         service.syncTime(selections);
       },
@@ -211,12 +211,19 @@ angular.module('timeseries')
       return err; // continue anyway
     };
 
+    var selectionComparator = function(selectionType) {
+      return function (existingSelection, newSelection){
+        if (existingSelection.type !== selectionType) { return false }
+        return existingSelection[selectionType] === newSelection[selectionType];
+    };};
+
     this.initializeTimeseriesOfAsset = function (asset) {
       var colors = UtilService.GRAPH_COLORS;
-      State.selections = _.unionBy(
+      State.selections = _.unionWith(
         State.selections,
         asset.timeseries.map(function (ts, i) {
           return {
+            type: "timeseries",
             timeseries: ts.uuid,
             active: false,
             order: 0,
@@ -224,7 +231,29 @@ angular.module('timeseries')
             measureScale: ts.scale
           };
         }),
-        'timeseries'
+        selectionComparator("timeseries")
+      );
+      return asset;
+    };
+
+    this.initializeRasterTimeseriesOfAsset= function (asset) {
+      var colors = UtilService.GRAPH_COLORS;
+      State.selections = _.unionWith(
+        State.selections,
+        _.filter(State.layers,
+            function(layer) {return layer.type === 'raster'}
+        ).map(function (layer, i) {
+          return {
+            type: "raster",
+            raster: layer.uuid,
+            asset: asset.entity_name + "$" + asset.id,
+            active: false,
+            order: 0,
+            color: colors[i + 8 % (colors.length - 1)],
+            measureScale: layer.scale
+          };
+        }),
+        selectionComparator("raster")
       );
       return asset;
     };
