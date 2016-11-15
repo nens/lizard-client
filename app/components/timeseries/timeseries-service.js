@@ -327,11 +327,11 @@ angular.module('timeseries')
       timeseries.forEach(function (ts) {
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
         graphTimeseries.data = ts.events;
-        if (graphTimeseries.data) {
+        if (graphTimeseries.data && graphTimeseries.data.length > 0) {
           // The y key is not always 'value' for bar charts. We get the y key
           // from the data.
           var yKey = _.filter(
-              Object.keys(graphTimeseries.data [0]),
+              Object.keys(graphTimeseries.data[0]),
               function(x){ return x !== graphTimeseries.keys.x }
           );
           if (yKey.length === 1 && graphTimeseries.keys.y !== yKey[0]) {
