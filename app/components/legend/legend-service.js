@@ -20,10 +20,6 @@ angular.module('legend')
       return url.replace("9000", "8000"); // Applicable for dev environment only..
     };
 
-    var resetDiscreteRasterData = function (name) {
-      self.rasterData.discrete[name] = {};
-    };
-
     var resetContinuousRasterData = function (name) {
       self.rasterData.continuous[name] = {
         min: null,
@@ -59,7 +55,9 @@ angular.module('legend')
             return datum.data;
           });
           self.rasterData.discrete[rasterName] = obj.data;
-        };
+        } else {
+          self.rasterData.discrete[rasterName] = undefined;
+        }
       });
     };
 
@@ -119,9 +117,12 @@ angular.module('legend')
           uuid = layerObj.uuid;
           if (layerObj.active) {
             dataLayerObj = _.find(DataService.dataLayers, {uuid: uuid});
+            if (!dataLayerObj) {
+              // On initial pageload, occasionally dataLayerObj is undefined
+              return;
+            }
             uuidMapping[uuid] = name;
             if (rasterIsDiscrete(dataLayerObj)) {
-              resetDiscreteRasterData(name);
               DataService.updateLayerData(geo, layerObj, options, promises);
             } else {
               resetContinuousRasterData(name);

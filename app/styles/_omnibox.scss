@@ -757,3 +757,52 @@ input[type=file] {
 .btn-link {
     padding: 0;
 }
+
+
+/** LEGEND (TODO - move this content to: app/styles/_legend.scss) ************/
+
+.legend-discrete {
+  margin-bottom: 0;
+}
+
+.single-discrete-legend {
+  background-color: white;
+  width: 400px;
+  margin-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.legend-header {
+  color: #777;
+  margin-left: 18px;
+  margin-bottom: 5px;
+}
+
+.discrete-legend-datum {
+  height: 25px;
+}
+
+.discrete-legend-datum-omitted {
+  color: #777;
+  height: 30px;
+  font-style: italic;
+  margin-left: 10px;
+  margin-top: 5px;
+  margin-bottom: 0px;
+}
+
+.discrete-legend-color-rect {
+  height: 18px;
+  width: 46px;
+  background-color: white;
+  float: left;
+  margin-left: 18px;
+  border-radius: 2px;
+}
+
+.discrete-legend-label {
+  margin-left: 10px;
+  float: left;
+  color: #777;
+}

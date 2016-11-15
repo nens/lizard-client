@@ -310,8 +310,6 @@ angular.module('map')
         MapService.remove();
         ClickFeedbackService.remove();
       });
-
-
     };
 
     return {
