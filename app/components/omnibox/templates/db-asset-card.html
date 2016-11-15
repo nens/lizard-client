@@ -37,7 +37,7 @@
       <div id="drag-container">
         <div ng-repeat="selection in state.selections | orderBy : 'type' : true"
              ng-init="metaData = getSelectionMetaData(selection)"
-             ng-if="getSelectionMetaData(selection).assetMatch">
+             ng-if="getSelectionMetaData(selection).match">
           <div data-uuid="<% selection.$$hashKey %>"
                class="draggable-ts">
             <div

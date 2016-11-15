@@ -7,10 +7,24 @@ angular.module('timeseries')
   function (TimeseriesService, State) {
   return {
     link: function (scope) {
+      scope.state = State; // TODO: only done this to watch state.layers. There is a better place for this.
+      var selectionObject, selectionType;
+      if (scope.asset) {
+        selectionObject = scope.asset;
+        selectionType = 'asset';
+      } else if (scope.geom){
+        selectionObject = scope.geom;
+        selectionType = 'geom';
+      }
+      scope.$watch('state.layers', function () { // TODO: There is a better place for this.
+        TimeseriesService.initializeRasterTimeseries(selectionObject, selectionType);
+      });
 
-      scope.$watch('asset', function () {
-        TimeseriesService.initializeTimeseriesOfAsset(scope.asset);
-        TimeseriesService.initializeRasterTimeseriesOfAsset(scope.asset);
+      scope.$watch(selectionType, function () {
+        if (selectionType === 'asset'){
+          TimeseriesService.initializeTimeseriesOfAsset(selectionObject);
+        }
+        TimeseriesService.initializeRasterTimeseries(selectionObject, selectionType);
 
         if (State.context === 'map') {
           scope.timeseries.change();

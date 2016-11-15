@@ -5,29 +5,52 @@ angular.module('omnibox')
   return {
     link: function (scope, element) {
 
+      var dbSupportedData = function (property) {  // TODO: double with geometrycards
+        var type = scope.asset.geometry.type;
+        var temporal = property.temporal && type === 'Point';
+
+        var events = property.format === 'Vector' && type !== 'LineString';
+
+        var other = type !== 'Point'
+          && property.scale !== 'nominal'
+          && property.scale !== 'ordinal';
+
+        return temporal || events || other;
+      };
+
       scope.state = State;
+      var _getTimeseriesMetaData = function (selection) {
+        var assetTs = _.find(scope.asset.timeseries, function (ts) {
+          return ts.uuid === selection.timeseries;
+        });
+        if (assetTs === undefined) {
+          assetTs = { match: false }
+        } else {
+          assetTs.match = true
+        }
+        assetTs.type = 'timeseries';
+        return assetTs;
+      };
+      var _getRasterMetaData = function (selection) {
+        var assetRaster = _.find(DataService.assets, function (asset) {
+          return asset.entity_name + "$" + asset.id === selection.asset;
+        });
+        var props = { match: false };
+        if (assetRaster !== undefined) {
+          var assetProps = assetRaster.properties[selection.raster];
+          if (assetProps) {
+            props = assetProps;
+            var assetCode = scope.asset.entity_name + "$" + scope.asset.id;  // TODO: this is used in many places
+            props.match = selection.asset === assetCode && dbSupportedData(assetProps);
+          }
+        }
+        return props;
+      };
       scope.getSelectionMetaData = function (selection) {
         if (selection.timeseries) {
-          var assetTs = _.find(scope.asset.timeseries, function (ts) {
-            return ts.uuid === selection.timeseries;
-          });
-          if (assetTs === undefined) { assetTs = {assetMatch: false} } else {
-            assetTs.assetMatch = true
-          }
-          assetTs.type = 'timeseries';
-          return assetTs;
+          return _getTimeseriesMetaData(selection);
         } else if (selection.raster) {
-          var assetRaster = _.find(DataService.assets, function (asset) {
-            return asset.entity_name + "$" + asset.id === selection.asset;
-          });
-          var props = { assetMatch: false };
-          if (assetRaster !== undefined) {
-            var assetProps = assetRaster.properties[selection.raster];
-            if (assetProps) {
-              props = assetProps; props.assetMatch = true
-            }
-          }
-          return props;
+          return _getRasterMetaData(selection);
         }
       };
 

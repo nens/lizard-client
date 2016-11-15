@@ -211,11 +211,18 @@ angular.module('timeseries')
       return err; // continue anyway
     };
 
-    var selectionComparator = function(selectionType) {
-      return function (existingSelection, newSelection){
-        if (existingSelection.type !== selectionType) { return false }
-        return existingSelection[selectionType] === newSelection[selectionType];
-    };};
+    var rasterComparatorFactory = function (comparatorType) {
+      return function (existingSelection, newSelection) {
+        if (existingSelection.type !== "raster") { return false }
+        return existingSelection.raster === newSelection.raster
+            && existingSelection[comparatorType] ===
+            newSelection[comparatorType];
+    }};
+
+    var timeseriesComparator = function(existingSelection, newSelection){
+        if (existingSelection.type !== "timeseries") { return false }
+        return existingSelection.timeseries === newSelection.timeseries;
+    };
 
     this.initializeTimeseriesOfAsset = function (asset) {
       var colors = UtilService.GRAPH_COLORS;
@@ -231,33 +238,36 @@ angular.module('timeseries')
             measureScale: ts.scale
           };
         }),
-        selectionComparator("timeseries")
+        timeseriesComparator
       );
       return asset;
     };
 
-    this.initializeRasterTimeseriesOfAsset= function (asset) {
+    this.initializeRasterTimeseries = function (geomObject, geomType) {
+      var geomId = geomType === 'asset' ?
+        geomObject.entity_name + "$" + geomObject.id :
+        geomObject.geometry.coordinates.toString();
       var colors = UtilService.GRAPH_COLORS;
       State.selections = _.unionWith(
         State.selections,
         _.filter(State.layers,
             function(layer) {return layer.type === 'raster'}
         ).map(function (layer, i) {
-          return {
+          var rasterSelection  = {
             type: "raster",
             raster: layer.uuid,
-            asset: asset.entity_name + "$" + asset.id,
             active: false,
             order: 0,
             color: colors[i + 8 % (colors.length - 1)],
             measureScale: layer.scale
           };
+          rasterSelection[geomType] = geomId;
+          return rasterSelection;
         }),
-        selectionComparator("raster")
+        rasterComparatorFactory(geomType)
       );
-      return asset;
+      return geomObject;
     };
-
   }
 
 ]);

@@ -1,14 +1,35 @@
 
 angular.module('omnibox')
-.directive('dbGeometryCards', [ 'State', 'DBCardsService', 'DataService',
-  function (State, DBCardsService, DataService) {
+.directive('dbGeometryCards', [ 'State', 'DBCardsService', 'DataService', 'DragService',
+  function (State, DBCardsService, DataService, DragService) { // TODO: This whole directive is a copy of parts of the asset-card-directive
     return {
-      link: function (scope) {
-        console.log("dbGeometryCards", State);
+      link: function (scope, element) {
+        scope.state = State;
 
         scope.noData = true;
+        var _getRasterMetaData = function (selection) { // TODO: DOUBLE
+          var assetRaster = _.find(DataService.geometries, function (geom) {
+            return geom.geometry.coordinates.toString() === selection.geom;
+          });
+          var props = { match: false };
+          if (assetRaster !== undefined) {
+            var assetProps = assetRaster.properties[selection.raster];
+            if (assetProps) {
+              props = assetProps;
+              var assetCode = scope.geom.geometry.coordinates.toString();  // TODO: this is used in many places
+              props.match = selection.geom === assetCode && scope.dbSupportedData(scope.geom.geometry.type, props);
+            }
+          }
+          return props;
+        };
+        scope.getSelectionMetaData = function (selection) { // TODO: DOUBLE
+          if (selection.raster) {
+            return _getRasterMetaData(selection);
+          }
+        };
 
-        scope.dbSupportedData = function (type, property) {
+
+        scope.dbSupportedData = function (type, property) { // TODO: DOUBLE
           var temporal = property.temporal && type === 'Point';
 
           var events = property.format === 'Vector' && type !== 'LineString';
@@ -78,6 +99,8 @@ angular.module('omnibox')
             property.active = undefined;
           });
         });
+
+        DragService.addDraggableContainer(element.find('#drag-container'));
 
       },
       restrict: 'E',

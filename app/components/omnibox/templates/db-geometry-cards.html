@@ -2,12 +2,40 @@
 <div>
   <em ng-if="noData" translate>No raster data available for this geometry</em>
 
-  <div
-    ng-if="dbSupportedData(geom.geometry.type, prop)"
-    ng-repeat="(slug, prop) in geom.properties">
-    <div ng-click="toggleProperty(prop)" class="card-content-list clickable">
-      <i class="fa fa-line-chart"></i>
-      <span ng-class="{'text-primary bg-warning': prop.active}"><% prop.quantity %>, (<% prop.unit %>)</span>
+    <timeseries geom="geom" time-state="timeState"></timeseries>
+
+    <div id="drag-container">
+      <div ng-repeat="selection in state.selections"
+           ng-init="metaData = getSelectionMetaData(selection)"
+           ng-if="getSelectionMetaData(selection).match">
+        <div data-uuid="<% selection.$$hashKey %>"
+             class="draggable-ts">
+          <div
+            ng-if="metaData.type === 'raster'"
+            id="<% selection.raster %>"
+            ng-click="toggleSelection(selection)"
+            class="card-content-list clickable">
+            <i class="fa fa-line-chart"></i>
+            <span ng-class="{'text-primary bg-warning': metaData.active}">
+              <% metaData.quantity %>, (<% metaData.unit %>)
+            </span>
+          </div>
+          <div class="circle pull-right"
+               ng-style="{'background-color': selection.color}"
+               ng-click="toggleColorPicker()">
+          </div>
+          <color-picker></color-picker>
+        </div>
+      </div>
     </div>
-  </div>
+
+
+  <!--<div-->
+    <!--ng-if="dbSupportedData(geom.geometry.type, prop)"-->
+    <!--ng-repeat="(slug, prop) in geom.properties">-->
+    <!--<div ng-click="toggleProperty(prop)" class="card-content-list clickable">-->
+      <!--<i class="fa fa-line-chart"></i>-->
+      <!--<span ng-class="{'text-primary bg-warning': prop.active}"><% prop.quantity %>, (<% prop.unit %>)</span>-->
+    <!--</div>-->
+  <!--</div>-->
 </div>
