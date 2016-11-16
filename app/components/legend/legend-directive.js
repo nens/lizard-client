@@ -1,6 +1,35 @@
 angular.module('legend')
 .directive('legend', ["LegendService", "State", function(LegendService, State) {
 
+  var rgbListToString = function (rgbList) {
+    var result = "rgb("
+      + rgbList[0] + ","
+      + rgbList[1] + ","
+      + rgbList[2] + ")";
+    return result;
+  };
+
+  var shiftColor = function (rgba0, rgba1, shiftRatio) {
+    console.log("[F] shiftColor");
+
+    var r0 = rgba0[0];
+    var r1 = rgba1[0];
+    var rDiff = r1 - r0;
+    var rInterp = Math.round(r0 + rDiff * shiftRatio);
+
+    var g0 = rgba0[1];
+    var g1 = rgba1[1];
+    var gDiff = g1 - g0;
+    var gInterp = Math.round(g0 + gDiff * shiftRatio);
+
+    var b0 = rgba0[2];
+    var b1 = rgba1[2];
+    var bDiff = b1 - b0;
+    var bInterp = Math.round(b0 + bDiff * shiftRatio);
+
+    return [rInterp, gInterp, bInterp];
+  };
+
   var link = function (scope, element, attrs) {
 
     /* scope variables used for DISCRETE rasters: ****************************/
@@ -87,9 +116,29 @@ angular.module('legend')
     };
 
     scope.getGradient = function (rasterName) {
-      console.log("[F] getGradient");
-      ///////////////////////////////
-      scope.getColorForMinimum(rasterName);
+
+      /*
+
+      ////////////////////////////////////////////////////
+      var minColor = scope.getColorForMinimum(rasterName);
+      ////////////////////////////////////////////////////
+
+      var intermediateColor = "rgb(255, 255, 198)";
+
+      ////////////////////////////////////////////////////
+      var maxColor = scope.getColorForMaximum(rasterName);
+      ////////////////////////////////////////////////////
+
+      var gradientValue = "-moz-linear-gradient(bottom, ";
+      var colorFirst = rgbListToString(minColor);
+      var colorLast = rgbListToString(maxColor);
+      gradientValue += colorFirst + "," + intermediateColor + "," + colorLast + ")";
+      console.log("gradientValue:", gradientValue);
+
+      return gradientValue;
+
+      */
+
 
       var colorData = scope.legendData.continuous[rasterName].colormap.data;
       var gradientValue = "-moz-linear-gradient(bottom, ";
@@ -108,8 +157,77 @@ angular.module('legend')
       var currentMin = rasterData.min;
       console.log("currentMin:", currentMin);
 
+      var colorDatum;
+      var rgba0;
+      var rgba1;
+      var num;
+      var prevNum;
+      var prevColorDatum;
+      var numDelta;
+      var shiftPercentage;
+      var interpolatedColor;
+      var shiftRatio;
 
+      for (var i = colorData.length - 1; i > 0; i--) {
 
+        colorDatum = colorData[i];
+        prevColorDatum = colorData[i - 1];
+
+        num = colorDatum[0];
+        prevNum = prevColorDatum[0];
+
+        console.log("num:", num);
+        if (currentMin > prevNum && currentMin < num) {
+          console.log("OK, found range!", prevNum, "<=", currentMin, " <=", num);
+
+          rgba1 = colorDatum[1];
+          rgba0 = prevColorDatum[1];
+
+          numDelta = num - prevNum;
+          console.log("numDelta:", numDelta);
+
+          shiftRatio = (currentMin - prevNum) / numDelta;
+          console.log("shiftRatio:", shiftRatio);
+          interpolatedColor = shiftColor(rgba0, rgba1, shiftRatio);
+          console.log("interpolatedColor for minimum:", interpolatedColor);
+          break;
+        }
+      }
+      return rgbListToString(interpolatedColor);
+    };
+
+    scope.getColorForMaximum = function (rasterName) {
+      var rasterData = scope.legendData.continuous[rasterName];
+      var colorData = rasterData.colormap.data;
+      var currentMax = rasterData.max;
+      // console.log("currentMax:", currentMax);
+
+      var colorDatum,
+          num,
+          rgba0,
+          rgba1,
+          prevNum,
+          deltaNum,
+          dist,
+          shiftRatio,
+          interpolatedColor;
+
+      for (var i=colorData.length - 1; i > 0; i--) {
+        colorDatum = colorData[i];
+        num = colorDatum[0];
+        rgba1 = colorDatum[1];
+        if (currentMax <= num) {
+          prevNum = colorData[i - 1][0];
+          rgba0 = colorData[i - 1][1];
+          deltaNum = num - prevNum;
+          dist = currentMax - prevNum;
+          shiftRatio = dist / deltaNum;
+          interpolatedColor = shiftColor(rgba0, rgba1, shiftRatio);
+          // console.log("interpolatedColor for maximum:", interpolatedColor);
+          break;
+        }
+      }
+      return rgbListToString(interpolatedColor);
     };
 
     /* Een kaartje voor zowel continuous als discrete rasters ****************/

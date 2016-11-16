@@ -33,13 +33,6 @@ angular.module('legend')
           max: null,
           colormap: colormaps[name] || null
         };
-      } else {
-        self.rasterData.continuous[name] = {
-          min: self.rasterData.continuous[name].min,
-          max: self.rasterData.continuous[name].max,
-          colormap: colormaps[name] || null
-        };
-
       }
     };
 
@@ -90,13 +83,13 @@ angular.module('legend')
       apiCallOptions.agg = 'min';
       var minPromise = RasterService.getData(apiCallOptions);
       minPromise.then(function (minData) {
-        self.rasterData.continuous[name].min = round(minData.data, 2);
+        self.rasterData.continuous[name].min = round(minData.data, 3);
       });
 
       apiCallOptions.agg = 'max';
       var maxPromise = RasterService.getData(apiCallOptions);
       maxPromise.then(function (maxData) {
-        self.rasterData.continuous[name].max = round(maxData.data, 2);
+        self.rasterData.continuous[name].max = round(maxData.data, 3);
       });
     };
 
