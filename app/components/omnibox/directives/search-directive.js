@@ -11,7 +11,9 @@ angular.module('omnibox')
     'MapService',
     'State',
     'UtilService',
-  function (SearchService, ClickFeedbackService, MapService, State, UtilService) {
+    '$timeout',
+  function (SearchService, ClickFeedbackService, MapService, State,
+    UtilService, $timeout) {
 
   var link = function (scope, element, attrs) {
 
@@ -20,6 +22,14 @@ angular.module('omnibox')
     scope.util = UtilService;
     scope.query = '';
 
+    var KEYPRESS = {
+      BACKSPACE: 8,
+      ENTER: 13,
+      SPACE: 32,
+      ESC: 27,
+      ARROWUP: 38,
+      ARROWDOWN: 40
+    };
     var ZOOM_FOR_OBJECT = 16;
 
     // Set focus on search input field.
@@ -67,6 +77,14 @@ angular.module('omnibox')
     };
 
     /**
+     * @description zooms to search resulit without clearing search or selecting the item.
+     * @param {object} one search result.
+     */
+    scope.zoomToSearchResultWithoutClearingSearch = function (result) {
+      State = SearchService.zoomToSearchResultWithoutSelecting(result, State);
+    };
+
+    /**
      * @description zooms to search resulit
      * @param {object} one search result.
      */
@@ -83,6 +101,14 @@ angular.module('omnibox')
     scope.zoomToSpatialResult = function (result) {
       scope.omnibox.searchResults = {};
       scope.query = "";
+      State = SearchService.zoomToGoogleGeocoderResult(result, State);
+    };
+
+    /**
+     * @description zooms to geocoder search result without clearing search
+     * @param {object} one search result.
+     */
+    scope.zoomToSpatialResultWithoutClearingSeach = function (result) {
       State = SearchService.zoomToGoogleGeocoderResult(result, State);
     };
 
@@ -113,12 +139,7 @@ angular.module('omnibox')
      */
     scope.searchKeyPress = function ($event) {
       clearTimeout(prevKeyTimeout);
-      var KEYPRESS = {
-        BACKSPACE: 8,
-        ENTER: 13,
-        SPACE: 32,
-        ESC: 27
-      };
+
 
       if ($event.target.id === "searchboxinput") {
         // Intercept keyPresses *within* searchbox,do xor prevent animation
@@ -156,6 +177,7 @@ angular.module('omnibox')
         }
       }
     };
+
 
     /**
      * Contains the logic to go through search result and puts relevant parts on
