@@ -1,15 +1,14 @@
-<div class="searchbox" id="searchbox" tabindex="-1" role="search">
-  <div class="zoom-buttons material-shadow">
+<div class="searchbox" id="searchbox" role="search">
+  <div class="zoom-buttons material-shadow hide">
     <button class="btn btn-primary"
             ng-click="zoomIn()"
-            tabindex="4"
             accesskey="+"
+            tabindex="0"
             aria-label="<% tooltips.zoomInMap %>">
       <i class="fa fa-plus"></i>
     </button>
     <button class="btn btn-primary"
             ng-click="zoomOut()"
-            tabindex="4"
             accesskey="-"
             aria-label="<% tooltips.zoomOutMap %>">
       <i class="fa fa-minus"></i>
@@ -23,15 +22,13 @@
               aria-label="<% tooltips.resetQuery %>"
               ng-click="cleanInput()"
               ng-if="query"
-              tabindex="3"
               accesskey="q"
               id="clear">
-        <i class="fa fa-close"></i>
+        <span aria-hidden="true">&times;</span>
       </button>
       <div class="resize-wrapper">
         <input
           id="searchboxinput"
-          tabindex="1"
           accesskey="s"
           placeholder="<% 'Search for places, or dates (i.e. 23-10-2013)' | translate %>"
           autocomplete="off"
@@ -40,6 +37,7 @@
           ng-change="search(query)"
           ng-keydown="searchKeyPress($event)"
           spellcheck="false"
+          tabindex="0"
           type="search">
       </div>
     </div>
