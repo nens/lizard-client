@@ -87,6 +87,10 @@ angular.module('legend')
     };
 
     scope.getGradient = function (rasterName) {
+      console.log("[F] getGradient");
+      ///////////////////////////////
+      scope.getColorForMinimum(rasterName);
+
       var colorData = scope.legendData.continuous[rasterName].colormap.data;
       var gradientValue = "-moz-linear-gradient(bottom, ";
       angular.forEach(colorData, function (datum) {
@@ -98,20 +102,19 @@ angular.module('legend')
       return gradientValue.substring(0, gradientValue.length - 1) + ")";
     };
 
-    scope.getHeightOffsetForMinimum = function (rasterName) {
-      console.log("[F] heightOffsetForMinimum");
-      var TOTAL_HEIGHT = 120;
-      var currentMin = scope.legendData.continuous[rasterName].min;
-      var absMin = scope.legendData.continuous[rasterName].colormap.interp[0][0];
-      var absMax = scope.legendData.continuous[rasterName].colormap.interp[100][0];
-      var totalDelta = absMax - absMin;
-      var result = 1 + (currentMin / totalDelta) * TOTAL_HEIGHT;
-      return Math.round(result);
+    scope.getColorForMinimum = function (rasterName) {
+      var rasterData = scope.legendData.continuous[rasterName];
+      var colorData = rasterData.colormap.data;
+      var currentMin = rasterData.min;
+      console.log("currentMin:", currentMin);
+
+
+
     };
 
     /* Een kaartje voor zowel continuous als discrete rasters ****************/
 
-    scope.selectedRasterName = "Bodem";
+    scope.selectedRasterName = null;
 
     scope.getAllRasterNames = function () {
       var cRasterNames = Object.keys(scope.legendData.continuous);
