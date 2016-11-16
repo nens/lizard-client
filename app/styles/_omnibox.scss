@@ -761,7 +761,7 @@ input[type=file] {
 
 /** LEGEND (TODO - move this content to: app/styles/_legend.scss) ************/
 
-.legend-discrete {
+/*.legend-discrete {
   margin-bottom: 0;
 }
 
@@ -815,7 +815,6 @@ input[type=file] {
   color: #777;
 }
 
-
 .single-continuous-legend {
   padding-right: 18px;
 }
@@ -828,4 +827,17 @@ input[type=file] {
   border: 1px solid #777;
 
   background: -moz-linear-gradient(left, red, blue);
+}
+*/
+
+.legends-card {
+  margin-bottom: 0;
+}
+
+.single-legend {
+  background-color: white;
+  width: 400px;
+  margin-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
