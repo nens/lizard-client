@@ -13,6 +13,12 @@ angular.module('legend')
     var colormaps = {}; // dict for saving colormaps locally
     var COLORMAP_URL; // constant containing the colormap endpoint URL
 
+    var round = function (r, decimalCount) {
+      var d = decimalCount === undefined ? 0 : decimalCount;
+      var multiplier = Math.pow(10, d);
+      return Math.round(r * multiplier) / multiplier;
+    };
+
     var getColormapUrl = function () {
       var url = window.location.protocol
         + '//' + window.location.host
@@ -21,11 +27,20 @@ angular.module('legend')
     };
 
     var resetContinuousRasterData = function (name) {
-      self.rasterData.continuous[name] = {
-        min: null,
-        max: null,
-        colormap: colormaps[name] || null
-      };
+      if (self.rasterData.continuous[name] === undefined) {
+        self.rasterData.continuous[name] = {
+          min: null,
+          max: null,
+          colormap: colormaps[name] || null
+        };
+      } else {
+        self.rasterData.continuous[name] = {
+          min: self.rasterData.continuous[name].min,
+          max: self.rasterData.continuous[name].max,
+          colormap: colormaps[name] || null
+        };
+
+      }
     };
 
     var rasterIsDiscrete = function (dataLayerObj) {
@@ -75,13 +90,13 @@ angular.module('legend')
       apiCallOptions.agg = 'min';
       var minPromise = RasterService.getData(apiCallOptions);
       minPromise.then(function (minData) {
-        self.rasterData.continuous[name].min = minData.data;
+        self.rasterData.continuous[name].min = round(minData.data, 2);
       });
 
       apiCallOptions.agg = 'max';
       var maxPromise = RasterService.getData(apiCallOptions);
       maxPromise.then(function (maxData) {
-        self.rasterData.continuous[name].max = maxData.data;
+        self.rasterData.continuous[name].max = round(maxData.data, 2);
       });
     };
 

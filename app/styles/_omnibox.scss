@@ -761,7 +761,7 @@ input[type=file] {
 
 /** LEGEND (TODO - move this content to: app/styles/_legend.scss) ************/
 
-/*.legend-discrete {
+.legend-discrete {
   margin-bottom: 0;
 }
 
@@ -783,7 +783,7 @@ input[type=file] {
 .legend-header-continuous {
   color: #777;
   margin-left: 15px;
-  margin-bottom: -2px;
+  margin-bottom: px;
   margin-top: -5px;
 }
 
@@ -817,27 +817,33 @@ input[type=file] {
 
 .single-continuous-legend {
   padding-right: 18px;
+  min-height: 160px;
+
 }
 
 .gradient-bar {
-  height: 20px;
+  height: 120px;
+  width: 46px;
   margin-left: 18px;
   margin-bottom: 5px;
-  border-radius: 2px;
   border: 1px solid #777;
+  border-radius: 2px;
+  background: -moz-linear-gradient(red, blue);
 
-  background: -moz-linear-gradient(left, red, blue);
-}
-*/
-
-.legends-card {
-  margin-bottom: 0;
+  float: left;
 }
 
-.single-legend {
-  background-color: white;
-  width: 400px;
-  margin-bottom: 5px;
-  padding-top: 5px;
-  padding-bottom: 5px;
+.min-max-indicators {
+}
+
+.min-indicator {
+  width: 310px;
+  border-top: 1px solid #777;
+  float: right;
+  color: #777;
+}
+
+.min-indicator > span {
+  float: right;
+  color: #777;
 }
