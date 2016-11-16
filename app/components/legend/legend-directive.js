@@ -30,6 +30,8 @@ angular.module('legend')
     return [rInterp, gInterp, bInterp];
   };
 
+  var colorMinMax = {};
+
   var link = function (scope, element, attrs) {
 
     /* scope variables used for DISCRETE rasters: ****************************/
@@ -152,6 +154,10 @@ angular.module('legend')
     };
 
     scope.getColorForMinimum = function (rasterName) {
+      if (colorMinMax[rasterName] && colorMinMax[rasterName].min) {
+        return colorMinMax[rasterName].min;
+      }
+
       var rasterData = scope.legendData.continuous[rasterName];
       var colorData = rasterData.colormap.data;
       var currentMin = rasterData.min;
@@ -193,7 +199,8 @@ angular.module('legend')
           break;
         }
       }
-      return rgbListToString(interpolatedColor);
+      colorMinMax[rasterName].min = rgbListToString(interpolatedColor);
+      return colorMinMax[rasterName].min;
     };
 
     scope.getColorForMaximum = function (rasterName) {
