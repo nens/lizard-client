@@ -28,33 +28,11 @@ angular.module('omnibox')
 
     DataService.assets.forEach(function (asset) {
 
-      _.forEach(
-        asset.properties,
-        function (property) {
-          if (property.active) {
-            actives++;
-            orders.push(property.order);
-          }
-        }
-      );
-
       if (asset.entity_name === 'leveecrosssection' &&
         asset.crosssection.active) {
         actives++;
         orders.push(asset.crosssection.order);
       }
-    });
-
-    DataService.geometries.forEach(function (geometry) {
-      _.forEach(
-        geometry.properties,
-        function (property) {
-          if (property.active) {
-            actives++;
-            orders.push(property.order);
-          }
-        }
-      );
     });
 
     return {

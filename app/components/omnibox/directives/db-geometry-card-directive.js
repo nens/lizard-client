@@ -1,9 +1,18 @@
 
 angular.module('omnibox')
-.directive('dbGeometryCards', [ 'State', 'DBCardsService', 'DataService', 'DragService',
-  function (State, DBCardsService, DataService, DragService) { // TODO: This whole directive is a copy of parts of the asset-card-directive
+.directive('dbGeometryCards', [
+  'State',
+  'DBCardsService',
+  'DataService',
+  'DragService',
+  function (
+      State,
+      DBCardsService,
+      DataService,
+      DragService) { // TODO: This whole directive is a copy of parts of the asset-card-directive
     return {
       link: function (scope, element) {
+
         scope.state = State;
 
         scope.noData = true;
@@ -65,6 +74,30 @@ angular.module('omnibox')
           scope.noData = noRasterData && scope.geom.entity_name === undefined;
 
         }, true);
+
+        scope.toggleSelection = function (selection) {
+
+          if (!selection.active) {
+
+            var plots = DBCardsService.getActiveCountAndOrder();
+
+            selection.order = plots.count > 0
+              ? plots.order + 1
+              : 0;
+
+          }
+
+          else {
+
+            DBCardsService.removeItemFromPlot(selection);
+
+          }
+
+          selection.active = !selection.active;
+          if (DataService.onGeometriesChange) {
+            DataService.onGeometriesChange();
+          }
+        };
 
 
         scope.toggleProperty = function (property) {

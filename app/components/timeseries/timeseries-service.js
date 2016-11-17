@@ -11,7 +11,6 @@ angular.module('timeseries')
   'DataService',
   'TimeseriesUtilService',
   function ($q, State, $http, notie, UtilService, DataService, TsUService) {
-    var that = this;
 
     var GRAPH_WIDTH = 320; // Width of drawing area of box graphs.
 
@@ -33,6 +32,16 @@ angular.module('timeseries')
       },
       enumerable: true
     });
+
+    this.findProperty = function (selection) {
+      if (selection.timeseries) {
+        return _.find(this.timeseries, function (ts) {
+          return selection.timeseries === ts.id
+        });
+      }
+      return DataService.findProperty(selection);
+    };
+
 
     this.syncTime = function (timeseries) {
 
@@ -60,7 +69,7 @@ angular.module('timeseries')
           defer.resolve([]);
           return defer.promise;
         } else {
-          return that._getTimeseries(
+          return service._getTimeseries(
             actives,
             State.temporal,
             minPoints && service.minPoints,

@@ -40,14 +40,14 @@ angular.module('dashboard')
             graph.type === 'distance' || graph.type === 'crosssection' // give space for axis.
           );
         });
-        window.graphs = scope.dashboard.graphs;
-        // console.log("scope.dashboard.graphs", scope.dashboard.graphs);
+        window.graphs = scope.dashboard.graphs; // TODO: VERWIJDEREN BIJ FINAL COMMIT
       };
 
+      DataService.onSelectionsChange = buildDashboard;
       DataService.onAssetsChange = buildDashboard;
       DataService.onGeometriesChange = buildDashboard;
       TimeseriesService.onTimeseriesChange = buildDashboard;
-      window.state = State;
+      window.state = State; // TODO: VERWIJDEREN BIJ FINAL COMMIT
 
       /**
        * Update dashboard when timeline has moved.

@@ -48,6 +48,7 @@ angular.module('omnibox')
           });
           return !hasTheSame;
         });
+        scope.localGeoms = scope.omnibox.data.geometries;
       });
 
       var getTsMetaData = function (uuid) {

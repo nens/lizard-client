@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('dashboard')
-.service('DashboardService', ['EventAggregateService', 'State', function (EventAggregateService, State) {
+.service('DashboardService', ['EventAggregateService', 'State', 'TimeseriesService', function (EventAggregateService, State, TimeseriesService) {
 
   this.GRAPH_PADDING = 13; // Padding around the graph svg. Not to be confused
                           // with the padding inside the svg which is used for
@@ -10,9 +10,9 @@ angular.module('dashboard')
 
 
   /**
-   * Combines selections, with other chartable active data to dashboard data.
+   * Combines timeseries, with other chartable active data to dashboard data.
    *
-   * Graphs are an array of graph-directive objects representing selections
+   * Graphs are an array of graph-directive objects representing timeseries
    * and raster data.
    * {
    *   'type': 'type',
@@ -25,47 +25,74 @@ angular.module('dashboard')
    * }
    *
    * @param  {array} graphs     Currently plotted graphs.
-   * @param  {array} selections Data source selections from timseriesService.
+   * @param  {array} timeseries Data source timeseries from timseriesService.
    * @param  {array} assets     Data source DataService.assets.
    * @param  {array} geometries Data source DataService.geometries.
    * @return {array} graph
    */
-  this.buildGraphs = function (graphs, selections, assets, geometries) {
+  this.buildGraphs = function (graphs, timeseries, assets, geometries) {
 
     graphs = this._setAllContentToNotUpdated(graphs);
 
-    selections.forEach(function (ts) {
-      ts.updated = true;
-      if (graphs[ts.order]) {
-        // Check if selections is already in the plot, if so replace data.
-        var partOfContent =_.find(graphs[ts.order].content, function (c) {
-          return c.id === ts.id;
-        });
-        if (partOfContent) {
-          partOfContent.data = ts.data;
-          partOfContent.color = ts.color;
-          // Keep this graph
-          partOfContent.updated = true;
-        } else {
-          graphs[ts.order].content.push(ts);
+    var findSelectionData = function (selection) {
+      var geomID = selection.asset || selection.geom || selection.timeseries;
+      var dataUUID = selection.raster;
+      var property = TimeseriesService.findProperty(selection);
+      if (property) {
+        if (dataUUID) {
+          property = property.properties[dataUUID];
+          property.active = selection.active;
+          if (property && property.data && property.active) {
+            var properties = typeContentFromProperty(property);
+            properties.item.id = geomID + "$" + dataUUID;
+            properties.item.color = selection.color;
+            return properties;
+          }
+        } else {  // We're dealing with timeseries. In the future we might want
+                  // to make timeseries / geometries and assets more consistent.
+          if (property) {
+            var type = property.valueType === 'image' ? 'image' :
+                property.measureScale === 'ratio'? 'temporalBar': 'temporalLine';
+            return { item: property, type: type };
+          }
         }
       }
-      else {
-        var content = [ts];
-        graphs[ts.order] = { 'content': content };
-      }
+    };
 
-      graphs[ts.order].type = ts.valueType === 'image' ? 'image' :
-          ts.measureScale === 'ratio'? 'temporalBar': 'temporalLine';
+    State.selections.forEach(function (selection) {
+      var selectionData = findSelectionData(selection);
+      if (selectionData && selectionData.item.data){
+        var selectionType = selectionData.type;
+        selectionData = selectionData.item;
+        selectionData.updated = true;
+        if (graphs[selectionData.order]) {
+          // Check if selection is already in the plot, if so replace data.
+          var partOfContent =_.find(graphs[selectionData.order].content, function (c) {
+            return c.id === selectionData.id;
+          });
+          if (partOfContent && selectionType === partOfContent.type) {
+            partOfContent.data = selectionData.data;
+            partOfContent.color = selectionData.color;
+            // Keep this graph
+            partOfContent.updated = true;
+          } else {
+            graphs[selection.order].content.push(selectionData);
+            graphs[selection.order].type = selectionType;
+          }
+        } else {
+          var content = [selectionData];
+          graphs[selection.order] = { content: content, type: selectionType };
+        }
+      }
     });
 
+    // TODO: Crosssections are not yet implemented as selection.
     assets.forEach(function (asset) {
-      graphs = addPropertyData(graphs, asset.properties);
-
       // Specific logic to add crosssections. We could abstract this to all
-      // assets with children that have selections.
+      // assets with children that have timeseries.
       if (asset.entity_name === 'leveecrosssection'
         && asset.crosssection && asset.crosssection.active) {
+        graphs = addPropertyData(graphs, asset.properties);
         graphs[asset.crosssection.order] = {
           'type': 'crosssection',
           'content': [asset]
@@ -73,10 +100,6 @@ angular.module('dashboard')
         graphs[asset.crosssection.order].content[0].updated = true;
       }
 
-    });
-
-    geometries.forEach(function (geometry) {
-      graphs = addPropertyData(graphs, geometry.properties);
     });
 
     // Add empty graphs for undefined items.
@@ -142,7 +165,57 @@ angular.module('dashboard')
     };
   };
 
-  /**
+  // TODO: docstrings
+  var typeContentFromProperty = function (property) {
+    var slug = property.slug;
+    if (property.active) {
+      var type = '';
+      var item = {};
+      if (property.format !== 'Vector') {
+        item = {
+          data: property.data,
+          keys: {x: 0, y: 1},
+          unit: property.unit,
+          // TODO: xLabel is not always meters.
+          xLabel: 'm'
+        };
+
+        if (slug === 'rain') {
+          type = 'rain';
+        } else if (property.temporal) {
+          if (property.measureScale === 'ratio'){
+            type = 'temporalBar';
+          } else {
+            type = 'temporalLine';
+          }
+        } else {
+          type = 'distance';
+        }
+        return {type: type, item: item}
+      } else if (property.format === 'Vector') {
+        item = {
+          data: EventAggregateService.aggregate(
+            property.data,
+            State.temporal.aggWindow,
+            property.color
+          ),
+          keys: {
+            x: 'timestamp',
+            y: 'count',
+            color: 'color',
+            category: 'category'
+          },
+          unit: property.unit
+        };
+
+        type = 'event';
+      }
+      return {type: type, item: item}
+    }
+    // return {type: '', item: {}}
+  };
+
+    /**
    * Adds DataService.assets|geometries.properties to dashboard graphs object.
    *
    * @param {object} graphs     dashboard graph object.
@@ -150,53 +223,12 @@ angular.module('dashboard')
    */
   var addPropertyData = function (graphs, properties) {
     _.forEach(properties, function (property) {
-      var slug = property.slug;
-      if (property.active) {
-        var type = '';
-        var item = {};
-        if (property.format !== 'Vector') {
-          item = {
-            data: property.data,
-            keys: {x: 0, y: 1},
-            unit: property.unit,
-            // TODO: xLabel is not always meters.
-            xLabel: 'm'
-          };
-
-          if (slug === 'rain') {
-            type = 'rain';
-          } else if (property.temporal) {
-            if (property.measureScale === 'ratio'){
-              type = 'temporalBar';
-            } else {
-              type = 'temporalLine';
-            }
-          } else {
-            type = 'distance';
-          }
-        }
-        else if (property.format === 'Vector') {
-          item = {
-            data: EventAggregateService.aggregate(
-              property.data,
-              State.temporal.aggWindow,
-              property.color
-            ),
-            keys: {
-              x: 'timestamp',
-              y: 'count',
-              color: 'color',
-              category: 'category'
-            },
-            unit: property.unit,
-          };
-
-          type = 'event';
-        }
-        graphs[property.order] = { type: type, content: [item] };
-        var indexOflast = graphs[property.order].content.length - 1;
-        graphs[property.order].content[indexOflast].updated = true;
-      }
+      var convertedProperty = typeContentFromProperty(property);
+      var type = convertedProperty.type;
+      var item = convertedProperty.item;
+      graphs[property.order] = { type: type, content: [item] };
+      var indexOflast = graphs[property.order].content.length - 1;
+      graphs[property.order].content[indexOflast].updated = true;
     });
     return graphs;
   };

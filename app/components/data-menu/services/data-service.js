@@ -33,6 +33,22 @@ angular.module('data-menu')
 
       var instance = this;
 
+      var idParsers = {
+        assets: function (asset) {return asset.entity_name + "$" + asset.id},
+        geometries: function (geom) {return geom.geometry.coordinates.toString()},
+        undefined: function() {}
+      };
+
+      this.findProperty = function (selection) {
+        var name = selection.asset ? "assets" : selection.geom ? "geometries": undefined;
+        var geomID = selection.asset || selection.geom;
+        var data = instance[name];
+        var idParser = idParsers[name];
+        return _.find(data, function (obj) {
+          return geomID === idParser(obj)
+        });
+      };
+
       instance.dataLayers = [];
 
       // Callback for when assets are being retrieved from api
@@ -71,8 +87,6 @@ angular.module('data-menu')
           assetPromise.then(assetChange);
         });
         _assets = assets;
-
-        console.log('State.assets:', State.assets);
 
         rebindAssetFunctions();
       };
@@ -148,7 +162,6 @@ angular.module('data-menu')
         });
 
         _geometries = geometries;
-        console.log('State.geometries:', State.geometries);
         State.geometries.addGeometry = addGeometry;
         State.geometries.removeGeometry = removeGeometry;
       };
@@ -283,6 +296,21 @@ angular.module('data-menu')
           promises.push(defer.promise);
         }
         return promises;
+      };
+
+      /**
+       * Color is stored with the asset or geom metadata
+       * This function searches in the selected object
+       * in to update the color.
+       *
+       * @param  {object} changedSelection selection object
+       */
+      this.onColorChange = function (changedSelection) {
+        var property = this.findProperty(changedSelection);
+        if (property) {
+          property.color = changedSelection.color;
+          instance.onSelectionsChange();
+        }
       };
 
       this.getGeomDataForAssets = function (oldAssets, assets) {
