@@ -36,3 +36,4 @@ deploy/auth.json
 
 #dist
 dist
+.DS_Store
