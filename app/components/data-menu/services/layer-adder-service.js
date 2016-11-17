@@ -55,7 +55,7 @@ angular.module('data-menu')
      * @param {function} error - Execute this function on an unsuccessful
      *                           GET.
      */
-    this.fetchLayer = function (entity, id, name) {
+    this.fetchLayer = function (entity, id, name) {   // TODO: this docstring is broken
       var onError = function (err) {
         var type = entity === 'eventseries' ?
           'eventseries' :

@@ -200,7 +200,7 @@ angular.module('favourites')
           'temporal.at',
           'assets',
           'geometries',
-          'timeseries',
+          'selections',
           'context',
           'box.type',
           'language',

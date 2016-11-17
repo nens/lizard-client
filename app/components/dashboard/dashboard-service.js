@@ -41,8 +41,8 @@ angular.module('dashboard')
       if (property) {
         if (dataUUID) {
           property = property.properties[dataUUID];
-          property.active = selection.active;
           if (property && property.data && property.active) {
+            property.active = selection.active;
             var properties = typeContentFromProperty(property);
             properties.item.id = geomID + "$" + dataUUID;
             properties.item.color = selection.color;
