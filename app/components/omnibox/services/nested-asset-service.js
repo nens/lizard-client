@@ -11,11 +11,11 @@
  * @return {array} list of child assets with entity names.
  */
 angular.module('omnibox')
-.service('getNestedAssets', [
-  function () {
+.service('getNestedAssets', ["AssetService", function (AssetService) {
     return function (asset) {
 
-      var NESTED_ASSETS = ['pumps', 'filters', 'monitoring_wells'];
+      var pluralizer = function (str) { return str + "s"; } ;
+      var NESTED_ASSETS = _.map(AssetService.NESTED_ASSET_PREFIXES, pluralizer);
       var nestedAssets = [];
 
       var child = _.pickBy(asset, function (value, key) {

@@ -11,6 +11,7 @@ angular.module('timeseries')
   'DataService',
   'TimeseriesUtilService',
   function ($q, State, $http, notie, UtilService, DataService, TsUService) {
+    var that = this;
 
     var GRAPH_WIDTH = 320; // Width of drawing area of box graphs.
 
@@ -34,45 +35,52 @@ angular.module('timeseries')
     });
 
     this.syncTime = function (timeseries) {
-      var promise = {};
 
-      var actives = State.selected.timeseries.map(function (ts) {
-        return ts.active && ts.uuid;
+      var groupedTimeseries = {temporalBars: [], temporalLines: []};
+      _.forEach(State.selected.timeseries, function(ts){
+        if(ts.active){
+          var scale = ts.measureScale == "ratio" ? "temporalBars" :
+            "temporalLines";
+          groupedTimeseries[scale].push(ts.uuid)
+        }
       });
 
-      // Return empty timeseries when empty selection
-      if (actives.length === 0) {
-        var defer = $q.defer();
-        defer.resolve([]);
-        promise = defer.promise;
-      }
+      var activeTimeseries = function(actives, minPoints, noDefer){
+        // Return empty timeseries when empty selection
+        if (actives.length === 0) {
+          var defer = $q.defer();
+          defer.resolve([]);
+          return defer.promise;
+        } else {
+          return that._getTimeseries(
+            actives,
+            State.temporal,
+            minPoints && service.minPoints,
+            noDefer
+          );
+        }
+      };
 
-      else {
-        promise = this._getTimeseries(
-          actives,
-          State.temporal,
-          service.minPoints
-        );
-      }
-
-      promise.then(function (ts) {
-        service.timeseries = ts;
+      var promise = $q.all([
+        activeTimeseries(groupedTimeseries.temporalLines, true),
+        activeTimeseries(groupedTimeseries.temporalBars, false, true)
+      ]).then(function (response) {
+        var barsAndLinesTimeseries = _.concat(response[0], response[1]);
         console.log('TimeseriesService.timeseries:', service.timeseries);
+        return barsAndLinesTimeseries
       })
-
-
-      .then(function (results) {
+      .then(function (barsAndLinesTimeseries) {
         // Called asynchronously, so check if timeseries is still in state and
         // active.
-        return _.filter(
-          results,
+        service.timeseries = _.filter(
+          barsAndLinesTimeseries,
           function (ts) { return _.some(
             State.selected.timeseries,
             function (stateTs) {
-              return ts.uuid === stateTs.uuid && stateTs.active;
+              return ts.id === stateTs.uuid && stateTs.active;
             });
           });
-
+        return service.timeseries;
       })
 
       .then(function (ts) {
@@ -113,35 +121,57 @@ angular.module('timeseries')
      * @memberOf timeseries.TimeseriesService
      * @description gets timeseries from service
      *
-     * @param {str} objectID asset identifyer. <entityname>$<id>
-     * @param {int} start get timeserie data from in epoch ms
-     * @param {int} end get timeserie data till in epoch ms
-     * @param {int} minPoints mutual exlcusive with aggWindow, for lines, ask
-     *                        for minimally the graphs width amount of pixels.
-     * @param {int} aggWindow mutual exclusive with minPoints, for barcharts,
-     *                        as for timestate.aggWindow so timeseries are
-     *                        aggregated to a sensible size.
-     *
+     * @param {str} uuids asset identifyer. <entityname>$<id>
+     * @param {object} timeState contains time parameters: start {int},
+     *                           end {int}(get timeserie data from and till
+     *                           in epoch ms) and aggWindow {str} (mutual
+     *                           exclusive with minPoints, for barChart, ask
+     *                           for the aggregation window.)
+     * @param {int} minPoints mutual exlcusive with timeState.aggWindow, for
+     *                        lines, ask for minimally the graphs width amount
+     *                        of pixels.
      */
-    this._getTimeseries = function (uuids, timeState, minPoints) {
-      // Cancel consecutive calls.
-      if (localPromise.reject) {
-        localPromise.resolve({data: {results: []}});
-      }
+    this._getTimeseries = function (uuids, timeState, minPoints, noReject) {
+      if(!noReject){
+        // Cancel consecutive calls.
+        if (localPromise.reject) {
+          localPromise.resolve({data: {results: []}});
+        }
 
-      localPromise = $q.defer();
-
+        localPromise = $q.defer();
+      };
       var id = uuids.join(',');
       var params = {
         uuid: id,
         start: timeState.start ? parseInt(timeState.start, 10): undefined,
         end: timeState.end ? parseInt(timeState.end, 10): undefined,
       };
-
       if (minPoints) {
         params.min_points = minPoints;
       } else {
-        params.window = timeState.aggWindow;
+        var aggWindow;
+        if (timeState.aggWindow <= 1000) {
+          aggWindow = "second";
+        } else if (timeState.aggWindow <= 60000) {
+          aggWindow = "minute";
+        } else if (timeState.aggWindow <= 300000) {
+          aggWindow = "5min";
+        } else if (timeState.aggWindow <= 3600000) {
+          aggWindow = "hour";
+        } else if (timeState.aggWindow <= 86400000) {
+          aggWindow = "day";
+        } else if (timeState.aggWindow <= 604800000) {
+          aggWindow = "week";
+        } else if (timeState.aggWindow <= 2678400000) {
+          aggWindow = "month";
+        } else {
+          aggWindow = "year"
+        }
+
+        params.window = aggWindow;
+        // We aggregate temporally using sum. This is what we want for rain and
+        // this also seems to be a logical default for other parameters.
+        params.fields = 'sum';
       }
 
       return $http({
@@ -182,7 +212,8 @@ angular.module('timeseries')
             uuid: ts.uuid,
             active: false,
             order: 0,
-            color: colors[i % (colors.length - 1)]
+            color: colors[i % (colors.length - 1)],
+            measureScale: ts.scale
           };
         }),
         'uuid'
@@ -210,7 +241,7 @@ angular.module('timeseries')
      * @param {object} graphTimeseries timeseriesSerivce.timeseries timeseries
      *                                 object.
      */
-    var addColorAndOrderAndUnitAndTresholds = function (graphTimeseries) {
+    var addTimeseriesProperties = function (graphTimeseries) {
       var EMPTY = '...';
       var ts; // initialize undefined and set when found.
       var assetOfTs;
@@ -296,13 +327,24 @@ angular.module('timeseries')
       timeseries.forEach(function (ts) {
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
         graphTimeseries.data = ts.events;
+        if (graphTimeseries.data && graphTimeseries.data.length > 0) {
+          // The y key is not always 'value' for bar charts. We get the y key
+          // from the data.
+          var yKey = _.filter(
+              Object.keys(graphTimeseries.data[0]),
+              function(x){ return x !== graphTimeseries.keys.x }
+          );
+          if (yKey.length === 1 && graphTimeseries.keys.y !== yKey[0]) {
+            graphTimeseries.keys.y = yKey[0];
+          }
+        }
         graphTimeseries.id = ts.uuid;
         graphTimeseries.valueType = ts.value_type;
-        graphTimeseries = addColorAndOrderAndUnitAndTresholds(graphTimeseries);
+        graphTimeseries.measureScale = ts.observation_type.scale;
+        graphTimeseries = addTimeseriesProperties(graphTimeseries);
         result.push(graphTimeseries);
       });
       return result;
-
     };
 
     var filterTimeseries = function (results) {
@@ -345,7 +387,7 @@ angular.module('timeseries')
     return {
       filterTimeseries: filterTimeseries,
       formatTimeseriesForGraph: formatTimeseriesForGraph,
-      addColorAndOrderAndUnitAndTresholds: addColorAndOrderAndUnitAndTresholds
+      addTimeseriesProperties: addTimeseriesProperties
     };
 
   }

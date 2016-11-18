@@ -31,7 +31,7 @@ describe('TimeseriesUtilService', function () {
     var graphTs = {id: 4};
 
     var graphWithThreshold = TimeseriesUtilService
-      .addColorAndOrderAndUnitAndTresholds(graphTs);
+      .addTimeseriesProperties(graphTs);
 
     expect(graphWithThreshold.thresholds).toBeDefined();
     expect(graphWithThreshold.name).toBe(
@@ -60,7 +60,7 @@ describe('TimeseriesUtilService', function () {
     var graphTs = {id: 5};
 
     var graphWithThreshold = TimeseriesUtilService
-      .addColorAndOrderAndUnitAndTresholds(graphTs);
+      .addTimeseriesProperties(graphTs);
 
     expect(graphWithThreshold.thresholds).toBeDefined();
     expect(graphWithThreshold.name).toBe(

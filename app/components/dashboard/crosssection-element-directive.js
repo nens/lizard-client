@@ -36,20 +36,25 @@ angular.module('dashboard')
 
       // Get elevation
       var coords = scope.asset.geometry.coordinates;
-
-      CabinetService.raster().get({
-        raster_names: 'dem/nl',
-        srs: 'EPSG:4326',
-        geom: 'LINESTRING(' + coords[0][0]
-          + ' ' + coords[0][1]
-          + ',' + coords[1][0]
-          + ' ' + coords[1][1]
-          + ')'
-      }).then(function (response) {
-        content.line.data = response.data;
-        scope.content = content; // bind content to scope to start drawing
-                                 // graph.
-      });
+      var getLineData = function(response){
+        var uuid = response.results[0].uuid;
+        CabinetService.raster().get({
+          rasters: uuid,
+          srs: 'EPSG:4326',
+          geom: 'LINESTRING(' + coords[0][0]
+            + ' ' + coords[0][1]
+            + ',' + coords[1][0]
+            + ' ' + coords[1][1]
+            + ')'
+        }).then(function (response) {
+          content.line.data = response.data;
+          scope.content = content; // bind content to scope to start drawing
+                                   // graph.
+        });
+      };
+      CabinetService.rasterInfo.get({
+        name: 'Hoogte'
+      }).then(getLineData);
 
       /** Gets timeseries using TimeseriesService .*/
       var getTimeseries = function (timeseries, timeState) {
