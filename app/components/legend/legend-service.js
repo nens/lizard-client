@@ -13,7 +13,7 @@ angular.module('legend')
     var colormaps = {}; // dict for saving colormaps locally
     var COLORMAP_URL; // constant containing the colormap endpoint URL
 
-    var round = function (r, decimalCount) {
+    var floatRound = function (r, decimalCount) {
       var d = decimalCount === undefined ? 0 : decimalCount;
       var multiplier = Math.pow(10, d);
       return Math.round(r * multiplier) / multiplier;
@@ -31,6 +31,7 @@ angular.module('legend')
         self.rasterData.continuous[name] = {
           min: null,
           max: null,
+          unit: null,
           colormap: colormaps[name] || null
         };
       }
@@ -51,7 +52,7 @@ angular.module('legend')
     };
 
     var responseIsEmpty = function (data) {
-      return data.length === 1 && data[0] == null;
+      return data.length === 1 && data[0] === null;
     };
 
     var setDiscreteRasterData = function (geoProperties) {
@@ -71,6 +72,8 @@ angular.module('legend')
 
     var updateContinuousRasterData = function (name, dataLayerObj, options) {
 
+      self.rasterData.continuous[name].unit = dataLayerObj.unit;
+
       // Merging two objects without altering one or both:
       var apiCallOptions = {};
       angular.forEach(dataLayerObj, function (v, k) {
@@ -83,13 +86,21 @@ angular.module('legend')
       apiCallOptions.agg = 'min';
       var minPromise = RasterService.getData(apiCallOptions);
       minPromise.then(function (minData) {
-        self.rasterData.continuous[name].min = round(minData.data, 3);
+        if (minData.data !== null) {
+          self.rasterData.continuous[name].min = floatRound(minData.data, 3);
+        } else {
+          self.rasterData.continuous[name].min = null;
+        }
       });
 
       apiCallOptions.agg = 'max';
       var maxPromise = RasterService.getData(apiCallOptions);
       maxPromise.then(function (maxData) {
-        self.rasterData.continuous[name].max = round(maxData.data, 3);
+        if (maxData.data !== null) {
+          self.rasterData.continuous[name].max = floatRound(maxData.data, 3);
+        } else {
+          self.rasterData.continuous[name].max = null;
+        }
       });
     };
 
@@ -125,8 +136,7 @@ angular.module('legend')
           uuid = layerObj.uuid;
           if (layerObj.active) {
             dataLayerObj = _.find(DataService.dataLayers, {uuid: uuid});
-            if (!dataLayerObj) {
-              // On initial pageload, occasionally dataLayerObj is undefined
+            if (!dataLayerObj || dataLayerObj.temporal) {
               return;
             }
             uuidMapping[uuid] = name;

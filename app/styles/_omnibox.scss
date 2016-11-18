@@ -761,6 +761,10 @@ input[type=file] {
 
 /** LEGEND (TODO - move this content to: app/styles/_legend.scss) ************/
 
+.container-for-both-legends {
+  border-radius: 3px;
+}
+
 .legend-discrete {
   margin-bottom: 0;
 }
@@ -772,6 +776,8 @@ input[type=file] {
   margin-bottom: 5px;
   padding-top: 5px;
   padding-bottom: 5px;
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba($black, 0.3), 0 4px 15px -5px transparent;
 }
 
 .legend-header {
@@ -780,11 +786,12 @@ input[type=file] {
   margin-bottom: 5px;
 }
 
-.legend-header-continuous {
+.legend-header a {
   color: #777;
-  margin-left: 15px;
-  margin-bottom: px;
-  margin-top: -5px;
+}
+
+.legend-header a:hover {
+  color: #16a085;
 }
 
 .discrete-legend-datum {
@@ -828,12 +835,8 @@ input[type=file] {
   margin-bottom: 5px;
   border: 1px solid #777;
   border-radius: 2px;
-  background: -moz-linear-gradient(red, blue);
 
   float: left;
-}
-
-.min-max-indicators {
 }
 
 .min-indicator {
@@ -867,4 +870,36 @@ input[type=file] {
   left: 80px;
   background-color: green;
 }
+
+.continuous-raster-numeric-data {
+  min-width: 300px;
+  max-width: 300px;
+  float: right;
+}
+
+.continuous-raster-table-row {
+  height: 29px;
+  border-bottom: 1px solid #ddd;
+  color: #777;
+  font-size: 0.9em;
+  line-height: 1.42857;
+}
+
+.continuous-raster-table-key {
+  min-width: 150px;
+  max-width: 150px;
+}
+
+.continuous-raster-table-value {
+  min-width: 100px;
+  max-width: 100px;
+}
+
+.continuous-raster-table-unit {
+  min-width: 50px;
+  max-width: 50px;
+}
+
+
+
 
