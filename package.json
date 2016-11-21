@@ -51,6 +51,7 @@
     "grunt-wiredep": "^1.7.0",
     "jshint-stylish": "^0.2.0",
     "karma": "^0.13.11",
+    "karma-chrome-launcher": "^2.0.0",
     "karma-coverage": "~0.2.6",
     "karma-jasmine": "~0.2.0",
     "karma-junit-reporter": "^0.3.4",

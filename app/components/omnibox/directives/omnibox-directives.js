@@ -26,7 +26,7 @@ angular.module("omnibox")
         if (item.hasOwnProperty('entity_url')) {
           scope.zoomToSearchResultWithoutClearingSearch(item);
         }
-      }
+      };
 
       scope.selectItem = function($event, result) {
         var e = $event;
@@ -35,7 +35,7 @@ angular.module("omnibox")
             scope.zoomToSearchResult(result);
             break;
         }
-      }
+      };
 
       scope.onKeydown = function($event) {
         var e = $event;
@@ -53,12 +53,14 @@ angular.module("omnibox")
                 nextTab = 1;
                 break;
         }
-        if (nextTab != undefined) {
+        if (nextTab !== undefined) {
             // Do this outside the current $digest cycle:
             // focus the next element by tabindex
-           $timeout(() => $('[tabindex=' + (parseInt($target.attr("tabindex")) + nextTab) + ']').focus());
+           $timeout(function() {
+             $('[tabindex=' + (parseInt($target.attr('tabindex')) + nextTab) + ']').focus();
+           });
         }
-      }
+      };
 
 
 
