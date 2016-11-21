@@ -55,6 +55,13 @@ angular.module('map')
 
       rasterMapLayer.update = function (map, timeState, options) {
 
+        console.log("[F] rasterMapLayer.update");
+
+        if (rasterMapLayer.showVectorized) {
+          console.log("..need to show vectorized response for rasterMapLayer:", rasterMapLayer);
+          return;
+        }
+
         // Wms options might be different for current zoom and aggWindow.
         // Redraw when wms parameters are different for temporal or spatial
         // zoom.

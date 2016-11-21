@@ -12,6 +12,36 @@ angular.module('data-menu')
       scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid;
     }
 
+    scope.rasterLayerIsVectorizable = function (layer) {
+      var dataLayer = _.find(DataService.dataLayers, {uuid: layer.uuid});
+      if (dataLayer) {
+        return !dataLayer.temporal &&
+          (dataLayer.scale === "nominal" || dataLayer.scale === "ordinal");
+      } else {
+        return false;
+      }
+    };
+
+    // scope.toggleVectorModus = function (layer) {
+    //   var dataLayer = _.find(DataService.dataLayers, {uuid: layer.uuid});
+    //   dataLayer.showVectorized = !dataLayer.showVectorized;
+    // };
+
+    // scope.showVectorized = function (layer) {
+    //   var dataLayer = _.find(DataService.dataLayers, {uuid: layer.uuid});
+    //   return !!dataLayer.showVectorized;
+    // }
+
+    scope.toggleVectorModus = function (layer) {
+      var mapLayer = _.find(MapService.mapLayers, {uuid: layer.uuid});
+      mapLayer.showVectorized = !mapLayer.showVectorized;
+    };
+
+    scope.showVectorized = function (layer) {
+      var mapLayer = _.find(MapService.mapLayers, {uuid: layer.uuid});
+      return !!mapLayer.showVectorized;
+    }
+
     var cancelFirstActive = scope.$watch('layer.active', function () {
       if (scope.layer.active) {
         scope.layer.active = false;
@@ -26,7 +56,8 @@ angular.module('data-menu')
             temporal: response.temporal,
             frequency: response.frequency,
             complexWmsOptions: response.options,
-            zIndex: LayerAdderService.getZIndex(scope.layer)
+            zIndex: LayerAdderService.getZIndex(scope.layer),
+            showVectorized: false
           });
 
           MapService.mapLayers.push(mapLayer);
@@ -42,7 +73,8 @@ angular.module('data-menu')
               && response.observation_type.parameter_short_display_name,
             unit: response.observation_type
               && response.observation_type.referenced_unit_short_display_name,
-            styles: response.options.styles
+            styles: response.options.styles,
+            //showVectorized: false
           }));
 
           // If the layer did not have a name, check if the backend has one.

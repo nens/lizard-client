@@ -8,7 +8,7 @@
       <span ng-show="!invalid" ng-bind="layer.name"></span>
       <del
         ng-show="invalid"
-        class="text-muted"
+        class="text-muted" class=""
         title="<% 'Layer could not be added' | translate %>"
         ng-bind="layer.name">
       </del>
@@ -20,6 +20,11 @@
           ng-click="zoomToBounds(); $event.stopPropagation()"
           ng-show="layer.active"
           class="fa fa-crosshairs">
+        </i>
+        <i class="fa fa-<% showVectorized(layer) ? 'star' : 'star-o' %>"
+           ng-show="layer.active"
+           ng-if="rasterLayerIsVectorizable(layer)"
+           ng-click="toggleVectorModus(layer); $event.stopPropagation()">
         </i>
       </div>
   </label>
