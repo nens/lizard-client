@@ -47,7 +47,6 @@ angular.module('dashboard')
       DataService.onAssetsChange = buildDashboard;
       DataService.onGeometriesChange = buildDashboard;
       TimeseriesService.onTimeseriesChange = buildDashboard;
-      window.state = State; // TODO: VERWIJDEREN BIJ FINAL COMMIT
 
       /**
        * Update dashboard when timeline has moved.
