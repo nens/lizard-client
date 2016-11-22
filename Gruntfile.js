@@ -199,7 +199,7 @@ module.exports = function (grunt) {
       dev: {
         options: {
           reporter: require('jshint-stylish'),
-          reporterOutput: null
+          reporterOutput: ""
         },
         src: [
           'Gruntfile.js',
