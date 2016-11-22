@@ -222,15 +222,15 @@ angular.module('timeseries')
 
     var rasterComparatorFactory = function (comparatorType) {
       return function (existingSelection, newSelection) {
-        if (existingSelection.type !== "raster") { return false }
-        return existingSelection.raster === newSelection.raster
-            && existingSelection[comparatorType] ===
-            newSelection[comparatorType];
+        return existingSelection.type === "raster" &&  // prevent undefined === undefined = true for raster
+          existingSelection[comparatorType] &&  // prevent undefined === undefined = true for comparator type
+          existingSelection.raster === newSelection.raster &&
+          existingSelection[comparatorType] === newSelection[comparatorType]; // only keep one selection if both raster and comparator type are equal
     }};
 
     var timeseriesComparator = function(existingSelection, newSelection){
-        if (existingSelection.type !== "timeseries") { return false }
-        return existingSelection.timeseries === newSelection.timeseries;
+        return existingSelection.type === "timeseries" &&
+            existingSelection.timeseries === newSelection.timeseries;
     };
 
     this.initializeTimeseriesOfAsset = function (asset) {

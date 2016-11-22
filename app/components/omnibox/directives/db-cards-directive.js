@@ -62,6 +62,73 @@ angular.module('omnibox')
         return tsMetaData;
       };
 
+      var dbSupportedData = function (type, property) { // TODO: DOUBLE
+        console.log(type, property)
+          var temporal = property.temporal && type === 'Point';
+
+          var events = property.format === 'Vector' && type !== 'LineString';
+
+          var other = type !== 'Point'
+            && property.scale !== 'nominal'
+            && property.scale !== 'ordinal';
+
+          return temporal || events || other;
+        };
+
+      var _getTimeseriesMetaData = function (selection) {
+        var tsMetaData;
+        _.forEach(DataService.assets, function (asset) {
+          tsMetaData = _.find(asset.timeseries, function (ts) {
+            return ts.uuid === selection.timeseries;
+          });
+          if (tsMetaData === undefined) {
+            tsMetaData = {match: false}
+          } else {
+            tsMetaData.match = true
+          }
+          tsMetaData.type = 'timeseries';
+          return !tsMetaData;
+        });
+        return tsMetaData;
+      };
+
+      var _getRasterMetaData = function (selection) {
+        var geomRaster, idGeom, geomAsset;
+        if (selection.asset) {
+          geomRaster = _.find(DataService.assets, function (asset) {
+            idGeom = function(a) {return a.entity_name + "$" + a.id};
+            geomAsset = asset;
+            return idGeom(geomAsset) === selection.asset;
+          });
+        } else {
+          geomRaster = _.find(DataService.geometries, function (geom) {
+            idGeom = function(g) {return g.geometry.coordinates.toString()};
+            geomAsset = geom;
+            return idGeom(geom) === selection.geom;
+          });
+        }
+        var props = { match: false };
+        if (geomRaster && geomRaster.properties) {
+          var assetProps = geomRaster.properties[selection.raster];
+          if (assetProps) {
+            props = assetProps;
+            var assetCode = idGeom(geomRaster);
+            props.match = selection.asset === assetCode && dbSupportedData(geomRaster.geometry.type, assetProps);
+          }
+        }
+        return props;
+      };
+
+      var getSelectionMetaData = function (selection) { // TODO: this is used in many places
+        if (selection.timeseries) {
+          return _getTimeseriesMetaData(selection);
+        } else if (selection.raster) {
+          return _getRasterMetaData(selection);
+        }
+      };
+
+
+
       /**
        * Turn ts on and give it the order of the dropped plot. Ts could already
        * be part of a plot above or below it, if so rearrange existing plots.
@@ -90,8 +157,8 @@ angular.module('omnibox')
         });
 
         // Possible other graph in target.
-        var otherGraphSelections = _.find(State.selections, function (selections) {
-          return selections.order === order && selections.active;
+        var otherGraphSelections = _.find(State.selections, function (selection) {
+          return selection.order === order && selection.active;
         });
 
         if (otherGraphSelections === undefined) {
@@ -121,11 +188,15 @@ angular.module('omnibox')
           DBCardsService.removeItemFromPlot(selection);
         }
 
-        var tsMetaData = getTsMetaData(selection.timeseries);
-        var otherGraphTsMetaData = getTsMetaData(otherGraphSelections.timeseries);
+        var tsMetaData = getSelectionMetaData(selection);
+        var otherGraphTsMetaData = getSelectionMetaData(otherGraphSelections);
         if (tsMetaData.value_type !== otherGraphTsMetaData.value_type) {
           notie.alert(2,
             gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!'));
+          emulateClick(el);
+        } else if (selection.raster) {
+          notie.alert(2,
+            gettextCatalog.getString('Whoops, bar charts cannot be combined. Try again!'));
           emulateClick(el);
         } else {
           // Set new order and tell TimeSeriesService to get data.

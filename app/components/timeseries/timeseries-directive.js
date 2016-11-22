@@ -95,7 +95,6 @@ angular.module('timeseries')
         }
       };
 
-
       scope.$watch('asset', function () {
 
         var setFirstTSAsSelected = function () {

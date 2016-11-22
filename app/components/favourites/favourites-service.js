@@ -5,8 +5,8 @@ angular.module('favourites')
   // NOTE: inject TimeseriesService even though it is not used.
   // TimeseriesService defines State.selections which may be restored
   // from favourite.
-  .service("FavouritesService", ['$resource', 'State', 'gettextCatalog', 'UtilService', 'notie', '$window', 'TimeseriesService',
-    function ($resource, State, gettextCatalog, UtilService, notie, $window) {
+  .service("FavouritesService", ['$resource', 'State', 'gettextCatalog', 'UtilService', 'DashboardService', 'TimeseriesService', 'notie', '$window',
+    function ($resource, State, gettextCatalog, UtilService, DashboardService, TimeseriesService, notie, $window) {
 
       /* Create a resource for interacting with the favourites endpoint of the
        * API.
@@ -178,6 +178,9 @@ angular.module('favourites')
        * @param {object} favourite - The favourite to apply with a state.
        */
       this.applyFavourite = function (favourite) {
+        DashboardService.resetGraphs();
+        State.resetObjects();
+
         if (favourite.state.temporal && favourite.state.temporal.relative) {
           favourite.state.temporal = adhereTemporalStateToInterval(
             favourite.state.temporal

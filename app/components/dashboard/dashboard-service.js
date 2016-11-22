@@ -8,6 +8,13 @@ angular.module('dashboard')
                           // axis and labels.
   var ROW_BOTTOM_MARGIN = 20; // Pixels between graph rows.
 
+  this.graphs = [];  // TODO: implement graphs in state!
+  var service = this;
+
+  this.resetGraphs = function () {
+    service.graphs = [];
+    console.log(this.graphs === service.graphs);
+  };
 
   /**
    * Combines timeseries, with other chartable active data to dashboard data.
@@ -30,25 +37,26 @@ angular.module('dashboard')
    * @param  {array} geometries Data source DataService.geometries.
    * @return {array} graph
    */
-  this.buildGraphs = function (graphs, timeseries, assets, geometries) {
 
-    graphs = this._setAllContentToNotUpdated(graphs);
-
+  this.buildGraphs = function (timeseries, assets, geometries) {
+    var graphs = this._setAllContentToNotUpdated(service.graphs);
     var findSelectionData = function (selection) {
       var geomID = selection.asset || selection.geom || selection.timeseries;
       var dataUUID = selection.raster;
       var property = TimeseriesService.findProperty(selection);
       if (property) {
-        if (dataUUID) {
+        if (dataUUID && property.properties && property.properties[dataUUID]) {
           property = property.properties[dataUUID];
-          if (property && property.data && property.active) {
+          if (property) {
             property.active = selection.active;
-            var properties = typeContentFromProperty(property);
-            properties.item.id = geomID + "$" + dataUUID;
-            properties.item.color = selection.color;
-            return properties;
+            if (property.data && selection.active) {
+              var properties = typeContentFromProperty(property);
+              properties.item.id = geomID + "$" + dataUUID;
+              properties.item.color = selection.color;
+              return properties;
+            }
           }
-        } else {  // We're dealing with timeseries. In the future we might want
+        } else if (!dataUUID) {  // We're dealing with timeseries. In the future we might want
                   // to make timeseries / geometries and assets more consistent.
           if (property) {
             var type = property.valueType === 'image' ? 'image' :
@@ -70,7 +78,7 @@ angular.module('dashboard')
           var partOfContent =_.find(graphs[selectionData.order].content, function (c) {
             return c.id === selectionData.id;
           });
-          if (partOfContent && selectionType === partOfContent.type) {
+          if (partOfContent && selectionType === graphs[selectionData.order].type) {
             partOfContent.data = selectionData.data;
             partOfContent.color = selectionData.color;
             // Keep this graph

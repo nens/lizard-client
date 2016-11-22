@@ -36,7 +36,7 @@ angular.module('omnibox')
           return asset.entity_name + "$" + asset.id === selection.asset;
         });
         var props = { match: false };
-        if (assetRaster !== undefined) {
+        if (assetRaster && assetRaster.properties) {
           var assetProps = assetRaster.properties[selection.raster];
           if (assetProps) {
             props = assetProps;

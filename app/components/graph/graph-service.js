@@ -672,7 +672,7 @@ angular.module('lizard-nxt')
       var thresholds = [];
 
       charts.forEach(function (chart) {
-        if (chart.unit === activeUnit) {
+        if (chart.unit === activeUnit && chart.thresholds) {
           chart.thresholds.forEach(function (threshold) {
             thresholds.push(threshold);
           });

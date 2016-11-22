@@ -21,7 +21,7 @@ angular.module('omnibox')
             return geom.geometry.coordinates.toString() === selection.geom;
           });
           var props = { match: false };
-          if (assetRaster !== undefined) {
+          if (assetRaster && assetRaster.properties) {
             var assetProps = assetRaster.properties[selection.raster];
             if (assetProps) {
               props = assetProps;
@@ -70,27 +70,18 @@ angular.module('omnibox')
           var noRasterData = scope.geom.properties
             ? !Object.keys(scope.geom.properties).length
             : true;
-
           scope.noData = noRasterData && scope.geom.entity_name === undefined;
-
         }, true);
 
         scope.toggleSelection = function (selection) {
 
           if (!selection.active) {
-
             var plots = DBCardsService.getActiveCountAndOrder();
-
             selection.order = plots.count > 0
               ? plots.order + 1
               : 0;
-
-          }
-
-          else {
-
+          } else {
             DBCardsService.removeItemFromPlot(selection);
-
           }
 
           selection.active = !selection.active;
