@@ -2,7 +2,7 @@
 angular.module('omnibox')
   .directive('dbCards', [
     'State',
-    'DataService',
+    'SelectionService',
     'DragService',
     'gettextCatalog',
     'notie',
@@ -11,7 +11,7 @@ angular.module('omnibox')
     'DBCardsService',
     function (
       State,
-      DataService,
+      SelectionService,
       DragService,
       gettextCatalog,
       notie,
@@ -50,82 +50,6 @@ angular.module('omnibox')
         });
         scope.localGeoms = scope.omnibox.data.geometries;
       });
-
-      var getTsMetaData = function (uuid) {
-        var tsMetaData;
-        _.forEach(DataService.assets, function (asset) {
-          tsMetaData = _.find(asset.timeseries, function (ts) {
-            return ts.uuid === uuid;
-          });
-          return !tsMetaData;
-        });
-        return tsMetaData;
-      };
-
-      var dbSupportedData = function (type, property) { // TODO: DOUBLE
-        console.log(type, property)
-          var temporal = property.temporal && type === 'Point';
-
-          var events = property.format === 'Vector' && type !== 'LineString';
-
-          var other = type !== 'Point'
-            && property.scale !== 'nominal'
-            && property.scale !== 'ordinal';
-
-          return temporal || events || other;
-        };
-
-      var _getTimeseriesMetaData = function (selection) {
-        var tsMetaData;
-        _.forEach(DataService.assets, function (asset) {
-          tsMetaData = _.find(asset.timeseries, function (ts) {
-            return ts.uuid === selection.timeseries;
-          });
-          if (tsMetaData === undefined) {
-            tsMetaData = {match: false}
-          } else {
-            tsMetaData.match = true
-          }
-          tsMetaData.type = 'timeseries';
-          return !tsMetaData;
-        });
-        return tsMetaData;
-      };
-
-      var _getRasterMetaData = function (selection) {
-        var geomRaster, idGeom, geomAsset;
-        if (selection.asset) {
-          geomRaster = _.find(DataService.assets, function (asset) {
-            idGeom = function(a) {return a.entity_name + "$" + a.id};
-            geomAsset = asset;
-            return idGeom(geomAsset) === selection.asset;
-          });
-        } else {
-          geomRaster = _.find(DataService.geometries, function (geom) {
-            idGeom = function(g) {return g.geometry.coordinates.toString()};
-            geomAsset = geom;
-            return idGeom(geom) === selection.geom;
-          });
-        }
-        var props = { match: false };
-        if (geomRaster && geomRaster.properties) {
-          var assetProps = geomRaster.properties[selection.raster];
-          if (assetProps) {
-            props = assetProps;
-            var assetCode = idGeom(geomRaster);
-            props.match = selection.asset === assetCode && dbSupportedData(geomRaster.geometry.type, assetProps);
-          }
-        }
-        return props;
-      };
-
-      var getSelectionMetaData = function (selection) { // TODO: this is used in many places
-        if (selection.timeseries) {
-          return _getTimeseriesMetaData(selection);
-        } else if (selection.raster) {
-          return _getRasterMetaData(selection);
-        }
-      };
 
 
 
@@ -188,8 +112,8 @@ angular.module('omnibox')
           DBCardsService.removeItemFromPlot(selection);
         }
 
-        var tsMetaData = getSelectionMetaData(selection);
-        var otherGraphTsMetaData = getSelectionMetaData(otherGraphSelections);
+        var tsMetaData = SelectionService.metaData(selection);
+        var otherGraphTsMetaData = SelectionService.metaData(otherGraphSelections);
         if (tsMetaData.value_type !== otherGraphTsMetaData.value_type) {
           notie.alert(2,
             gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!'));

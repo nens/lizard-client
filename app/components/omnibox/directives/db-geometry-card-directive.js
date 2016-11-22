@@ -4,11 +4,13 @@ angular.module('omnibox')
   'State',
   'DBCardsService',
   'DataService',
+  'SelectionService',
   'DragService',
   function (
       State,
       DBCardsService,
       DataService,
+      SelectionService,
       DragService) { // TODO: This whole directive is a copy of parts of the asset-card-directive
     return {
       link: function (scope, element) {
@@ -16,39 +18,8 @@ angular.module('omnibox')
         scope.state = State;
 
         scope.noData = true;
-        var _getRasterMetaData = function (selection) { // TODO: DOUBLE
-          var assetRaster = _.find(DataService.geometries, function (geom) {
-            return geom.geometry.coordinates.toString() === selection.geom;
-          });
-          var props = { match: false };
-          if (assetRaster && assetRaster.properties) {
-            var assetProps = assetRaster.properties[selection.raster];
-            if (assetProps) {
-              props = assetProps;
-              var assetCode = scope.geom.geometry.coordinates.toString();  // TODO: this is used in many places
-              props.match = selection.geom === assetCode && scope.dbSupportedData(scope.geom.geometry.type, props);
-            }
-          }
-          return props;
-        };
-        scope.getSelectionMetaData = function (selection) { // TODO: DOUBLE
-          if (selection.raster) {
-            return _getRasterMetaData(selection);
-          }
-        };
 
-
-        scope.dbSupportedData = function (type, property) { // TODO: DOUBLE
-          var temporal = property.temporal && type === 'Point';
-
-          var events = property.format === 'Vector' && type !== 'LineString';
-
-          var other = type !== 'Point'
-            && property.scale !== 'nominal'
-            && property.scale !== 'ordinal';
-
-          return temporal || events || other;
-        };
+        scope.getSelectionMetaData = SelectionService.metaDataFactory(scope.geom);
 
         /**
          * Properties are asynchronous so watch it to set noData when added.
@@ -57,7 +28,7 @@ angular.module('omnibox')
 
           _.forEach(scope.geom.properties, function (property, slug) {
             if (property.active === undefined
-              && scope.dbSupportedData(
+              && SelectionService.dbSupportedData(
                 scope.geom.geometry.type,
                 property
               )) {
@@ -73,23 +44,7 @@ angular.module('omnibox')
           scope.noData = noRasterData && scope.geom.entity_name === undefined;
         }, true);
 
-        scope.toggleSelection = function (selection) {
-
-          if (!selection.active) {
-            var plots = DBCardsService.getActiveCountAndOrder();
-            selection.order = plots.count > 0
-              ? plots.order + 1
-              : 0;
-          } else {
-            DBCardsService.removeItemFromPlot(selection);
-          }
-
-          selection.active = !selection.active;
-          if (DataService.onGeometriesChange) {
-            DataService.onGeometriesChange();
-          }
-        };
-
+        scope.toggleSelection = SelectionService.toggle;
 
         scope.toggleProperty = function (property) {
 
