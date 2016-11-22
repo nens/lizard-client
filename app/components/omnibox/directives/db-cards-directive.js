@@ -112,8 +112,8 @@ angular.module('omnibox')
           DBCardsService.removeItemFromPlot(selection);
         }
 
-        var tsMetaData = SelectionService.metaData(selection);
-        var otherGraphTsMetaData = SelectionService.metaData(otherGraphSelections);
+        var tsMetaData = SelectionService.metaDataFactory(TimeseriesService.timeseries)(selection);
+        var otherGraphTsMetaData = SelectionService.metaDataFactory(TimeseriesService.timeseries)(otherGraphSelections);
         if (tsMetaData.value_type !== otherGraphTsMetaData.value_type) {
           notie.alert(2,
             gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!'));

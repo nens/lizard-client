@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('dashboard')
-.service('DashboardService', ['EventAggregateService', 'State', 'TimeseriesService', function (EventAggregateService, State, TimeseriesService) {
+.service('DashboardService', ['EventAggregateService', 'State', 'TimeseriesService', 'DataService', function (EventAggregateService, State, TimeseriesService, DataService) {
 
   this.GRAPH_PADDING = 13; // Padding around the graph svg. Not to be confused
                           // with the padding inside the svg which is used for
@@ -43,7 +43,7 @@ angular.module('dashboard')
     var findSelectionData = function (selection) {
       var geomID = selection.asset || selection.geom || selection.timeseries;
       var dataUUID = selection.raster;
-      var property = TimeseriesService.findProperty(selection);
+      var property = selection.timeseries !== undefined ? TimeseriesService.findProperty(selection) : DataService.findProperty(selection);
       if (property) {
         if (dataUUID && property.properties && property.properties[dataUUID]) {
           property = property.properties[dataUUID];
