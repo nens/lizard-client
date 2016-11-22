@@ -21,7 +21,7 @@ angular.module('map')
     // ILayer of last region that recieved click.
     var previousActiveLayer;
 
-    var deafaultRegionStyle = {
+    var defaultRegionStyle = {
       weight: 2,
       opacity: 0.6,
       color: '#7f8c8d', // asbestos
@@ -53,7 +53,8 @@ angular.module('map')
       regionsLayer = LeafletService.geoJson(regions, {
         // Style function must be included in order to overwrite style on click.
         style: function (feature) {
-          return deafaultRegionStyle;
+
+          return defaultRegionStyle;
         },
         onEachFeature: function (d, layer) {
           layer.on({

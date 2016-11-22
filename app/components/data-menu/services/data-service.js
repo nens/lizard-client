@@ -35,10 +35,6 @@ angular.module('data-menu')
 
       instance.dataLayers = [];
 
-      // this.dataLayerIsVectorizable = function (dataLayer) {
-      //    return dataLayerObj.scale === "nominal" || dataLayerObj.scale === "ordinal";
-      // }
-
       // Callback for when assets are being retrieved from api
       var assetChange = function (asset) {
         if (asset) {

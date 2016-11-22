@@ -58,8 +58,10 @@ angular.module('map')
         console.log("[F] rasterMapLayer.update");
 
         if (rasterMapLayer.showVectorized) {
-          console.log("..need to show vectorized response for rasterMapLayer:", rasterMapLayer);
+          console.log("..need to show VECTORIZED response for rasterMapLayer:", rasterMapLayer);
           return;
+        } else {
+          console.log("..need to show NORMAL response for rasterMapLayer:", rasterMapLayer);
         }
 
         // Wms options might be different for current zoom and aggWindow.
@@ -81,7 +83,7 @@ angular.module('map')
           rasterMapLayer._syncTime(timeState, map, options, options);
         }
 
-        // flattened parameters an be different per zoomlevel in space and time.
+        // flattened parameters can be different per zoomlevel in space and time.
         // only update layer when changed to prevent flickering.
         else if (rasterMapLayer.temporal || !_.isEqual(newParams, params)) {
           // Keep track of changes to paramaters for next update.
@@ -168,7 +170,6 @@ angular.module('map')
           rasterMapLayer._imageOverlays[0].addTo(map),
           timeState.at
         );
-
       };
 
       /**

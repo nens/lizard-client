@@ -22,25 +22,22 @@ angular.module('data-menu')
       }
     };
 
-    // scope.toggleVectorModus = function (layer) {
-    //   var dataLayer = _.find(DataService.dataLayers, {uuid: layer.uuid});
-    //   dataLayer.showVectorized = !dataLayer.showVectorized;
-    // };
-
-    // scope.showVectorized = function (layer) {
-    //   var dataLayer = _.find(DataService.dataLayers, {uuid: layer.uuid});
-    //   return !!dataLayer.showVectorized;
-    // }
-
     scope.toggleVectorModus = function (layer) {
       var mapLayer = _.find(MapService.mapLayers, {uuid: layer.uuid});
       mapLayer.showVectorized = !mapLayer.showVectorized;
+      if (mapLayer.showVectorized) {
+        mapLayer.remove(MapService._map);
+        MapService.getRegionsForVectorizedRaster(layer);
+      } else {
+        MapService.removeRegionsForVectorizedRaster(layer);
+        MapService.updateLayers([layer]);
+      }
     };
 
     scope.showVectorized = function (layer) {
       var mapLayer = _.find(MapService.mapLayers, {uuid: layer.uuid});
       return !!mapLayer.showVectorized;
-    }
+    };
 
     var cancelFirstActive = scope.$watch('layer.active', function () {
       if (scope.layer.active) {
@@ -112,7 +109,6 @@ angular.module('data-menu')
       _.pull(DataService.dataLayers, {uuid: scope.layer.uuid });
       _.pull(MapService.mapLayers, {uuid: scope.layer.uuid });
     });
-
   };
 
   return {

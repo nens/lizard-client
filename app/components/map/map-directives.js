@@ -230,6 +230,7 @@ angular.module('map')
         else if (State.box.type === 'region') {
           MapService.getRegions(State.spatial.bounds);
         }
+        MapService.getRegionsForAllVectorizedRasters();
       }, true);
 
       /**
