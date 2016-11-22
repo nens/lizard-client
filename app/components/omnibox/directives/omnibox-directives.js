@@ -1,13 +1,68 @@
 'use strict';
 
 angular.module("omnibox")
-.directive("omnibox", ['$window', '$document', 'State', 'user',
-  function ($window, $document, State, user) { return {
+.directive("omnibox", ['$window', '$document', 'State', 'user', '$timeout',
+  function ($window, $document, State, user, $timeout) { return {
 
     /**
      * Keeps omnibox size in check and creates and maintains a scrollbar.
      */
     link: function (scope, element) {
+
+      var KeyCodes = {
+        BACKSPACE: 8,
+        SPACE: 32,
+        ESC: 27,
+        UPARROW: 38,
+        DOWNARROW: 40,
+        RETURNKEY: 13,
+      };
+
+      scope.onFocus = function(item, $event) {
+        item.selected = "selected";
+        if (item.hasOwnProperty('formatted_address')) {
+          scope.zoomToSpatialResultWithoutClearingSeach(item);
+        }
+        if (item.hasOwnProperty('entity_url')) {
+          scope.zoomToSearchResultWithoutClearingSearch(item);
+        }
+      };
+
+      scope.selectItem = function($event, result) {
+        var e = $event;
+        switch (e.keyCode) {
+          case KeyCodes.RETURNKEY:
+            scope.zoomToSearchResult(result);
+            break;
+        }
+      };
+
+      scope.onKeydown = function($event) {
+        var e = $event;
+        var $target = $(e.target);
+        var nextTab;
+        switch (e.keyCode) {
+            case KeyCodes.ESC:
+                $target.blur();
+                scope.cleanInput();
+                break;
+            case KeyCodes.UPARROW:
+                nextTab = - 1;
+                break;
+            case KeyCodes.DOWNARROW:
+                nextTab = 1;
+                break;
+        }
+        if (nextTab !== undefined) {
+            // Do this outside the current $digest cycle:
+            // focus the next element by tabindex
+           $timeout(function() {
+             $('[tabindex=' + (parseInt($target.attr('tabindex')) + nextTab) + ']').focus();
+           });
+        }
+      };
+
+
 
       scope.showAnnotations = function () {
         return (

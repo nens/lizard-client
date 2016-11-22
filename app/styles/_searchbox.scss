@@ -63,6 +63,7 @@ $zoombutton-width: 30px;
 
 .zoom-buttons {
     float: right;
+
     height: $searchbox-height;
     margin-left: $searchbox-margins;
     text-align: center;
@@ -89,12 +90,15 @@ $zoombutton-width: 30px;
 }
 
 .search-results {
-  margin-top: 5px;
+  position: absolute;
+  z-index: 9999;
+  background-color: $white;
+  margin-top: 0;
     > h3 {
-        background-color: $greenSea;
-        font-size: 14px;
-        padding: $searchbox-margins;
-        color: $white;
+        background-color: $white;
+        font-size: 12px;
+        padding: 20px 0 0 10px;
+        color: #9AAAAA;
         margin: 0;
     }
     > ul {

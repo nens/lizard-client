@@ -168,3 +168,4 @@ angular.module('timeseries')
     scope: true // Share scope with timeseries directive
   };
 }]);
+
