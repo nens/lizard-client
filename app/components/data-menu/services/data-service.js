@@ -39,6 +39,13 @@ angular.module('data-menu')
         undefined: function() {}
       };
 
+
+      /**
+       * Finds asset or geometry data for a selection.
+       *
+       * @param  {object}  selection   a selection from State.selections
+       * @return {object} asset or geometry data.
+       */
       this.findProperty = function (selection) {
         var name = selection.asset ? "assets" : selection.geom ? "geometries": undefined;
         var geomID = selection.asset || selection.geom;

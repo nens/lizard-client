@@ -21,16 +21,15 @@ angular.module('dashboard')
         state: State
       };
 
+      /**
+       * Updates dashboard graphs on the scope when called.
+       */
       var buildDashboard = function () {
 
         TimeseriesService.minPoints =
           element.width() - DashboardService.GRAPH_PADDING;
 
-        scope.dashboard.graphs = DashboardService.buildGraphs(
-          TimeseriesService.timeseries,
-          DataService.assets,
-          DataService.geometries
-        );
+        scope.dashboard.graphs = DashboardService.buildGraphs();
 
         _.forEach(scope.dashboard.graphs, function (graph) {
           graph.dimensions = DashboardService.getDimensions(

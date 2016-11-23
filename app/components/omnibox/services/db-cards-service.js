@@ -44,8 +44,8 @@ angular.module('omnibox')
 
   var removeItemFromPlot = function (item) {
     var order = item.order;
-    var uuid = item.timeseries; // Timeseries have a uuid. Other plottable items do
-                                // not.
+    var uuid = item.timeseries; // Timeseries have a uuid. Other plottable
+                                // items do not.
 
     var otherItems = 0;
 
@@ -54,7 +54,8 @@ angular.module('omnibox')
       otherItems += _.filter(
         State.selections,
         function (selection) {
-          return selection.active && selection.timeseries !== uuid && selection.order === order;
+          return selection.active && selection.timeseries !== uuid &&
+              selection.order === order;
         }
       ).length;
     }

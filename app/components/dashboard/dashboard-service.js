@@ -11,9 +11,11 @@ angular.module('dashboard')
   this.graphs = [];  // TODO: implement graphs in state!
   var service = this;
 
+  /**
+   * Empties graphs object. When dashboard is rebuilt this is taken as a basis.
+   */
   this.resetGraphs = function () {
     service.graphs = [];
-    console.log(this.graphs === service.graphs);
   };
 
   /**
@@ -31,19 +33,16 @@ angular.module('dashboard')
    *   }]
    * }
    *
-   * @param  {array} graphs     Currently plotted graphs.
-   * @param  {array} timeseries Data source timeseries from timseriesService.
-   * @param  {array} assets     Data source DataService.assets.
-   * @param  {array} geometries Data source DataService.geometries.
    * @return {array} graph
    */
-
-  this.buildGraphs = function (timeseries, assets, geometries) {
+  this.buildGraphs = function () {
     var graphs = this._setAllContentToNotUpdated(service.graphs);
     var findSelectionData = function (selection) {
       var geomID = selection.asset || selection.geom || selection.timeseries;
       var dataUUID = selection.raster;
-      var property = selection.timeseries !== undefined ? TimeseriesService.findProperty(selection) : DataService.findProperty(selection);
+      var property = selection.timeseries !== undefined ?
+          TimeseriesService.findProperty(selection) :
+          DataService.findProperty(selection);
       if (property) {
         if (dataUUID && property.properties && property.properties[dataUUID]) {
           property = property.properties[dataUUID];
@@ -95,7 +94,7 @@ angular.module('dashboard')
     });
 
     // TODO: Crosssections are not yet implemented as selection.
-    assets.forEach(function (asset) {
+    DataService.assets.forEach(function (asset) {
       // Specific logic to add crosssections. We could abstract this to all
       // assets with children that have timeseries.
       if (asset.entity_name === 'leveecrosssection'
@@ -173,7 +172,11 @@ angular.module('dashboard')
     };
   };
 
-  // TODO: docstrings
+    /**
+   * Transforms property data into a format that is plottable in a graph.
+   *
+   * @return {Object} item: the transformed property; type: the graph type.
+   */
   var typeContentFromProperty = function (property) {
     var slug = property.slug;
     if (property.active) {
@@ -220,14 +223,14 @@ angular.module('dashboard')
       }
       return {type: type, item: item}
     }
-    // return {type: '', item: {}}
   };
 
     /**
-   * Adds DataService.assets|geometries.properties to dashboard graphs object.
+   * Adds DataService.[assets|geometries].properties to dashboard graphs object.
    *
    * @param {object} graphs     dashboard graph object.
    * @param {object} properties asset or geometries properties.
+   * @return {array} graph
    */
   var addPropertyData = function (graphs, properties) {
     _.forEach(properties, function (property) {

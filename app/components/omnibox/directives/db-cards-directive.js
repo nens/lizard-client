@@ -52,7 +52,6 @@ angular.module('omnibox')
       });
 
 
-
       /**
        * Turn ts on and give it the order of the dropped plot. Ts could already
        * be part of a plot above or below it, if so rearrange existing plots.

@@ -56,6 +56,12 @@ angular.module('timeseries')
       enumerable: true
     });
 
+    /**
+     * Finds timeseries, asset or geometry data for a selection.
+     *
+     * @param  {object}  selection   a selection from State.selections
+     * @return {object} asset or geometry data.
+     */
     this.findProperty = function (selection) {
       if (selection.timeseries) {
         return _.find(this.timeseries, function (ts) {
@@ -66,7 +72,13 @@ angular.module('timeseries')
     };
 
 
-    this.syncTime = function (timeseries) {
+    /**
+     * Collects timeseries data from the backend.
+     *
+     * @return {array} array of two angular promises: the first one for lines,
+     *                 the second one for bars (data with a ratio scale).
+     */
+    this.syncTime = function () {
 
       var groupedSelections = {
         temporalBars: {timeseries: [], rasters: []},
@@ -233,7 +245,7 @@ angular.module('timeseries')
       return err; // continue anyway
     };
 
-    var rasterComparatorFactory = function (comparatorType) {
+    var _rasterComparatorFactory = function (comparatorType) {
       return function (existingSelection, newSelection) {
         return existingSelection.type === "raster" &&  // prevent undefined === undefined = true for raster
           existingSelection[comparatorType] &&  // prevent undefined === undefined = true for comparator type
@@ -241,11 +253,17 @@ angular.module('timeseries')
           existingSelection[comparatorType] === newSelection[comparatorType]; // only keep one selection if both raster and comparator type are equal
     }};
 
-    var timeseriesComparator = function(existingSelection, newSelection){
+    var _timeseriesComparator = function(existingSelection, newSelection){
         return existingSelection.type === "timeseries" &&
             existingSelection.timeseries === newSelection.timeseries;
     };
 
+    /**
+     * initializes timeseries selections for a certain asset.
+     *
+     * @param  {object} asset   a DataService asset with timeseries.
+     * @return {object} asset or geometry data.
+     */
     this.initializeTimeseriesOfAsset = function (asset) {
       var colors = UtilService.GRAPH_COLORS;
       State.selections = _.unionWith(
@@ -260,11 +278,17 @@ angular.module('timeseries')
             measureScale: ts.scale
           };
         }),
-        timeseriesComparator
+        _timeseriesComparator
       );
       return asset;
     };
 
+    /**
+     * initializes timeseries selections for a certain asset or geometry.
+     *
+     * @param  {object} asset|geometry  a DataService asset with timeseries.
+     * @return {object} asset or geometry data.
+     */
     this.initializeRasterTimeseries = function (geomObject, geomType) {
       var geomId = geomType === 'asset' ?
         geomObject.entity_name + "$" + geomObject.id :
@@ -286,7 +310,7 @@ angular.module('timeseries')
           rasterSelection[geomType] = geomId;
           return rasterSelection;
         }),
-        rasterComparatorFactory(geomType)
+        _rasterComparatorFactory(geomType)
       );
       return geomObject;
     };

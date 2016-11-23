@@ -8,6 +8,11 @@ angular.module('global-state')
     'TimeseriesService',
     function (DataService, DBCardsService, TimeseriesService) {
 
+    /**
+     * Checks whether this datatype is supported for graphs.
+     *
+     * @return {Boolean} datatype support
+     */
     var dbSupportedData = function (type, property) {
         var temporal = property.temporal && type === 'Point';
 
@@ -64,12 +69,24 @@ angular.module('global-state')
         if (assetProps) {
           props = assetProps;
           var assetCode = idGeomFunction(geometry);
-          props.match = selection[geomType] === assetCode && dbSupportedData(geometry.geometry.type, props);
+          props.match = selection[geomType] === assetCode &&
+              dbSupportedData(geometry.geometry.type, props);
         }
       }
       return props;
     };
 
+    /**
+     * Factory that returns a function that finds metadata for a selection.
+     * metadata search can be limited to a geometry.
+     *
+     * @param  {object}  geometry   either an asset or a geometry from the
+     *                              State.
+     * @param  {object}  selection  selection from the State.
+     * @return {object} asset, timeseries or geometry metadata, including a
+     *                  match attribute that states whether a selection belongs
+     *                  to the geometry.
+     */
     var getMetaData = function(geometry){
       return function (selection) {
         if (selection.timeseries) {
@@ -80,6 +97,17 @@ angular.module('global-state')
       };
     };
 
+    /**
+     * Toggles selection active state and keeps track of the graph order for
+     * selections.
+     *
+     * @param  {object}  geometry   either an asset or a geometry from the
+     *                              State.
+     * @param  {object}  selection  selection from the State.
+     * @return {object} asset, timeseries or geometry metadata, including a
+     *                  match attribute that states whether a selection belongs
+     *                  to the geometry.
+     */
     var toggleSelection = function (selection) {
 
       if (!selection.active) {
