@@ -12,15 +12,38 @@ angular.module('timeseries')
   'TimeseriesUtilService',
   function ($q, State, $http, notie, UtilService, DataService, TsUService) {
 
+    var service = this;
+
     var GRAPH_WIDTH = 320; // Width of drawing area of box graphs.
 
-    // Contains timeseries metadata and data as comes from api. It mirrors
-    // State.seletected.timeseries.
-    this.timeseries = [];
+    // Contains timeseries metadata and data as comes from api. Since bars and
+    // lines
+
+    var _barTimeseries = [];
+    var _lineTimeseries = [];
+
+    var _setTimeseries = function (timeseriesIn) {
+      if (timeseriesIn !== undefined && timeseriesIn.length > 0 &&
+          timeseriesIn[0].measureScale) {
+        if (timeseriesIn[0].measureScale !== "ratio") {
+          _barTimeseries = timeseriesIn;
+        } else {
+          _lineTimeseries = timeseriesIn;
+        }
+        if (service.onTimeseriesChange) {
+          service.onTimeseriesChange();
+        }
+      }
+    };
+
+    Object.defineProperty(service, 'timeseries', {
+      get: function () { return _barTimeseries.concat(_lineTimeseries); },
+      set: _setTimeseries,
+      enumerable: true
+    });
 
     this.minPoints = GRAPH_WIDTH; // default
 
-    var service = this;
 
     var _selections = [];
     Object.defineProperty(State, 'selections', {
@@ -62,57 +85,48 @@ angular.module('timeseries')
         }
       });
 
-      var activeTimeseries = function(actives, minPoints, noDefer){
+      var activeTimeseries = function(actives, minPoints, chartType){
         // Return empty timeseries when empty selection
+        var timeseriesPromise;
         if (actives.length === 0) {
           var defer = $q.defer();
           defer.resolve([]);
-          return defer.promise;
+          timeseriesPromise = defer.promise;
         } else {
-          return service._getTimeseries(
+          timeseriesPromise =  service._getTimeseries(
             actives,
             State.temporal,
             minPoints && service.minPoints,
-            noDefer
+            chartType
           );
         }
+
+        timeseriesPromise.then(function (response) {
+          service.timeseries = _.filter(
+            response,
+            function (ts) { return _.some(
+              State.selections,
+              function (stateTs) {
+                return ts.id === stateTs.timeseries && stateTs.active;
+              });
+            });
+          console.log('TimeseriesService.timeseries:', service.timeseries);
+          return service.timeseries;
+        });
+
+        return timeseriesPromise
       };
 
-      var promise = $q.all([
-        activeTimeseries(groupedSelections.temporalLines.timeseries, true),
-        activeTimeseries(groupedSelections.temporalBars.timeseries, false, true)
-      ]).then(function (response) {
-        var barsAndLinesTimeseries = _.concat(response[0], response[1]);
-        console.log('TimeseriesService.timeseries:', service.timeseries);
-        return barsAndLinesTimeseries;
-      })
-      .then(function (barsAndLinesTimeseries) {
-        // Called asynchronously, so check if timeseries is still in state and
-        // active.
-        service.timeseries = _.filter(
-          barsAndLinesTimeseries,
-          function (ts) { return _.some(
-            State.selections,
-            function (stateTs) {
-              return ts.id === stateTs.timeseries && stateTs.active;
-            });
-          });
-        return service.timeseries;
-      })
+      return [
+        activeTimeseries(groupedSelections.temporalLines.timeseries, true,
+          'lines'),
+        activeTimeseries(groupedSelections.temporalBars.timeseries, false,
+          'bars')
+      ]
 
-      .then(function (ts) {
-
-        if (service.onTimeseriesChange) {
-          service.onTimeseriesChange();
-        }
-        // accomadate chaining;
-        return ts;
-
-      });
-      return promise;
     };
 
-    var localPromise = {};
+    var localPromise = {lines: {}, bars: {}, crosssections: {}};
 
     /**
      * Color is stored with the ts metadata in asset.timeseries of every asset
@@ -127,10 +141,11 @@ angular.module('timeseries')
       });
       if (ts) {
         ts.color = changedTS.color;
-        service.onTimeseriesChange();
+        if (service.onTimeseriesChange) {
+          service.onTimeseriesChange();
+        }
       }
     };
-
 
 
     /**
@@ -148,15 +163,13 @@ angular.module('timeseries')
      *                        lines, ask for minimally the graphs width amount
      *                        of pixels.
      */
-    this._getTimeseries = function (uuids, timeState, minPoints, noReject) {
-      if(!noReject){
-        // Cancel consecutive calls.
-        if (localPromise.reject) {
-          localPromise.resolve({data: {results: []}});
-        }
-
-        localPromise = $q.defer();
+    this._getTimeseries = function (uuids, timeState, minPoints, chartType) {
+      // Cancel consecutive calls.
+      if (localPromise[chartType].reject) {
+        localPromise[chartType].resolve({data: {results: []}});
       }
+      localPromise[chartType] = $q.defer();
+
       var id = uuids.join(',');
       var params = {
         uuid: id,
@@ -195,7 +208,7 @@ angular.module('timeseries')
         url: 'api/v2/timeseries/',
         method: 'GET',
         params: params,
-        timeout: localPromise.promise
+        timeout: localPromise[chartType].promise
       })
 
       .then(function (response) {

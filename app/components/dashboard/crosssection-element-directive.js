@@ -59,7 +59,8 @@ angular.module('dashboard')
       /** Gets timeseries using TimeseriesService .*/
       var getTimeseries = function (timeseries, timeState) {
         TimeseriesService
-        ._getTimeseries(timeseries, timeState, TimeseriesService.minPoints)
+        ._getTimeseries(timeseries, timeState, TimeseriesService.minPoints,
+            "crosssections")
         .then(function (result) {
           tsData = [];
           result.forEach(function (ts) {

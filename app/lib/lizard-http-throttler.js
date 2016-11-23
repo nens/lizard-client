@@ -18,6 +18,13 @@ angular.module('lizard-http-throttler', [])
 
     return {
       request: function(config) {
+        var urlID = config.url;
+        if (config.params){
+          Object.keys(config.params).sort().forEach(function(key) {
+            if (key)
+            urlID += key;
+          });
+        }
 
         var timeout = config.timeout;
         // Only intercept when $http is called with custom timeout.
@@ -28,14 +35,14 @@ angular.module('lizard-http-throttler', [])
         config.ignoreLoadingBar = true;
 
         // Store timeout synchronously.
-        timeouts[config.url] = timeout;
+        timeouts[urlID] = timeout;
 
         // Create config promise for $http.
         var promise = $q.defer();
 
         // Create throttle function if necessary
-        if (!throttles[config.url]) {
-          throttles[config.url] = _.throttle(function (config, defer) {
+        if (!throttles[urlID]) {
+          throttles[urlID] = _.throttle(function (config, defer) {
 
             // Throttle function fires asynchronously but requires timeout of
             // last request.
@@ -49,7 +56,7 @@ angular.module('lizard-http-throttler', [])
         }
 
         // Call throttled function.
-        throttles[config.url](config, promise);
+        throttles[urlID](config, promise);
 
         // $http takes a promise which ignites request when resolved.
         return promise.promise;

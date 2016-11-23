@@ -78,7 +78,10 @@ angular.module('timeseries')
           }
         });
 
-        TimeseriesService.syncTime().then(getContentForAsset);
+        _.forEach(TimeseriesService.syncTime(),
+            function (tsPromise) {
+              tsPromise.then(getContentForAsset);
+        })
 
       };
 
@@ -127,8 +130,10 @@ angular.module('timeseries')
        */
       scope.$watch('timeState.timelineMoving', function (newValue, oldValue) {
         if (!newValue && newValue !== oldValue) {
-          TimeseriesService.syncTime().then(getContentForAsset);
-
+          _.forEach(TimeseriesService.syncTime(),
+            function (tsPromise) {
+              tsPromise.then(getContentForAsset);
+          });
           scope.startDownload = function(){
             $http.get('/api/v2/timeseries/data/', {
                 params: {
