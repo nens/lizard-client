@@ -29,18 +29,17 @@ angular.module('global-state')
       // if no asset is given, iterate over all assets if the asset is a
       // geometry instead no timeseries are found so this will return undefined
       var assets = asset !== undefined ? [asset] : DataService.assets;
-      var tsMetaData;
+      var tsMetaData = { match: false };
       _.forEach(assets, function (a) {
         tsMetaData = _.find(a.timeseries, function (ts) {
           return ts.uuid === selection.timeseries;
         });
         if (tsMetaData === undefined) {
-          tsMetaData = {match: false}
+          tsMetaData = { match: false };
         } else {
-          tsMetaData.match = true
+          tsMetaData.match = true;
         }
         tsMetaData.type = 'timeseries';
-        return !tsMetaData;
       });
       return tsMetaData;
     };
@@ -49,14 +48,14 @@ angular.module('global-state')
       var geomRaster, idGeomFunction, geomType, geomAsset;
       if (selection.asset) {
         geomType = "asset";
-        idGeomFunction = function(a) {return a.entity_name + "$" + a.id};
+        idGeomFunction = function(a) { return a.entity_name + "$" + a.id; };
         geomRaster = _.find(DataService.assets, function (asset) {
           geomAsset = asset;
           return idGeomFunction(geomAsset) === selection.asset;
         });
       } else {
         geomType = "geom";
-        idGeomFunction = function(g) {return g.geometry.coordinates.toString()};
+        idGeomFunction = function(g) { return g.geometry.coordinates.toString(); };
         geomRaster = _.find(DataService.geometries, function (geom) {
           geomAsset = geom;
           return idGeomFunction(geom) === selection.geom;
@@ -127,7 +126,6 @@ angular.module('global-state')
     };
 
     return {
-      metaData: getMetaData(),
       metaDataFactory: getMetaData,
       dbSupportedData: dbSupportedData,
       toggle: toggleSelection
