@@ -1,0 +1,142 @@
+/** LEGEND (TODO - move this content to: app/styles/_legend.scss) ************/
+
+.container-for-both-legends {
+  border-radius: 3px;
+}
+
+.legend-discrete {
+  margin-bottom: 0;
+}
+
+.single-discrete-legend,
+.single-continuous-legend {
+  background-color: white;
+  width: 400px;
+  margin-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba($black, 0.3), 0 4px 15px -5px transparent;
+}
+
+.legend-header {
+  color: #777;
+  margin-left: 18px;
+  margin-bottom: 5px;
+}
+
+.legend-header a {
+  color: #777;
+}
+
+.legend-header a:hover {
+  color: #16a085;
+}
+
+.discrete-legend-datum {
+  height: 25px;
+}
+
+.discrete-legend-datum-omitted {
+  color: #777;
+  height: 30px;
+  font-style: italic;
+  margin-left: 10px;
+  margin-top: 5px;
+  margin-bottom: 0px;
+}
+
+.discrete-legend-color-rect {
+  height: 18px;
+  width: 46px;
+  background-color: white;
+  float: left;
+  margin-left: 18px;
+  border-radius: 2px;
+}
+
+.discrete-legend-label {
+  margin-left: 10px;
+  float: left;
+  color: #777;
+}
+
+.single-continuous-legend {
+  padding-right: 18px;
+  min-height: 160px;
+
+}
+
+.gradient-bar {
+  height: 120px;
+  width: 46px;
+  margin-left: 18px;
+  margin-bottom: 5px;
+  border: 1px solid #777;
+  border-radius: 2px;
+
+  float: left;
+}
+
+.min-indicator {
+  width: 310px;
+  border-top: 1px solid #777;
+  float: right;
+  color: #777;
+}
+
+.min-indicator > span {
+  float: right;
+  color: #777;
+}
+
+.color-indicator {
+  width: 50px;
+  height: 50px;
+  float: left;
+}
+
+.min-color-indicator {
+  position: relative;
+  top: 40px;
+  background-color: red;
+  left: 40px;
+}
+
+.max-color-indicator {
+  position: relative;
+  top: 40px;
+  left: 80px;
+  background-color: green;
+}
+
+.continuous-raster-numeric-data {
+  min-width: 300px;
+  max-width: 300px;
+  float: right;
+}
+
+.continuous-raster-table-row {
+  height: 29px;
+  border-bottom: 1px solid #ddd;
+  color: #777;
+  font-size: 0.9em;
+  line-height: 1.42857;
+}
+
+.continuous-raster-table-key {
+  min-width: 150px;
+  max-width: 150px;
+}
+
+.continuous-raster-table-value {
+  min-width: 100px;
+  max-width: 100px;
+}
+
+.continuous-raster-table-unit {
+  min-width: 50px;
+  max-width: 50px;
+}
+
+
