@@ -39,9 +39,9 @@ angular.module('timeseries')
       var groupedTimeseries = {temporalBars: [], temporalLines: []};
       _.forEach(State.selected.timeseries, function(ts){
         if(ts.active){
-          var scale = ts.measureScale == "ratio" ? "temporalBars" :
+          var scale = ts.measureScale === "ratio" ? "temporalBars" :
             "temporalLines";
-          groupedTimeseries[scale].push(ts.uuid)
+          groupedTimeseries[scale].push(ts.uuid);
         }
       });
 
@@ -67,7 +67,7 @@ angular.module('timeseries')
       ]).then(function (response) {
         var barsAndLinesTimeseries = _.concat(response[0], response[1]);
         console.log('TimeseriesService.timeseries:', service.timeseries);
-        return barsAndLinesTimeseries
+        return barsAndLinesTimeseries;
       })
       .then(function (barsAndLinesTimeseries) {
         // Called asynchronously, so check if timeseries is still in state and
@@ -139,7 +139,7 @@ angular.module('timeseries')
         }
 
         localPromise = $q.defer();
-      };
+      }
       var id = uuids.join(',');
       var params = {
         uuid: id,
@@ -165,7 +165,7 @@ angular.module('timeseries')
         } else if (timeState.aggWindow <= 2678400000) {
           aggWindow = "month";
         } else {
-          aggWindow = "year"
+          aggWindow = "year";
         }
 
         params.window = aggWindow;
@@ -332,7 +332,7 @@ angular.module('timeseries')
           // from the data.
           var yKey = _.filter(
               Object.keys(graphTimeseries.data[0]),
-              function(x){ return x !== graphTimeseries.keys.x }
+              function(x){ return x !== graphTimeseries.keys.x; }
           );
           if (yKey.length === 1 && graphTimeseries.keys.y !== yKey[0]) {
             graphTimeseries.keys.y = yKey[0];

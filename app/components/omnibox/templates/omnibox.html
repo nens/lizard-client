@@ -1,11 +1,12 @@
-<div>
+<div class="omniboxWrapper"
+     ng-keydown="onKeydown($event)"
+     style="z-index:999;"
+     ng-class="{ active: omnibox.data.assets.length > 0 }">
 
   <search></search>
+  <search-results ng-if="omnibox.searchResults"></search-results>
 
   <div id="cards" class="pullDown cardbox">
-
-    <search-results ng-if="omnibox.searchResults"></search-results>
-
     <div ng-if="omnibox.context === 'map'">
 
       <asset-cards
