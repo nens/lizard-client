@@ -49,7 +49,8 @@ angular.module("lizard-nxt", [
   'angular-loading-bar',
   'lizard-boostrap',
   'ui-utils',
-  'export'
+  'export',
+  'legend'
 ])
 
 // Decorator for ngExceptionHandler to log exceptions to sentry
