@@ -174,5 +174,28 @@ angular.module('omnibox')
 
       return state;
     };
+
+    /**
+     * Zooms to API search result without selecting it.
+     *
+     * @param {object} result: API search result.
+     * @param {object} state: the current state.
+     * @return {object} state: the new state.
+     */
+    this.zoomToSearchResultWithoutSelecting = function (result, state) {
+      var ZOOM_FOR_OBJECT = 19;
+
+      if (state.box.type !== 'multi-point' && state.context !== 'dashboard') {
+        state.selected.reset();
+      }
+
+      MapService.setView({
+        lat: result.view[0],
+        lng: result.view[1],
+        zoom: result.view[2] || ZOOM_FOR_OBJECT
+      });
+
+      return state;
+    };
   }
 ]);

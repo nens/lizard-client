@@ -37,8 +37,7 @@
 
     <!-- use ng-if to reiniatialize when context changes -->
     <div ng-if="context === 'map' || context === 'scenarios'">
-      <map
-        state="state">
+      <map state="state">
       </map>
       <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
       <timeline class="timeline-map"></timeline>
@@ -231,6 +230,10 @@
 
     <script src="/components/single-click/single-click-directive.js"></script>
     <script src="/components/opacity/opacity-directives.js"></script>
+
+    <script src="/components/legend/legend.js"></script>
+    <script src="/components/legend/legend-directive.js"></script>
+    <script src="/components/legend/legend-service.js"></script>
 
     <script src="/components/map/services/vectorized-raster-layer-service.js"></script>
 

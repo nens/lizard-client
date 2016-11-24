@@ -2,10 +2,11 @@
  * Omnibox style definition
  */
 #omnibox {
+    margin:0;
+    padding:0;
     position: absolute;
     width: 400px;
     left: 0;
-    margin: 10px;
     transition: left 0.5s;
 
     .animate-repeat {
@@ -38,6 +39,11 @@
       opacity:1;
       max-height:40px;
     }
+}
+
+#omnibox.active {
+  height: 100%;
+  background-color: none;
 }
 
 #rap-card {
@@ -143,6 +149,7 @@
     white-space:nowrap;
     text-overflow:ellipsis;
     font-size: .9em;
+    border-bottom: 1px solid $deprecated-gray7;
 }
 
 .carousel {
@@ -198,8 +205,8 @@
 
 #cards {
   position: relative;
-  width: 415px;
-  margin-top: 5px;
+  width: 400px;
+  margin-top: -5px;
   outline: none;
   background: none;
   opacity: 1;
@@ -518,15 +525,13 @@
   white-space: normal;
   background: $white;
   background: rgba($white, 0.95);
-  border-radius: 2px;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  z-index:10;
   width: $omnibox-width;
   top:0px;
   transition: all .2s ease-out;
   -webkit-transition: all .2s ease-out;
-  margin-bottom: 5px;
+  margin-bottom: 1px;
   @include material-shadow();
 }
 
@@ -536,10 +541,10 @@
 
 .card-header {
   position: relative;
-  height: 60px;
+  height: 75px;
   width: $omnibox-width;
   top: 50%;
-  background-color: $greensea;
+  background-color: #E4E8E9;
 }
 
 .card-header-center {
@@ -547,7 +552,7 @@
     top: 9px;
     width: 390px;
     padding-left: 9px;
-    color: $white;
+    color: #606162;
     line-height: 1;
 
     .icons {
@@ -565,11 +570,11 @@
     .asset-title {
         padding-left: 5px;
         padding-top: 5px;
-        font-size: 1em;
+        font-size: .85em;
     }
 
     em {
-        font-size: 15px;
+        font-size: 12px;
         padding-left: 40px;
     }
 }
@@ -757,3 +762,5 @@ input[type=file] {
 .btn-link {
     padding: 0;
 }
+
+
