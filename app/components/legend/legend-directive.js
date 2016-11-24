@@ -62,8 +62,10 @@ angular.module('legend')
         + suffix;
       var gradientValue1 = "background: -webkit-linear-gradient("
         + suffix;
+      var gradientValue2 = "background: -ms-linear-gradient("
+        + suffix;
 
-      return gradientValue0 + "; " + gradientValue1;
+      return gradientValue0 + "; " + gradientValue1 + "; " + gradientValue2;
     };
 
     /* Een kaartje voor zowel continuous als discrete rasters ****************/
