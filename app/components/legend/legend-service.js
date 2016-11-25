@@ -104,6 +104,11 @@ angular.module('legend')
       });
     };
 
+    var deleteLegendData = function (layerName) {
+      delete self.rasterData.discrete[layerName];
+      delete self.rasterData.continuous[layerName];
+    };
+
     this.updateLegendData = function (bounds, layers) {
 
       var GEOMETRY;
@@ -155,8 +160,7 @@ angular.module('legend')
               updateContinuousRasterData(name, dataLayerObj, options);
             }
           } else {
-            delete self.rasterData.discrete[name];
-            delete self.rasterData.continuous[name];
+            deleteLegendData(name);
           }
         }
       });
