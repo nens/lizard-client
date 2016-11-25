@@ -1,7 +1,12 @@
 //rasterlayer-directive.js
 
 angular.module('data-menu')
-.directive('rasterlayer', ['MapService', 'DataService', 'LayerAdderService', 'rasterMapLayer', 'rasterDataLayer', function (MapService, DataService, LayerAdderService, rasterMapLayer, rasterDataLayer) {
+.directive('rasterlayer', ['MapService', 'DataService', 'LayerAdderService',
+'rasterMapLayer', 'rasterDataLayer', 'VectorizedRasterService',
+
+  function (MapService, DataService, LayerAdderService,
+  rasterMapLayer, rasterDataLayer, VectorizedRasterService) {
+
   var link = function (scope) {
 
     scope.remove = LayerAdderService.remove;
@@ -25,18 +30,24 @@ angular.module('data-menu')
     scope.toggleVectorModus = function (layer) {
       var mapLayer = _.find(MapService.mapLayers, {uuid: layer.uuid});
       mapLayer.showVectorized = !mapLayer.showVectorized;
+      VectorizedRasterService.updateAllLayers();
       if (mapLayer.showVectorized) {
         mapLayer.remove(MapService._map);
-        MapService.getRegionsForVectorizedRaster(layer);
       } else {
-        MapService.removeRegionsForVectorizedRaster(layer);
         MapService.updateLayers([layer]);
       }
     };
 
-    scope.showVectorized = function (layer) {
+    scope.rasterIsVectorized = function (layer) {
       var mapLayer = _.find(MapService.mapLayers, {uuid: layer.uuid});
       return !!mapLayer.showVectorized;
+    };
+
+    scope.removeVectorizedLayer = function (layer) {
+      console.log("[F] removeVectorizedLayer; layer:", layer);
+      var mapLayer = _.find(MapService.mapLayers, {uuid: layer.uuid});
+
+      VectorizedRasterService.deleteLayer(layer.uuid, true);
     };
 
     var cancelFirstActive = scope.$watch('layer.active', function () {

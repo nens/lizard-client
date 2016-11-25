@@ -104,13 +104,13 @@ angular.module('legend')
       scope.legendData = LegendService.updateLegendData(
         State.spatial.bounds,
         scope.state.layers);
-      console.log("legendData:", scope.legendData);
+      // console.log("legendData:", scope.legendData);
     });
 
     scope.$watch('state.spatial.bounds', function (n, o) {
       if (n === o) { return; }
       scope.legendData = LegendService.updateLegendData(n, scope.state.layers);
-      console.log("legendData:", scope.legendData);
+      // console.log("legendData:", scope.legendData);
     });
 
     scope.legendData = LegendService.updateLegendData(

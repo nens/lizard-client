@@ -12,9 +12,9 @@
 angular.module('map')
 .service('MapService',
         ['$rootScope', 'CabinetService', 'LeafletService', 'NxtRegionsLayer',
-         'NxtVectorizedRasterLayer', 'UtfGridService', 'baselayer', 'eventseriesMapLayer', 'State',
+         'UtfGridService', 'baselayer', 'eventseriesMapLayer', 'State',
   function ($rootScope, CabinetService, LeafletService, NxtRegionsLayer,
-          NxtVectorizedRasterLayer, UtfGridService, baselayer, eventseriesMapLayer, State) {
+          UtfGridService, baselayer, eventseriesMapLayer, State) {
 
     var topography = 'https://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa98k8k';
     var satellite = 'https://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa79205';
@@ -324,7 +324,7 @@ angular.module('map')
           State.selected.geometries = [layer.feature];
         };
 
-       CabinetService.regions.get({
+        CabinetService.regions.get({
           z: State.spatial.view.zoom,
           in_bbox: State.spatial.bounds.getWest()
             + ','
@@ -339,52 +339,56 @@ angular.module('map')
         });
       },
 
-      getRegionsForVectorizedRaster: function (layer) {
-        console.log("[F] getRegionsForVectorizedRaster; layer =", layer);
-        CabinetService.regions.get({
-          z: State.spatial.view.zoom,
-          in_bbox: State.spatial.bounds.getWest()
-            + ','
-            + State.spatial.bounds.getNorth()
-            + ','
-            + State.spatial.bounds.getEast()
-            + ','
-            + State.spatial.bounds.getSouth()
-        })
-        .then(function (regions) {
-          NxtVectorizedRasterLayer.add(service, regions.results, layer);
-        });
-      },
+      // getRegionsForVectorizedRaster: function (layer) {
+      //   CabinetService.regions.get({
+      //     z: State.spatial.view.zoom,
+      //     in_bbox: State.spatial.bounds.getWest()
+      //       + ','
+      //       + State.spatial.bounds.getNorth()
+      //       + ','
+      //       + State.spatial.bounds.getEast()
+      //       + ','
+      //       + State.spatial.bounds.getSouth()
+      //   })
+      //   .then(function (regions) {
+      //     NxtVectorizedRasterLayers.add(service, regions.results, layer);
+      //   });
+      // },
 
-      getRegionsForAllVectorizedRasters: function () {
-        console.log("[F] getRegionsForAllVectorizedRasters");
-        CabinetService.regions.get({
-          z: State.spatial.view.zoom,
-          in_bbox: State.spatial.bounds.getWest()
-            + ','
-            + State.spatial.bounds.getNorth()
-            + ','
-            + State.spatial.bounds.getEast()
-            + ','
-            + State.spatial.bounds.getSouth()
-        })
-        .then(function (regions) {
-          angular.forEach(service.mapLayers, function (mapLayer) {
-            if (mapLayer.showVectorized) {
-              NxtVectorizedRasterLayer.add(service, regions.results, mapLayer);
-            }
-          });
-        });
+      // getRegionsForAllVectorizedRasters: function () {
+      //   var vectorizedRasterLayers = [];
+      //   angular.forEach(service.mapLayers, function (mapLayer) {
+      //     if (mapLayer.showVectorized) {
+      //       vectorizedRasterLayers.push(mapLayer);
+      //     }
+      //   });
 
-      },
+      //   if (vectorizedRasterLayers.length > 0) {
+      //     CabinetService.regions.get({
+      //       z: State.spatial.view.zoom,
+      //       in_bbox: State.spatial.bounds.getWest()
+      //         + ','
+      //         + State.spatial.bounds.getNorth()
+      //         + ','
+      //         + State.spatial.bounds.getEast()
+      //         + ','
+      //         + State.spatial.bounds.getSouth()
+      //     })
+      //     .then(function (regions) {
+      //       angular.forEach(vectorizedRasterLayers, function (mapLayer, index) {
+      //         NxtVectorizedRasterLayers.add(service, regions.results, mapLayer);
+      //       });
+      //     });
+      //   }
+      // },
 
       removeRegions: function () {
         NxtRegionsLayer.remove(this);
       },
 
-      removeRegionsForVectorizedRaster: function (layer) {
-        NxtVectorizedRasterLayer.remove(this);
-      },
+      // removeRegionsForVectorizedRaster: function (layer) {
+      //   NxtVectorizedRasterLayers.remove(this, layer);
+      // },
 
       /**
        * @function

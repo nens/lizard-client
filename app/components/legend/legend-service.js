@@ -86,6 +86,7 @@ angular.module('legend')
       apiCallOptions.agg = 'min';
       var minPromise = RasterService.getData(apiCallOptions);
       minPromise.then(function (minData) {
+        // console.log("data:", minData);
         if (minData.data !== null) {
           self.rasterData.continuous[name].min = floatRound(minData.data, 3);
         } else {
@@ -96,6 +97,7 @@ angular.module('legend')
       apiCallOptions.agg = 'max';
       var maxPromise = RasterService.getData(apiCallOptions);
       maxPromise.then(function (maxData) {
+        // console.log("data:", maxData);
         if (maxData.data !== null) {
           self.rasterData.continuous[name].max = floatRound(maxData.data, 3);
         } else {

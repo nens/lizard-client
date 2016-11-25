@@ -18,12 +18,14 @@ angular.module('map')
   'ClickFeedbackService',
   'UtilService',
   'State',
+  'VectorizedRasterService',
   function (
     MapService,
     DataService,
     ClickFeedbackService,
     UtilService,
-    State
+    State,
+    VectorizedRasterService
   ) {
 
     var link = function (scope, element, attrs) {
@@ -225,8 +227,16 @@ angular.module('map')
         if (State.box.type === 'region') {
           MapService.getRegions(State.spatial.bounds);
         }
-        MapService.getRegionsForAllVectorizedRasters();
+        if (VectorizedRasterService.hasVectorizedRasterLayers()) {
+          VectorizedRasterService.setRegions(true);
+        }
+
       }, true);
+
+      scope.$watch(State.toString('layers.active'), function (n, o) {
+        if (n.length === o.length) { return; }
+        VectorizedRasterService.updateAllLayers();
+      });
 
       /**
        * Watch temporal.at of app and update maplayers accordingly.
@@ -300,8 +310,6 @@ angular.module('map')
           return;
         }
         UtilService.addNewStyle(selector);
-
-
       });
 
       init();

@@ -2,7 +2,8 @@
  * Opacity slider for layer-chooser.
  */
 angular.module('data-menu')
-  .directive('opacitySlider', ['MapService', function (MapService) {
+  .directive('opacitySlider', ['MapService', 'VectorizedRasterService',
+    function (MapService, VectorizedRasterService) {
 
   var link = function (scope, element, attrs) {
 
@@ -23,6 +24,8 @@ angular.module('data-menu')
       var newOpacity = localClick / layerChooserWidth;
       scope.layer.opacity = newOpacity;
       MapService.updateLayers([scope.layer]);
+      VectorizedRasterService.setOpacity(scope.layer.uuid, newOpacity);
+      VectorizedRasterService.updateLayer(scope.layer);
     };
 
   };

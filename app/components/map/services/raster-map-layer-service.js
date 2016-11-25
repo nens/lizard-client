@@ -55,15 +55,6 @@ angular.module('map')
 
       rasterMapLayer.update = function (map, timeState, options) {
 
-        console.log("[F] rasterMapLayer.update");
-
-        if (rasterMapLayer.showVectorized) {
-          console.log("..need to show VECTORIZED response for rasterMapLayer:", rasterMapLayer);
-          return;
-        } else {
-          console.log("..need to show NORMAL response for rasterMapLayer:", rasterMapLayer);
-        }
-
         // Wms options might be different for current zoom and aggWindow.
         // Redraw when wms parameters are different for temporal or spatial
         // zoom.
@@ -78,6 +69,12 @@ angular.module('map')
         // mapservice.
         newParams.opacity = options.opacity;
         rasterMapLayer._setOpacity(options.opacity);
+
+        /////////////////////////////////
+        if (rasterMapLayer.showVectorized) {
+          rasterMapLayer.remove(map);
+          return;
+        }
 
         if (rasterMapLayer.temporal && timeState.playing) {
           rasterMapLayer._syncTime(timeState, map, options, options);

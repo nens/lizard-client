@@ -15,13 +15,16 @@
       <div class="layer-chooser-tools">
         <i class="fa fa-close"
            ng-hide="closebutton === false"
-           ng-click="remove(layer); $event.stopPropagation()"></i>
+           ng-click="remove(layer);
+                     rasterIsVectorized(layer) ? removeVectorizedLayer(layer) : '';
+                     $event.stopPropagation()">
+        </i>
         <i ng-if="zoomToBounds"
           ng-click="zoomToBounds(); $event.stopPropagation()"
           ng-show="layer.active"
           class="fa fa-crosshairs">
         </i>
-        <i class="fa fa-<% showVectorized(layer) ? 'star' : 'star-o' %>"
+        <i class="fa fa-<% rasterIsVectorized(layer) ? 'star' : 'star-o' %>"
            ng-show="layer.active"
            ng-if="rasterLayerIsVectorizable(layer)"
            ng-click="toggleVectorModus(layer); $event.stopPropagation()">
