@@ -25,10 +25,21 @@ angular.module('global-state')
         return temporal || events || other;
       };
 
-    var _getTimeseriesMetaData = function (selection, asset) {
+    /**
+     * Finds metadata for a timeseries selection.
+     * metadata search can be limited to a geometry.
+     *
+     * @param  {object}  geometry   either an asset or a geometry from the
+     *                              State.
+     * @param  {object}  selection  selection from the State.
+     * @return {object} asset, timeseries or geometry metadata, including a
+     *                  match attribute that states whether a selection belongs
+     *                  to the geometry.
+     */
+    var getTimeseriesMetaData = _.curry(function (geometry, selection) {
       // if no asset is given, iterate over all assets if the asset is a
       // geometry instead no timeseries are found so this will return undefined
-      var assets = asset !== undefined ? [asset] : DataService.assets;
+      var assets = geometry !== undefined ? [geometry] : DataService.assets;
       var tsMetaData = { match: false };
       _.forEach(assets, function (a) {
         tsMetaData = _.find(a.timeseries, function (ts) {
@@ -42,9 +53,20 @@ angular.module('global-state')
         tsMetaData.type = 'timeseries';
       });
       return tsMetaData;
-    };
+    });
 
-    var _getRasterMetaData = function (selection, geometry) {
+    /**
+     * Finds metadata for a raster selection.
+     * metadata search can be limited to a geometry.
+     *
+     * @param  {object}  geometry   either an asset or a geometry from the
+     *                              State.
+     * @param  {object}  selection  selection from the State.
+     * @return {object} asset, timeseries or geometry metadata, including a
+     *                  match attribute that states whether a selection belongs
+     *                  to the geometry.
+     */
+    var getRasterMetaData = _.curry(function (geometry, selection) {
       var geomRaster, idGeomFunction, geomType, geomAsset;
       if (selection.asset) {
         geomType = "asset";
@@ -73,27 +95,24 @@ angular.module('global-state')
         }
       }
       return props;
-    };
+    });
 
     /**
-     * Factory that returns a function that finds metadata for a selection.
+     * Returns a function that finds metadata for a selection.
      * metadata search can be limited to a geometry.
      *
      * @param  {object}  geometry   either an asset or a geometry from the
      *                              State.
-     * @param  {object}  selection  selection from the State.
-     * @return {object} asset, timeseries or geometry metadata, including a
-     *                  match attribute that states whether a selection belongs
-     *                  to the geometry.
+     * @return {function} function that returns either asset or geometry
+     *                    metadata or timeseries metadata.
      */
     var getMetaData = function(geometry){
-      return function (selection) {
+      return function(selection){
         if (selection.timeseries) {
-          return _getTimeseriesMetaData(selection, geometry);
-        } else if (selection.raster) {
-          return _getRasterMetaData(selection, geometry);
-        }
-      };
+          return getTimeseriesMetaData(geometry, selection);
+         } else if (selection.raster) {
+          return getRasterMetaData(geometry, selection);
+        }};
     };
 
     /**
@@ -126,7 +145,9 @@ angular.module('global-state')
     };
 
     return {
-      metaDataFactory: getMetaData,
+      timeseriesMetaDataFunction: getTimeseriesMetaData,
+      rasterMetaDataFunction: getRasterMetaData,
+      getMetaDataFunction: getMetaData,
       dbSupportedData: dbSupportedData,
       toggle: toggleSelection
     };

@@ -16,7 +16,8 @@ angular.module('omnibox')
     link: function (scope, element) {
 
       scope.state = State;
-      scope.getSelectionMetaData = SelectionService.metaDataFactory(scope.asset);
+      scope.getSelectionMetaData = SelectionService.getMetaDataFunction(
+          scope.asset);
 
       scope.toggleSelection = SelectionService.toggle;
 

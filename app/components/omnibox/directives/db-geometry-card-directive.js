@@ -19,7 +19,8 @@ angular.module('omnibox')
 
         scope.noData = true;
 
-        scope.getSelectionMetaData = SelectionService.metaDataFactory(scope.geom);
+        scope.getSelectionMetaData = SelectionService.rasterMetaDataFunction(
+            scope.geom);
 
         /**
          * Properties are asynchronous so watch it to set noData when added.
