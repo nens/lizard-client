@@ -206,7 +206,7 @@
 #cards {
   position: relative;
   width: 400px;
-  margin-top: -5px;
+  margin-top: -2px;
   outline: none;
   background: none;
   opacity: 1;
@@ -524,20 +524,22 @@
   position: relative;
   white-space: normal;
   background: $white;
-  background: rgba($white, 0.95);
+  /*background: rgba($white, 0.95);*/
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   width: $omnibox-width;
-  top:0px;
+  top: 0px;
   transition: all .2s ease-out;
   -webkit-transition: all .2s ease-out;
-  margin-bottom: 1px;
-  @include material-shadow();
+  margin-top: 0;
+  margin-bottom: 0;
+
+  /*@include material-shadow();*/
 }
 
-.card:hover {
+/*.card:hover {
     @include material-shadow-hover();
-}
+}*/
 
 .card-header {
   position: relative;

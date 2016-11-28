@@ -87,6 +87,7 @@ angular.module('legend')
       var minPromise = RasterService.getData(apiCallOptions);
       minPromise.then(function (minData) {
         if (minData.data !== null) {
+          console.log("minData from server:", minData.data);
           self.rasterData.continuous[name].min = floatRound(minData.data, 3);
         } else {
           self.rasterData.continuous[name].min = null;
@@ -96,12 +97,18 @@ angular.module('legend')
       apiCallOptions.agg = 'max';
       var maxPromise = RasterService.getData(apiCallOptions);
       maxPromise.then(function (maxData) {
+        console.log("maxData from server:", maxData.data);
         if (maxData.data !== null) {
           self.rasterData.continuous[name].max = floatRound(maxData.data, 3);
         } else {
           self.rasterData.continuous[name].max = null;
         }
       });
+    };
+
+    var deleteLegendData = function (layerName) {
+      delete self.rasterData.discrete[layerName];
+      delete self.rasterData.continuous[layerName];
     };
 
     this.updateLegendData = function (bounds, layers) {
@@ -155,8 +162,7 @@ angular.module('legend')
               updateContinuousRasterData(name, dataLayerObj, options);
             }
           } else {
-            delete self.rasterData.discrete[name];
-            delete self.rasterData.continuous[name];
+            deleteLegendData(name);
           }
         }
       });
