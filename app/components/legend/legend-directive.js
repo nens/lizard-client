@@ -121,7 +121,7 @@ angular.module('legend')
       }
     };
 
-    scope.switchSelectedRaster = function (currentRasterName) {;
+    scope.switchSelectedRaster = function (currentRasterName) {
       var allRasterNames = scope.getAllRasterNames();
       var currentIndex = allRasterNames.indexOf(currentRasterName);
       if (allRasterNames.length !== 0) {
