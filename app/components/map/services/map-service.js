@@ -339,56 +339,9 @@ angular.module('map')
         });
       },
 
-      // getRegionsForVectorizedRaster: function (layer) {
-      //   CabinetService.regions.get({
-      //     z: State.spatial.view.zoom,
-      //     in_bbox: State.spatial.bounds.getWest()
-      //       + ','
-      //       + State.spatial.bounds.getNorth()
-      //       + ','
-      //       + State.spatial.bounds.getEast()
-      //       + ','
-      //       + State.spatial.bounds.getSouth()
-      //   })
-      //   .then(function (regions) {
-      //     NxtVectorizedRasterLayers.add(service, regions.results, layer);
-      //   });
-      // },
-
-      // getRegionsForAllVectorizedRasters: function () {
-      //   var vectorizedRasterLayers = [];
-      //   angular.forEach(service.mapLayers, function (mapLayer) {
-      //     if (mapLayer.showVectorized) {
-      //       vectorizedRasterLayers.push(mapLayer);
-      //     }
-      //   });
-
-      //   if (vectorizedRasterLayers.length > 0) {
-      //     CabinetService.regions.get({
-      //       z: State.spatial.view.zoom,
-      //       in_bbox: State.spatial.bounds.getWest()
-      //         + ','
-      //         + State.spatial.bounds.getNorth()
-      //         + ','
-      //         + State.spatial.bounds.getEast()
-      //         + ','
-      //         + State.spatial.bounds.getSouth()
-      //     })
-      //     .then(function (regions) {
-      //       angular.forEach(vectorizedRasterLayers, function (mapLayer, index) {
-      //         NxtVectorizedRasterLayers.add(service, regions.results, mapLayer);
-      //       });
-      //     });
-      //   }
-      // },
-
       removeRegions: function () {
         NxtRegionsLayer.remove(this);
       },
-
-      // removeRegionsForVectorizedRaster: function (layer) {
-      //   NxtVectorizedRasterLayers.remove(this, layer);
-      // },
 
       /**
        * @function
