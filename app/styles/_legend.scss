@@ -1,9 +1,5 @@
 /** LEGEND (TODO - move this content to: app/styles/_legend.scss) ************/
 
-.container-for-both-legends {
-  border-radius: 3px;
-}
-
 .legend-discrete {
   margin-bottom: 0;
 }
@@ -15,7 +11,6 @@
   margin-bottom: 5px;
   padding-top: 5px;
   padding-bottom: 5px;
-  border-radius: 3px;
   box-shadow: 0 2px 6px rgba($black, 0.3), 0 4px 15px -5px transparent;
 }
 
@@ -27,10 +22,6 @@
 
 .legend-header a {
   color: #777;
-}
-
-.legend-header a:hover {
-  color: #16a085;
 }
 
 .discrete-legend-datum {
@@ -139,4 +130,19 @@
   max-width: 50px;
 }
 
+.toggle-categories-shown {
+  float: right;
+  margin-right: 15px;
+}
+
+.toggle-categories-shown i {
+  font-size: 15px !important;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Chrome/Safari/Opera */
+   -khtml-user-select: none; /* Konqueror */
+     -moz-user-select: none; /* Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+          user-select: none; /* Non-prefixed version, currently
+                                not supported by any browser */
+}
 
