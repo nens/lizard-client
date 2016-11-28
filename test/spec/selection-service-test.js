@@ -60,14 +60,14 @@ describe('selection service', function () {
   it('should toggle active state in selections', function () {
 
     var selectionActive = {
-      $$hashKey: "object:999",
+      uuid: "1234",
       active: true,
       geom: "10000.0000,520000.0000",
       order: 1,
       type: "raster"
     };
     var selectionInActive = {
-      $$hashKey: "object:999",
+      uuid: "5678",
       active: false,
       order: 0,
       timeseries: "66c94920-706e-42e4-8b8c-e0c9e0e2d5db",
