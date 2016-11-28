@@ -17,9 +17,6 @@ nav.navbar {
     .navbar-collapse {
         margin: 0 -15px;
         @include material-shadow();
-        &:hover {
-            @include material-shadow-hover();
-        }
     }
 
     &.navbar-default {
