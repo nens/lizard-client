@@ -11,10 +11,15 @@ angular.module('data-menu')
 
     scope.remove = LayerAdderService.remove;
 
+    var mapLayer;
+
     // Set defaults.
     if (!scope.layer.opacity) { scope.layer.opacity = 1; }
     if (!scope.layer.name) {
       scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid;
+    }
+    if (scope.layer.vectorized === undefined) {
+      scope.layer.vectorized = false;
     }
 
     scope.rasterLayerIsVectorizable = function (layer) {
@@ -28,26 +33,12 @@ angular.module('data-menu')
     };
 
     scope.toggleVectorModus = function (layer) {
-      var mapLayer = _.find(MapService.mapLayers, {uuid: layer.uuid});
-      mapLayer.showVectorized = !mapLayer.showVectorized;
-      VectorizedRasterService.updateAllLayers();
-      if (mapLayer.showVectorized) {
-        mapLayer.remove(MapService._map);
-      } else {
-        MapService.updateLayers([layer]);
-      }
+      layer.vectorized = !layer.vectorized;
+      MapService.updateLayers([layer]);
     };
 
     scope.rasterIsVectorized = function (layer) {
-      var mapLayer = _.find(MapService.mapLayers, {uuid: layer.uuid});
-      return !!mapLayer.showVectorized;
-    };
-
-    scope.removeVectorizedLayer = function (layer) {
-      console.log("[F] removeVectorizedLayer; layer:", layer);
-      var mapLayer = _.find(MapService.mapLayers, {uuid: layer.uuid});
-
-      VectorizedRasterService.deleteLayer(layer.uuid, true);
+      return !!layer.vectorized;
     };
 
     var cancelFirstActive = scope.$watch('layer.active', function () {
@@ -56,7 +47,7 @@ angular.module('data-menu')
         LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.uuid, scope.layer.name)
         .then(function (response) {
 
-          var mapLayer = rasterMapLayer({
+          mapLayer = rasterMapLayer({
             uuid: scope.layer.uuid,
             url: 'api/v2/wms/',
             slug: response.slug,
@@ -64,8 +55,7 @@ angular.module('data-menu')
             temporal: response.temporal,
             frequency: response.frequency,
             complexWmsOptions: response.options,
-            zIndex: LayerAdderService.getZIndex(scope.layer),
-            showVectorized: false
+            zIndex: LayerAdderService.getZIndex(scope.layer)
           });
 
           MapService.mapLayers.push(mapLayer);

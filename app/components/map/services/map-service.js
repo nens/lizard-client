@@ -68,7 +68,7 @@ angular.module('map')
             if (layer.active) {
               mapLayer.update(service._map, State.temporal, layer);
             } else {
-              mapLayer.remove(service._map);
+              mapLayer.removeWms(service._map);
             }
           }
         });

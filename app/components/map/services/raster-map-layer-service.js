@@ -8,14 +8,15 @@
  * Additional methods used to extend nxtLayer with leaflet/map specific methods.
  */
 angular.module('map')
-.factory('rasterMapLayer', ['$rootScope', '$http', 'LeafletService', 'MapLayerService', 'RasterService', 'UtilService',
-  function ($rootScope, $http, LeafletService, MapLayerService, RasterService, UtilService) {
+.factory('rasterMapLayer', ['$rootScope', '$http', 'LeafletService', 'MapLayerService', 'RasterService', 'UtilService', 'VectorizedRasterService',
+  function ($rootScope, $http, LeafletService, MapLayerService, RasterService, UtilService, VectorizedRasterService) {
 
     return function (options) {
 
       var rasterMapLayer = options;
 
       rasterMapLayer.loading = false;
+      rasterMapLayer.vectorized = false;
 
       // Base of the image url without the time.
       rasterMapLayer._imageUrlBase = options.url;
@@ -54,7 +55,6 @@ angular.module('map')
       );
 
       rasterMapLayer.update = function (map, timeState, options) {
-
         // Wms options might be different for current zoom and aggWindow.
         // Redraw when wms parameters are different for temporal or spatial
         // zoom.
@@ -71,9 +71,15 @@ angular.module('map')
         rasterMapLayer._setOpacity(options.opacity);
 
         /////////////////////////////////
-        if (rasterMapLayer.showVectorized) {
-          rasterMapLayer.remove(map);
-          return;
+        if (options.vectorized) {
+          rasterMapLayer.removeWms(map);
+          rasterMapLayer.drawVectorized(map);
+          ///////////
+          return; ///
+          ///////////
+        } else {
+          // rasterMapLayer.removeVectorized(map);
+          rasterMapLayer.removeWms(map);
         }
 
         if (rasterMapLayer.temporal && timeState.playing) {
@@ -85,7 +91,7 @@ angular.module('map')
         else if (rasterMapLayer.temporal || !_.isEqual(newParams, params)) {
           // Keep track of changes to paramaters for next update.
           params = newParams;
-          rasterMapLayer.remove(map);
+          rasterMapLayer.removeWms(map);
           rasterMapLayer._add(timeState, map, params);
         }
 
@@ -95,6 +101,13 @@ angular.module('map')
 
       };
 
+      rasterMapLayer.drawVectorized = function () {
+        VectorizedRasterService.setData('agg-boeit-niet', rasterMapLayer);
+      };
+
+      rasterMapLayer.removeVectorized = function () {
+        VectorizedRasterService.removeData(rasterMapLayer);
+      };
 
       /**
        * @description removes all _imageOverlays from the map. Removes
@@ -102,7 +115,7 @@ angular.module('map')
        *              from this layer and removes the references to
        *              the _imageOverlays.
        */
-      rasterMapLayer.remove = function (map) {
+      rasterMapLayer.removeWms = function (map) {
         for (var i in rasterMapLayer._imageOverlays) {
           if (map.hasLayer(rasterMapLayer._imageOverlays[i])) {
             rasterMapLayer._imageOverlays[i].off('load');
@@ -112,6 +125,8 @@ angular.module('map')
         rasterMapLayer._nLoadingRasters = 0;
         rasterMapLayer._imageOverlays = [];
         rasterMapLayer._frameLookup = {};
+
+        rasterMapLayer.removeVectorized(map);
       };
 
       rasterMapLayer.rescale = function (bounds) {
@@ -296,7 +311,7 @@ angular.module('map')
        */
       rasterMapLayer._createImageOverlays = function (map, buffer, bounds) {
         // detach all listeners and references to the imageOverlays.
-        rasterMapLayer.remove(map);
+        rasterMapLayer.removeWms(map);
         // create new ones.
         for (var i = rasterMapLayer._imageOverlays.length; i < buffer; i++) {
           rasterMapLayer._imageOverlays.push(

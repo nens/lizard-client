@@ -227,16 +227,7 @@ angular.module('map')
         if (State.box.type === 'region') {
           MapService.getRegions(State.spatial.bounds);
         }
-        if (VectorizedRasterService.hasVectorizedRasterLayers()) {
-          VectorizedRasterService.setRegions(true);
-        }
-
       }, true);
-
-      scope.$watch(State.toString('layers.active'), function (n, o) {
-        if (n.length === o.length) { return; }
-        VectorizedRasterService.updateAllLayers();
-      });
 
       /**
        * Watch temporal.at of app and update maplayers accordingly.
