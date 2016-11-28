@@ -44,6 +44,7 @@ angular.module('legend')
       if (layer === undefined) {
         if (scope.legendData.discrete[rasterName]) {
           delete scope.legendData.discrete[rasterName];
+          scope.switchSelectedRaster(rasterName);
         }
         return false;
       } else {
@@ -57,6 +58,7 @@ angular.module('legend')
       if (layer === undefined) {
         if (scope.legendData.continuous[rasterName]) {
           delete scope.legendData.continuous[rasterName];
+          scope.switchSelectedRaster(rasterName);
         }
         return false;
       } else {
@@ -119,11 +121,13 @@ angular.module('legend')
       }
     };
 
-    scope.switchSelectedRaster = function (currentRasterName) {
+    scope.switchSelectedRaster = function (currentRasterName) {;
       var allRasterNames = scope.getAllRasterNames();
       var currentIndex = allRasterNames.indexOf(currentRasterName);
-      var nextIndex = (currentIndex + 1) % allRasterNames.length;
-      scope.selectedRasterName = allRasterNames[nextIndex];
+      if (allRasterNames.length !== 0) {
+        var nextIndex = (currentIndex + 1) % allRasterNames.length;
+        scope.selectedRasterName = allRasterNames[nextIndex];
+      }
     };
 
     scope.$watch(State.toString('layers.active'), function (n, o) {
