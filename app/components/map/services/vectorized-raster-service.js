@@ -48,50 +48,47 @@ angular.module('map')
     };
 
     this.setData = function (agg, rasterMapLayer) {
-      // Todo: use new endpoint/agg type; for now, use 'regions' endpoint
-      if (State.spatial.bounds && State.spatial.bounds.getWest) {
-        CabinetService.regions.get({
-          z: State.spatial.view.zoom,
-          in_bbox: State.spatial.bounds.getWest()
-            + ','
-            + State.spatial.bounds.getNorth()
-            + ','
-            + State.spatial.bounds.getEast()
-            + ','
-            + State.spatial.bounds.getSouth()
-          }
-        ).then(
-        function (regions) {
-          var uuid = rasterMapLayer.uuid;
-          var fillColor = FILL_COLORS[uuid];
-          var leafletLayer = LeafletService.geoJson(regions.results, {
-            style: function (feature) {
+      var uuid = rasterMapLayer.uuid;
+      var styles = rasterMapLayer.complexWmsOptions.styles;
+      var fillColor = FILL_COLORS[uuid];
+      var leafletLayer = LeafletService.nxtAjaxGeoJSON('api/v2/regions/', {
+        // Add these static parameters to requests.
+        requestParams: {
+          raster: uuid,
+          styles: styles,
+          page_size: 500
+        },
+        // Add bbox to the request and update on map move.
+        bbox: true,
+        // Add zoomlevel to the request and update on map zoom.
+        zoom: true,
+        style: function (feature) {
+          defaultRegionStyle.fillColor = feature.properties.raster
+            ? feature.properties.raster.color: '';
+          defaultRegionStyle.fillOpacity = getOpacity(uuid);
+          return defaultRegionStyle;
+        },
+        onEachFeature: function (d, layer) {
+          layer.on({
+            mouseover: function (e) {
+              var layer = e.target;
+              layer.setStyle({ fillOpacity: getOpacity(uuid) * 0.3 });
+            },
+            mouseout: function (e) {
+              var layer = e.target;
               defaultRegionStyle.fillColor = fillColor;
               defaultRegionStyle.fillOpacity = getOpacity(uuid);
-              return defaultRegionStyle;
-            },
-            onEachFeature: function (d, layer) {
-              layer.on({
-                mouseover: function (e) {
-                  var layer = e.target;
-                  layer.setStyle({ fillOpacity: getOpacity(uuid) * 0.3 });
-                },
-                mouseout: function (e) {
-                  var layer = e.target;
-                  defaultRegionStyle.fillColor = fillColor;
-                  defaultRegionStyle.fillOpacity = getOpacity(uuid);
-                  layer.setStyle(defaultRegionStyle);
-                },
-              });
+              layer.setStyle(defaultRegionStyle);
             },
           });
-          if (rasterMapLayer.leafletLayer) {
-            MapService.removeLeafletLayer(rasterMapLayer.leafletLayer);
-          }
-          rasterMapLayer.leafletLayer = leafletLayer;
-          MapService.addLeafletLayer(leafletLayer);
-        });
+        },
+      });
+      if (rasterMapLayer.leafletLayer) {
+        MapService.removeLeafletLayer(rasterMapLayer.leafletLayer);
       }
+      rasterMapLayer.leafletLayer = leafletLayer;
+      MapService.addLeafletLayer(leafletLayer);
     };
+
   }]
 );
