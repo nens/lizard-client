@@ -161,7 +161,6 @@ angular.module('data-menu')
             // Dedupe instance.geometries asynchronous.
             instance.geometries = _.uniqWith(geometries, isDuplicateGeometry);
             console.log('DataService.geometries:', instance.geometries);
-
             if (instance.onGeometriesChange) {
               instance.onGeometriesChange();
             }
@@ -336,7 +335,42 @@ angular.module('data-menu')
         }, this);
       };
 
+      this.updateLayerData = function (geo, layer, options, promises) {
+
+        if (!layer.active) { return; }
+
+        var dataLayer = _.find(instance.dataLayers, {uuid: layer.uuid});
+
+        if (dataLayer
+          && !(dataLayer.temporal && geo.geometry.type === 'LineString')
+        ) {
+          promises.push(
+            dataLayer.getData(options).then(function (response) {
+              // async so remove anything obsolete.
+              geo.properties = geo.properties || {};
+              geo.properties[layer.uuid] = geo.properties[layer.uuid] || _.clone(dataLayer);
+              // Replace data and merge everything with existing state of
+              // property.
+              if (response.data) {
+                geo.properties[layer.uuid].data = [];
+                _.merge(geo.properties[layer.uuid], response);
+              } else {
+                geo.properties[layer.uuid].data = response;
+              }
+              if ((!layer.active && layer.uuid in Object.keys(geo.properties))
+                || geo.properties[layer.uuid].data === null) {
+
+                // Use delete to remove the key and the value and the omnibox
+                // can show a nodata message.
+                delete geo.properties[layer.uuid];
+              }
+            })
+          );
+        }
+      };
+
       this.getGeomData = function (geo) {
+
         var defer = $q.defer();
 
         var promises = [];
@@ -354,41 +388,7 @@ angular.module('data-menu')
         }
 
         angular.forEach(State.layers, function (layer) {
-
-          if (!layer.active) { return; }
-
-          var dataLayer = _.find(instance.dataLayers, {uuid: layer.uuid});
-
-          if (dataLayer
-            && !(dataLayer.temporal && geo.geometry.type === 'LineString')
-          ) {
-            promises.push(
-              dataLayer.getData(options).then(function (response) {
-                // async so remove anything obsolete.
-                geo.properties = geo.properties || {};
-                geo.properties[layer.uuid] = geo.properties[layer.uuid] || _.clone(dataLayer);
-                // Replace data and merge everything with existing state of
-                // property.
-                if (response.data) {
-                  geo.properties[layer.uuid].data = [];
-                  _.merge(geo.properties[layer.uuid], response);
-                } else {
-                  geo.properties[layer.uuid].data = response;
-                }
-                if ((!layer.active && layer.uuid in Object.keys(geo.properties))
-                  || geo.properties[layer.uuid].data === null) {
-
-                  // Use delete to remove the key and the value and the omnibox
-                  // can show a nodata message.
-                  delete geo.properties[layer.uuid];
-
-                }
-              // Catch rejections, otherwise $.all(promises) is never resolved.
-              }, _.noop
-              )
-            );
-          }
-
+          instance.updateLayerData(geo, layer, options, promises);
         });
 
         if (State.annotations.active) {
