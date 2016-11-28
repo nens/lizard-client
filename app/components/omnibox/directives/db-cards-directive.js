@@ -66,7 +66,7 @@ angular.module('omnibox')
           return;
         }
         var order = Number(target.getAttribute('data-order'));
-        var hashkey = el.children[0].getAttribute('data-uuid');
+        var uuid = el.children[0].getAttribute('data-uuid');
         // El either represents a timeseries or another plottable item.
         //
         // NOTE: there is only one drop callback for all the possible assets. So
@@ -76,7 +76,7 @@ angular.module('omnibox')
 
         // timeseries representend by el.
         var selection = _.find(State.selections, function (selection) {
-          return selection.$$hashKey === hashkey;
+          return selection.uuid === uuid;
         });
 
         // Possible other graph in target.

@@ -259,6 +259,23 @@ angular.module('timeseries')
     };
 
     /**
+     * Generates UUID
+     *
+     * Taken from:
+     * http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/#answer-2117523
+     *
+     * Disclaimer:
+     * Since we use Math.random there is a somewhat higher chance of collision
+     * than other higher quality random number generator like we use in the
+     * Lizard backend.
+     */
+    var uuidGenerator = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,
+      function(c) {
+        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+        return v.toString(16);
+    });
+
+    /**
      * initializes timeseries selections for a certain asset.
      *
      * @param  {object} asset   a DataService asset with timeseries.
@@ -270,6 +287,7 @@ angular.module('timeseries')
         State.selections,
         asset.timeseries.map(function (ts, i) {
           return {
+            uuid: uuidGenerator(),
             type: "timeseries",
             timeseries: ts.uuid,
             active: false,
@@ -300,6 +318,7 @@ angular.module('timeseries')
             function(layer) {return layer.type === 'raster'}
         ).map(function (layer, i) {
           var rasterSelection  = {
+            uuid: uuidGenerator(),
             type: "raster",
             raster: layer.uuid,
             active: false,

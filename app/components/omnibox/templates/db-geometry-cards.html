@@ -8,7 +8,7 @@
       <div ng-repeat="selection in state.selections"
            ng-init="metaData = getSelectionMetaData(selection)"
            ng-if="getSelectionMetaData(selection).match">
-        <div data-uuid="<% selection.$$hashKey %>"
+        <div data-uuid="<% selection.uuid %>"
              class="draggable-ts">
           <div
             ng-if="metaData.type === 'raster'"
