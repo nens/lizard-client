@@ -39,11 +39,40 @@ angular.module('legend')
         scope.MAX_DISCRETE_CATEGORIES_DEFAULT;
     };
 
+    scope.mustShowDiscreteLegend = function (rasterName) {
+      var layer = _.find(State.layers, { name: rasterName });
+      if (layer === undefined) {
+        if (scope.legendData.discrete[rasterName]) {
+          delete scope.legendData.discrete[rasterName];
+          scope.switchSelectedRaster(rasterName);
+        }
+        return false;
+      } else {
+        return scope.rasterIsSelected(rasterName) &&
+          scope.legendData.discrete[rasterName] !== undefined;
+      }
+    };
+
+    scope.mustShowContinuousLegend = function (rasterName) {
+      var layer = _.find(State.layers, { name: rasterName });
+      if (layer === undefined) {
+        if (scope.legendData.continuous[rasterName]) {
+          delete scope.legendData.continuous[rasterName];
+          scope.switchSelectedRaster(rasterName);
+        }
+        return false;
+      } else {
+        return scope.rasterIsSelected(rasterName) &&
+          scope.legendData.continuous[rasterName] !== undefined &&
+          scope.legendData.continuous[rasterName].min !== null &&
+          scope.legendData.continuous[rasterName].max !== null;
+      }
+    };
 
     scope.getGradient = function (rasterName) {
 
-      if (scope.legendData.continuous[rasterName].colormap === null) {
-        return;
+      if (scope.legendData.continuous[rasterName] === undefined ||
+          scope.legendData.continuous[rasterName].colormap === null) { return;
       }
       var colorData = scope.legendData.continuous[rasterName].colormap.data;
       var rgba,
@@ -95,8 +124,10 @@ angular.module('legend')
     scope.switchSelectedRaster = function (currentRasterName) {
       var allRasterNames = scope.getAllRasterNames();
       var currentIndex = allRasterNames.indexOf(currentRasterName);
-      var nextIndex = (currentIndex + 1) % allRasterNames.length;
-      scope.selectedRasterName = allRasterNames[nextIndex];
+      if (allRasterNames.length !== 0) {
+        var nextIndex = (currentIndex + 1) % allRasterNames.length;
+        scope.selectedRasterName = allRasterNames[nextIndex];
+      }
     };
 
     scope.$watch(State.toString('layers.active'), function (n, o) {

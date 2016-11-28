@@ -1,0 +1,101 @@
+
+<div class="container-for-both-legends">
+
+  <div class="card legend-discrete">
+
+    <div  ng-repeat="(rasterName, rasterData) in legendData.discrete"
+          ng-if="mustShowDiscreteLegend(rasterName)">
+
+      <div class="single-discrete-legend">
+        <div class="legend-header">
+          <a href="#"
+             ng-click="switchSelectedRaster(rasterName)">
+            <% rasterName %>
+          </a>
+          <i ng-show="legendData.discrete[rasterName].length > 0" translate>
+            <span ng-if="hasMoreCategoriesAvailableThanDefault(rasterName)">
+
+              <a href=""
+                 ng-click="toggleShowAllCategories(rasterName)"
+                 class="toggle-categories-shown"
+                 translate>
+                <i ng-if="!showingAllCategories(rasterName)"
+                   class="fa fa-lg fa-caret-left"></i>
+                <i ng-if="showingAllCategories(rasterName)"
+                   class="fa fa-lg fa-caret-down"></i>
+              </a>
+            </span>
+          </i>
+        </div>
+
+        <div ng-repeat="datum in rasterData track by $index"
+             class="discrete-legend-datum"
+             ng-if="$index < getAmountOfDiscreteCategories(rasterName)">
+            <div class="discrete-legend-color-rect"
+                 style="background-color: <% datum.color %>; border: <% getBorderStyle(datum) %>"></div>
+            <div class="discrete-legend-label" translate>
+              <% datum.label === -1 ? 'other' : datum.label %>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-like legend-continuous">
+
+      <div ng-repeat="(rasterName, rasterData) in legendData.continuous"
+           ng-if="mustShowContinuousLegend(rasterName)">
+        <div class="single-continuous-legend">
+
+          <div class="legend-header">
+            <a href="#"
+               ng-click="switchSelectedRaster(rasterName)"
+               ng-bind="rasterName">
+            </a>
+          </div>
+
+          <div class="gradient-bar"
+               style="<% getGradient(rasterName) %>">
+          </div>
+
+          <div class="continuous-raster-numeric-data">
+
+            <table>
+              <tr class="continuous-raster-table-row">
+                <td class="continuous-raster-table-key">Absolute minimum</td>
+                <td class="continuous-raster-table-value"
+                    ng-bind="rasterData.colormap.data[0][0]"></td>
+                <td class="continuous-raster-table-unit"
+                    ng-bind="rasterData.unit">
+              </tr>
+
+               <tr class="continuous-raster-table-row">
+                <td class="continuous-raster-table-key">Extent minimum</td>
+                <td class="continuous-raster-table-value"
+                    ng-bind="rasterData.min"></td>
+                <td class="continuous-raster-table-unit"
+                    ng-bind="rasterData.unit">
+              </tr>
+
+              <tr class="continuous-raster-table-row">
+                <td class="continuous-raster-table-key">Extent maximum</td>
+                <td class="continuous-raster-table-value"
+                    ng-bind="rasterData.max"></td>
+                <td class="continuous-raster-table-unit"
+                    ng-bind="rasterData.unit">
+              </tr>
+
+              <tr class="continuous-raster-table-row">
+                <td class="continuous-raster-table-key">Absolute maximum</td>
+                <td class="continuous-raster-table-value"
+                    ng-bind="rasterData.colormap.data[rasterData.colormap.data.length - 1][0]"></td>
+                <td class="continuous-raster-table-unit"
+                    ng-bind="rasterData.unit">
+              </tr>
+            </table>
+          </div>
+
+        </div>
+      </div>
+  </div>
+</div>
