@@ -13,68 +13,68 @@ angular.module('legend')
       return datum.label === -1 ? "1px solid #ccc" : "0";
     };
 
-    scope.totalCategoryCount = function (rasterName) {
-      return scope.legendData.discrete[rasterName].length;
+    scope.totalCategoryCount = function (uuid) {
+      return scope.legendData.discrete[uuid].length;
     };
 
-    scope.showingAllCategories = function (rasterName) {
-      return scope.showAllCategoriesForRaster[rasterName];
+    scope.showingAllCategories = function (uuid) {
+      return scope.showAllCategoriesForRaster[uuid];
     };
 
-    scope.toggleShowAllCategories = function (rasterName) {
-      scope.showAllCategoriesForRaster[rasterName] =
-        !scope.showAllCategoriesForRaster[rasterName];
+    scope.toggleShowAllCategories = function (uuid) {
+      scope.showAllCategoriesForRaster[uuid] =
+        !scope.showAllCategoriesForRaster[uuid];
     };
 
-    scope.getAmountOfDiscreteCategories = function (rasterName) {
-      if (scope.showAllCategoriesForRaster[rasterName]) {
-        return scope.totalCategoryCount(rasterName);
+    scope.getAmountOfDiscreteCategories = function (uuid) {
+      if (scope.showAllCategoriesForRaster[uuid]) {
+        return scope.totalCategoryCount(uuid);
       } else {
         return scope.MAX_DISCRETE_CATEGORIES_DEFAULT;
       }
     };
 
-    scope.hasMoreCategoriesAvailableThanDefault = function (rasterName) {
-      return scope.totalCategoryCount(rasterName) >
+    scope.hasMoreCategoriesAvailableThanDefault = function (uuid) {
+      return scope.totalCategoryCount(uuid) >
         scope.MAX_DISCRETE_CATEGORIES_DEFAULT;
     };
 
-    scope.mustShowDiscreteLegend = function (rasterName) {
-      var layer = _.find(State.layers, { name: rasterName });
+    scope.mustShowDiscreteLegend = function (uuid) {
+      var layer = _.find(State.layers, { uuid: uuid });
       if (layer === undefined) {
-        if (scope.legendData.discrete[rasterName]) {
-          delete scope.legendData.discrete[rasterName];
-          scope.switchSelectedRaster(rasterName);
+        if (scope.legendData.discrete[uuid]) {
+          delete scope.legendData.discrete[uuid];
+          scope.switchSelectedRaster(uuid);
         }
         return false;
       } else {
-        return scope.rasterIsSelected(rasterName) &&
-          scope.legendData.discrete[rasterName] !== undefined;
+        return scope.rasterIsSelected(uuid) &&
+          scope.legendData.discrete[uuid] !== undefined;
       }
     };
 
-    scope.mustShowContinuousLegend = function (rasterName) {
-      var layer = _.find(State.layers, { name: rasterName });
+    scope.mustShowContinuousLegend = function (uuid) {
+      var layer = _.find(State.layers, { uuid: uuid });
       if (layer === undefined) {
-        if (scope.legendData.continuous[rasterName]) {
-          delete scope.legendData.continuous[rasterName];
-          scope.switchSelectedRaster(rasterName);
+        if (scope.legendData.continuous[uuid]) {
+          delete scope.legendData.continuous[uuid];
+          scope.switchSelectedRaster(uuid);
         }
         return false;
       } else {
-        return scope.rasterIsSelected(rasterName) &&
-          scope.legendData.continuous[rasterName] !== undefined &&
-          scope.legendData.continuous[rasterName].min !== null &&
-          scope.legendData.continuous[rasterName].max !== null;
+        return scope.rasterIsSelected(uuid) &&
+          scope.legendData.continuous[uuid] !== undefined &&
+          scope.legendData.continuous[uuid].min !== null &&
+          scope.legendData.continuous[uuid].max !== null;
       }
     };
 
-    scope.getGradient = function (rasterName) {
+    scope.getGradient = function (uuid) {
 
-      if (scope.legendData.continuous[rasterName] === undefined ||
-          scope.legendData.continuous[rasterName].colormap === null) { return;
+      if (scope.legendData.continuous[uuid] === undefined ||
+          scope.legendData.continuous[uuid].colormap === null) { return;
       }
-      var colorData = scope.legendData.continuous[rasterName].colormap.data;
+      var colorData = scope.legendData.continuous[uuid].colormap.data;
       var rgba,
           colorString,
           suffix = "";
@@ -101,32 +101,32 @@ angular.module('legend')
 
     scope.selectedRasterName = null;
 
-    scope.getAllRasterNames = function () {
+    scope.getAllRasterUuids = function () {
       var cRasterNames = Object.keys(scope.legendData.continuous);
       var dRasterNames = Object.keys(scope.legendData.discrete);
       return cRasterNames.concat(dRasterNames);
     };
 
-    scope.rasterIsSelected = function (rasterName) {
-      var allRasterNames = scope.getAllRasterNames();
-      if (allRasterNames.length === 1 && allRasterNames[0] === rasterName) {
-        scope.selectedRasterName = rasterName;
+    scope.rasterIsSelected = function (uuid) {
+      var allRasterUuids = scope.getAllRasterUuids();
+      if (allRasterUuids.length === 1 && allRasterUuids[0] === uuid) {
+        scope.selectedRasterName = uuid;
         return true;
       }
       else if (!scope.selectedRasterName) {
-        scope.selectedRasterName = rasterName;
+        scope.selectedRasterName = uuid;
         return true;
       } else {
-        return scope.selectedRasterName === rasterName;
+        return scope.selectedRasterName === uuid;
       }
     };
 
-    scope.switchSelectedRaster = function (currentRasterName) {
-      var allRasterNames = scope.getAllRasterNames();
-      var currentIndex = allRasterNames.indexOf(currentRasterName);
-      if (allRasterNames.length !== 0) {
-        var nextIndex = (currentIndex + 1) % allRasterNames.length;
-        scope.selectedRasterName = allRasterNames[nextIndex];
+    scope.switchSelectedRaster = function (uuid) {
+      var allRasterUuids = scope.getAllRasterUuids();
+      var currentIndex = allRasterUuids.indexOf(uuid);
+      if (allRasterUuids.length !== 0) {
+        var nextIndex = (currentIndex + 1) % allRasterUuids.length;
+        scope.selectedRasterName = allRasterUuids[nextIndex];
       }
     };
 
@@ -143,6 +143,8 @@ angular.module('legend')
       scope.legendData = LegendService.updateLegendData(n, scope.state.layers);
       // console.log("legendData:", scope.legendData);
     });
+
+    scope.uuidMapping = LegendService.uuidMapping;
 
     scope.legendData = LegendService.updateLegendData(
       State.spatial.bounds,
