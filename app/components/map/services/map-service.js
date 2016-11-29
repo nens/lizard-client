@@ -65,8 +65,14 @@ angular.module('map')
         layers.forEach(function (layer) {
           var mapLayer = _.find(service.mapLayers, { uuid: layer.uuid });
           if (mapLayer) {
+            if (mapLayer.leafletLayer) {
+              service.removeLeafletLayer(mapLayer.leafletLayer);
+            }
             if (layer.active) {
               mapLayer.update(service._map, State.temporal, layer);
+              if (layer.vectorized) {
+                service.addLeafletLayer(mapLayer.leafletLayer);
+              }
             } else {
               mapLayer.removeWms(service._map);
             }

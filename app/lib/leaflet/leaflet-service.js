@@ -86,20 +86,16 @@ angular.module('lizard-nxt')
       },
 
       reload: function() {
-
         // Use $http to respect loading bar.
         $http.get(this.options.requestUrl, {params: this._getParams()})
         .then(this._checkResponseStatus)
         .then(this.redraw.bind(this));
-
       },
 
       _checkResponseStatus: function(response) {
-
         if (response.status === 200) {
           return response.data.results;
-        }
-        else if (response.status) {
+        } else if (response.status) {
           console.log(
             'ajaxRequest error status = '
             + response.status

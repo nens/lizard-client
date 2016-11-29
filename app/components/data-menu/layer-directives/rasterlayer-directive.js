@@ -2,10 +2,10 @@
 
 angular.module('data-menu')
 .directive('rasterlayer', ['MapService', 'DataService', 'LayerAdderService',
-'rasterMapLayer', 'rasterDataLayer', 'VectorizedRasterService',
+'rasterMapLayer', 'rasterDataLayer',
 
   function (MapService, DataService, LayerAdderService,
-  rasterMapLayer, rasterDataLayer, VectorizedRasterService) {
+  rasterMapLayer, rasterDataLayer) {
 
   var link = function (scope) {
 
