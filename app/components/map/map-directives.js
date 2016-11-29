@@ -18,14 +18,12 @@ angular.module('map')
   'ClickFeedbackService',
   'UtilService',
   'State',
-  'VectorizedRasterService',
   function (
     MapService,
     DataService,
     ClickFeedbackService,
     UtilService,
-    State,
-    VectorizedRasterService
+    State
   ) {
 
     var link = function (scope, element, attrs) {

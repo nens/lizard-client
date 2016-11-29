@@ -8,8 +8,8 @@
  * Additional methods used to extend nxtLayer with leaflet/map specific methods.
  */
 angular.module('map')
-.factory('rasterMapLayer', ['$rootScope', '$http', 'LeafletService', 'MapLayerService', 'RasterService', 'UtilService', 'VectorizedRasterService',
-  function ($rootScope, $http, LeafletService, MapLayerService, RasterService, UtilService, VectorizedRasterService) {
+.factory('rasterMapLayer', ['$rootScope', '$http', 'LeafletService', 'MapLayerService', 'RasterService', 'UtilService',
+  function ($rootScope, $http, LeafletService, MapLayerService, RasterService, UtilService) {
 
     return function (options) {
 
@@ -70,15 +70,11 @@ angular.module('map')
         newParams.opacity = options.opacity;
         rasterMapLayer._setOpacity(options.opacity);
 
-        /////////////////////////////////
         if (options.vectorized) {
           rasterMapLayer.removeWms(map);
-          rasterMapLayer.drawVectorized(map);
-          ///////////
-          return; ///
-          ///////////
+          rasterMapLayer.updateVectorizedData();
+          return;
         } else {
-          // rasterMapLayer.removeVectorized(map);
           rasterMapLayer.removeWms(map);
         }
 
@@ -101,12 +97,64 @@ angular.module('map')
 
       };
 
-      rasterMapLayer.drawVectorized = function () {
-        VectorizedRasterService.setData('agg-boeit-niet', rasterMapLayer);
+      rasterMapLayer._updateStyling = function (properties, stylingDict) {
+        if (properties.raster && properties.raster.color) {
+          stylingDict.fillColor = properties.raster.color;
+          stylingDict.fillOpacity = rasterMapLayer._opacity;
+        } else {
+          stylingDict.fillColor = '#fff';
+          stylingDict.fillOpacity = rasterMapLayer._opacity;
+        }
       };
 
-      rasterMapLayer.removeVectorized = function () {
-        VectorizedRasterService.removeData(rasterMapLayer);
+      /**
+       * @description Creates a new L.NxtAjaxGeoJSON layer for a vectorized
+       *              raster, and adds that to the current rasterMapLayer
+       *              instance.
+       */
+      rasterMapLayer.updateVectorizedData = function () {
+        var defaultRegionStyle = {
+          weight: 2,
+          opacity: 0.6,
+          color: '#7f8c8d', // asbestos,
+          fillOpacity: rasterMapLayer._opacity
+        };
+        var MOUSE_OVER_OPACITY_MULTIPLIER = 0.3;
+        var uuid = rasterMapLayer.uuid;
+        var styles = rasterMapLayer.complexWmsOptions.styles;
+        var leafletLayer = LeafletService.nxtAjaxGeoJSON('api/v2/regions/', {
+          // Add these static parameters to requests.
+          requestParams: {
+            raster: uuid,
+            styles: styles,
+            page_size: 500
+          },
+          // Add bbox to the request and update on map move.
+          bbox: true,
+          // Add zoomlevel to the request and update on map zoom.
+          zoom: true,
+          style: function (feature) {
+            rasterMapLayer._updateStyling(feature.properties, defaultRegionStyle);
+            return defaultRegionStyle;
+          },
+          onEachFeature: function (d, layer) {
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({
+                  // TODO: Multiply this with layer opacity (when moved to
+                  // RasterMapLayerFactory)
+                  fillOpacity:
+                    MOUSE_OVER_OPACITY_MULTIPLIER * rasterMapLayer._opacity
+                });
+              },
+              mouseout: function (e) {
+                rasterMapLayer._updateStyling(d.properties, defaultRegionStyle);
+                e.target.setStyle(defaultRegionStyle);
+              },
+            });
+          },
+        });
+        rasterMapLayer.leafletLayer = leafletLayer;
       };
 
       /**
@@ -125,8 +173,6 @@ angular.module('map')
         rasterMapLayer._nLoadingRasters = 0;
         rasterMapLayer._imageOverlays = [];
         rasterMapLayer._frameLookup = {};
-
-        rasterMapLayer.removeVectorized(map);
       };
 
       rasterMapLayer.rescale = function (bounds) {
@@ -298,7 +344,6 @@ angular.module('map')
           rasterMapLayer._progressFrame(currentOverlayIndex, wmsOptions);
           // Done!
         }
-
       };
 
       /**
