@@ -2,17 +2,16 @@
 <div class="container-for-both-legends">
 
   <div class="card legend-discrete">
-
-    <div  ng-repeat="(uuid, rasterData) in legendData.discrete"
+    <div  ng-repeat="(uuid, rasterData) in legend.data.discrete"
           ng-if="mustShowDiscreteLegend(uuid)">
 
       <div class="single-discrete-legend">
         <div class="legend-header">
           <a href="#"
              ng-click="switchSelectedRaster(uuid)">
-            <% uuidMapping[uuid] %>
+            <% legend.uuidMapping[uuid] %>
           </a>
-          <i ng-show="legendData.discrete[uuid].length > 0" translate>
+          <i ng-show="legend.data.discrete[uuid].length > 0" translate>
             <span ng-if="hasMoreCategoriesAvailableThanDefault(uuid)">
 
               <a href=""
@@ -30,11 +29,14 @@
 
         <div
           ng-repeat="datum in rasterData track by $index"
+          ng-click="setDiscreteRasterCategory(uuid, datum.class)"
           class="discrete-legend-datum"
           ng-if="$index < getAmountOfDiscreteCategories(uuid)">
           <div class="discrete-legend-color-rect"
                style="background-color: <% datum.color %>; border: <% getBorderStyle(datum) %>"></div>
-          <div class="discrete-legend-label" translate>
+          <div class="discrete-legend-label"
+            ng-class="{'discrete-legend-label-selected': legend.activeCategory === datum.class}"
+            translate>
             <% datum.label === -1 ? 'other' : datum.label %>
           </div>
         </div>
@@ -44,14 +46,14 @@
 
   <div class="card-like legend-continuous">
 
-      <div ng-repeat="(uuid, rasterData) in legendData.continuous"
+      <div ng-repeat="(uuid, rasterData) in legend.data.continuous"
            ng-if="mustShowContinuousLegend(uuid)">
         <div class="single-continuous-legend">
 
           <div class="legend-header">
             <a href="#"
                ng-click="switchSelectedRaster(uuid)">
-              <% uuidMapping[uuid] %>
+              <% legend.uuidMapping[uuid] %>
             </a>
           </div>
 

@@ -72,7 +72,7 @@ angular.module('map')
 
         if (options.vectorized) {
           rasterMapLayer.removeWms(map);
-          rasterMapLayer.updateVectorizedData();
+          rasterMapLayer.updateVectorizedData(options);
           return;
         } else {
           rasterMapLayer.removeWms(map);
@@ -98,7 +98,13 @@ angular.module('map')
       };
 
       rasterMapLayer._updateStyling = function (properties, stylingDict) {
-        if (properties.raster && properties.raster.color) {
+        if (properties.raster && properties.raster.color && properties.raster.fraction) {
+          var white = new Chromath('white');
+          stylingDict.fillColor = white
+          .towards(properties.raster.color, properties.raster.fraction)
+          .toString(); // #FF7F00
+          stylingDict.fillOpacity = rasterMapLayer._opacity;
+        } else if (properties.raster && properties.raster.color) {
           stylingDict.fillColor = properties.raster.color;
           stylingDict.fillOpacity = rasterMapLayer._opacity;
         } else {
@@ -112,7 +118,7 @@ angular.module('map')
        *              raster, and adds that to the current rasterMapLayer
        *              instance.
        */
-      rasterMapLayer.updateVectorizedData = function () {
+      rasterMapLayer.updateVectorizedData = function (stateLayer) {
         var defaultRegionStyle = {
           weight: 2,
           opacity: 0.6,
@@ -126,6 +132,7 @@ angular.module('map')
           // Add these static parameters to requests.
           requestParams: {
             raster: uuid,
+            class: stateLayer.category,
             styles: styles,
             page_size: 500
           },
