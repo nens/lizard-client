@@ -361,14 +361,18 @@ angular.module('lizard-nxt')
   Graph.prototype.drawHorizontalStack = function (content) {
       var data = content[0].data,
           keys = content[0].keys,
+          area = Number(content[0].area) / 10000,
           labels = { x: content.xLabel, y: content.unit };
+
+      this.dimensions.height -= 10;
 
       var options = {
         scale: 'linear',
         orientation: 'bottom',
-        tickFormat: d3.format(".0%") // Custom tickFomat in percentages
+        tickFormat: function(value){return d3.format("s")(value) + " ha"} // Custom tickFomat in hectares
       };
-      this._x = createXGraph(this._svg, this.dimensions, labels, options);
+      this._x = createXGraph(
+          this._svg, this.dimensions, labels, options, area);
 
       if (data === null) { return; } // We are done here.
 
@@ -376,13 +380,17 @@ angular.module('lizard-nxt')
       var total = d3.sum(data, function (d) {
         return Number(d[keys.x]);
       });
+      var pixelArea = area / total;
 
       var dataCopy = angular.copy(data);
 
       angular.forEach(dataCopy, function (value, key) {
-        value[keys.x] = value[keys.x] / total;
+        value[keys.x] = value[keys.x] * pixelArea;
       });
-      drawHorizontalRects(this._svg, this.dimensions, this.transTime, this._x.scale, dataCopy, keys, labels);
+
+      drawHorizontalRects(
+          this._svg, this.dimensions, this.transTime, this._x.scale, dataCopy,
+          keys, labels, area);
   };
 
   /**
@@ -902,11 +910,21 @@ angular.module('lizard-nxt')
       .attr("d", path);
   };
 
-  var drawHorizontalRects = function (svg, dimensions, duration, scale, data, keys, labels) {
+  var drawHorizontalRects = function (svg, dimensions, duration, scale, data, keys, labels, area) {
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
         DEFAULT_BAR_COLOR = "#7f8c8d", // $asbestos is the default color for bars
         previousCumu = 0;
+
+    var createLabel = function (value) {
+      var si = d3.format("s")(value);
+      var siUnit = si[si.length - 1];
+      if (si.indexOf('.') > -1 && !Number(siUnit)) {
+        si = si.split('.')[0] + siUnit;
+      }
+      var percentage = d3.format(".0%")(value / area);
+      return percentage + ", " + si + " ha"
+    };
 
     // Create a start and end for each rectangle.
     angular.forEach(data, function (value) {
@@ -952,20 +970,16 @@ angular.module('lizard-nxt')
       var label;
       var labelstr = d.label;
       if (d.label === -1 || d.label.split === undefined) {
-        label = Math.round(d[keys.x] * 100) + "% overig";
+        label = createLabel(d[keys.x]) + " overig";
       } else {
         labelstr = d.label.split('-');
-        label = Math.round(d[keys.x] * 100) + '% ' + labelstr[labelstr.length - 1];
+        label = createLabel(d[keys.x]) + ' ' + labelstr[labelstr.length - 1];
       }
 
       svg.select('#xlabel')
         .text(label)
         .attr("class", "selected");
 
-      // Correct height so label fits within svg.
-      var mv = - 0.5 * svg.select('#xlabel').node().getBBox().height;
-      svg.select('#xlabel')
-        .attr('dy', mv);
     });
 
     // When the user moves the mouse away from the graph, put the original
@@ -1172,7 +1186,7 @@ angular.module('lizard-nxt')
     });
   };
 
-  var createXGraph = function (svg, dimensions, labels, options) {
+  var createXGraph = function (svg, dimensions, labels, options, domainMax) {
     var x = {};
     if (!options) {
       options = {
@@ -1183,7 +1197,7 @@ angular.module('lizard-nxt')
     var width = Graph.prototype._getWidth(dimensions),
     range = {min: 0, max: width},
     // Axis should run from zero to 100%
-    domain = {min: 0, max: 1};
+    domain = {min: 0, max: domainMax || 1};
     x.scale = Graph.prototype._makeScale(domain, range, {scale: options.scale});
     x.axis = Graph.prototype._makeAxis(x.scale, options);
     drawAxes(svg, x.axis, dimensions, false);
