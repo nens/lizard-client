@@ -344,13 +344,10 @@ angular.module('omnibox')
     link: function (scope) {
       scope.isUrl = UtilService.isUrl;
       scope.isSmallOrNull = function(n) {
-          return n < 0.01;
+        return n < 0.01;
       };
       scope.expWithPrecision = function(n, precision) {
-          if (n === null || n === 0) {
-              return n;
-          }
-          return parseFloat(n.toPrecision(precision)).toExponential();
+        return (n === null || n === 0) ? n : parseFloat(n.toPrecision(precision)).toExponential();
       };
     },
     restrict: 'E',
