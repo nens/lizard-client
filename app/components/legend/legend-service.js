@@ -48,7 +48,7 @@ angular.module('legend')
       $http.get(COLORMAP_URL + styles + "/").then(function (result) {
         colormaps[name] = result.data.definition;
         this.rasterData.continuous[name].colormap = result.data.definition;
-      });
+      }.bind(this));
     };
 
     var responseIsEmpty = function (data) {

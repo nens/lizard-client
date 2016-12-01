@@ -55,7 +55,8 @@ angular.module('data-menu')
             temporal: response.temporal,
             frequency: response.frequency,
             complexWmsOptions: response.options,
-            zIndex: LayerAdderService.getZIndex(scope.layer)
+            zIndex: LayerAdderService.getZIndex(scope.layer),
+            vectorClickCb: MapService.vectorClickCb
           });
 
           MapService.mapLayers.push(mapLayer);

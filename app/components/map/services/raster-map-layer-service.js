@@ -70,9 +70,9 @@ angular.module('map')
         newParams.opacity = options.opacity;
         rasterMapLayer._setOpacity(options.opacity);
 
-        if (options.vectorized) {
+        if (options.vectorized && !timeState.playing) {
           rasterMapLayer.removeWms(map);
-          rasterMapLayer.updateVectorizedData(map, options);
+          rasterMapLayer.updateVectorizedData(map, timeState.at, options);
           return;
         } else {
           rasterMapLayer.removeVectorized(map);
@@ -118,7 +118,7 @@ angular.module('map')
        *              raster, and adds that to the current rasterMapLayer
        *              instance.
        */
-      rasterMapLayer.updateVectorizedData = function (map, stateLayer) {
+      rasterMapLayer.updateVectorizedData = function (map, at, stateLayer) {
         var defaultRegionStyle = {
           weight: 2,
           opacity: 0.6,
@@ -139,7 +139,8 @@ angular.module('map')
             raster: uuid,
             class: stateLayer.category,
             styles: styles,
-            page_size: 500
+            page_size: 500,
+            time: at
           },
           // Add bbox to the request and update on map move.
           bbox: true,
@@ -163,6 +164,9 @@ angular.module('map')
                 rasterMapLayer._updateStyling(d.properties, defaultRegionStyle);
                 e.target.setStyle(defaultRegionStyle);
               },
+              click: function (e) {
+                rasterMapLayer.vectorClickCb(this);
+              }
             });
           },
         });
