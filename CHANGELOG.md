@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.2.2"></a>
+## [4.2.2](https://github.com/nens/lizard-client/compare/v4.2.1...v4.2.2) (2016-12-01)
+
+
+### Bug Fixes
+
+* **data-service:** ignore wms getfeatureinfo when not point, fixes nens/lizard-nxt[#2053](https://github.com/nens/lizard-client/issues/2053) and nens/lizard-nxt[#2060](https://github.com/nens/lizard-client/issues/2060) ([f98bb2d](https://github.com/nens/lizard-client/commit/f98bb2d))
+
+
+
 <a name="4.2.1"></a>
 ## [4.2.1](https://github.com/nens/lizard-client/compare/v4.2.0...v4.2.1) (2016-10-19)
 
