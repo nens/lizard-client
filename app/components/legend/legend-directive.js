@@ -144,12 +144,6 @@ angular.module('legend')
     };
 
     scope.setDiscreteRasterCategory = function (uuid, category) {
-      var layer = _.find(scope.state.layers, {uuid: uuid});
-      if (layer.category === category) {
-        layer.category = null;
-      } else {
-        layer.category = category;
-      }
       LegendService.setActiveCategory(uuid, category);
     };
 

@@ -13,7 +13,15 @@ angular.module('legend')
                                // each legend.
 
     this.setActiveCategory = function (uuid, category) {
-      activeCategories[uuid] = category;
+      var layer = _.find(State.layers, {uuid: uuid});
+      var newCategory = null;
+      if (layer) {
+        if (layer.category !== category) {
+          newCategory = category;
+        }
+        layer.category = newCategory;
+      }
+      activeCategories[uuid] = newCategory;
     };
 
     this.getActiveCategory = function (uuid) {

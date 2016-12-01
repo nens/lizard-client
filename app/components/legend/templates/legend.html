@@ -10,6 +10,10 @@
           <a href="#"
              ng-click="switchSelectedRaster(uuid)">
             <% legend.uuidMapping[uuid] %>
+            &nbsp;
+            <i class="fa fa-star"
+               ng-if="rasterIsVectorized(uuid)">
+            </i>
           </a>
           <i ng-show="legend.data.discrete[uuid].length > 0" translate>
             <span ng-if="hasMoreCategoriesAvailableThanDefault(uuid)">
