@@ -72,10 +72,10 @@ angular.module('map')
 
         if (options.vectorized) {
           rasterMapLayer.removeWms(map);
-          rasterMapLayer.updateVectorizedData(options);
+          rasterMapLayer.updateVectorizedData(map, options);
           return;
         } else {
-          rasterMapLayer.removeWms(map);
+          rasterMapLayer.removeVectorized(map);
         }
 
         if (rasterMapLayer.temporal && timeState.playing) {
@@ -118,7 +118,7 @@ angular.module('map')
        *              raster, and adds that to the current rasterMapLayer
        *              instance.
        */
-      rasterMapLayer.updateVectorizedData = function (stateLayer) {
+      rasterMapLayer.updateVectorizedData = function (map, stateLayer) {
         var defaultRegionStyle = {
           weight: 2,
           opacity: 0.6,
@@ -128,6 +128,11 @@ angular.module('map')
         var MOUSE_OVER_OPACITY_MULTIPLIER = 0.3;
         var uuid = rasterMapLayer.uuid;
         var styles = rasterMapLayer.complexWmsOptions.styles;
+
+        // TODO: check if something in statLayer is different from leaflet
+        // reality.
+        rasterMapLayer.removeVectorized(map);
+
         var leafletLayer = LeafletService.nxtAjaxGeoJSON('api/v2/regions/', {
           // Add these static parameters to requests.
           requestParams: {
@@ -161,7 +166,24 @@ angular.module('map')
             });
           },
         });
-        rasterMapLayer.leafletLayer = leafletLayer;
+        rasterMapLayer._leafletLayer = leafletLayer;
+        leafletLayer.addTo(map);
+
+      };
+
+      rasterMapLayer.remove = function (map, layer) {
+        if (layer.vectorized) {
+          rasterMapLayer.removeVectorized(map);
+        }
+        else {
+          rasterMapLayer.removeWms(map);
+        }
+      };
+
+      rasterMapLayer.removeVectorized = function (map) {
+        if (map.hasLayer(rasterMapLayer._leafletLayer)) {
+          map.removeLayer(rasterMapLayer._leafletLayer);
+        }
       };
 
       /**
