@@ -8,6 +8,18 @@ angular.module('legend')
       discrete: {}
     };
 
+    var activeCategories = {}; // Per discrete raster we keep track of the
+                               // selected category, so we can show this for
+                               // each legend.
+
+    this.setActiveCategory = function (uuid, category) {
+      activeCategories[uuid] = category;
+    };
+
+    this.getActiveCategory = function (uuid) {
+      return activeCategories[uuid];
+    };
+
     this.uuidMapping = {}; // dict for getting the name when having the uuid
 
     var colormaps = {}; // dict for saving colormaps locally

@@ -9,7 +9,6 @@ angular.module('legend')
       MAX_DISCRETE_CATEGORIES_DEFAULT: 5,
       showAllCategoriesForRaster: {},
       selectedDiscreteRasterName: null,
-      activeCategory: null,
       uuidMapping: LegendService.uuidMapping,
       data: {
         discrete: {},
@@ -118,7 +117,6 @@ angular.module('legend')
     scope.rasterIsSelected = function (uuid) {
       var allRasterUuids = scope.getAllRasterUuids();
       var layer = _.find(scope.state.layers, {uuid: uuid});
-      scope.legend.activeCategory = layer.category;
       if (allRasterUuids.length === 1 && allRasterUuids[0] === uuid) {
         scope.selectedRasterName = uuid;
         return true;
@@ -129,6 +127,11 @@ angular.module('legend')
       } else {
         return scope.selectedRasterName === uuid;
       }
+    };
+
+    scope.rasterIsVectorized = function (uuid) {
+      var layer = _.find(scope.state.layers, {uuid: uuid});
+      return !!layer.vectorized;
     };
 
     scope.switchSelectedRaster = function (uuid) {
@@ -144,11 +147,14 @@ angular.module('legend')
       var layer = _.find(scope.state.layers, {uuid: uuid});
       if (layer.category === category) {
         layer.category = null;
-      }
-      else {
+      } else {
         layer.category = category;
       }
-      scope.legend.activeCategory = layer.category;
+      LegendService.setActiveCategory(uuid, category);
+    };
+
+    scope.getDiscreteRasterCategory = function (uuid) {
+      return LegendService.getActiveCategory(uuid);
     };
 
     scope.$watch(scope.state.toString('layers.active'), function (n, o) {

@@ -8,8 +8,8 @@
  * Additional methods used to extend nxtLayer with leaflet/map specific methods.
  */
 angular.module('map')
-.factory('rasterMapLayer', ['$rootScope', '$http', 'LeafletService', 'MapLayerService', 'RasterService', 'UtilService',
-  function ($rootScope, $http, LeafletService, MapLayerService, RasterService, UtilService) {
+.factory('rasterMapLayer', ['$rootScope', '$http', 'LeafletService', 'MapLayerService', 'RasterService', 'UtilService', 'LegendService',
+  function ($rootScope, $http, LeafletService, MapLayerService, RasterService, UtilService, LegendService) {
 
     return function (options) {
 
@@ -75,7 +75,7 @@ angular.module('map')
           rasterMapLayer.updateVectorizedData(map, options);
           return;
         } else {
-          rasterMapLayer.removeVectorized(map);
+          rasterMapLayer.removeVectorized(map, true);
         }
 
         if (rasterMapLayer.temporal && timeState.playing) {
@@ -131,7 +131,7 @@ angular.module('map')
 
         // TODO: check if something in statLayer is different from leaflet
         // reality.
-        rasterMapLayer.removeVectorized(map);
+        rasterMapLayer.removeVectorized(map, false);
 
         var leafletLayer = LeafletService.nxtAjaxGeoJSON('api/v2/regions/', {
           // Add these static parameters to requests.
@@ -168,20 +168,21 @@ angular.module('map')
         });
         rasterMapLayer._leafletLayer = leafletLayer;
         leafletLayer.addTo(map);
-
       };
 
       rasterMapLayer.remove = function (map, layer) {
         if (layer.vectorized) {
-          rasterMapLayer.removeVectorized(map);
-        }
-        else {
+          rasterMapLayer.removeVectorized(map, true);
+        } else {
           rasterMapLayer.removeWms(map);
         }
       };
 
-      rasterMapLayer.removeVectorized = function (map) {
+      rasterMapLayer.removeVectorized = function (map, clearActiveCategory) {
         if (map.hasLayer(rasterMapLayer._leafletLayer)) {
+          if (clearActiveCategory) {
+            LegendService.setActiveCategory(rasterMapLayer.uuid, null);
+          }
           map.removeLayer(rasterMapLayer._leafletLayer);
         }
       };

@@ -29,14 +29,16 @@
 
         <div
           ng-repeat="datum in rasterData track by $index"
-          ng-click="setDiscreteRasterCategory(uuid, datum.class)"
+          ng-click="rasterIsVectorized(uuid) ? setDiscreteRasterCategory(uuid, datum.class) : _.noop();"
           class="discrete-legend-datum"
           ng-if="$index < getAmountOfDiscreteCategories(uuid)">
           <div class="discrete-legend-color-rect"
-               style="background-color: <% datum.color %>; border: <% getBorderStyle(datum) %>"></div>
+               style="background-color: <% datum.color %>; border: <% getBorderStyle(datum) %>">
+          </div>
           <div class="discrete-legend-label"
-            ng-class="{'discrete-legend-label-selected': legend.activeCategory === datum.class}"
-            translate>
+               ng-class="{'discrete-legend-label-selected': getDiscreteRasterCategory(uuid) === datum.class,
+                          'discrete-legend-label-selectable': rasterIsVectorized(uuid)}"
+               translate>
             <% datum.label === -1 ? 'other' : datum.label %>
           </div>
         </div>
