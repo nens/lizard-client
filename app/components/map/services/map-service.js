@@ -307,6 +307,16 @@ angular.module('map')
         }
       },
 
+      vectorClickCb: function (layer) {
+        for (var key in layer.feature.properties) {
+          var newkey = key === 'type' ? 'regionType' : key;
+          layer.feature[newkey] = layer.feature.properties[key];
+        }
+        layer.feature.properties = {};
+        State.selected.geometries = []; // empty first.
+        State.selected.geometries = [layer.feature];
+      },
+
       getRegions: function () {
 
         /**
@@ -314,15 +324,7 @@ angular.module('map')
          *
          * @param  {object} leaflet ILayer that recieved the click.
          */
-        var clickCb = function (layer) {
-          State.selected.geometries = [];
-          for (var key in layer.feature.properties) {
-            var newkey = key === 'type' ? 'regionType' : key;
-            layer.feature[newkey] = layer.feature.properties[key];
-          }
-          layer.feature.properties = {};
-          State.selected.geometries = [layer.feature];
-        };
+        var clickCb = service.vectorClickCb;
 
         CabinetService.regions.get({
           z: State.spatial.view.zoom,
