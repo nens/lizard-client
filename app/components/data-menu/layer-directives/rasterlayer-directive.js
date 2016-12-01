@@ -37,10 +37,6 @@ angular.module('data-menu')
       MapService.updateLayers([layer]);
     };
 
-    scope.rasterIsVectorized = function (layer) {
-      return !!layer.vectorized;
-    };
-
     var cancelFirstActive = scope.$watch('layer.active', function () {
       if (scope.layer.active) {
         scope.layer.active = false;

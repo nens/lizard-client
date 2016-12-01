@@ -94,23 +94,38 @@ angular.module('map')
         else if (!map.hasLayer(rasterMapLayer._imageOverlays[0])) {
           rasterMapLayer._add(timeState, map, params);
         }
-
       };
 
-      rasterMapLayer._updateStyling = function (properties, stylingDict) {
-        if (properties.raster && properties.raster.color && properties.raster.fraction) {
-          var white = new Chromath('white');
-          stylingDict.fillColor = white
-          .towards(properties.raster.color, properties.raster.fraction)
-          .toString(); // #FF7F00
-          stylingDict.fillOpacity = rasterMapLayer._opacity;
-        } else if (properties.raster && properties.raster.color) {
-          stylingDict.fillColor = properties.raster.color;
-          stylingDict.fillOpacity = rasterMapLayer._opacity;
-        } else {
-          stylingDict.fillColor = '#fff';
-          stylingDict.fillOpacity = rasterMapLayer._opacity;
+      /**
+       * @description A dict for keep track of the default styling for all
+       *              regions of a vectorized raster layer.
+       */
+      rasterMapLayer._defaultRegionStyling = {
+        weight: 2,
+        opacity: 1,
+        color: '#7f8c8d', // asbestos,
+        fillOpacity: rasterMapLayer._opacity
+      };
+
+      /**
+       * @description A function to update fillColor/fillOpacity of the current
+       *              rasterMapLayer._defaultRegionStyling dict, based on a
+       *              properties of a single geojson feature:
+       */
+      rasterMapLayer._updateStyling = function (properties) {
+        var color = '#fff';
+        if (properties.raster && properties.raster.color) {
+          if (properties.raster.fraction) {
+            color = (new Chromath('white'))
+              .towards(properties.raster.color, properties.raster.fraction)
+              .toString();
+          } else {
+            color = properties.raster.color;
+          }
         }
+        rasterMapLayer._defaultRegionStyling.fillColor = color;
+        rasterMapLayer._defaultRegionStyling.fillOpacity = rasterMapLayer._opacity;
+        return rasterMapLayer._defaultRegionStyling;
       };
 
       /**
@@ -119,19 +134,31 @@ angular.module('map')
        *              instance.
        */
       rasterMapLayer.updateVectorizedData = function (map, at, stateLayer) {
-        var defaultRegionStyle = {
-          weight: 2,
-          opacity: 0.6,
-          color: '#7f8c8d', // asbestos,
-          fillOpacity: rasterMapLayer._opacity
-        };
-        var MOUSE_OVER_OPACITY_MULTIPLIER = 0.3;
-        var uuid = rasterMapLayer.uuid;
-        var styles = rasterMapLayer.complexWmsOptions.styles;
-
-        // TODO: check if something in statLayer is different from leaflet
-        // reality.
+        // We check whether it's only the opacity we need to update; if so, we
+        // we only update the leafletLayer style function and then prematurely
+        // return:
+        var previousFillOpacity = rasterMapLayer._defaultRegionStyling.fillOpacity;
+        if (!(previousFillOpacity === undefined ||
+              previousFillOpacity === stateLayer.opacity)) {
+          rasterMapLayer._leafletLayer.setStyle(function () {
+            rasterMapLayer._defaultRegionStyling = {
+              weight: 2,
+              opacity: 1,
+              color: '#7f8c8d', // asbestos,
+              fillOpacity: rasterMapLayer._opacity
+            };
+            return rasterMapLayer._defaultRegionStyling;
+          });
+          return;
+        }
+        // Apparently, it's not only opacity we need to update; in this case
+        // we rebuild the complete leafletLayer and therefore throw away the
+        // current one:
         rasterMapLayer.removeVectorized(map, false);
+
+        var MOUSE_OVER_OPACITY_MULTIPLIER = 0.5,
+            uuid = rasterMapLayer.uuid,
+            styles = rasterMapLayer.complexWmsOptions.styles;
 
         var leafletLayer = LeafletService.nxtAjaxGeoJSON('api/v2/regions/', {
           // Add these static parameters to requests.
@@ -147,22 +174,17 @@ angular.module('map')
           // Add zoomlevel to the request and update on map zoom.
           zoom: true,
           style: function (feature) {
-            rasterMapLayer._updateStyling(feature.properties, defaultRegionStyle);
-            return defaultRegionStyle;
+            return rasterMapLayer._updateStyling(feature.properties);
           },
           onEachFeature: function (d, layer) {
             layer.on({
               mouseover: function (e) {
-                e.target.setStyle({
-                  // TODO: Multiply this with layer opacity (when moved to
-                  // RasterMapLayerFactory)
-                  fillOpacity:
+                e.target.setStyle({fillOpacity:
                     MOUSE_OVER_OPACITY_MULTIPLIER * rasterMapLayer._opacity
                 });
               },
               mouseout: function (e) {
-                rasterMapLayer._updateStyling(d.properties, defaultRegionStyle);
-                e.target.setStyle(defaultRegionStyle);
+                e.target.setStyle({fillOpacity: rasterMapLayer._opacity});
               },
               click: function (e) {
                 rasterMapLayer.vectorClickCb(this);
@@ -170,6 +192,7 @@ angular.module('map')
             });
           },
         });
+
         rasterMapLayer._leafletLayer = leafletLayer;
         leafletLayer.addTo(map);
       };
