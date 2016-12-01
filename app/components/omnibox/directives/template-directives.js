@@ -343,12 +343,6 @@ angular.module('omnibox')
   return {
     link: function (scope) {
       scope.isUrl = UtilService.isUrl;
-      scope.isSmallOrNull = function(n) {
-        return n < 0.01;
-      };
-      scope.expWithPrecision = function(n, precision) {
-        return (n === null || n === 0) ? n : parseFloat(n.toPrecision(precision)).toExponential();
-      };
     },
     restrict: 'E',
     scope: {
