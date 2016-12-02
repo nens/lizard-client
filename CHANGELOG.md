@@ -2,38 +2,6 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-<a name="4.4.0"></a>
-# [4.4.0](https://github.com/nens/lizard-client/compare/v4.3.0...v4.4.0) (2016-12-02)
-
-
-### Bug Fixes
-
-* **barchart:** Fixes stacked barchart colors. ([#748](https://github.com/nens/lizard-client/issues/748)) ([255c8fb](https://github.com/nens/lizard-client/commit/255c8fb))
-* **build:** fixed notie being called from window instead of injected as dependency ([94b0709](https://github.com/nens/lizard-client/commit/94b0709))
-* **data-menu:** do not capitalize namens, show as configured ([81e2076](https://github.com/nens/lizard-client/commit/81e2076))
-* **data-service:** ignore wms getfeatureinfo when not point, fixes nens/lizard-nxt[#2053](https://github.com/nens/lizard-client/issues/2053) and nens/lizard-nxt[#2060](https://github.com/nens/lizard-client/issues/2060) ([138f529](https://github.com/nens/lizard-client/commit/138f529))
-* **edge:** rootscope watcher is now only executed in Edge when adding layers, adds strict to data-layer-adder-directive. ([33012f8](https://github.com/nens/lizard-client/commit/33012f8))
-* **legend:** include missing template and polish legend ([#758](https://github.com/nens/lizard-client/issues/758)) ([44d1f05](https://github.com/nens/lizard-client/commit/44d1f05))
-* **omnibox:** better precision handling, using .toPrecision(3) ([#764](https://github.com/nens/lizard-client/issues/764)) ([d51036b](https://github.com/nens/lizard-client/commit/d51036b))
-* **omnibox:** more robust precision handling ([dcadb16](https://github.com/nens/lizard-client/commit/dcadb16))
-* **omnibox:** show region's name and area independently ([fb1fa56](https://github.com/nens/lizard-client/commit/fb1fa56))
-* **raster-aggregates:** adds boundary type to raster-aggregates request. ([9056a2a](https://github.com/nens/lizard-client/commit/9056a2a))
-* **switch:** No asset removal on switch from db to map ([#728](https://github.com/nens/lizard-client/issues/728)) ([6993df7](https://github.com/nens/lizard-client/commit/6993df7))
-
-
-### Features
-
-* **barcharts:** timeseries with a ratio measurement scale are shown as barcharts. ([#745](https://github.com/nens/lizard-client/issues/745)) ([41430f8](https://github.com/nens/lizard-client/commit/41430f8))
-* **debugging:** you can now inspect the State object in the dev console ([#749](https://github.com/nens/lizard-client/issues/749)) ([788adef](https://github.com/nens/lizard-client/commit/788adef))
-* **export:** timeseriesexport is now async and downloads xlsx. ([#742](https://github.com/nens/lizard-client/issues/742)) ([96b875c](https://github.com/nens/lizard-client/commit/96b875c))
-* **horizontal stack:** horizontal stack in hectares ([9d17eb5](https://github.com/nens/lizard-client/commit/9d17eb5))
-* **legend:** data for legend is retrieved+formatted/deleted when necessary ([7c9ecba](https://github.com/nens/lizard-client/commit/7c9ecba))
-* **legend:** data for legend is retrieved+formatted/deleted when necessary ([c30c1b4](https://github.com/nens/lizard-client/commit/c30c1b4))
-* **legend:** Discrete rasterdata has a visualized legend ([aa82acb](https://github.com/nens/lizard-client/commit/aa82acb))
-* **legend:** legend data for cont. and discrete rasters both get visualized in omnibox ([0d1acbe](https://github.com/nens/lizard-client/commit/0d1acbe))
-
-
-
 <a name="4.3.0"></a>
 # [4.3.0](https://github.com/nens/lizard-client/compare/v4.2.1...v4.3.0) (2016-10-24)
 
