@@ -5,8 +5,23 @@ angular.module('favourites')
   // NOTE: inject TimeseriesService even though it is not used.
   // TimeseriesService defines State.selections which may be restored
   // from favourite.
-  .service("FavouritesService", ['$resource', 'State', 'gettextCatalog', 'UtilService', 'DashboardService', 'TimeseriesService', 'notie', '$window',
-    function ($resource, State, gettextCatalog, UtilService, DashboardService, TimeseriesService, notie, $window) {
+  .service("FavouritesService", [
+    '$resource',
+    'State',
+    'gettextCatalog',
+    'UtilService',
+    'TimeseriesService',
+    'notie',
+    '$window',
+    function (
+        $resource,
+        State,
+        gettextCatalog,
+        UtilService,
+        TimeseriesService,
+        notie,
+        $window)
+    {
 
       /* Create a resource for interacting with the favourites endpoint of the
        * API.
@@ -178,8 +193,11 @@ angular.module('favourites')
        * @param {object} favourite - The favourite to apply with a state.
        */
       this.applyFavourite = function (favourite) {
-        DashboardService.resetGraphs();
-        State.resetObjects();
+        // TODO: Because we do not reset the graphs here. The old and new
+        // dasboard-graph 'states' are merged. Which introduces buggy dashboard
+        // favourites. This could fix this:
+        // DashboardService.resetGraphs();
+        // State.resetObjects();
 
         if (favourite.state.temporal && favourite.state.temporal.relative) {
           favourite.state.temporal = adhereTemporalStateToInterval(
