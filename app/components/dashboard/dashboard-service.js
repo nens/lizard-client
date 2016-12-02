@@ -8,7 +8,14 @@ angular.module('dashboard')
                           // axis and labels.
   var ROW_BOTTOM_MARGIN = 20; // Pixels between graph rows.
 
-  this.graphs = [];  // TODO: implement graphs in state!
+  // TODO: implement graphs in state!
+  // Graphs are part of dashboard service for now. Graphs are constructed by
+  // the order attribute of each selection in State.selections. It would be
+  // better to remove the order attribute altogether and implement a
+  // State.graphs object like: [[selectionID, selectionID, ...], [...], ...].
+  // Where graphs is a list of graphs. For an example see:
+  // https://github.com/nens/lizard-nxt/issues/1801#issuecomment-259432073
+  this.graphs = [];
   var service = this;
 
   /**

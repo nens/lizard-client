@@ -14,16 +14,16 @@ angular.module('global-state')
      * @return {Boolean} datatype support
      */
     var dbSupportedData = function (type, property) {
-        var temporal = property.temporal && type === 'Point';
+      var temporal = property.temporal && type === 'Point';
 
-        var events = property.format === 'Vector' && type !== 'LineString';
+      var events = property.format === 'Vector' && type !== 'LineString';
 
-        var other = type !== 'Point'
-          && property.scale !== 'nominal'
-          && property.scale !== 'ordinal';
+      var other = type !== 'Point'
+        && property.scale !== 'nominal'
+        && property.scale !== 'ordinal';
 
-        return temporal || events || other;
-      };
+      return temporal || events || other;
+    };
 
     /**
      * Finds metadata for a timeseries selection.
@@ -91,7 +91,7 @@ angular.module('global-state')
           props = assetProps;
           var assetCode = idGeomFunction(geometry);
           props.match = selection[geomType] === assetCode &&
-              dbSupportedData(geometry.geometry.type, props);
+            dbSupportedData(geometry.geometry.type, props);
         }
       }
       return props;
@@ -110,7 +110,7 @@ angular.module('global-state')
       return function(selection){
         if (selection.timeseries) {
           return getTimeseriesMetaData(geometry, selection);
-         } else if (selection.raster) {
+        } else if (selection.raster) {
           return getRasterMetaData(geometry, selection);
         }};
     };

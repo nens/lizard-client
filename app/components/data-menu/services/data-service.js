@@ -35,8 +35,8 @@ angular.module('data-menu')
 
       var idParsers = {
         assets: function (asset) {return asset.entity_name + "$" + asset.id},
-        geometries: function (geom) {return geom.geometry.coordinates.toString()},
-        undefined: function() {}
+        geometries: function (geom) {
+          return geom.geometry.coordinates.toString()}
       };
 
 
