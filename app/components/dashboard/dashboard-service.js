@@ -33,6 +33,10 @@ angular.module('dashboard')
    *   }]
    * }
    *
+   * NOTE: this is a temporary solution. We should do something different with a
+   * list of graphs on the state. A synchronous build of the dashboard into
+   * items which fill themselves with asynchronous data.
+   *
    * @return {array} graph
    */
   this.buildGraphs = function () {
