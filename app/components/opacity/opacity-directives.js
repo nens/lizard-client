@@ -21,8 +21,11 @@ angular.module('data-menu')
       var localClick = e.offsetX;
       var layerChooserWidth = element.width();
       var newOpacity = localClick / layerChooserWidth;
+
       scope.layer.opacity = newOpacity;
-      MapService.updateLayers([scope.layer]);
+
+      // Is the following line even neccessary???
+      // MapService.updateLayers([scope.layer]);
     };
 
   };

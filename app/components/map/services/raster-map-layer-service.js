@@ -8,14 +8,15 @@
  * Additional methods used to extend nxtLayer with leaflet/map specific methods.
  */
 angular.module('map')
-.factory('rasterMapLayer', ['$rootScope', '$http', 'LeafletService', 'MapLayerService', 'RasterService', 'UtilService',
-  function ($rootScope, $http, LeafletService, MapLayerService, RasterService, UtilService) {
+.factory('rasterMapLayer', ['$rootScope', '$http', 'LeafletService', 'MapLayerService', 'RasterService', 'UtilService', 'LegendService',
+  function ($rootScope, $http, LeafletService, MapLayerService, RasterService, UtilService, LegendService) {
 
     return function (options) {
 
       var rasterMapLayer = options;
 
       rasterMapLayer.loading = false;
+      rasterMapLayer.vectorized = false;
 
       // Base of the image url without the time.
       rasterMapLayer._imageUrlBase = options.url;
@@ -54,7 +55,6 @@ angular.module('map')
       );
 
       rasterMapLayer.update = function (map, timeState, options) {
-
         // Wms options might be different for current zoom and aggWindow.
         // Redraw when wms parameters are different for temporal or spatial
         // zoom.
@@ -70,25 +70,149 @@ angular.module('map')
         newParams.opacity = options.opacity;
         rasterMapLayer._setOpacity(options.opacity);
 
+        if (options.vectorized && !timeState.playing) {
+          rasterMapLayer.removeWms(map);
+          rasterMapLayer.updateVectorizedData(map, timeState.at, options);
+          return;
+        } else {
+          rasterMapLayer.removeVectorized(map, true);
+        }
+
         if (rasterMapLayer.temporal && timeState.playing) {
           rasterMapLayer._syncTime(timeState, map, options, options);
         }
 
-        // flattened parameters an be different per zoomlevel in space and time.
+        // flattened parameters can be different per zoomlevel in space and time.
         // only update layer when changed to prevent flickering.
         else if (rasterMapLayer.temporal || !_.isEqual(newParams, params)) {
           // Keep track of changes to paramaters for next update.
           params = newParams;
-          rasterMapLayer.remove(map);
+          rasterMapLayer.removeWms(map);
           rasterMapLayer._add(timeState, map, params);
         }
 
         else if (!map.hasLayer(rasterMapLayer._imageOverlays[0])) {
           rasterMapLayer._add(timeState, map, params);
         }
-
       };
 
+      /**
+       * @description A dict for keep track of the default styling for all
+       *              regions of a vectorized raster layer.
+       */
+      rasterMapLayer._defaultRegionStyling = {
+        weight: 2,
+        opacity: 1,
+        color: '#7f8c8d', // asbestos,
+        fillOpacity: rasterMapLayer._opacity
+      };
+
+      /**
+       * @description A function to update fillColor/fillOpacity of the current
+       *              rasterMapLayer._defaultRegionStyling dict, based on a
+       *              properties of a single geojson feature:
+       */
+      rasterMapLayer._updateStyling = function (properties) {
+        var color = '#fff';
+        if (properties.raster && properties.raster.color) {
+          if (properties.raster.fraction) {
+            color = (new Chromath('white'))
+              .towards(properties.raster.color, properties.raster.fraction)
+              .toString();
+          } else {
+            color = properties.raster.color;
+          }
+        }
+        rasterMapLayer._defaultRegionStyling.fillColor = color;
+        rasterMapLayer._defaultRegionStyling.fillOpacity = rasterMapLayer._opacity;
+        return rasterMapLayer._defaultRegionStyling;
+      };
+
+      /**
+       * @description Creates a new L.NxtAjaxGeoJSON layer for a vectorized
+       *              raster, and adds that to the current rasterMapLayer
+       *              instance.
+       */
+      rasterMapLayer.updateVectorizedData = function (map, at, stateLayer) {
+        // We check whether it's only the opacity we need to update; if so, we
+        // we only update the leafletLayer style function and then prematurely
+        // return:
+        var previousFillOpacity = rasterMapLayer._defaultRegionStyling.fillOpacity;
+        if (!(previousFillOpacity === undefined ||
+              previousFillOpacity === stateLayer.opacity)) {
+          rasterMapLayer._leafletLayer.setStyle(function () {
+            rasterMapLayer._defaultRegionStyling = {
+              weight: 2,
+              opacity: 1,
+              color: '#7f8c8d', // asbestos,
+              fillOpacity: rasterMapLayer._opacity
+            };
+            return rasterMapLayer._defaultRegionStyling;
+          });
+          return;
+        }
+        // Apparently, it's not only opacity we need to update; in this case
+        // we rebuild the complete leafletLayer and therefore throw away the
+        // current one:
+        rasterMapLayer.removeVectorized(map, false);
+
+        var MOUSE_OVER_OPACITY_MULTIPLIER = 0.5,
+            uuid = rasterMapLayer.uuid,
+            styles = rasterMapLayer.complexWmsOptions.styles;
+
+        var leafletLayer = LeafletService.nxtAjaxGeoJSON('api/v2/regions/', {
+          // Add these static parameters to requests.
+          requestParams: {
+            raster: uuid,
+            class: stateLayer.category,
+            styles: styles,
+            page_size: 500,
+            time: at
+          },
+          // Add bbox to the request and update on map move.
+          bbox: true,
+          // Add zoomlevel to the request and update on map zoom.
+          zoom: true,
+          style: function (feature) {
+            return rasterMapLayer._updateStyling(feature.properties);
+          },
+          onEachFeature: function (d, layer) {
+            layer.on({
+              mouseover: function (e) {
+                e.target.setStyle({fillOpacity:
+                    MOUSE_OVER_OPACITY_MULTIPLIER * rasterMapLayer._opacity
+                });
+              },
+              mouseout: function (e) {
+                e.target.setStyle({fillOpacity: rasterMapLayer._opacity});
+              },
+              click: function (e) {
+                rasterMapLayer.vectorClickCb(this);
+              }
+            });
+          },
+        });
+
+        rasterMapLayer._leafletLayer = leafletLayer;
+        leafletLayer.addTo(map);
+      };
+
+      rasterMapLayer.remove = function (map, layer) {
+        if (layer.vectorized) {
+          rasterMapLayer.removeVectorized(map, true);
+        } else {
+          rasterMapLayer.removeWms(map);
+        }
+      };
+
+      rasterMapLayer.removeVectorized = function (map, clearActiveCategory) {
+        if (map.hasLayer(rasterMapLayer._leafletLayer)) {
+          if (clearActiveCategory) {
+            LegendService.setActiveCategory(rasterMapLayer.uuid, null);
+          }
+          map.removeLayer(rasterMapLayer._leafletLayer);
+        }
+      };
 
       /**
        * @description removes all _imageOverlays from the map. Removes
@@ -96,7 +220,7 @@ angular.module('map')
        *              from this layer and removes the references to
        *              the _imageOverlays.
        */
-      rasterMapLayer.remove = function (map) {
+      rasterMapLayer.removeWms = function (map) {
         for (var i in rasterMapLayer._imageOverlays) {
           if (map.hasLayer(rasterMapLayer._imageOverlays[i])) {
             rasterMapLayer._imageOverlays[i].off('load');
@@ -161,7 +285,6 @@ angular.module('map')
           rasterMapLayer._imageOverlays[0].addTo(map),
           timeState.at
         );
-
       };
 
       /**
@@ -278,7 +401,6 @@ angular.module('map')
           rasterMapLayer._progressFrame(currentOverlayIndex, wmsOptions);
           // Done!
         }
-
       };
 
       /**
@@ -291,7 +413,7 @@ angular.module('map')
        */
       rasterMapLayer._createImageOverlays = function (map, buffer, bounds) {
         // detach all listeners and references to the imageOverlays.
-        rasterMapLayer.remove(map);
+        rasterMapLayer.removeWms(map);
         // create new ones.
         for (var i = rasterMapLayer._imageOverlays.length; i < buffer; i++) {
           rasterMapLayer._imageOverlays.push(

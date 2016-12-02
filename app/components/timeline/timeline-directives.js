@@ -352,6 +352,11 @@ angular.module('lizard-nxt')
       };
 
       rasterLayers.forEach(function (raster) {
+
+        if (!raster.temporal) {
+          return;
+        }
+
         raster.getTimesteps({
           start: State.temporal.start,
           end: State.temporal.end

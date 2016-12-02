@@ -8,18 +8,25 @@
       <span ng-show="!invalid" ng-bind="layer.name"></span>
       <del
         ng-show="invalid"
-        class="text-muted"
+        class="text-muted" class=""
         title="<% 'Layer could not be added' | translate %>"
         ng-bind="layer.name">
       </del>
       <div class="layer-chooser-tools">
         <i class="fa fa-close"
            ng-hide="closebutton === false"
-           ng-click="remove(layer); $event.stopPropagation()"></i>
+           ng-click="remove(layer);
+                     $event.stopPropagation()">
+        </i>
         <i ng-if="zoomToBounds"
           ng-click="zoomToBounds(); $event.stopPropagation()"
           ng-show="layer.active"
           class="fa fa-crosshairs">
+        </i>
+        <i class="fa fa-<% layer.vectorized ? 'star' : 'star-o' %>"
+           ng-show="layer.active"
+           ng-if="rasterLayerIsVectorizable(layer)"
+           ng-click="toggleVectorModus(layer); $event.stopPropagation()">
         </i>
       </div>
   </label>

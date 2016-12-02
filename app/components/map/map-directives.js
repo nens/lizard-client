@@ -299,8 +299,6 @@ angular.module('map')
           return;
         }
         UtilService.addNewStyle(selector);
-
-
       });
 
       init();

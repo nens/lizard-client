@@ -52,10 +52,20 @@
   color: #777;
 }
 
+.discrete-legend-label-selected {
+  font-weight: bolder;
+  font-style: italic;
+  color: #888;
+}
+
+.discrete-legend-label-selectable:hover {
+  color: $alizarin;
+  cursor: pointer;
+}
+
 .single-continuous-legend {
   padding-right: 18px;
   min-height: 160px;
-
 }
 
 .gradient-bar {
