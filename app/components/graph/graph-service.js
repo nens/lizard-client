@@ -923,7 +923,7 @@ angular.module('lizard-nxt')
         si = si.split('.')[0] + siUnit;
       }
       var percentage = d3.format(".0%")(value / area);
-      return percentage + ", " + si + " ha"
+      return percentage + "   |   " + si + " ha"
     };
 
     // Create a start and end for each rectangle.
@@ -953,6 +953,7 @@ angular.module('lizard-nxt')
       .attr("y", 0)
       .attr('class', 'horizontal-rect')
       .attr("height", height)
+      .append("title").text(function(d) { return createLabel(d[keys.x]); })
       .transition()
       .duration(duration)
       .attr('width', function (d) { return scale(d[keys.x]); });
@@ -965,30 +966,6 @@ angular.module('lizard-nxt')
       .attr('width', 0)
       .remove();
 
-    // Rects set their value on the label axis when hoovered
-    rects.on('mousemove', function (d) {
-      var label;
-      var labelstr = d.label;
-      if (d.label === -1 || d.label.split === undefined) {
-        label = createLabel(d[keys.x]) + " overig";
-      } else {
-        labelstr = d.label.split('-');
-        label = createLabel(d[keys.x]) + ' ' + labelstr[labelstr.length - 1];
-      }
-
-      svg.select('#xlabel')
-        .text(label)
-        .attr("class", "selected");
-
-    });
-
-    // When the user moves the mouse away from the graph, put the original
-    // label back in place.
-    rects.on('mouseout', function (d) {
-      svg.select('#xlabel')
-        .text(labels.x)
-        .classed({"selected": false});
-    });
   };
 
     /**
