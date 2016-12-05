@@ -10,6 +10,10 @@
  *
  */
 
+// TODO: this is in a reflection of the db-asset-card, db-card etc. directives.
+// To me the name template directive is not clear. This is all put in one file,
+// where the db-asset|geometry|-directives are seperate. I expected them to
+// be the same.
 angular.module('omnibox')
   .directive('assetCards', ['ClickFeedbackService', 'MapService', 'user',
     function (ClickFeedbackService, MapService, user) {

@@ -7,6 +7,9 @@ angular.module('timeseries')
   function (TimeseriesService, State) {
   return {
     link: function (scope) {
+      // TODO: This has become a selection directive. In a data sense
+      // timeseries do exist. In the state I think they should only be
+      // represented as selections.
       scope.state = State; // TODO: only done this to watch state.layers. There is a better place for this.
       var selectionObject, selectionType;
       if (scope.asset) {
@@ -16,10 +19,15 @@ angular.module('timeseries')
         selectionObject = scope.geom;
         selectionType = 'geom';
       }
+
+      // TODO: these watch functions should probably work the other way around
+      // timeseries should be set when the data arrives and not by constant
+      // watching.
       scope.$watch('state.layers', function () { // TODO: There is a better place for this.
         TimeseriesService.initializeRasterTimeseries(selectionObject, selectionType);
       });
 
+      // TODO: same here.
       scope.$watch(selectionType, function () {
         if (selectionType === 'asset'){
           TimeseriesService.initializeTimeseriesOfAsset(selectionObject);
@@ -68,6 +76,9 @@ angular.module('timeseries')
   function ($http, State, TimeseriesService, gettextCatalog) {
   return {
     link: function (scope) {
+
+      // TODO: this hasn't been changed yet (I only changed the dashboard.
+      // Also here the setter watch function should move to the data service.
 
       var selectTimeseries = function () {
         var selectedTimeseriesUuid = scope.timeseries.selected.uuid;

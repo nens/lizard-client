@@ -10,6 +10,10 @@
 angular.module('data-menu')
 .factory('wmsFeatureInfoDataLayer', ['WmsGetFeatureInfoService', '$q',
   function (WmsGetFeatureInfoService, $q) {
+    // TODO: I think this is what the data (layer) menu is all about:
+    // data-layers. Still layers / rasters etc. are data in its own right. Also
+    // wms feature info is more something map related. So why here and not in
+    // the map service?
 
     return function (options) {
 

@@ -5,8 +5,20 @@ angular.module('data-menu')
   .service("AssetService", ['State', '$q', '$http',
     function (State, $q, $http) {
 
+      // TODO: Why asset service here in the data-menu (which is a subset: not
+      // a data menu but a data layer menu)? You do assetthings in the
+      // data-service and you do it here. The data-service is an interface?
+      // In that case, the data-service should be stripped to a be a bare
+      // interface. Move the geometries to their own place.
+      // There might be some sync vs async magic going on here that I just
+      // don't get. Even then, to me it doesn't speak for itself.
+
       this.NESTED_ASSET_PREFIXES = ['pump', 'filter', 'monitoring_well'];
 
+      // TODO: so I understand why this was put in asset-service. Still this
+      // seems to be a method that affects timeseries. So shouldn't this be a
+      // part of the timeseries service? Off course that could lead to circular
+      // reference problems directly or just eventually.
       /**
        * Removes all the ts from the selection of the asset. It should not be
        * possible to select ts of assets.

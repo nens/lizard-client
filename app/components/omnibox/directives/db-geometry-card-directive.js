@@ -11,10 +11,16 @@ angular.module('omnibox')
       DBCardsService,
       DataService,
       SelectionService,
-      DragService) { // TODO: This whole directive is a copy of parts of the asset-card-directive
+      DragService) {
+    // TODO: This whole directive is a copy of parts of the
+    // asset-card-directive. Asset cards also contain geometry so why not merge
+    // them?
     return {
       link: function (scope, element) {
 
+        // TODO: I use this to propagate the selections (setting
+        // scope.selections won't work cause it won't update. Still it seems
+        // ugly to me to pass on the whole state.
         scope.state = State;
 
         scope.noData = true;

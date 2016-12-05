@@ -10,6 +10,9 @@ angular.module('data-menu')
   'gettextCatalog',
   function ($http, UtilService, State, notie, gettextCatalog) {
 
+    // TODO: This is really part of the data-menu. Why not call it
+    // data-layer-menu btw?
+
     // Baselayers are 0, raster and wmslayers are equal and above baselayer,
     // assetgroups are above and eventseries are on top.
     var Z_INDICES = {

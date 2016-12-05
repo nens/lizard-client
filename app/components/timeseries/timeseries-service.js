@@ -12,6 +12,11 @@ angular.module('timeseries')
   'TimeseriesUtilService',
   function ($q, State, $http, notie, UtilService, DataService, TsUService) {
 
+    // TODO: I think this is part of a database (and thus the data-service)
+    // and of the omnibox. Furthermore this contains selection stuff. I think
+    // this should be put in their appropriate places. It might be a good idea
+    // to put this behind an interface.
+
     var service = this;
 
     var GRAPH_WIDTH = 320; // Width of drawing area of box graphs.

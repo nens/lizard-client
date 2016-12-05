@@ -10,6 +10,9 @@
 angular.module('lizard-http-throttler', [])
 .config(['$httpProvider', function ($httpProvider) {
 
+  // TODO: this is only used in Timeseries. To me it was obscure and easy to
+  // look over. Still it is a necessary part. Can this also be used elsewhere?
+
   $httpProvider.interceptors.push(function($q) {
 
     var WAIT = 1000; // Max two request every second.

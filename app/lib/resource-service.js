@@ -7,6 +7,7 @@
  */
 angular.module('lizard-nxt')
   .service('Resource', ['$http', function ($http) {
+   // TODO: why not use this everywhere we interact with the lizard API?
 
   this.baseUrl = '';
 
