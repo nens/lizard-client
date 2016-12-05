@@ -9,6 +9,8 @@ angular.module('lizard-nxt')
                              "$q",
                              "$http",
   function (State, UtilService, CabinetService, LeafletService, $q, $http) {
+  // TODO: get Data and get timesteps could also be placed in a data-service.
+  // I'm not sure about the other two functions.
 
   var intensityData,
       cancelers = {};

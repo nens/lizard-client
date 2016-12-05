@@ -363,6 +363,9 @@ angular.module('lizard-nxt')
           keys = content[0].keys,
           labels = { x: content.xLabel, y: content.unit };
 
+      // TODO: This is a specific implementation with percentages (which I
+      // changed to hectares elsewhere.
+
       var options = {
         scale: 'linear',
         orientation: 'bottom',

@@ -8,6 +8,12 @@ angular.module('dashboard')
                           // axis and labels.
   var ROW_BOTTOM_MARGIN = 20; // Pixels between graph rows.
 
+  // TODO: so this probably is the culprit why you have to reset the graphs
+  // in the favourites. Graphs persist here in the service, where
+  // (when set in the scope) will be destroyed when building a new dashboard.
+  // Still I wonder what happens when selecting a new favourite in the
+  // dashboard. Will it also be destroyed there?
+
   // TODO: implement graphs in state!
   // Graphs are part of dashboard service for now. Graphs are constructed by
   // the order attribute of each selection in State.selections. It would be
@@ -18,6 +24,7 @@ angular.module('dashboard')
   this.graphs = [];
   var service = this;
 
+  // TODO: this is bad since graphs shouldn't be reset.
   /**
    * Empties graphs object. When dashboard is rebuilt this is taken as a basis.
    */
@@ -48,6 +55,8 @@ angular.module('dashboard')
    */
   this.buildGraphs = function () {
     var graphs = this._setAllContentToNotUpdated(service.graphs);
+
+    // TODO: so this is bad too.
     var findSelectionData = function (selection) {
       var geomID = selection.asset || selection.geom || selection.timeseries;
       var dataUUID = selection.raster;
@@ -77,6 +86,9 @@ angular.module('dashboard')
       }
     };
 
+    // TODO: because I am iterating over selection instead of the actual data.
+    // Perhaps we would need to have a selection interface. That combines asset
+    // geometry and timeseries data. All this data is of the same form.
     State.selections.forEach(function (selection) {
       var selectionData = findSelectionData(selection);
       if (selectionData && selectionData.item.data){

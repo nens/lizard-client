@@ -5,6 +5,13 @@ angular.module('lizard-nxt')
            "$q", "Resource", "backendDomain", "gettextCatalog",
   function ($q, Resource, backendDomain, gettextCatalog) {
 
+    // TODO: The name cabinet service is unclear. It uses the resource service
+    // which is nice (and a far better name), but it is only used for rasters.
+    // It can be used to connect to the lizard api everywhere. The things you
+    // can find here you can also find for timeseries, geometries, assets,
+    // events. etc. This probably means some extra work to make everything a
+    // resource, but it makes the client codebase a lot more dry.
+
   // for the wizard demo's
   if (window.location.host === 'nens.github.io' ||
       window.location.host === 'lizard.sandbox.lizard.net') {

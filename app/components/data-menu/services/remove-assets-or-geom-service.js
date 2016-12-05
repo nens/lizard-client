@@ -8,6 +8,10 @@ angular.module('data-menu')
 function (State) {
 
   return function () {
+    // TODO: so why is this here seperately? Again this probably has a purpose
+    // from an app stance but why is it here and not in the dataservice or
+    // elsewhere?
+
     State.assets.forEach(function (asset) {
       if (State.assets.length > 1) {
         State.assets.removeAsset(asset);

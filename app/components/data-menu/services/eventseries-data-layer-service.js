@@ -12,6 +12,10 @@ angular.module('data-menu')
   function (VectorService) {
 
     return function (options) {
+      // TODO: This is a wrapper around Vectorservice. Vectorservice is in lib.
+      // As far as I can see Vectorservice is only (really) used by the
+      // eventseriesdatalayer. Why do you do this for the eventseries datalayer,
+      // but not for other layers? Or perhaps the other way around.
 
       var eventseriesDataLayer = options;
 

@@ -7,7 +7,11 @@
  */
 angular.module('lizard-nxt')
   .service("UtilService", ["NxtD3", "$timeout", function (NxtD3, $timeout) {
-
+    // TODO: This module is > 1000 lines of either really common functions or
+    // more specialized functions, like geometry functions. I didn't really dig
+    // through it but shouldn't this be at a higher level where it is used, or
+    // bundled in more common array handling functions, geometry functions,
+    // etc.?
 
   /**
    * Returns the index of the value at key in arrayObject closest to value.

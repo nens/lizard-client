@@ -30,6 +30,34 @@ angular.module('data-menu')
       LayerAdderService,
       State
     ) {
+      // TODO: I understand why this was put in the data-menu services. Still
+      // only assets belong in the data menu,  timeseries is on its own,
+      // geometries are here, but are not really related to the data-menu.
+      // I think data-services should be put on its own like or next to the
+      // state service. Like a set of root-services. Surely something that
+      // needs to be coupled to an element? like the layer-adder-service for
+      // the data-menu belongs here. Not my idea (yours Ernst?): you can make
+      // an interface that links to the selection data. This way iterating over
+      // the selection data in buildgraphs in the dashboard service becomes
+      // easier.
+      // When you implement a redux like structure, you can think of a
+      // database like flattened structure. Just like we are moving for the
+      // state:
+      // {
+      //    assets: {
+      //      orfice$1: {
+      //        orficeAttribute1: "attribute",
+      //        timeseriesList: "uuid1",
+      //        ...
+      //      }
+      //    },
+      //    timeseriesLists: {
+      //      uuid1: [tsUuid1, tsUuid2, ...],
+      //      uuid2: [tsUuid3, tsUuid4, ...],
+      //    }
+      //    geometries: {},  // like assets
+      //    timeseries: {},  // like assets
+      // }
 
       var instance = this;
 
@@ -40,6 +68,8 @@ angular.module('data-menu')
       };
 
 
+      // TODO: so I put this here. But I think this is kind of out of place
+      // This would be nice to put in the data interface.
       /**
        * Finds asset or geometry data for a selection.
        *
