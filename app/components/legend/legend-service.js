@@ -164,7 +164,7 @@ angular.module('legend')
           uuid = layerObj.uuid;
           if (layerObj.active) {
             dataLayerObj = _.find(DataService.dataLayers, {uuid: uuid});
-            if (!dataLayerObj || dataLayerObj.temporal) {
+            if (!dataLayerObj) {
               return;
             }
             this.uuidMapping[uuid] = name;

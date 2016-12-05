@@ -25,8 +25,8 @@ angular.module('data-menu')
     scope.rasterLayerIsVectorizable = function (layer) {
       var dataLayer = _.find(DataService.dataLayers, {uuid: layer.uuid});
       if (dataLayer) {
-        return !dataLayer.temporal &&
-          (dataLayer.scale === "nominal" || dataLayer.scale === "ordinal");
+        return (dataLayer.scale === "nominal" ||
+          dataLayer.scale === "ordinal");
       } else {
         return false;
       }
