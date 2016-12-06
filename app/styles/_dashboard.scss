@@ -23,6 +23,10 @@
   transition: .3s ease;
 }
 
+.dashboard-inner {
+  background-color: $white;
+  border-radius: 4px;
+}
 
 .dashboard-wrapper .row {
   min-height: 50px;
