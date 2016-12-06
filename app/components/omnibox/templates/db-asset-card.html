@@ -39,15 +39,16 @@
              ng-if="getTsMetaData(ts.uuid) && ($index < 3 || ts.active)"
              data-uuid="<% ts.uuid %>"
              class="draggable-ts">
-
             <div
               id="<% ts.uuid %>"
-              ng-click="toggleTimeseries(ts)"
-              ng-mouseover=""
+              ng-click="toggleTimeseries(ts);"
+              ng-class="{active: mouseIsOver}"
+              ng-mouseover="mouseIsOver = true"
+              ng-mouseleave="mouseIsOver = false"
               class="card-content-list clickable">
               <div class="card-content-colorhandle"
                    ng-style="{'background-color': ts.color}"
-                   ng-click="toggleColorPicker()">
+                   ng-click="toggleColorPicker(); $event.stopPropagation();">
               </div>
               <i class="fa" ng-class="{
                 'fa-clock-o': getTsMetaData(ts.uuid).value_type !== 'image',
@@ -55,7 +56,7 @@
               }"></i>
               <span
                 title="<% getTsMetaData(ts.uuid).location %>, <% getTsMetaData(ts.uuid).name %>, <% getTsMetaData(ts.uuid).parameter %>"
-                ng-class="{'text-primary bg-warning': ts.active}">
+                ng-class="{'text-primary': ts.active}">
                 <% getTsMetaData(ts.uuid).location %>,
                 <% getTsMetaData(ts.uuid).name %>,
                 <% getTsMetaData(ts.uuid).parameter %>
