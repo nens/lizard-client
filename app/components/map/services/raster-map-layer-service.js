@@ -109,7 +109,7 @@ angular.module('map')
 
       /**
        * @description A function to update fillColor/fillOpacity of the current
-       *              rasterMapLayer._defaultRegionStyling dict, based on a
+       *              rasterMapLayer._defaultRegionStyling dict, based on the
        *              properties of a single geojson feature:
        */
       rasterMapLayer._updateStyling = function (properties) {
@@ -245,6 +245,12 @@ angular.module('map')
             bounds.toBBoxString();
           $http.get(url).success(function (data) {
             var limits = ':' + data[0][0] + ':' + data[0][1];
+            var legendDataForCurrentLayer = LegendService.rasterData.continuous[
+              rasterMapLayer.uuid];
+            if (legendDataForCurrentLayer !== undefined) {
+              legendDataForCurrentLayer.min = UtilService.round(data[0][0], 3);
+              legendDataForCurrentLayer.max = UtilService.round(data[0][1], 3);
+            }
             // strip existing domain if already present.
             rasterMapLayer.complexWmsOptions.styles = rasterMapLayer
             .complexWmsOptions.styles.split(':')[0];

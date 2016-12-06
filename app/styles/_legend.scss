@@ -114,21 +114,31 @@
 .continuous-raster-numeric-data {
   min-width: 300px;
   max-width: 300px;
+  height: 116px;
   float: right;
+  margin-top: 2px;
+
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
 }
 
 .continuous-raster-table-row {
   height: 29px;
-  border-bottom: 1px solid #ddd;
   color: #777;
   font-size: 0.9em;
   line-height: 1.42857;
+}
+
+.row-max {
+  position: relative;
+  top: 55px;
 }
 
 .continuous-raster-table-key {
   min-width: 150px;
   max-width: 150px;
 }
+
 
 .continuous-raster-table-value {
   min-width: 100px;

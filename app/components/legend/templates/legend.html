@@ -71,33 +71,17 @@
 
             <table>
               <tr class="continuous-raster-table-row">
-                <td class="continuous-raster-table-key">Absolute minimum</td>
-                <td class="continuous-raster-table-value"
-                    ng-bind="rasterData.colormap.data[0][0]"></td>
-                <td class="continuous-raster-table-unit"
-                    ng-bind="rasterData.unit">
-              </tr>
-
-               <tr class="continuous-raster-table-row">
-                <td class="continuous-raster-table-key">Extent minimum</td>
+                <td class="continuous-raster-table-key">minimum:</td>
                 <td class="continuous-raster-table-value"
                     ng-bind="rasterData.min"></td>
                 <td class="continuous-raster-table-unit"
                     ng-bind="rasterData.unit">
               </tr>
 
-              <tr class="continuous-raster-table-row">
-                <td class="continuous-raster-table-key">Extent maximum</td>
+              <tr class="continuous-raster-table-row row-max">
+                <td class="continuous-raster-table-key">maximum:</td>
                 <td class="continuous-raster-table-value"
                     ng-bind="rasterData.max"></td>
-                <td class="continuous-raster-table-unit"
-                    ng-bind="rasterData.unit">
-              </tr>
-
-              <tr class="continuous-raster-table-row">
-                <td class="continuous-raster-table-key">Absolute maximum</td>
-                <td class="continuous-raster-table-value"
-                    ng-bind="rasterData.colormap.data[rasterData.colormap.data.length - 1][0]"></td>
                 <td class="continuous-raster-table-unit"
                     ng-bind="rasterData.unit">
               </tr>

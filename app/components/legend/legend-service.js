@@ -33,12 +33,6 @@ angular.module('legend')
     var colormaps = {}; // dict for saving colormaps locally
     var COLORMAP_URL; // constant containing the colormap endpoint URL
 
-    var floatRound = function (r, decimalCount) {
-      var d = decimalCount === undefined ? 0 : decimalCount;
-      var multiplier = Math.pow(10, d);
-      return Math.round(r * multiplier) / multiplier;
-    };
-
     var getColormapUrl = function () {
       var url = window.location.protocol
         + '//' + window.location.host
@@ -46,28 +40,30 @@ angular.module('legend')
       return url.replace("9000", "8000"); // Applicable for dev environment only..
     };
 
-    this.resetContinuousRasterData = function (uuid) {
-      if (this.rasterData.continuous[uuid] === undefined) {
-        this.rasterData.continuous[uuid] = {
-          min: null,
-          max: null,
-          unit: null,
-          colormap: colormaps[uuid] || null
-        };
-      }
+    this.initContinuousRasterData = function (uuid, unit) {
+      this.rasterData.continuous[uuid] = {
+        min: null,
+        max: null,
+        unit: unit,
+        colormap: null
+      };
     };
 
     var rasterIsDiscrete = function (dataLayerObj) {
       return dataLayerObj.scale === "nominal" || dataLayerObj.scale === "ordinal";
     };
 
-    this.setColormap = function (name, styles) {
+    this.setColormap = function (uuid, styles) {
       if (!COLORMAP_URL) {
         COLORMAP_URL = getColormapUrl();
       }
       $http.get(COLORMAP_URL + styles + "/").then(function (result) {
-        colormaps[name] = result.data.definition;
-        this.rasterData.continuous[name].colormap = result.data.definition;
+        var colormap = result.data.definition;
+        colormaps[uuid] = colormap;
+        this.rasterData.continuous[uuid].colormap = colormap;
+        this.rasterData.continuous[uuid].min = colormap.data[0][0];
+        this.rasterData.continuous[uuid].max = colormap.data[
+          colormap.data.length - 1][0];
       }.bind(this));
     };
 
@@ -88,43 +84,6 @@ angular.module('legend')
           this.rasterData.discrete[raster] = undefined;
         }
       }, this);
-    };
-
-    this.updateContinuousRasterData = function (uuid, dataLayerObj, options) {
-
-      this.rasterData.continuous[uuid].unit = dataLayerObj.unit;
-
-      // Merging two objects without altering one or both:
-      var apiCallOptions = {};
-      angular.forEach(dataLayerObj, function (v, k) {
-        apiCallOptions[k] = v;
-      });
-      angular.forEach(options, function (v, k) {
-        apiCallOptions[k] = v;
-      });
-
-      apiCallOptions.agg = 'min';
-      var minPromise = RasterService.getData(apiCallOptions);
-      minPromise.then(function (minData) {
-        // console.log("data:", minData);
-        if (minData.data !== null) {
-          console.log("minData from server:", minData.data);
-          this.rasterData.continuous[uuid].min = floatRound(minData.data, 3);
-        } else {
-          this.rasterData.continuous[uuid].min = null;
-        }
-      }.bind(this));
-
-      apiCallOptions.agg = 'max';
-      var maxPromise = RasterService.getData(apiCallOptions);
-      maxPromise.then(function (maxData) {
-        console.log("maxData from server:", maxData.data);
-        if (maxData.data !== null) {
-          this.rasterData.continuous[uuid].max = floatRound(maxData.data, 3);
-        } else {
-          this.rasterData.continuous[uuid].max = null;
-        }
-      }.bind(this));
     };
 
     this.deleteLegendData = function (uuid) {
@@ -171,16 +130,22 @@ angular.module('legend')
             if (rasterIsDiscrete(dataLayerObj)) {
               DataService.updateLayerData(geo, layerObj, options, promises);
             } else {
-              this.resetContinuousRasterData(uuid);
-              if (!colormaps[name]) {
-                // IF colormap for the current layer ain't already defined,
+              if (this.rasterData.continuous[uuid] === undefined) {
+                 this.initContinuousRasterData(uuid, dataLayerObj.unit);
+              }
+              if (!colormaps[uuid]) {
+                // IF colormap for the current layer isn't already defined,
                 // retrieve it via the API's colormaps endpoint:
                 this.setColormap(uuid, dataLayerObj.styles);
               } else {
                 // ELSE, retrieve it from local dict:
                 this.rasterData.continuous[uuid].colormap = colormaps[uuid];
+                this.rasterData.continuous[uuid].min =
+                  this.rasterData.continuous[uuid].min || colormaps[uuid].data[0][0];
+                this.rasterData.continuous[uuid].max =
+                  this.rasterData.continuous[uuid].max ||colormaps[uuid].data[
+                    colormaps[uuid].data.length - 1][0];
               }
-              this.updateContinuousRasterData(uuid, dataLayerObj, options);
             }
           } else {
             this.deleteLegendData(uuid);
