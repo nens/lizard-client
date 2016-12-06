@@ -12,8 +12,8 @@
 .dashboard-wrapper {
   position: absolute;
   top: 70px;
-  left: 0px;
-  @media (min-width:991px) {
+  left: 0;
+  @media (min-width: $desktop-minimum) {
     left: 420px;
   }
   right: 0px;
