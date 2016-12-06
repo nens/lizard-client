@@ -43,12 +43,15 @@
 
           <div
             id="<% ts.uuid %>"
-            ng-click="toggleTimeseries(ts)"
-            ng-mouseover=""
+            ng-click="toggleTimeseries(ts);"
+            ng-class="{active: mouseIsOver}"
+            ng-mouseover="mouseIsOver = true"
+            ng-mouseleave="mouseIsOver = false"
             class="card-content-list clickable">
             <div class="card-content-colorhandle"
+                 ng-show="ts.active"
                  ng-style="{'background-color': ts.color}"
-                 ng-click="toggleColorPicker()">
+                 ng-click="toggleColorPicker(); $event.stopPropagation();">
             </div>
             <i class="fa" ng-class="{
               'fa-clock-o': getTsMetaData(ts.uuid).value_type !== 'image',

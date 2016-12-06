@@ -599,6 +599,14 @@
     padding: 10px 15px 10px 10px;
   }
 
+  .card-content-list.active {
+    padding-left: 25px;
+  }
+
+  .card-content-list.active .card-content-colorhandle {
+    width: 20px;
+  }
+
   .card-content-colorhandle {
     position: absolute;
     height: 400px;

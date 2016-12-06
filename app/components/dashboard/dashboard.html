@@ -1,5 +1,10 @@
 <div class="dashboard-wrapper drag-target">
 
+  <div ng-if="dashboard.graphs.length < 1" class="dashboard-empty-drag-target">
+    <p translate><strong>Sleep of selecteer een tijdreeks</strong></p>
+  </div>
+
+
   <!-- Use track by to keep references to dom elements and prevent redraws -->
   <!-- Store index on dom element for drag and drop functionality -->
   <div
