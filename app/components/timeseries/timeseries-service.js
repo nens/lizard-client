@@ -140,6 +140,7 @@ angular.module('timeseries')
 
       if (minPoints) {
         params.min_points = minPoints;
+        params.untangle = true;
       } else {
         params.window = timeState.aggWindow;
       }
