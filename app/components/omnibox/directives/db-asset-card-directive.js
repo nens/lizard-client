@@ -13,6 +13,22 @@ angular.module('omnibox')
         });
       };
 
+      /**
+       * Returns true if selection with uuid is one the first three in the list.
+       *
+       * This is used to bypass ngRepeat which loops over one big list of
+       * selections multiple times, once for each asset. It should draw the
+       * first three of each asset or more if more than three are active.
+       *
+       * @param  {str}  uuid uuid of selection.
+       * @return {Boolean} is in first three of DOM list.
+       */
+      scope.isOneOfFirstThree = function (uuid) {
+        var items = element.find('.draggable-ts');
+        var index = _.findIndex(items, function (item) {return item.dataset.uuid === uuid; });
+        return index < 3;
+      };
+
       scope.toggleTimeseries = function (timeseries) {
 
         if (!timeseries.active) {
