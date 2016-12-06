@@ -584,16 +584,27 @@
 .card-content {
   padding-top: 10px;
   padding-bottom: 10px;
-  padding-left: 15px;
+  padding-left: 0;
   padding-right: 15px;
   color: $asbestos;
 
   .card-content-list {
-    display: inline-block;
-    width: 350px;
+    position: relative;
+    // display: inline-block;
+    width: 400px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    border-bottom: 1px solid #E2E3E5;
+    padding: 10px 15px 10px 10px;
+  }
+
+  .card-content-colorhandle {
+    position: absolute;
+    height: 400px;
+    width: 5px;
+    left: 0;
+    top: -50px;
   }
 
   i {
@@ -764,5 +775,3 @@ input[type=file] {
 .btn-link {
     padding: 0;
 }
-
-

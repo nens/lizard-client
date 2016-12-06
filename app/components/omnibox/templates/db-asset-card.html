@@ -29,7 +29,7 @@
         </dl>
       </div>
 
-      <em ng-if="noTimeseries && asset.entity_name !== 'leveecrosssection'" translate>
+      <em class="card-content-list" ng-if="noTimeseries && asset.entity_name !== 'leveecrosssection'" translate>
         No timeseries available for this asset
       </em>
 
@@ -42,7 +42,12 @@
           <div
             id="<% ts.uuid %>"
             ng-click="toggleTimeseries(ts)"
+            ng-mouseover=""
             class="card-content-list clickable">
+            <div class="card-content-colorhandle"
+                 ng-style="{'background-color': ts.color}"
+                 ng-click="toggleColorPicker()">
+            </div>
             <i class="fa" ng-class="{
               'fa-clock-o': getTsMetaData(ts.uuid).value_type !== 'image',
               'fa-file-image-o': getTsMetaData(ts.uuid).value_type === 'image'
@@ -55,10 +60,7 @@
               <% getTsMetaData(ts.uuid).parameter %>
             </span>
           </div>
-          <div class="circle pull-right"
-               ng-style="{'background-color': ts.color}"
-               ng-click="toggleColorPicker()">
-          </div>
+
           <color-picker></color-picker>
         </div>
       </div>

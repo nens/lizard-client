@@ -31,9 +31,10 @@
     <link rel="stylesheet" href="/styles/main.css">
     <!-- endbuild -->
 
+    <script>window.showomnibox = false;</script>
   </head>
 
-  <body>
+  <body ng-class="{'dashboard': (context === 'dashboard'), 'map': (context === 'map')}">
 
     <!-- use ng-if to reiniatialize when context changes -->
     <div ng-if="context === 'map' || context === 'scenarios'">

@@ -18,6 +18,10 @@ angular.module("omnibox")
         RETURNKEY: 13,
       };
 
+      scope.showOmnibox = function() {
+        return '-400px';
+      }
+
       scope.onFocus = function(item, $event) {
         item.selected = "selected";
         if (item.hasOwnProperty('formatted_address')) {
