@@ -12,10 +12,8 @@
 .dashboard-wrapper {
   position: absolute;
   top: 70px;
-  @media (min-width:600px) {
-    left: 0px;
-  }
-  @media (min-width:801px) {
+  left: 0px;
+  @media (min-width:991px) {
     left: 420px;
   }
   right: 0px;
@@ -24,10 +22,6 @@
   overflow: hidden;
   transition: .3s ease;
 }
-
-
-
-
 
 
 .dashboard-wrapper .row {
