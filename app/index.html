@@ -33,7 +33,7 @@
 
   </head>
 
-  <body>
+  <body ng-class="{'dashboard': (context === 'dashboard'), 'map': (context === 'map')}">
 
     <!-- use ng-if to reiniatialize when context changes -->
     <div ng-if="context === 'map' || context === 'scenarios'">

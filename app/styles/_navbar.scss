@@ -8,6 +8,7 @@ nav.navbar {
     border: none;
     border-radius: 0;
     color: $white;
+    width: 100% !important;
 
     .navbar-header {
         background: none;
@@ -52,6 +53,10 @@ nav.navbar {
     ul.dropdown-menu {
         border-radius: 0;
     }
+}
+
+.navbar-right {
+  margin-right: 0 !important;
 }
 
 // Apparently Bootstrap expects a navbar-header on the left side

@@ -621,20 +621,26 @@ angular.module('lizard-nxt')
 
   /**
    * @function
-   * @description Get correct icon for structure
+   * @description - Get correct icon.
+   *                Assumes hydracore strings such as pumpstation and formats
+   *                that into lz lz-* format.
+   *                Exceptions, like for font-awesome's 'filter' can be added
+   *                here when neccessary.
    */
   this.getIconClass = function (str) {
     switch (str) {
+    case 'filter':
+      return 'fa fa-filter';
     case 'pumpstation':
-      return 'icon-pumpstation-diesel';
+      return 'lz lz-pumpstation-diesel';
     case 'bridge':
-      return 'icon-bridge';
+      return 'lz lz-bridge';
     case 'bridge-draw':
-      return 'icon-bridge';
+      return 'lz lz-bridge-draw';
     case 'bridge-fixed':
-      return 'icon-bridge';
+      return 'lz lz-bridge-fixed';
     default:
-      return 'icon-' + str;
+      return 'lz lz-' + str;
     }
   };
 
