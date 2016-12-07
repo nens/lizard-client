@@ -205,7 +205,6 @@ angular.module('lizard-nxt')
         data: scope.data,
         unit: scope.ylabel,
         xLabel: scope.xlabel,
-        area: scope.area, // added for horizontalStack chart
         keys: {
           x: (scope.keys && scope.keys.x) || 0,
           y: (scope.keys && scope.keys.y) || 1
@@ -252,9 +251,6 @@ angular.module('lizard-nxt')
       yfilter: '=',
       dimensions: '=',
       temporal: '=',
-
-      // added for horizontal stack charts
-      area: '=?',
 
       // Legacy, use list of graph datasets in content. This is for line and
       // other old graphs.
