@@ -12,7 +12,8 @@
       </span>
 
       <span class="asset-title">
-        <strong style="font-weight:bolder;"><% asset.name | objectTitle | translate %></strong>&nbsp;
+        <strong style="font-weight:bolder;"><% asset.name | objectTitle | translate %></strong>
+        <span ng-if="asset.name">&nbsp;</span>
         <span style="color:#727272;font-weight:lighter;"><% asset.code | objectTitle | translate %></span>
       </span>
 
