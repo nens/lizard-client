@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.5.0"></a>
+# [4.5.0](https://github.com/nens/lizard-client/compare/v4.4.0...v4.5.0) (2016-12-07)
+
+
+### Bug Fixes
+
+* **card-header:** Nameless cards remain nameless. Fixes nens/lizard-nxt[#2124](https://github.com/nens/lizard-client/issues/2124) ([#773](https://github.com/nens/lizard-client/issues/773)) ([3320c21](https://github.com/nens/lizard-client/commit/3320c21))
+* **helpmodal:** strings should not use _.merge, but assigned directly ([3e9e0b4](https://github.com/nens/lizard-client/commit/3e9e0b4))
+
+
+### Features
+
+* **dashboard:** redesigned timeseries ([#771](https://github.com/nens/lizard-client/issues/771)) ([4073f0c](https://github.com/nens/lizard-client/commit/4073f0c))
+* **rasters:** Temporal raster vectorizable and with legend too. ([ebd6cce](https://github.com/nens/lizard-client/commit/ebd6cce))
+
+
+
 <a name="4.4.0"></a>
 # [4.4.0](https://github.com/nens/lizard-client/compare/v4.3.0...v4.4.0) (2016-12-02)
 
