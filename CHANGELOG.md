@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.5.1"></a>
+## [4.5.1](https://github.com/nens/lizard-client/compare/v4.5.0...v4.5.1) (2016-12-07)
+
+
+### Bug Fixes
+
+* **dashboard:** display timeseries on left screen edge, everything else in card-content padded 10px from left ([6098212](https://github.com/nens/lizard-client/commit/6098212))
+* **omnibox:** Revert horizontal stack in hectares ([#774](https://github.com/nens/lizard-client/issues/774)) ([1b516f0](https://github.com/nens/lizard-client/commit/1b516f0))
+
+
+
 <a name="4.5.0"></a>
 # [4.5.0](https://github.com/nens/lizard-client/compare/v4.4.0...v4.5.0) (2016-12-07)
 
