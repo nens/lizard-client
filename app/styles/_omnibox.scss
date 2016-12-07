@@ -615,9 +615,13 @@
 .card-content {
   padding-top: 10px;
   padding-bottom: 10px;
-  padding-left: 0;
+  padding-left: 10px;
   padding-right: 15px;
   color: $asbestos;
+
+  &.hug-left {
+    padding-left: 0;
+  }
 
   .card-content-list {
     position: relative;
