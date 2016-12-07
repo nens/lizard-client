@@ -29,18 +29,19 @@
         </dl>
       </div>
 
-      <em class="card-content-list" ng-if="noTimeseries && asset.entity_name !== 'leveecrosssection'" translate>
+      <em class="card-content-list"
+          ng-if="noTimeseries && asset.entity_name !== 'leveecrosssection'"
+          translate>
         No timeseries available for this asset
       </em>
 
-      <div id="drag-container">
+      <div id="drag-container" ng-if="!noTimeseries">
         <div
           ng-repeat="ts in selected.timeseries | orderBy : ['-active', '+order']"
           ng-if="getTsMetaData(ts.uuid)"
           ng-show="extended || ts.active || isOneOfFirstThree(ts.uuid)"
           data-uuid="<% ts.uuid %>"
-          class="draggable-ts">
-
+          class="draggable-ts animate-repeat">
           <div
             id="<% ts.uuid %>"
             ng-click="toggleTimeseries(ts);"
@@ -68,7 +69,13 @@
 
           <color-picker></color-picker>
         </div>
-        <a href="#" translate ng-click="extended = !extended">Show <% extended ? 'less' : 'more' %></a>
+        <div class="card-content-list clickable">
+          <a style='cursor:pointer;'
+             translate
+             ng-click="extended = !extended">
+            <% extended ? '▴' : '▸' %>&nbsp;&nbsp;<% extended ? 'Less' : 'More' %> timeseries
+          </a>
+        </div>
       </div>
 
       <db-geometry-cards
