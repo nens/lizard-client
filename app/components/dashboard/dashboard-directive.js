@@ -17,7 +17,7 @@ angular.module('dashboard')
     var link = function (scope, element, attrs) {
 
       scope.dashboard = {
-        graphs: DashboardService.graphs,
+        graphs: [],
         state: State
       };
 
@@ -29,7 +29,13 @@ angular.module('dashboard')
         TimeseriesService.minPoints =
           element.width() - DashboardService.GRAPH_PADDING;
 
-        scope.dashboard.graphs = DashboardService.buildGraphs();
+        scope.dashboard.graphs = DashboardService.buildGraphs(
+          scope.dashboard.graphs,
+          TimeseriesService.timeseries,
+          DataService.assets,
+          DataService.geometries,
+          State.selections
+        );
 
         _.forEach(scope.dashboard.graphs, function (graph) {
           graph.dimensions = DashboardService.getDimensions(
