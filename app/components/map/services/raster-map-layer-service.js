@@ -248,8 +248,16 @@ angular.module('map')
             var legendDataForCurrentLayer = LegendService.rasterData.continuous[
               rasterMapLayer.uuid];
             if (legendDataForCurrentLayer !== undefined) {
-              legendDataForCurrentLayer.min = UtilService.round(data[0][0], 3);
-              legendDataForCurrentLayer.max = UtilService.round(data[0][1], 3);
+              legendDataForCurrentLayer.min = data[0][0];
+              legendDataForCurrentLayer.max = data[0][1];
+            }
+            else {
+              // Legends are loaded asynchronous, rescale might be done before
+              // the legend is there.
+              LegendService.rasterData.continuous[rasterMapLayer.uuid] = {
+                min: data[0][0],
+                max: data[0][1]
+              };
             }
             // strip existing domain if already present.
             rasterMapLayer.complexWmsOptions.styles = rasterMapLayer
