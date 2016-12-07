@@ -15,13 +15,12 @@
                ng-if="rasterIsVectorized(uuid)">
             </i>
           </a>
-          <i ng-show="legend.data.discrete[uuid].length > 0" translate>
+          <i ng-show="legend.data.discrete[uuid].length > 0">
             <span ng-if="hasMoreCategoriesAvailableThanDefault(uuid)">
 
               <a href=""
                  ng-click="toggleShowAllCategories(uuid)"
-                 class="toggle-categories-shown"
-                 translate>
+                 class="toggle-categories-shown">
                 <i ng-if="!showingAllCategories(uuid)"
                    class="fa fa-lg fa-caret-left"></i>
                 <i ng-if="showingAllCategories(uuid)"
@@ -41,8 +40,7 @@
           </div>
           <div class="discrete-legend-label"
                ng-class="{'discrete-legend-label-selected': getDiscreteRasterCategory(uuid) === datum.class,
-                          'discrete-legend-label-selectable': rasterIsVectorized(uuid)}"
-               translate>
+                          'discrete-legend-label-selectable': rasterIsVectorized(uuid)}">
             <% datum.label === -1 ? 'other' : datum.label %>
           </div>
         </div>
@@ -71,33 +69,17 @@
 
             <table>
               <tr class="continuous-raster-table-row">
-                <td class="continuous-raster-table-key">Absolute minimum</td>
+                <td class="continuous-raster-table-key" translate>minimum:</td>
                 <td class="continuous-raster-table-value"
-                    ng-bind="rasterData.colormap.data[0][0]"></td>
+                    ng-bind="rasterData.min.toPrecision(3)"></td>
                 <td class="continuous-raster-table-unit"
                     ng-bind="rasterData.unit">
               </tr>
 
-               <tr class="continuous-raster-table-row">
-                <td class="continuous-raster-table-key">Extent minimum</td>
+              <tr class="continuous-raster-table-row row-max">
+                <td class="continuous-raster-table-key" translate>maximum:</td>
                 <td class="continuous-raster-table-value"
-                    ng-bind="rasterData.min"></td>
-                <td class="continuous-raster-table-unit"
-                    ng-bind="rasterData.unit">
-              </tr>
-
-              <tr class="continuous-raster-table-row">
-                <td class="continuous-raster-table-key">Extent maximum</td>
-                <td class="continuous-raster-table-value"
-                    ng-bind="rasterData.max"></td>
-                <td class="continuous-raster-table-unit"
-                    ng-bind="rasterData.unit">
-              </tr>
-
-              <tr class="continuous-raster-table-row">
-                <td class="continuous-raster-table-key">Absolute maximum</td>
-                <td class="continuous-raster-table-value"
-                    ng-bind="rasterData.colormap.data[rasterData.colormap.data.length - 1][0]"></td>
+                    ng-bind="rasterData.max.toPrecision(3)"></td>
                 <td class="continuous-raster-table-unit"
                     ng-bind="rasterData.unit">
               </tr>

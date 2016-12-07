@@ -170,8 +170,6 @@ angular.module('legend')
       scope.state.spatial.bounds,
       scope.state.layers
     );
-
-
   };
 
 
