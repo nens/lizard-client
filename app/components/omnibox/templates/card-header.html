@@ -12,12 +12,13 @@
       </span>
 
       <span class="asset-title">
-        <% asset.entity_name | objectTitle | translate %>
+        <strong style="font-weight:bolder;"><% asset.name | objectTitle | translate %></strong>&nbsp;
+        <span style="color:#727272;font-weight:lighter;"><% asset.code | objectTitle | translate %></span>
       </span>
 
       <br>
 
-      <em><% asset.code %></em>
+      <span style="margin-left:38px;font-size: 0.75em;font-weight:lighter;"><% asset.entity_name | objectTitle | translate %></span>
 
   </div>
 
