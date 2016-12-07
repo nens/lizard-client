@@ -4,22 +4,21 @@
     <close-card asset="asset"></close-card>
 
       <span class="icons fa-stack fa-lg">
-        <i class="fa fa-circle fa-stack-2x"
-           style="color:#ffffff;font-size:2.4em;"></i>
+        <i class="fa fa-circle fa-stack-2x iconcircle"></i>
         <i class="asset-icon"
            ng-class="getIconClass(asset.entity_name)">
         </i>
       </span>
 
       <span class="asset-title">
-        <strong style="font-weight:bolder;"><% asset.name | objectTitle | translate %></strong>
+        <strong class="asset-name"><% asset.name | objectTitle | translate %></strong>
         <span ng-if="asset.name">&nbsp;</span>
-        <span style="color:#727272;font-weight:lighter;"><% asset.code | objectTitle | translate %></span>
+        <span class="asset-code"><% asset.code | objectTitle | translate %></span>
       </span>
 
       <br>
 
-      <span style="margin-left:38px;font-size: 0.75em;font-weight:lighter;"><% asset.entity_name | objectTitle | translate %></span>
+      <span class="asset-entity-name"><% asset.entity_name | objectTitle | translate %></span>
 
   </div>
 

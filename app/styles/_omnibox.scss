@@ -41,6 +41,10 @@
     }
 }
 
+.omniboxWrapper {
+  z-index:999 !important;
+}
+
 #omnibox.active {
   height: 100%;
   background-color: none;
@@ -567,13 +571,33 @@
         padding-top: 10px;
     }
 
+    .iconcircle {
+      color: #ffffff;
+      font-size: 2.4em;
+    }
+
     .asset-icon {
         top: -4px;
         left: 5px;
         color: #94A5A6;
         position: absolute;
         top: 20px;
-        left:8px;
+        left: 8px;
+    }
+
+    .asset-code {
+      color: #727272;
+      font-weight: lighter;
+    }
+
+    .asset-entity-name {
+      margin-left: 38px;
+      font-size: 0.75em;
+      font-weight: lighter;
+    }
+
+    .asset-name {
+      font-weight: bolder;
     }
 
     .asset-title {
@@ -612,6 +636,11 @@
 
   .card-content-list.active .card-content-colorhandle {
     width: 20px;
+  }
+
+  .lessmore {
+    border-bottom: none;
+    padding-bottom: 0;
   }
 
   .card-content-colorhandle {
