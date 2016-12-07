@@ -219,6 +219,9 @@
   overwrite the sass files before compilation, but we use compiled css of vendor
   packages. Hence, this error prone list.
  */
+.ps-scrollbar-y-rail {
+  z-index: 999999 !important;
+}
 .ps-container.ps-in-scrolling.ps-x > .ps-scrollbar-x-rail {
   background-color: $clouds;
 }
