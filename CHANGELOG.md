@@ -2,16 +2,6 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-<a name="4.5.0"></a>
-# [4.5.0](https://github.com/nens/lizard-client/compare/v4.4.0...v4.5.0) (2016-12-05)
-
-
-### Features
-
-* **rasters:** Temporal raster vectorizable and with legend too. ([ebd6cce](https://github.com/nens/lizard-client/commit/ebd6cce))
-
-
-
 <a name="4.4.0"></a>
 # [4.4.0](https://github.com/nens/lizard-client/compare/v4.3.0...v4.4.0) (2016-12-02)
 
