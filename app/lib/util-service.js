@@ -625,16 +625,18 @@ angular.module('lizard-nxt')
    */
   this.getIconClass = function (str) {
     switch (str) {
+    case 'filter':
+      return 'fa fa-filter';
     case 'pumpstation':
-      return 'icon-pumpstation-diesel';
+      return 'lz lz-pumpstation-diesel';
     case 'bridge':
-      return 'icon-bridge';
+      return 'lz lz-bridge';
     case 'bridge-draw':
-      return 'icon-bridge';
+      return 'lz lz-bridge-draw';
     case 'bridge-fixed':
-      return 'icon-bridge';
+      return 'lz lz-bridge-fixed';
     default:
-      return 'icon-' + str;
+      return 'lz lz-' + str;
     }
   };
 
