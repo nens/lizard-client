@@ -131,8 +131,10 @@ angular.module('lizard-boostrap', ['favourites'])
       .then(
         function (response) {
           var bootstrap = response.data;
+          // Set injected angular values: user and version.
           _.merge(user, bootstrap.user);
-          _.merge(version, bootstrap.version);
+          version.full = bootstrap.version;
+          version.revision = bootstrap.revision;
           if (applyState) {
             FavouritesService.applyFavourite(bootstrap);
             FavouritesService.applyFavourite({state: urlState});
