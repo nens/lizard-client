@@ -198,7 +198,7 @@ angular.module('map')
       };
 
       rasterMapLayer.remove = function (map, layer) {
-        if (layer.vectorized) {
+        if (layer && layer.vectorized) {
           rasterMapLayer.removeVectorized(map, true);
         } else {
           rasterMapLayer.removeWms(map);
