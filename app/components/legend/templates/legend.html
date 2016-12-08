@@ -67,25 +67,17 @@
 
           <div class="continuous-raster-numeric-data">
 
-            <table>
-              <tr class="continuous-raster-table-row">
-                <td class="continuous-raster-table-key" translate>minimum:</td>
-                <td class="continuous-raster-table-value"
-                    ng-bind="rasterData.min.toPrecision(3)"></td>
-                <td class="continuous-raster-table-unit"
-                    ng-bind="rasterData.unit">
-              </tr>
+            <div class="continuous-legend-top-row">
+              <span ng-bind="rasterData.max.toPrecision(3)"></span>
+              <span ng-bind="rasterData.unit"></span>
+            <div>
 
-              <tr class="continuous-raster-table-row row-max">
-                <td class="continuous-raster-table-key" translate>maximum:</td>
-                <td class="continuous-raster-table-value"
-                    ng-bind="rasterData.max.toPrecision(3)"></td>
-                <td class="continuous-raster-table-unit"
-                    ng-bind="rasterData.unit">
-              </tr>
-            </table>
+            <div class="continuous-legend-bottom-row">
+              <span ng-bind="rasterData.min.toPrecision(3)"></span>
+              <span ng-bind="rasterData.unit"></span>
+            <div>
+
           </div>
-
         </div>
       </div>
   </div>
