@@ -60,10 +60,17 @@ angular.module('legend')
       $http.get(COLORMAP_URL + styles + "/").then(function (result) {
         var colormap = result.data.definition;
         colormaps[uuid] = colormap;
-        this.rasterData.continuous[uuid].colormap = colormap;
-        this.rasterData.continuous[uuid].min = colormap.data[0][0];
-        this.rasterData.continuous[uuid].max = colormap.data[
-          colormap.data.length - 1][0];
+        var layer = _.find(State.layers, {uuid: uuid});
+        if (layer && layer.active) {
+          this.rasterData.continuous[uuid].colormap = colormap;
+          if (!this.rasterData.continuous[uuid].hasOwnsProperty('min')) {
+            this.rasterData.continuous[uuid].min = colormap.data[0][0];
+          }
+          if (!this.rasterData.continuous[uuid].hasOwnsProperty('max')) {
+            this.rasterData.continuous[uuid].max = colormap.data[
+              colormap.data.length - 1][0];
+          }
+        }
       }.bind(this));
     };
 
