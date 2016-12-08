@@ -94,11 +94,11 @@ angular.module('legend')
 
       suffix = suffix.substring(0, suffix.length - 1) + ")";
 
-      var gradientValue0 = "background: -moz-linear-gradient("
+      var gradientValue0 = "background: -moz-linear-gradient(bottom, "
         + suffix;
-      var gradientValue1 = "background: -webkit-linear-gradient("
+      var gradientValue1 = "background: -webkit-linear-gradient(bottom, "
         + suffix;
-      var gradientValue2 = "background: -ms-linear-gradient("
+      var gradientValue2 = "background: -ms-linear-gradient(bottom, "
         + suffix;
 
       return gradientValue0 + "; " + gradientValue1 + "; " + gradientValue2;
@@ -109,9 +109,18 @@ angular.module('legend')
     scope.selectedRasterName = null;
 
     scope.getAllRasterUuids = function () {
-      var cRasterNames = Object.keys(scope.legend.data.continuous);
-      var dRasterNames = Object.keys(scope.legend.data.discrete);
-      return cRasterNames.concat(dRasterNames);
+      var allRasterNames = [];
+      _.forEach(scope.legend.data.continuous, function (v, k) {
+        if (scope.legend.data.continuous[k] !== undefined) {
+          allRasterNames.push(k);
+        }
+      });
+      _.forEach(scope.legend.data.discrete, function (v, k) {
+        if (scope.legend.data.discrete[k] !== undefined) {
+          allRasterNames.push(k);
+        }
+      });
+      return allRasterNames;
     };
 
     scope.rasterIsSelected = function (uuid) {
