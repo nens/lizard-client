@@ -198,11 +198,8 @@ angular.module('map')
       };
 
       rasterMapLayer.remove = function (map, layer) {
-        if (layer.vectorized) {
-          rasterMapLayer.removeVectorized(map, true);
-        } else {
-          rasterMapLayer.removeWms(map);
-        }
+        rasterMapLayer.removeVectorized(map, true);
+        rasterMapLayer.removeWms(map);
       };
 
       rasterMapLayer.removeVectorized = function (map, clearActiveCategory) {
