@@ -177,7 +177,7 @@ angular.module('dashboard')
     };
   };
 
-    /**
+  /**
    * Transforms property data into a format that is plottable in a graph.
    *
    * @return {Object} item: the transformed property; type: the graph type.
@@ -188,6 +188,7 @@ angular.module('dashboard')
     var item = {};
     if (property.format !== 'Vector') {
       item = {
+        color: property.color,
         data: property.data,
         keys: {x: 0, y: 1},
         unit: property.unit,
@@ -240,10 +241,8 @@ angular.module('dashboard')
       var selection = selectedTest(rasterID);
       if(selection && selection.active){
         property.color = selection.color;
-        property.order = selection.order;
         var graph = graphs[selection.order];
         var typeContent = typeContentFromProperty(property);
-        console.log('typeContent', typeContent, selection);
         if (graph && typeContent.type === graph.type) {
           graph.content.push(typeContent.content[0]);
         } else {
@@ -259,6 +258,5 @@ angular.module('dashboard')
   var getGraphHeight = function (element, nGraphs) {
     return (element.height() - ROW_BOTTOM_MARGIN * nGraphs) / nGraphs;
   };
-
 
 }]);

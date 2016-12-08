@@ -63,7 +63,7 @@
               ng-click="toggleSelection(selection)"
               class="card-content-list clickable">
               <i class="fa fa-line-chart"></i>
-              <span ng-class="{'text-primary bg-warning': metaData.active}">
+              <span ng-class="{'text-primary bg-warning': selection.active}">
                 <% metaData.quantity %>, (<% metaData.unit %>)
               </span>
             </div>
