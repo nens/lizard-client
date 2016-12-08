@@ -115,7 +115,7 @@ angular.module('map')
       rasterMapLayer._updateStyling = function (properties) {
         var color = '#fff';
         if (properties.raster && properties.raster.color) {
-          if (properties.raster.fraction) {
+          if (properties.raster.hasOwnProperty('fraction')) {
             color = (new Chromath('white'))
               .towards(properties.raster.color, properties.raster.fraction)
               .toString();

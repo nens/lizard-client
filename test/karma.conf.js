@@ -41,7 +41,6 @@ module.exports = function(config) {
       'vendor/angular-sanitize/angular-sanitize.js',
       'vendor/ng-csv/build/ng-csv.min.js',
       'vendor/notie/dist/notie.js',
-      'vendor/perfect-scrollbar/js/perfect-scrollbar.jquery.js',
       'vendor/perfect-scrollbar/js/perfect-scrollbar.js',
       'vendor/raven-js/dist/raven.js',
       // endbower
