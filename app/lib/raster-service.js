@@ -19,11 +19,13 @@ angular.module('lizard-nxt')
         agg = options.agg || '',
         startString,
         endString,
-        aggWindow;
+        aggWindow,
+        atString;
 
     if (options.start && options.end) {
       startString = new Date(options.start).toISOString().split('.')[0];
       endString = new Date(options.end).toISOString().split('.')[0];
+      atString = new Date(State.temporal.at).toISOString().split('.')[0];
     }
 
     aggWindow = options.aggWindow || State.temporal.aggWindow;
@@ -44,7 +46,6 @@ angular.module('lizard-nxt')
       if (cancelers[options.uuid]) {
         cancelers[options.uuid].resolve();
       }
-
       canceler = cancelers[options.uuid] = $q.defer();
     }
 
@@ -53,6 +54,7 @@ angular.module('lizard-nxt')
       srs: srs,
       start: startString,
       stop: endString,
+      at: atString,
       agg: agg,
       window: aggWindow
     };

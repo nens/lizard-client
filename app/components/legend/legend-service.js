@@ -49,6 +49,11 @@ angular.module('legend')
       };
     };
 
+    this.rasterIsTemporal = function (uuid) {
+      var dataLayerObj = _.find(DataService.dataLayers, {uuid: uuid});
+      return dataLayerObj && dataLayerObj.temporal;
+    };
+
     var rasterIsDiscrete = function (dataLayerObj) {
       return dataLayerObj.scale === "nominal" || dataLayerObj.scale === "ordinal";
     };

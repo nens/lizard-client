@@ -173,6 +173,17 @@ angular.module('legend')
       LegendService.updateLegendData(n, scope.state.layers);
     });
 
+    scope.$watch('state.temporal.at', function (n, o) {
+      if (n === o) { return; }
+      var temporalLayers = [];
+      _.forEach(scope.state.layers, function (layer) {
+        if (LegendService.rasterIsTemporal(layer.uuid)) {
+          temporalLayers.push(layer);
+        }
+      });
+      LegendService.updateLegendData(scope.state.spatial.bounds, temporalLayers);
+    });
+
     scope.legend.data = LegendService.rasterData;
 
     LegendService.updateLegendData(
