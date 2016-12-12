@@ -3,8 +3,8 @@
  * Timeseries directive.
  */
 angular.module('timeseries')
-.directive('timeseries', ['TimeseriesService', 'State',
-  function (TimeseriesService, State) {
+.directive('timeseries', ['SelectionService', 'State',
+  function (SelectionService, State) {
   return {
     link: function (scope) {
       scope.state = State; // TODO: only done this to watch state.layers. There is a better place for this.
@@ -17,14 +17,14 @@ angular.module('timeseries')
         selectionType = 'geom';
       }
       scope.$watch('state.layers', function () { // TODO: There is a better place for this.
-        TimeseriesService.initializeRasterTimeseries(selectionObject, selectionType);
+        SelectionService.initializeRaster(selectionObject, selectionType);
       });
 
       scope.$watch(selectionType, function () {
         if (selectionType === 'asset'){
-          TimeseriesService.initializeTimeseriesOfAsset(selectionObject);
+          SelectionService.initializeAsset(selectionObject);
         }
-        TimeseriesService.initializeRasterTimeseries(selectionObject, selectionType);
+        SelectionService.initializeRaster(selectionObject, selectionType);
 
         if (State.context === 'map') {
           scope.timeseries.change();

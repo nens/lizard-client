@@ -108,7 +108,7 @@ angular.module('omnibox')
           }
 
           selection.active = false;
-          DBCardsService.removeItemFromPlot(selection);
+          DBCardsService.removeSelectionFromPlot(selection);
         }
 
         var tsMetaData = SelectionService.timeseriesMetaDataFunction(

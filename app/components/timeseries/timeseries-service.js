@@ -44,7 +44,6 @@ angular.module('timeseries')
 
     this.minPoints = GRAPH_WIDTH; // default
 
-
     var _selections = [];
     Object.defineProperty(State, 'selections', {
       get: function () { return _selections; },
@@ -245,96 +244,6 @@ angular.module('timeseries')
       return err; // continue anyway
     };
 
-    var _rasterComparatorFactory = function (comparatorType) {
-      return function (existingSelection, newSelection) {
-        return existingSelection.type === "raster" &&  // prevent undefined === undefined = true for raster
-          existingSelection[comparatorType] &&  // prevent undefined === undefined = true for comparator type
-          existingSelection.raster === newSelection.raster &&
-          existingSelection[comparatorType] === newSelection[comparatorType]; // only keep one selection if both raster and comparator type are equal
-    }};
-
-    var _timeseriesComparator = function(existingSelection, newSelection){
-        return existingSelection.type === "timeseries" &&
-            existingSelection.timeseries === newSelection.timeseries;
-    };
-
-    /**
-     * Generates UUID
-     *
-     * Taken from:
-     * http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/#answer-2117523
-     *
-     * Disclaimer:
-     * Since we use Math.random there is a somewhat higher chance of collision
-     * than other higher quality random number generator like we use in the
-     * Lizard backend.
-     */
-    var uuidGenerator = function(){
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,
-      function(c) {
-        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-        return v.toString(16);
-      });
-    };
-
-    /**
-     * initializes timeseries selections for a certain asset.
-     *
-     * @param  {object} asset   a DataService asset with timeseries.
-     * @return {object} asset or geometry data.
-     */
-    this.initializeTimeseriesOfAsset = function (asset) {
-      var colors = UtilService.GRAPH_COLORS;
-      State.selections = _.unionWith(
-        State.selections,
-        asset.timeseries.map(function (ts, i) {
-          return {
-            uuid: uuidGenerator(),
-            type: "timeseries",
-            timeseries: ts.uuid,
-            active: false,
-            order: 0,
-            color: colors[i % (colors.length - 1)],
-            measureScale: ts.scale
-          };
-        }),
-        _timeseriesComparator
-      );
-      return asset;
-    };
-
-    /**
-     * initializes timeseries selections for a certain asset or geometry.
-     *
-     * @param  {object} asset|geometry  a DataService asset with timeseries.
-     * @return {object} asset or geometry data.
-     */
-    this.initializeRasterTimeseries = function (geomObject, geomType) {
-      var geomId = geomType === 'asset' ?
-        geomObject.entity_name + "$" + geomObject.id :
-        geomObject.geometry.coordinates.toString();
-      var colors = UtilService.GRAPH_COLORS;
-      State.selections = _.unionWith(
-        State.selections,
-        _.filter(State.layers,
-            function(layer) {return layer.type === 'raster'}
-        ).map(function (layer, i) {
-          var rasterSelection  = {
-            uuid: uuidGenerator(),
-            type: "raster",
-            raster: layer.uuid,
-            active: false,
-            order: 0,
-            color: colors[i + 8 % (colors.length - 1)],
-            measureScale: layer.scale
-          };
-          rasterSelection[geomType] = geomId;
-          return rasterSelection;
-        }),
-        _rasterComparatorFactory(geomType)
-      );
-      return geomObject;
-    };
   }
 
 ]);
@@ -427,8 +336,8 @@ angular.module('timeseries')
         id: '', //uuid
         data: [],
         unit: '',
-        color: '', // Defined on asset.timeseries
-        order: '', // Defined on asset.timeseries
+        color: '', // Defined on State.selections
+        order: '', // Defined on State.selections
         valueType: '',
         labels: {
           x: '',
@@ -439,6 +348,8 @@ angular.module('timeseries')
 
       var result = [];
       timeseries.forEach(function (ts) {
+        var tsSelection = _.find(State.selections, function (s) {
+          return s.timeseries === ts.uuid });
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
         graphTimeseries.data = ts.events;
         if (graphTimeseries.data && graphTimeseries.data.length > 0) {
@@ -452,6 +363,8 @@ angular.module('timeseries')
             graphTimeseries.keys.y = yKey[0];
           }
         }
+        graphTimeseries.order = tsSelection.order;
+        graphTimeseries.color = tsSelection.color;
         graphTimeseries.id = ts.uuid;
         graphTimeseries.valueType = ts.value_type;
         graphTimeseries.measureScale = ts.observation_type.scale;

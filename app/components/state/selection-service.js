@@ -6,7 +6,10 @@ angular.module('global-state')
     'DataService',
     'DBCardsService',
     'TimeseriesService',
-    function (DataService, DBCardsService, TimeseriesService) {
+    'UtilService',
+    'State',
+    function (
+      DataService, DBCardsService, TimeseriesService, UtilService, State) {
 
     /**
      * Checks whether this datatype is supported for graphs.
@@ -127,26 +130,118 @@ angular.module('global-state')
      *                  to the geometry.
      */
     var toggleSelection = function (selection) {
-
       if (!selection.active) {
         var plots = DBCardsService.getActiveCountAndOrder();
         selection.order = plots.count > 0
           ? plots.order + 1
           : 0;
       } else {
-        DBCardsService.removeItemFromPlot(selection);
+        DBCardsService.removeSelectionFromPlot(selection);
       }
-
       selection.active = !selection.active;
+
       if (DataService.onSelectionsChange) {
         DataService.onSelectionsChange();
       }
       TimeseriesService.syncTime();
     };
 
+    var _rasterComparatorFactory = function (comparatorType) {
+      return function (existingSelection, newSelection) {
+        return existingSelection.type === "raster" &&  // prevent undefined === undefined = true for raster
+          existingSelection[comparatorType] &&  // prevent undefined === undefined = true for comparator type
+          existingSelection.raster === newSelection.raster &&
+          existingSelection[comparatorType] === newSelection[comparatorType]; // only keep one selection if both raster and comparator type are equal
+    }};
+
+    var _timeseriesComparator = function(existingSelection, newSelection){
+        return existingSelection.type === "timeseries" &&
+            existingSelection.timeseries === newSelection.timeseries;
+    };
+
+    /**
+     * Generates UUID
+     *
+     * Taken from:
+     * http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/#answer-2117523
+     *
+     * Disclaimer:
+     * Since we use Math.random there is a somewhat higher chance of collision
+     * than other higher quality random number generator like we use in the
+     * Lizard backend.
+     */
+    var uuidGenerator = function(){
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,
+      function(c) {
+        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+        return v.toString(16);
+      });
+    };
+
+    /**
+     * initializes timeseries selections for a certain asset.
+     *
+     * @param  {object} asset   a DataService asset with timeseries.
+     * @return {object} asset or geometry data.
+     */
+    var initializeAssetSelections = function (asset) {
+      var colors = UtilService.GRAPH_COLORS;
+      State.selections = _.unionWith(
+        State.selections,
+        asset.timeseries.map(function (ts, i) {
+          return {
+            uuid: uuidGenerator(),
+            type: "timeseries",
+            timeseries: ts.uuid,
+            active: false,
+            order: 0,
+            color: colors[i % (colors.length - 1)],
+            measureScale: ts.scale
+          };
+        }),
+        _timeseriesComparator
+      );
+      return asset;
+    };
+
+    /**
+     * initializes timeseries selections for a certain asset or geometry.
+     *
+     * @param  {object} asset|geometry  a DataService asset with timeseries.
+     * @return {object} asset or geometry data.
+     */
+    var initializeRasterSelections = function (geomObject, geomType) {
+      var geomId = geomType === 'asset' ?
+        geomObject.entity_name + "$" + geomObject.id :
+        geomObject.geometry.coordinates.toString();
+      var colors = UtilService.GRAPH_COLORS;
+      State.selections = _.unionWith(
+        State.selections,
+        _.filter(State.layers,
+            function(layer) {return layer.type === 'raster'}
+        ).map(function (layer, i) {
+          var rasterSelection  = {
+            uuid: uuidGenerator(),
+            type: "raster",
+            raster: layer.uuid,
+            active: false,
+            order: 0,
+            color: colors[i + 8 % (colors.length - 1)],
+            measureScale: layer.scale
+          };
+          rasterSelection[geomType] = geomId;
+          return rasterSelection;
+        }),
+        _rasterComparatorFactory(geomType)
+      );
+      return geomObject;
+    };
+
     return {
       timeseriesMetaDataFunction: getTimeseriesMetaData,
       rasterMetaDataFunction: getRasterMetaData,
+      initializeAsset: initializeAssetSelections,
+      initializeRaster: initializeRasterSelections,
       getMetaDataFunction: getMetaData,
       dbSupportedData: dbSupportedData,
       toggle: toggleSelection

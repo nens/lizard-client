@@ -14,10 +14,11 @@ angular.module('data-menu')
        * @param  {object} asset
        */
       var removeTSofAsset = function (asset) {
-        State.selections = _.differenceBy(
+        State.selections = _.differenceWith(
           State.selections,
           asset.timeseries,
-          'uuid'
+          function(selectionTs, assetTs) {
+            return selectionTs.timeseries === assetTs.uuid; }
         );
       };
 

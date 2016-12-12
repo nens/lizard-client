@@ -64,29 +64,30 @@ angular.module('dashboard')
 
     timeseries.forEach(function (ts) {
       var selection = (selected('timeseries', ts.id, undefined));
-      if (selection) {
+      if (selection && selection.active) {
         ts.updated = true;
-        if (graphs[ts.order]) {
+        ts.color = selection.color;
+        ts.order = selection.order;
+        if (graphs[selection.order]) {
           // Check if timeseries is already in the plot, if so replace data.
 
-          var partOfContent =_.find(graphs[ts.order].content, function (c) {
-            return c.id === ts.id;
-          });
+          var partOfContent =_.find(graphs[selection.order].content,
+            function (c) { return c.id === ts.id; });
           if (partOfContent) {
             partOfContent.data = ts.data;
-            partOfContent.color = ts.color;
+            partOfContent.color = selection.color;
             // Keep this graph
             partOfContent.updated = true;
           } else {
-            graphs[ts.order].content.push(ts);
+            graphs[selection.order].content.push(ts);
           }
         }
         else {
           var content = [ts];
-          graphs[ts.order] = { 'content': content };
+          graphs[selection.order] = { 'content': content };
         }
 
-      graphs[ts.order].type = ts.valueType === 'image' ? 'image' :
+      graphs[selection.order].type = ts.valueType === 'image' ? 'image' :
           ts.measureScale === 'ratio'? 'temporalBar': 'temporalLine';
       }
     });
@@ -156,7 +157,7 @@ angular.module('dashboard')
    * Creates a dimensions object for graph-directive.
    *
    * @param  {angular element} element   element to draw graphs in.
-   * @param  {[int}            nGraphs   number of graphs in dashboard.
+   * @param  {int}            nGraphs   number of graphs in dashboard.
    * @param  {boolean}         showXAxis should be true for non temporal graphs.
    * @return {object}          dimension object per graph.
    */
@@ -193,7 +194,8 @@ angular.module('dashboard')
         keys: {x: 0, y: 1},
         unit: property.unit,
         // TODO: xLabel is not always meters.
-        xLabel: 'm'
+        xLabel: 'm',
+        updated: true
       };
 
       if (slug === 'rain') {
@@ -220,7 +222,8 @@ angular.module('dashboard')
           color: 'color',
           category: 'category'
         },
-        unit: property.unit
+        unit: property.unit,
+        updated: true
       };
 
       type = 'event';
@@ -231,10 +234,10 @@ angular.module('dashboard')
   /**
    * Adds DataService.[assets|geometries].properties to dashboard graphs object.
    *
-   * @param {object} graphs        dashboard graph object.
-   * @param {object} properties    asset or geometries properties.
-   * @param {function} selectedTest
-   * @return {array} graph
+   * @param {array} graphs         Currently plotted graphs.
+   * @param {object} properties     asset or geometries properties.
+   * @param {function} selectedTest function that returns wether the properties
+   *                                are also selected.
    */
   var addPropertyData = function (graphs, properties, selectedTest) {
     _.forEach(properties, function (property, rasterID) {
@@ -251,7 +254,6 @@ angular.module('dashboard')
         var indexOflast = graphs[selection.order].content.length - 1;
         graphs[selection.order].content[indexOflast].updated = true;
     }});
-    console.log('GRAPHS', graphs);
     return graphs;
   };
 

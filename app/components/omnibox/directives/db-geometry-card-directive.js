@@ -27,13 +27,16 @@ angular.module('omnibox')
          */
         scope.$watch('geom.properties', function (n, o) {
 
-          _.forEach(scope.geom.properties, function (property, slug) {
-            if (property.active === undefined
+          _.forEach(scope.geom.properties, function (property, uuid) {
+            var selection = _.find(State.selections, function(s) {
+              return s.geom === scope.geom.geometry.coordinates.toString() && s.raster === uuid
+            });
+            if (selection.active === undefined
               && SelectionService.dbSupportedData(
                 scope.geom.geometry.type,
                 property
               )) {
-              scope.toggleProperty(property);
+              scope.toggleSelection(selection);
             }
           });
 
@@ -47,36 +50,16 @@ angular.module('omnibox')
 
         scope.toggleSelection = SelectionService.toggle;
 
-        scope.toggleProperty = function (property) {
-
-          if (!property.active) {
-            var plots = DBCardsService.getActiveCountAndOrder();
-
-            // On toggle, add seperate graph. Give order of highest order + 1.
-            property.order = plots.count > 0
-              ? plots.order + 1
-              : 0;
-            property.active = true;
-          }
-
-          else {
-            DBCardsService.removeItemFromPlot(property);
-            property.active = false;
-          }
-
-          if (DataService.onGeometriesChange) {
-            DataService.onGeometriesChange();
-          }
-
-        };
-
         scope.$on('$destroy', function () {
-          _.forEach(scope.geom.properties, function (property) {
-            property.active = true;
-            scope.toggleProperty(property);
-            // Activity of property should not be defined when creating
+          _.forEach(scope.geom.properties, function (property, uuid) {
+            var selection = _.find(State.selections, function(s) {
+              return s.geom === scope.geom.geometry.coordinates.toString() && s.raster === uuid
+            });
+            selection.active = true;
+            scope.toggleSelection(selection);
+            // Activity of selection should not be defined when creating
             // dashboard.
-            property.active = undefined;
+            selection.active = undefined;
           });
         });
 

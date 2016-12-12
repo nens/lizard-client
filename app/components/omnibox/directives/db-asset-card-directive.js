@@ -41,7 +41,7 @@ angular.module('omnibox')
           asset.crosssection.active = true;
 
         } else {
-          DBCardsService.removeItemFromPlot(asset.crosssection);
+          DBCardsService.removeSelectionFromPlot(asset.crosssection);
           asset.crosssection.active = false;
         }
 
