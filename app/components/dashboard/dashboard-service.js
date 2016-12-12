@@ -48,22 +48,26 @@ angular.module('dashboard')
     graphs = this._setAllContentToNotUpdated(graphs);
 
   /**
-   * Checks if a selectable data item is in selections.
+   * Checks if a selectable data item is in selections and returns it.
    *
    * @param  {array} selectiontype  timeseries, geom, asset, ... etc.
    * @param  {array} selectionId    Data source timeseries from timseriesService.
    * @param  {array} rasterId       Data source DataService.assets.
-   * @return {boolean}              whether data item is in selections
+   * @return {function}             returns a function that returns a selection
+   *                                based on a raster uuid or undefined () if
+   *                                no raster is available for that selection
+   *                                type.
    */
-    var selected = _.curry(function(selectiontype, selectionId, rasterId) {
-      return _.find(selections, function(selection){
-        return selection[selectiontype] === selectionId &&
-          selection.raster === rasterId;
-      });
-    });
+    var findSelection = function (selectiontype, selectionId) {
+      return function (rasterId) {
+        return _.find(selections, function(selection){
+          return selection[selectiontype] === selectionId &&
+            selection.raster === rasterId;
+        });
+      };};
 
     timeseries.forEach(function (ts) {
-      var selection = (selected('timeseries', ts.id, undefined));
+      var selection = (findSelection('timeseries', ts.id)());
       if (selection && selection.active) {
         ts.updated = true;
         ts.color = selection.color;
@@ -94,8 +98,8 @@ angular.module('dashboard')
 
     assets.forEach(function (asset) {
 
-      var selectedTest = selected('asset', asset.entity_name + "$" + asset.id);
-      graphs = addPropertyData(graphs, asset.properties, selectedTest);
+      var getSelected = findSelection('asset', asset.entity_name + "$" + asset.id);
+      graphs = addPropertyData(graphs, asset.properties, getSelected);
 
       // Specific logic to add crosssections. We could abstract this to all
       // assets with children that have timeseries.
@@ -110,9 +114,9 @@ angular.module('dashboard')
     });
 
     geometries.forEach(function (geometry) {
-      var selectedTest = selected(
+      var getSelected = findSelection(
         'geom', geometry.geometry.coordinates.toString());
-      graphs = addPropertyData(graphs, geometry.properties, selectedTest);
+      graphs = addPropertyData(graphs, geometry.properties, getSelected);
     });
 
     // Add empty graphs for undefined items.
@@ -236,12 +240,12 @@ angular.module('dashboard')
    *
    * @param {array} graphs         Currently plotted graphs.
    * @param {object} properties     asset or geometries properties.
-   * @param {function} selectedTest function that returns wether the properties
+   * @param {function} getSelected function that returns the selection
    *                                are also selected.
    */
-  var addPropertyData = function (graphs, properties, selectedTest) {
+  var addPropertyData = function (graphs, properties, getSelected) {
     _.forEach(properties, function (property, rasterID) {
-      var selection = selectedTest(rasterID);
+      var selection = getSelected(rasterID);
       if(selection && selection.active){
         property.color = selection.color;
         var graph = graphs[selection.order];
