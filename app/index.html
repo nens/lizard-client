@@ -33,7 +33,7 @@
 
   </head>
 
-  <body>
+  <body ng-class="{'dashboard': (context === 'dashboard'), 'map': (context === 'map')}">
 
     <!-- use ng-if to reiniatialize when context changes -->
     <div ng-if="context === 'map' || context === 'scenarios'">
@@ -86,6 +86,7 @@
     <script src="/vendor/bootstrap/dist/js/bootstrap.js"></script>
     <script src="/vendor/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
     <script src="/vendor/classList.js/classList.min.js"></script>
+    <script src="/vendor/chromath/dist/chromath.min.js"></script>
     <script src="/vendor/d3/d3.js"></script>
     <script src="/vendor/d3-comparator/d3-comparator.js"></script>
     <script src="/vendor/dragula/dist/dragula.js"></script>
@@ -96,7 +97,6 @@
     <script src="/vendor/angular-sanitize/angular-sanitize.js"></script>
     <script src="/vendor/ng-csv/build/ng-csv.min.js"></script>
     <script src="/vendor/notie/dist/notie.js"></script>
-    <script src="/vendor/perfect-scrollbar/js/perfect-scrollbar.jquery.js"></script>
     <script src="/vendor/perfect-scrollbar/js/perfect-scrollbar.js"></script>
     <script src="/vendor/raven-js/dist/raven.js"></script>
     <!-- endbower -->

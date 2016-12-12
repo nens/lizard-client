@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default" style="width:100%;">
+<nav class="navbar navbar-default fullnavbar">
   <div id="lizard-apps-container" class="lizard-apps-container material-shadow"></div>
   <div style="margin-right:15px;width:100%;">
     <div class="navbar-header">
@@ -90,7 +90,7 @@
           </ul>
         </li>
       </ul>
-      <ul class="nav navbar-nav navbar-right" style="margin-right: 0 !important;">
+      <ul class="nav navbar-nav navbar-right">
         <li ng-show="showApps">
           <a id="lizard-apps-button"
              class="lizard-apps-button"
@@ -139,7 +139,7 @@
       <ng-include src="'/about/'"></ng-include>
     </div>
     <div class="modal-footer">
-      <span class="pull-left text-muted">Version: <% about.version.version%></span>
+      <span class="pull-left text-muted">Version: <% about.version.full %></span>
       <button class="btn btn-default" type="button" ng-click="$dismiss()">
         Close
       </button>

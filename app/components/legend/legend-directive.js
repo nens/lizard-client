@@ -1,80 +1,87 @@
 angular.module('legend')
-.directive('legend', ["LegendService", "State", function(LegendService, State) {
+.directive('legend', ["LegendService", function(LegendService) {
 
   var link = function (scope, element, attrs) {
 
     /* scope variables used for DISCRETE rasters: ****************************/
 
-    scope.MAX_DISCRETE_CATEGORIES_DEFAULT = 5;
-    scope.showAllCategoriesForRaster = {};
-    scope.selectedDiscreteRasterName = null;
+    scope.legend = {
+      MAX_DISCRETE_CATEGORIES_DEFAULT: 5,
+      showAllCategoriesForRaster: {},
+      selectedDiscreteRasterName: null,
+      uuidMapping: LegendService.uuidMapping,
+      data: {
+        discrete: {},
+        continuous: {}
+      }
+    };
 
     scope.getBorderStyle = function (datum) {
       return datum.label === -1 ? "1px solid #ccc" : "0";
     };
 
-    scope.totalCategoryCount = function (rasterName) {
-      return scope.legendData.discrete[rasterName].length;
+    scope.totalCategoryCount = function (uuid) {
+      return scope.legend.data.discrete[uuid].length;
     };
 
-    scope.showingAllCategories = function (rasterName) {
-      return scope.showAllCategoriesForRaster[rasterName];
+    scope.showingAllCategories = function (uuid) {
+      return scope.legend.showAllCategoriesForRaster[uuid];
     };
 
-    scope.toggleShowAllCategories = function (rasterName) {
-      scope.showAllCategoriesForRaster[rasterName] =
-        !scope.showAllCategoriesForRaster[rasterName];
+    scope.toggleShowAllCategories = function (uuid) {
+      scope.legend.showAllCategoriesForRaster[uuid] =
+        !scope.legend.showAllCategoriesForRaster[uuid];
     };
 
-    scope.getAmountOfDiscreteCategories = function (rasterName) {
-      if (scope.showAllCategoriesForRaster[rasterName]) {
-        return scope.totalCategoryCount(rasterName);
+    scope.getAmountOfDiscreteCategories = function (uuid) {
+      if (scope.legend.showAllCategoriesForRaster[uuid]) {
+        return scope.totalCategoryCount(uuid);
       } else {
-        return scope.MAX_DISCRETE_CATEGORIES_DEFAULT;
+        return scope.legend.MAX_DISCRETE_CATEGORIES_DEFAULT;
       }
     };
 
-    scope.hasMoreCategoriesAvailableThanDefault = function (rasterName) {
-      return scope.totalCategoryCount(rasterName) >
-        scope.MAX_DISCRETE_CATEGORIES_DEFAULT;
+    scope.hasMoreCategoriesAvailableThanDefault = function (uuid) {
+      return scope.totalCategoryCount(uuid) >
+        scope.legend.MAX_DISCRETE_CATEGORIES_DEFAULT;
     };
 
-    scope.mustShowDiscreteLegend = function (rasterName) {
-      var layer = _.find(State.layers, { name: rasterName });
+    scope.mustShowDiscreteLegend = function (uuid) {
+      var layer = _.find(scope.state.layers, { uuid: uuid });
       if (layer === undefined) {
-        if (scope.legendData.discrete[rasterName]) {
-          delete scope.legendData.discrete[rasterName];
-          scope.switchSelectedRaster(rasterName);
+        if (scope.legend.data.discrete[uuid]) {
+          delete scope.legend.data.discrete[uuid];
+          scope.switchSelectedRaster(uuid);
         }
         return false;
       } else {
-        return scope.rasterIsSelected(rasterName) &&
-          scope.legendData.discrete[rasterName] !== undefined;
+        return scope.rasterIsSelected(uuid) &&
+          scope.legend.data.discrete[uuid] !== undefined;
       }
     };
 
-    scope.mustShowContinuousLegend = function (rasterName) {
-      var layer = _.find(State.layers, { name: rasterName });
+    scope.mustShowContinuousLegend = function (uuid) {
+      var layer = _.find(scope.state.layers, { uuid: uuid });
       if (layer === undefined) {
-        if (scope.legendData.continuous[rasterName]) {
-          delete scope.legendData.continuous[rasterName];
-          scope.switchSelectedRaster(rasterName);
+        if (scope.legend.data.continuous[uuid]) {
+          delete scope.legend.data.continuous[uuid];
+          scope.switchSelectedRaster(uuid);
         }
         return false;
       } else {
-        return scope.rasterIsSelected(rasterName) &&
-          scope.legendData.continuous[rasterName] !== undefined &&
-          scope.legendData.continuous[rasterName].min !== null &&
-          scope.legendData.continuous[rasterName].max !== null;
+        return scope.rasterIsSelected(uuid) &&
+          scope.legend.data.continuous[uuid] !== undefined &&
+          scope.legend.data.continuous[uuid].min !== null &&
+          scope.legend.data.continuous[uuid].max !== null;
       }
     };
 
-    scope.getGradient = function (rasterName) {
+    scope.getGradient = function (uuid) {
 
-      if (scope.legendData.continuous[rasterName] === undefined ||
-          scope.legendData.continuous[rasterName].colormap === null) { return;
+      if (scope.legend.data.continuous[uuid] === undefined ||
+          scope.legend.data.continuous[uuid].colormap === null) { return;
       }
-      var colorData = scope.legendData.continuous[rasterName].colormap.data;
+      var colorData = scope.legend.data.continuous[uuid].colormap.data;
       var rgba,
           colorString,
           suffix = "";
@@ -87,11 +94,11 @@ angular.module('legend')
 
       suffix = suffix.substring(0, suffix.length - 1) + ")";
 
-      var gradientValue0 = "background: -moz-linear-gradient("
+      var gradientValue0 = "background: -moz-linear-gradient(bottom, "
         + suffix;
-      var gradientValue1 = "background: -webkit-linear-gradient("
+      var gradientValue1 = "background: -webkit-linear-gradient(bottom, "
         + suffix;
-      var gradientValue2 = "background: -ms-linear-gradient("
+      var gradientValue2 = "background: -ms-linear-gradient(bottom, "
         + suffix;
 
       return gradientValue0 + "; " + gradientValue1 + "; " + gradientValue2;
@@ -101,57 +108,86 @@ angular.module('legend')
 
     scope.selectedRasterName = null;
 
-    scope.getAllRasterNames = function () {
-      var cRasterNames = Object.keys(scope.legendData.continuous);
-      var dRasterNames = Object.keys(scope.legendData.discrete);
-      return cRasterNames.concat(dRasterNames);
+    scope.getAllRasterUuids = function () {
+      var allRasterNames = [];
+      _.forEach(scope.legend.data.continuous, function (v, k) {
+        if (scope.legend.data.continuous[k] !== undefined) {
+          allRasterNames.push(k);
+        }
+      });
+      _.forEach(scope.legend.data.discrete, function (v, k) {
+        if (scope.legend.data.discrete[k] !== undefined) {
+          allRasterNames.push(k);
+        }
+      });
+      return allRasterNames;
     };
 
-    scope.rasterIsSelected = function (rasterName) {
-      var allRasterNames = scope.getAllRasterNames();
-      if (allRasterNames.length === 1 && allRasterNames[0] === rasterName) {
-        scope.selectedRasterName = rasterName;
+    scope.rasterIsSelected = function (uuid) {
+      var allRasterUuids = scope.getAllRasterUuids();
+      var layer = _.find(scope.state.layers, {uuid: uuid});
+      if (allRasterUuids.length === 1 && allRasterUuids[0] === uuid) {
+        scope.selectedRasterName = uuid;
         return true;
       }
       else if (!scope.selectedRasterName) {
-        scope.selectedRasterName = rasterName;
+        scope.selectedRasterName = uuid;
         return true;
       } else {
-        return scope.selectedRasterName === rasterName;
+        return scope.selectedRasterName === uuid;
       }
     };
 
-    scope.switchSelectedRaster = function (currentRasterName) {
-      var allRasterNames = scope.getAllRasterNames();
-      var currentIndex = allRasterNames.indexOf(currentRasterName);
-      if (allRasterNames.length !== 0) {
-        var nextIndex = (currentIndex + 1) % allRasterNames.length;
-        scope.selectedRasterName = allRasterNames[nextIndex];
+    scope.rasterIsVectorized = function (uuid) {
+      var layer = _.find(scope.state.layers, {uuid: uuid});
+      return !!layer.vectorized;
+    };
+
+    scope.switchSelectedRaster = function (uuid) {
+      var allRasterUuids = scope.getAllRasterUuids();
+      var currentIndex = allRasterUuids.indexOf(uuid);
+      if (allRasterUuids.length !== 0) {
+        var nextIndex = (currentIndex + 1) % allRasterUuids.length;
+        scope.selectedRasterName = allRasterUuids[nextIndex];
       }
     };
 
-    scope.$watch(State.toString('layers.active'), function (n, o) {
+    scope.setDiscreteRasterCategory = function (uuid, category) {
+      LegendService.setActiveCategory(uuid, category);
+    };
+
+    scope.getDiscreteRasterCategory = function (uuid) {
+      return LegendService.getActiveCategory(uuid);
+    };
+
+    scope.$watch(scope.state.toString('layers.active'), function (n, o) {
       if (n === o) { return; }
-      scope.legendData = LegendService.updateLegendData(
-        State.spatial.bounds,
-        scope.state.layers);
-      console.log("legendData:", scope.legendData);
+      LegendService.updateLegendData(
+        scope.state.spatial.bounds,
+        scope.state.layers
+      );
     });
 
     scope.$watch('state.spatial.bounds', function (n, o) {
       if (n === o) { return; }
-      scope.legendData = LegendService.updateLegendData(n, scope.state.layers);
-      console.log("legendData:", scope.legendData);
+      LegendService.updateLegendData(n, scope.state.layers);
     });
 
-    scope.legendData = LegendService.updateLegendData(
-      State.spatial.bounds,
-      scope.state.layers);
+    scope.legend.data = LegendService.rasterData;
+
+    LegendService.updateLegendData(
+      scope.state.spatial.bounds,
+      scope.state.layers
+    );
   };
+
 
   return {
     link: link,
     restrict: 'E',
+    scope: {
+      state: '='
+    },
     templateUrl: "legend/templates/legend.html",
     replace: true
   };

@@ -2,15 +2,45 @@
  * Dashboard style definition
  */
 
+ $break-small: 500px;
+ $break-large: 991px;
+
+ body.dashboard {
+   background-color: #F1F2F3;
+ }
+
 .dashboard-wrapper {
   position: absolute;
   top: 70px;
-  left: 420px;
+  left: 0;
+  @media (min-width: $desktop-minimum) {
+    left: 420px;
+  }
   right: 0px;
   margin-right: 10px;
   bottom: 65px;
   overflow: hidden;
   transition: .3s ease;
+}
+
+.dashboard-inner {
+  background-color: $white;
+  border-radius: 4px;
+}
+
+.dashboard-empty-drag-target {
+  background-color:#F0F2F4;
+  border-radius:4px;
+  border:2px dotted #ccc;
+  color:#9A9C9D;
+  height:100%;
+  width:100%;
+}
+.dashboard-empty-drag-target p {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
 }
 
 .dashboard-wrapper .row {

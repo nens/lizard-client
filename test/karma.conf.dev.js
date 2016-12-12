@@ -30,6 +30,7 @@ module.exports = function(config) {
       'vendor/bootstrap/dist/js/bootstrap.js',
       'vendor/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
       'vendor/classList.js/classList.min.js',
+      'vendor/chromath/dist/chromath.min.js',
       'vendor/d3/d3.js',
       'vendor/d3-comparator/d3-comparator.js',
       'vendor/dragula/dist/dragula.js',
@@ -40,7 +41,6 @@ module.exports = function(config) {
       'vendor/angular-sanitize/angular-sanitize.js',
       'vendor/ng-csv/build/ng-csv.min.js',
       'vendor/notie/dist/notie.js',
-      'vendor/perfect-scrollbar/js/perfect-scrollbar.jquery.js',
       'vendor/perfect-scrollbar/js/perfect-scrollbar.js',
       'vendor/raven-js/dist/raven.js',
       // endbower

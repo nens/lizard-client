@@ -52,10 +52,20 @@
   color: #777;
 }
 
+.discrete-legend-label-selected {
+  font-weight: bolder;
+  font-style: italic;
+  color: #888;
+}
+
+.discrete-legend-label-selectable:hover {
+  color: $alizarin;
+  cursor: pointer;
+}
+
 .single-continuous-legend {
   padding-right: 18px;
   min-height: 160px;
-
 }
 
 .gradient-bar {
@@ -104,30 +114,23 @@
 .continuous-raster-numeric-data {
   min-width: 300px;
   max-width: 300px;
+  height: 116px;
   float: right;
+  margin-top: 2px;
 }
 
-.continuous-raster-table-row {
-  height: 29px;
-  border-bottom: 1px solid #ddd;
+.continuous-legend-top-row {
   color: #777;
   font-size: 0.9em;
-  line-height: 1.42857;
+  line-height: 2;
+  border-top: 1px solid #ddd;
 }
 
-.continuous-raster-table-key {
-  min-width: 150px;
-  max-width: 150px;
-}
+.continuous-legend-bottom-row {
+  position: relative;
+  top: 65px;
 
-.continuous-raster-table-value {
-  min-width: 100px;
-  max-width: 100px;
-}
-
-.continuous-raster-table-unit {
-  min-width: 50px;
-  max-width: 50px;
+  border-bottom: 1px solid #ddd;
 }
 
 .toggle-categories-shown {

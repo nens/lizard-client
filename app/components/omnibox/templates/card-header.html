@@ -4,20 +4,21 @@
     <close-card asset="asset"></close-card>
 
       <span class="icons fa-stack fa-lg">
-        <i class="fa fa-circle fa-stack-2x"></i>
-        <i
-          class="asset-icon fa fa-stack"
-          ng-class="getIconClass(asset.entity_name)">
+        <i class="fa fa-circle fa-stack-2x iconcircle"></i>
+        <i class="asset-icon"
+           ng-class="getIconClass(asset.entity_name)">
         </i>
       </span>
 
       <span class="asset-title">
-        <% asset.entity_name | objectTitle | translate %>
+        <strong class="asset-name"><% asset.name | objectTitle | translate %></strong>
+        <span ng-if="asset.name">&nbsp;</span>
+        <span class="asset-code"><% asset.code | objectTitle | translate %></span>
       </span>
 
       <br>
 
-      <em><% asset.code %></em>
+      <span class="asset-entity-name"><% asset.entity_name | objectTitle | translate %></span>
 
   </div>
 
@@ -32,9 +33,6 @@
     <span ng-if="geom.name"><% geom.name %></span>
     <span ng-if="geom.name && geom.area">: </span>
     <span ng-if="geom.area"><% geom.area / 10000 | number : 0 %> ha.</span>
-    <span ng-if="geom.geometry.type === 'Polygon' && !geom.name" translate>
-      Screen view
-    </span>
   </div>
 
 </header>

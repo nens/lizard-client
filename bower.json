@@ -21,7 +21,7 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "~1.5.0",
+    "angular": "#1.5.9",
     "angular-animate": "~1.5.0",
     "angular-bootstrap": "1.2.5",
     "angular-gettext": "~2.1.0",
@@ -31,6 +31,7 @@
     "bootstrap": "~3.1.1",
     "bootstrap-datepicker": "~1.6.4",
     "classList.js": "https://github.com/nens/classList.js.git#master",
+    "chromath": "https://github.com/ernstkui/chromath.git#master",
     "components-font-awesome": "~4.5.0",
     "d3": "~3.4.11",
     "d3-comparator": "~0.1.0",
@@ -50,5 +51,8 @@
       "main": "dist/leaflet.markercluster.js"
     }
   },
-  "appPath": "app"
+  "appPath": "app",
+  "resolutions": {
+    "angular": "1.5.9"
+  }
 }

@@ -10,8 +10,11 @@
  */
 
 angular.module('map')
-.service('MapService', ['$rootScope', 'CabinetService', 'LeafletService', 'NxtRegionsLayer', 'UtfGridService', 'baselayer', 'eventseriesMapLayer', 'State',
-  function ($rootScope, CabinetService, LeafletService, NxtRegionsLayer, UtfGridService, baselayer, eventseriesMapLayer, State) {
+.service('MapService',
+        ['$rootScope', 'CabinetService', 'LeafletService', 'NxtRegionsLayer',
+         'UtfGridService', 'baselayer', 'eventseriesMapLayer', 'State',
+  function ($rootScope, CabinetService, LeafletService, NxtRegionsLayer,
+          UtfGridService, baselayer, eventseriesMapLayer, State) {
 
     var topography = 'https://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa98k8k';
     var satellite = 'https://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa79205';
@@ -65,7 +68,7 @@ angular.module('map')
             if (layer.active) {
               mapLayer.update(service._map, State.temporal, layer);
             } else {
-              mapLayer.remove(service._map);
+              mapLayer.remove(service._map, layer);
             }
           }
         });
@@ -304,6 +307,16 @@ angular.module('map')
         }
       },
 
+      vectorClickCb: function (layer) {
+        for (var key in layer.feature.properties) {
+          var newkey = key === 'type' ? 'regionType' : key;
+          layer.feature[newkey] = layer.feature.properties[key];
+        }
+        layer.feature.properties = {};
+        State.geometries = []; // empty first.
+        State.geometries = [layer.feature];
+      },
+
       getRegions: function () {
 
         /**
@@ -311,17 +324,10 @@ angular.module('map')
          *
          * @param  {object} leaflet ILayer that recieved the click.
          */
-        var clickCb = function (layer) {
-          State.geometries = [];
-          for (var key in layer.feature.properties) {
-            var newkey = key === 'type' ? 'regionType' : key;
-            layer.feature[newkey] = layer.feature.properties[key];
-          }
-          layer.feature.properties = {};
-          State.geometries = [layer.feature];
-        };
 
-       CabinetService.regions.get({
+        var clickCb = service.vectorClickCb;
+
+        CabinetService.regions.get({
           z: State.spatial.view.zoom,
           in_bbox: State.spatial.bounds.getWest()
             + ','

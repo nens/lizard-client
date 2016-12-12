@@ -385,6 +385,7 @@ angular.module('data-menu')
 
         if (geo.geometry && (geo.geometry.type === 'Polygon' || geo.geometry.type === 'MultiPolygon') && geo.id) {
           options.id = geo.id;
+          options.boundary_type = geo.regionType;
         }
 
         angular.forEach(State.layers, function (layer) {

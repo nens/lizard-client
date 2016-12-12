@@ -64,8 +64,8 @@ angular.module('timeseries')
 
 
 .directive('timeseriesSingleSelect', ['$http', 'State', 'TimeseriesService',
-  'gettextCatalog',
-  function ($http, State, TimeseriesService, gettextCatalog) {
+  'gettextCatalog', 'notie',
+  function ($http, State, TimeseriesService, gettextCatalog, notie) {
   return {
     link: function (scope) {
 
@@ -173,4 +173,3 @@ angular.module('timeseries')
     scope: true // Share scope with timeseries directive
   };
 }]);
-
