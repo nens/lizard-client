@@ -42,11 +42,12 @@
 }
 
 .omniboxWrapper {
+  height: calc(100% - 50) !important;
   z-index:999 !important;
 }
 
 #omnibox.active {
-  height: 100%;
+  height: calc(100% - 50) !important;
   background-color: none;
 }
 
