@@ -3,25 +3,9 @@
   <db-asset-card
     timeseries
     time-state="omnibox.state.temporal"
-    asset="asset"
-    assets="omnibox.data.assets"
-    ng-repeat="asset in localAssets">
+    asset-geom="localAsset.asset"
+    asset-type="localAsset.type"
+    ng-repeat="localAsset in localAssets">
   </db-asset-card>
-
-  <div
-    class="card animate-repeat"
-    ng-repeat="geom in omnibox.data.geometries">
-
-    <cardheader geom="geom"></cardheader>
-
-    <div class="card-content">
-      <db-geometry-cards
-        time-state="state.temporal"
-        geom="geom"
-        header="true"
-        >
-      </db-geometry-cards>
-    </div>
-  </div>
 
 </div>

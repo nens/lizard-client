@@ -36,9 +36,9 @@ describe('selection service', function () {
       type: "raster"
     };
 
-    expect(SelectionService.rasterMetaDataFunction).toBeDefined();
-    expect(SelectionService.rasterMetaDataFunction(undefined)).toBeDefined();
-    expect(SelectionService.rasterMetaDataFunction(undefined, rasterSelection))
+    expect(SelectionService.rasterMetaData).toBeDefined();
+    expect(SelectionService.rasterMetaData(undefined)).toBeDefined();
+    expect(SelectionService.rasterMetaData(undefined, rasterSelection))
         .toEqual({ match: false });
   });
 
@@ -49,10 +49,10 @@ describe('selection service', function () {
       type: "timeseries"
     };
 
-    expect(SelectionService.timeseriesMetaDataFunction).toBeDefined();
-    expect(SelectionService.timeseriesMetaDataFunction(undefined))
+    expect(SelectionService.timeseriesMetaData).toBeDefined();
+    expect(SelectionService.timeseriesMetaData(undefined))
         .toBeDefined();
-    expect(SelectionService.timeseriesMetaDataFunction(
+    expect(SelectionService.timeseriesMetaData(
         undefined, timeseriesSelection)).toEqual({ match: false });
   });
 

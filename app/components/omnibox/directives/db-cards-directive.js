@@ -42,13 +42,20 @@ angular.module('omnibox')
         });
 
         // set it locally so it doesn't show all the dupes
-        scope.localAssets = _.filter(scope.omnibox.data.assets, function (asset) {
+        var localAssets = _.filter(scope.omnibox.data.assets, function (asset) {
           var hasTheSame = nestedAssets.some(function (nesAs) {
             return asset.entity_name + '$' + asset.id === nesAs;
           });
           return !hasTheSame;
         });
-        scope.localGeoms = scope.omnibox.data.geometries;
+        var mapGeoms = function (type_) {
+          return function (geom) { return {type: type_, asset: geom }; };
+        };
+        scope.localAssets = _.concat(
+          _.map(scope.omnibox.data.geometries, mapGeoms('geom')),
+          _.map(localAssets, mapGeoms('asset'))
+        );
+        console.log(scope.localAssets);
       });
 
 
@@ -111,9 +118,9 @@ angular.module('omnibox')
           DBCardsService.removeSelectionFromPlot(selection);
         }
 
-        var tsMetaData = SelectionService.timeseriesMetaDataFunction(
+        var tsMetaData = SelectionService.timeseriesMetaData(
             TimeseriesService.timeseries, selection);
-        var otherGraphTsMetaData = SelectionService.timeseriesMetaDataFunction(
+        var otherGraphTsMetaData = SelectionService.timeseriesMetaData(
             TimeseriesService.timeseries, otherGraphSelections);
         if (tsMetaData.value_type !== otherGraphTsMetaData.value_type) {
           notie.alert(2,

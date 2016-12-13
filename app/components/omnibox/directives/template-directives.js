@@ -16,6 +16,7 @@ angular.module('omnibox')
   return {
     link: function (scope, element) {
 
+      scope.assetType = 'asset';
       scope.user = user;
 
       var clickId;

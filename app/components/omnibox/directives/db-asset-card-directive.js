@@ -15,13 +15,49 @@ angular.module('omnibox')
   return {
     link: function (scope, element) {
 
+      scope.noData = true;
+
+      // geometry or asset administration
+      if (scope.assetType === "asset") {
+        scope.asset = scope.assetGeom;
+        scope.noData = scope.asset.timeseries.length === 0;
+        scope.assetTypeName = "asset";
+        scope.noDataType = "timeseries";
+      } else {
+        scope.geom = scope.assetGeom;
+        scope.assetTypeName = "geometry";
+        scope.noDataType = "raster";
+
+       /**
+        * Properties are asynchronous so watch it to set noData when added.
+        */
+        scope.$watch('geom.properties', function (geoms) {
+          var noRasterData = geoms ? !Object.keys(geoms).length : true;
+          scope.noData = noRasterData && scope.geom.entity_name === undefined;
+        }, true);
+      }
+
       scope.state = State;
       scope.getSelectionMetaData = SelectionService.getMetaDataFunction(
-          scope.asset);
-
+        scope.assetGeom);
       scope.toggleSelection = SelectionService.toggle;
 
-      scope.noTimeseries = scope.asset.timeseries.length === 0;
+     /**
+       * Returns true if selection with uuid is one the first three in the list.
+       *
+       * This is used to bypass ngRepeat which loops over one big list of
+       * selections multiple times, once for each asset. It should draw the
+       * first three of each asset or more if more than three are active.
+       *
+       * @param  {str}  uuid uuid of selection.
+       * @return {Boolean} is in first three of DOM list.
+       */
+      scope.isOneOfFirstThree = function (uuid) {
+        var items = element.find('.draggable-ts');
+        var index = _.findIndex(items, function (item) {
+          return item.dataset.uuid === uuid; });
+        return index < 3;
+      };
 
       /**
        * Specific toggle for crosssection
@@ -51,7 +87,7 @@ angular.module('omnibox')
       };
 
       // Init crosssection
-      if (scope.asset.entity_name === 'leveecrosssection') {
+      if (scope.assetGeom.entity_name === 'leveecrosssection') {
         scope.asset.crosssection = {
           active: false, // set to true by  toggle
           order: 0
@@ -64,9 +100,9 @@ angular.module('omnibox')
     },
     restrict: 'E',
     scope: {
-      asset: '=',
-      timeState: '=',
-      assets: '='
+      assetGeom: '=',
+      assetType: '=',
+      timeState: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/db-asset-card.html'
