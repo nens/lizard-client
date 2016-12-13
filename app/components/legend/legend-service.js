@@ -57,7 +57,9 @@ angular.module('legend')
       if (!COLORMAP_URL) {
         COLORMAP_URL = getColormapUrl();
       }
-      $http.get(COLORMAP_URL + styles + "/").then(function (result) {
+      var formattedStyles = UtilService.formatRasterStyles(styles);
+      var singleColormapUrl = COLORMAP_URL + formattedStyles + "/";
+      $http.get(singleColormapUrl).then(function (result) {
         var colormap = result.data.definition;
         colormaps[uuid] = colormap;
         var layer = _.find(State.layers, {uuid: uuid});
