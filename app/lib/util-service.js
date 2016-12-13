@@ -631,14 +631,6 @@ angular.module('lizard-nxt')
     switch (str) {
     case 'filter':
       return 'fa fa-filter';
-    case 'pumpstation':
-      return 'lz lz-pumpstation-diesel';
-    case 'bridge':
-      return 'lz lz-bridge';
-    case 'bridge-draw':
-      return 'lz lz-bridge-draw';
-    case 'bridge-fixed':
-      return 'lz lz-bridge-fixed';
     default:
       return 'lz lz-' + str;
     }
