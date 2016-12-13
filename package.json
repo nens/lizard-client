@@ -23,6 +23,7 @@
     "url": "https://github.com/nens/lizard-nxt/issues"
   },
   "devDependencies": {
+    "phantomjs-prebuilt": "^2.1.14",
     "buck-trap": "^1.0.11",
     "connect-modrewrite": "~0.7.9",
     "grunt": "^0.4.1",
