@@ -71,16 +71,28 @@ Use Grunt to simplify development in the client. When developing the client the 
 
 Whenever files change, grunt triggers the `test` and the `compile` scripts that compile all the html templates to a js file and run the jasmine tests. The failing tests show up in your notification area.
 
-This error: `Waiting...Fatal error: watch ENOSPC` (on Ubuntu/OS X) when runnning the watch command, means inotify is tracking too many files. Possibly because of Dropbox or other filewatchers. Either switch those off, or increase the amount of files that can be watched by `inotify`:
-
-    echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
-
 When you want to add a external library, add it to bower.json with an url to the github or zipfile.
 This can be done by hand or if it is available in the bower repo through searching a library and
 adding the --save option. Always check your bower.json afterwards. e.g.:
 
     bin/bower search leaflet-dist
     bin/bower install leaflet-dist --save
+
+
+## Troubleshooting usage
+
+This error: `Waiting...Fatal error: watch ENOSPC` (on Ubuntu/OS X) when runnning the watch command, means inotify is tracking too many files. Possibly because of Dropbox or other filewatchers. Either switch those off, or increase the amount of files that can be watched by `inotify`:
+
+    echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+
+
+Running `grunt serve` may sometimes exit with the error: `Cannot read property 'main' of undefined`.
+This is usually caused by a Bower package being listed in `bower.json` while it is not actually installed.
+
+Solved by simply running:
+
+    bower install
+
 
 ## Commit Message Convention, at a Glance
 (this section is copied from https://github.com/conventional-changelog/standard-version#commit-message-convention-at-a-glance)
@@ -146,23 +158,23 @@ attachments you we use nens/buck-trap. It versions your repo and changes the cha
 * There is a `dist` folder which will be attached to the release on github
 
 #### Releasing hotfixes or patches
-If a stable release is coming out release it and start a new branch for the 
+If a stable release is coming out release it and start a new branch for the
 stable release e.g.:
 
-	git checkout -b release4.0 
+	git checkout -b release4.0
 
-If stuff is fixed on this branch, the fixes can be rolled out as patches without 
+If stuff is fixed on this branch, the fixes can be rolled out as patches without
 affecting the mainline release track.
 To run buck-trap from this branch and to release the branch with its `CHANGELOG.md`
 
 	npm run buck-trap -- -b release4.0
 
-The fixes and the `CHANGELOG.md` would have to be merged with master, which might 
+The fixes and the `CHANGELOG.md` would have to be merged with master, which might
 give some merge conflicts. C'est la vie.
 
 
 ### Deployment
-For the deployment of frontend repositories we make use of the client 
+For the deployment of frontend repositories we make use of the client
 deployment repository https://github.com/nens/client-deployment. It is already
 included as a git submodule in this repo.
 
