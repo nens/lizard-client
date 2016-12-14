@@ -8,11 +8,10 @@ angular.module('omnibox')
   .directive('search', [
     'SearchService',
     'ClickFeedbackService',
-    'MapService',
     'State',
     'UtilService',
     '$timeout',
-  function (SearchService, ClickFeedbackService, MapService, State,
+  function (SearchService, ClickFeedbackService, State,
     UtilService, $timeout) {
 
   var link = function (scope, element, attrs) {
@@ -34,10 +33,6 @@ angular.module('omnibox')
 
     // Set focus on search input field.
     element.children()[0].focus();
-
-    // Bind mapservice functions for zoom buttons;
-    scope.zoomIn = MapService.zoomIn;
-    scope.zoomOut = MapService.zoomOut;
 
     /**
      * Uses scope.query to search for results through SearchService. Response
