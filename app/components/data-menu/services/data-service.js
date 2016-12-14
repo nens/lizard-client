@@ -301,7 +301,7 @@ angular.module('data-menu')
 
       /**
        * @description - Retrieve data layer by layer UUID
-       * @param uuid {string} - Data layer UUID
+       * @param uuid {string} - Layer UUID
        * @return {object} - Data layer object
        */
       this.getDataLayer = function(uuid) {

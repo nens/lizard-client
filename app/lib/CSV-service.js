@@ -28,19 +28,18 @@ angular.module('lizard-nxt')
     /**
      * @description - Delegates between the two CSV generating functions, one
      *                for temporal rasters and on for non-temporal rasters.
-     * @param {string} dataLayerUUID - The UUID for the data layer we want to intersect.
      * @param {object} layer - The layer we want to intersect.
      * @return {object} - Array of arrays result, which can be formatted to an
      *                               actual CSV by the ng-csv directive.
      */
-    this.formatLineCSV = function (dataLayerUUID, layer) {
+    this.formatLineCSV = function (layer) {
       if (layer.data) {
-        return _dataIsTemporal(dataLayerUUID)
+        return _dataIsTemporal(layer.uuid)
           // NB! Sometimes a resolved API call uses layer.data for housing it's
           // raw response, and sometimes it uses layer.temporalData; in the latter
           // case layer.data is already needed for the Graph svc, where D3 requires
           // specifically formatted data:
-          ? _formatLineCSVTemporal(layer.temporalData || layer.data, dataLayerUUID)
+          ? _formatLineCSVTemporal(layer.temporalData || layer.data, layer.uuid)
           : _formatLineCSVNonTemporal(layer.data);
       } else {
         _throwDataError(layer);
@@ -49,21 +48,21 @@ angular.module('lizard-nxt')
 
     /*
      * @description - Get the column names for CSV
-     * @param {string} dataLayerUUID - The UUID for the data layer we want to intersect.
      * @param {object} layer - The layer we want to intersect.
      * @return {string[]} - A list with the column names.
      */
-    this.getLineCSVHeaders = function (dataLayerUUID, layer) {
+    this.getLineCSVHeaders = function (layer) {
+      var layerUUID = layer.uuid;
 
       var DEFAULT_HUMAN_READABLE_X = "Afstand [m]",
           humanReadableX = {
             // someLGslug: someHumanReadableXforThatLG
-          }[dataLayerUUID] || DEFAULT_HUMAN_READABLE_X,
+          }[layerUUID] || DEFAULT_HUMAN_READABLE_X,
           // ^^^^^^ WTF??? TODO: fix this?
           humanReadableY = layer.quantity + ' [' + layer.unit + ']';
 
       if (layer.data) {
-        return _dataIsTemporal(dataLayerUUID)
+        return _dataIsTemporal(layerUUID)
           ? [ 'Timestamp',
               humanReadableX,
               humanReadableY,
@@ -100,32 +99,32 @@ angular.module('lizard-nxt')
 
     /**
      * @description - Throws error because incorrect data layer UUID.
-     * @param {object} dataLayerUUID - The UUID for the data layer we want to intersect.
+     * @param {object} layerUUID - The UUID for the data layer we want to intersect.
      * @return {void}
      */
-    var _throwDataLayerError = function (dataLayerUUID) {
+    var _throwDataLayerError = function (layerUUID) {
       throw new Error(
-        "No data layer retrievable from DataService when using the uuid: " + dataLayerUUID
+        "No data layer retrievable from DataService when using the uuid: " + layerUUID
       );
     };
 
     /**
      * @description - Check whether a data layer has a temporal component.
-     * @param {string} dataLayerUUID - The UUID for the data layer we want to intersect.
+     * @param {string} layerUUID - The UUID for the data layer we want to intersect.
      * @return {boolean}
      */
-    var _dataIsTemporal = function (dataLayerUUID) {
-      var dlyr = DataService.getDataLayer(dataLayerUUID);
+    var _dataIsTemporal = function (layerUUID) {
+      var dlyr = DataService.getDataLayer(layerUUID);
       if (dlyr === undefined) {
-        _throwDataLayerError(dataLayerUUID);
+        _throwDataLayerError(layerUUID);
       }
       return dlyr.temporal;
     };
 
-    var _getStoreResolution = function (dataLayerUUID) {
-      var dlyr = DataService.getDataLayer(dataLayerUUID);
+    var _getStoreResolution = function (layerUUID) {
+      var dlyr = DataService.getDataLayer(layerUUID);
       if (dlyr === undefined || !dlyr.temporalResolution) {
-        _throwDataLayerError(dataLayerUUID);
+        _throwDataLayerError(layerUUID);
       }
       return dlyr.temporalResolution;
     };
@@ -221,9 +220,10 @@ angular.module('lizard-nxt')
     /**
      * @description - format the CSV data (temporal raster data)
      * @param {number[][]} data - The data to be formatted.
+     * @param {string} layerUUID - Layer UUID
      * @return {number[][]} - the formatted data
      */
-    var _formatLineCSVTemporal = function (data, dataLayerUUID) {
+    var _formatLineCSVTemporal = function (data, layerUUID) {
 
       var t,
           i,
@@ -239,7 +239,7 @@ angular.module('lizard-nxt')
           tempExtentInterval = State.temporal.end - State.temporal.start,
           // Assumption which holds when measurements (i) are present for full
           // temp.extent and (ii) are equidistant with distance equal to aggWindow:
-          durationPerMeasurement = _getStoreResolution(dataLayerUUID);
+          durationPerMeasurement = _getStoreResolution(layerUUID);
 
       if (amountOfTimestamps * data[0][1].length > MAX_ROW_COUNT) {
         return [[TOO_MUCH_DATA_MSG + amountOfTimestamps * data.length]];
