@@ -299,11 +299,22 @@ angular.module('data-menu')
         }, this);
       };
 
+      /**
+       * @description - Retrieve data layer by layer UUID
+       * @param uuid {string} - Data layer UUID
+       * @return {object} - Data layer object
+       */
+      this.getDataLayer = function(uuid) {
+        return _.find(instance.dataLayers, {uuid: uuid});
+      };
+
       this.updateLayerData = function (geo, layer, options, promises) {
 
-        if (!layer.active) { return; }
+        if (!layer.active) {
+          return;
+        }
 
-        var dataLayer = _.find(instance.dataLayers, {uuid: layer.uuid});
+        var dataLayer = this.getDataLayer(layer.uuid);
 
         if (dataLayer
           && !(dataLayer.temporal && geo.geometry.type === 'LineString')
