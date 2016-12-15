@@ -1,4 +1,19 @@
 <nav class="navbar navbar-default fullnavbar">
+  <div class="zoom-buttons" ng-show="state.context === 'map'">
+    <button class="btn btn-primary"
+            ng-click="zoomIn()"
+            accesskey="+"
+            tabindex="0"
+            aria-label="<% tooltips.zoomInMap %>">
+      <i class="fa fa-plus"></i>
+    </button>
+    <button class="btn btn-primary"
+            ng-click="zoomOut()"
+            accesskey="-"
+            aria-label="<% tooltips.zoomOutMap %>">
+      <i class="fa fa-minus"></i>
+    </button>
+  </div>
   <div id="lizard-apps-container" class="lizard-apps-container material-shadow"></div>
   <div style="margin-right:15px;width:100%;">
     <div class="navbar-header">
