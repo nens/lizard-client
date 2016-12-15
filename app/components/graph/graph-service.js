@@ -783,36 +783,25 @@ angular.module('lizard-nxt')
       drawGrid: drawGrid
     };
 
-    var missedCharts = [];
-
     charts.forEach(function (chart) {
 
       var maxMin = Graph.prototype._maxMin(chart.data, chart.keys.y);
       var unitY = yPerUnit[chart.unit];
 
-      if (unitY) {
+      // All maxes and minuses should be defined for the max/min comparison to
+      // work.
+      if (
+        unitY
+        && !_.isUndefined(chart.yMaxMin.min)
+        && !_.isUndefined(chart.yMaxMin.max)
+        && !_.isUndefined(unitY.maxMin.max)
+        && !_.isUndefined(unitY.maxMin.min)
+      ) {
         maxMin.min = Math.min(chart.yMaxMin.min, unitY.maxMin.min);
         maxMin.max = Math.max(chart.yMaxMin.max, unitY.maxMin.max);
       }
 
-      // only add a maxMin for a unit when defined. The undefined maxMin is set
-      // seperately to ensure the yPerUnit doesn't get spoiled when multiple
-      // charts are drawn in one graph.
-      if (maxMin.max && maxMin.min) {
-        yPerUnit[chart.unit] = {maxMin: maxMin};
-      } else if (unitY) {
-        yPerUnit[chart.unit] = unitY;
-      } else {
-        missedCharts.push(chart);
-      }
-    });
-
-    // these charts failed, only fill them in when they're on their own.
-    missedCharts.forEach(function (chart) {
-      var maxMin = Graph.prototype._maxMin(chart.data, chart.keys.y);
-      if (!yPerUnit[chart.unit]){
-        yPerUnit[chart.unit] = maxMin;
-      }
+      yPerUnit[chart.unit] = {maxMin: maxMin};
     });
 
     _.forEach(yPerUnit, function (unitY) {
