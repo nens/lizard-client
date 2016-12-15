@@ -38,7 +38,10 @@
           ng-keydown="searchKeyPress($event)"
           spellcheck="false"
           tabindex="0"
-          type="search">
+          type="search" />
+          <span ng-if="!query" class="search-looking-glass">
+            <i class="fa fa-search" aria-hidden="true"></i>
+          </span>
       </div>
     </div>
   </div>

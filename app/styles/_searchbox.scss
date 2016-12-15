@@ -9,6 +9,13 @@ $zoombutton-width: 30px;
         overflow: hidden;
     }
 
+    .search-looking-glass {
+      position: absolute;
+      right: 10px;
+      top: 14px;
+      color: $asbestos;
+    }
+
     .search-and-close {
         height: $searchbox-height;
         width: 100%;
