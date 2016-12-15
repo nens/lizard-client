@@ -151,6 +151,7 @@
 .location {
     padding: 10px;
     width:400px;
+    overflow-x: hidden;
     white-space:nowrap;
     text-overflow:ellipsis;
     font-size: .9em;
