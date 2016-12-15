@@ -40,10 +40,10 @@
          <a
            class="btn btn-default btn-xs"
            title="<% 'Export info card data' | translate %>"
-           ng-csv="formatLineCSV(uuid, properties)"
+           ng-csv="formatLineCSV(properties)"
            field-separator=";"
-           filename="<% uuid %>.csv"
-           csv-header="getLineCSVHeaders(uuid, properties)">
+           filename="<% properties.uuid %>.csv"
+           csv-header="getLineCSVHeaders(properties)">
            <i class="fa fa-share-square-o"></i>
            <span translate>Export</span>
         </a>
