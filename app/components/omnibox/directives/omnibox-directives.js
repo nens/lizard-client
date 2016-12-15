@@ -15,7 +15,7 @@ angular.module("omnibox")
         ESC: 27,
         UPARROW: 38,
         DOWNARROW: 40,
-        RETURNKEY: 13,
+        RETURNKEY: 13
       };
 
       scope.onFocus = function(item, $event) {
