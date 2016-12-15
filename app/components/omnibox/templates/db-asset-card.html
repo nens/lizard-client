@@ -28,11 +28,11 @@
       </dl>
     </div>
 
-    <em class="card-content-list"
+    <div class="card-content-list"
         ng-if="noTimeseries && asset.entity_name !== 'leveecrosssection'"
         translate>
-      No timeseries available for this asset
-    </em>
+      <em>No timeseries available for this asset</em>
+    </div>
 
     <div id="drag-container" ng-if="!noTimeseries">
 
