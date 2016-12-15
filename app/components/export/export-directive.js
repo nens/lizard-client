@@ -5,7 +5,7 @@ angular.module('export')
   var link = function (scope) {
     // bind the assets with the selected things from the DataService
     scope.assets = DataService.assets;
-    scope.isMap = State.context == 'map';
+    scope.isMap = State.context === 'map';
 
     // Start and end of data
     var timeState = {
