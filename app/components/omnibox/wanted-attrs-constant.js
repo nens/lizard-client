@@ -680,6 +680,11 @@ angular.module('omnibox')
     ]
   };
 
+  /// Some fugly hardcoded translations for pumped drainage areas:
+  gettext('sanitary');
+  gettext('combined');
+  gettext('other');
+
   this.pumpeddrainagearea = {
     rows: [
       {
@@ -694,7 +699,7 @@ angular.module('omnibox')
         keyName: gettext("Sewer system"),
         attrName: "sewer_system ",
         ngBindValue:
-          "waterchain.sewer_system",
+          "waterchain.sewer_system | translate",
         valueSuffix: ""
       },
       {
