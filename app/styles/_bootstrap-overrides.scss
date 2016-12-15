@@ -1,3 +1,7 @@
 .modal-title {
   text-transform: capitalize;
 }
+input::-webkit-input-placeholder { color: #ccc !important; }
+input:-moz-placeholder { color: #ccc !important; }
+input::-moz-placeholder { color: #ccc !important; }
+input:-ms-input-placeholder { color: #ccc !important; }
