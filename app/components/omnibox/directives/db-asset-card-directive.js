@@ -54,6 +54,19 @@ angular.module('omnibox')
 
       scope.noTimeseries = scope.asset.timeseries.length === 0;
 
+      // Extender is the button at the bottom of the timeseries list to show
+      // more or less items.
+      scope.showExtender = true;
+
+      var MANY = 5;
+
+      // If there are a few timeseries, show them all and do not show the
+      // extender button.
+      if (scope.asset.timeseries.length < MANY) {
+        scope.extended = true;
+        scope.showExtender = false;
+      }
+
       /**
        * Specific toggle for crosssection
        *
