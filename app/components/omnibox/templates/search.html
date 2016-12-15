@@ -9,7 +9,9 @@
               ng-if="query"
               accesskey="q"
               id="clear">
-        <span aria-hidden="true">&times;</span>
+        <span aria-hidden="true">
+          <i class="fa fa-times"></i>
+        </span>
       </button>
       <div class="resize-wrapper">
         <input
@@ -23,7 +25,16 @@
           ng-keydown="searchKeyPress($event)"
           spellcheck="false"
           tabindex="0"
-          type="search">
+          type="search" />
+          <button class="btn btn-default btn-lg clear-search"
+                  type="button"
+                  ng-if="!query"
+                  accesskey="q"
+                  id="clear">
+            <span ng-if="!query" class="search-looking-glass">
+              <i class="fa fa-search" aria-hidden="true"></i>
+            </span>
+          </button>
       </div>
     </div>
   </div>
