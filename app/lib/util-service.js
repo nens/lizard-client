@@ -1031,4 +1031,26 @@ angular.module('lizard-nxt')
     return closest;
   };
 
+  /**
+    * @description  This function is used to format a raster config's "styles"
+    *               value. This should be used for e.g. colormap API calls, where
+    *               the value is parsed differently than when used for the WMS.
+    *               E.g:
+    *
+    *               "dem-nl"     => "dem-nl"
+    *               "dem-nl:8:9" => "dem-nl"
+    *               "dem-nl:8:"  => "dem-nl"
+    *               "abcd"       => "abcd"
+    *               "abcd:0:23"  => "abcd"
+    *
+    * @param {string} styles
+    */
+  this.formatRasterStyles = function (styles) {
+    var parts = styles.split(":");
+    if (parts.length > 1) {
+      return parts[0];
+    } else {
+      return styles;
+    }
+  };
 }]);
