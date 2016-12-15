@@ -18,18 +18,29 @@ angular.module('map')
   'ClickFeedbackService',
   'UtilService',
   'State',
+  '$timeout',
   function (
     MapService,
     DataService,
     ClickFeedbackService,
     UtilService,
-    State
+    State,
+    $timeout
   ) {
 
     var link = function (scope, element, attrs) {
 
-      var mapSetsBounds = false,
-          mapSetsView = false;
+      // Leaflet sometimes returns a bounds of a view, which when fitted,
+      // results in a different view which when fitted, results in a different
+      // bounds. This may repeat it self one to infinite times.
+      //
+      // The map-directive always updates the state with the leaflet map. And it
+      // sets leaflet map to the state when it is not setting the state to the
+      // leaflet map. When the leaflet map is updating the state it sets this
+      // boolean to true. When the state changes and mapSetsViewOrBounds is
+      // true, it does not sync the state with leaflet and sets
+      // mapSetsViewOrBounds back to false.
+      var mapSetsViewOrBounds = false;
 
       /**
        * Init is called when directive is compiled and listeners are attached
@@ -57,17 +68,20 @@ angular.module('map')
         );
 
         if (Object.keys(State.spatial.view).length !== 0) {
-          mapSetsView = true;
+          mapSetsViewOrBounds = true;
           MapService.setView(State.spatial.view, {animate: true});
         }
         else if (Object.keys(State.spatial.bounds).length !== 0) {
-          mapSetsBounds = true;
+          mapSetsViewOrBounds = true;
           MapService.fitBounds(State.spatial.bounds, {animate: true});
         }
 
         MapService.updateBaselayers(scope.state.baselayer);
         MapService.updateLayers(scope.state.layers);
         MapService.updateAnnotations(scope.state.annotations);
+
+        mapSetsViewOrBounds = false;
+        updateMapViewOrBounds(State.spatial.view, State.spatial.bounds);
 
       };
 
@@ -179,11 +193,17 @@ angular.module('map')
         // Moveended is fired on teardown of map and map.getBounds() returns a
         // bounds object of size zero. We want to keep the bounds.
         if (State.context === 'map') {
-          mapSetsBounds = true;
-          mapSetsView = true;
+          // Do not set map bounds when state bounds change because map bounds
+          // change, set boolean to true.
+          mapSetsViewOrBounds = true;
           State.spatial.bounds = map.getBounds();
           State.spatial.view = MapService.getView();
         }
+        $timeout(function () {
+          // If map changed map view or bounds, set boolean back to false after
+          // digest loop.
+          mapSetsViewOrBounds = false;
+        }, 0);
       };
 
       scope.$watch('state.layers', function () {
@@ -199,31 +219,54 @@ angular.module('map')
       }, true);
 
       /**
+       * Syncs map with state if map did not sync state to map.
+       *
+       * @param {object} view { lat, lng, zoom }.
+       * @param {object} bounds leaflet bounds.
+       */
+      var updateMapViewOrBounds = function (view, bounds) {
+        // Do not set map bounds when state bounds change because map bounds
+        // change.
+        if (!mapSetsViewOrBounds) {
+          var oldView = MapService.getView();
+
+          // The spatial state can be set either by changing the bounds or by
+          // changing the view. This function compares the new view to the old
+          // view and prefers changing view over fitting bounds.
+
+          if (
+            view.lat === oldView.lat
+            && view.lng === oldView.lng
+            && view.zoom === oldView.zoom
+          ) {
+            MapService.fitBounds(State.spatial.bounds, {animate: true});
+            State.spatial.view = MapService.getView();
+          }
+          else {
+            MapService.setView(State.spatial.view, {animate: true});
+            State.spatial.bounds = MapService.getBounds();
+          }
+        }
+      };
+
+      /**
        * Watch state spatial view and update the whole shebang.
        */
-      scope.$watch('state.spatial.view', function (n, o) {
-        if (n !== o && !mapSetsView) {
-          MapService.setView(State.spatial.view, {animate: true});
-          mapSetsBounds = true;
-          State.spatial.bounds = MapService.getBounds();
-        } else {
-          mapSetsView = false;
+      scope.$watch('state.spatial.view', function (newView, oldView) {
+        if (newView !== oldView) {
+          updateMapViewOrBounds(newView, scope.state.spatial.bounds);
         }
       }, true);
 
       /**
        * Watch bounds of state and update map bounds when state is changed.
        */
-      scope.$watch('state.spatial.bounds', function (n, o) {
-        if (n !== o && !mapSetsBounds) {
-          MapService.fitBounds(State.spatial.bounds, {animate: true});
-          mapSetsView = true;
-          State.spatial.view = MapService.getView();
-        } else {
-          mapSetsBounds = false;
-        }
-        if (State.box.type === 'region') {
-          MapService.getRegions(State.spatial.bounds);
+      scope.$watch('state.spatial.bounds', function (newBounds, oldBounds) {
+        if (newBounds !== oldBounds) {
+          updateMapViewOrBounds(scope.state.spatial.view, newBounds);
+          if (State.box.type === 'region') {
+            MapService.getRegions(newBounds);
+          }
         }
       }, true);
 
@@ -309,6 +352,7 @@ angular.module('map')
         ClickFeedbackService.remove();
       });
     };
+
 
     return {
       restrict: 'E',
