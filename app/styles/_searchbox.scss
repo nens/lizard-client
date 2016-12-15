@@ -5,29 +5,28 @@ $zoombutton-width: 30px;
 .searchbox {
     height: $searchbox-height;
 
+
     .resize-wrapper {
         overflow: hidden;
     }
 
     .search-looking-glass {
       position: absolute;
-      right: 10px;
-      top: 14px;
-      color: $asbestos;
+      right: 15px;
+      top: 13px;
+      color: $silver;
     }
 
     .search-and-close {
         height: $searchbox-height;
         width: 100%;
         background: $white;
-        background: rgba($white, 0.95);
 
         input {
             height: $searchbox-height - (2 * $searchbox-margins);
             width: 100%;
             margin-top: $searchbox-margins;
             padding: 0 15px;
-            background: transparent;
             color: $asbestos;
             border: none;
             &:focus {
