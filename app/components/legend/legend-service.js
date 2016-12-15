@@ -135,6 +135,12 @@ angular.module('legend')
             if (!dataLayerObj) {
               return;
             }
+            if (typeof(dataLayerObj.styles) === 'object') {
+              // NB! Compound values for raster "styles" option (currently only
+              // in place for rain), as opposed to a single string, imply we
+              // don't want to draw legend data.
+              return;
+            }
             this.uuidMapping[uuid] = name;
             if (rasterIsDiscrete(dataLayerObj)) {
               DataService.updateLayerData(geo, layerObj, options, promises);
