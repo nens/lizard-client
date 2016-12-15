@@ -35,7 +35,7 @@
         No timeseries available for this asset
       </em>
 
-      <div id="drag-container" ng-if="!noTimeseries">
+      <div id="drag-container">
         <div
           ng-repeat="ts in selected.timeseries | orderBy : ['-active', '+order']"
           ng-if="getTsMetaData(ts.uuid)"
@@ -68,7 +68,8 @@
 
           <color-picker></color-picker>
         </div>
-        <div class="card-content-list clickable lessmore">
+        <div ng-if="!noTimeseries"
+             class="card-content-list clickable lessmore">
           <a style='cursor:pointer;'
              translate
              ng-click="extended = !extended">
