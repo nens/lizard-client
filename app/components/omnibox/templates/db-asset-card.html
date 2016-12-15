@@ -34,7 +34,7 @@
       <em>No timeseries available for this asset</em>
     </div>
 
-    <div id="drag-container" ng-if="!noTimeseries">
+    <div id="drag-container">
 
       <div
         ng-repeat="ts in selected.timeseries | orderBy : ['-active', '+order']"
@@ -48,46 +48,11 @@
         ng-mouseleave="mouseIsOver = false"
         class="draggable-ts animate-repeat card-content-list clickable">
 
-      <div id="drag-container">
         <div
-          ng-repeat="ts in selected.timeseries | orderBy : ['-active', '+order']"
-          ng-if="getTsMetaData(ts.uuid)"
-          ng-show="extended || ts.active || isOneOfFirstThree(ts.uuid)"
-          data-uuid="<% ts.uuid %>"
-          class="draggable-ts animate-repeat">
-          <div
-            id="<% ts.uuid %>"
-            ng-click="toggleTimeseries(ts);"
-            ng-class="{active: mouseIsOver}"
-            ng-mouseover="mouseIsOver = true"
-            ng-mouseleave="mouseIsOver = false"
-            class="card-content-list clickable">
-            <div class="card-content-colorhandle"
-                 ng-show="ts.active"
-                 ng-style="{'background-color': ts.color}"
-                 ng-click="toggleColorPicker(); $event.stopPropagation();">
-            </div>
-            <i class="fa" ng-class="{
-              'fa-clock-o': getTsMetaData(ts.uuid).value_type !== 'image',
-              'fa-file-image-o': getTsMetaData(ts.uuid).value_type === 'image'
-            }"></i>
-            <span
-              title="<% getTsMetaData(ts.uuid).location %>, <% getTsMetaData(ts.uuid).name %>, <% getTsMetaData(ts.uuid).parameter %>"
-              ng-class="{'text-primary': ts.active}">
-              <% getTsMetaData(ts.uuid).location %>,
-              <% getTsMetaData(ts.uuid).parameter %>
-            </span>
-          </div>
-
-          <color-picker></color-picker>
-        </div>
-        <div ng-if="!noTimeseries"
-             class="card-content-list clickable lessmore">
-          <a style='cursor:pointer;'
-             translate
-             ng-click="extended = !extended">
-            <% extended ? '▴' : '▸' %>&nbsp;&nbsp;<% extended ? 'Less' : 'More' %> timeseries
-          </a>
+          class="card-content-colorhandle"
+          ng-show="ts.active"
+          ng-style="{'background-color': ts.color}"
+          ng-click="toggleColorPicker(); $event.stopPropagation();">
         </div>
         <i class="fa" ng-class="{
           'fa-clock-o': getTsMetaData(ts.uuid).value_type !== 'image',
