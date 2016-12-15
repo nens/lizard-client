@@ -68,34 +68,6 @@ $zoombutton-width: 30px;
     }
 }
 
-.zoom-buttons {
-    float: right;
-
-    height: $searchbox-height;
-    margin-left: 0;
-    text-align: center;
-
-    button {
-        display: block;
-        height: $searchbox-height / 2;
-        width: $zoombutton-width;
-        padding: 0;
-        background-color: $greenSea;
-        color: $white;
-        border: none;
-        border-radius: 0;
-
-        &:hover, &:active {
-            color: $white;
-            background-color: $turquoise;
-            @include material-shadow-hover();
-        }
-        &:focus {
-            background-color: $greenSea;
-        }
-    }
-}
-
 .search-results {
   position: absolute;
   z-index: 9999;
