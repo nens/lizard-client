@@ -13,6 +13,8 @@ angular.module('data-menu')
       var RESULT_TYPES = {
         'arrival': gettextCatalog.getString('arrival times'),
         'maxwdepth': gettextCatalog.getString('max water depth'),
+        'depth-first-dtri': gettextCatalog.getString('arrival times'),
+        'depth-max-dtri': gettextCatalog.getString('max water depth'),
         'roads': gettextCatalog.getString('roads'),
         'vulnerable_buildings':
           gettextCatalog.getString('vulnerable buildings'),
