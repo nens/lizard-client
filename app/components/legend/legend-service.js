@@ -65,10 +65,10 @@ angular.module('legend')
         var layer = _.find(State.layers, {uuid: uuid});
         if (layer && layer.active) {
           this.rasterData.continuous[uuid].colormap = colormap;
-          if (!this.rasterData.continuous[uuid].hasOwnProperty('min')) {
+          if (this.rasterData.continuous[uuid].min === null) {
             this.rasterData.continuous[uuid].min = colormap.data[0][0];
           }
-          if (!this.rasterData.continuous[uuid].hasOwnProperty('max')) {
+          if (this.rasterData.continuous[uuid].max === null) {
             this.rasterData.continuous[uuid].max = colormap.data[
               colormap.data.length - 1][0];
           }
