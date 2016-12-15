@@ -57,7 +57,9 @@ angular.module('legend')
       if (!COLORMAP_URL) {
         COLORMAP_URL = getColormapUrl();
       }
-      $http.get(COLORMAP_URL + styles + "/").then(function (result) {
+      var formattedStyles = UtilService.formatRasterStyles(styles);
+      var singleColormapUrl = COLORMAP_URL + formattedStyles + "/";
+      $http.get(singleColormapUrl).then(function (result) {
         var colormap = result.data.definition;
         colormaps[uuid] = colormap;
         var layer = _.find(State.layers, {uuid: uuid});
@@ -131,6 +133,12 @@ angular.module('legend')
           if (layerObj.active) {
             dataLayerObj = _.find(DataService.dataLayers, {uuid: uuid});
             if (!dataLayerObj) {
+              return;
+            }
+            if (typeof(dataLayerObj.styles) === 'object') {
+              // NB! Compound values for raster "styles" option (currently only
+              // in place for rain), as opposed to a single string, imply we
+              // don't want to draw legend data.
               return;
             }
             this.uuidMapping[uuid] = name;
