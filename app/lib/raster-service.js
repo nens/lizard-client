@@ -54,7 +54,7 @@ angular.module('lizard-nxt')
       srs: srs,
       start: startString,
       stop: endString,
-      at: atString,
+      time: atString,
       agg: agg,
       window: aggWindow
     };
