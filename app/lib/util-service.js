@@ -1032,7 +1032,7 @@ angular.module('lizard-nxt')
   };
 
   /**
-    * @descriptions This function is used to format a raster config's "styles"
+    * @description  This function is used to format a raster config's "styles"
     *               value. This should be used for e.g. colormap API calls, where
     *               the value is parsed differently than when used for the WMS.
     *               E.g:
@@ -1047,11 +1047,7 @@ angular.module('lizard-nxt')
     */
   this.formatRasterStyles = function (styles) {
     var parts = styles.split(":");
-    if (parts.length === 3) {
-      return parts[0];
-    } else if (parts.length === 2 || parts.length === 3) {
-      console.log("Encountered unusual raster 'styles' option: '" + styles + "'");
-      console.log("We'll use '" + parts[0] + "' instead of '" + styles + "'");
+    if (parts.length > 1) {
       return parts[0];
     } else {
       return styles;

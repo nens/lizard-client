@@ -119,5 +119,18 @@ describe('Testing util-service functions', function () {
     expect(UtilService.isUrl('mailto:henkie@gekkegerrit')).toBe(true);
     expect(UtilService.isUrl('myownnewprotocol:ditkanechtniet')).toBe(true);
     expect(UtilService.isUrl('demo.lizard.net')).toBe(false);
-  })
+  });
+
+  it('should format the "styles" options correct', function () {
+    var styles = {
+      'foobar'      :'foobar',
+      'foobar:0'    :'foobar',
+      'foobar:0:0'  :'foobar',
+      'foobar:0::'  :'foobar',
+      'foobar::1'   :'foobar'
+    };
+    angular.forEach(styles, function (v, k) {
+      expect(UtilService.formatRasterStyles(k)).toBe(v);
+    });
+  });
 });
