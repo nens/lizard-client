@@ -202,12 +202,12 @@ angular.module('data-menu')
         }
       });
 
-      // When timeline is not moving and at is changed, also update assets and
+      // When timeline is not moving and at has changed, also update assets and
       // geometries.
       //
-      // NOTE: This implementation is not fool proof. When at is changed because
-      // the timeline is dragged, refreshSelected is not called here. This is
-      // not noticeable because when timelineMoving goes to false is
+      // NOTE: This implementation is not fool proof. When at has changed
+      // because the timeline is dragged, refreshSelected is not called in this
+      // setter. This is not noticeable, when timelineMoving goes to false
       // refreshSelected is also called.
       var _at = Date.now();
       Object.defineProperty(State.temporal, 'at', {
