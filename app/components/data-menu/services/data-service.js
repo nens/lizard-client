@@ -202,6 +202,25 @@ angular.module('data-menu')
         }
       });
 
+      // When timeline is not moving and at is changed, also update assets and
+      // geometries.
+      //
+      // NOTE: This implementation is not fool proof. When at is changed because
+      // the timeline is dragged, refreshSelected is not called here. This is
+      // not noticeable because when timelineMoving goes to false is
+      // refreshSelected is also called.
+      var _at = Date.now();
+      Object.defineProperty(State.temporal, 'at', {
+        get: function () { return _at; },
+        set: function (value) {
+          _at = value;
+          if (!State.temporal.timelineMoving && !State.temporal.playing) {
+            console.log('set at');
+            instance.refreshSelected();
+          }
+        }
+      });
+
       this._dataDefers = {}; // Per callee a list with a defer for every time
                              // getData gets called before the last one
                              // resolves.

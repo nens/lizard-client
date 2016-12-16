@@ -53,6 +53,13 @@ angular.module('lizard-nxt')
         end = State.temporal.end,
         el = element.find('svg');
 
+    // D3 fires zoomEnd on click event and clicks on zoom events. The clicks on
+    // zoomEnd are prevented by the timeline. ZoomEnd callback keeps track of
+    // changes to temporal.start and temporal.end and only sets timelineMoving
+    // and triggers a digest loop if they changed.
+    var oldStart = State.temporal.start;
+    var oldEnd = State.temporal.end;
+
     var interaction = {
 
       /**
@@ -84,10 +91,18 @@ angular.module('lizard-nxt')
        * @summary Update zoomEnded to trigger new call for new timeline data.
        */
       zoomEndFn: function () {
-        scope.$apply(function () {
-          getTimeLineData();
-          State.temporal.timelineMoving = false;
-        });
+        if (
+          State.temporal.start !== oldStart
+          && State.temporal.end !== oldEnd
+        ) {
+          State.temporal.timelineMoving = true;
+          scope.$apply(function () {
+            getTimeLineData();
+            State.temporal.timelineMoving = false;
+          });
+        }
+        oldStart = State.temporal.start;
+        oldEnd = State.temporal.end;
       },
 
       /**
