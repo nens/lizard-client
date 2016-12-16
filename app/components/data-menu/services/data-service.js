@@ -215,7 +215,6 @@ angular.module('data-menu')
         set: function (value) {
           _at = value;
           if (!State.temporal.timelineMoving && !State.temporal.playing) {
-            console.log('set at');
             instance.refreshSelected();
           }
         }
@@ -338,6 +337,18 @@ angular.module('data-menu')
         if (dataLayer
           && !(dataLayer.temporal && geo.geometry.type === 'LineString')
         ) {
+
+          // Request data for point in time when discrete.
+          if (dataLayer.scale === 'nominal' || dataLayer.scale === 'ordinal') {
+            options.at = State.temporal.at;
+          }
+
+          // Request data for time interval when continuous.
+          else {
+            options.start = State.temporal.start;
+            options.end = State.temporal.end;
+          }
+
           promises.push(
             dataLayer.getData(options).then(function (response) {
               // async so remove anything obsolete.
@@ -370,10 +381,7 @@ angular.module('data-menu')
         var promises = [];
         var instance = this;
 
-        var options = {
-          start: State.temporal.start,
-          end: State.temporal.end
-        };
+        var options = {};
 
         options.geom = geo.geometry;
 
@@ -382,12 +390,16 @@ angular.module('data-menu')
           options.boundary_type = geo.regionType;
         }
 
+        // Add promise to promises.
         angular.forEach(State.layers, function (layer) {
           instance.updateLayerData(geo, layer, options, promises);
         });
 
         if (State.annotations.active) {
           var uuid = instance.annotationsLayer.uuid;
+          // Get annotations for time interval.
+          options.start = State.temporal.start;
+          options.end = State.temporal.end;
           promises.push(
             instance.annotationsLayer.getData(options).then(function (response) {
               // async so remove anything obsolete.

@@ -25,6 +25,9 @@ angular.module('lizard-nxt')
     if (options.start && options.end) {
       startString = new Date(options.start).toISOString().split('.')[0];
       endString = new Date(options.end).toISOString().split('.')[0];
+    }
+
+    if (options.at) {
       atString = new Date(State.temporal.at).toISOString().split('.')[0];
     }
 
