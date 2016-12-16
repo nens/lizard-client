@@ -1,6 +1,12 @@
 .modal-title {
   text-transform: capitalize;
 }
+.navbar-collapse {
+  padding-right: 0 !important;
+}
+.navbar-nav.navbar-right:last-child {
+  margin-right: 0 !important;
+}
 input::-webkit-input-placeholder { color: #ccc !important; }
 input:-moz-placeholder { color: #ccc !important; }
 input::-moz-placeholder { color: #ccc !important; }
