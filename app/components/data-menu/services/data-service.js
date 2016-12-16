@@ -202,6 +202,24 @@ angular.module('data-menu')
         }
       });
 
+      // When timeline is not moving and at has changed, also update assets and
+      // geometries.
+      //
+      // NOTE: This implementation is not fool proof. When at has changed
+      // because the timeline is dragged, refreshSelected is not called in this
+      // setter. This is not noticeable, when timelineMoving goes to false
+      // refreshSelected is also called.
+      var _at = Date.now();
+      Object.defineProperty(State.temporal, 'at', {
+        get: function () { return _at; },
+        set: function (value) {
+          _at = value;
+          if (!State.temporal.timelineMoving && !State.temporal.playing) {
+            instance.refreshSelected();
+          }
+        }
+      });
+
       this._dataDefers = {}; // Per callee a list with a defer for every time
                              // getData gets called before the last one
                              // resolves.
@@ -319,6 +337,18 @@ angular.module('data-menu')
         if (dataLayer
           && !(dataLayer.temporal && geo.geometry.type === 'LineString')
         ) {
+
+          // Request data for point in time when discrete.
+          if (dataLayer.scale === 'nominal' || dataLayer.scale === 'ordinal') {
+            options.at = State.temporal.at;
+          }
+
+          // Request data for time interval when continuous.
+          else {
+            options.start = State.temporal.start;
+            options.end = State.temporal.end;
+          }
+
           promises.push(
             dataLayer.getData(options).then(function (response) {
               // async so remove anything obsolete.
@@ -351,10 +381,7 @@ angular.module('data-menu')
         var promises = [];
         var instance = this;
 
-        var options = {
-          start: State.temporal.start,
-          end: State.temporal.end
-        };
+        var options = {};
 
         options.geom = geo.geometry;
 
@@ -363,12 +390,16 @@ angular.module('data-menu')
           options.boundary_type = geo.regionType;
         }
 
+        // Add promise to promises.
         angular.forEach(State.layers, function (layer) {
           instance.updateLayerData(geo, layer, options, promises);
         });
 
         if (State.annotations.active) {
           var uuid = instance.annotationsLayer.uuid;
+          // Get annotations for time interval.
+          options.start = State.temporal.start;
+          options.end = State.temporal.end;
           promises.push(
             instance.annotationsLayer.getData(options).then(function (response) {
               // async so remove anything obsolete.
