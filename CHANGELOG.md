@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.6.1"></a>
+## [4.6.1](https://github.com/nens/lizard-client/compare/v4.6.0...v4.6.1) (2016-12-16)
+
+
+### Bug Fixes
+
+* **edge:** fixes legend gradient in Micrsoft Edge. Fixes: nens/lizard-nxt/issues/2155 ([debf328](https://github.com/nens/lizard-client/commit/debf328))
+* **omnibox:** Add translation of sewer_system of pumped drainage area ([7fc7729](https://github.com/nens/lizard-client/commit/7fc7729))
+* **omnibox:** different icons for different measuringstations ([e2c9712](https://github.com/nens/lizard-client/commit/e2c9712))
+* **omnibox:** omnibox now programmatically adjusts its height based on the height of the timeline component  ([#806](https://github.com/nens/lizard-client/issues/806)) ([a2310d3](https://github.com/nens/lizard-client/commit/a2310d3))
+* **scenarios:** new results translated ([53baf21](https://github.com/nens/lizard-client/commit/53baf21))
+* **temporal rasters:** refreshdata when temporal start, end or at changes, only set temporal.timelineMoving when timeline moves, not when user clicks on timeline ([482e816](https://github.com/nens/lizard-client/commit/482e816))
+* **temporal rasters:** request raster data with time parameter for discrete raster, with start and end interval when continuous. ([1d24f59](https://github.com/nens/lizard-client/commit/1d24f59))
+
+
+
 <a name="4.6.0"></a>
 # [4.6.0](https://github.com/nens/lizard-client/compare/v4.5.1...v4.6.0) (2016-12-15)
 
