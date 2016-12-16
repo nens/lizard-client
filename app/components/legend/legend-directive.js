@@ -94,14 +94,18 @@ angular.module('legend')
 
       suffix = suffix.substring(0, suffix.length - 1) + ")";
 
-      var gradientValue0 = "background: -moz-linear-gradient(bottom, "
+      var gradientValue0 = "background: linear-gradient(to top, "
         + suffix;
-      var gradientValue1 = "background: -webkit-linear-gradient(bottom, "
+      var gradientValue1 = "background: -moz-linear-gradient(bottom, "
         + suffix;
-      var gradientValue2 = "background: -ms-linear-gradient(bottom, "
+      var gradientValue2 = "background: -webkit-linear-gradient(bottom, "
+        + suffix;
+      var gradientValue3 = "background: -ms-linear-gradient(bottom, "
         + suffix;
 
-      return gradientValue0 + "; " + gradientValue1 + "; " + gradientValue2;
+
+      return gradientValue0 + "; " + gradientValue1 + "; " + gradientValue2 +
+        "; " + gradientValue3 ;
     };
 
     /* Een kaartje voor zowel continuous als discrete rasters ****************/
