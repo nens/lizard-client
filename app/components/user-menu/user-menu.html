@@ -15,7 +15,7 @@
     </button>
   </div>
   <div id="lizard-apps-container" class="lizard-apps-container material-shadow"></div>
-  <div style="margin-right:15px;width:100%;">
+  <div>
     <div class="navbar-header">
       <button type="button"
               class="navbar-toggle"
@@ -29,6 +29,43 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
+
+        <li ng-show="showApps">
+          <a id="lizard-apps-button"
+             class="lizard-apps-button"
+             title="Apps"
+             href="">
+          </a>
+        </li>
+        <li>
+          <a ng-click="toggleExport()"
+             title="<% 'Export all selected timeseries' | translate %>"
+             href="">
+            <i class="fa fa-space-shuttle"></i>
+            <span translate>Export</span>
+          </a>
+        </li>
+        <li>
+          <a ng-click="toggleDashboard()"
+             title="<% 'Switch to ' + getContextComplement() | translate %>"
+             target="_blank"
+             accesskey="d"
+             href="">
+            <i class="fa <% getContextComplementIcon() %>"></i>
+            <span translate><% getContextComplement() %></span>
+          </a>
+        </li>
+        <li ng-if="user.authenticated"
+            ng-class="{'open': favourites.enabled}">
+          <a title="<% 'Favourites' | translate %>"
+             href=""
+             ng-click="toggleFavourites($event)">
+            <i class="fa fa-star"></i>
+            <span translate>Favourites</span>
+          </a>
+        </li>
+        <li role="separator" class="divider"></li>
+
         <li ng-if="!user.authenticated">
           <a title="<% 'Question and manual' | translate %>"
              class="clickable"
@@ -104,43 +141,6 @@
             </li>
           </ul>
         </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li ng-show="showApps">
-          <a id="lizard-apps-button"
-             class="lizard-apps-button"
-             title="Apps"
-             href="">
-          </a>
-        </li>
-        <li>
-          <a ng-click="toggleExport()"
-             title="<% 'Export all selected timeseries' | translate %>"
-             href="">
-            <i class="fa fa-space-shuttle"></i>
-            <span translate>Export</span>
-          </a>
-        </li>
-        <li>
-          <a ng-click="toggleDashboard()"
-             title="<% 'Switch to ' + getContextComplement() | translate %>"
-             target="_blank"
-             accesskey="d"
-             href="">
-            <i class="fa <% getContextComplementIcon() %>"></i>
-            <span translate><% getContextComplement() %></span>
-          </a>
-        </li>
-        <li ng-if="user.authenticated"
-            ng-class="{'open': favourites.enabled}">
-          <a title="<% 'Favourites' | translate %>"
-             href=""
-             ng-click="toggleFavourites($event)">
-            <i class="fa fa-star"></i>
-            <span translate>Favourites</span>
-          </a>
-        </li>
-        <li role="separator" class="divider"></li>
       </ul>
 
     </div>
