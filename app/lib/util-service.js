@@ -627,20 +627,45 @@ angular.module('lizard-nxt')
    *                Exceptions, like for font-awesome's 'filter' can be added
    *                here when neccessary.
    */
-  this.getIconClass = function (str) {
-    switch (str) {
-    case 'filter':
-      return 'fa fa-filter';
-    case 'pumpstation':
-      return 'lz lz-pumpstation-diesel';
-    case 'bridge':
-      return 'lz lz-bridge';
-    case 'bridge-draw':
-      return 'lz lz-bridge-draw';
-    case 'bridge-fixed':
-      return 'lz lz-bridge-fixed';
-    default:
-      return 'lz lz-' + str;
+  this.getIconClass = function (str, asset) {
+
+    if (str === "measuringstation") {
+      var station_type = asset && asset.station_type;
+      if (station_type !== undefined) {
+        switch (station_type) {
+          case 1:
+            return "lz lz-measuringstation";
+          case 2:
+            return "lz lz-manhole";
+          case 3:
+            return "lz lz-surface-water";
+          case 4:
+            return "lz lz-manhole";
+          case 5:
+            return "lz lz-manhole";
+          case 6:
+            return "lz lz-dmc";
+          case 7:
+            return "lz lz-seismometer";
+          case 8:
+            return "lz lz-radar-image";
+          case 9:
+            return "lz lz-radar-image";
+          case 10:
+            return "lz lz-inclinometer";
+          default:
+            return "lz lz-measuringstation";
+        }
+      } else {
+        return "lz lz-measuringstation";
+      }
+    } else {
+      switch (str) {
+        case 'filter':
+          return 'fa fa-filter';
+        default:
+          return 'lz lz-' + str;
+      }
     }
   };
 
