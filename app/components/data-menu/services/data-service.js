@@ -339,7 +339,8 @@ angular.module('data-menu')
         ) {
 
           // Request data for point in time when discrete.
-          if (dataLayer.scale === 'nominal' || dataLayer.scale === 'ordinal') {
+          if ((dataLayer.scale === 'nominal' || dataLayer.scale === 'ordinal')
+              && (geo.geometry.type === 'Polygon' || geo.geometry.type === 'MultiPolygon')) {
             options.at = State.temporal.at;
           }
 
