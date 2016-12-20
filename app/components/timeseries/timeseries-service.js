@@ -186,7 +186,7 @@ angular.module('timeseries')
       }, errorFn)
 
       .then(TsUService.filterTimeseries, errorFn)
-      .then(TsUService.formatTimeseriesForGraph, null);
+      .then(TsUService.formatTimeseriesForGraph, params.fields);
     };
 
     var errorFn = function (err) {
@@ -307,8 +307,8 @@ angular.module('timeseries')
       return graphTimeseries;
     };
 
-    var formatTimeseriesForGraph = function (timeseries) {
-
+    var formatTimeseriesForGraph = function (timeseries, fields) {
+      var yKey = fields && fields.length == 1 ? fields[0] : 'value';
       var graphTimeseriesTemplate = {
         id: '', //uuid
         data: [],
@@ -320,24 +320,13 @@ angular.module('timeseries')
           x: '',
           y: ''
         },
-        keys: { x: 'timestamp', y: 'value' }
+        keys: { x: 'timestamp', y: yKey }
       };
 
       var result = [];
       timeseries.forEach(function (ts) {
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
         graphTimeseries.data = ts.events;
-        if (graphTimeseries.data && graphTimeseries.data.length > 0) {
-          // The y key is not always 'value' for bar charts. We get the y key
-          // from the data.
-          var yKey = _.filter(
-              Object.keys(graphTimeseries.data[0]),
-              function(x){ return x !== graphTimeseries.keys.x; }
-          );
-          if (yKey.length === 1 && graphTimeseries.keys.y !== yKey[0]) {
-            graphTimeseries.keys.y = yKey[0];
-          }
-        }
         graphTimeseries.id = ts.uuid;
         graphTimeseries.valueType = ts.value_type;
         graphTimeseries.measureScale = ts.observation_type.scale;
