@@ -64,7 +64,17 @@
           ng-class="{'text-primary': ts.active}">
           <% getTsMetaData(ts.uuid).location %>,
           <% getTsMetaData(ts.uuid).parameter %>
+          &nbsp;
         </span>
+
+
+        <i class="active fa fa-<% relativeTimeseries ? 'check-square' : 'square' %> relativate-ts-icon"
+           ng-class="{'active': relativeTimeseries}"
+           ng-click="toggleRelativeTimeseries(); $event.stopPropagation();"
+           ng-if="ts.active"
+           title="<% relativeTimeseries && 'Show absolute values for all timeseries' || 'Show all timeseries relative to surface level' %>"
+           translate>
+        </i>
 
         <color-picker></color-picker>
 

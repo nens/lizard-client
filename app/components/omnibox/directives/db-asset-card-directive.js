@@ -6,6 +6,11 @@ angular.module('omnibox')
     link: function (scope, element) {
 
       scope.selected = State.selected;
+      scope.relativeTimeseries = false;
+
+      scope.toggleRelativeTimeseries = function () {
+        scope.relativeTimeseries = !scope.relativeTimeseries;
+      };
 
       scope.getTsMetaData = function (uuid) {
         return _.find(scope.asset.timeseries, function (ts) {
