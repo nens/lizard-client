@@ -8,15 +8,13 @@ nav.navbar {
     border: none;
     border-radius: 0;
     color: $white;
-    width: 100% !important;
 
     .navbar-header {
         background: none;
-        margin: 0 -15px;
+        margin: 0;
     }
 
     .navbar-collapse {
-        margin: 0 -15px;
         @include material-shadow();
     }
 
@@ -55,9 +53,6 @@ nav.navbar {
     }
 }
 
-.navbar-right {
-  margin-right: 0 !important;
-}
 
 // Apparently Bootstrap expects a navbar-header on the left side
 .navbar-nav.navbar-left:first-child {
@@ -79,6 +74,37 @@ $grid-float-breakpoint-max: 768px;
    left: -32px;
 }
 
-.user-name {
-  margin-left: -10px;
+.zoom-buttons {
+    position: absolute;
+    left: 0;
+    height: $searchbox-height;
+    margin-left: 0;
+    text-align: center;
+
+    button {
+        display: block;
+        height: $searchbox-height / 2;
+        width: $zoombutton-width;
+        padding: 0;
+        background-color: $greenSea;
+        color: $white;
+        border: none;
+        border-radius: 0;
+
+        &:hover, &:active {
+            color: $white;
+            background-color: $turquoise;
+            @include material-shadow-hover();
+        }
+        &:focus {
+            background-color: $greenSea;
+        }
+    }
+}
+
+.fullnavbar {
+  position: absolute;
+  right: 0;
+  margin: 0 auto;
+  left: 400px;
 }

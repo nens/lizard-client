@@ -49,6 +49,11 @@ angular.module('legend')
       };
     };
 
+    this.rasterIsTemporal = function (uuid) {
+      var dataLayerObj = _.find(DataService.dataLayers, {uuid: uuid});
+      return dataLayerObj && dataLayerObj.temporal;
+    };
+
     var rasterIsDiscrete = function (dataLayerObj) {
       return dataLayerObj.scale === "nominal" || dataLayerObj.scale === "ordinal";
     };
@@ -57,16 +62,18 @@ angular.module('legend')
       if (!COLORMAP_URL) {
         COLORMAP_URL = getColormapUrl();
       }
-      $http.get(COLORMAP_URL + styles + "/").then(function (result) {
+      var formattedStyles = UtilService.formatRasterStyles(styles);
+      var singleColormapUrl = COLORMAP_URL + formattedStyles + "/";
+      $http.get(singleColormapUrl).then(function (result) {
         var colormap = result.data.definition;
         colormaps[uuid] = colormap;
         var layer = _.find(State.layers, {uuid: uuid});
         if (layer && layer.active) {
           this.rasterData.continuous[uuid].colormap = colormap;
-          if (!this.rasterData.continuous[uuid].hasOwnProperty('min')) {
+          if (this.rasterData.continuous[uuid].min === null) {
             this.rasterData.continuous[uuid].min = colormap.data[0][0];
           }
-          if (!this.rasterData.continuous[uuid].hasOwnProperty('max')) {
+          if (this.rasterData.continuous[uuid].max === null) {
             this.rasterData.continuous[uuid].max = colormap.data[
               colormap.data.length - 1][0];
           }
@@ -131,6 +138,12 @@ angular.module('legend')
           if (layerObj.active) {
             dataLayerObj = _.find(DataService.dataLayers, {uuid: uuid});
             if (!dataLayerObj) {
+              return;
+            }
+            if (typeof(dataLayerObj.styles) === 'object') {
+              // NB! Compound values for raster "styles" option (currently only
+              // in place for rain), as opposed to a single string, imply we
+              // don't want to draw legend data.
               return;
             }
             this.uuidMapping[uuid] = name;

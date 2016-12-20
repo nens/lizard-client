@@ -94,14 +94,18 @@ angular.module('legend')
 
       suffix = suffix.substring(0, suffix.length - 1) + ")";
 
-      var gradientValue0 = "background: -moz-linear-gradient(bottom, "
+      var gradientValue0 = "background: linear-gradient(to top, "
         + suffix;
-      var gradientValue1 = "background: -webkit-linear-gradient(bottom, "
+      var gradientValue1 = "background: -moz-linear-gradient(bottom, "
         + suffix;
-      var gradientValue2 = "background: -ms-linear-gradient(bottom, "
+      var gradientValue2 = "background: -webkit-linear-gradient(bottom, "
+        + suffix;
+      var gradientValue3 = "background: -ms-linear-gradient(bottom, "
         + suffix;
 
-      return gradientValue0 + "; " + gradientValue1 + "; " + gradientValue2;
+
+      return gradientValue0 + "; " + gradientValue1 + "; " + gradientValue2 +
+        "; " + gradientValue3 ;
     };
 
     /* Een kaartje voor zowel continuous als discrete rasters ****************/
@@ -171,6 +175,17 @@ angular.module('legend')
     scope.$watch('state.spatial.bounds', function (n, o) {
       if (n === o) { return; }
       LegendService.updateLegendData(n, scope.state.layers);
+    });
+
+    scope.$watch('state.temporal.at', function (n, o) {
+      if (n === o) { return; }
+      var temporalLayers = [];
+      _.forEach(scope.state.layers, function (layer) {
+        if (LegendService.rasterIsTemporal(layer.uuid)) {
+          temporalLayers.push(layer);
+        }
+      });
+      LegendService.updateLegendData(scope.state.spatial.bounds, temporalLayers);
     });
 
     scope.legend.data = LegendService.rasterData;

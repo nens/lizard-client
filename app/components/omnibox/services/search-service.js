@@ -16,7 +16,6 @@ angular.module('omnibox')
     'CabinetService',
     'DateParser',
     'DataService',
-    'MapService',
     'notie',
     function SearchService (
       $q,
@@ -25,7 +24,6 @@ angular.module('omnibox')
       CabinetService,
       dateParser,
       DataService,
-      MapService,
       notie
       ) {
 
@@ -132,8 +130,8 @@ angular.module('omnibox')
     };
 
     /**
-     * Zooms to result of geocoder. If result is precise it also simulates a
-     * click on the result.
+     * Zooms to result of geocoder.
+     *
      * @param  {object} result google geocoder result.
      */
     this.zoomToGoogleGeocoderResult = function (result, state) {
@@ -141,9 +139,6 @@ angular.module('omnibox')
         LeafletService.latLng(result.geometry.viewport.southwest),
         LeafletService.latLng(result.geometry.viewport.northeast)
       );
-      if (result.geometry.location_type === 'ROOFTOP') { // Precise location
-        state.spatial.here = LeafletService.latLng(result.geometry.location);
-      }
       return state;
     };
 
@@ -166,11 +161,11 @@ angular.module('omnibox')
       state.assets.addAsset(
         result.entity_name + '$' + result.entity_id);
 
-      MapService.setView({
+      state.spatial.view = {
         lat: result.view[0],
         lng: result.view[1],
         zoom: result.view[2] || ZOOM_FOR_OBJECT
-      });
+      };
 
       return state;
     };
@@ -180,7 +175,7 @@ angular.module('omnibox')
      *
      * @param {object} result: API search result.
      * @param {object} state: the current state.
-     * @return {object} state: the new state.
+     * @return {object} state: the mutated state.
      */
     this.zoomToSearchResultWithoutSelecting = function (result, state) {
       var ZOOM_FOR_OBJECT = 19;
@@ -189,11 +184,11 @@ angular.module('omnibox')
         state.selected.reset();
       }
 
-      MapService.setView({
+      state.spatial.view = {
         lat: result.view[0],
         lng: result.view[1],
         zoom: result.view[2] || ZOOM_FOR_OBJECT
-      });
+      };
 
       return state;
     };

@@ -769,10 +769,10 @@ angular.module('lizard-nxt')
    * the charts in this graph. It looks for similar units and calculates
    * the min and the max based on all of the items with the same unit.
    * In this way the charts can be compared and different y-axes calculated.
-   * @param {object} - charts - ChartContainer object with y and data
-   * @param {object} - xyPerUnit - y characteristics (domain, scale, axis) per
+   * @param {object}   charts - ChartContainer object with y and data
+   * @param {object}   yPerUnit - y characteristics (domain, scale, axis) per
    *                               unit of the graph
-   * @param {object} - dimensions - object describing the size of the graph
+   * @param {object}   dimensions - object describing the size of the graph
    * @param {boolean}  drawGrid    to draw a grid or not.
    */
   var updateYs = function (charts, yPerUnit, dimensions, drawGrid) {
@@ -788,12 +788,20 @@ angular.module('lizard-nxt')
       var maxMin = Graph.prototype._maxMin(chart.data, chart.keys.y);
       var unitY = yPerUnit[chart.unit];
 
-      if (unitY) {
+      // All maxes and minuses should be defined for the max/min comparison to
+      // work.
+      if (
+        unitY
+        && !_.isUndefined(chart.yMaxMin.min)
+        && !_.isUndefined(chart.yMaxMin.max)
+        && !_.isUndefined(unitY.maxMin.max)
+        && !_.isUndefined(unitY.maxMin.min)
+      ) {
         maxMin.min = Math.min(chart.yMaxMin.min, unitY.maxMin.min);
         maxMin.max = Math.max(chart.yMaxMin.max, unitY.maxMin.max);
       }
 
-      yPerUnit[chart.unit] = { maxMin: maxMin };
+      yPerUnit[chart.unit] = {maxMin: maxMin};
     });
 
     _.forEach(yPerUnit, function (unitY) {

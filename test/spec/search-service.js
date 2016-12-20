@@ -95,10 +95,4 @@ describe('Service: SearchService', function () {
       .toBe(ggResult.results[0].geometry.viewport.southwest.lat);
   });
 
-  it('should set spatial.here when location_type is ROOFTOP', function () {
-    SearchService.zoomToGoogleGeocoderResult(ggResult.results[0], State);
-    expect(State.spatial.here.lat)
-      .toBe(ggResult.results[0].geometry.location.lat);
-  });
-
 });

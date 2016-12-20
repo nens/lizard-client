@@ -4,95 +4,102 @@
     <timeseries asset-geom="assetGeom" asset-type="assetType" time-state="timeState"></timeseries>
     <cardheader asset="asset" geom="geom"></cardheader>
 
-    <div class="card-content hug-left">
 
-      <!-- crosssections are not draggable and a specific visualization. -->
+    <!-- crosssections are not draggable and a specific visualization. -->
+    <div
+      ng-if="asset.entity_name === 'leveecrosssection'"
+      ng-click="toggleCrosssection(asset)"
+      class="card-content-list clickable">
+      <i class="fa fa-line-chart"></i>
+      <span translate ng-class="{'text-primary bg-warning': asset.crosssection.active}">
+        Levee cross section
+      </span>
+    </div>
+
+    <div ng-if="asset.crosssection.active">
+      <dl>
+        <dt translate>Green line</dt>
+        <dd translate>Elevation along crosssection (source: AHN2).</dd>
+        <dt translate>Grey dots</dt>
+        <dd translate>Measured hydraulic head at current time.</dd>
+        <dt translate>Dashed line</dt>
+        <dd translate>indicative interpolation of hydraulic head in the same aquifer.</dd>
+      </dl>
+    </div>
+
+    <em class="card-content-list"
+        ng-if="noData && (assetType==='geometry' || asset.entity_name !== 'leveecrosssection')"
+        translate>
+      No <% noDataType %> data available for this <% assetTypeName %>
+    </em>
+
+    <!-- use ng-show, so div is present and can be added to drag containers -->
+     <div id="drag-container">
+
       <div
-        ng-if="asset.entity_name === 'leveecrosssection'"
-        ng-click="toggleCrosssection(asset)"
-        class="card-content-list clickable">
-        <i class="fa fa-line-chart"></i>
-        <span translate ng-class="{'text-primary bg-warning': asset.crosssection.active}">
-          Levee cross section
-        </span>
-      </div>
+        ng-repeat="selection in state.selections | orderBy : ['-active', '+order']"
+        ng-init="metaData = getSelectionMetaData(selection)"
+        ng-if="getSelectionMetaData(selection).match"
+        ng-show="extended || selection.active || isOneOfFirstThree(selection.uuid)">
 
-      <div ng-if="asset.crosssection.active">
-        <dl>
-          <dt translate>Green line</dt>
-          <dd translate>Elevation along crosssection (source: AHN2).</dd>
-          <dt translate>Grey dots</dt>
-          <dd translate>Measured hydraulic head at current time.</dd>
-          <dt translate>Dashed line</dt>
-          <dd translate>indicative interpolation of hydraulic head in the same aquifer.</dd>
-        </dl>
-      </div>
-
-      <em class="card-content-list"
-          ng-if="noData && (assetType==='geometry' || asset.entity_name !== 'leveecrosssection')"
-          translate>
-        No <% noDataType %> data available for this <% assetTypeName %>
-      </em>
-
-
-      <!-- use ng-show, so div is present and can be added to drag containers -->
-      <div id="drag-container" ng-if="!noData">
-        <div ng-repeat="selection in state.selections | orderBy : ['-active', '+order']"
-             ng-init="metaData = getSelectionMetaData(selection)"
-             ng-if="getSelectionMetaData(selection).match"
-             ng-show="extended || selection.active || isOneOfFirstThree(selection.uuid)">
-          <div data-uuid="<% selection.uuid %>"
-               class="draggable-ts">
-            <div
-              ng-if="metaData.type === 'timeseries'"
-              id="<% selection.timeseries %>"
-              ng-click="toggleSelection(selection);"
-              ng-class="{active: mouseIsOver}"
-              ng-mouseover="mouseIsOver = true"
-              ng-mouseleave="mouseIsOver = false"
-              class="card-content-list clickable">
-              <div class="card-content-colorhandle"
-                   ng-show="selection.active"
-                   ng-style="{'background-color': selection.color}"
-                   ng-click="toggleColorPicker(); $event.stopPropagation();">
-              </div>
-              <i class="fa" ng-class="{
-                'fa-clock-o': metaData.value_type !== 'image',
-                'fa-file-image-o': metaData.value_type === 'image'
-              }"></i>
-              <span
-                title="<% metaData.location %>, <% metaData.name %>, <% metaData.parameter %>"
-                ng-class="{'text-primary bg-warning': selection.active}">
-                <% metaData.location %>,
-                <% metaData.name %>,
-                <% metaData.parameter %>
-              </span>
+        <div data-uuid="<% selection.uuid %>" class="draggable-ts">
+          <div
+            ng-if="metaData.type === 'timeseries'"
+            id="<% selection.timeseries %>"
+            ng-click="toggleSelection(selection);"
+            ng-class="{active: mouseIsOver}"
+            ng-mouseover="mouseIsOver = true"
+            ng-mouseleave="mouseIsOver = false"
+            class="card-content-list clickable">
+            <div class="card-content-colorhandle"
+                 ng-show="selection.active"
+                 ng-style="{'background-color': selection.color}"
+                 ng-click="toggleColorPicker(); $event.stopPropagation();">
             </div>
-            <div
-              ng-if="metaData.type === 'raster'"
-              id="<% selection.raster %>"
-              ng-click="toggleSelection(selection)"
-              class="card-content-list clickable">
-              <div class="card-content-colorhandle"
-                   ng-show="selection.active"
-                   ng-style="{'background-color': selection.color}"
-                   ng-click="toggleColorPicker(); $event.stopPropagation();">
-              </div>
-              <i class="fa fa-line-chart"></i>
-              <span ng-class="{'text-primary bg-warning': selection.active}">
-                <% metaData.quantity %>, (<% metaData.unit %>)
-              </span>
-            </div>
-            <color-picker></color-picker>
+
+            <i class="fa" ng-class="{
+              'fa-clock-o': metaData.value_type !== 'image',
+              'fa-file-image-o': metaData.value_type === 'image'
+            }"></i>
+
+            <span
+              title="<% metaData.location %>, <% metaData.uuid %>, <% metaData.parameter %>"
+              ng-class="{'text-primary bg-warning': selection.active}">
+              <% metaData.location %>,
+              <% metaData.parameter %>
+            </span>
           </div>
+
+          <div
+            ng-if="metaData.type === 'raster'"
+            ng-class="{active: mouseIsOver}"
+            ng-mouseover="mouseIsOver = true"
+            ng-mouseleave="mouseIsOver = false"
+            id="<% selection.raster %>"
+            ng-click="toggleSelection(selection)"
+            class="card-content-list clickable">
+            <div class="card-content-colorhandle"
+                 ng-show="selection.active"
+                 ng-style="{'background-color': selection.color}"
+                 ng-click="toggleColorPicker(); $event.stopPropagation();">
+            </div>
+            <i class="fa fa-line-chart"></i>
+            <span ng-class="{'text-primary bg-warning': selection.active}">
+              <% metaData.quantity %>, (<% metaData.unit %>)
+            </span>
+          </div>
+
+          <color-picker></color-picker>
+
         </div>
-        <div class="card-content-list clickable lessmore">
-          <a style='cursor:pointer;'
-             translate
-             ng-click="extended = !extended">
-            <% extended ? '▴' : '▸' %>&nbsp;&nbsp;<% extended ? 'Less' : 'More' %> timeseries
-          </a>
-        </div>
+      </div>
+
+      <div class="card-content-list clickable lessmore">
+        <a style='cursor:pointer;'
+           translate
+           ng-click="extended = !extended">
+          <% extended ? '▴' : '▸' %>&nbsp;&nbsp;<% extended ? 'Less' : 'More' %> timeseries
+        </a>
       </div>
 
     </div>

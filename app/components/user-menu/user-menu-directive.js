@@ -6,6 +6,7 @@ angular.module('user-menu')
   .directive('userMenu',[
     '$http',
     'UtilService',
+    'MapService',
     '$location',
     'user',
     '$uibModal',
@@ -15,6 +16,7 @@ angular.module('user-menu')
     function (
       $http,
       UtilService,
+      MapService,
       $location,
       user,
       $uibModal,
@@ -32,6 +34,10 @@ angular.module('user-menu')
       };
 
       scope.inbox = [];
+
+      // Bind mapservice functions for zoom buttons;
+      scope.zoomIn = MapService.zoomIn;
+      scope.zoomOut = MapService.zoomOut;
 
       /**
        * Turn off either favourites or apps when click the on or the other

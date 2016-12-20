@@ -122,7 +122,7 @@ angular.module('omnibox')
             TimeseriesService.timeseries, selection);
         var otherGraphTsMetaData = SelectionService.timeseriesMetaData(
             TimeseriesService.timeseries, otherGraphSelections);
-        if (tsMetaData.value_type !== otherGraphTsMetaData.value_type) {
+        if (tsMetaData.valueType !== otherGraphTsMetaData.valueType) {
           notie.alert(2,
             gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!'));
           emulateClick(el);

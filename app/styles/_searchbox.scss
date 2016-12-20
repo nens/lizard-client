@@ -5,22 +5,28 @@ $zoombutton-width: 30px;
 .searchbox {
     height: $searchbox-height;
 
+
     .resize-wrapper {
         overflow: hidden;
+    }
+
+    .search-looking-glass {
+      position: absolute;
+      right: 15px;
+      top: 13px;
+      color: $silver;
     }
 
     .search-and-close {
         height: $searchbox-height;
         width: 100%;
         background: $white;
-        background: rgba($white, 0.95);
 
         input {
             height: $searchbox-height - (2 * $searchbox-margins);
             width: 100%;
             margin-top: $searchbox-margins;
             padding: 0 15px;
-            background: transparent;
             color: $asbestos;
             border: none;
             &:focus {
@@ -57,34 +63,6 @@ $zoombutton-width: 30px;
                 right: $zoombutton-width + $searchbox-margins + $searchbox-height;
                 top: $searchbox-margins;
             }
-        }
-    }
-}
-
-.zoom-buttons {
-    float: right;
-
-    height: $searchbox-height;
-    margin-left: $searchbox-margins;
-    text-align: center;
-
-    button {
-        display: block;
-        height: $searchbox-height / 2;
-        width: $zoombutton-width;
-        padding: 0;
-        background-color: $greenSea;
-        color: $white;
-        border: none;
-        border-radius: 0;
-
-        &:hover, &:active {
-            color: $white;
-            background-color: $turquoise;
-            @include material-shadow-hover();
-        }
-        &:focus {
-            background-color: $greenSea;
         }
     }
 }

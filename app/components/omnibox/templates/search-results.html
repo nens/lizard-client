@@ -1,6 +1,6 @@
 <div class="card active">
 
-  <div class="search-results"
+  <div class="search-results material-shadow"
        ng-keydown="onKeydown($event)"
        ng-focus="onFocus(item)">
 
@@ -16,7 +16,7 @@
         <i class="fa fa-location-arrow">&nbsp;</i>
         <a ng-click="zoomToSpatialResult(result)"
           href="">
-          <span><% result.formatted_address %></span>
+          <span title="<% result.formatted_address %>"><% result.formatted_address %></span>
         </a>
       </li>
     </ul>
@@ -35,7 +35,7 @@
         <a ng-click="zoomToSearchResult(result)"
           href="">
           <i class="fa"
-             ng-class="util.getIconClass(result.entity_name)"></i>
+             ng-class="util.getIconClass(result.entity_name, result)"></i>
           <span><% result.title %></span>
         </a>
       </li>

@@ -15,7 +15,7 @@ angular.module("omnibox")
         ESC: 27,
         UPARROW: 38,
         DOWNARROW: 40,
-        RETURNKEY: 13,
+        RETURNKEY: 13
       };
 
       scope.onFocus = function(item, $event) {
@@ -74,10 +74,10 @@ angular.module("omnibox")
       };
 
       // In pixels
-      var SEARCHBAR_FROM_TOP = 60;
-      var TIMLINE_BOTTOM_MARGIN = 10;
-      var OMNIBOX_BOTTOM_MARGIN = 5;
-      var OMNIBOX_TOP_MARGIN = 5;
+      var SEARCHBAR_FROM_TOP = 50;
+      var TIMLINE_BOTTOM_MARGIN = 0;
+      var OMNIBOX_BOTTOM_MARGIN = 0;
+      var OMNIBOX_TOP_MARGIN = 0;
 
       var cards = element.find('#cards');
 
