@@ -139,6 +139,18 @@ angular.module('map')
         return rasterMapLayer._defaultRegionStyling;
       };
 
+      var _bringActiveRegionToFront = function (e) {
+        // Make sure the currently active region is brough to front:
+        if (e.layer.feature &&
+            e.layer.feature.id &&
+            e.layer.feature.id === rasterMapLayer._activeRegionId
+        ) {
+          e.layer.bringToFront();
+        } else {
+          e.layer.bringToBack();
+        }
+      };
+
       /**
        * @description Creates a new L.NxtAjaxGeoJSON layer for a vectorized
        *              raster, and adds that to the current rasterMapLayer
@@ -242,18 +254,7 @@ angular.module('map')
 
         rasterMapLayer._leafletLayer = leafletLayer;
         leafletLayer.addTo(map);
-
-        map.on('layeradd', function (e) {
-          // Make sure the currently active region is brough to front:
-          if (e.layer.feature &&
-              e.layer.feature.id &&
-              e.layer.feature.id === rasterMapLayer._activeRegionId
-          ) {
-            e.layer.bringToFront();
-          } else {
-            e.layer.bringToBack();
-          }
-        });
+        map.on('layeradd', _bringActiveRegionToFront);
       };
 
       rasterMapLayer.remove = function (map, layer) {
@@ -266,6 +267,7 @@ angular.module('map')
           if (clearActiveCategory) {
             LegendService.setActiveCategory(rasterMapLayer.uuid, null);
           }
+          map.off('layeradd', _bringActiveRegionToFront);
           map.removeLayer(rasterMapLayer._leafletLayer);
         }
       };
