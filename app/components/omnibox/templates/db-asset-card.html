@@ -72,7 +72,10 @@
            ng-class="{'active': relativeTimeseries}"
            ng-click="toggleRelativeTimeseries(); $event.stopPropagation();"
            ng-if="ts.active"
-           title="<% relativeTimeseries && 'Show absolute values for all timeseries' || 'Show all timeseries relative to surface level' %>"
+           title="<% relativeTimeseries
+             && 'Deselect to show absolute values for all timeseries'
+             || 'Select to show all timeseries relative to surface level'
+           %>"
            translate>
         </i>
 

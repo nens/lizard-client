@@ -10,25 +10,19 @@ angular.module('timeseries')
 
       scope.$watch('asset', function () {
         TimeseriesService.initializeTimeseriesOfAsset(scope.asset);
-
         if (State.context === 'map') {
           scope.timeseries.change();
         }
-
       });
 
-
       scope.$on('$destroy', function () {
-
         if (State.selected.assets.length > 1 && State.context === 'map') {
           _.forEach(State.selected.timeseries, function (ts) {
             ts.active = false;
           });
           TimeseriesService.syncTime();
         }
-
       });
-
     },
     restrict: 'E', // Timeseries can be an element with single-select or
                     // multi select as an attribute or without in which
@@ -115,6 +109,18 @@ angular.module('timeseries')
       scope.$watch('timeState.timelineMoving', function (newValue, oldValue) {
         if (!newValue && newValue !== oldValue) {
           TimeseriesService.syncTime().then(getContentForAsset);
+
+          var params = {
+            uuid: scope.timeseries.selected.uuid,
+            start: Math.round(scope.timeState.start),
+            end: Math.round(scope.timeState.end),
+            format: 'xlsx',
+            async: 'true'
+          };
+
+          if (TimeseriesService.relativeTimeseries) {
+            params.relative_to = 'surface_level';
+          }
 
           scope.startDownload = function(){
             $http.get('/api/v2/timeseries/data/', {

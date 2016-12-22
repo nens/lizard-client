@@ -1,7 +1,9 @@
 var ASYNC_FORMAT = 'xlsx';
 
 angular.module('export')
-.directive('exportSelector', ['$http', 'DataService', 'State', function ($http, DataService, State) {
+.directive('exportSelector', ['$http', 'DataService', 'TimeseriesService',
+'State', function ($http, DataService, TimeseriesService, State) {
+
   var link = function (scope) {
     // bind the assets with the selected things from the DataService
     scope.assets = DataService.assets;
@@ -23,8 +25,6 @@ angular.module('export')
     // Contains the selected timeseries to export
     scope.toExport = {};
 
-    var pollInterval;
-
     /**
      * startExport - Finds all the timeseries and gets the uuids
      * requests a ASYNC_FORMAT task to be setup for these uuids. The API returns a
@@ -38,18 +38,23 @@ angular.module('export')
       // spinner
       scope.loading = true;
 
+      var params = {
+        uuid: uuids,
+        start: timeState.start.getTime(),
+        end: timeState.end.getTime(),
+        format: ASYNC_FORMAT,
+        async: 'true'
+      };
+
+      if (TimeseriesService.relativeTimeseries) {
+        params.relative_to = 'surface_level';
+      }
+
       // Request timeseries/data/ with uuids and format=ASYNC_FORMAT and async=true
       $http.get('/api/v2/timeseries/data/', {
-        params: {
-          uuid: uuids,
-          start: timeState.start.getTime(),
-          end: timeState.end.getTime(),
-          format: ASYNC_FORMAT,
-          async: 'true'
-        }
+        params: params
       }).then(function (response) {
         scope.taskInfo.url = response.data.task_url;
-        pollInterval = setInterval(pollForChange, 500);
       });
     };
 
@@ -61,14 +66,9 @@ angular.module('export')
     var pollForChange = function () {
       $http.get(scope.taskInfo.url).then(function (response) {
         var status = response.data.task_status;
-
         if (status === 'SUCCESS') {
           scope.loading = false;
           scope.taskInfo.downloadUrl = response.data.result_url;
-        }
-
-        if (status !== 'PENDING') {
-          clearInterval(pollInterval);
         }
       });
     };
