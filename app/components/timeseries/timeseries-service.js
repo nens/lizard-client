@@ -182,9 +182,10 @@ angular.module('timeseries')
         timeout: localPromise.promise
       })
 
-      .then(function (response, fields) {
+      // Bind field to succes function so we can use it as the y key for graphs.
+      .then(function (response) {
         var result = response.data.results;
-        result.fields = fields;
+        result.field = this.field;
         return result;
       }.bind({field: params.fields}), errorFn)
 
@@ -312,8 +313,7 @@ angular.module('timeseries')
 
     var formatTimeseriesForGraph = function (timeseries) {
 
-      var yKey = timeseries.field && fields.length == 1 ?
-        timeseries.field : 'value';
+      var yKey = timeseries.field || 'value';
       var graphTimeseriesTemplate = {
         id: '', //uuid
         data: [],
