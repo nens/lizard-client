@@ -95,6 +95,8 @@ angular.module('data-menu')
         });
         _assets = assets;
 
+        console.log('State.assets:', State.assets);
+
         rebindAssetFunctions();
       };
 
@@ -168,6 +170,7 @@ angular.module('data-menu')
         });
 
         _geometries = geometries;
+        console.log('State.geometries:', State.geometries);
         State.geometries.addGeometry = addGeometry;
         State.geometries.removeGeometry = removeGeometry;
       };
