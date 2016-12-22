@@ -193,14 +193,14 @@ angular.module('omnibox')
         keyName: gettext("Filter top level"),
         attrName: "filter_top_level",
         ngBindValue: "waterchain.filter_top_level | niceNumberOrEllipsis: 2",
-        valueSuffix: "mNAP"
+        valueSuffix: "m (NAP)"
       },
       {
         /// Onderkant filter
         keyName: gettext("Filter bottom level"),
         attrName: "filter_bottom_level",
         ngBindValue: "waterchain.filter_bottom_level | niceNumberOrEllipsis: 2",
-        valueSuffix: "mNAP"
+        valueSuffix: "m (NAP)"
       },
       {
         keyName: gettext("Aquifer confinement"),
@@ -238,21 +238,21 @@ angular.module('omnibox')
         keyName: gettext("Surface level"),
         attrName: "surface_level",
         ngBindValue: "waterchain.surface_level",
-        valueSuffix: "m"
+        valueSuffix: "m (NAP)"
       },
       {
         /// Bovenkant buis
         keyName: gettext("Top level"),
         attrName: "top_level",
         ngBindValue: "waterchain.top_level",
-        valueSuffix: "m"
+        valueSuffix: "m (NAP)"
       },
       {
         /// Onderkan buis
         keyName: gettext("Bottom level"),
         attrName: "bottom_level",
         ngBindValue: "waterchain.bottom_level",
-        valueSuffix: "m"
+        valueSuffix: "m (NAP)"
       }
     ]
   };
@@ -770,7 +770,7 @@ angular.module('omnibox')
         attrName: "minimum_overflow_crest_level",
         ngBindValue:
           "waterchain.minimum_overflow_crest_level | niceNumberOrEllipsis: 2",
-        valueSuffix: "m"
+        valueSuffix: "m (NAP)"
       },
       {
         keyName: gettext("Upstream load"),
