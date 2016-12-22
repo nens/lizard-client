@@ -72,6 +72,7 @@
 
           <div
             ng-if="metaData.type === 'raster'"
+            ng-class="{active: mouseIsOver}"
             ng-mouseover="mouseIsOver = true"
             ng-mouseleave="mouseIsOver = false"
             id="<% selection.raster %>"
