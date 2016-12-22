@@ -62,8 +62,7 @@ angular.module('map')
             onClick: _clicked,
             onMoveStart: _moveStarted,
             onMoveEnd: _moveEnded,
-            onMouseMove: _mouseMove,
-            onZoomEnd: _zoomEnd
+            onMouseMove: _mouseMove
           }
         );
 
@@ -110,14 +109,6 @@ angular.module('map')
        */
       var _moveStarted = function (e) {
         State.spatial.mapMoving = true;
-      };
-
-      /**
-       * Update layers when zoomlevel changes. Some layers have different
-       * styles or wms layers per zoomlevel.
-       */
-      var _zoomEnd = function (e) {
-        MapService.updateLayers(scope.state.layers);
       };
 
       var circleAlongLine;
