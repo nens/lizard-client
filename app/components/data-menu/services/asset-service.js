@@ -8,18 +8,23 @@ angular.module('data-menu')
       this.NESTED_ASSET_PREFIXES = ['pump', 'filter', 'monitoring_well'];
 
       /**
-       * Removes all the ts from the selection of the asset. It should not be
-       * possible to select ts of assets.
+       * Removes all the selections of the asset. It should not be
+       * possible to select timeseries or asset selections that belong to this
+       * asset.
        *
        * @param  {object} asset
        */
-      var removeTSofAsset = function (asset) {
+      var removeAssetSelections = function (asset) {
         State.selections = _.differenceWith(
           State.selections,
           asset.timeseries,
           function(selectionTs, assetTs) {
-            return selectionTs.timeseries === assetTs.uuid; }
+            return selectionTs.timeseries === assetTs.uuid;}
         );
+        State.selections = _.filter(State.selections, function(selection) {
+            return selection.asset !== asset.entity_name + "$" + asset.id;
+          }
+        )
       };
 
       /**
@@ -51,7 +56,7 @@ angular.module('data-menu')
           var assetId = asset.entity_name + '$' + asset.id;
           var keep = selectedAssets.indexOf(assetId) !== -1;
           if (!keep) {
-            removeTSofAsset(asset);
+            removeAssetSelections(asset);
           }
           return keep;
         });

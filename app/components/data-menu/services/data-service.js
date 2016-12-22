@@ -179,6 +179,10 @@ angular.module('data-menu')
       };
 
       var removeGeometry = function (geometry) {
+        State.selections = _.filter(State.selections, function(selection) {
+            return selection.geom !== geometry.geometry.coordinates.toString();
+          }
+        );
         var newGeometries = angular.copy(_geometries);
         var index = -1;
         _geometries.forEach(function(geom, i) {
