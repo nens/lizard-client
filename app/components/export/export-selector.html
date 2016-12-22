@@ -21,12 +21,12 @@
     <div ng-repeat="asset in assets">
       <div ng-repeat="ts in asset.timeseries">
         <input ng-model="toExport[ts.uuid]" type="checkbox">
-        <span><% ts.location %>, <% ts.name %>, <% ts.parameter %></span>
+        <span><% ts.location %>, <% ts.parameter %></span>
       </div>
       <div ng-repeat="filter in asset.filters" ng-if="isMap">
         <div ng-repeat="fts in filter.timeseries">
           <input ng-model="toExport[fts.uuid]" type="checkbox">
-          <span><% fts.location %>, <% fts.name %>, <% fts.parameter %></span>
+          <span><% fts.location %>, <% fts.parameter %></span>
         </div>
       </div>
     </div>
