@@ -8,7 +8,7 @@
  * Perhaps in the future this can be done with CommonJS style requires.
  */
 angular.module('lizard-nxt')
-.service('LeafletService', ['$http', function ($http) {
+.service('LeafletService', ['$http', '$q', function ($http, $q) {
 
   var L = window.L;
 
@@ -52,18 +52,17 @@ angular.module('lizard-nxt')
 
         this.reload(); // Load it at the beginning.
 
-        if (this.options.bbox) { // Reload if the map pans
+        if (this.options.bbox) { // Reload if the map pans or zooms.
           this._map.on('moveend', this.reload, this);
         }
-
-        if (this.options.zoom) { // Reload if the map zooms
+        else if (this.options.zoom) { // Reload if the map zooms.
           this._map.on('zoomend', this.reload, this);
         }
+
       },
 
       onRemove: function(map) {
         this._map.off('moveend', this.reload, this);
-        this._map.off('zoomend', this.reload, this);
 
         L.GeoJSON.prototype.onRemove.call(this, map);
       },
@@ -85,10 +84,20 @@ angular.module('lizard-nxt')
         return requestParams;
       },
 
+      // Keep track of last deferred to cancel consecutive calls.
+      deferred: $q.defer(),
+
       reload: function() {
+        // Any calls still underway can be ignored.
+        this.deferred.resolve();
+        this.deferred = $q.defer();
+
         // Use $http to respect loading bar.
-        $http.get(this.options.requestUrl, {params: this._getParams()})
-        .then(this._checkResponseStatus)
+        $http.get(this.options.requestUrl, {
+          timeout: this.deferred.promise,
+          params: this._getParams()
+        })
+        .then(this._checkResponseStatus.bind(this))
         .then(this.redraw.bind(this));
       },
 
@@ -96,13 +105,12 @@ angular.module('lizard-nxt')
         if (response.status === 200) {
           return response.data.results;
         } else if (response.status) {
-          console.log(
+          throw new Error(
             'ajaxRequest error status = '
             + response.status
             + ' calling '
             + this._getUrl()
           );
-          return [];
         }
       },
 
