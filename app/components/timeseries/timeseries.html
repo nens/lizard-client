@@ -15,8 +15,6 @@
         ng-change="timeseries.change()"
         ng-options="ts.location
           + ', '
-          + ts.name
-          + ', '
           + ts.parameter
           for ts in asset.timeseries track by ts.uuid
         ">

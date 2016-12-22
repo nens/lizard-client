@@ -190,6 +190,7 @@ angular.module('timeseries')
       if (minPoints) {
         params.min_points = minPoints;
       } else {
+        // TODO: aggwindow should be month, second, some other timeunit.
         var aggWindow;
         if (timeState.aggWindow <= 1000) {
           aggWindow = "second";
@@ -222,12 +223,15 @@ angular.module('timeseries')
         timeout: localPromise[chartType].promise
       })
 
+      // Bind field to succes function so we can use it as the y key for graphs.
       .then(function (response) {
-        return response.data.results;
-      }, errorFn)
+        var result = response.data.results;
+        result.field = this.field;
+        return result;
+      }.bind({field: params.fields}), errorFn)
 
       .then(TsUService.filterTimeseries, errorFn)
-      .then(TsUService.formatTimeseriesForGraph, null);
+      .then(TsUService.formatTimeseriesForGraph);
     };
 
     var errorFn = function (err) {
@@ -332,6 +336,7 @@ angular.module('timeseries')
 
     var formatTimeseriesForGraph = function (timeseries) {
 
+      var yKey = timeseries.field || 'value';
       var graphTimeseriesTemplate = {
         id: '', //uuid
         data: [],
@@ -343,7 +348,7 @@ angular.module('timeseries')
           x: '',
           y: ''
         },
-        keys: { x: 'timestamp', y: 'value' }
+        keys: { x: 'timestamp', y: yKey }
       };
 
       var result = [];
@@ -352,17 +357,6 @@ angular.module('timeseries')
           return s.timeseries === ts.uuid });
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
         graphTimeseries.data = ts.events;
-        if (graphTimeseries.data && graphTimeseries.data.length > 0) {
-          // The y key is not always 'value' for bar charts. We get the y key
-          // from the data.
-          var yKey = _.filter(
-              Object.keys(graphTimeseries.data[0]),
-              function(x){ return x !== graphTimeseries.keys.x; }
-          );
-          if (yKey.length === 1 && graphTimeseries.keys.y !== yKey[0]) {
-            graphTimeseries.keys.y = yKey[0];
-          }
-        }
         graphTimeseries.order = tsSelection.order;
         graphTimeseries.color = tsSelection.color;
         graphTimeseries.id = ts.uuid;
@@ -381,6 +375,7 @@ angular.module('timeseries')
       var MAX_NR_TIMESERIES_EVENTS = 25000;
 
       var filteredResult = [];
+      filteredResult.field = results.field;
 
       angular.forEach(results, function (ts) {
         var msg = '';

@@ -42,7 +42,7 @@
         ng-if="getSelectionMetaData(selection).match"
         ng-show="extended || selection.active || isOneOfFirstThree(selection.uuid)">
 
-        <div data-uuid="<% selection.uuid %>" class="draggable-ts">
+        <div data-uuid="<% selection.uuid %>" class="draggable-ts animate-repeat">
           <div
             ng-if="metaData.type === 'timeseries'"
             id="<% selection.timeseries %>"
@@ -64,7 +64,7 @@
 
             <span
               title="<% metaData.location %>, <% metaData.uuid %>, <% metaData.parameter %>"
-              ng-class="{'text-primary bg-warning': selection.active}">
+              ng-class="{'text-primary': selection.active}">
               <% metaData.location %>,
               <% metaData.parameter %>
             </span>
@@ -72,7 +72,6 @@
 
           <div
             ng-if="metaData.type === 'raster'"
-            ng-class="{active: mouseIsOver}"
             ng-mouseover="mouseIsOver = true"
             ng-mouseleave="mouseIsOver = false"
             id="<% selection.raster %>"
@@ -84,7 +83,7 @@
                  ng-click="toggleColorPicker(); $event.stopPropagation();">
             </div>
             <i class="fa fa-line-chart"></i>
-            <span ng-class="{'text-primary bg-warning': selection.active}">
+            <span ng-class="{'text-primary': selection.active}">
               <% metaData.quantity %>, (<% metaData.unit %>)
             </span>
           </div>
@@ -94,7 +93,7 @@
         </div>
       </div>
 
-      <div class="card-content-list clickable lessmore">
+      <div class="card-content-list clickable lessmore" ng-show="showExtender">
         <a style='cursor:pointer;'
            translate
            ng-click="extended = !extended">

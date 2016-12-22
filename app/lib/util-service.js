@@ -628,9 +628,9 @@ angular.module('lizard-nxt')
    *                here when neccessary.
    */
   this.getIconClass = function (str, asset) {
-
+    var station_type = asset && asset.station_type;
+    var asset_type = asset && asset.type;
     if (str === "measuringstation") {
-      var station_type = asset && asset.station_type;
       if (station_type !== undefined) {
         switch (station_type) {
           case 1:
@@ -659,7 +659,29 @@ angular.module('lizard-nxt')
       } else {
         return "lz lz-measuringstation";
       }
-    } else {
+    } else if (str === "pumpstation") {
+      if (asset_type !== undefined) {
+        switch (asset_type) {
+          case "Rioolgemaal":
+            return "lz lz-pumpstation-diesel";
+          case "Poldergemaal":
+            return "lz lz-pumpstation-electric";
+          case "Transportgemaal":
+            return "lz lz-pumpstation-diesel";
+          case "Boezemgemaal":
+            return "lz lz-pumpstation-electric";
+          case "Onderbemaling":
+            return "lz lz-pumpstation-wind";
+          case "Drukgemaal":
+            return "lz lz-pumpstation-diesel";
+          case "Gemaal":
+            return "lz lz-pumpstation-diesel";
+          default:
+            return "lz lz-pumpstation";
+        }
+      }
+    }
+    else {
       switch (str) {
         case 'filter':
           return 'fa fa-filter';

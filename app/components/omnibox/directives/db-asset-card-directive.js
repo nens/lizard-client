@@ -94,7 +94,6 @@ angular.module('omnibox')
         };
         scope.toggleCrosssection(scope.asset);
       }
-
       DragService.addDraggableContainer(element.find('#drag-container'));
 
     },
