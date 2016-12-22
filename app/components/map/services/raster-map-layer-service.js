@@ -125,8 +125,12 @@ angular.module('map')
         var color = '#fff';
         if (properties.raster && properties.raster.color) {
           if (properties.raster.hasOwnProperty('fraction')) {
+            // Emphasize the differences between regions in the predominant case
+            // where the differences are quite subtle and the fraction usually
+            // low. This way the differenc between 0.1 and 0.2 has more color
+            // difference than between 0.8 and 0.9.
             var newFraction = 1 - Math.pow(1 - properties.raster.fraction, 2);
-            color = (new Chromath('white'))
+            color = (new window.Chromath('white'))
               .towards(properties.raster.color, newFraction)
               .toString();
           } else {
@@ -254,7 +258,7 @@ angular.module('map')
 
         rasterMapLayer._leafletLayer = leafletLayer;
         leafletLayer.addTo(map);
-        map.on('layeradd', _bringActiveRegionToFront);
+        rasterMapLayer._leafletLayer.on('layeradd', _bringActiveRegionToFront);
       };
 
       rasterMapLayer.remove = function (map, layer) {
@@ -267,7 +271,10 @@ angular.module('map')
           if (clearActiveCategory) {
             LegendService.setActiveCategory(rasterMapLayer.uuid, null);
           }
-          map.off('layeradd', _bringActiveRegionToFront);
+          rasterMapLayer._leafletLayer.off(
+            'layeradd',
+            _bringActiveRegionToFront
+          );
           map.removeLayer(rasterMapLayer._leafletLayer);
         }
       };
