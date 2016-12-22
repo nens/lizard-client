@@ -2,23 +2,6 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-<a name="4.6.2"></a>
-## [4.6.2](https://github.com/nens/lizard-client/compare/v4.6.1...v4.6.2) (2016-12-22)
-
-
-### Bug Fixes
-
-* **graph:** use correct key for bar data. (Fixes nens/lizard-nxt[#2160](https://github.com/nens/lizard-client/issues/2160) ([#811](https://github.com/nens/lizard-client/issues/811)) ([2ce0c3c](https://github.com/nens/lizard-client/commit/2ce0c3c))
-* **omnibox:** consistent use of 'm (NAP)' where applicable ([44534a9](https://github.com/nens/lizard-client/commit/44534a9))
-* **regions:** cancel consecutive requests to vectorize raster regions. ([85d9aa8](https://github.com/nens/lizard-client/commit/85d9aa8))
-* **regions:** decrease region requests from two to one on zoom: do not update all layers on zoom, wmslayer calls update himself when the map zooms ([c0c7d24](https://github.com/nens/lizard-client/commit/c0c7d24))
-* **timeseries:** click on colorpicker is not a click on timeseries ([ad43367](https://github.com/nens/lizard-client/commit/ad43367))
-* **timeseries:** show only location name and parameter in timeseries lists. (nens/lizard-nxt[#2164](https://github.com/nens/lizard-client/issues/2164)) ([8577da6](https://github.com/nens/lizard-client/commit/8577da6))
-* **timeseries:** transition timeseries colorhandle to indicate changes ([0dad638](https://github.com/nens/lizard-client/commit/0dad638))
-* **vectorized rasters:** visualize selected region on map ([#809](https://github.com/nens/lizard-client/issues/809)) ([0f7246a](https://github.com/nens/lizard-client/commit/0f7246a))
-
-
-
 <a name="4.6.1"></a>
 ## [4.6.1](https://github.com/nens/lizard-client/compare/v4.6.0...v4.6.1) (2016-12-16)
 
