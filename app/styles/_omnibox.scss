@@ -617,6 +617,10 @@
   border-bottom: 1px solid #E2E3E5;
   padding: 10px 15px 10px 10px;
   color: $asbestos;
+
+  &.clickable {
+    transition: ease-in-out .3s;
+  }
 }
 
 .card-content-list.active {
@@ -633,6 +637,7 @@
   width: 5px;
   left: 0;
   top: -50px;
+  transition: ease-in-out .3s;
 }
 
 .lessmore {
