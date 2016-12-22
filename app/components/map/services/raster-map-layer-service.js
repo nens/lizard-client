@@ -103,9 +103,18 @@ angular.module('map')
       rasterMapLayer._defaultRegionStyling = {
         weight: 2,
         opacity: 1,
-        color: '#7f8c8d', // asbestos,
-        fillOpacity: rasterMapLayer._opacity
+        color: '#7f8c8d', // asbestos: Gets overwritten per geojson feature.
+        fillOpacity: rasterMapLayer._opacity // Gets overwritten when user
+                                             // changes opacity via layermenu.
       };
+
+      /**
+       * @description We can have a region selected when the rasterMapLayer
+       *              represents a vectorized raster on the map. We keep track
+       *              of the currently selected region's ID for this
+       *              rasterMapLayer.
+       */
+      rasterMapLayer._activeRegionId = null;
 
       /**
        * @description A function to update fillColor/fillOpacity of the current
@@ -116,16 +125,34 @@ angular.module('map')
         var color = '#fff';
         if (properties.raster && properties.raster.color) {
           if (properties.raster.hasOwnProperty('fraction')) {
-            color = (new Chromath('white'))
-              .towards(properties.raster.color, properties.raster.fraction)
+            // Emphasize the differences between regions in the predominant case
+            // where the differences are quite subtle and the fraction usually
+            // low. This way the differenc between 0.1 and 0.2 has more color
+            // difference than between 0.8 and 0.9.
+            var newFraction = 1 - Math.pow(1 - properties.raster.fraction, 2);
+            color = (new window.Chromath('white'))
+              .towards(properties.raster.color, newFraction)
               .toString();
           } else {
             color = properties.raster.color;
           }
         }
+
         rasterMapLayer._defaultRegionStyling.fillColor = color;
         rasterMapLayer._defaultRegionStyling.fillOpacity = rasterMapLayer._opacity;
         return rasterMapLayer._defaultRegionStyling;
+      };
+
+      var _bringActiveRegionToFront = function (e) {
+        // Make sure the currently active region is brough to front:
+        if (e.layer.feature &&
+            e.layer.feature.id &&
+            e.layer.feature.id === rasterMapLayer._activeRegionId
+        ) {
+          e.layer.bringToFront();
+        } else {
+          e.layer.bringToBack();
+        }
       };
 
       /**
@@ -134,20 +161,39 @@ angular.module('map')
        *              instance.
        */
       rasterMapLayer.updateVectorizedData = function (map, at, stateLayer) {
+        var MOUSE_OVER_OPACITY_MULTIPLIER = 0.5,
+            uuid = rasterMapLayer.uuid,
+            styles = rasterMapLayer.complexWmsOptions.styles,
+            getDefaultActiveStyle = function () {
+              return {
+                fillOpacity: MOUSE_OVER_OPACITY_MULTIPLIER * rasterMapLayer._opacity,
+                weight: '4',
+                dashArray: '6',
+                color: '#c0392b' // pomegranate
+              };
+            },
+            getDefaultInactiveStyle = function () {
+              return {
+                fillOpacity: rasterMapLayer._opacity,
+                weight: 2,
+                dashArray: 1,
+                color: '#7f8c8d' // asbestos
+              };
+            };
         // We check whether it's only the opacity we need to update; if so, we
         // we only update the leafletLayer style function and then prematurely
         // return:
         var previousFillOpacity = rasterMapLayer._defaultRegionStyling.fillOpacity;
         if (!(previousFillOpacity === undefined ||
               previousFillOpacity === stateLayer.opacity)) {
-          rasterMapLayer._leafletLayer.setStyle(function () {
-            rasterMapLayer._defaultRegionStyling = {
-              weight: 2,
-              opacity: 1,
-              color: '#7f8c8d', // asbestos,
-              fillOpacity: rasterMapLayer._opacity
-            };
-            return rasterMapLayer._defaultRegionStyling;
+          rasterMapLayer._leafletLayer.setStyle(function (feature) {
+            if (feature.id === rasterMapLayer._activeRegionId) {
+              var activeStyle = getDefaultActiveStyle();
+              activeStyle.fillOpacity = MOUSE_OVER_OPACITY_MULTIPLIER * rasterMapLayer._opacity;
+              return activeStyle;
+            } else {
+              return getDefaultInactiveStyle();
+            }
           });
           return;
         }
@@ -155,10 +201,6 @@ angular.module('map')
         // we rebuild the complete leafletLayer and therefore throw away the
         // current one:
         rasterMapLayer.removeVectorized(map, false);
-
-        var MOUSE_OVER_OPACITY_MULTIPLIER = 0.5,
-            uuid = rasterMapLayer.uuid,
-            styles = rasterMapLayer.complexWmsOptions.styles;
 
         var leafletLayer = LeafletService.nxtAjaxGeoJSON('api/v2/regions/', {
           // Add these static parameters to requests.
@@ -174,7 +216,14 @@ angular.module('map')
           // Add zoomlevel to the request and update on map zoom.
           zoom: true,
           style: function (feature) {
-            return rasterMapLayer._updateStyling(feature.properties);
+            var styling = rasterMapLayer._updateStyling(feature.properties),
+                fn;
+            if (feature.id === rasterMapLayer._activeRegionId) {
+              fn = getDefaultActiveStyle;
+            } else {
+              fn = getDefaultInactiveStyle;
+            }
+            return _.merge(styling, fn());
           },
           onEachFeature: function (d, layer) {
             layer.on({
@@ -184,9 +233,23 @@ angular.module('map')
                 });
               },
               mouseout: function (e) {
-                e.target.setStyle({fillOpacity: rasterMapLayer._opacity});
+                if (rasterMapLayer._activeRegionId !== e.target.feature.id) {
+                  e.target.setStyle({fillOpacity: rasterMapLayer._opacity});
+                }
               },
               click: function (e) {
+                var featureId,
+                    clickedId = e.target.feature.id;
+                rasterMapLayer._leafletLayer.eachLayer(function (layer) {
+                  featureId = layer.feature.id;
+                  if (featureId === clickedId) {
+                    rasterMapLayer._activeRegionId = clickedId;
+                    layer.setStyle(getDefaultActiveStyle());
+                    layer.bringToFront();
+                  } else {
+                    layer.setStyle(getDefaultInactiveStyle());
+                  }
+                });
                 rasterMapLayer.vectorClickCb(this);
               }
             });
@@ -195,6 +258,7 @@ angular.module('map')
 
         rasterMapLayer._leafletLayer = leafletLayer;
         leafletLayer.addTo(map);
+        rasterMapLayer._leafletLayer.on('layeradd', _bringActiveRegionToFront);
       };
 
       rasterMapLayer.remove = function (map, layer) {
@@ -207,6 +271,10 @@ angular.module('map')
           if (clearActiveCategory) {
             LegendService.setActiveCategory(rasterMapLayer.uuid, null);
           }
+          rasterMapLayer._leafletLayer.off(
+            'layeradd',
+            _bringActiveRegionToFront
+          );
           map.removeLayer(rasterMapLayer._leafletLayer);
         }
       };
