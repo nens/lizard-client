@@ -149,6 +149,7 @@ angular.module('timeseries')
       if (minPoints) {
         params.min_points = minPoints;
       } else {
+        // TODO: aggwindow should be month, second, some other timeunit.
         var aggWindow;
         if (timeState.aggWindow <= 1000) {
           aggWindow = "second";
@@ -181,12 +182,14 @@ angular.module('timeseries')
         timeout: localPromise.promise
       })
 
-      .then(function (response) {
-        return response.data.results;
-      }, errorFn)
+      .then(function (response, fields) {
+        var result = response.data.results;
+        result.fields = fields;
+        return result;
+      }.bind({field: params.fields}), errorFn)
 
       .then(TsUService.filterTimeseries, errorFn)
-      .then(TsUService.formatTimeseriesForGraph, params.fields);
+      .then(TsUService.formatTimeseriesForGraph);
     };
 
     var errorFn = function (err) {
@@ -307,8 +310,10 @@ angular.module('timeseries')
       return graphTimeseries;
     };
 
-    var formatTimeseriesForGraph = function (timeseries, fields) {
-      var yKey = fields && fields.length == 1 ? fields[0] : 'value';
+    var formatTimeseriesForGraph = function (timeseries) {
+
+      var yKey = timeseries.field && fields.length == 1 ?
+        timeseries.field : 'value';
       var graphTimeseriesTemplate = {
         id: '', //uuid
         data: [],
@@ -343,6 +348,7 @@ angular.module('timeseries')
       var MAX_NR_TIMESERIES_EVENTS = 25000;
 
       var filteredResult = [];
+      filteredResult.field = results.field;
 
       angular.forEach(results, function (ts) {
         var msg = '';
