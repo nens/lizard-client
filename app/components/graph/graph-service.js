@@ -368,9 +368,13 @@ angular.module('lizard-nxt')
         orientation: 'bottom',
         tickFormat: d3.format(".0%") // Custom tickFomat in percentages
       };
-      this._x = createXGraph(this._svg, this.dimensions, labels, options);
 
-      if (data === null) { return; } // We are done here.
+      if (data === null || data.length === 1 && data[0] === null) {
+        // We are done here.
+        return;
+      }
+
+      this._x = createXGraph(this._svg, this.dimensions, labels, options);
 
       // normalize data
       var total = d3.sum(data, function (d) {
