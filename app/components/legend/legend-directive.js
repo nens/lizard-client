@@ -77,9 +77,7 @@ angular.module('legend')
     };
 
     var _getBrowserType = function () {
-      console.log("[F] _getBrowserType");
       var userAgent = window.navigator.userAgent;
-      console.log("*** userAgent:", userAgent);
       var REGEX = {
         'edge': /Edge/i,
         'mozilla': /Mozilla/i,
