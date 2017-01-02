@@ -16,7 +16,7 @@ angular.module('legend')
       }
     };
 
-    scope.getBorderStyle = function (datum) {
+    var getBorderStyle = function (datum) {
       return datum.label === -1 ? "1px solid #ccc" : "0";
     };
 
@@ -158,6 +158,13 @@ angular.module('legend')
 
     scope.setDiscreteRasterCategory = function (uuid, category) {
       LegendService.setActiveCategory(uuid, category);
+    };
+
+    scope.getColoredRect = function (datum) {
+      return {
+        "background-color": datum.color,
+        "border": getBorderStyle(datum)
+      };
     };
 
     scope.getDiscreteRasterCategory = function (uuid) {

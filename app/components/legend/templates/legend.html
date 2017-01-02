@@ -35,9 +35,11 @@
           ng-click="rasterIsVectorized(uuid) ? setDiscreteRasterCategory(uuid, datum.class) : _.noop();"
           class="discrete-legend-datum"
           ng-if="$index < getAmountOfDiscreteCategories(uuid)">
+
           <div class="discrete-legend-color-rect"
-               style="background-color: <% datum.color %>; border: <% getBorderStyle(datum) %>">
+               ng-style="getColoredRect(datum)">
           </div>
+
           <div class="discrete-legend-label"
                ng-class="{'discrete-legend-label-selected': getDiscreteRasterCategory(uuid) === datum.class,
                           'discrete-legend-label-selectable': rasterIsVectorized(uuid)}">
