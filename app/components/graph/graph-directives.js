@@ -217,9 +217,7 @@ angular.module('lizard-nxt')
     }
     // Support legacy graph api
     else if ($scope.data) {
-
       this.setFormattedContent($scope);
-
     }
 
     this.graph = {};
