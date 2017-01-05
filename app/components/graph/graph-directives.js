@@ -176,7 +176,6 @@ angular.module('lizard-nxt')
     scope.$on('$destroy' , function () { graphCtrl.graph.destroy(); });
 
     scope.title = attrs.name;
-
   };
 
   /**

@@ -225,7 +225,7 @@ angular.module('lizard-nxt')
     drawMultipleAxes(graph);
 
     if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
-      addLineInteraction(graph, temporal);
+      addLineInteraction(graph, temporal, content);
     }
   };
 
@@ -1223,7 +1223,7 @@ angular.module('lizard-nxt')
    *
    * @params {object} - the graph object (all-encompassing, ever-faithful)
    */
-  var addLineInteraction = function (graph, temporal) {
+  var addLineInteraction = function (graph, temporal, content) {
     var height = graph._getHeight(graph.dimensions),
         fg = graph._svg.select('#feature-group'),
         MIN_LABEL_Y = 50,
@@ -1327,11 +1327,31 @@ angular.module('lizard-nxt')
             .attr('stroke', 'none')
             .attr('fill', v.color);
 
-        var location = (v.location) ? '' + ' - ' + v.location : '';
-        var name = (v.name) ? '' + ', ' + v.name : '';
+        var location = (v.location) ? v.location : '';
+        var name = (v.name) ? ', ' + v.name : '';
+
+        var parameter;
+        try {
+          parameter = content[0].parameter;
+        } catch (e) {
+          parameter = '';
+        }
+
+        var unit;
+        if (v.ylabel) {
+          unit = v.ylabel;
+        } else {
+          unit = v.unit;
+        }
+
+        var boxText = value + ' ' + unit + ' - ' + location;
+        if (parameter !== '') {
+          boxText += ", " + parameter;
+        }
+
         var tspan = valuebox.select('text')
           .append('tspan')
-            .text(value + ' ' + v.ylabel + v.unit + location + name)
+            .text(boxText)
             .attr('class', 'graph-tooltip-y')
             .attr('x', 25)
             .attr('y', 15 + 15 * i);
@@ -1516,6 +1536,7 @@ angular.module('lizard-nxt')
     var axisEl;
     // Make graph specific changes to the x and y axis
     if (y) {
+
       axisEl = svg.select('#yaxis')
         .attr("class", "y-axis y axis")
         .selectAll("text")
