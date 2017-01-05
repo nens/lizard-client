@@ -149,6 +149,7 @@ angular.module('dashboard')
    * @param {object} properties asset or geometries properties.
    */
   var addPropertyData = function (graphs, properties) {
+
     _.forEach(properties, function (property) {
       var slug = property.slug;
       if (property.active) {
@@ -193,6 +194,7 @@ angular.module('dashboard')
 
           type = 'event';
         }
+
         graphs[property.order] = { type: type, content: [item] };
         var indexOflast = graphs[property.order].content.length - 1;
         graphs[property.order].content[indexOflast].updated = true;
@@ -204,6 +206,5 @@ angular.module('dashboard')
   var getGraphHeight = function (element, nGraphs) {
     return (element.height() - ROW_BOTTOM_MARGIN * nGraphs) / nGraphs;
   };
-
 
 }]);

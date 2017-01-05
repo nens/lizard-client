@@ -176,7 +176,6 @@ angular.module('lizard-nxt')
     scope.$on('$destroy' , function () { graphCtrl.graph.destroy(); });
 
     scope.title = attrs.name;
-
   };
 
   /**
@@ -218,7 +217,9 @@ angular.module('lizard-nxt')
     }
     // Support legacy graph api
     else if ($scope.data) {
+
       this.setFormattedContent($scope);
+
     }
 
     this.graph = {};
