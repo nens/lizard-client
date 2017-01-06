@@ -37,7 +37,7 @@ angular.module('legend')
       var url = window.location.protocol
         + '//' + window.location.host
         + '/api/v2/colormaps/';
-      return url.replace("9000", "8000"); // Applicable for dev environment only..
+      return url;
     };
 
     this.initContinuousRasterData = function (uuid, unit) {
@@ -106,7 +106,6 @@ angular.module('legend')
     };
 
     this.updateLegendData = function (bounds, layers) {
-
       var GEOMETRY;
       try {
         GEOMETRY = UtilService.lLatLngBoundsToGJ(bounds);
@@ -151,7 +150,7 @@ angular.module('legend')
               DataService.updateLayerData(geo, layerObj, options, promises);
             } else {
               if (this.rasterData.continuous[uuid] === undefined) {
-                 this.initContinuousRasterData(uuid, dataLayerObj.unit);
+                this.initContinuousRasterData(uuid, dataLayerObj.unit);
               }
               if (!colormaps[uuid]) {
                 // IF colormap for the current layer isn't already defined,
