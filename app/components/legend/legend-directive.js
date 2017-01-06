@@ -79,16 +79,13 @@ angular.module('legend')
     var _getBrowserType = function () {
       var userAgent = window.navigator.userAgent;
       var REGEX = {
-        'edge': /Edge/i,
-        'mozilla': /Mozilla/i,
+        'mozillaEdge': /Mozilla/i,
         'gecko': /Gecko/i,
         'webkit': /Webkit/i,
       };
 
-      if (userAgent.match(REGEX.mozilla)) {
+      if (userAgent.match(REGEX.mozillaEdge)) {
         return 'edge';
-      } else if (userAgent.match(REGEX.mozilla)) {
-        return 'mozilla';
       } else if (userAgent.match(REGEX.gecko)) {
         return 'mozilla';
       } else if (userAgent.match(REGEX.webkit)) {
@@ -123,8 +120,8 @@ angular.module('legend')
         case 'webkit':
           gradientValuePrefix = "-webkit-linear-gradient(bottom, ";
           break;
-        default:
-          // NB! M$ Edge uses the "generic" CSS3 gradient syntax
+        default:  // case mozillaEdge
+          // NB! M$ Edge and new mozilla use the "generic" CSS3 gradient syntax
           gradientValuePrefix = "linear-gradient(to top, ";
       }
 
