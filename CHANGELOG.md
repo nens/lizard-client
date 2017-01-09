@@ -2,60 +2,6 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-<a name="4.7.0"></a>
-# [4.7.0](https://github.com/nens/lizard-client/compare/v4.5.1...v4.7.0) (2017-01-09)
-
-
-### Bug Fixes
-
-* **colormaps:** WMS scaling no longer used when querying colormap endpoint. ([#782](https://github.com/nens/lizard-client/issues/782)) ([635ce7c](https://github.com/nens/lizard-client/commit/635ce7c))
-* **csv-export:** Remove traces of old layer group from CSV export service and data service ([fee26d1](https://github.com/nens/lizard-client/commit/fee26d1))
-* **dashboard:** en-/disabling vectorizable layers no longer conflicts… ([#775](https://github.com/nens/lizard-client/issues/775)) ([98190f6](https://github.com/nens/lizard-client/commit/98190f6))
-* **dashboard:** other syntax for label in graph ([1ad556f](https://github.com/nens/lizard-client/commit/1ad556f))
-* **draggable:** dashboard assetcard timeseries are draggable again. Fixes: nens/lizard-nxt/issues/2135 ([f350c81](https://github.com/nens/lizard-client/commit/f350c81))
-* **edge:** browser determination by useragent. ([bd5f257](https://github.com/nens/lizard-client/commit/bd5f257))
-* **edge:** fixes legend gradient in Micrsoft Edge. Fixes: nens/lizard-nxt/issues/2155 ([debf328](https://github.com/nens/lizard-client/commit/debf328))
-* **export modal:** export modal now only iterates over nested asset timeseries if in the Map context. Fixes: nens/lizard-nxt/issues/2086 ([caa0271](https://github.com/nens/lizard-client/commit/caa0271))
-* **graph:** use correct key for bar data. (Fixes nens/lizard-nxt[#2160](https://github.com/nens/lizard-client/issues/2160) ([#811](https://github.com/nens/lizard-client/issues/811)) ([2ce0c3c](https://github.com/nens/lizard-client/commit/2ce0c3c))
-* **layout:** remove material-shadow from search box, underlying navbar has it too ([aadf3a9](https://github.com/nens/lizard-client/commit/aadf3a9))
-* **legend:** both MS Edge and IE11 can draw the continuous legend OK ([e34502b](https://github.com/nens/lizard-client/commit/e34502b))
-* **legend:** category indicators aren't hidden in IE11 ([4ba0c09](https://github.com/nens/lizard-client/commit/4ba0c09))
-* **legend:** checks if layer has been removed or already rescaled when adding legend data ([90d71bd](https://github.com/nens/lizard-client/commit/90d71bd))
-* **legend:** checks if layer has been removed or already rescaled when adding legend data ([3180527](https://github.com/nens/lizard-client/commit/3180527))
-* **legend:** cont.legend gets drawn on page load ([3a2f61d](https://github.com/nens/lizard-client/commit/3a2f61d))
-* **legend:** show from max to min and same on ff and chrome ([a8fe68b](https://github.com/nens/lizard-client/commit/a8fe68b))
-* **map:** Set map view when something besides map changes state view. ([24c0594](https://github.com/nens/lizard-client/commit/24c0594))
-* **omnibox:** Add translation of sewer_system of pumped drainage area ([7fc7729](https://github.com/nens/lizard-client/commit/7fc7729))
-* **omnibox:** consistent use of 'm (NAP)' where applicable ([44534a9](https://github.com/nens/lizard-client/commit/44534a9))
-* **omnibox:** different icons for different measuringstations ([e2c9712](https://github.com/nens/lizard-client/commit/e2c9712))
-* **omnibox:** do not show border for last item in timeseries list. ([f05b51e](https://github.com/nens/lizard-client/commit/f05b51e))
-* **omnibox:** In dashboard, only show more timeseries button when there are many timeseries. ([e6d6dbd](https://github.com/nens/lizard-client/commit/e6d6dbd))
-* **omnibox:** omnibox now programmatically adjusts its height based on the height of the timeline component  ([#806](https://github.com/nens/lizard-client/issues/806)) ([a2310d3](https://github.com/nens/lizard-client/commit/a2310d3))
-* **omnibox:** Stop scrollbar from showing up in omnibox in the dashboard view ([ec41ac6](https://github.com/nens/lizard-client/commit/ec41ac6))
-* **omnibox search:** Fix long search results that overflow the omnibox by truncating them with ellipsis ([4ae0dd4](https://github.com/nens/lizard-client/commit/4ae0dd4))
-* **raster-store:** API calls use key 'time' instead of 'at' ([92d57db](https://github.com/nens/lizard-client/commit/92d57db))
-* **regions:** cancel consecutive requests to vectorize raster regions. ([85d9aa8](https://github.com/nens/lizard-client/commit/85d9aa8))
-* **regions:** decrease region requests from two to one on zoom: do not update all layers on zoom, wmslayer calls update himself when the map zooms ([c0c7d24](https://github.com/nens/lizard-client/commit/c0c7d24))
-* **regions:** when fraction is 0 fully white ([232b824](https://github.com/nens/lizard-client/commit/232b824))
-* **scenarios:** new results translated ([53baf21](https://github.com/nens/lizard-client/commit/53baf21))
-* **search:** set state with view of search result, instead of calling map-service directly. ([390a86c](https://github.com/nens/lizard-client/commit/390a86c))
-* **temporal rasters:** refreshdata when temporal start, end or at changes, only set temporal.timelineMoving when timeline moves, not when user clicks on timeline ([482e816](https://github.com/nens/lizard-client/commit/482e816))
-* **temporal rasters:** request raster data with time parameter for discrete raster, with start and end interval when continuous. ([1d24f59](https://github.com/nens/lizard-client/commit/1d24f59))
-* **timeseries:** click on colorpicker is not a click on timeseries ([ad43367](https://github.com/nens/lizard-client/commit/ad43367))
-* **timeseries:** show only location name and parameter in timeseries lists. (nens/lizard-nxt[#2164](https://github.com/nens/lizard-client/issues/2164)) ([8577da6](https://github.com/nens/lizard-client/commit/8577da6))
-* **timeseries:** transition timeseries colorhandle to indicate changes ([0dad638](https://github.com/nens/lizard-client/commit/0dad638))
-* **translation:** title tag of export scenario button was not picked up for translation ([edb1810](https://github.com/nens/lizard-client/commit/edb1810))
-* **vectorized rasters:** visualize selected region on map ([#809](https://github.com/nens/lizard-client/issues/809)) ([0f7246a](https://github.com/nens/lizard-client/commit/0f7246a))
-* **zoom buttons:** move out of search bar and show only when in map context ([c156ce1](https://github.com/nens/lizard-client/commit/c156ce1))
-
-
-### Features
-
-* **rasters:** requests for rasterdata also have key called 'at' ([f7de570](https://github.com/nens/lizard-client/commit/f7de570))
-* **search:** Adds looking glass icon to search input.  ([4622992](https://github.com/nens/lizard-client/commit/4622992))
-
-
-
 <a name="4.6.1"></a>
 ## [4.6.1](https://github.com/nens/lizard-client/compare/v4.6.0...v4.6.1) (2016-12-16)
 
