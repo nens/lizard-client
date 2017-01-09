@@ -2,7 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-<a name="4.6.2"></a>
+
+
+<a name="4.6.3"></a>
+## [4.6.3](https://github.com/nens/lizard-client/compare/v4.6.2...v4.6.3) (2017-01-09)
+
+
+### Bug Fixes
+
+* **dashboard:** other syntax for label in graph ([1ad556f](https://github.com/nens/lizard-client/commit/1ad556f))
+* **edge:** browser determination by useragent. ([bd5f257](https://github.com/nens/lizard-client/commit/bd5f257))
+* **legend:** both MS Edge and IE11 can draw the continuous legend OK ([e34502b](https://github.com/nens/lizard-client/commit/e34502b))
+* **legend:** category indicators aren't hidden in IE11 ([4ba0c09](https://github.com/nens/lizard-client/commit/4ba0c09))
+
+
+
 ## [4.6.2](https://github.com/nens/lizard-client/compare/v4.6.1...v4.6.2) (2016-12-22)
 
 
