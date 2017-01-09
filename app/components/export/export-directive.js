@@ -47,7 +47,8 @@ angular.module('export')
       };
 
       if (TimeseriesService.relativeTimeseries) {
-        params.relative_to = 'surface_level';
+        // params.relative_to = 'surface_level';
+        params.relative_to = 'filter_bottom_level';
       }
 
       // Request timeseries/data/ with uuids and format=ASYNC_FORMAT and async=true

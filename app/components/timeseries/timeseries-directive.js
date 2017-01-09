@@ -119,7 +119,8 @@ angular.module('timeseries')
           };
 
           if (TimeseriesService.relativeTimeseries) {
-            params.relative_to = 'surface_level';
+            // params.relative_to = 'surface_level';
+            params.relative_to = 'filter_bottom_level';
           }
 
           scope.startDownload = function(){
