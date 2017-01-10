@@ -1,3 +1,4 @@
+
 'use strict';
 
 /*
@@ -568,7 +569,7 @@ module.exports = function (grunt) {
     grunt.task.run(['mrdoc']);
   });
 
-  grunt.registerTask('internationalize', function () {
+  grunt.registerTask('transifexUpload', function () {
     if (grunt.option('txusername') && grunt.option('txpassword')) {
 
       grunt.log.ok('Got transifex credentials,' +
@@ -578,7 +579,6 @@ module.exports = function (grunt) {
       grunt.loadNpmTasks('grunt-tx-source-upload');
 
       grunt.task.run([
-        'translate',
         'nggettext_extract', // extract strings from code
         'tx-source-upload', // upload to transifex
       ]);
@@ -636,7 +636,6 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'test',
-      'internationalize',
       'build',
       'replace:dist',
     ]);

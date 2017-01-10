@@ -16,7 +16,7 @@ angular.module('legend')
       }
     };
 
-    scope.getBorderStyle = function (datum) {
+    var getBorderStyle = function (datum) {
       return datum.label === -1 ? "1px solid #ccc" : "0";
     };
 
@@ -76,13 +76,32 @@ angular.module('legend')
       }
     };
 
+    var _getBrowserType = function () {
+      var userAgent = window.navigator.userAgent;
+      var REGEX = {
+        'mozillaEdge': /Mozilla/i,
+        'gecko': /Gecko/i,
+        'webkit': /Webkit/i,
+      };
+
+      if (userAgent.match(REGEX.mozillaEdge)) {
+        return 'edge';
+      } else if (userAgent.match(REGEX.gecko)) {
+        return 'mozilla';
+      } else if (userAgent.match(REGEX.webkit)) {
+        return 'webkit';
+      }
+    };
+
     scope.getGradient = function (uuid) {
 
       if (scope.legend.data.continuous[uuid] === undefined ||
-          scope.legend.data.continuous[uuid].colormap === null) { return;
+          scope.legend.data.continuous[uuid].colormap === null) {
+        return;
       }
-      var colorData = scope.legend.data.continuous[uuid].colormap.data;
-      var rgba,
+      var colorData = scope.legend.data.continuous[uuid].colormap.data,
+          gradientValuePrefix,
+          rgba,
           colorString,
           suffix = "";
 
@@ -94,21 +113,22 @@ angular.module('legend')
 
       suffix = suffix.substring(0, suffix.length - 1) + ")";
 
-      var gradientValue0 = "background: linear-gradient(to top, "
-        + suffix;
-      var gradientValue1 = "background: -moz-linear-gradient(bottom, "
-        + suffix;
-      var gradientValue2 = "background: -webkit-linear-gradient(bottom, "
-        + suffix;
-      var gradientValue3 = "background: -ms-linear-gradient(bottom, "
-        + suffix;
+      switch (_getBrowserType()) {
+        case 'mozilla':
+          gradientValuePrefix = "-moz-linear-gradient(bottom, ";
+          break;
+        case 'webkit':
+          gradientValuePrefix = "-webkit-linear-gradient(bottom, ";
+          break;
+        default:  // case mozillaEdge
+          // NB! M$ Edge and new mozilla use the "generic" CSS3 gradient syntax
+          gradientValuePrefix = "linear-gradient(to top, ";
+      }
 
-
-      return gradientValue0 + "; " + gradientValue1 + "; " + gradientValue2 +
-        "; " + gradientValue3 ;
+      return {
+        background: gradientValuePrefix + suffix
+      };
     };
-
-    /* Een kaartje voor zowel continuous als discrete rasters ****************/
 
     scope.selectedRasterName = null;
 
@@ -158,6 +178,13 @@ angular.module('legend')
 
     scope.setDiscreteRasterCategory = function (uuid, category) {
       LegendService.setActiveCategory(uuid, category);
+    };
+
+    scope.getColoredRect = function (datum) {
+      return {
+        "background-color": datum.color,
+        "border": getBorderStyle(datum)
+      };
     };
 
     scope.getDiscreteRasterCategory = function (uuid) {

@@ -39,21 +39,36 @@
       <div
         ng-repeat="ts in selected.timeseries | orderBy : ['-active', '+order']"
         ng-if="getTsMetaData(ts.uuid)"
-        ng-show="extended || ts.active || isOneOfFirstThree(ts.uuid)"
-        data-uuid="<% ts.uuid %>"
-        id="<% ts.uuid %>"
-        ng-click="toggleTimeseries(ts);"
-        ng-class="{active: mouseIsOver}"
-        ng-mouseover="mouseIsOver = true"
-        ng-mouseleave="mouseIsOver = false"
-        class="draggable-ts animate-repeat card-content-list clickable">
-
+        ng-show="extended || ts.active || isOneOfFirstThree(ts.uuid)">
         <div
-          class="card-content-colorhandle"
-          ng-show="ts.active"
-          ng-style="{'background-color': ts.color}"
-          ng-click="toggleColorPicker(); $event.stopPropagation();">
+          data-uuid="<% ts.uuid %>"
+          ng-class="{active: mouseIsOver}"
+          class="draggable-ts animate-repeat card-content-list clickable"
+          id="<% ts.uuid %>"
+          ng-click="toggleTimeseries(ts);"
+          ng-mouseover="mouseIsOver = true"
+          ng-mouseleave="mouseIsOver = false">
+
+          <div
+            class="card-content-colorhandle"
+            ng-show="ts.active"
+            ng-style="{'background-color': ts.color}"
+            ng-click="toggleColorPicker(); $event.stopPropagation();">
+          </div>
+          <i class="fa" ng-class="{
+            'fa-clock-o': getTsMetaData(ts.uuid).value_type !== 'image',
+            'fa-file-image-o': getTsMetaData(ts.uuid).value_type === 'image'
+          }"></i>
+
+          <span
+            title="<% getTsMetaData(ts.uuid).location %>, <% getTsMetaData(ts.uuid).name %>, <% getTsMetaData(ts.uuid).parameter %>"
+            ng-class="{'text-primary': ts.active}">
+            <% getTsMetaData(ts.uuid).location %>,
+            <% getTsMetaData(ts.uuid).parameter %>
+          </span>
+
         </div>
+
         <i class="fa" ng-class="{
           'fa-clock-o': getTsMetaData(ts.uuid).value_type !== 'image',
           'fa-file-image-o': getTsMetaData(ts.uuid).value_type === 'image'
@@ -66,7 +81,6 @@
           <% getTsMetaData(ts.uuid).parameter %>
           &nbsp;
         </span>
-
 
         <i class="active fa fa-<% relativeTimeseries ? 'check-square' : 'square' %> relativate-ts-icon"
            ng-class="{'active': relativeTimeseries}"

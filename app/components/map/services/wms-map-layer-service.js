@@ -40,7 +40,6 @@ angular.module('map')
       wmsMapLayer.update = function (map, timeState, options) {
         var promise;
 
-
         // Wms options might be different for current zoom and aggWindow.
         var newParams = RasterService.getWmsParameters(
           wmsMapLayer.complexWmsOptions,
@@ -55,7 +54,7 @@ angular.module('map')
         wmsMapLayer.wms.setOpacity(options.opacity);
 
         if (!map.hasLayer(wmsMapLayer.wms)) {
-          map.addLayer(wmsMapLayer.wms);
+          wmsMapLayer._add(map, timeState, options);
         }
 
         if (!_.isEqual(newParams, params)) {
@@ -70,6 +69,31 @@ angular.module('map')
         if (map.hasLayer(wmsMapLayer.wms)) {
           map.removeLayer(wmsMapLayer.wms);
         }
+        map.off('zoomend', wmsMapLayer.onZoomend, wmsMapLayer);
+      };
+
+      /**
+       * Adds leaflet layer to leaflet map and includes a zoom listener to
+       * update wms parameters for different zoomlevels. This functionality is
+       * used by stroombanen wmslayer.
+       *
+       * @param {L.Map}             map
+       * @param {state.temporal {}} timeState
+       * @param {state layer {}}    options
+       */
+      wmsMapLayer._add = function (map, timeState, options) {
+        map.addLayer(wmsMapLayer.wms);
+
+        // Store callback on instance to remove this callback from leaflets
+        // listeners on remove.
+        wmsMapLayer.onZoomend = wmsMapLayer
+        .update
+        .bind(wmsMapLayer, map, timeState, options);
+
+        // WMS parameters can be different for different zoomlevels. On map
+        // zoomend call update again with map and options for the same
+        // timeState.
+        map.on('zoomend', wmsMapLayer.onZoomend, wmsMapLayer);
       };
 
     return wmsMapLayer;
