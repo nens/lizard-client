@@ -29,7 +29,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-sass');
   grunt.loadNpmTasks('grunt-autoprefixer');
 
-
   var appConfig = {
     app: require('./bower.json').appPath,
     dist: 'dist',
@@ -396,13 +395,6 @@ module.exports = function (grunt) {
       }
     },
 
-    // Replace Google CDN references
-    cdnify: {
-      dist: {
-        html: ['<%= yeoman.dist %>/*.html']
-      }
-    },
-
     // Copies remaining files to places other tasks can use
     copy: {
       dist: {
@@ -507,28 +499,30 @@ module.exports = function (grunt) {
   });
 
 
-  grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
-    grunt.loadNpmTasks('grunt-contrib-connect');
-    grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.registerTask('serve', 'Compile, start a connect web server and watch',
+    function (target) {
+      grunt.loadNpmTasks('grunt-contrib-connect');
+      grunt.loadNpmTasks('grunt-contrib-watch');
 
-    if (target === 'dist') {
-      return grunt.task.run(['build', 'connect:dist:keepalive']);
+      if (target === 'dist') {
+        return grunt.task.run(['build', 'connect:dist:keepalive']);
+      }
+
+      grunt.task.run([
+        'html2js', // Convert html omnibox templates to js files.
+        'wiredep', // Add bower files as script tags to index.html
+        'sass:watch', // Create .tmp/main.css from sass files.
+        'autoprefixer', // Add vendor prefixes to .tmp/main.css.
+        'connect:livereload', // Connect browser window.
+        'watch' // Watch for changes to reload.
+      ]);
     }
-
-    grunt.task.run([
-      'html2js', // Convert html omnibox templates to js files.
-      'wiredep', // Add bower files as script tags to index.html
-      'sass:watch', // Create .tmp/main.css from sass files.
-      'autoprefixer', // Add vendor prefixes to .tmp/main.css.
-      'connect:livereload', // Connect browser window.
-      'watch' // Watch for changes to reload.
-    ]);
-  });
+  );
 
   grunt.registerTask('test', [
     'html2js',
     'karma:unit',
-    'newer:jshint:dev'
+    'jshint:dev'
   ]);
 
   grunt.registerTask('build', function () {
@@ -539,7 +533,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-svgmin');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-ng-annotate');
-    grunt.loadNpmTasks('grunt-google-cdn');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-filerev');
 
@@ -557,7 +550,6 @@ module.exports = function (grunt) {
       'concat',
       'ngAnnotate',
       'copy:dist',
-      'cdnify',
       'cssmin',
       'filerev',
       'usemin'
@@ -569,80 +561,54 @@ module.exports = function (grunt) {
     grunt.task.run(['mrdoc']);
   });
 
-  grunt.registerTask('transifexUpload', function () {
-    if (grunt.option('txusername') && grunt.option('txpassword')) {
+  grunt.registerTask(
+    'transifex',
+    'Extraxt strings annotated for translation and upload to transifex.',
+    function () {
+      if (grunt.option('txusername') && grunt.option('txpassword')) {
 
-      grunt.log.ok('Got transifex credentials,' +
-        ' extracting and uploading translations.');
+        grunt.log.ok('Got transifex credentials,' +
+          ' extracting and uploading translations.');
 
-      grunt.loadNpmTasks('grunt-angular-gettext');
-      grunt.loadNpmTasks('grunt-tx-source-upload');
+        grunt.loadNpmTasks('grunt-angular-gettext');
+        grunt.loadNpmTasks('grunt-tx-source-upload');
 
-      grunt.task.run([
-        'nggettext_extract', // extract strings from code
-        'tx-source-upload', // upload to transifex
-      ]);
+        grunt.task.run([
+          'nggettext_extract', // extract strings from code
+          'tx-source-upload', // upload to transifex
+        ]);
 
-    } else {
-      grunt.log.writeln('Missing transifex credentials, '.red.bold +
-        'newly annotated strings will not be uploaded to transifex'.red.bold);
-      grunt.log.ok('Specify --txusername=<transifex username> and '+
-        '--txpassword=<transifex password> to upload strings to transifex.');
+      } else {
+        grunt.log.writeln('Missing transifex credentials, '.red.bold +
+          'newly annotated strings will not be uploaded to transifex'.red.bold);
+        grunt.log.ok('Specify --txusername=<transifex username> and '+
+          '--txpassword=<transifex password> to upload strings to transifex.');
+      }
     }
-  });
+  );
 
-  grunt.registerTask('translate', function () {
-    if (grunt.option('txusername') && grunt.option('txpassword')) {
-      grunt.log.ok('Got transifex credentials, getting translations.');
-      grunt.loadNpmTasks('grunt-angular-gettext');
-      grunt.task.run([
-        'download-po-files',
-        'nggettext_compile',
-      ]);
-    } else {
-      grunt.log.writeln('Missing transifex credentials, '.red.bold +
-        'build will be in English.'.red.bold);
-      grunt.log.ok('Specify --txusername=<transifex username> and '+
-        '--txpassword=<transifex password> to include translations.');
+  grunt.registerTask(
+    'translate',
+    'Get translations from transifex and compile for use in app.' ,
+    function () {
+      if (grunt.option('txusername') && grunt.option('txpassword')) {
+        grunt.log.ok('Got transifex credentials, getting translations.');
+        grunt.loadNpmTasks('grunt-angular-gettext');
+        grunt.task.run([
+          'download-po-files',
+          'nggettext_compile',
+        ]);
+      } else {
+        grunt.log.writeln('Missing transifex credentials, '.red.bold +
+          'build will be in English.'.red.bold);
+        grunt.log.ok('Specify --txusername=<transifex username> and '+
+          '--txpassword=<transifex password> to include translations.');
+      }
     }
-  });
-
-  grunt.registerTask('release', function () {
-    grunt.loadNpmTasks('grunt-text-replace');
-    grunt.loadNpmTasks('grunt-lizard-release');
-
-    grunt.task.run([
-      'test',
-      'build',
-      'replace:dist',
-      'releaser:dist'
-    ]);
-  });
-
-  grunt.registerTask('sandbox', function () {
-    grunt.loadNpmTasks('grunt-text-replace');
-
-    grunt.task.run([
-      'test',
-      'build',
-      'copy:CNAME',
-      'replace:ghpages',
-      'releaser:ghpages'
-    ]);
-  });
-
-  grunt.registerTask('default', function () {
-    grunt.loadNpmTasks('grunt-text-replace');
-
-    grunt.task.run([
-      'test',
-      'build',
-      'replace:dist',
-    ]);
-  });
+  );
 
   grunt.registerTask('download-po-files',
-    'Task to get languages and po files for each language from transifex',
+    'Internal task to get po files for each language from transifex',
     function () {
       var request = require('request');
       var chalk = require('chalk');

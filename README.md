@@ -1,100 +1,212 @@
-![Build Status](http://buildbot.lizardsystem.nl/jenkins/buildStatus/icon?job=Lizard-Client Integration 2. Deploy)
-
-
 # Lizard client
 
-Angular/leaflet/d3 app that visualizes (geo-)information specific for the water sector. It is the front-end in the lizard-nxt ecosystem, with the closed source lizard-nxt django app as an API to the hydra-core db.
+Angular/leaflet/d3 app that visualizes (geo-)information for the water sector. It is the front-end in the lizard-nxt ecosystem, with the closed source [Lizard-nxt]( https://github.com/nens/lizard-nxt) django app as an API to the hydra-core db.
 
-* [Install](#Install)
-* [Use](#Use)
-
-For more than demo purposes Lizard client depends on:
-
-* [Hydra-core]( https://github.com/nens/hydra-core ), a django app with hydrological models and utils
-* [Lizard-nxt]( https://github.com/nens/lizard-nxt ), a django site that provides an api for hydra-core
+[Demo](https://demo.lizard.net)
 
 
-## Requirements
-Install Node and npm (as per: https://github.com/nodesource/distributions#installation-instructions)
+#### Get up and running
 
-    curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
-    sudo apt-get install -y nodejs
+Assuming you have the [required](#requirements) front-end dev environment.
 
+Clone this repo with its submodules:
 
-## Install
+```sh
+git clone --recursive git@github.com:nens/lizard-client.git
+cd lizard-client
+```
 
-Lizard client can be installed independent of the lizard-nxt ecosystem.
+Run npm install to install development dependencies:
 
+```sh
+npm install
+```
 
-### Independent
+Install vendor browser packages:
 
-Clone this repo:
+```sh
+bower install
+```
 
-    git clone git@github.com:nens/lizard-client.git
-    cd lizard-client
+Start dev server to test and load app in a browser at `http://localhost:9000`:
 
-Run NPM install (see [Node Package Manager]( https://www.npmjs.org/ )):
+```sh
+npm start
+```
 
-    npm install
+## Content
 
-If you don't have the bower and grunt-cli do this too:
+* [`npm start`](#grunt-serve): starts a dev server with Grunt.
+* [`npm test`](#test): runs the test.
+* [`npm run transifex`](#translations): extracts strings annotated for translation and uploads to transifex.
+* [`npm run translate`](#translations): downloads translations from transifex and compile a translations file.
+* [`npm run dist`](#build): builds the app as a _compiled_ distribution in `dist/`.
+* [`npm run release`](#release): creates a release of your `dist/`.
+* [Deployment](#deployment) is done with ansible and [nens/client_deployment](https://github.com/nens/client-deployment), included in this repo as a submodule.
 
-    (sudo) npm install -g bower grunt-cli
-
-Install vendor files:
-
-    bower install
-
-Create dist files (optional) and templates (compulsory):
-
-    grunt serve
-
-Point you browser to index.html for a client demo. By default, lizard is in
-English. To enable other languages run:
-
-    grunt translate --txusername=<transifex username> --txpassword=<transifex password>
-
-
-### Django backend
-
-Django serves a REST API which also bootstraps the data for the client. Tiles and stuff also come from Lizard-NXT django site:
-
-    cd to/wherever/this/may/be/lizard-nxt
-    bin/django runserver <ip>:<port>
+Before you make any commits, make sure to read the general [nens workflow document](https://github.com/nens/inframan/blob/master/workflow/workflow.rst) and the  [commit guidelines](#commit-message-convention,-at-a-glance).
 
 
-## Use
-
-Use Grunt to simplify development in the client. When developing the client the easiest way to test and watch your files is by running:
-
-    bin/grunt serve
-
+## Grunt serve
 Whenever files change, grunt triggers the `test` and the `compile` scripts that compile all the html templates to a js file and run the jasmine tests. The failing tests show up in your notification area.
 
-When you want to add a external library, add it to bower.json with an url to the github or zipfile.
-This can be done by hand or if it is available in the bower repo through searching a library and
-adding the --save option. Always check your bower.json afterwards. e.g.:
+Lizard-client by default proxies all api requests to `http://localhost:8000`. To proxy to a different location, call start with hostname and port `npm start -- --hostname=<hostname> --port=<port>`.
 
-    bin/bower search leaflet-dist
-    bin/bower install leaflet-dist --save
+Common practice is to run some sort of container with [Lizard-nxt]( https://github.com/nens/lizard-nxt). Lizard-nxt serves a REST API which also bootstraps the data for the client and serves tile layers. See [Lizard-nxt]( https://github.com/nens/lizard-nxt) for instructions to set up a development server.
 
 
-## Troubleshooting usage
+## Test
+```sh
+npm test
+```
+Runs all tests once.
 
-This error: `Waiting...Fatal error: watch ENOSPC` (on Ubuntu/OS X) when runnning the watch command, means inotify is tracking too many files. Possibly because of Dropbox or other filewatchers. Either switch those off, or increase the amount of files that can be watched by `inotify`:
+To only run the test without other develoment you do not need all development dependencies:
 
-    echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+```sh
+npm install --optional=false
+```
+
+Using `--optional=false` saves around halve of all the `node_modules` which is useful for continuous integration.
 
 
-Running `grunt serve` may sometimes exit with the error: `Cannot read property 'main' of undefined`.
-This is usually caused by a Bower package being listed in `bower.json` while it is not actually installed.
+## Translations
+```sh
+npm run translate -- --txusername=<your transifex username> --txpassword=<your transifex password>
+```
+Includes all supported languages and all strings from transifex. It creates a `translations.js` that is included in the app.
 
-Solved by simply running:
+To extract all annotated strings from the source and upload to transifex:
+```sh
+npm run transifex -- --txusername=<your transifex username> --txpassword=<your transifex password>
+```
+Supported languages:
 
-    bower install
+* Nederlands nl_NL
+* Engels en_GB
+
+Lizard-client uses angular-gettext to translate and pluralize texts. See the [docs](https://angular-gettext.rocketeer.be/dev-guide/). All the translation strings are in `app/translations.js`. In the future we might move to support multiple languages in seperate files and lazy loading, see: https://angular-gettext.rocketeer.be/dev-guide/lazy-loading/ .
+
+The first part of the url's path indicates the lanuage. When requesting `/en`
+the app should be in English. Strings still appearing in Dutch need to be
+annotated for translation, this is a bug. When requesting `/nl` all strings
+should be in Dutch, when string are still in English, the text is either not
+translated or the text is in English but not properly annotated, the latter is a
+[bug](https://github.com/nens/lizard-nxt/issues), the first requires translation
+on [transifex](https://www.transifex.com/nens/lizard-client/) and a new release.
+
+To create a new string that requires translation:
+
+1. Use `<span translate>Hi!</span>`, or for more complicated cases check the docs: [on html elements](https://angular-gettext.rocketeer.be/dev-guide/annotate/), [or in the source code](https://angular-gettext.rocketeer.be/dev-guide/annotate-js/). The app is in English which is translated to other languages.
+2. Create a PR to merge to master and let buildbot do the heavy lifting or call `grunt translate --txusername=<transifex username> --txpassword=<transifex password>` as administrator of transifex to upload strings for translation.
+4. Get yourself a language wizard and get some coffee.
+5. Run `npm run translate --txusername=<transifex username> --txpassword=<transifex password>` to get the newest translations or run `npm run release --txusername=<transifex username> --txpassword=<transifex password>` to make a release with the newest translations.
+
+
+## Build
+**NOTE: make sure you are not running `npm start` in a different session**
+
+```sh
+git pull origin
+git checkout master
+```
+
+Create a distribution in `dist/` with translations from transifex:
+
+```sh
+npm run dist -- --txusername=<transifex username> --txpassword=<transifex password>
+```
+
+
+## Release
+
+Doing a release of lizard-client is easy:
+
+To tag this as a new release and to add the `dist` folder to the release
+attachments we use nens/buck-trap. If you have not already done so, create a github token and add it to `deploy/auth.json`.
+
+You can create your tokens here: https://github.com/settings/tokens Grant the token full access under the repo section
+
+The `auth.json` file should like similar to this:
+
+```json
+{
+    "token": "Your-token-that-you-created-on-github"
+}
+```
+
+Release:
+
+```sh
+npm run release
+```
+
+### Releasing hotfixes or patches
+Consider fixing bugs before creating new features or release you bugfixes together with features. This significantly simplifies development. If you do fix a bug after merging features and you cannot wait for another official release, create a bugfix branch:
+
+```sh
+git checkout v<bugged version you want to fix>
+git checkout -b fixes_<bugged version you want to fix>
+git push origin fixes_<bugged version you want to fix>
+```
+
+Now you have a branch from the version currently in production. Merge your fixes into this branch while making sure your fixes are also in `master`.
+
+```sh
+git checkout -b <my name_my_fix
+```
+
+Create the fix and make an atomic commit with test and documentation. Then push your  branch and create a pr to the fixes_<bugged version you want to fix> branch on github. After merging to fixes also immediately merge to master.
+
+Do not linger your bugfixes around. It was a bug right? Otherwise you might as well just put it in the normal feature flow. So release and deploy it. The fixes can be rolled out as patches without affecting the main release track. To run buck-trap from this branch and to release the branch with its `CHANGELOG.md`
+
+```sh
+npm run release -- -b fixes_<bugged version you want to fix>
+```
+
+The `CHANGELOG.md` would have to be merged with master, which might give some merge conflicts. C'est la vie.
+
+
+## Deployment
+For the deployment of frontend repositories we make use of the client
+deployment repository https://github.com/nens/client-deployment. It is already
+included as a git submodule in this repo.
+
+Init the git submodule if you haven't done `clone --recursive`  or ran this command earlier:
+
+    git submodule init
+
+To update the git submodule:
+
+    git pull --recurse-submodules
+    git submodule update --remote
+
+Deployment is done with `ansible`. Make sure to install ansible with eg:
+
+    pip install ansible
+
+Copy `deploy/hosts.example` to `deploy/hosts` and `deploy/production_hosts.example` to `deploy/production_hosts` and edit to match your server layout. Also copy the `deploy/group_vars\all.example` to `deploy/group_vars/all`:
+
+    cp deploy/hosts.example deploy/hosts
+    cp deploy/production_hosts.example deploy/production_hosts
+    cp deploy/group_vars/all.example deploy/group_vars/all
+
+Adjust the variables to reflect your layout. E.g. fill in build_user: `build_user: 'jeanjacquesmarieantoinette'`
+
+Deployment to integration is done by Jenkins. All it does for deployment is check out the client repo in the right place and build project. Meanwhile the tests are being run and the JavaScript checked for syntax errors or style errors with JSHint.
+
+Deploy to staging:
+
+    ansible-playbook -i deploy/hosts --limit=staging -K deploy/deploy.yml --extra-vars="version=2.7.1"
+
+Deploy to production:
+
+    ansible-playbook -i deploy/production_hosts -K deploy/deploy.yml --extra-vars="version=2.7.1"
 
 
 ## Commit Message Convention, at a Glance
+Lizard-client compiles its CHANGELOG.md directly from the commits. Therefore commits have to be atomic and follow a strict convention:
+
 (this section is copied from https://github.com/conventional-changelog/standard-version#commit-message-convention-at-a-glance)
 
 _patches:_
@@ -131,88 +243,25 @@ appropriate URLs in your CHANGELOG.
 
 The commits made are reflected in the Changelog. See the (changelog)[CHANGELOG.md] for an example.
 
-### Release
 
-Doing a release for your package is easy(-ish). There is a grunt task to tag and push tags to github.
+## Troubleshooting usage
 
-**NOTE: make sure you are not running `grunt serve` in a different session**
+This error: `Waiting...Fatal error: watch ENOSPC` (on Ubuntu/OS X) when runnning the watch command, means inotify is tracking too many files. Possibly because of Dropbox or other filewatchers. Either switch those off, or increase the amount of files that can be watched by `inotify`:
 
-Workflow:
-
-    git pull origin
-    git checkout master
-
-    grunt --txusername=<transifex username> --txpassword=<transifex password>
-
-This creates a build in the `dist/` folder.
-
-To tag this as a new release and to add the `dist` folder to the release
-attachments you we use nens/buck-trap. It versions your repo and changes the changelog for you.
-
-	npm run buck-trap
-
-**NOTE:** buck-trap assumes:
-
-* There is a package.json.
-* You release from `master` branch.
-* There is a `dist` folder which will be attached to the release on github
-
-#### Releasing hotfixes or patches
-If a stable release is coming out release it and start a new branch for the
-stable release e.g.:
-
-	git checkout -b release4.0
-
-If stuff is fixed on this branch, the fixes can be rolled out as patches without
-affecting the mainline release track.
-To run buck-trap from this branch and to release the branch with its `CHANGELOG.md`
-
-	npm run buck-trap -- -b release4.0
-
-The fixes and the `CHANGELOG.md` would have to be merged with master, which might
-give some merge conflicts. C'est la vie.
+    echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 
 
-### Deployment
-For the deployment of frontend repositories we make use of the client
-deployment repository https://github.com/nens/client-deployment. It is already
-included as a git submodule in this repo.
+Running `grunt serve` may sometimes exit with the error: `Cannot read property 'main' of undefined`.
+This is usually caused by a Bower package being listed in `bower.json` while it is not actually installed.
 
-Init the git submodule if you haven't done so:
+Solved by simply running:
 
-    git submodule init
-
-To update the git submodule:
-
-    git pull --recurse-submodules
-    git submodule update --remote
-
-Deployment is done with `ansible`. Make sure to install ansible with eg:
-
-    pip install ansible
-
-Copy `deploy/hosts.example` to `deploy/hosts` and `deploy/production_hosts.example` to `deploy/production_hosts` and edit to match your server layout. Also copy the `deploy/group_vars\all.example` to `deploy/group_vars/all`:
-
-    cp deploy/hosts.example deploy/hosts
-    cp deploy/production_hosts.example deploy/production_hosts
-    cp deploy/group_vars/all.example deploy/group_vars/all
-
-Adjust the variables to reflect your layout. E.g. fill in build_user: `build_user: 'jeanjacquesmarieantoinette'`
-
-Deployment to integration is done by Jenkins. All it does for deployment is check out the client repo in the right place and build project. Meanwhile the tests are being run and the JavaScript checked for syntax errors or style errors with JSHint.
-
-Deploy to staging:
-
-    ansible-playbook -i deploy/hosts --limit=staging -K deploy/deploy.yml --extra-vars="version=2.7.1"
-
-Deploy to production:
-
-    ansible-playbook -i deploy/production_hosts -K deploy/deploy.yml --extra-vars="version=2.7.1"
+    bower install
 
 
 ## Source files
 
-Files are grouped per component, mini angular apps doing one thing. Timeline is currently our most straightforward example. It has a template, a directive, a controller and a service under `app/components/timeline`.
+Files are grouped per component, mini angular apps doing one thing. Data-menu is currently our most straightforward example. It has a template, a directive, a controller and a service under `app/components/data-menu`.
 
 There are still 3 todo's for this example:
 
@@ -225,34 +274,20 @@ The components can include other components and should be used by a *core* modul
 `app/lib` contains low level services and non-angular files. These do not make up a component but contain individual pieces of logic that are used by components or *core* modules.
 
 
-## Internationalization
+## Requirements
 
-Supported languages:
+Install Node and [Node Package Manager]( https://www.npmjs.org/ )): (as per: https://github.com/nodesource/distributions#installation-instructions)
 
-* Nederlands nl_NL
-* Engels en_GB
+```sh
+curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+sudo apt-get install -y nodejs
+```
 
-Lizard-client uses angular-gettext to translate and pluralize texts. See the [docs](https://angular-gettext.rocketeer.be/dev-guide/). All the translation strings are in `app/translations.js`. In the future we might move to support multiple languages in seperate files and lazy loading, see: https://angular-gettext.rocketeer.be/dev-guide/lazy-loading/ .
+If you don't have the bower and grunt-cli do this too:
 
-To include translation, make sure you have all the dependencies by calling `npm install` and run `grunt translate --txusername=<transifex username> --txpassword=<transifex password>` which downloads our translations from transifex and creates a `translations.js` that is included in the app.
-
-The first part of the url's path indicates the lanuage. When requesting `/en`
-the app should be in English. Strings still appearing in Dutch need to be
-annotated for translation, this is a bug. When requesting `/nl` all strings
-should be in Dutch, when string are still in English, the text is either not
-translated or the text is in English but not properly annotated, the latter is a
-[bug](https://github.com/nens/lizard-nxt/issues), the first requires translation
-on [transifex](https://www.transifex.com/nens/lizard-client/) and a new release.
-
-
-To create a new string that requires translation:
-
-1. Use `<span translate>Hi!</span>`, or for more complicated cases check the docs: [on html elements](https://angular-gettext.rocketeer.be/dev-guide/annotate/), [or in the source code](https://angular-gettext.rocketeer.be/dev-guide/annotate-js/). The app is in English which is translated to other languages.
-2. Create a PR to merge to master and let buildbot do the heavy lifting or call `grunt translate --txusername=<transifex username> --txpassword=<transifex password>` as administrator of transifex to upload strings for translation.
-4. Get yourself a language wizard and get some coffee.
-5. Run `grunt translate --txusername=<transifex username> --txpassword=<transifex password>` to get the newest translations or run `grunt release --txusername=<transifex username> --txpassword=<transifex password>` to make a release with the newest translations.
-
-
+```sh
+(sudo) npm install -g bower grunt-cli
+```
 
 ## Angular coding guidelines
 
