@@ -1,16 +1,15 @@
 # Lizard client
 
-Angular/leaflet/d3 app that visualizes (geo-)information for the water sector. It is the front-end in the lizard-nxt ecosystem, with the closed source lizard-nxt django app as an API to the hydra-core db.
+Angular/leaflet/d3 app that visualizes (geo-)information for the water sector. It is the front-end in the lizard-nxt ecosystem, with the closed source lizard-nxt django app as an API to the hydra-core db. For more than demo purposes Lizard client depends on the closed source [Lizard-nxt]( https://github.com/nens/lizard-nxt), a django site that provides an api for hydra-core
 
 [Demo](https://demo.lizard.net)
 
-For more than demo purposes Lizard client depends on the closed source [Lizard-nxt]( https://github.com/nens/lizard-nxt ), a django site that provides an api for hydra-core
 
-### Get up and running
+#### Get up and running
 
 Assuming you have the [required](#requirements) front-end dev environment.
 
-Clone this repo with its submodules.
+Clone this repo with its submodules:
 
 ```sh
 git clone --recursive git@github.com:nens/lizard-client.git
@@ -23,41 +22,26 @@ Run npm install to install development dependencies:
 npm install
 ```
 
-Install vendor dependencies:
+Install vendor browser packages:
 
 ```sh
 bower install
 ```
 
-Start dev server to test and load app in a browser:
+Start dev server to test and load app in a browser at `http://localhost:9000`:
 
 ```sh
 npm start
 ```
 
-Whenever files change, grunt triggers the `test` and the `compile` scripts that compile all the html templates to a js file and run the jasmine tests. The failing tests show up in your notification area.
-
-## Requirements
-Install Node and [Node Package Manager]( https://www.npmjs.org/ )): (as per: https://github.com/nodesource/distributions#installation-instructions)
-
-```sh
-curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
-sudo apt-get install -y nodejs
-```
-
-If you don't have the bower and grunt-cli do this too:
-
-```sh
-(sudo) npm install -g bower grunt-cli
-```
-
-### Django backend
-
-Django serves a REST API which also bootstraps the data for the client. Tiles and stuff also come from Lizard-NXT django site. Lizard-client by default proxies all api requests to `http://localhost:8000`. To change this, call `npm start -- --hostname=<hostname> --port=<port>`
-
 ## Development
 
-Run `npm run` to see all scripts for lizard-client. Besides the above mentioned `start` there are:
+Run `npm run` to see all scripts for lizard-client:
+
+```sh
+npm start
+```
+Starts a dev server with Grunt. See [Grunt serve](#grunt-serve).
 
 ```sh
 npm test
@@ -77,16 +61,31 @@ To download translations from transifex and compile a js translations file. See 
 ```sh
 npm run dist
 ```
-[To create a _compiled_ distribution in `dist/`](#build)
+Builds the app as a _compiled_ distribution in `dist/`. See [build](#build).
 
 ```sh
 npm run release
 ```
 [To create a release of your `dist/`](#release)
 
+Deployment is done with ansible and [nens/client_deployment](https://github.com/nens/client-deployment), included in this repo as a submodule. See [Deploy](#deploy) for deployment instructions.
+
+Before you make any commits, make sure to read the [commit guidelines](#commit-message-convention,-at-a-glance) and the general [nens workflow document](https://github.com/nens/inframan/blob/master/workflow/workflow.rst).
+
+### Grunt serve
+Whenever files change, grunt triggers the `test` and the `compile` scripts that compile all the html templates to a js file and run the jasmine tests. The failing tests show up in your notification area.
+
+Lizard-client by default proxies all api requests to `http://localhost:8000`. To proxy to a different location, call start with hostname and port `npm start -- --hostname=<hostname> --port=<port>`.
+
+Common practice is to run some sort of container with [Lizard-nxt]( https://github.com/nens/lizard-nxt). Lizard-nxt serves a REST API which also bootstraps the data for the client and serves tile layers. See [Lizard-nxt]( https://github.com/nens/lizard-nxt) for instructions to set up a development server.
 
 ### Test
-To only run the test you do not need all development dependencies:
+```sh
+npm test
+```
+Runs all tests once.
+
+To only run the test without other develoment you do not need all development dependencies:
 
 ```sh
 npm install --optional=false
@@ -96,19 +95,22 @@ Using `--optional=false` saves around halve of all the `node_modules` which is u
 
 
 ### Translations
-To include all supported languages and all strings from transifex:
-
 ```sh
 npm translate -- --txusername=<your transifex username> --txpassword=<your transifex password>
 ```
+Includes all supported languages and all strings from transifex. It creates a `translations.js` that is included in the app.
+
+To extract all annotated strings from the source and upload to transifex:
+```sh
+npm run transifex -- --txusername=<your transifex username> --txpassword=<your transifex password>
+```
+
 Supported languages:
 
 * Nederlands nl_NL
 * Engels en_GB
 
 Lizard-client uses angular-gettext to translate and pluralize texts. See the [docs](https://angular-gettext.rocketeer.be/dev-guide/). All the translation strings are in `app/translations.js`. In the future we might move to support multiple languages in seperate files and lazy loading, see: https://angular-gettext.rocketeer.be/dev-guide/lazy-loading/ .
-
-To include translation, make sure you have all the dependencies by calling `npm install` and run `npm run translate --txusername=<transifex username> --txpassword=<transifex password>` which downloads our translations from transifex and creates a `translations.js` that is included in the app.
 
 The first part of the url's path indicates the lanuage. When requesting `/en`
 the app should be in English. Strings still appearing in Dutch need to be
@@ -151,12 +153,15 @@ You can create your tokens here: https://github.com/settings/tokens Grant the to
 
 The `auth.json` file should like similar to this:
 
+```json
 {
     "token": "Your-token-that-you-created-on-github"
 }
+```
 
 Release:
-```
+
+```sh
 npm run release
 ```
 
@@ -261,6 +266,7 @@ appropriate URLs in your CHANGELOG.
 
 The commits made are reflected in the Changelog. See the (changelog)[CHANGELOG.md] for an example.
 
+
 ## Troubleshooting usage
 
 This error: `Waiting...Fatal error: watch ENOSPC` (on Ubuntu/OS X) when runnning the watch command, means inotify is tracking too many files. Possibly because of Dropbox or other filewatchers. Either switch those off, or increase the amount of files that can be watched by `inotify`:
@@ -297,6 +303,20 @@ The components can include other components and should be used by a *core* modul
 
 `app/lib` contains low level services and non-angular files. These do not make up a component but contain individual pieces of logic that are used by components or *core* modules.
 
+
+### Requirements
+Install Node and [Node Package Manager]( https://www.npmjs.org/ )): (as per: https://github.com/nodesource/distributions#installation-instructions)
+
+```sh
+curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+sudo apt-get install -y nodejs
+```
+
+If you don't have the bower and grunt-cli do this too:
+
+```sh
+(sudo) npm install -g bower grunt-cli
+```
 
 ## Angular coding guidelines
 
