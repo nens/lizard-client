@@ -2,37 +2,35 @@
 
 Angular/leaflet/d3 app that visualizes (geo-)information for the water sector. It is the front-end in the lizard-nxt ecosystem, with the closed source lizard-nxt django app as an API to the hydra-core db.
 
-[demo](demo.lizard.net).
+[Demo](https://demo.lizard.net)
 
-For more than demo purposes Lizard client depends on the closed source:
-
-* [Lizard-nxt]( https://github.com/nens/lizard-nxt ), a django site that provides an api for hydra-core
+For more than demo purposes Lizard client depends on the closed source [Lizard-nxt]( https://github.com/nens/lizard-nxt ), a django site that provides an api for hydra-core
 
 ## Get up and running
 
-Assuming you meet the [requirements](#Requirements). Clone this repo with its submodules.
+Assuming you have the [required](#Requirements) front-end dev environment. Clone this repo with its submodules.
 
 ```sh
-$ git clone --recursive git@github.com:nens/lizard-client.git
-$ cd lizard-client
+git clone --recursive git@github.com:nens/lizard-client.git
+cd lizard-client
 ```
 
 Run NPM install to install development dependencies (see [Node Package Manager]( https://www.npmjs.org/ )):
 
 ```sh
-$ npm install
+npm install
 ```
 
 Install vendor dependencies:
 
 ```sh
-$ bower install
+bower install
 ```
 
 Start dev server to test and load app in a browser:
 
 ```sh
-$ npm start
+npm start
 ```
 
 Whenever files change, grunt triggers the `test` and the `compile` scripts that compile all the html templates to a js file and run the jasmine tests. The failing tests show up in your notification area.
@@ -48,7 +46,7 @@ sudo apt-get install -y nodejs
 If you don't have the bower and grunt-cli do this too:
 
 ```sh
-$ (sudo) npm install -g bower grunt-cli
+(sudo) npm install -g bower grunt-cli
 ```
 
 ## Django backend
@@ -60,20 +58,20 @@ Django serves a REST API which also bootstraps the data for the client. Tiles an
 By default, lizard is in English. To enable other languages run:
 
 ```sh
-$ npm translate -- --txusername=<your transifex username> --txpassword=<your transifex password>
+npm translate -- --txusername=<your transifex username> --txpassword=<your transifex password>
 ```
 
 To only run the test you do not need all development dependencies:
 
 ```sh
-$ npm install --optional=false
+npm install --optional=false
 ```
 
 When you want to add an external library, add it to bower.json with an url to the github repo or zipfile. This can be done by hand or if it is available in the bower repo through searching a library and adding the --save option. Always check your bower.json afterwards. e.g.:
 
 ```sh
-$ bower search leaflet-dist
-$ bower install leaflet-dist --save
+bower search leaflet-dist
+bower install leaflet-dist --save
 ```
 
 
@@ -169,7 +167,7 @@ Create the fix and make an atomic commit with test and documentation. Then push 
 Do not linger your bugfixes around. It was a bug right? Otherwise you might as well just put it in the normal feature flow. So release and deploy it. The fixes can be rolled out as patches without affecting the main release track. To run buck-trap from this branch and to release the branch with its `CHANGELOG.md`
 
 ```sh
-$ npm run release -- -b fixes_<bugged version you want to fix>
+npm run release -- -b fixes_<bugged version you want to fix>
 ```
 
 The `CHANGELOG.md` would have to be merged with master, which might give some merge conflicts. C'est la vie.
