@@ -36,16 +36,13 @@ npm start
 
 ## Content
 
-Run `npm run` to see all scripts for lizard-client:
-
-* `npm start`: starts a dev server with Grunt. See [Grunt serve](#grunt-serve).
-* `npm test`: to run the test. See [test](#test).
-* `npm run transifex`: to extract string annotated for translation and upload to transifex. See [translations](#translations).
-* `npm run translate`: to download translations from transifex and compile a translations file. See [translations](#translations).
-* `npm run dist`: builds the app as a _compiled_ distribution in `dist/`. See [build](#build).
-* `npm run release`: to create a release of your `dist/`. See [Release](#release).
-
-* Deployment is done with ansible and [nens/client_deployment](https://github.com/nens/client-deployment), included in this repo as a submodule. See [Deploy](#deploy) for deployment instructions.
+* [`npm start`](#grunt-serve): starts a dev server with Grunt.
+* [`npm test`](#test): runs the test.
+* [`npm run transifex`](#translations): extracts strings annotated for translation and uploads to transifex.
+* [`npm run translate`](#translations): downloads translations from transifex and compile a translations file.
+* [`npm run dist`](#build): builds the app as a _compiled_ distribution in `dist/`.
+* [`npm run release`](#release): creates a release of your `dist/`.
+* [Deployment](#deploy) is done with ansible and [nens/client_deployment](https://github.com/nens/client-deployment), included in this repo as a submodule.
 
 Before you make any commits, make sure to read the general [nens workflow document](https://github.com/nens/inframan/blob/master/workflow/workflow.rst) and the  [commit guidelines](#commit-message-convention,-at-a-glance).
 
