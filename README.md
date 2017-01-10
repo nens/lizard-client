@@ -38,35 +38,12 @@ npm start
 
 Run `npm run` to see all scripts for lizard-client:
 
-```sh
-npm start
-```
-Starts a dev server with Grunt. See [Grunt serve](#grunt-serve).
-
-```sh
-npm test
-```
-To run the test. See [test](#test).
-
-```sh
-npm run transifex
-```
-To extract string annotated for translation and upload to transifex. See [translations](#translations).
-
-```sh
-npm run translate
-```
-To download translations from transifex and compile a js translations file. See [translations](#translations).
-
-```sh
-npm run dist
-```
-Builds the app as a _compiled_ distribution in `dist/`. See [build](#build).
-
-```sh
-npm run release
-```
-[To create a release of your `dist/`](#release)
+* `npm start`: starts a dev server with Grunt. See [Grunt serve](#grunt-serve).
+* `npm test`: to run the test. See [test](#test).
+* `npm run transifex`: to extract string annotated for translation and upload to transifex. See [translations](#translations).
+* `npm run translate`: to download translations from transifex and compile a translations file. See [translations](#translations).
+* `npm run dist`: builds the app as a _compiled_ distribution in `dist/`. See [build](#build).
+* `npm run release`: to create a release of your `dist/`. See [Release](#release).
 
 Deployment is done with ansible and [nens/client_deployment](https://github.com/nens/client-deployment), included in this repo as a submodule. See [Deploy](#deploy) for deployment instructions.
 
