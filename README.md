@@ -6,16 +6,18 @@ Angular/leaflet/d3 app that visualizes (geo-)information for the water sector. I
 
 For more than demo purposes Lizard client depends on the closed source [Lizard-nxt]( https://github.com/nens/lizard-nxt ), a django site that provides an api for hydra-core
 
-## Get up and running
+### Get up and running
 
-Assuming you have the [required](#Requirements) front-end dev environment. Clone this repo with its submodules.
+Assuming you have the [required](#requirements) front-end dev environment.
+
+Clone this repo with its submodules.
 
 ```sh
 git clone --recursive git@github.com:nens/lizard-client.git
 cd lizard-client
 ```
 
-Run NPM install to install development dependencies (see [Node Package Manager]( https://www.npmjs.org/ )):
+Run npm install to install development dependencies:
 
 ```sh
 npm install
@@ -36,7 +38,7 @@ npm start
 Whenever files change, grunt triggers the `test` and the `compile` scripts that compile all the html templates to a js file and run the jasmine tests. The failing tests show up in your notification area.
 
 ## Requirements
-Install Node and npm (as per: https://github.com/nodesource/distributions#installation-instructions)
+Install Node and [Node Package Manager]( https://www.npmjs.org/ )): (as per: https://github.com/nodesource/distributions#installation-instructions)
 
 ```sh
 curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
@@ -49,76 +51,83 @@ If you don't have the bower and grunt-cli do this too:
 (sudo) npm install -g bower grunt-cli
 ```
 
-## Django backend
+### Django backend
 
 Django serves a REST API which also bootstraps the data for the client. Tiles and stuff also come from Lizard-NXT django site. Lizard-client by default proxies all api requests to `http://localhost:8000`. To change this, call `npm start -- --hostname=<hostname> --port=<port>`
 
-## Advanced development
+## Development
 
-By default, lizard is in English. To enable other languages run:
+Run `npm run` to see all scripts for lizard-client. Besides the above mentioned `start` there are:
 
 ```sh
-npm translate -- --txusername=<your transifex username> --txpassword=<your transifex password>
+npm test
 ```
+To run the test. See [test](#test).
 
+```sh
+npm run transifex
+```
+To extract string annotated for translation and upload to transifex. See [translations](#translations).
+
+```sh
+npm run translate
+```
+To download translations from transifex and compile a js translations file. See [translations](#translations).
+
+```sh
+npm run dist
+```
+[To create a _compiled_ distribution in `dist/`](#build)
+
+```sh
+npm run release
+```
+[To create a release of your `dist/`](#release)
+
+
+### Test
 To only run the test you do not need all development dependencies:
 
 ```sh
 npm install --optional=false
 ```
 
-When you want to add an external library, add it to bower.json with an url to the github repo or zipfile. This can be done by hand or if it is available in the bower repo through searching a library and adding the --save option. Always check your bower.json afterwards. e.g.:
+Using `--optional=false` saves around halve of all the `node_modules` which is useful for continuous integration.
+
+
+### Translations
+To include all supported languages and all strings from transifex:
 
 ```sh
-bower search leaflet-dist
-bower install leaflet-dist --save
+npm translate -- --txusername=<your transifex username> --txpassword=<your transifex password>
 ```
+Supported languages:
+
+* Nederlands nl_NL
+* Engels en_GB
+
+Lizard-client uses angular-gettext to translate and pluralize texts. See the [docs](https://angular-gettext.rocketeer.be/dev-guide/). All the translation strings are in `app/translations.js`. In the future we might move to support multiple languages in seperate files and lazy loading, see: https://angular-gettext.rocketeer.be/dev-guide/lazy-loading/ .
+
+To include translation, make sure you have all the dependencies by calling `npm install` and run `npm run translate --txusername=<transifex username> --txpassword=<transifex password>` which downloads our translations from transifex and creates a `translations.js` that is included in the app.
+
+The first part of the url's path indicates the lanuage. When requesting `/en`
+the app should be in English. Strings still appearing in Dutch need to be
+annotated for translation, this is a bug. When requesting `/nl` all strings
+should be in Dutch, when string are still in English, the text is either not
+translated or the text is in English but not properly annotated, the latter is a
+[bug](https://github.com/nens/lizard-nxt/issues), the first requires translation
+on [transifex](https://www.transifex.com/nens/lizard-client/) and a new release.
+
+To create a new string that requires translation:
+
+1. Use `<span translate>Hi!</span>`, or for more complicated cases check the docs: [on html elements](https://angular-gettext.rocketeer.be/dev-guide/annotate/), [or in the source code](https://angular-gettext.rocketeer.be/dev-guide/annotate-js/). The app is in English which is translated to other languages.
+2. Create a PR to merge to master and let buildbot do the heavy lifting or call `grunt translate --txusername=<transifex username> --txpassword=<transifex password>` as administrator of transifex to upload strings for translation.
+4. Get yourself a language wizard and get some coffee.
+5. Run `npm run translate --txusername=<transifex username> --txpassword=<transifex password>` to get the newest translations or run `npm run release --txusername=<transifex username> --txpassword=<transifex password>` to make a release with the newest translations.
 
 
-## Commit Message Convention, at a Glance
-Lizard-client compiles its CHANGELOG.md directly from the commits. Therefore commits have to be atomic and follow a strict convention:
-
-(this section is copied from https://github.com/conventional-changelog/standard-version#commit-message-convention-at-a-glance)
-
-_patches:_
-
-```sh
-git commit -a -m "fix(parsing): fixed a bug in our parser"
-```
-
-_features:_
-
-```sh
-git commit -a -m "feat(parser): we now have a parser \o/"
-```
-
-_breaking changes:_
-
-```sh
-git commit -a -m "feat(new-parser): introduces a new parsing library
-BREAKING CHANGE: new library does not support foo-construct"
-```
-
-_other changes:_
-
-You decide, e.g., docs, chore, etc.
-
-```sh
-git commit -a -m "docs: fixed up the docs a bit"
-```
-
-_but wait, there's more!_
-
-Github usernames (`@bcoe`) and issue references (#133) will be swapped out for the
-appropriate URLs in your CHANGELOG.
-
-The commits made are reflected in the Changelog. See the (changelog)[CHANGELOG.md] for an example.
-
-### Release
-
-Doing a release of lizard-client is easy:
-
-**NOTE: make sure you are not running `grunt serve` in a different session**
+### Build
+**NOTE: make sure you are not running `npm start` in a different session**
 
 ```sh
 git pull origin
@@ -130,6 +139,10 @@ Create a distribution in `dist/` with translations from transifex:
 ```sh
 npm run dist -- --txusername=<transifex username> --txpassword=<transifex password>
 ```
+
+### Release
+
+Doing a release of lizard-client is easy:
 
 To tag this as a new release and to add the `dist` folder to the release
 attachments we use nens/buck-trap. If you have not already done so, create a github token and add it to `deploy/auth.json`.
@@ -173,7 +186,7 @@ npm run release -- -b fixes_<bugged version you want to fix>
 The `CHANGELOG.md` would have to be merged with master, which might give some merge conflicts. C'est la vie.
 
 
-### Deployment
+## Deployment
 For the deployment of frontend repositories we make use of the client
 deployment repository https://github.com/nens/client-deployment. It is already
 included as a git submodule in this repo.
@@ -209,34 +222,44 @@ Deploy to production:
 
     ansible-playbook -i deploy/production_hosts -K deploy/deploy.yml --extra-vars="version=2.7.1"
 
+## Commit Message Convention, at a Glance
+Lizard-client compiles its CHANGELOG.md directly from the commits. Therefore commits have to be atomic and follow a strict convention:
 
-## Internationalization
+(this section is copied from https://github.com/conventional-changelog/standard-version#commit-message-convention-at-a-glance)
 
-Supported languages:
+_patches:_
 
-* Nederlands nl_NL
-* Engels en_GB
+```sh
+git commit -a -m "fix(parsing): fixed a bug in our parser"
+```
 
-Lizard-client uses angular-gettext to translate and pluralize texts. See the [docs](https://angular-gettext.rocketeer.be/dev-guide/). All the translation strings are in `app/translations.js`. In the future we might move to support multiple languages in seperate files and lazy loading, see: https://angular-gettext.rocketeer.be/dev-guide/lazy-loading/ .
+_features:_
 
-To include translation, make sure you have all the dependencies by calling `npm install` and run `npm run translate --txusername=<transifex username> --txpassword=<transifex password>` which downloads our translations from transifex and creates a `translations.js` that is included in the app.
+```sh
+git commit -a -m "feat(parser): we now have a parser \o/"
+```
 
-The first part of the url's path indicates the lanuage. When requesting `/en`
-the app should be in English. Strings still appearing in Dutch need to be
-annotated for translation, this is a bug. When requesting `/nl` all strings
-should be in Dutch, when string are still in English, the text is either not
-translated or the text is in English but not properly annotated, the latter is a
-[bug](https://github.com/nens/lizard-nxt/issues), the first requires translation
-on [transifex](https://www.transifex.com/nens/lizard-client/) and a new release.
+_breaking changes:_
 
+```sh
+git commit -a -m "feat(new-parser): introduces a new parsing library
+BREAKING CHANGE: new library does not support foo-construct"
+```
 
-To create a new string that requires translation:
+_other changes:_
 
-1. Use `<span translate>Hi!</span>`, or for more complicated cases check the docs: [on html elements](https://angular-gettext.rocketeer.be/dev-guide/annotate/), [or in the source code](https://angular-gettext.rocketeer.be/dev-guide/annotate-js/). The app is in English which is translated to other languages.
-2. Create a PR to merge to master and let buildbot do the heavy lifting or call `grunt translate --txusername=<transifex username> --txpassword=<transifex password>` as administrator of transifex to upload strings for translation.
-4. Get yourself a language wizard and get some coffee.
-5. Run `npm run translate --txusername=<transifex username> --txpassword=<transifex password>` to get the newest translations or run `npm run release --txusername=<transifex username> --txpassword=<transifex password>` to make a release with the newest translations.
+You decide, e.g., docs, chore, etc.
 
+```sh
+git commit -a -m "docs: fixed up the docs a bit"
+```
+
+_but wait, there's more!_
+
+Github usernames (`@bcoe`) and issue references (#133) will be swapped out for the
+appropriate URLs in your CHANGELOG.
+
+The commits made are reflected in the Changelog. See the (changelog)[CHANGELOG.md] for an example.
 
 ## Troubleshooting usage
 
@@ -252,6 +275,12 @@ Solved by simply running:
 
     bower install
 
+When you want to add an external library, add it to bower.json with an url to the github repo or zipfile. This can be done by hand or if it is available in the bower repo through searching a library and adding the --save option. Always check your bower.json afterwards. e.g.:
+
+```sh
+bower search leaflet-dist
+bower install leaflet-dist --save
+```
 
 
 ## Source files
