@@ -1,6 +1,6 @@
 # Lizard client
 
-Angular/leaflet/d3 app that visualizes (geo-)information for the water sector. It is the front-end in the lizard-nxt ecosystem, with the closed source lizard-nxt django app as an API to the hydra-core db. For more than demo purposes Lizard client depends on the closed source [Lizard-nxt]( https://github.com/nens/lizard-nxt), a django site that provides an api for hydra-core
+Angular/leaflet/d3 app that visualizes (geo-)information for the water sector. It is the front-end in the lizard-nxt ecosystem, with the closed source [Lizard-nxt]( https://github.com/nens/lizard-nxt) django app as an API to the hydra-core db.
 
 [Demo](https://demo.lizard.net)
 
@@ -47,7 +47,7 @@ Run `npm run` to see all scripts for lizard-client:
 
 Deployment is done with ansible and [nens/client_deployment](https://github.com/nens/client-deployment), included in this repo as a submodule. See [Deploy](#deploy) for deployment instructions.
 
-Before you make any commits, make sure to read the [commit guidelines](#commit-message-convention,-at-a-glance) and the general [nens workflow document](https://github.com/nens/inframan/blob/master/workflow/workflow.rst).
+Before you make any commits, make sure to read the general [nens workflow document](https://github.com/nens/inframan/blob/master/workflow/workflow.rst) and the  [commit guidelines](#commit-message-convention,-at-a-glance).
 
 ### Grunt serve
 Whenever files change, grunt triggers the `test` and the `compile` scripts that compile all the html templates to a js file and run the jasmine tests. The failing tests show up in your notification area.
@@ -73,7 +73,7 @@ Using `--optional=false` saves around halve of all the `node_modules` which is u
 
 ### Translations
 ```sh
-npm translate -- --txusername=<your transifex username> --txpassword=<your transifex password>
+npm run translate -- --txusername=<your transifex username> --txpassword=<your transifex password>
 ```
 Includes all supported languages and all strings from transifex. It creates a `translations.js` that is included in the app.
 
@@ -81,7 +81,6 @@ To extract all annotated strings from the source and upload to transifex:
 ```sh
 npm run transifex -- --txusername=<your transifex username> --txpassword=<your transifex password>
 ```
-
 Supported languages:
 
 * Nederlands nl_NL
@@ -168,7 +167,7 @@ npm run release -- -b fixes_<bugged version you want to fix>
 The `CHANGELOG.md` would have to be merged with master, which might give some merge conflicts. C'est la vie.
 
 
-## Deployment
+### Deployment
 For the deployment of frontend repositories we make use of the client
 deployment repository https://github.com/nens/client-deployment. It is already
 included as a git submodule in this repo.
@@ -257,13 +256,6 @@ This is usually caused by a Bower package being listed in `bower.json` while it 
 Solved by simply running:
 
     bower install
-
-When you want to add an external library, add it to bower.json with an url to the github repo or zipfile. This can be done by hand or if it is available in the bower repo through searching a library and adding the --save option. Always check your bower.json afterwards. e.g.:
-
-```sh
-bower search leaflet-dist
-bower install leaflet-dist --save
-```
 
 
 ## Source files
