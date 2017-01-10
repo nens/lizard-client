@@ -23,6 +23,14 @@ angular.module('omnibox')
         });
       };
 
+      scope.measureScaleIsNotInterval = function (ts) {
+        return ts.measureScale !== 'interval';
+      }
+
+      scope.assetHasSurfaceLevel = function () {
+        return ('surface_level' in scope.asset);
+      }
+
       /**
        * Returns true if selection with uuid is one the first three in the list.
        *

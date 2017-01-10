@@ -107,6 +107,7 @@ angular.module('timeseries')
        * Get new ts when time changes
        */
       scope.$watch('timeState.timelineMoving', function (newValue, oldValue) {
+        // NB! I believe this code is no longer used?
         if (!newValue && newValue !== oldValue) {
           TimeseriesService.syncTime().then(getContentForAsset);
 
@@ -118,13 +119,8 @@ angular.module('timeseries')
             async: 'true'
           };
 
-          if (TimeseriesService.relativeTimeseries) {
-            // params.relative_to = 'surface_level';
-            params.relative_to = 'filter_bottom_level';
-          }
-
           scope.startDownload = function(){
-            $http.get('/api/v2/timeseries/data/', {
+            $http.get('/api/v2/timeseries/data', {
                 params: {
                   uuid: scope.timeseries.selected.uuid,
                   start: Math.round(scope.timeState.start),

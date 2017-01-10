@@ -47,12 +47,11 @@ angular.module('export')
       };
 
       if (TimeseriesService.relativeTimeseries) {
-        // params.relative_to = 'surface_level';
-        params.relative_to = 'filter_bottom_level';
+        params.relative_to = 'surface_level';
       }
 
-      // Request timeseries/data/ with uuids and format=ASYNC_FORMAT and async=true
-      $http.get('/api/v2/timeseries/data/', {
+      // Request timeseries with uuids and format=ASYNC_FORMAT and async=true
+      $http.get('/api/v2/timeseries/', {
         params: params
       }).then(function (response) {
         scope.taskInfo.url = response.data.task_url;

@@ -150,8 +150,7 @@ angular.module('timeseries')
       };
 
       if (service.relativeTimeseries) {
-        // params.relative_to = 'surface_level';
-        params.relative_to = 'filter_bottom_level';
+        params.relative_to = 'surface_level';
       }
 
       if (minPoints) {
