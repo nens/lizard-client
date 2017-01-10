@@ -34,7 +34,7 @@ Start dev server to test and load app in a browser at `http://localhost:9000`:
 npm start
 ```
 
-## Development
+## Content
 
 Run `npm run` to see all scripts for lizard-client:
 
@@ -45,18 +45,20 @@ Run `npm run` to see all scripts for lizard-client:
 * `npm run dist`: builds the app as a _compiled_ distribution in `dist/`. See [build](#build).
 * `npm run release`: to create a release of your `dist/`. See [Release](#release).
 
-Deployment is done with ansible and [nens/client_deployment](https://github.com/nens/client-deployment), included in this repo as a submodule. See [Deploy](#deploy) for deployment instructions.
+* Deployment is done with ansible and [nens/client_deployment](https://github.com/nens/client-deployment), included in this repo as a submodule. See [Deploy](#deploy) for deployment instructions.
 
 Before you make any commits, make sure to read the general [nens workflow document](https://github.com/nens/inframan/blob/master/workflow/workflow.rst) and the  [commit guidelines](#commit-message-convention,-at-a-glance).
 
-### Grunt serve
+
+## Grunt serve
 Whenever files change, grunt triggers the `test` and the `compile` scripts that compile all the html templates to a js file and run the jasmine tests. The failing tests show up in your notification area.
 
 Lizard-client by default proxies all api requests to `http://localhost:8000`. To proxy to a different location, call start with hostname and port `npm start -- --hostname=<hostname> --port=<port>`.
 
 Common practice is to run some sort of container with [Lizard-nxt]( https://github.com/nens/lizard-nxt). Lizard-nxt serves a REST API which also bootstraps the data for the client and serves tile layers. See [Lizard-nxt]( https://github.com/nens/lizard-nxt) for instructions to set up a development server.
 
-### Test
+
+## Test
 ```sh
 npm test
 ```
@@ -71,7 +73,7 @@ npm install --optional=false
 Using `--optional=false` saves around halve of all the `node_modules` which is useful for continuous integration.
 
 
-### Translations
+## Translations
 ```sh
 npm run translate -- --txusername=<your transifex username> --txpassword=<your transifex password>
 ```
@@ -104,7 +106,7 @@ To create a new string that requires translation:
 5. Run `npm run translate --txusername=<transifex username> --txpassword=<transifex password>` to get the newest translations or run `npm run release --txusername=<transifex username> --txpassword=<transifex password>` to make a release with the newest translations.
 
 
-### Build
+## Build
 **NOTE: make sure you are not running `npm start` in a different session**
 
 ```sh
@@ -118,7 +120,8 @@ Create a distribution in `dist/` with translations from transifex:
 npm run dist -- --txusername=<transifex username> --txpassword=<transifex password>
 ```
 
-### Release
+
+## Release
 
 Doing a release of lizard-client is easy:
 
@@ -141,7 +144,7 @@ Release:
 npm run release
 ```
 
-#### Releasing hotfixes or patches
+### Releasing hotfixes or patches
 Consider fixing bugs before creating new features or release you bugfixes together with features. This significantly simplifies development. If you do fix a bug after merging features and you cannot wait for another official release, create a bugfix branch:
 
 ```sh
@@ -167,7 +170,7 @@ npm run release -- -b fixes_<bugged version you want to fix>
 The `CHANGELOG.md` would have to be merged with master, which might give some merge conflicts. C'est la vie.
 
 
-### Deployment
+## Deployment
 For the deployment of frontend repositories we make use of the client
 deployment repository https://github.com/nens/client-deployment. It is already
 included as a git submodule in this repo.
@@ -202,6 +205,7 @@ Deploy to staging:
 Deploy to production:
 
     ansible-playbook -i deploy/production_hosts -K deploy/deploy.yml --extra-vars="version=2.7.1"
+
 
 ## Commit Message Convention, at a Glance
 Lizard-client compiles its CHANGELOG.md directly from the commits. Therefore commits have to be atomic and follow a strict convention:
@@ -273,7 +277,8 @@ The components can include other components and should be used by a *core* modul
 `app/lib` contains low level services and non-angular files. These do not make up a component but contain individual pieces of logic that are used by components or *core* modules.
 
 
-### Requirements
+## Requirements
+
 Install Node and [Node Package Manager]( https://www.npmjs.org/ )): (as per: https://github.com/nodesource/distributions#installation-instructions)
 
 ```sh
