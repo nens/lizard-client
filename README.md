@@ -42,7 +42,7 @@ npm start
 * [`npm run translate`](#translations): downloads translations from transifex and compile a translations file.
 * [`npm run dist`](#build): builds the app as a _compiled_ distribution in `dist/`.
 * [`npm run release`](#release): creates a release of your `dist/`.
-* [Deployment](#deploy) is done with ansible and [nens/client_deployment](https://github.com/nens/client-deployment), included in this repo as a submodule.
+* [Deployment](#deployment) is done with ansible and [nens/client_deployment](https://github.com/nens/client-deployment), included in this repo as a submodule.
 
 Before you make any commits, make sure to read the general [nens workflow document](https://github.com/nens/inframan/blob/master/workflow/workflow.rst) and the  [commit guidelines](#commit-message-convention,-at-a-glance).
 
