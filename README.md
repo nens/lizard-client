@@ -48,12 +48,15 @@ Before you make any commits, make sure to read the general [nens workflow docume
 
 
 ## Grunt serve
+Grunt serves the app on `http://localhost:9000`. Call start with hostname and port `npm start -- --hostname=<hostname> --port=<port>` to serve from a different location.
+
 Whenever files change, grunt triggers the `test` and the `compile` scripts that compile all the html templates to a js file and run the jasmine tests. The failing tests show up in your notification area.
 
-Lizard-client by default proxies all api requests to `http://localhost:8000`. To proxy to a different location, call start with hostname and port `npm start -- --hostname=<hostname> --port=<port>`.
+Lizard-client by default proxies all api requests to `http://localhost:8000`. To proxy to a different location change `Gruntfile.js`.
 
 Common practice is to run some sort of container with [Lizard-nxt]( https://github.com/nens/lizard-nxt). Lizard-nxt serves a REST API which also bootstraps the data for the client and serves tile layers. See [Lizard-nxt]( https://github.com/nens/lizard-nxt) for instructions to set up a development server.
 
+_NOTE: Some files do not trigger a reload, this probably has to do with the configuration in `Gruntfile.js`_
 
 ## Test
 ```sh
