@@ -36,7 +36,7 @@ npm start
 
 ## Content
 
-* [`npm start`](#grunt-serve): starts a dev server with Grunt.
+* [`npm start`](#npm-start): starts a dev server with Grunt.
 * [`npm test`](#test): runs the test.
 * [`npm run transifex`](#translations): extracts strings annotated for translation and uploads to transifex.
 * [`npm run translate`](#translations): downloads translations from transifex and compile a translations file.
@@ -47,7 +47,7 @@ npm start
 Before you make any commits, make sure to read the general [nens workflow document](https://github.com/nens/inframan/blob/master/workflow/workflow.rst) and the  [commit guidelines](#commit-message-convention,-at-a-glance).
 
 
-## Grunt serve
+## NPM start
 Grunt serves the app on `http://localhost:9000`. Call start with hostname and port `npm start -- --hostname=<hostname> --port=<port>` to serve from a different location.
 
 Whenever files change, grunt triggers the `test` and the `compile` scripts that compile all the html templates to a js file and run the jasmine tests. The failing tests show up in your notification area.
@@ -143,6 +143,12 @@ Release:
 ```sh
 npm run release
 ```
+
+Buck-trap ups version number in `package.json`, compiles the `CHANGELOG.md` tags and creates a github release with a zipped `dist/`.
+
+_NOTE: Sometimes buck trap messes up for unknown reasons. It does everything except  making the github release. It hangs with the message: `tag already exists`. This sucks because you will have to [clean up the tag](https://nathanhoad.net/how-to-delete-a-remote-git-tag) and revert the release commit._
+
+_NOTE on the NOTE: One time reverting the release commit an making a new release  it did not update the CHANGELOG.md again which resulted in this PR: [#821](https://github.com/nens/lizard-client/pull/821)._
 
 ### Releasing hotfixes or patches
 Consider fixing bugs before creating new features or release bugfixes together with features. This significantly simplifies development. If you do decide on fixing a bug after merging features and you cannot wait for another official release, create a bugfix branch as described by the [nens workflow](https://github.com/nens/inframan/blob/master/workflow/workflow.rst#bug-fixes).
