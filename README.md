@@ -7,7 +7,7 @@ Angular/leaflet/d3 app that visualizes (geo-)information for the water sector. I
 
 #### Get up and running
 
-Assuming you have the [required](#requirements) front-end dev environment.
+Assuming you have `node~4.4.2`, `npm~2.15.0` and `bower ~1.4.0`. Otherwise see [requirements](#requirements) for the required front-end dev environment. Since lizard-client 4.6.4 it is no longer required to have `grunt-cli` installed globally.
 
 Clone this repo with its submodules:
 
@@ -283,10 +283,10 @@ curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
 sudo apt-get install -y nodejs
 ```
 
-If you don't have the bower and grunt-cli do this too:
+If you don't have bower do this too:
 
 ```sh
-(sudo) npm install -g bower grunt-cli
+(sudo) npm install -g bower
 ```
 
 ## Angular coding guidelines
