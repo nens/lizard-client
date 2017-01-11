@@ -2,19 +2,13 @@ node ('nxt'){
     stage "Checkout"
     checkout scm
 
-    stage "Build"
+    stage "Install"
     sh "sudo su buildout"
     sh "rm -rf node_modules"
     sh "rm -rf vendor"
-    sh "npm install"
+    sh "npm install --optional=false"
     sh "bower install"
 
-    stage "JSLint"
-    sh "grunt jshint"
-
     stage "Test"
-    sh "grunt test"
-
-    stage "Docs"
-    sh "grunt docs"
+    sh "npm test"
 }
