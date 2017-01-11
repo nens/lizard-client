@@ -142,7 +142,7 @@ npm run release
 ```
 
 ### Releasing hotfixes or patches
-Consider fixing bugs before creating new features or release you bugfixes together with features. This significantly simplifies development. If you do fix a bug after merging features and you cannot wait for another official release, create a bugfix branch:
+Consider fixing bugs before creating new features or release bugfixes together with features. This significantly simplifies development. If you do decide on fixing a bug after merging features and you cannot wait for another official release, create a bugfix branch as described by the [nens workflow](https://github.com/nens/inframan/blob/master/workflow/workflow.rst#bug-fixes):
 
 ```sh
 git checkout v<bugged version you want to fix>
