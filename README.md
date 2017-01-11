@@ -142,29 +142,15 @@ npm run release
 ```
 
 ### Releasing hotfixes or patches
-Consider fixing bugs before creating new features or release bugfixes together with features. This significantly simplifies development. If you do decide on fixing a bug after merging features and you cannot wait for another official release, create a bugfix branch as described by the [nens workflow](https://github.com/nens/inframan/blob/master/workflow/workflow.rst#bug-fixes):
+Consider fixing bugs before creating new features or release bugfixes together with features. This significantly simplifies development. If you do decide on fixing a bug after merging features and you cannot wait for another official release, create a bugfix branch as described by the [nens workflow](https://github.com/nens/inframan/blob/master/workflow/workflow.rst#bug-fixes).
 
-```sh
-git checkout v<bugged version you want to fix>
-git checkout -b fixes_<bugged version you want to fix>
-git push origin fixes_<bugged version you want to fix>
-```
-
-Now you have a branch from the version currently in production. Merge your fixes into this branch while making sure your fixes are also in `master`.
-
-```sh
-git checkout -b <my name_my_fix
-```
-
-Create the fix and make an atomic commit with test and documentation. Then push your  branch and create a pr to the fixes_<bugged version you want to fix> branch on github. After merging to fixes also immediately merge to master.
-
-Do not linger your bugfixes around. It was a bug right? Otherwise you might as well just put it in the normal feature flow. So release and deploy it. The fixes can be rolled out as patches without affecting the main release track. To run buck-trap from this branch and to release the branch with its `CHANGELOG.md`
+Do not linger your bugfixes around. It was a bug right? Otherwise you might as well just put it in the normal feature flow. So create a [distribution](#build), release and deploy it. The fixes can be rolled out as patches without affecting the main release track. To run buck-trap from this branch and to release the branch with its `CHANGELOG.md`:
 
 ```sh
 npm run release -- -b fixes_<bugged version you want to fix>
 ```
 
-The `CHANGELOG.md` would have to be merged with master, which might give some merge conflicts. C'est la vie.
+The `CHANGELOG.md` would have to be merged with master after the release, which might give some merge conflicts. C'est la vie.
 
 
 ## Deployment
@@ -174,35 +160,44 @@ included as a git submodule in this repo.
 
 Init the git submodule if you haven't done `clone --recursive`  or ran this command earlier:
 
-    git submodule init
+```sh
+git submodule init
+```
 
 To update the git submodule:
 
-    git pull --recurse-submodules
-    git submodule update --remote
+```sh
+git pull --recurse-submodules
+git submodule update --remote
+```
 
 Deployment is done with `ansible`. Make sure to install ansible with eg:
 
-    pip install ansible
+```sh
+pip install ansible
+```
 
 Copy `deploy/hosts.example` to `deploy/hosts` and `deploy/production_hosts.example` to `deploy/production_hosts` and edit to match your server layout. Also copy the `deploy/group_vars\all.example` to `deploy/group_vars/all`:
 
-    cp deploy/hosts.example deploy/hosts
-    cp deploy/production_hosts.example deploy/production_hosts
-    cp deploy/group_vars/all.example deploy/group_vars/all
+```sh
+cp deploy/hosts.example deploy/hosts
+cp deploy/production_hosts.example deploy/production_hosts
+cp deploy/group_vars/all.example deploy/group_vars/all
+```
 
 Adjust the variables to reflect your layout. E.g. fill in build_user: `build_user: 'jeanjacquesmarieantoinette'`
 
-Deployment to integration is done by Jenkins. All it does for deployment is check out the client repo in the right place and build project. Meanwhile the tests are being run and the JavaScript checked for syntax errors or style errors with JSHint.
-
 Deploy to staging:
 
-    ansible-playbook -i deploy/hosts --limit=staging -K deploy/deploy.yml --extra-vars="version=2.7.1"
+```sh
+ansible-playbook -i deploy/hosts --limit=staging -K deploy/deploy.yml --extra-vars="version=2.7.1"
+```
 
 Deploy to production:
 
-    ansible-playbook -i deploy/production_hosts -K deploy/deploy.yml --extra-vars="version=2.7.1"
-
+```sh
+ansible-playbook -i deploy/production_hosts -K deploy/deploy.yml --extra-vars="version=2.7.1"
+```
 
 ## Commit Message Convention, at a Glance
 Lizard-client compiles its CHANGELOG.md directly from the commits. Therefore commits have to be atomic and follow a strict convention:
