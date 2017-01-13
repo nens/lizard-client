@@ -488,8 +488,6 @@ module.exports = function (grunt) {
 
     'tx-source-upload': {
       options: {
-        username: grunt.option('txusername'),
-        password: grunt.option('txpassword'),
         project: 'lizard-client',
         resource: 'core',
         i18nType: 'pot'
@@ -562,28 +560,58 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask(
+    'checkOrGetTransifexCredentials',
+    'Check if transifex credential are set as environment variable or prompts' +
+    ' for credentials.',
+    function () {
+
+    var username = process.env.TRANSIFEX_USERNAME;
+
+    var password = process.env.TRANSIFEX_PASSWORD;
+
+    if (!username || !password) {
+      grunt.log.error('Define environment variables TRANSIFEX_USERNAME or TRANSIFEX_PASSWORD to skip this prompt');
+      var done = this.async();
+
+      var prompt = require("prompt");
+      var colors = require("colors/safe");
+
+      prompt.message = "";
+      prompt.delimiter = ' ';
+      prompt.start();
+      prompt.get({
+        properties: {
+          username: {
+            description: colors.cyan("What is your transifex username?")
+          },
+          password: {
+            hidden: true,
+            description: colors.cyan("What is your password?")
+          }
+        }
+      }, function (err, result) {
+        process.env.TRANSIFEX_USERNAME = result.username;
+        process.env.TRANSIFEX_PASSWORD = result.password;
+        done();
+      });
+    } else {
+      grunt.log.oklns('Got transifex credentials for user:', username);
+    }
+
+  });
+
+  grunt.registerTask(
     'transifex',
     'Extraxt strings annotated for translation and upload to transifex.',
     function () {
-      if (grunt.option('txusername') && grunt.option('txpassword')) {
+      grunt.loadNpmTasks('grunt-angular-gettext');
+      grunt.loadNpmTasks('grunt-tx-source-upload');
 
-        grunt.log.ok('Got transifex credentials,' +
-          ' extracting and uploading translations.');
-
-        grunt.loadNpmTasks('grunt-angular-gettext');
-        grunt.loadNpmTasks('grunt-tx-source-upload');
-
-        grunt.task.run([
-          'nggettext_extract', // extract strings from code
-          'tx-source-upload', // upload to transifex
-        ]);
-
-      } else {
-        grunt.log.writeln('Missing transifex credentials, '.red.bold +
-          'newly annotated strings will not be uploaded to transifex'.red.bold);
-        grunt.log.ok('Specify --txusername=<transifex username> and '+
-          '--txpassword=<transifex password> to upload strings to transifex.');
-      }
+      grunt.task.run([
+        'checkOrGetTransifexCredentials',
+        'nggettext_extract', // extract strings from code
+        'tx-source-upload', // upload to transifex
+      ]);
     }
   );
 
@@ -591,19 +619,12 @@ module.exports = function (grunt) {
     'translate',
     'Get translations from transifex and compile for use in app.' ,
     function () {
-      if (grunt.option('txusername') && grunt.option('txpassword')) {
-        grunt.log.ok('Got transifex credentials, getting translations.');
-        grunt.loadNpmTasks('grunt-angular-gettext');
-        grunt.task.run([
-          'download-po-files',
-          'nggettext_compile',
-        ]);
-      } else {
-        grunt.log.writeln('Missing transifex credentials, '.red.bold +
-          'build will be in English.'.red.bold);
-        grunt.log.ok('Specify --txusername=<transifex username> and '+
-          '--txpassword=<transifex password> to include translations.');
-      }
+      grunt.loadNpmTasks('grunt-angular-gettext');
+      grunt.task.run([
+        'checkOrGetTransifexCredentials',
+        'download-po-files',
+        'nggettext_compile',
+      ]);
     }
   );
 
@@ -618,9 +639,14 @@ module.exports = function (grunt) {
 
       grunt.log.verbose.ok('Getting available languages');
 
+      var response = '';
+
       request.get('http://www.transifex.com/api/2/project/lizard-client/resource/core/?details')
-      .auth(grunt.option('txusername'), grunt.option('txpassword'))
-      .on('data', function (response) {
+      .auth(process.env.TRANSIFEX_USERNAME, process.env.TRANSIFEX_PASSWORD)
+      .on('data', function (chunck) {
+        response += chunck;
+      })
+      .on('end', function () {
         getLanguages(JSON.parse(response).available_languages);
       });
 
@@ -647,8 +673,8 @@ module.exports = function (grunt) {
             url: 'http://www.transifex.com/api/2/project/lizard-client/resource/core/translation/' +
               lang.code + '?file',
             auth: {
-              user: grunt.option('txusername'),
-              password: grunt.option('txpassword')
+              user: process.env.TRANSIFEX_USERNAME,
+              password: process.env.TRANSIFEX_PASSWORD
             }
           };
 
