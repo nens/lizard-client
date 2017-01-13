@@ -69,19 +69,6 @@
 
         </div>
 
-        <i class="fa" ng-class="{
-          'fa-clock-o': getTsMetaData(ts.uuid).value_type !== 'image',
-          'fa-file-image-o': getTsMetaData(ts.uuid).value_type === 'image'
-        }"></i>
-
-        <span
-          title="<% getTsMetaData(ts.uuid).location %>, <% getTsMetaData(ts.uuid).name %>, <% getTsMetaData(ts.uuid).parameter %>"
-          ng-class="{'text-primary': ts.active}">
-          <% getTsMetaData(ts.uuid).location %>,
-          <% getTsMetaData(ts.uuid).parameter %>
-          &nbsp;
-        </span>
-
         <i class="active fa fa-<% relativeTimeseries ? 'check-square' : 'square' %> relativate-ts-icon"
            ng-class="{'active': relativeTimeseries}"
            ng-click="toggleRelativeTimeseries(); $event.stopPropagation();"
