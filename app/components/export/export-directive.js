@@ -45,19 +45,27 @@ angular.module('export')
         params.relative_to = 'surface_level';
       }
 
-      var successCb = function (response) {
+      var exportCb = function (response) {
         var motherModal = angular.element('#MotherModal');
         motherModal.modal('hide');
-        notie.alert(
-          4,
-          gettextCatalog.getString("Export timeseries started"),
-          2
-        );
+        if (response && response.status === 200) {
+          notie.alert(
+            4,
+            gettextCatalog.getString("Export timeseries started"),
+            2
+          );
+        } else {
+          notie.alert(
+            3,
+            gettextCatalog.getString("Export timeseries failed!"),
+            3
+          );
+        }
       };
 
       // Request timeseries with uuids and format=ASYNC_FORMAT and async=true
       $http.get('/api/v2/timeseries/', {params: params})
-        .then(successCb);
+        .then(exportCb);
     };
 
     /**
