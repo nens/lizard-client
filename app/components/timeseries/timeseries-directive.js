@@ -103,55 +103,6 @@ angular.module('timeseries')
 
       });
 
-      /**
-       * Get new ts when time changes
-       */
-      scope.$watch('timeState.timelineMoving', function (newValue, oldValue) {
-        // NB! I believe this code is no longer used?
-        if (!newValue && newValue !== oldValue) {
-          TimeseriesService.syncTime().then(getContentForAsset);
-
-          var params = {
-            uuid: scope.timeseries.selected.uuid,
-            start: Math.round(scope.timeState.start),
-            end: Math.round(scope.timeState.end),
-            format: 'xlsx',
-            async: 'true'
-          };
-
-          scope.startDownload = function(){
-            $http.get('/api/v2/timeseries/data', {
-                params: {
-                  uuid: scope.timeseries.selected.uuid,
-                  start: Math.round(scope.timeState.start),
-                  end: Math.round(scope.timeState.end),
-                  format: 'xlsx',
-                  async: 'true'
-                }
-              }).then(function(response) {
-                notie.alert(
-                  4,
-                  gettextCatalog.getString(
-                    "Preparing xlsx for timeseries " +
-                    scope.timeseries.selected.name +
-                    ". You will be notified when ready."),
-                  3
-                );
-              },
-              function(error) {
-                notie.alert(
-                  3,
-                  gettextCatalog.getString(
-                    "Oops! Something went wrong while preparing the " +
-                    "xlsx for the timeseries " +
-                    scope.timeseries.selected.name + "."),
-                  3
-                );
-              });
-            };
-          }
-      });
-
     },
     restrict: 'A',
     templateUrl: 'timeseries/timeseries.html',
