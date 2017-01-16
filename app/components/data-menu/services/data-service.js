@@ -350,26 +350,30 @@ angular.module('data-menu')
           }
 
           promises.push(
-            dataLayer.getData(options).then(function (response) {
-              // async so remove anything obsolete.
-              geo.properties = geo.properties || {};
-              geo.properties[layer.uuid] = geo.properties[layer.uuid] || _.clone(dataLayer);
-              // Replace data and merge everything with existing state of
-              // property.
-              if (response.data) {
-                geo.properties[layer.uuid].data = [];
-                _.merge(geo.properties[layer.uuid], response);
-              } else {
-                geo.properties[layer.uuid].data = response;
-              }
-              if ((!layer.active && layer.uuid in Object.keys(geo.properties))
-                || geo.properties[layer.uuid].data === null) {
+            dataLayer.getData(options).then(
+              function (response) {
+                // async so remove anything obsolete.
+                geo.properties = geo.properties || {};
+                geo.properties[layer.uuid] = geo.properties[layer.uuid] || _.clone(dataLayer);
+                // Replace data and merge everything with existing state of
+                // property.
+                if (response.data) {
+                  geo.properties[layer.uuid].data = [];
+                  _.merge(geo.properties[layer.uuid], response);
+                } else {
+                  geo.properties[layer.uuid].data = response;
+                }
+                if ((!layer.active && layer.uuid in Object.keys(geo.properties))
+                  || geo.properties[layer.uuid].data === null) {
 
-                // Use delete to remove the key and the value and the omnibox
-                // can show a nodata message.
-                delete geo.properties[layer.uuid];
-              }
-            })
+                  // Use delete to remove the key and the value and the omnibox
+                  // can show a nodata message.
+                  delete geo.properties[layer.uuid];
+                }
+              },
+              // Catch rejections, otherwise $.all(promises) is never resolved.
+              _.noop
+            )
           );
         }
       };
