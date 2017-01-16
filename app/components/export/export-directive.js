@@ -28,6 +28,11 @@ angular.module('export')
         if (yes) { return uuid; }
       }).join(',');
 
+      if (uuids === '') {
+        // Don't do anything if no timeseries were selected for export:
+        return;
+      }
+
       var params = {
         uuid: uuids,
         start: timeState.start.getTime(),
