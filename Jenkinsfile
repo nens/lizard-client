@@ -13,7 +13,9 @@ node ('nxt'){
     sh "npm test"
 
     if (env.BRANCH_NAME == "master") {
-      stage "Transifex"
+      stage "Install transifex tools"
+      sh "npm install --optional=true"
+      stage "Transifex"  
       sh "npm run transifex"
     }
 }
