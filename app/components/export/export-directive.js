@@ -15,13 +15,6 @@ angular.module('export')
       end: new Date(State.temporal.end)
     };
 
-    // Will be populated with the startExport function
-    scope.taskInfo = {
-      url: '',
-      id: '',
-      downloadUrl: ''
-    };
-
     // Contains the selected timeseries to export
     scope.toExport = {};
 
@@ -35,9 +28,6 @@ angular.module('export')
         if (yes) { return uuid; }
       }).join(',');
 
-      // spinner
-      scope.loading = true;
-
       var params = {
         uuid: uuids,
         start: timeState.start.getTime(),
@@ -50,27 +40,15 @@ angular.module('export')
         params.relative_to = 'surface_level';
       }
 
-      // Request timeseries with uuids and format=ASYNC_FORMAT and async=true
-      $http.get('/api/v2/timeseries/', {
-        params: params
-      }).then(function (response) {
-        scope.taskInfo.url = response.data.task_url;
-      });
-    };
+      var successCb = function (response) {
+        console.log("[F] successCb; response =", response);
+        var motherModal = angular.element('#MotherModal');
+        motherModal.modal('hide');
+      };
 
-    /**
-     * pollForChange - Checks if the task is done: 'SUCCES', waiting: 'PENDING',
-     * or failed: 'FAILED'
-     *
-     */
-    var pollForChange = function () {
-      $http.get(scope.taskInfo.url).then(function (response) {
-        var status = response.data.task_status;
-        if (status === 'SUCCESS') {
-          scope.loading = false;
-          scope.taskInfo.downloadUrl = response.data.result_url;
-        }
-      });
+      // Request timeseries with uuids and format=ASYNC_FORMAT and async=true
+      $http.get('/api/v2/timeseries/', {params: params})
+        .then(successCb);
     };
 
     /**
