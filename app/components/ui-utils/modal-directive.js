@@ -11,7 +11,6 @@ angular.module('ui-utils').directive('uiModal', [
       var mode = (scope.active) ? 'show' : 'hide';
       $(el).modal(mode);
 
-
       /**
        * closeModal - close the modal with an angular click.
        *

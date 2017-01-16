@@ -63,10 +63,22 @@
           <span
             title="<% getTsMetaData(ts.uuid).location %>, <% getTsMetaData(ts.uuid).name %>, <% getTsMetaData(ts.uuid).parameter %>"
             ng-class="{'text-primary': ts.active}">
+
             <% getTsMetaData(ts.uuid).location %>,
             <% getTsMetaData(ts.uuid).parameter %>
-          </span>
+            &nbsp;
 
+            <i class="active fa fa-<% relativeTimeseries ? 'check-square' : 'square' %> relativate-ts-icon"
+               ng-class="{'active': relativeTimeseries}"
+               ng-click="toggleRelativeTimeseries(); $event.stopPropagation();"
+               ng-if="ts.active && ts.measureScale === 'interval' && assetHasSurfaceLevel()"
+               title="<% relativeTimeseries
+                 && 'Deselect to show absolute values for all timeseries'
+                 || 'Select to show all timeseries relative to surface level'
+               %>"
+               translate>
+            </i>
+          </span>
         </div>
 
         <color-picker></color-picker>

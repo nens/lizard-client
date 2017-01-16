@@ -21,6 +21,11 @@ angular.module('timeseries')
 
     this.minPoints = GRAPH_WIDTH; // default
 
+    // Boolean indicating we want the timeseries value (y-axis) to be relative
+    // to the asset's "surface_level" value (boolean set to true) or we want it
+    // to be the absolute value (boolean set to false);
+    this.relativeTimeseries = false;
+
     var service = this;
 
     var _timeseries = [];
@@ -114,8 +119,6 @@ angular.module('timeseries')
       }
     };
 
-
-
     /**
      * @function
      * @memberOf timeseries.TimeseriesService
@@ -137,7 +140,6 @@ angular.module('timeseries')
         if (localPromise.reject) {
           localPromise.resolve({data: {results: []}});
         }
-
         localPromise = $q.defer();
       }
       var id = uuids.join(',');
@@ -146,6 +148,11 @@ angular.module('timeseries')
         start: timeState.start ? parseInt(timeState.start, 10): undefined,
         end: timeState.end ? parseInt(timeState.end, 10): undefined,
       };
+
+      if (service.relativeTimeseries) {
+        params.relative_to = 'surface_level';
+      }
+
       if (minPoints) {
         params.min_points = minPoints;
       } else {

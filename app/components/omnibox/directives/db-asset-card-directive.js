@@ -6,12 +6,26 @@ angular.module('omnibox')
     link: function (scope, element) {
 
       scope.selected = State.selected;
+      scope.relativeTimeseries = TimeseriesService.relativeTimeseries;
+
+      scope.toggleRelativeTimeseries = function () {
+        scope.relativeTimeseries = TimeseriesService.relativeTimeseries =
+          !scope.relativeTimeseries;
+        var uuidList = _.map(TimeseriesService.timeseries, function (ts) {
+          return ts.id;
+        });
+        TimeseriesService.syncTime(uuidList);
+      };
 
       scope.getTsMetaData = function (uuid) {
         return _.find(scope.asset.timeseries, function (ts) {
           return ts.uuid === uuid;
         });
       };
+
+      scope.assetHasSurfaceLevel = function () {
+        return ('surface_level' in scope.asset);
+      }
 
       /**
        * Returns true if selection with uuid is one the first three in the list.

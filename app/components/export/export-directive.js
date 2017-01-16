@@ -1,7 +1,9 @@
 var ASYNC_FORMAT = 'xlsx';
 
 angular.module('export')
-.directive('exportSelector', ['$http', 'DataService', 'State', function ($http, DataService, State) {
+.directive('exportSelector', ['$http', 'DataService', 'TimeseriesService', 'notie',
+'gettextCatalog', 'State', function ($http, DataService, TimeseriesService, notie, gettextCatalog, State) {
+
   var link = function (scope) {
     // bind the assets with the selected things from the DataService
     scope.assets = DataService.assets;
@@ -13,17 +15,8 @@ angular.module('export')
       end: new Date(State.temporal.end)
     };
 
-    // Will be populated with the startExport function
-    scope.taskInfo = {
-      url: '',
-      id: '',
-      downloadUrl: ''
-    };
-
     // Contains the selected timeseries to export
     scope.toExport = {};
-
-    var pollInterval;
 
     /**
      * startExport - Finds all the timeseries and gets the uuids
@@ -35,42 +28,44 @@ angular.module('export')
         if (yes) { return uuid; }
       }).join(',');
 
-      // spinner
-      scope.loading = true;
+      if (uuids === '') {
+        // Don't do anything if no timeseries were selected for export:
+        return;
+      }
 
-      // Request timeseries/data/ with uuids and format=ASYNC_FORMAT and async=true
-      $http.get('/api/v2/timeseries/data/', {
-        params: {
-          uuid: uuids,
-          start: timeState.start.getTime(),
-          end: timeState.end.getTime(),
-          format: ASYNC_FORMAT,
-          async: 'true'
+      var params = {
+        uuid: uuids,
+        start: timeState.start.getTime(),
+        end: timeState.end.getTime(),
+        format: ASYNC_FORMAT,
+        async: 'true'
+      };
+
+      if (TimeseriesService.relativeTimeseries) {
+        params.relative_to = 'surface_level';
+      }
+
+      var exportCb = function (response) {
+        var motherModal = angular.element('#MotherModal');
+        motherModal.modal('hide');
+        if (response && response.status === 200) {
+          notie.alert(
+            4,
+            gettextCatalog.getString("Export timeseries started"),
+            2
+          );
+        } else {
+          notie.alert(
+            3,
+            gettextCatalog.getString("Export timeseries failed!"),
+            3
+          );
         }
-      }).then(function (response) {
-        scope.taskInfo.url = response.data.task_url;
-        pollInterval = setInterval(pollForChange, 500);
-      });
-    };
+      };
 
-    /**
-     * pollForChange - Checks if the task is done: 'SUCCES', waiting: 'PENDING',
-     * or failed: 'FAILED'
-     *
-     */
-    var pollForChange = function () {
-      $http.get(scope.taskInfo.url).then(function (response) {
-        var status = response.data.task_status;
-
-        if (status === 'SUCCESS') {
-          scope.loading = false;
-          scope.taskInfo.downloadUrl = response.data.result_url;
-        }
-
-        if (status !== 'PENDING') {
-          clearInterval(pollInterval);
-        }
-      });
+      // Request timeseries with uuids and format=ASYNC_FORMAT and async=true
+      $http.get('/api/v2/timeseries/', {params: params})
+        .then(exportCb);
     };
 
     /**
