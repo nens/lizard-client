@@ -1,8 +1,8 @@
 var ASYNC_FORMAT = 'xlsx';
 
 angular.module('export')
-.directive('exportSelector', ['$http', 'DataService', 'TimeseriesService',
-'State', function ($http, DataService, TimeseriesService, State) {
+.directive('exportSelector', ['$http', 'DataService', 'TimeseriesService', 'notie',
+'gettextCatalog', 'State', function ($http, DataService, TimeseriesService, notie, gettextCatalog, State) {
 
   var link = function (scope) {
     // bind the assets with the selected things from the DataService
@@ -41,9 +41,13 @@ angular.module('export')
       }
 
       var successCb = function (response) {
-        console.log("[F] successCb; response =", response);
         var motherModal = angular.element('#MotherModal');
         motherModal.modal('hide');
+        notie.alert(
+          4,
+          gettextCatalog.getString("Export timeseries started"),
+          2
+        );
       };
 
       // Request timeseries with uuids and format=ASYNC_FORMAT and async=true
