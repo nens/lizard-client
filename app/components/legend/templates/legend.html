@@ -9,7 +9,7 @@
         <div class="legend-header">
           <a href="#"
              ng-click="switchSelectedRaster(uuid)">
-            <% legend.uuidMapping[uuid] %>
+            {{ legend.uuidMapping[uuid] }}
             &nbsp;
             <i class="fa fa-star"
                ng-if="rasterIsVectorized(uuid)">
@@ -43,7 +43,7 @@
           <div class="discrete-legend-label"
                ng-class="{'discrete-legend-label-selected': getDiscreteRasterCategory(uuid) === datum.class,
                           'discrete-legend-label-selectable': rasterIsVectorized(uuid)}">
-            <% datum.label === -1 ? 'other' : datum.label %>
+            {{ datum.label === -1 ? 'other' : datum.label }}
           </div>
         </div>
       </div>
@@ -59,12 +59,12 @@
           <div class="legend-header">
             <a href="#"
                ng-click="switchSelectedRaster(uuid)">
-              <% legend.uuidMapping[uuid] %>
+              {{ legend.uuidMapping[uuid] }}
             </a>
           </div>
 
           <div class="gradient-bar"
-               ng-style="<% getGradient(uuid) %>">
+               ng-style="{{ getGradient(uuid) }}">
           </div>
 
           <div class="continuous-raster-numeric-data">

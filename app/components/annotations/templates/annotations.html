@@ -5,7 +5,7 @@
             ng-if="annotations.length > 0"
             translate
             translate-n="annotations.length"
-            translate-plural="<% $count %> annotations">One annotation</span>
+            translate-plural="{{ $count }} annotations">One annotation</span>
 
       <span class="card-title-text"
             ng-if="annotations.length == 0"

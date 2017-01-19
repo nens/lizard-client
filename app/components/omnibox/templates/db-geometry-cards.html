@@ -7,7 +7,7 @@
     ng-repeat="(slug, prop) in geom.properties">
     <div ng-click="toggleProperty(prop)" class="card-content-list clickable">
       <i class="fa fa-line-chart"></i>
-      <span ng-class="{'text-primary bg-warning': prop.active}"><% prop.quantity %>, (<% prop.unit %>)</span>
+      <span ng-class="{'text-primary bg-warning': prop.active}">{{ prop.quantity }}, ({{ prop.unit }})</span>
     </div>
   </div>
 </div>

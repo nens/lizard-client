@@ -73,15 +73,6 @@ angular.module("lizard-nxt", [
 }])
 
 /**
- * Change default angular tags to prevent collision with Django tags.
- */
-.config(function ($interpolateProvider) {
-  //To prevent Django and Angular Template hell
-  $interpolateProvider.startSymbol('<%');
-  $interpolateProvider.endSymbol('%>');
-})
-
-/**
  * Set url fragment behavior to HTML5 mode (without hash in url).
  */
 .config(function ($locationProvider) {

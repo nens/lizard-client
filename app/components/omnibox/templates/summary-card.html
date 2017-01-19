@@ -13,7 +13,7 @@
 
         <td class="fixed-width-card-table">
           <div class="attr-row-content">
-            <% obj.keyName | translate %>
+            {{ obj.keyName | translate }}
           </div>
         </td>
 
@@ -33,7 +33,7 @@
               || asset.data[obj.attrName] === ''"
             rel="tooltip"
             asset.data-toggle="tooltip"
-            title="<% 'Example value' | translate %>">
+            title="{{ 'Example value' | translate }}">
           <div class="attr-row-content dummy-attr-value" ng-bind-html="obj.defaultValue + obj.valueSuffix">
           </div>
         </td>
@@ -44,7 +44,7 @@
          ng-if="!!asset.data.image_url && fullDetails">
 
         <img class="structure-image"
-             ng-src="<% asset.data.image_url %>" />
+             ng-src="{{ asset.data.image_url }}" />
 
     </div>
   </div>
