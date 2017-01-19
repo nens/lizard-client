@@ -1,13 +1,18 @@
 'use strict';
 
 /**
- * Lizard-nxt filters
+ * Lizard-nxt angular filters. See https://docs.angularjs.org/guide/filter
  *
- * Overview
- * ========
+ * Lizard filters are used in two ways in lizard:
  *
- * Defines custom filters
+ * 1. As ligitimate ways to parse objects or primitives in templates.
+ *    (niceNumberOrEllipsis, capitalize, ...)
+ * 2. As hacks because we have a halve-assed asset database/serializers, which
+ *    does not translate attributes properly. (lookupManholeShape,
+ *    lookupWeirControl, ...)
  *
+ * TODO: move logic to the serializers and implement internationalization in the
+ * backend.
  */
 
 angular.module('lizard-nxt-filters', []);
@@ -568,4 +573,3 @@ angular.module('lizard-nxt-filters')
     }
   };
 });
-

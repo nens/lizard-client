@@ -1,6 +1,12 @@
 'use strict';
 
 /**
+ * Setup app module "lizard-nxt" and do configuration for url, raven/sentry
+ * angular-loading-bar.
+ */
+
+
+/**
  * Setup Raven if available.
  * Raven is responsible for logging to https://sentry.lizard.net
  */
@@ -47,7 +53,7 @@ angular.module("lizard-nxt", [
   'ui.bootstrap',
   'lizard-http-throttler', // Add this $http interceptor befor the loading-bar.
   'angular-loading-bar',
-  'lizard-boostrap',
+  'lizard-bootstrap',
   'ui-utils',
   'export',
   'legend'
@@ -89,75 +95,5 @@ angular.module("lizard-nxt", [
   cfpLoadingBarProvider.includeSpinner = false;
   // Default is 100, but Lizard is not for impatient teenagers, so 250 is ok.
   cfpLoadingBarProvider.latencyThreshold = 250;
-  }
-])
-
-/**
- * @name notie
- * @memberOf app
- * @description Notification service
- */
-.constant('notie', window.notie)
-
-/**
- * @name production backend
- * @memberOf app
- * @description subdomain of production backend.
- */
-.constant('backendDomain', 'https://demo.lizard.net');
-
-angular.module('lizard-boostrap', ['favourites'])
-.run([
-  '$http', 'UrlService', 'FavouritesService', 'user', 'version', 'debug',
-  function ($http, UrlService, FavouritesService, user, version, debug) {
-
-    var showErrorModal = function () {
-      var overlay = document.getElementById('dark-overlay');
-      overlay.style.display = 'inline';
-      throw new Error('No lizard/bootstrap.json lizard is down or malfunctioning');
-    };
-
-    var getBootstrap = function (applyState) {
-      $http.get('bootstrap/lizard/', {})
-      .then(
-        function (response) {
-          var bootstrap = response.data;
-          // Set injected angular values: user and version.
-          _.merge(user, bootstrap.user);
-          version.full = bootstrap.version;
-          version.revision = bootstrap.revision;
-          if (applyState) {
-            FavouritesService.applyFavourite(bootstrap);
-            FavouritesService.applyFavourite({state: urlState});
-          }
-        },
-        function (response) {
-          showErrorModal();
-        }
-      );
-    };
-
-    var urlState = UrlService.getState();
-
-    var urlFavourite = UrlService.getFavourite();
-
-    if (urlFavourite) {
-
-      FavouritesService.getFavourite(
-        urlFavourite,
-        function (favourite, getResponseHeaders) {
-          getBootstrap(false);
-          FavouritesService.applyFavourite(favourite);
-        },
-        function () {
-          urlState = UrlService.getState();
-          getBootstrap(true);
-        }
-      );
-    }
-    else {
-      getBootstrap(true);
-    }
-
   }
 ]);

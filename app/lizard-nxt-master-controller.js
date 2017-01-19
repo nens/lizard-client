@@ -1,16 +1,6 @@
-
 /**
- *
- * @name MasterController
- * @class MasterCtrl
- * @memberOf app
- *
- * @summary Master controller
- *
- * @description Binds logic and attributes to the global $scope. Keep
- *              this clean and put stuff in specific component controllers
- *              if it is not global.
- *
+ * Binds logic and attributes to the global $scope. Keep this clean and put
+ * stuff in specific component controllers if it is not global or state-service.
  */
 angular.module('lizard-nxt')
   .controller('MasterCtrl',
@@ -21,26 +11,25 @@ angular.module('lizard-nxt')
    '$window',
    'CabinetService',
    'UtilService',
-   'ClickFeedbackService',
    'version',
    'State',
-   'MapService',
    'UrlService',
    'AssetService',
 
-  function ($scope,
-            $rootScope,
-            $timeout,
-            $window,
-            CabinetService,
-            UtilService,
-            ClickFeedbackService,
-            version,
-            State,
-            MapService,
-            UrlService,
-            AssetService) {
+  function (
+    $scope,
+    $rootScope,
+    $timeout,
+    $window,
+    CabinetService,
+    UtilService,
+    version,
+    State,
+    UrlService,
+    AssetService
+  ) {
 
+  // Bind to the global scope
   $scope.version = version;
   $scope.tooltips = CabinetService.createTooltips();
 
@@ -55,10 +44,16 @@ angular.module('lizard-nxt')
     UrlService.setUrl($scope.state);
   }, true);
 
-  // CONTEXT
-
   /**
    * Switch between contexts.
+   *
+   * Set State.context with param context.
+   *
+   * When going from dashboard to map, decide on changing "tool" from point to
+   * multi-point.
+   *
+   * When going to or from map, create a "curtain" to make the transition more
+   * visually pleasing.
    *
    * @param {string} context - Context name to switch to
    */
@@ -105,14 +100,12 @@ angular.module('lizard-nxt')
     return $scope.context === 'map' ? 'fa-bar-chart' : 'fa-globe';
   };
 
-  // END CONTEXT
-
   $scope.toggleVersionVisibility = function () {
     $('.navbar-version').toggle();
   };
 
   /**
-   * Returns Lizard || DDSC + the Subdomain.
+   * Returns (Lizard || DDSC) + the Subdomain.
    */
   $scope.getDocumentTitle = function () {
     var application = 'Lizard';
@@ -123,6 +116,10 @@ angular.module('lizard-nxt')
     portal = portal.charAt(0).toUpperCase() + portal.slice(1);
     return application + ' ' + portal;
   };
+
+  // End bind to global scope.
+
+  // Do some things that need to happen, but IMHO not necessarily here.
 
   UtilService.preventOldIEUsage();
 

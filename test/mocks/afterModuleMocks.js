@@ -9,8 +9,8 @@ angular.module('lizard-nxt')
   $compileProvider.debugInfoEnabled(true);
 }]);
 
-// Redefine bootstrap module, it is skip for testing.
-angular.module('lizard-boostrap', []);
+// Redefine bootstrap module, it is skipped for testing.
+angular.module('lizard-bootstrap', []);
 
 angular.module('lizard-nxt')
 
