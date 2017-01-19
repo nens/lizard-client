@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.7.0"></a>
+# [4.7.0](https://github.com/nens/lizard-client/compare/v4.6.3...v4.7.0) (2017-01-19)
+
+
+### Bug Fixes
+
+* **translations:** get transifex credentials from environment or prompt. Get language in chunks. ([bdb042d](https://github.com/nens/lizard-client/commit/bdb042d))
+
+
+### Features
+
+* **relative timeseries:** render in dashboard and dowload relative timeseries ([c064bcc](https://github.com/nens/lizard-client/commit/c064bcc))
+
 
 
 <a name="4.6.3"></a>
