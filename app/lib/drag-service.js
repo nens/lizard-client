@@ -5,7 +5,18 @@
  * @name DragulaService
  * @description Trivial wrapper for global dragula object.
  *
- * Perhaps in the future this can be done with CommonJS style requires.
+ * Dragula.js is a module to do drag an drop of DOM elements.
+ * https://github.com/bevacqua/dragula . There is an official angular version
+ * which I did not like because it used controllers and other confusing angular
+ * stuff.
+ *
+ * The way it works:
+ * 1. Create a drake by calling DragService.create
+ * 2. Add drag containers (dashboard timeseries):
+ *    DragService.addDraggableContainer(element)
+ * 3. Add .drag-target class to targets.
+ *
+ * See: components/omnibox/directives/db-cards-directive.js
  */
 angular.module('lizard-nxt')
 .service('DragService', [function () {

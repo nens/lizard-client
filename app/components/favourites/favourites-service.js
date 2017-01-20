@@ -4,7 +4,8 @@
 angular.module('favourites')
   // NOTE: inject TimeseriesService even though it is not used.
   // TimeseriesService defines State.selected.timeseries which may be restored
-  // from favourite.
+  // from favourite. If timeseriesService is not injected it might not be
+  // defined.
   .service("FavouritesService", ['$resource', 'State', 'gettextCatalog', 'UtilService', 'notie', '$window', 'TimeseriesService',
     function ($resource, State, gettextCatalog, UtilService, notie, $window) {
 

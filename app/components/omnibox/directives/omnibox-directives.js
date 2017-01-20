@@ -62,8 +62,6 @@ angular.module("omnibox")
         }
       };
 
-
-
       scope.showAnnotations = function () {
         return (
           user.authenticated &&

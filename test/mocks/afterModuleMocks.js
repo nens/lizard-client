@@ -1,6 +1,8 @@
 'use strict;'
 // mocks.js
 
+// Redefine bootstrap module, it is skipped for testing.
+angular.module('lizard-bootstrap', []);
 
 // App is run with debugInfoEnabled(false), because it is faster. But it is
 // needed to do stuff like var scope = element.scope();

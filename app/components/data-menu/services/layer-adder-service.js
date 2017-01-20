@@ -1,5 +1,6 @@
 /**
- * Service to handle layer-group retrieval.
+ * Service to handle adding layers. It fetches a list of layers and adds
+ * individual layers.
  */
 angular.module('data-menu')
 .service("LayerAdderService", [

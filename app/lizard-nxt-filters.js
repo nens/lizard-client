@@ -8,7 +8,7 @@
  * 1. As ligitimate ways to parse objects or primitives in templates.
  *    (niceNumberOrEllipsis, capitalize, ...)
  * 2. As hacks because we have a halve-assed asset database/serializers, which
- *    does not translate attributes properly. (lookupManholeShape,
+ *    do not translate attributes properly. (lookupManholeShape,
  *    lookupWeirControl, ...)
  *
  * TODO: move logic to the serializers and implement internationalization in the

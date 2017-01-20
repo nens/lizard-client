@@ -1,6 +1,7 @@
 /**
+ * Favourites are (partial) JSON representations of the state with a name and a
+ * uuid.
  *
- * Initialize favourites module
- *
+ * They can be created and restored by the favourite-service.
  */
 angular.module('favourites', []);
