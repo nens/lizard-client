@@ -39,9 +39,9 @@
       <div
         ng-repeat="ts in selected.timeseries | orderBy : ['-active', '+order']"
         ng-if="getTsMetaData(ts.uuid)"
+        data-uuid="<% ts.uuid %>"
         ng-show="extended || ts.active || isOneOfFirstThree(ts.uuid)">
         <div
-          data-uuid="<% ts.uuid %>"
           ng-class="{active: mouseIsOver}"
           class="draggable-ts animate-repeat card-content-list clickable"
           id="<% ts.uuid %>"
