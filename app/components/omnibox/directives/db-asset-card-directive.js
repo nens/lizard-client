@@ -42,7 +42,7 @@ angular.module('omnibox')
           });
         }
 
-        return parentAsset && parentAsset.hasOwnProperty('surface_level');
+        return parentAsset && ('surface_level' in parentAsset);
       };
 
       /**
