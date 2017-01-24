@@ -9,8 +9,20 @@ angular.module('omnibox')
       scope.relativeTimeseries = TimeseriesService.relativeTimeseries;
 
       scope.toggleRelativeTimeseries = function () {
-        scope.relativeTimeseries = TimeseriesService.relativeTimeseries =
-          !scope.relativeTimeseries;
+
+        var activeBefore = TimeseriesService.relativeTimeseries;
+        TimeseriesService.relativeTimeseries = !activeBefore;
+        scope.relativeTimeseries = !activeBefore;
+
+        var checkBoxes = angular.element('.relativate-ts-icon');
+        if (scope.relativeTimeseries) {
+          checkBoxes.removeClass('fa-square');
+          checkBoxes.addClass('fa-check-square');
+        } else {
+          checkBoxes.removeClass('fa-check-square');
+          checkBoxes.addClass('fa-square');
+        }
+
         var uuidList = _.map(TimeseriesService.timeseries, function (ts) {
           return ts.id;
         });

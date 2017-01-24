@@ -68,10 +68,9 @@
             <% getTsMetaData(ts.uuid).parameter %>
             &nbsp;
 
-            <i class="active fa fa-<% relativeTimeseries ? 'check-square' : 'square' %> relativate-ts-icon"
-               ng-class="{'active': relativeTimeseries}"
+            <i class="fa <% relativeTimeseries ? 'fa-check-square' : 'fa-square' %> relativate-ts-icon"
                ng-click="toggleRelativeTimeseries(); $event.stopPropagation();"
-               ng-if="ts.active && ts.measureScale === 'interval' &&
+               ng-if="ts.active && ts.measureScale === 'nominal' &&
                       (assetHasSurfaceLevel() || parentAssetHasSurfaceLevel())"
                title="<% relativeTimeseries
                  && 'Deselect to show absolute values for all timeseries'
