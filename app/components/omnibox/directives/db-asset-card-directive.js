@@ -1,7 +1,7 @@
 
 angular.module('omnibox')
-  .directive('dbAssetCard', [ 'State', 'DataService', 'DragService', 'DBCardsService', 'TimeseriesService',
-    function (State, DataService, DragService, DBCardsService, TimeseriesService) {
+  .directive('dbAssetCard', [ 'State', 'DataService', 'DragService', 'DBCardsService', 'TimeseriesService', 'AssetService',
+    function (State, DataService, DragService, DBCardsService, TimeseriesService, AssetService) {
   return {
     link: function (scope, element) {
 
@@ -25,7 +25,25 @@ angular.module('omnibox')
 
       scope.assetHasSurfaceLevel = function () {
         return ('surface_level' in scope.asset);
-      }
+      };
+
+      scope.parentAssetHasSurfaceLevel = function () {
+
+        if (scope.asset.parentAsset) {
+
+          var parentAssetKey = scope.asset.parentAsset;
+          var splittedKey = parentAssetKey.split("$");
+          var parentAssetEntity = splittedKey[0];
+          var parentAssetId = parseInt(splittedKey[1]);
+
+          var parentAsset = _.find(DataService.assets, {
+            entity_name: parentAssetEntity,
+            id: parentAssetId
+          });
+        }
+
+        return parentAsset && ('surface_level' in parentAsset);
+      };
 
       /**
        * Returns true if selection with uuid is one the first three in the list.

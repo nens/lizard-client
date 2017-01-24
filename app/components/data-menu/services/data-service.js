@@ -37,7 +37,28 @@ angular.module('data-menu')
 
       // Callback for when assets are being retrieved from api
       var assetChange = function (asset) {
+
         if (asset) {
+
+          asset.parentAsset = null;
+
+          _.forEach(AssetService.NESTED_ASSET_PREFIXES, function (prefix) {
+
+            var plural = prefix + 's';
+            var parentAssetKey = asset.entity_name + '$' + asset.id;
+
+            if (asset[plural]) {
+              // Apparently, either asset.filters/asset.pumps/asset.monitoring_wells
+              // is defined: this implies the current asset IS a parentAsset and
+              // HAS nestedAssets; for each nestedAsset we set the 'parentAsset'
+              // property with value equal to parentAssetKey
+              // (e.g 'groundwater_station$303')
+              _.forEach(asset[plural], function (nestedAsset) {
+                nestedAsset.parentAsset = parentAssetKey;
+              });
+            }
+          });
+
           instance.assets.push(asset);
         }
 
