@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.8.0"></a>
+# [4.8.0](https://github.com/nens/lizard-client/compare/v4.6.3...v4.8.0) (2017-01-24)
+
+
+### Bug Fixes
+
+* **build:** /scripts to /static/client/scripts ([0a44bdb](https://github.com/nens/lizard-client/commit/0a44bdb))
+* **relative timeseries:** both parent asset and nested assets are checked for surface_level ([e5efaff](https://github.com/nens/lizard-client/commit/e5efaff))
+* **translations:** get transifex credentials from environment or prompt. Get language in chunks. ([bdb042d](https://github.com/nens/lizard-client/commit/bdb042d))
+
+
+### Features
+
+* **relative timeseries:** render in dashboard and dowload relative timeseries ([c064bcc](https://github.com/nens/lizard-client/commit/c064bcc))
+
+
+
+<a name="4.7.1"></a>
+## [4.7.1](https://github.com/nens/lizard-client/compare/v4.7.0...v4.7.1) (2017-01-19)
+
+
+### Bug Fixes
+
+* **build:** /scripts to /static/client/scripts ([0a44bdb](https://github.com/nens/lizard-client/commit/0a44bdb))
+
+
+
+<a name="4.7.0"></a>
+# [4.7.0](https://github.com/nens/lizard-client/compare/v4.6.3...v4.7.0) (2017-01-19)
+
+
+### Bug Fixes
+
+* **translations:** get transifex credentials from environment or prompt. Get language in chunks. ([bdb042d](https://github.com/nens/lizard-client/commit/bdb042d))
+
+
+### Features
+
+* **relative timeseries:** render in dashboard and dowload relative timeseries ([c064bcc](https://github.com/nens/lizard-client/commit/c064bcc))
+
 
 
 <a name="4.6.3"></a>

@@ -208,6 +208,13 @@ Deploy to production:
 ansible-playbook -i deploy/production_hosts -K deploy/deploy.yml --extra-vars="version=2.7.1"
 ```
 
+_NOTE: When deploying to a remote server for the first time it is required to
+either (i) provide the remote server with with your public SSH key (locally
+generated with `$ ssh-keygen`, transferable to each server with
+`$ ssh-copy-id <REMOTE_USERNAME>@<HOSTNAME>`), or (ii) use the -k flag to have
+Ansible launch an interactive prompt._
+
+
 ## Commit Message Convention, at a Glance
 Lizard-client compiles its CHANGELOG.md directly from the commits. Therefore commits have to be atomic and follow a strict convention:
 

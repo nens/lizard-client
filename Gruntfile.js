@@ -533,6 +533,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-ng-annotate');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-filerev');
+    grunt.loadNpmTasks('grunt-text-replace');
 
     grunt.task.run([
       'clean:dist',
@@ -550,7 +551,8 @@ module.exports = function (grunt) {
       'copy:dist',
       'cssmin',
       'filerev',
-      'usemin'
+      'usemin',
+      'replace:dist'
     ]);
   });
 

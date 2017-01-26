@@ -39,9 +39,9 @@
       <div
         ng-repeat="ts in selected.timeseries | orderBy : ['-active', '+order']"
         ng-if="getTsMetaData(ts.uuid)"
+        data-uuid="{{ ts.uuid }}"
         ng-show="extended || ts.active || isOneOfFirstThree(ts.uuid)">
         <div
-          data-uuid="{{ ts.uuid }}"
           ng-class="{active: mouseIsOver}"
           class="draggable-ts animate-repeat card-content-list clickable"
           id="{{ ts.uuid }}"
@@ -71,7 +71,8 @@
             <i class="active fa fa-{{ relativeTimeseries ? 'check-square' : 'square' }} relativate-ts-icon"
                ng-class="{'active': relativeTimeseries}"
                ng-click="toggleRelativeTimeseries(); $event.stopPropagation();"
-               ng-if="ts.active && ts.measureScale === 'interval' && assetHasSurfaceLevel()"
+               ng-if="ts.active && ts.measureScale === 'interval' &&
+                      (assetHasSurfaceLevel() || parentAssetHasSurfaceLevel())"
                title="{{ relativeTimeseries
                  && 'Deselect to show absolute values for all timeseries'
                  || 'Select to show all timeseries relative to surface level'

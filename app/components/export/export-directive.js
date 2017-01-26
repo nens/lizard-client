@@ -64,7 +64,7 @@ angular.module('export')
       };
 
       // Request timeseries with uuids and format=ASYNC_FORMAT and async=true
-      $http.get('/api/v2/timeseries/', {params: params})
+      $http.get('/api/v2/timeseries/', { params: params })
         .then(exportCb);
     };
 
