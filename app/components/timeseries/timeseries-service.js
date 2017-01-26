@@ -21,10 +21,15 @@ angular.module('timeseries')
 
     this.minPoints = GRAPH_WIDTH; // default
 
-    // Boolean indicating we want the timeseries value (y-axis) to be relative
-    // to the asset's "surface_level" value (boolean set to true) or we want it
-    // to be the absolute value (boolean set to false);
-    this.relativeTimeseries = false;
+    // *wrapped* boolean indicating we want the timeseries value (y-axis) to be
+    // relative to the asset's "surface_level" value (boolean set to true) or
+    // we want it to be the absolute value (boolean set to false);
+
+    // NB! This wrapping is required for syncing multiple directive scopes to
+    // this value: if the boolean does not gets wrapped, every directive's scope
+    // gets a local copy and will tehrefor not be updated in-sync with updating
+    // the value in the service
+    this.relativeTimeseries = { 'value': false };
 
     var service = this;
 
@@ -149,7 +154,7 @@ angular.module('timeseries')
         end: timeState.end ? parseInt(timeState.end, 10): undefined,
       };
 
-      if (service.relativeTimeseries) {
+      if (service.relativeTimeseries.value) {
         params.relative_to = 'surface_level';
       }
 

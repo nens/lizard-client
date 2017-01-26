@@ -9,8 +9,11 @@ angular.module('omnibox')
       scope.relativeTimeseries = TimeseriesService.relativeTimeseries;
 
       scope.toggleRelativeTimeseries = function () {
-        scope.relativeTimeseries = TimeseriesService.relativeTimeseries =
-          !scope.relativeTimeseries;
+
+        var activeBefore = TimeseriesService.relativeTimeseries.value;
+        TimeseriesService.relativeTimeseries.value = !activeBefore;
+        scope.relativeTimeseries = TimeseriesService.relativeTimeseries;
+
         var uuidList = _.map(TimeseriesService.timeseries, function (ts) {
           return ts.id;
         });
