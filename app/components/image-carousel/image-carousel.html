@@ -4,9 +4,9 @@
   <!-- Wrapper for slides -->
   <div class="carousel-inner" role="listbox">
     <div class="item" ng-class="{active: $first}" ng-repeat="img in images">
-      <img src="" data-lazy-load-src="<% img.url %>" data-timestamp="<% img.timestamp %>" ng-style="dimensions">
+      <img src="" data-lazy-load-src="{{ img.url }}" data-timestamp="{{ img.timestamp }}" ng-style="dimensions">
       <div class="carousel-caption">
-        <p><% img.timestamp | date:'yyyy-MM-dd HH:mm' %></p>
+        <p>{{ img.timestamp | date:'yyyy-MM-dd HH:mm' }}</p>
       </div>
     </div>
   </div>

@@ -1,5 +1,8 @@
 /**
- * Service to handle utf grid requests.
+ * Service to handle utf grid requests. It wraps a leaflet utrgrid and is a way
+ * to get data from the utfgrid using leaflet private functions.
+ *
+ * Read about leaflet utfgrid here: https://github.com/mapbox/utfgrid-spec
  */
 angular.module('lizard-nxt')
   .service('UtfGridService', ['$q', '$rootScope', 'UtilService',
@@ -11,6 +14,11 @@ angular.module('lizard-nxt')
       var deferred = $q.defer(),
           e = { latlng: options.geom };
 
+      /**
+       * call private leaflet function. A hack which worked for a long time but
+       * might break in leaflet 1.
+       * @type {{} utfgrid data}
+       */
       var response = leafLayer._objectForEvent(e);
 
       if (leafLayer.isLoading) {

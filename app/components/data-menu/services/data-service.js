@@ -9,12 +9,10 @@
  * @requires $q, dataLayers, LayerGroup, getNestedAssets and State
  * @summary Encapsulates dataLayers
  * @description NxtData service encapsulates dataLayers from the server side
- *              configuration of dataLayers. It enables to perform actions
- *              on all dataLayers simultaneously. When provided with a string
- *              representation of the service containing the global map it
- *              it performs these actions on the map from this service, else
- *              it needs a map object when calling toggleLayerGroup and
- *              syncTime.
+ *              configuration of dataLayers. It keeps most data alligned with
+ *              state. Timeseries are treated seperately in timeseries-service.
+ *
+ *              It performs actions on all dataLayers simultaneously.
  */
 
 angular.module('data-menu')

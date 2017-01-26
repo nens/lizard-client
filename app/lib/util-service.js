@@ -3,7 +3,12 @@
  * @class UtilService
  * @name UtilService
  * @summary Generic util functions.
- * @description Generic util functions.
+ * @description Generic util functions. A file where developers put hacky code
+ * because data formats are messed up. Nobody ever checks if a function is still
+ * relevant after removing logic somewhere else or after introducing helper
+ * libs.
+ *
+ * NOTE: this file probably contains lots of stale code.
  */
 angular.module('lizard-nxt')
   .service("UtilService", ["NxtD3", "$timeout", function (NxtD3, $timeout) {

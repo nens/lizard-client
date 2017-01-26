@@ -22,17 +22,17 @@
             ng-click="recurrenceTimeToggle()"
             ng-class="{ active: rrc.active }"
             class="btn btn-default btn-xs"
-            title="<% 'Rain recurrence statistics' | translate %>"
+            title="{{ 'Rain recurrence statistics' | translate }}"
             translate>
             <span translate>Statistics</span>
           </a>
 
           <a
             target="_blank"
-            ng-href="<% getRawDataUrl() %>"
+            ng-href="{{ getRawDataUrl() }}"
             ng-class="timeState.end - timeState.start > rain.MAX_TIME_INTERVAL ? 'disabled' : ''"
             class="btn btn-default btn-xs"
-            title="<% 'Export data' | translate %>">
+            title="{{ 'Export data' | translate }}">
             <i class="fa fa-share-square-o"></i>
             <span translate>Export</span>
           </a>
@@ -60,16 +60,16 @@
             <tbody>
             <tr class="recurrence_time"
               ng-repeat="recurTime in rrc.data.data">
-              <td class="larger-font-card-table"><% recurTime.start | date : 'dd-MM-yyyy HH:mm' %></td>
-              <td class="larger-font-card-table"><% recurTime.td_window %></td>
-              <td class="larger-font-card-table text-right"><% recurTime.max | number: 1 %></td>
-              <td class="larger-font-card-table"><% recurTime.t %></td>
+              <td class="larger-font-card-table">{{ recurTime.start | date : 'dd-MM-yyyy HH:mm' }}</td>
+              <td class="larger-font-card-table">{{ recurTime.td_window }}</td>
+              <td class="larger-font-card-table text-right">{{ recurTime.max | number: 1 }}</td>
+              <td class="larger-font-card-table">{{ recurTime.t }}</td>
             </tr>
             </tbody>
           </table>
         </div>
         <div ng-if="rrc.data.message">
-          <span class="message"><% rrc.data.message %></span>
+          <span class="message">{{ rrc.data.message }}</span>
         </div>
       </div>
     </div>

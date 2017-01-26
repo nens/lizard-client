@@ -11,6 +11,11 @@ angular.module('global-state')
      * returns a function that returns a string representation of the provided
      * attribute of the state. When the state. does not exist, it returns a
      * function that returns "undefined". Useful to $watch the state.
+     *
+     * NOTE: this was used to watch for state changes. Do not use this anymore.
+     * Instead bind a state property to the scope of your directive and use a
+     * watch or watchCollection as intended.
+     * https://docs.angularjs.org/api/ng/type/$rootScope.Scope
      */
     state.toString = function (stateStr) {
       return function () {

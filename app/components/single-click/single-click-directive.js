@@ -1,3 +1,10 @@
+
+/**
+ * A double click in browsers is also two seperate clicks. So to have both
+ * double click listeners as single click listeneres this directive checks if
+ * a single click is really just one before firing the single click callback.
+ * As a result single clicks are slow.
+ */
 angular.module('data-menu')
   .directive('singleClick', ['$parse', function ($parse) {
     return {

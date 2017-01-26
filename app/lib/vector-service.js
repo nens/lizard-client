@@ -9,6 +9,9 @@
  * @description VectorService is responsible for retreiving, storing
  * and exposing vector typed data.
  *
+ * NOTE: contrary to its name, this service raison d'etre is caching events.
+ * Lizard can only serve all events of an eventseries. As a result adding events
+ * takes a while but are then cached here.
  */
 
 angular.module('lizard-nxt')

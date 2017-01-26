@@ -22,9 +22,9 @@
       <span
         class="card-title-text placeholder"
         ng-if="asset.timeseries.length === 1 && fullDetails">
-        <% asset.timeseries[0].location
+        {{ asset.timeseries[0].location
           + ', '
-          + asset.timeseries[0].parameter %>
+          + asset.timeseries[0].parameter }}
       </span>
       <span class="card-title-text placeholder" ng-class="{hidden: fullDetails}" translate>Timeseries</span>
       <full-details></full-details>

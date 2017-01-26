@@ -39,12 +39,12 @@
       <div
         ng-repeat="ts in selected.timeseries | orderBy : ['-active', '+order']"
         ng-if="getTsMetaData(ts.uuid)"
+        data-uuid="{{ ts.uuid }}"
         ng-show="extended || ts.active || isOneOfFirstThree(ts.uuid)">
         <div
-          data-uuid="<% ts.uuid %>"
           ng-class="{active: mouseIsOver}"
           class="draggable-ts animate-repeat card-content-list clickable"
-          id="<% ts.uuid %>"
+          id="{{ ts.uuid }}"
           ng-click="toggleTimeseries(ts);"
           ng-mouseover="mouseIsOver = true"
           ng-mouseleave="mouseIsOver = false">
@@ -61,22 +61,22 @@
           }"></i>
 
           <span
-            title="<% getTsMetaData(ts.uuid).location %>, <% getTsMetaData(ts.uuid).name %>, <% getTsMetaData(ts.uuid).parameter %>"
+            title="{{ getTsMetaData(ts.uuid).location }}, {{ getTsMetaData(ts.uuid).name }}, {{ getTsMetaData(ts.uuid).parameter }}"
             ng-class="{'text-primary': ts.active}">
 
-            <% getTsMetaData(ts.uuid).location %>,
-            <% getTsMetaData(ts.uuid).parameter %>
+            {{ getTsMetaData(ts.uuid).location }},
+            {{ getTsMetaData(ts.uuid).parameter }}
             &nbsp;
 
-            <i class="active fa fa-<% relativeTimeseries ? 'check-square' : 'square' %> relativate-ts-icon"
+            <i class="active fa fa-{{ relativeTimeseries ? 'check-square' : 'square' }} relativate-ts-icon"
                ng-class="{'active': relativeTimeseries}"
                ng-click="toggleRelativeTimeseries(); $event.stopPropagation();"
                ng-if="ts.active && ts.measureScale === 'interval' &&
                       (assetHasSurfaceLevel() || parentAssetHasSurfaceLevel())"
-               title="<% relativeTimeseries
+               title="{{ relativeTimeseries
                  && 'Deselect to show absolute values for all timeseries'
                  || 'Select to show all timeseries relative to surface level'
-               %>"
+               }}"
                translate>
             </i>
           </span>
@@ -90,7 +90,7 @@
         <a style='cursor:pointer;'
            translate
            ng-click="extended = !extended">
-          <% extended ? '▴' : '▸' %>&nbsp;&nbsp;<% extended ? 'Less' : 'More' %> timeseries
+          {{ extended ? '▴' : '▸' }}&nbsp;&nbsp;{{ extended ? 'Less' : 'More' }} timeseries
         </a>
       </div>
 

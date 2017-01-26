@@ -14,7 +14,7 @@
                  ng-maxlength=256
                  required
                  ng:model="text"
-                 placeholder="<% 'Annotation message...'|translate %>">
+                 placeholder="{{ 'Annotation message...'|translate }}">
           <div
             ng-show="annotationform.text.$dirty && annotationform.text.$invalid">
             <small
