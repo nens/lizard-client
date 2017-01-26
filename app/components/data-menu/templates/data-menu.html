@@ -12,29 +12,29 @@
           'fa-caret-left': !menu.state.gettingData && !menu.enabled,
           'fa-caret-right': !menu.state.gettingData && menu.enabled
         }"
-        title="<% menu.enabled ? tooltips.closeMenu : tooltips.openMenu %>">
+        title="{{ menu.enabled ? tooltips.closeMenu : tooltips.openMenu }}">
       </span>
     </div>
     <datamenu-item
-      title="<% 'Point selection' | translate %>"
+      title="{{ 'Point selection' | translate }}"
       box-type="menu.box.type"
       type="point"
       icon="map-marker">
     </datamenu-item>
     <datamenu-item
-      title="<% 'Select Multiple Points' | translate %>"
+      title="{{ 'Select Multiple Points' | translate }}"
       box-type="menu.box.type"
       type="multi-point"
       icon="multi-point-tool">
     </datamenu-item>
     <datamenu-item
-      title="<% 'Line selection' | translate %>"
+      title="{{ 'Line selection' | translate }}"
       box-type="menu.box.type"
       type="line"
       icon="line-tool">
     </datamenu-item>
     <datamenu-item
-      title="<% 'Region selection' | translate %>"
+      title="{{ 'Region selection' | translate }}"
       box-type="menu.box.type"
       type="region"
       icon="region-tool">

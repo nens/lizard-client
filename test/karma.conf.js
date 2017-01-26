@@ -62,6 +62,7 @@ module.exports = function(config) {
       'app/components/export/export.js',
       'app/components/ui-utils/ui-utils.js',
       'app/components/legend/legend.js',
+      'app/lizard-bootstrap.js',
       'app/lizard-nxt.js',
       'test/mocks/**/*.js',
       'app/lib/**/*.js',

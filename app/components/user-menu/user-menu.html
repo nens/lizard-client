@@ -4,13 +4,13 @@
             ng-click="zoomIn()"
             accesskey="+"
             tabindex="0"
-            aria-label="<% tooltips.zoomInMap %>">
+            aria-label="{{ tooltips.zoomInMap }}">
       <i class="fa fa-plus"></i>
     </button>
     <button class="btn btn-primary"
             ng-click="zoomOut()"
             accesskey="-"
-            aria-label="<% tooltips.zoomOutMap %>">
+            aria-label="{{ tooltips.zoomOutMap }}">
       <i class="fa fa-minus"></i>
     </button>
   </div>
@@ -39,7 +39,7 @@
         </li>
         <li>
           <a ng-click="toggleExport()"
-             title="<% 'Export all selected timeseries' | translate %>"
+             title="{{ 'Export all selected timeseries' | translate }}"
              href="">
             <i class="fa fa-space-shuttle"></i>
             <span translate>Export</span>
@@ -47,17 +47,17 @@
         </li>
         <li>
           <a ng-click="toggleDashboard()"
-             title="<% 'Switch to ' + getContextComplement() | translate %>"
+             title="{{ 'Switch to ' + getContextComplement() | translate }}"
              target="_blank"
              accesskey="d"
              href="">
-            <i class="fa <% getContextComplementIcon() %>"></i>
-            <span translate><% getContextComplement() %></span>
+            <i class="fa {{ getContextComplementIcon() }}"></i>
+            <span translate>{{ getContextComplement() }}</span>
           </a>
         </li>
         <li ng-if="user.authenticated"
             ng-class="{'open': favourites.enabled}">
-          <a title="<% 'Favourites' | translate %>"
+          <a title="{{ 'Favourites' | translate }}"
              href=""
              ng-click="toggleFavourites($event)">
             <i class="fa fa-star"></i>
@@ -67,7 +67,7 @@
         <li role="separator" class="divider"></li>
 
         <li ng-if="!user.authenticated">
-          <a title="<% 'Question and manual' | translate %>"
+          <a title="{{ 'Question and manual' | translate }}"
              class="clickable"
              ng-click="openAbout()">
             <i class="fa fa-question"></i>
@@ -77,7 +77,7 @@
         <li ng-if="!user.authenticated">
           <a ng-click="logIn()"
              href="/accounts/login/"
-             title="<% tooltips.login %>"
+             title="{{ tooltips.login }}"
              class="clickable">
             <div ng-cloak id="username">
               <i id="" class="fa fa-user"></i>
@@ -86,7 +86,7 @@
           </a>
         </li>
         <li class="dropdown" ng-if="user.authenticated">
-          <a title="<% tooltips.profile %>"
+          <a title="{{ tooltips.profile }}"
              class="dropdown-toggle"
              data-toggle="dropdown"
              role="button"
@@ -106,7 +106,7 @@
           </a>
           <ul class="dropdown-menu">
             <li>
-              <a title="<% 'Show Messages' | translate %>"
+              <a title="{{ 'Show Messages' | translate }}"
                  class="clickable"
                  ng-click="showMessage(inbox[0])">
                 <i class="fa fa-envelope"></i>
@@ -114,7 +114,7 @@
               </a>
             </li>
             <li>
-              <a title="<% 'Question and manual' | translate %>"
+              <a title="{{ 'Question and manual' | translate }}"
                  class="clickable"
                  ng-click="openAbout()">
                 <i class="fa fa-question"></i>
@@ -123,7 +123,7 @@
             </li>
             <li>
               <a href="http://sso.lizard.net/edit_profile/"
-                 title="<% 'Edit profile' | translate %>">
+                 title="{{ 'Edit profile' | translate }}">
                 <i class="fa fa-pencil"></i>
                 <span translate>Edit profile</span>
               </a>
@@ -134,7 +134,7 @@
                  class="logout user"
                  ng-click="logOut()"
                  href="/accounts/logout/"
-                 title="<% tooltips.logout %>">
+                 title="{{ tooltips.logout }}">
                  <i id="" class="fa fa-power-off"></i>
                  <span translate>Log out</span>
               </a>
@@ -154,7 +154,7 @@
       <ng-include src="'/about/'"></ng-include>
     </div>
     <div class="modal-footer">
-      <span class="pull-left text-muted">Version: <% about.version.full %></span>
+      <span class="pull-left text-muted">Version: {{ about.version.full }}</span>
       <button class="btn btn-default" type="button" ng-click="$dismiss()">
         Close
       </button>

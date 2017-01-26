@@ -6,7 +6,7 @@
  * @summary Service to create and update a graph
  *
  * @description Inject "Graph" and call new graph(<args>) to create a
- * graph. Currently the graph supports lines, bars, donut, and a flat
+ * graph. Currently the graph supports lines, bars, and a flat
  * donut called horizontal stacked bar. The user may interact with
  * the graph through click and hover functions. Graph inherits from
  * NxtD3, a lower level d3 helper class.

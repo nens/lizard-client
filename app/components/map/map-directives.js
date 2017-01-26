@@ -6,9 +6,7 @@
  * Overview
  * ========
  *
- * Defines the map. Directive does all the watching and DOM binding, MapDirCtrl
- * holds all the testable logic. Ideally the directive has no logic and the
- * MapDirCtrl is independent of the rest of the application.
+ * Defines the map. Directive does all the watching and DOM binding.
  *
  */
 angular.module('map')

@@ -1,5 +1,13 @@
 'use strict';
 
+/**
+ * This mythical portal goes back to the early days of lizard-client. It never
+ * had a clear scope, but it should function as a simple wrapper around
+ * endpoints. Abstracting away api versions and backend location.
+ *
+ * NOTE this service also includes tooltips used in element titles.
+ * NOTE not all lizard resources are queried through this service.
+ */
 angular.module('lizard-nxt')
   .service("CabinetService", [
            "$q", "Resource", "backendDomain", "gettextCatalog",

@@ -6,6 +6,9 @@
  * promise.
  *
  * Depends on lodash throttle and $q.
+ *
+ * NOTE: preferably this is something which can be applied to certain resources
+ *       under specific conditions and not a httpInterceptor.
  */
 angular.module('lizard-http-throttler', [])
 .config(['$httpProvider', function ($httpProvider) {
@@ -57,4 +60,3 @@ angular.module('lizard-http-throttler', [])
     };
   });
 }]);
-

@@ -9,7 +9,7 @@
       <del
         ng-show="invalid"
         class="text-muted"
-        title="<% 'Layer could not be added' | translate %>"
+        title="{{ 'Layer could not be added' | translate }}"
         ng-bind="layer.name">
       </del>
       <div class="layer-chooser-tools">
@@ -23,7 +23,7 @@
           ng-show="layer.active"
           class="fa fa-crosshairs">
         </i>
-        <i class="fa fa-<% layer.vectorized ? 'star' : 'star-o' %>"
+        <i class="fa fa-{{ layer.vectorized ? 'star' : 'star-o' }}"
            ng-show="layer.active"
            ng-if="rasterLayerIsVectorizable(layer)"
            ng-click="toggleVectorModus(layer); $event.stopPropagation()">
@@ -32,4 +32,4 @@
   </label>
 </div>
 
-<opacity-slider title="<% tooltips.transparency %>" layer="layer"></opacity-slider>
+<opacity-slider title="{{ tooltips.transparency }}" layer="layer"></opacity-slider>

@@ -1,5 +1,19 @@
 'use strict';
 
+/**
+ * The attributes you want.
+ *
+ * Retrieving asset information from the server returns many attributes not
+ * necessarily all relevant in the omnibox asset cards. These objects include
+ * relevant attributes per entity with display names, filters an suffixes. Used
+ * by cardattributes.
+ *
+ * keyNam is displayed to the user and therefore annotated for translation in
+ * transifex using gettext(). In the template they are fetched from the
+ * dictionary using the translate filter.
+ *
+ * NOTE: this service contains logic that belongs on the server.
+ */
 angular.module('omnibox')
 .service("WantedAttributes", ["gettext", function (gettext) {
 
@@ -13,6 +27,7 @@ angular.module('omnibox')
         valueSuffix: "m<sup>3</sup> / uur"
       },
       {
+        // use tripple slashes to include comment in transifex.
         /// Aanslagpeil
         keyName: gettext("Start level"),
         attrName: "start_level",

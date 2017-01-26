@@ -2,7 +2,7 @@
    ng-click="changeBoxType()"
    class="button-list-item clickable">
    <i ng-if="lzIcons.indexOf(icon) === -1"
-      class="fa fa-<% icon %>"></i>
+      class="fa fa-{{ icon }}"></i>
    <i ng-if="lzIcons.indexOf(icon) > -1"
-      class="lz lz-<% icon %>"></i>
+      class="lz lz-{{ icon }}"></i>
 </a>

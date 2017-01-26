@@ -1,3 +1,11 @@
+
+/**
+ * Service to create CSVs client side.
+ *
+ * NOTE: the server should be responsible for rendering data as csv/excel files.
+ * NOTE: possibly a lot of this code is no longer used since we introduced async
+ * dowloads of timeseries.
+ */
 angular.module('lizard-nxt')
 .service("CSVService",
 

@@ -10,7 +10,7 @@
   <div
     ng-if="item.type !== 'empty'"
     ng-repeat="item in dashboard.graphs track by $index"
-    data-order="<% $index %>"
+    data-order="{{ $index }}"
     class="row dashboard-inner drag-target">
 
     <graph

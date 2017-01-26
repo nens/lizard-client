@@ -41,7 +41,7 @@ angular.module('export')
         async: 'true'
       };
 
-      if (TimeseriesService.relativeTimeseries) {
+      if (TimeseriesService.relativeTimeseries.value) {
         params.relative_to = 'surface_level';
       }
 

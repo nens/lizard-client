@@ -5,30 +5,30 @@
        ng-focus="onFocus(item)">
 
     <h3 ng-if="omnibox.searchResults.spatial.length > 0">
-      <span translate>Locations</span>&nbsp;(<% omnibox.searchResults.spatial.length %>)
+      <span translate>Locations</span>&nbsp;({{ omnibox.searchResults.spatial.length }})
     </h3>
     <ul>
       <li ng-cloak
         ng-repeat="result in omnibox.searchResults.spatial"
-        tabindex="<% $index + 1 %>"
+        tabindex="{{ $index + 1 }}"
         ng-focus="onFocus(result)"
         class="cluster location">
         <i class="fa fa-location-arrow">&nbsp;</i>
         <a ng-click="zoomToSpatialResult(result)"
           href="">
-          <span title="<% result.formatted_address %>"><% result.formatted_address %></span>
+          <span title="{{ result.formatted_address }}">{{ result.formatted_address }}</span>
         </a>
       </li>
     </ul>
 
     <h3 ng-if="omnibox.searchResults.api.length > 0">
       <i class="fa fa-map-pin">&nbsp;</i>
-      <span translate>Assets</span>&nbsp;(<% omnibox.searchResults.api.length %>)
+      <span translate>Assets</span>&nbsp;({{ omnibox.searchResults.api.length }})
     </h3>
     <ul>
       <li ng-cloak
         ng-repeat="result in omnibox.searchResults.api"
-        tabindex="<% $index + omnibox.searchResults.spatial.length + 1 %>"
+        tabindex="{{ $index + omnibox.searchResults.spatial.length + 1 }}"
         ng-focus="onFocus(result)"
         ng-keydown="selectItem($event, result)"
         class="cluster location">
@@ -36,7 +36,7 @@
           href="">
           <i class="fa"
              ng-class="util.getIconClass(result.entity_name, result)"></i>
-          <span><% result.title %></span>
+          <span>{{ result.title }}</span>
         </a>
       </li>
     </ul>
@@ -48,9 +48,9 @@
   		class="cluster location">
   	  <a ng-click="zoomToTemporalResult(omnibox.searchResults.temporal)"
   	    class="pointer clickable">
-  	    <span><% omnibox.searchResults.temporal.format(
+  	    <span>{{ omnibox.searchResults.temporal.format(
   	    	omnibox.searchResults.temporal.nxtFormatString
-  	    ) %></span>
+  	    ) }}</span>
   	  </a>
   	</div>
 

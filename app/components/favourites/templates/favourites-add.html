@@ -16,7 +16,7 @@
                  ng-maxlength=256
                  required
                  ng:model="favourite.name"
-                 placeholder="<% 'New favourite name...'|translate %>" />
+                 placeholder="{{ 'New favourite name...'|translate }}" />
           <div
             ng-show="favouritesForm.favourite.name.$dirty && favouritesForm.favourite.name.$invalid">
             <small
