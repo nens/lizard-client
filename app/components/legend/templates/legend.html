@@ -36,11 +36,13 @@
           class="discrete-legend-datum"
           ng-if="$index < getAmountOfDiscreteCategories(uuid)">
 
-          <div class="discrete-legend-color-rect"
+          <div title="{{ datum.label === -1 ? 'other' : datum.label }}"
+               class="discrete-legend-color-rect"
                ng-style="getColoredRect(datum)">
           </div>
 
           <div class="discrete-legend-label"
+               title="{{ datum.label === -1 ? 'other' : datum.label }}"
                ng-class="{'discrete-legend-label-selected': getDiscreteRasterCategory(uuid) === datum.class,
                           'discrete-legend-label-selectable': rasterIsVectorized(uuid)}">
             {{ datum.label === -1 ? 'other' : (datum.label | truncate: 42) }}
