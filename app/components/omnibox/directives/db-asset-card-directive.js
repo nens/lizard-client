@@ -26,6 +26,11 @@ angular.module('omnibox')
         });
       };
 
+      scope.getTsLongName = function (uuid) {
+        var metaData = scope.getTsMetaData(uuid);
+        return metaData.location + ',' + metaData.parameter;
+      };
+
       scope.assetHasSurfaceLevel = function () {
         return ('surface_level' in scope.asset);
       };

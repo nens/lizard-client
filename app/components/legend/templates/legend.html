@@ -43,8 +43,9 @@
           <div class="discrete-legend-label"
                ng-class="{'discrete-legend-label-selected': getDiscreteRasterCategory(uuid) === datum.class,
                           'discrete-legend-label-selectable': rasterIsVectorized(uuid)}">
-            {{ datum.label === -1 ? 'other' : datum.label }}
+            {{ datum.label === -1 ? 'other' : (datum.label | truncate: 42) }}
           </div>
+
         </div>
       </div>
     </div>
