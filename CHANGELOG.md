@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.8.1"></a>
+## [4.8.1](https://github.com/nens/lizard-client/compare/v4.8.0...v4.8.1) (2017-01-30)
+
+
+### Bug Fixes
+
+* **relative timeseries:** checkboxes for relativation are always in s… ([#831](https://github.com/nens/lizard-client/issues/831)) ([41bbe98](https://github.com/nens/lizard-client/commit/41bbe98))
+
+
+
 <a name="4.8.0"></a>
 # [4.8.0](https://github.com/nens/lizard-client/compare/v4.6.3...v4.8.0) (2017-01-24)
 
