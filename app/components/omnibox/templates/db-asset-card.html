@@ -62,11 +62,10 @@
 
           <span
             title="{{ getTsMetaData(ts.uuid).location }}, {{ getTsMetaData(ts.uuid).name }}, {{ getTsMetaData(ts.uuid).parameter }}"
-            ng-class="{'text-primary': ts.active}">
+            ng-class="{'text-primary': ts.active}"
+            ng-init="displayName = (getTsLongName(ts.uuid) | truncate: 50)">
 
-            {{ getTsMetaData(ts.uuid).location }},
-            {{ getTsMetaData(ts.uuid).parameter }}
-            &nbsp;
+            {{ displayName }}&nbsp;
 
             <i class="fa relativate-ts-icon"
                ng-class="{ 'fa-check-square': relativeTimeseries.value, 'fa-square': !relativeTimeseries.value }"
@@ -79,8 +78,8 @@
                }}"
                translate>
             </i>
-
           </span>
+
         </div>
 
         <color-picker></color-picker>
