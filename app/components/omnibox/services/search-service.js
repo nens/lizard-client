@@ -162,14 +162,15 @@ angular.module('omnibox')
       state.selected.assets.addAsset(
         result.entity_name + '$' + result.entity_id);
 
-      // If the water layer is present in the layer menu, but it is not active,
-      // we activate it to provide consistent UX:
-      var waterLayer = _.find(state.layers, function (obj) {
-        return obj.name && obj.name.toLowerCase() === 'water';
+      // If an assetgroup layer is present in the layer menu, but it is not
+      // currently active, we activate it to provide consistent UX (i.e. the
+      // map and the omnibox are consistent together):
+      var assetLayer = _.find(state.layers, function (obj) {
+        return obj.type && obj.type.toLowerCase() === 'assetgroup';
       });
 
-      if (waterLayer) {
-        waterLayer.active = true;
+      if (assetLayer) {
+        assetLayer.active = true;
       }
 
       state.spatial.view = {
