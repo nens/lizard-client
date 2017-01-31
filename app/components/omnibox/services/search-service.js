@@ -152,6 +152,7 @@ angular.module('omnibox')
      * @return {object} state: the new state.
      */
     this.zoomToSearchResult = function (result, state) {
+
       var ZOOM_FOR_OBJECT = 19;
 
       if (state.box.type !== 'multi-point' && state.context !== 'dashboard') {
@@ -160,6 +161,16 @@ angular.module('omnibox')
 
       state.selected.assets.addAsset(
         result.entity_name + '$' + result.entity_id);
+
+      // If the water layer is present in the layer menu, but it is not active,
+      // we activate it to provide consistent UX:
+      var waterLayer = _.find(state.layers, function (obj) {
+        return obj.name && obj.name.toLowerCase() === 'water';
+      });
+
+      if (waterLayer) {
+        waterLayer.active = true;
+      }
 
       state.spatial.view = {
         lat: result.view[0],
