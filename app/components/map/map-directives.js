@@ -296,8 +296,27 @@ angular.module('map')
 
       scope.$watchCollection('state.selected.geometries', function (n, o) {
         if (n === o) { return true; }
-        if (State.box.type === 'line' && State.selected.geometries[0] === undefined) {
-          lineCleanup();
+
+        if (State.selected.geometries[0] === undefined) {
+
+          if (State.box.type === 'line') { lineCleanup() }
+
+          // When state.selected.geometries updates, we might need to update
+          // vectorized raster layers: e.g., a selected region gets deselected
+          // and then we need to update the map to show this deselection:
+
+          var vectorizedRasterLayer = _.find(State.layers,
+            { type: 'raster', vectorized: true });
+
+          if (vectorizedRasterLayer) {
+
+            var theRasterMapLayer = _.find(MapService.mapLayers,
+              { uuid: vectorizedRasterLayer.uuid }
+            );
+
+            theRasterMapLayer.resetActiveRegionId();
+            MapService.updateLayers([vectorizedRasterLayer]);
+          }
         }
       });
 

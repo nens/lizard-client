@@ -116,6 +116,10 @@ angular.module('map')
        */
       rasterMapLayer._activeRegionId = null;
 
+      rasterMapLayer.resetActiveRegionId = function () {
+        rasterMapLayer._activeRegionId = null;
+      };
+
       /**
        * @description A function to update fillColor/fillOpacity of the current
        *              rasterMapLayer._defaultRegionStyling dict, based on the
@@ -189,7 +193,8 @@ angular.module('map')
           rasterMapLayer._leafletLayer.setStyle(function (feature) {
             if (feature.id === rasterMapLayer._activeRegionId) {
               var activeStyle = getDefaultActiveStyle();
-              activeStyle.fillOpacity = MOUSE_OVER_OPACITY_MULTIPLIER * rasterMapLayer._opacity;
+              activeStyle.fillOpacity = MOUSE_OVER_OPACITY_MULTIPLIER *
+                rasterMapLayer._opacity;
               return activeStyle;
             } else {
               return getDefaultInactiveStyle();
@@ -238,19 +243,31 @@ angular.module('map')
                 }
               },
               click: function (e) {
+
                 var featureId,
+                    clearGeometries = false,
                     clickedId = e.target.feature.id;
+
                 rasterMapLayer._leafletLayer.eachLayer(function (layer) {
                   featureId = layer.feature.id;
                   if (featureId === clickedId) {
-                    rasterMapLayer._activeRegionId = clickedId;
-                    layer.setStyle(getDefaultActiveStyle());
-                    layer.bringToFront();
+                    if (rasterMapLayer._activeRegionId === clickedId) {
+                      // We click an already active region a second time, so we
+                      // deactive it:
+                      rasterMapLayer._activeRegionId = null;
+                      layer.setStyle(getDefaultInactiveStyle());
+                      clearGeometries = true;
+
+                    } else {
+                      rasterMapLayer._activeRegionId = clickedId;
+                      layer.setStyle(getDefaultActiveStyle());
+                      layer.bringToFront();
+                    }
                   } else {
                     layer.setStyle(getDefaultInactiveStyle());
                   }
                 });
-                rasterMapLayer.vectorClickCb(this);
+                rasterMapLayer.vectorClickCb(this, clearGeometries);
               }
             });
           },
