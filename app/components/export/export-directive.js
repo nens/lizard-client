@@ -27,7 +27,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
     scope.assets = DataService.assets;
     scope.isMap = State.context === 'map';
 
-    scope.isAuthenticated = !user.authenticated;
+    scope.isAuthenticated = user.authenticated;
     scope.isPolling = false;
 
     var POLL_INTERVAL = 1000;
@@ -77,20 +77,25 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
 
       var motherModal = angular.element('#MotherModal');
 
+      // scope.resultUrl: holds the location for the downloadable file
       scope.resultUrl = null;
 
+      // Update a single GUI component:
       var hideExportButton = function () {
         angular.element('.start-export-button').addClass('hide');
       };
 
+      // Update a single GUI component:
       var showDownloadButton = function () {
         angular.element('.download-export-button').removeClass('hide');
       };
 
+      // Update a single GUI component:
       var enableDownloadButton = function () {
         angular.element('.download-export-button').prop('disabled', false);
       };
 
+      // Update a single GUI component:
       var disableDownloadButton = function () {
         angular.element('.download-export-button').prop('disabled', true);
       };
