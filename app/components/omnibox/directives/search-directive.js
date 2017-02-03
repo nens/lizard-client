@@ -11,8 +11,7 @@ angular.module('omnibox')
     'State',
     'UtilService',
     '$timeout',
-  function (SearchService, ClickFeedbackService, State,
-    UtilService, $timeout) {
+  function (SearchService, ClickFeedbackService, State, UtilService, $timeout) {
 
   var link = function (scope, element, attrs) {
 

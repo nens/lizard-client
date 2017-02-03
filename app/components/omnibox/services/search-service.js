@@ -152,6 +152,7 @@ angular.module('omnibox')
      * @return {object} state: the new state.
      */
     this.zoomToSearchResult = function (result, state) {
+
       var ZOOM_FOR_OBJECT = 19;
 
       if (state.box.type !== 'multi-point' && state.context !== 'dashboard') {
@@ -160,6 +161,17 @@ angular.module('omnibox')
 
       state.selected.assets.addAsset(
         result.entity_name + '$' + result.entity_id);
+
+      // If an assetgroup layer is present in the layer menu, but it is not
+      // currently active, we activate it to provide consistent UX (i.e. the
+      // map and the omnibox are consistent together):
+      var assetLayer = _.find(state.layers, function (obj) {
+        return obj.type && obj.type.toLowerCase() === 'assetgroup';
+      });
+
+      if (assetLayer) {
+        assetLayer.active = true;
+      }
 
       state.spatial.view = {
         lat: result.view[0],
