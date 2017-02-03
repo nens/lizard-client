@@ -5,7 +5,7 @@
       <i>"Start Export"</i> button and the exporter will fetch the time series
       behind the scenes.
     </p>
-    <p translate>
+    <p ng-if="authenticated" translate>
       When the download is ready, you will be notified with a message.
     </p>
     <p translate>
@@ -28,13 +28,31 @@
         </div>
       </div>
     </div>
+
+    <div ng-if="isPolling"
+         class="download-export-message">
+      <br />
+      <i translate>Your file is being prepared, please wait...</i>
+    </div>
+
   </div>
 
   <div class="modal-footer footer-left">
-    <button class="btn btn-primary"
-            ng-click="startExport()" translate>
+
+    <button
+      class="btn btn-primary start-export-button"
+      ng-click="startExport()"
+      translate>
       Start Export
     </button>
+
+    <button
+      class="btn btn-warning download-export-button hide"
+      ng-click="downloadFinishedFile()"
+      translate>
+      Download File
+    </button>
+
   </div>
 
 </div>
