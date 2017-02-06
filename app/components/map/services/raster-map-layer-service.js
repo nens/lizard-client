@@ -116,6 +116,11 @@ angular.module('map')
        */
       rasterMapLayer._activeRegionId = null;
 
+
+      /**
+       * @description We need to be able to reset the _activeRegionId: e.g,
+       *              when deselecting a geom in the omnibox.
+       */
       rasterMapLayer.resetActiveRegionId = function () {
         rasterMapLayer._activeRegionId = null;
       };
@@ -131,7 +136,7 @@ angular.module('map')
           if (properties.raster.hasOwnProperty('fraction')) {
             // Emphasize the differences between regions in the predominant case
             // where the differences are quite subtle and the fraction usually
-            // low. This way the differenc between 0.1 and 0.2 has more color
+            // low. This way the difference between 0.1 and 0.2 has more color
             // difference than between 0.8 and 0.9.
             var newFraction = 1 - Math.pow(1 - properties.raster.fraction, 2);
             color = (new window.Chromath('white'))
@@ -254,7 +259,7 @@ angular.module('map')
                     if (rasterMapLayer._activeRegionId === clickedId) {
                       // We click an already active region a second time, so we
                       // deactive it:
-                      rasterMapLayer._activeRegionId = null;
+                      rasterMapLayer.resetActiveRegionId();
                       layer.setStyle(getDefaultInactiveStyle());
                       clearGeometries = true;
 

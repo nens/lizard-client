@@ -307,10 +307,6 @@ angular.module('map')
         }
       },
 
-      vectorLayerCleanup: function () {
-        console.log("[F] MapService.vectorLayerCleanup... WIP!");
-      },
-
       vectorClickCb: function (layer, clearGeometries) {
         for (var key in layer.feature.properties) {
           var newkey = key === 'type' ? 'regionType' : key;

@@ -299,24 +299,23 @@ angular.module('map')
 
         if (State.selected.geometries[0] === undefined) {
 
-          if (State.box.type === 'line') { lineCleanup() }
+          if (State.box.type === 'line') { lineCleanup(); }
 
           // When state.selected.geometries updates, we might need to update
           // vectorized raster layers: e.g., a selected region gets deselected
-          // and then we need to update the map to show this deselection:
+          // and then we need to update the map to show this deselection.
+          // NB! This works for multiple vectorizedRasterLayers at once.
 
-          var vectorizedRasterLayer = _.find(State.layers,
-            { type: 'raster', vectorized: true });
+          var theRasterMapLayer,
+              vectorizedRasterLayers = _.filter(State.layers,
+                { type: 'raster', vectorized: true });
 
-          if (vectorizedRasterLayer) {
-
-            var theRasterMapLayer = _.find(MapService.mapLayers,
-              { uuid: vectorizedRasterLayer.uuid }
-            );
-
+          _.forEach(vectorizedRasterLayers, function (layer) {
+            theRasterMapLayer = _.find(MapService.mapLayers, { uuid: layer.uuid });
             theRasterMapLayer.resetActiveRegionId();
-            MapService.updateLayers([vectorizedRasterLayer]);
-          }
+          });
+
+          MapService.updateLayers(vectorizedRasterLayers);
         }
       });
 
