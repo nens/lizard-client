@@ -86,6 +86,27 @@ angular.module('lizard-nxt')
       syncTimeWrapper(State.temporal);
     });
 
+    //////////////////////////////////////////////
+    // TMP: debugging frame problems (06-02-2017):
+    //////////////////////////////////////////////
+    var oldTime,
+        newTime,
+        diffTime,
+        frameCount = 0; // NB!
+
+    var printTime = function () {
+      var newTime = new Date();
+      if (!oldTime) {
+        diffTime = null;
+      } else {
+        diffTime = newTime - oldTime;
+      }
+      oldTime = newTime;
+    };
+    ////////////////////////////////////////////////
+    // END of debugging tools //////////////////////
+    ////////////////////////////////////////////////
+
     // *
     //  * @description sets the timeStep and minLag on the basis of layergroups and
     //  *              their temporalResolution. The temporal layer with the smallest
@@ -113,11 +134,11 @@ angular.module('lizard-nxt')
             minLag = timeStep / 1200 > 240 ? timeStep / 1200 : 250;
             minLag = minLag > 1000 ? 1000 : minLag;
           }
-
         }
       });
 
       this.animatable = activeTemporalLs;
+
       // Do not continue animating when there is nothing to animate.
       if (!this.animatable) {
         State.temporal.playing  = false;
@@ -154,6 +175,9 @@ angular.module('lizard-nxt')
      * of temporal extent.
      */
     var step =  function () {
+      // frameCount++;
+      // printTime();
+      /////////////////////
       // Make a new step.
       $scope.$apply(function () {
         State.temporal.at += timeStep;
