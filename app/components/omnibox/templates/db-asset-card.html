@@ -89,10 +89,20 @@
       <div class="card-content-list clickable lessmore" ng-show="showExtender">
         <a style='cursor:pointer;'
            translate
+           ng-click="toggleExtended()">
+          {{ extended ? '▴' : '▸' }}&nbsp;&nbsp;{{ extended ? 'Less' : 'More' }} timeseries
+        </a>
+      </div>
+
+      <!--
+      <div class="card-content-list clickable lessmore" ng-show="showExtender">
+        <a style='cursor:pointer;'
+           translate
            ng-click="extended = !extended">
           {{ extended ? '▴' : '▸' }}&nbsp;&nbsp;{{ extended ? 'Less' : 'More' }} timeseries
         </a>
       </div>
+      -->
 
     </div>
 
