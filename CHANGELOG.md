@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.9.0"></a>
+# [4.9.0](https://github.com/nens/lizard-client/compare/v4.8.1...v4.9.0) (2017-02-13)
+
+
+### Bug Fixes
+
+* **dashboard:** timeseries listing can be collapsed ([ce07654](https://github.com/nens/lizard-client/commit/ce07654))
+* **waterlayer:** selecting a asset via search activates the waterlayer if needed ([b92f31f](https://github.com/nens/lizard-client/commit/b92f31f))
+
+
+### Features
+
+* **timeseries:** timeseries can be exported when not logged in ([bc17357](https://github.com/nens/lizard-client/commit/bc17357))
+
+
+
 <a name="4.8.1"></a>
 ## [4.8.1](https://github.com/nens/lizard-client/compare/v4.8.0...v4.8.1) (2017-01-30)
 
