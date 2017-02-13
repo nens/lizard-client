@@ -116,6 +116,15 @@ angular.module('map')
        */
       rasterMapLayer._activeRegionId = null;
 
+
+      /**
+       * @description We need to be able to reset the _activeRegionId: e.g,
+       *              when deselecting a geom in the omnibox.
+       */
+      rasterMapLayer.resetActiveRegionId = function () {
+        rasterMapLayer._activeRegionId = null;
+      };
+
       /**
        * @description A function to update fillColor/fillOpacity of the current
        *              rasterMapLayer._defaultRegionStyling dict, based on the
@@ -127,7 +136,7 @@ angular.module('map')
           if (properties.raster.hasOwnProperty('fraction')) {
             // Emphasize the differences between regions in the predominant case
             // where the differences are quite subtle and the fraction usually
-            // low. This way the differenc between 0.1 and 0.2 has more color
+            // low. This way the difference between 0.1 and 0.2 has more color
             // difference than between 0.8 and 0.9.
             var newFraction = 1 - Math.pow(1 - properties.raster.fraction, 2);
             color = (new window.Chromath('white'))
@@ -189,7 +198,8 @@ angular.module('map')
           rasterMapLayer._leafletLayer.setStyle(function (feature) {
             if (feature.id === rasterMapLayer._activeRegionId) {
               var activeStyle = getDefaultActiveStyle();
-              activeStyle.fillOpacity = MOUSE_OVER_OPACITY_MULTIPLIER * rasterMapLayer._opacity;
+              activeStyle.fillOpacity = MOUSE_OVER_OPACITY_MULTIPLIER *
+                rasterMapLayer._opacity;
               return activeStyle;
             } else {
               return getDefaultInactiveStyle();
@@ -238,19 +248,31 @@ angular.module('map')
                 }
               },
               click: function (e) {
+
                 var featureId,
+                    clearGeometries = false,
                     clickedId = e.target.feature.id;
+
                 rasterMapLayer._leafletLayer.eachLayer(function (layer) {
                   featureId = layer.feature.id;
                   if (featureId === clickedId) {
-                    rasterMapLayer._activeRegionId = clickedId;
-                    layer.setStyle(getDefaultActiveStyle());
-                    layer.bringToFront();
+                    if (rasterMapLayer._activeRegionId === clickedId) {
+                      // We click an already active region a second time, so we
+                      // deactive it:
+                      rasterMapLayer.resetActiveRegionId();
+                      layer.setStyle(getDefaultInactiveStyle());
+                      clearGeometries = true;
+
+                    } else {
+                      rasterMapLayer._activeRegionId = clickedId;
+                      layer.setStyle(getDefaultActiveStyle());
+                      layer.bringToFront();
+                    }
                   } else {
                     layer.setStyle(getDefaultInactiveStyle());
                   }
                 });
-                rasterMapLayer.vectorClickCb(this);
+                rasterMapLayer.vectorClickCb(this, clearGeometries);
               }
             });
           },
