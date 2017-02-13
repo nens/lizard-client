@@ -64,9 +64,19 @@ angular.module('omnibox')
        * @return {Boolean} is in first three of DOM list.
        */
       scope.isOneOfFirstThree = function (uuid) {
+        var MAX = 3;
         var items = element.find('.draggable-ts');
-        var index = _.findIndex(items, function (item) {return item.dataset.uuid === uuid; });
-        return index < 3;
+        if (!items || items.length <= MAX) {
+          return true;
+        } else {
+          var result = false;
+          _.forEach(items, function (item, key) {
+            if (parseInt(key) < MAX) {
+              result = result || item.id === uuid;
+            }
+          });
+          return result;
+        }
       };
 
       scope.toggleTimeseries = function (timeseries) {
@@ -96,16 +106,23 @@ angular.module('omnibox')
 
       // Extender is the button at the bottom of the timeseries list to show
       // more or less items.
-      scope.showExtender = true;
 
-      var MANY = 5;
+      scope.showExtender = false;
+      scope.extended = true;
+
+      var MANY = 3;
 
       // If there are a few timeseries, show them all and do not show the
       // extender button.
       if (scope.asset.timeseries.length < MANY) {
-        scope.extended = true;
         scope.showExtender = false;
+      } else {
+        scope.showExtender = true;
       }
+
+      scope.toggleExtended = function () {
+        scope.extended = !scope.extended;
+      };
 
       /**
        * Specific toggle for crosssection
