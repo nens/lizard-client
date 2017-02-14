@@ -57,13 +57,6 @@ angular.module('timeseries')
 
       var activeTimeseries = function(actives, useMinPoints, noDefer, graphType) {
 
-        /////////////////////////////////////////////////////////////
-        // Adding this line only "fixes the bug": ///////////////////
-        //
-        // noDefer = true;
-        //
-        //
-
         if (actives.length === 0) {
 
           var defer = $q.defer();

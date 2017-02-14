@@ -151,8 +151,6 @@ angular.module('dashboard')
    */
   var addPropertyData = function (graphs, properties) {
 
-    // Git blame for more info! //////////////
-
     _.forEach(properties, function (property) {
       var slug = property.slug;
       if (property.active) {
