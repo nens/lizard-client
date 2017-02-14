@@ -146,7 +146,7 @@ angular.module('timeseries')
 
       var localPromise = graphType === 'temporalLines'
         ? localPromiseLines
-        : localPromiseBars
+        : localPromiseBars;
 
       if (!noReject){
         // Cancel consecutive calls.
