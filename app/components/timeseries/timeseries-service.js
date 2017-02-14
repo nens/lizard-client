@@ -150,12 +150,6 @@ angular.module('timeseries')
      *                        of pixels.
      */
     this._getTimeseries = function (uuids, timeState, minPoints, noReject, graphType) {
-      console.log("[F] this._getTimeseries")
-      console.log("*** uuids......:", uuids);
-      console.log("*** timeState..:", timeState);
-      console.log("*** minPoints..:", minPoints);
-      console.log("*** noReject...:", noReject);
-      console.log("*** graphType..:", graphType);
 
       var localPromise = graphType === 'temporalLines'
         ? localPromiseLines

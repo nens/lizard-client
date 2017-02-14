@@ -54,6 +54,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
      * link to see status updates of the task
      */
     scope.startExport = function () {
+
       var uuids = _.map(scope.toExport, function (yes, uuid) {
         if (yes) { return uuid; }
       }).join(',');
