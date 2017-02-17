@@ -8,7 +8,6 @@ angular.module('dashboard')
                           // axis and labels.
   var ROW_BOTTOM_MARGIN = 20; // Pixels between graph rows.
 
-
   /**
    * Combines timeseries, with other chartable active data to dashboard data.
    *
@@ -112,7 +111,9 @@ angular.module('dashboard')
    */
   this._setAllContentToNotUpdated = function (graphs) {
     _.forEach(graphs, function (g, i) {
-      _.forEach(g.content, function (c) { c.updated = false; });
+      _.forEach(g.content, function (c) {
+        c.updated = false;
+      });
     });
     return graphs;
   };

@@ -45,7 +45,6 @@ angular.module('timeseries')
     });
 
     this.syncTime = function (timeseries) {
-
       var groupedTimeseries = {temporalBars: [], temporalLines: []};
       _.forEach(State.selected.timeseries, function(ts){
         if(ts.active){
@@ -55,8 +54,7 @@ angular.module('timeseries')
         }
       });
 
-      var activeTimeseries = function(actives, minPoints, noDefer){
-        // Return empty timeseries when empty selection
+      var getActiveTimeseries = function(actives, useMinPoints, noDefer, graphType) {
         if (actives.length === 0) {
           var defer = $q.defer();
           defer.resolve([]);
@@ -65,15 +63,18 @@ angular.module('timeseries')
           return that._getTimeseries(
             actives,
             State.temporal,
-            minPoints && service.minPoints,
-            noDefer
+            useMinPoints && service.minPoints,
+            noDefer,
+            graphType
           );
         }
       };
 
       var promise = $q.all([
-        activeTimeseries(groupedTimeseries.temporalLines, true),
-        activeTimeseries(groupedTimeseries.temporalBars, false, true)
+        getActiveTimeseries(
+          groupedTimeseries.temporalLines, true, false, 'temporalLines'),
+        getActiveTimeseries(
+          groupedTimeseries.temporalBars, false, true, 'temporalBars')
       ]).then(function (response) {
         var barsAndLinesTimeseries = _.concat(response[0], response[1]);
         console.log('TimeseriesService.timeseries:', service.timeseries);
@@ -92,20 +93,18 @@ angular.module('timeseries')
           });
         return service.timeseries;
       })
-
       .then(function (ts) {
-
         if (service.onTimeseriesChange) {
           service.onTimeseriesChange();
         }
         // accomadate chaining;
         return ts;
-
       });
       return promise;
     };
 
-    var localPromise = {};
+    var localPromiseLines = {};
+    var localPromiseBars = {};
 
     /**
      * Color is stored with the ts metadata in asset.timeseries of every asset
@@ -139,14 +138,20 @@ angular.module('timeseries')
      *                        lines, ask for minimally the graphs width amount
      *                        of pixels.
      */
-    this._getTimeseries = function (uuids, timeState, minPoints, noReject) {
-      if(!noReject){
+    this._getTimeseries = function (uuids, timeState, minPoints, noReject, graphType) {
+
+      var localPromise = graphType === 'temporalLines'
+        ? localPromiseLines
+        : localPromiseBars;
+
+      if (!noReject){
         // Cancel consecutive calls.
         if (localPromise.reject) {
           localPromise.resolve({data: {results: []}});
         }
         localPromise = $q.defer();
       }
+
       var id = uuids.join(',');
       var params = {
         uuid: id,
@@ -154,7 +159,7 @@ angular.module('timeseries')
         end: timeState.end ? parseInt(timeState.end, 10): undefined,
       };
 
-      if (service.relativeTimeseries.value) {
+      if (graphType === 'temporalLines' && service.relativeTimeseries.value) {
         params.relative_to = 'surface_level';
       }
 
