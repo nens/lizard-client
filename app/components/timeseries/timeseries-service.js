@@ -45,7 +45,6 @@ angular.module('timeseries')
     });
 
     this.syncTime = function (timeseries) {
-
       var groupedTimeseries = {temporalBars: [], temporalLines: []};
       _.forEach(State.selected.timeseries, function(ts){
         if(ts.active){
@@ -55,10 +54,8 @@ angular.module('timeseries')
         }
       });
 
-      var activeTimeseries = function(actives, useMinPoints, noDefer, graphType) {
-
+      var getActiveTimeseries = function(actives, useMinPoints, noDefer, graphType) {
         if (actives.length === 0) {
-
           var defer = $q.defer();
           defer.resolve([]);
           return defer.promise;
@@ -74,9 +71,9 @@ angular.module('timeseries')
       };
 
       var promise = $q.all([
-        activeTimeseries(
+        getActiveTimeseries(
           groupedTimeseries.temporalLines, true, false, 'temporalLines'),
-        activeTimeseries(
+        getActiveTimeseries(
           groupedTimeseries.temporalBars, false, true, 'temporalBars')
       ]).then(function (response) {
         var barsAndLinesTimeseries = _.concat(response[0], response[1]);
@@ -106,7 +103,6 @@ angular.module('timeseries')
       return promise;
     };
 
-    // var localPromise = {};
     var localPromiseLines = {};
     var localPromiseBars = {};
 
