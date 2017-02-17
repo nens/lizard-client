@@ -245,7 +245,7 @@ angular.module('omnibox')
     scope.setSearchBoxPlaceholder = function () {
       if (window.location.href.indexOf("/nl/") > -1) {
         // Apparently, we want dutch placeholder:
-        return "Zoek naar plaatsen, or datums (i.e. 23-10-2013)";
+        return "Zoek naar plaatsen, of datums (i.e. 23-10-2013)";
       } else {
         // Apparently, we want english (default) placeholder:
         return "Search for places, or dates (i.e. 23-10-2013)";
