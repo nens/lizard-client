@@ -103,6 +103,15 @@ angular.module('timeseries')
 
       });
 
+      /**
+       * Get new ts when time changes
+       */
+      scope.$watch('timeState.timelineMoving', function (newValue, oldValue) {
+        if (!newValue && newValue !== oldValue) {
+          TimeseriesService.syncTime().then(getContentForAsset);
+          }
+      });
+
     },
     restrict: 'A',
     templateUrl: 'timeseries/timeseries.html',
