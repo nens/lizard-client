@@ -228,7 +228,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
         : exportCbUnknownUser;
 
       // Request timeseries with uuids and format=ASYNC_FORMAT and async=true
-      $http.get('/api/v2/timeseries/', { params: params })
+      $http.get('/api/v3/timeseries/', { params: params })
         .then(exportCb);
     };
 

@@ -70,7 +70,7 @@ angular.module('omnibox')
         // Otherwise return zero relevant searches.
         if (params.q.length >= MINIMUM_SEARCH_QUERY_LENGTH) {
           return $http({
-            url: 'api/v2/search/',
+            url: 'api/v3/search/',
             method: 'GET',
             params: params,
             timeout: localPromise.promise
