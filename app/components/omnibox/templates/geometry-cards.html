@@ -25,7 +25,9 @@
     </defaultpoint>
 
     <div
-      ng-if="geom.geometry.type === 'LineString' && (properties.scale === 'interval' || properties.scale === 'ratio')"
+      ng-if="geom.geometry.type === 'LineString' && (
+        properties.scale === 'interval' || properties.scale === 'ratio'
+      )"
       class="card active card-content">
 
       <graph
@@ -53,6 +55,7 @@
 
     <div
       ng-if="properties.data
+      && !(properties.data.length === 1 && properties.data[0] === null)
       && (geom.geometry.type === 'Polygon' || geom.geometry.type === 'MultiPolygon')
       && properties.slug !== 'rain'"
       class="card active">
