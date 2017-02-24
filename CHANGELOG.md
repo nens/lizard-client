@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.9.2"></a>
+## [4.9.2](https://github.com/nens/lizard-client/compare/v4.9.1...v4.9.2) (2017-02-24)
+
+
+### Bug Fixes
+
+* **timeseries:** fixed downloading timeseries when timeline moves. ([6679e7c](https://github.com/nens/lizard-client/commit/6679e7c))
+
+
+
 <a name="4.9.1"></a>
 ## [4.9.1](https://github.com/nens/lizard-client/compare/v4.9.0...v4.9.1) (2017-02-17)
 
