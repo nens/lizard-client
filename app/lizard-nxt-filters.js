@@ -140,31 +140,31 @@ angular.module('lizard-nxt-filters')
   return function (input) {
     var out;
     switch (input) {
-    case '0':
+    case 0:
       out = 'rond';
       break;
-    case '1':
+    case 1:
       out = 'eivorm';
       break;
-    case '2':
+    case 2:
       out = 'rechthoek';
       break;
-    case '3':
+    case 3:
       out = 'muilvorm';
       break;
-    case '4':
+    case 4:
       out = 'vierkant';
       break;
-    case '5':
+    case 5:
       out = 'heul';
       break;
-    case '6':
+    case 6:
       out = 'trapezium';
       break;
-    case '98':
+    case 98:
       out = 'Vorm afwijkend';
       break;
-    case '99':
+    case 99:
       out = 'Vorm onbekend';
       break;
     default:
@@ -179,13 +179,13 @@ angular.module('lizard-nxt-filters')
   return function (input) {
     var out;
     switch (input) {
-    case '0':
+    case 0:
       out = 'beton';
       break;
-    case '1':
+    case 1:
       out = 'PVC';
       break;
-    case '2':
+    case 2:
       out = 'gres';
       break;
     default:
@@ -202,19 +202,19 @@ angular.module('lizard-nxt-filters')
   return function (input) {
     var out;
     switch (input) {
-    case '1':
+    case 1:
       out = 'Vast';
       break;
-    case '2':
+    case 2:
       out = 'Regelbaar, niet auto';
       break;
-    case '3':
+    case 3:
       out = 'Regelbaar, auto';
       break;
-    case '4':
+    case 4:
       out = 'Handmatig';
       break;
-    case '98':
+    case 98:
       out = 'Overig';
       break;
     default:
@@ -382,13 +382,13 @@ angular.module('lizard-nxt-filters')
   return function (input) {
     var out;
     switch (input) {
-    case '1':
+    case 1:
       out = 'Drukriolering';
       break;
-    case '2':
+    case 2:
       out = 'Persleiding';
       break;
-    case '3':
+    case 3:
       out = 'Pers-/transportleiding';
       break;
     default:
