@@ -366,6 +366,17 @@ angular.module('lizard-nxt')
         timeline.drawTickMarks(dates);
       };
 
+      var offsetInMinutes;
+      var offsetInMsec;
+
+      var convertFromUTC = function (steps) {
+        return _.map(steps, function (step) {
+          offsetInMinutes =  new Date(step).getTimezoneOffset();
+          offsetInMsec = 1000 * 60 * offsetInMinutes;
+          return step + offsetInMsec;
+        });
+      };
+
       rasterLayers.forEach(function (raster) {
 
         if (!raster.temporal) {
@@ -377,7 +388,7 @@ angular.module('lizard-nxt')
           end: State.temporal.end
         }).then(function (response) {
           if (response && response !== 'null') {
-            dates = dates.concat(response.data.steps);
+            dates = convertFromUTC(response.data.steps);
           }
           draw(dates);
         });
