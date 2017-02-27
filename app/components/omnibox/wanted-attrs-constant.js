@@ -221,14 +221,14 @@ angular.module('omnibox')
         keyName: gettext("Aquifer confinement"),
         attrName: "aquifer_confiment",
         ngBindValue: "waterchain.aquifer_confiment",
-        valueSuffix: "m"
+        valueSuffix: ""
       },
       {
         /// bodemsoort
         keyName: gettext("Lithology"),
         attrName: "litology",
         ngBindValue: "waterchain.litology",
-        valueSuffix: "m"
+        valueSuffix: ""
       },
 
     ]
@@ -343,7 +343,14 @@ angular.module('omnibox')
         keyName: gettext("Material"),
         attrName: "material",
         ngBindValue:
-          "waterchain.material",
+          "waterchain.material | lookupManholeMaterial",
+        valueSuffix: ""
+      },
+      {
+        keyName: gettext("Shape"),
+        attrName: "shape",
+        ngBindValue:
+          "waterchain.shape | lookupManholeShape",
         valueSuffix: ""
       },
       {
@@ -352,13 +359,6 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.width | niceNumberOrEllipsis: 2",
         valueSuffix: "m"
-      },
-      {
-        keyName: gettext("Shape"),
-        attrName: "shape",
-        ngBindValue:
-          "waterchain.shape | lookupManholeShape",
-        valueSuffix: ""
       },
       {
         /// Putbodem
@@ -414,14 +414,14 @@ angular.module('omnibox')
         keyName: gettext("Well top level"),
         attrName: "well_top_level",
         ngBindValue: "waterchain.well_top_level",
-        valueSuffix: ""
+        valueSuffix: "m (NAP)"
       },
       {
         keyName: gettext("Well bottom level"),
         attrName: "well_bottom_level",
         ngBindValue:
           "waterchain.well_bottom_level",
-        valueSuffix: ""
+        valueSuffix: "m (NAP)"
       }
     ]
   };
@@ -618,18 +618,18 @@ angular.module('omnibox')
         valueSuffix: ""
       },
       {
-        keyName: gettext("Diameter"),
-        attrName: "diameter",
-        ngBindValue:
-          "waterchain.diameter | niceNumberOrEllipsis: 2",
-        valueSuffix: "m"
-      },
-      {
         keyName: gettext("Shape"),
         attrName: "shape",
         ngBindValue:
           "waterchain.shape",
         valueSuffix: ""
+      },
+      {
+        keyName: gettext("Diameter"),
+        attrName: "diameter",
+        ngBindValue:
+          "waterchain.diameter | niceNumberOrEllipsis: 2",
+        valueSuffix: "m"
       },
       {
         keyName: gettext("Length"),
