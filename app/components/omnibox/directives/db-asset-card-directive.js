@@ -32,10 +32,20 @@ angular.module('omnibox')
       };
 
       scope.assetHasSurfaceLevel = function () {
-        return ('surface_level' in scope.asset);
+        // console.log("[F] assetHasSurfaceLevel; scope.asset =", scope.asset);
+        var result = !!scope.asset.relativatableTimeseries;
+        // console.log("===>", result);
+        return result;
+        // return ('surface_level' in scope.asset);
       };
 
       scope.parentAssetHasSurfaceLevel = function () {
+        // console.log("[F] parentAssetHasSurfaceLevel; scope.asset =", scope.asset);
+        // var result = !!scope.asset.relativatableTimeseries;
+        // console.log("===>", result);
+        // return result;
+
+        var parentAsset;
 
         if (scope.asset.parentAsset) {
 
@@ -44,13 +54,14 @@ angular.module('omnibox')
           var parentAssetEntity = splittedKey[0];
           var parentAssetId = parseInt(splittedKey[1]);
 
-          var parentAsset = _.find(DataService.assets, {
+          parentAsset = _.find(DataService.assets, {
             entity_name: parentAssetEntity,
             id: parentAssetId
           });
         }
 
-        return parentAsset && ('surface_level' in parentAsset);
+        // return parentAsset && ('surface_level' in parentAsset);
+        return parentAsset.relativatableTimeseries;
       };
 
       /**

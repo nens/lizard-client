@@ -53,9 +53,19 @@ angular.module('data-menu')
               // (e.g 'groundwater_station$303')
               _.forEach(asset[plural], function (nestedAsset) {
                 nestedAsset.parentAsset = parentAssetKey;
+                if ('surface_level' in nestedAsset) {
+                  asset.relativatableTimeseries = true;
+                } else if ('surface_level' in asset) {
+                  asset.relativatableTimeseries = true;
+                }
               });
             }
           });
+
+
+          if (asset.relativatableTimeseries) {
+            console.log("[AAA] Got asset with relativatable timeseries:", asset);
+          }
 
           instance.assets.push(asset);
         }
@@ -72,8 +82,6 @@ angular.module('data-menu')
         if (instance.onAssetsChange) {
           instance.onAssetsChange();
         }
-
-        console.log('DataService.assets:', instance.assets);
       };
 
       // Define assets on State and update DataService.assets.

@@ -34,6 +34,10 @@ angular.module('data-menu')
 
         .then(function (response) {
           response.data.entity_name = entity;
+          // if ('surface_level' in response.data) {
+          //   response.data.relativatableTimeseries = true;
+          // }
+
           return response.data;
         });
       };
