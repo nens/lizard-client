@@ -26,7 +26,7 @@ angular.module('annotations')
        * Use a reconfigured 'save' to be able to send an attachment file using
        * 'multipart/form-data' content-type headers.
        */
-      var Annotations = $resource('/api/v2/annotations/:id/', {}, {
+      var Annotations = $resource('/api/v3/annotations/:id/', {}, {
         'query': {
           method:'GET',
           isArray:true,
@@ -47,7 +47,7 @@ angular.module('annotations')
        *
        * Use a reconfigured 'query' so it actually returns an array of items.
        */
-      var Organisations = $resource('/api/v2/organisations/:uuid/', {}, {
+      var Organisations = $resource('/api/v3/organisations/:uuid/', {}, {
         'query': {
           method:'GET',
           isArray:true,

@@ -212,7 +212,7 @@ angular.module('map')
         // current one:
         rasterMapLayer.removeVectorized(map, false);
 
-        var leafletLayer = LeafletService.nxtAjaxGeoJSON('api/v2/regions/', {
+        var leafletLayer = LeafletService.nxtAjaxGeoJSON('api/v3/regions/', {
           // Add these static parameters to requests.
           requestParams: {
             raster: uuid,
