@@ -298,7 +298,7 @@ angular.module('omnibox')
         // hack to make it testable on staging :( and gets the correct hostname
         // on production
         var hostname = window.location.hostname.replace('nxt.staging', 'demo');
-        return 'https://' + hostname + '/api/v2/rasters/' +
+        return 'https://' + hostname + '/api/v3/rasters/' +
           RAW_RAIN_RASTER_UUID + '/data/' +
           '?format=csv' +
           '&start=' +

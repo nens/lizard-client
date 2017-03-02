@@ -79,7 +79,7 @@ angular.module('lizard-nxt')
   var getTimesteps = function (options) {
     return $http({
         method: 'GET',
-        url: 'api/v2/rasters/' + options.uuid + '/timesteps/',
+        url: 'api/v3/rasters/' + options.uuid + '/timesteps/',
         params: {start: options.start, end: options.end}
       });
   };

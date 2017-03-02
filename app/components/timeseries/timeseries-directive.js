@@ -117,7 +117,7 @@ angular.module('timeseries')
           TimeseriesService.syncTime().then(getContentForAsset);
 
           scope.startDownload = function(){
-            $http.get('/api/v2/timeseries/data/', {
+            $http.get('/api/v3/timeseries/data/', {
                 params: {
                   uuid: scope.timeseries.selected.uuid,
                   start: Math.round(scope.timeState.start),

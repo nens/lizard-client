@@ -28,7 +28,7 @@ angular.module('data-menu')
        */
       var getAsset = function (entity, id) {
         return $http({
-          url: 'api/v2/' + entity + 's' + '/' + id + '/',
+          url: 'api/v3/' + entity + 's' + '/' + id + '/',
           method: 'GET'
         })
 
