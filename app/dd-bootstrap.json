@@ -1,0 +1,49 @@
+{
+    "domain": "localhost:8000",
+    "gauges": false,
+    "locale": "nl_NL",
+    "js_debug": true,
+    "sso": {
+        "login": "http://localhost:8000/accounts/login/?domain=http://localhost:9000/",
+        "logout": "http://localhost:8000/accounts/logout/?domain=http://localhost:9000/"
+    },
+    "user": {
+        "username": "",
+        "first_name": "",
+        "authenticated": false
+    },
+    "random_string": "69f955e6e239a95e2f7c239c412116a7",
+    "sentry": false,
+    "temporal_bounds": {
+        "start": -172800000,
+        "end": 10800000
+    },
+    "state": {
+        "box": {
+            "type": "point"
+        },
+        "layers": [],
+        "language": "en",
+        "temporal": {
+            "start": 14696280,
+            "end": 1469811601268,
+            "at": 1469800801268
+        },
+        "context": "map",
+        "spatial": {
+            "bounds": {
+                "_southWest": {
+                    "lat": 50.57,
+                    "lng": 3.04
+                },
+                "_northEast": {
+                    "lat": 53.63,
+                    "lng": 7.58
+                }
+            }
+        },
+        "baselayer": "topography"
+    },
+    "version": "3.12.0-67-gecd9ee4",
+    "revision": "ecd9ee4"
+}
