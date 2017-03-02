@@ -45,7 +45,7 @@ angular.module('data-menu')
 
           mapLayer = rasterMapLayer({
             uuid: scope.layer.uuid,
-            url: 'api/v3/wms/',
+            url: 'api/v2/wms/',
             slug: response.slug,
             bounds: response.spatial_bounds,
             temporal: response.temporal,
@@ -65,9 +65,9 @@ angular.module('data-menu')
             scale: response.observation_type
               && response.observation_type.scale,
             quantity: response.observation_type
-              && response.observation_type.parameter,
+              && response.observation_type.parameter_short_display_name,
             unit: response.observation_type
-              && response.observation_type.referenced_unit,
+              && response.observation_type.referenced_unit_short_display_name,
             styles: response.options.styles,
             //showVectorized: false
           }));

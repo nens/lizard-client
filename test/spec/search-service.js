@@ -42,7 +42,7 @@ describe('Service: SearchService', function () {
             rank: 1.1,
             entity_name: "groundwaterstation",
             entity_id: 4,
-            entity_url: "/api/v3/groundwaterstations/4/",
+            entity_url: "/api/v2/groundwaterstations/4/",
             view: [
                 52.53154,
                 4.853579999999999,
@@ -56,7 +56,7 @@ describe('Service: SearchService', function () {
             rank: 1.1,
             entity_name: "groundwaterstation",
             entity_id: 5,
-            entity_url: "/api/v3/groundwaterstations/5/",
+            entity_url: "/api/v2/groundwaterstations/5/",
             view: [
                 51.98899999999999,
                 4.65027,

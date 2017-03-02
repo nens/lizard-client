@@ -36,7 +36,7 @@ angular.module('legend')
     var getColormapUrl = function () {
       var url = window.location.protocol
         + '//' + window.location.host
-        + '/api/v3/colormaps/';
+        + '/api/v2/colormaps/';
       return url;
     };
 

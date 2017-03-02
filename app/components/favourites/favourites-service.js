@@ -14,7 +14,7 @@ angular.module('favourites')
        *
        * Use a reconfigured 'query' so it actually returns an array of items.
        */
-      var Favourites = $resource('/api/v3/favourites/:uuid/', {uuid:'@uuid'}, {
+      var Favourites = $resource('/api/v2/favourites/:uuid/', {uuid:'@uuid'}, {
         'query': {
           method:'GET',
           isArray:true,

@@ -130,7 +130,7 @@ angular.module('user-menu')
        * @param  {any} id string or integer representing the id e.g. "1"
        */
       var archiveMessage = function (id) {
-        $http.post('/api/v3/inbox/{id}/read/'.replace(/\{id\}/g, id));
+        $http.post('/api/v2/inbox/{id}/read/'.replace(/\{id\}/g, id));
         scope.inbox = scope.inbox.filter(function (message) {
           return message.id !== id;
         });
@@ -183,7 +183,7 @@ angular.module('user-menu')
        * rendering and only when the browser tab is active.
        */
       var poll = requestAnimationFrame.bind(null, function () {
-        $http.get('/api/v3/inbox/')
+        $http.get('/api/v2/inbox/')
         .then(
           function (response) { scope.inbox = response.data; },
           function (response) { console.error(response.data); }
