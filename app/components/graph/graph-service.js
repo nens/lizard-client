@@ -1453,6 +1453,13 @@ angular.module('lizard-nxt')
    * @param  {boolean}      draw on y axis, else x-axis.
    */
   var drawLabel = function (svg, dimensions, label, y) {
+    // Hack-alert: if label === undefined, we assume it to be "mm". We do this
+    // because the only place where this "blank label" bug occurs is when
+    // drawing the barchart for rain, and that requires "mm" as the label on
+    // the yAxis.
+    if (label === undefined) {
+      label = "mm";
+    }
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
         mv,
