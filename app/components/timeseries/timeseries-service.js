@@ -176,7 +176,7 @@ angular.module('timeseries')
       }
 
       return $http({
-        url: 'api/v2/timeseries/',
+        url: 'api/v3/timeseries/',
         method: 'GET',
         params: params,
         timeout: localPromise.promise
@@ -356,8 +356,8 @@ angular.module('timeseries')
           filteredResult.push(ts);
         } else if (ts.events.length < MAX_NR_TIMESERIES_EVENTS) {
 
-          if (ts.parameter_referenced_unit === null) {
-            ts.parameter_referenced_unit = {};
+          if (ts.observation_type === null) {
+            ts.observation_type = {};
           }
 
           filteredResult.push(ts);

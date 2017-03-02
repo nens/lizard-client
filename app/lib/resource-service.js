@@ -22,7 +22,7 @@ angular.module('lizard-nxt')
   /**
    * @functtion
    * @description makes an url based on base url and the url param
-   * @params {string} url e.g. api/v2/search/
+   * @params {string} url e.g. api/v3/search/
    * @params {string} baseurl - optional e.g. https://demo.lizard.net/
    */
   this.makeUrl = function (url, baseUrl) {
@@ -47,7 +47,7 @@ angular.module('lizard-nxt')
   /**
    * @function
    * @description helper function for options that $http uses
-   * @params {string} url - e.g. 'api/v2/timeseries/'
+   * @params {string} url - e.g. 'api/v3/timeseries/'
    * @params {object} params - url parameters e.g. {q: 'this-is-a-query-param'}
    * @params {string} method - HTTP method e.g. 'PUT'
    */

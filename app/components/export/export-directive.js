@@ -39,7 +39,7 @@ angular.module('export')
       scope.loading = true;
 
       // Request timeseries/data/ with uuids and format=ASYNC_FORMAT and async=true
-      $http.get('/api/v2/timeseries/data/', {
+      $http.get('/api/v3/timeseries/data/', {
         params: {
           uuid: uuids,
           start: timeState.start.getTime(),

@@ -12,8 +12,8 @@ angular.module('lizard-nxt')
     Resource.setDefaultHttpFields({withCredentials: true});
   }
 
-  var timeseriesResource = new Resource.Endpoint('api/v2/timeseries/');
-  var regions = new Resource.Endpoint('api/v2/regions/?page_size=500');
+  var timeseriesResource = new Resource.Endpoint('api/v3/timeseries/');
+  var regions = new Resource.Endpoint('api/v3/regions/?page_size=500');
 
   // Wms getFeatureInfo goes through a proxy. Specify url as a param.
   var wmsGetFeatureInfo = new Resource.Endpoint('proxy/');

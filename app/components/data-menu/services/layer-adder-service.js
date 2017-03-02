@@ -43,7 +43,7 @@ angular.module('data-menu')
     this.fetchLayers = function (params, success, error) {
       params.type = 'assetgroup,eventseries,wmslayer,rasterstore,scenario';
       params.page_size = 8;
-      return $http.get('api/v2/search/', {
+      return $http.get('api/v3/search/', {
         params: params
       }).then(success, error);
     };
@@ -71,7 +71,7 @@ angular.module('data-menu')
       };
 
       return $http({
-        url: 'api/v2/' + entity + '/' + id + '/',
+        url: 'api/v3/' + entity + '/' + id + '/',
         method: 'GET'
       })
 
