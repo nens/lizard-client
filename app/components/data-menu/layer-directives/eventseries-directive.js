@@ -43,7 +43,7 @@ angular.module('data-menu')
             quantity: response.observation_type
               && response.observation_type.parameter,
             unit: response.observation_type
-              && response.observation_type.referenced_unit
+              && response.observation_type.unit
           }));
 
           MapService.updateLayers([scope.layer]);
