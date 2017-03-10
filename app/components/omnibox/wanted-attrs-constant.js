@@ -382,6 +382,27 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.code",
         valueSuffix: ""
+      },
+      {
+          keyName: gettext("UUID"),
+          attrName: "uuid",
+          ngBindValue:
+            "waterchain.timeseries[0].uuid",
+          valueSuffix: ""
+      },
+      {
+          keyName: gettext("Value type"),
+          attrName: "value",
+          ngBindValue:
+            "waterchain.timeseries[0].value_type",
+          valueSuffix: ""
+      },
+      {
+          keyName: gettext("Source Node"),
+          attrName: "node",
+          ngBindValue:
+            "waterchain.timeseries[0].node",
+          valueSuffix: ""
       }
     ]
   };
