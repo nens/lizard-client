@@ -126,25 +126,34 @@ angular.module('lizard-boostrap', ['favourites'])
       throw new Error('No lizard/bootstrap.json lizard is down or malfunctioning');
     };
 
+    /**
+     * Get and apply local bootstrap file. If there is no local bootstrap file,
+     * try to bootstrap from the standard location.
+     *
+     * @param  {boolean} applyState if true applies bootstrap.state, otherwise
+     * only set username and backend version.
+     */
     var getBootstrap = function (applyState) {
-      $http.get('bootstrap/lizard/', {})
-      .then(
-        function (response) {
-          var bootstrap = response.data;
-          // Set injected angular values: user and version.
-          _.merge(user, bootstrap.user);
-          version.full = bootstrap.version;
-          version.revision = bootstrap.revision;
-          if (applyState) {
-            FavouritesService.applyFavourite(bootstrap);
-            FavouritesService.applyFavourite({state: urlState});
-          }
-        },
-        function (response) {
-          showErrorModal();
+
+      function successCallback(response) {
+        var bootstrap = response.data;
+        // Set injected angular values: user and version.
+        _.merge(user, bootstrap.user);
+        version.full = bootstrap.version;
+        version.revision = bootstrap.revision;
+        if (applyState) {
+          FavouritesService.applyFavourite(bootstrap);
+          FavouritesService.applyFavourite({ state: urlState });
         }
-      );
-    };
+      }
+
+      $http.get('/dd-bootstrap.json').then(successCallback, function () {
+        $http.get('/bootstrap/lizard/').then(successCallback, function () {
+          showErrorModal();
+        });
+      });
+
+    }
 
     var urlState = UrlService.getState();
 

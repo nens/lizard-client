@@ -131,7 +131,7 @@ appropriate URLs in your CHANGELOG.
 
 The commits made are reflected in the Changelog. See the (changelog)[CHANGELOG.md] for an example.
 
-### Release
+## Release
 
 Doing a release for your package is easy(-ish). There is a grunt task to tag and push tags to github.
 
@@ -173,7 +173,8 @@ The fixes and the `CHANGELOG.md` would have to be merged with master, which migh
 give some merge conflicts. C'est la vie.
 
 
-### Deployment
+## Deployment
+
 For the deployment of frontend repositories we make use of the client
 deployment repository https://github.com/nens/client-deployment. It is already
 included as a git submodule in this repo.
@@ -208,6 +209,16 @@ Deploy to staging:
 Deploy to production:
 
     ansible-playbook -i deploy/production_hosts -K deploy/deploy.yml --extra-vars="version=2.7.1"
+
+
+### Bootstrapping
+
+For bootstrapping purposes, the DD-viewer needs some data from
+[https://digitaledelta.lizard.net/bootstrap/lizard/](https://digitaledelta.lizard.net/bootstrap/lizard/).
+This JSON determines the base layers and overlays, the spatial and temporal
+viewport, etc., and is the recommended way to initialize the client. If you are
+inclined to override any of these settings, it's possible the save the file
+locally as `dd-bootstrap.json`, edit it, and place it next to `index.html`.
 
 
 ## Source files
