@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.10.0"></a>
+# [4.10.0](https://github.com/nens/lizard-client/compare/v4.9.2...v4.10.0) (2017-03-13)
+
+
+### Bug Fixes
+
+* **observation_type:** fixes referenced_unit to unit ([f8392b1](https://github.com/nens/lizard-client/commit/f8392b1))
+* **timeline:** plotted tickmarks are converted to local time ([b70884e](https://github.com/nens/lizard-client/commit/b70884e))
+
+
+### Features
+
+* **api:** Client connects to  api/v3. ([8000f5b](https://github.com/nens/lizard-client/commit/8000f5b))
+
+
+
 <a name="4.9.2"></a>
 ## [4.9.2](https://github.com/nens/lizard-client/compare/v4.9.1...v4.9.2) (2017-02-24)
 
