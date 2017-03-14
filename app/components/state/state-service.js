@@ -194,7 +194,7 @@ angular.module('global-state')
       playing: false,
       start: null, // defined below
       end: null, // defined below
-      relative: true, // relative or absolut offset.
+      relative: true, // relative or absolute offset.
       showingTemporalData: false
     };
 
