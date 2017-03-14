@@ -1,6 +1,7 @@
 <div id="timeline"
-     class="timeline navbar-fixed-bottom material-shadow hidden-sm hidden-xs" 
-     ng-controller="TimeCtrl as timeline">
+     class="timeline navbar-fixed-bottom material-shadow hidden-sm hidden-xs"
+     ng-controller="TimeCtrl as timeline"
+     ng-hide="!timeline.state.temporal.showingTemporalData">
 
   <div class="timeline-wrapper">
     <div class="time-controls" id="time-controls" ng-if="timeline.animatable">

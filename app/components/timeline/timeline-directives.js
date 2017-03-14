@@ -463,6 +463,35 @@ angular.module('lizard-nxt')
       );
     });
 
+    /**
+     * Decide whether we show the timeline.
+     *
+     * This depends on the presence of active temporal layers and on
+     * on selected assets with timeseries, so we watch those.
+     */
+    scope.$watch(
+      (() => JSON.stringify([
+        State.layers,
+        State.selected.timeseries
+      ])),
+      function (n, o) {
+        var showTemporalData = false;
+
+        if (State.selected.timeseries && State.selected.timeseries.length) {
+          // Showing an asset with a timeseries
+          showTemporalData = true;
+        } else if (State.layers && DataService.dataLayers) {
+          showTemporalData = State.layers.some((layer) =>
+              layer.active &&
+              // To check if it's temporal, we have to find a layer with the same UUID in
+              // DataService.dataLayers, and check its .temporal property.
+              DataService.dataLayers.some((dl) =>
+                dl.uuid == layer.uuid && dl.temporal
+              ));;
+        }
+
+        State.temporal.showingTemporalData = !!showTemporalData;
+      });
 
     /**
      * The timeline can be too early on initialization.
