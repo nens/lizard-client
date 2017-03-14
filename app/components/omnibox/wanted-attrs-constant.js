@@ -365,24 +365,64 @@ angular.module('omnibox')
         valueSuffix: ""
       },
       {
+        keyName: gettext("Code"),
+        attrName: "code",
+        ngBindValue:
+          "waterchain.code",
+        valueSuffix: ""
+      },
+      {
         keyName: gettext("Category"),
         attrName: "category",
         ngBindValue: "waterchain.category",
         valueSuffix: ""
       },
       {
+          keyName: gettext("Node"),
+          attrName: "node",
+          ngBindValue:
+            "waterchain.ts.node.name",
+          valueSuffix: ""
+      },
+      {
+        keyName: gettext("Compartment"),
+        attrName: "compartment",
+        ngBindValue: "waterchain.ts.observation_type.compartment",
+        valueSuffix: ""
+      },
+      {
+          keyName: gettext("Time series"),
+          attrName: "url",
+          ngBindValue:
+            "waterchain.timeseries_url",
+          valueSuffix: ""
+      },
+      {
+        keyName: gettext("Start"),
+        attrName: "start",
+        ngBindValue: "waterchain.ts.start | date:'yyyy-MM-dd HH:mm:ss Z'",
+        valueSuffix: ""
+      },
+      {
+        keyName: gettext("End"),
+        attrName: "end",
+        ngBindValue: "waterchain.ts.end | date:'yyyy-MM-dd HH:mm:ss Z'",
+        valueSuffix: ""
+      },
+      {
+        keyName: gettext("Interval"),
+        attrName: "interval",
+        ngBindValue: "waterchain.ts.interval",
+        valueSuffix: ""
+      }
+      /*
+      {
         keyName: gettext("Frequency"),
         attrName: "frequency",
         ngBindValue: "waterchain.frequency",
         valueSuffix: ""
-      },
-      {
-        keyName: gettext("Code"),
-        attrName: "code",
-        ngBindValue:
-          "waterchain.code",
-        valueSuffix: ""
       }
+      */
     ]
   };
 

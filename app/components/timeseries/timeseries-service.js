@@ -273,6 +273,12 @@ angular.module('timeseries')
           graphTimeseries.unit += ' (' + ts.reference_frame + ')';
         }
         graphTimeseries.thresholds = [];
+        var tsActive = _.find(State.selected.timeseries, {'uuid': ts.uuid });
+        if (tsActive && tsActive.active) {
+          assetOfTs.timeseries_url = "<a href='" + graphTimeseries.url +
+            "' target='_blank'>" + graphTimeseries.url + "</a>";
+          assetOfTs.ts = graphTimeseries.ts;
+        }
       }
 
       if (assetOfTs) {
@@ -312,7 +318,6 @@ angular.module('timeseries')
     };
 
     var formatTimeseriesForGraph = function (timeseries) {
-
       var yKey = timeseries.field || 'value';
       var graphTimeseriesTemplate = {
         id: '', //uuid
@@ -335,6 +340,8 @@ angular.module('timeseries')
         graphTimeseries.id = ts.uuid;
         graphTimeseries.valueType = ts.value_type;
         graphTimeseries.measureScale = ts.observation_type.scale;
+        graphTimeseries.url = ts.url;
+        graphTimeseries.ts = ts;
         graphTimeseries = addTimeseriesProperties(graphTimeseries);
         result.push(graphTimeseries);
       });
