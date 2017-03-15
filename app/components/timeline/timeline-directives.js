@@ -490,8 +490,7 @@ angular.module('lizard-nxt')
               // DataService.dataLayers, and check its .temporal property.
               DataService.dataLayers.some(function (dl) {
                 return (dl.uuid == layer.uuid && dl.temporal);
-              });
-            )
+              }))
           });
         }
 
