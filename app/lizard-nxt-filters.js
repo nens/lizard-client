@@ -11,8 +11,8 @@
  *    do not translate attributes properly. (lookupManholeShape,
  *    lookupWeirControl, ...)
  *
- * TODO: move logic to the serializers and implement internationalization in the
- * backend.
+ * TODO: move logic to the serializers and further implement
+ * internationalization in the backend.
  */
 
 angular.module('lizard-nxt-filters', []);
@@ -227,119 +227,6 @@ angular.module('lizard-nxt-filters')
 
 // lookups: levee
 
-angular.module('lizard-nxt-filters')
-  .filter('lookupLeveeType', function () {
-  return function (input) {
-    var out;
-    switch (input) {
-    case 1:
-      out = 'Primair';
-      break;
-    case 2:
-      out = 'Regionaal';
-      break;
-    case 3:
-      out = 'c-type';
-      break;
-    default:
-      out = 'Afwijkend type';
-    }
-    return out;
-  };
-});
-
-angular.module('lizard-nxt-filters')
-  .filter('lookupLeveeReferencePointType', function () {
-  return function (input) {
-    var out;
-    switch (input) {
-    case 1:
-      out = 'Dijkpaal';
-      break;
-    case 2:
-      out = 'Virtueel';
-      break;
-    default:
-      out = 'Afwijkend type';
-    }
-    return out;
-  };
-});
-
-
-angular.module('lizard-nxt-filters')
-  .filter('allowedFlowDirection', function () {
-  return function (input) {
-    var out;
-    if (input !== null && input !== undefined) {
-      out = input;
-    } else {
-      out = '...';
-    }
-    return out;
-  };
-});
-
-
-angular.module('lizard-nxt-filters')
-  .filter('lookupPumpStationType', function () {
-  return function (input) {
-      switch (input) {
-      case 'HOUSEHOLD':
-        return 'Drukgemaal';
-      case 'SEWER':
-        return 'Rioolgemaal';
-      case 'TRANSPORT':
-        return 'Transportgemaal';
-      case 'UNDER':
-        return 'Onderbemaling';
-      case 'POLDER':
-        return 'Poldergemaal';
-      case 'BOSOM':
-        return 'Boezemgemaal';
-      case 'OTHER':
-        return 'Gemaaltype afwijkend';
-      default:
-        return 'Gemaaltype onbekend';
-      }
-    };
-});
-
-angular.module('lizard-nxt-filters')
-  .filter('lookupPipeType', function () {
-  return function (input) {
-    var out;
-    switch (input) {
-    case '00':
-      out = 'Gemengde leiding';
-      break;
-    case '01':
-      out = 'Regenwaterleiding';
-      break;
-    case '02':
-      out = 'Vuilwaterleiding';
-      break;
-    case '03':
-      out = 'Transportleiding';
-      break;
-    case '04':
-      out = 'Overstortleiding';
-      break;
-    case '05':
-      out = 'Zinker';
-      break;
-    case '06':
-      out = 'Bergingsleiding';
-      break;
-    case '07':
-      out = 'Berg-/Bezinkleiding';
-      break;
-    default:
-      out = 'Leidingtype afwijkend';
-    }
-    return out;
-  };
-});
 
 angular.module('lizard-nxt-filters')
   .filter('lookupPipeShape', function () {
@@ -378,27 +265,6 @@ angular.module('lizard-nxt-filters')
 });
 
 angular.module('lizard-nxt-filters')
-  .filter('lookupPressurePipeType', function () {
-  return function (input) {
-    var out;
-    switch (input) {
-    case 1:
-      out = 'Drukriolering';
-      break;
-    case 2:
-      out = 'Persleiding';
-      break;
-    case 3:
-      out = 'Pers-/transportleiding';
-      break;
-    default:
-      out = 'Persleidingtype afwijkend';
-    }
-    return out;
-  };
-});
-
-angular.module('lizard-nxt-filters')
   .filter('pipeMaterialOrEllipsis', function () {
   return function (input) {
     var out;
@@ -428,30 +294,6 @@ angular.module('lizard-nxt-filters')
   };
 });
 
-angular.module('lizard-nxt-filters')
-  .filter('aggWinToYLabel', ['gettext', function (gettext) {
-  return function (input) {
-    var out;
-    switch (input) {
-    case 300000:
-      out = gettext('mm / 5 min');
-      break;
-    case 3600000:
-      out = gettext('mm / hour');
-      break;
-    case 86400000:
-      out = gettext('mm / day');
-      break;
-    case 2635200000:
-      out = gettext('mm / month');
-      break;
-    default:
-      out = '...';
-    }
-    return out;
-  };
-}]);
-
 /**
  * Truncates a string to have no more than maxLength characters.
  * Used in the righthand menu for truncating lengthy layer names.
@@ -474,26 +316,6 @@ angular.module('lizard-nxt-filters')
     } else {
       return input;
     }
-  };
-});
-
-/**
- * For the n timeseries related to a structure, remove the ones with an
- * insufficient amount of measurements to be able draw a graph. Since ts events
- * have a max and a min, it is possible to draw a line between 1 data point.
- *
- * @param {Object[]} A list of timeseries
- * @return  {Object[]} A list of timeseries with sufficient data
- */
-angular.module('lizard-nxt-filters')
-  .filter('rmZeroDatumTimeseries', function () {
-
-  return function (input) {
-    var result = [];
-    angular.forEach(input, function (datum) {
-      if (datum.events.length > 0) { result.push(datum); }
-    });
-    return result;
   };
 });
 

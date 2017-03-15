@@ -531,7 +531,7 @@ angular.module('omnibox')
         keyName: gettext("Type"),
         attrName: "type",
         ngBindValue:
-          "waterchain.type | lookupPipeType",
+          "waterchain.type",
         valueSuffix: ""
       },
       {
@@ -600,7 +600,7 @@ angular.module('omnibox')
         keyName: gettext("Type"),
         attrName: "type",
         ngBindValue:
-          "waterchain.type | lookupPressurePipeType",
+          "waterchain.type",
         valueSuffix: ""
       },
       {
@@ -714,7 +714,7 @@ angular.module('omnibox')
         keyName: gettext("Sewer system"),
         attrName: "sewer_system ",
         ngBindValue:
-          "waterchain.sewer_system | translate",
+          "waterchain.sewer_system",
         valueSuffix: ""
       },
       {
