@@ -470,10 +470,12 @@ angular.module('lizard-nxt')
      * on selected assets with timeseries, so we watch those.
      */
     scope.$watch(
-      (() => JSON.stringify([
-        State.layers,
-        State.selected.timeseries
-      ])),
+      function () {
+        return JSON.stringify([
+          State.layers,
+          State.selected.timeseries
+        ])
+      },
       function (n, o) {
         var showTemporalData = false;
 
@@ -481,13 +483,16 @@ angular.module('lizard-nxt')
           // Showing an asset with a timeseries
           showTemporalData = true;
         } else if (State.layers && DataService.dataLayers) {
-          showTemporalData = State.layers.some((layer) =>
+          showTemporalData = State.layers.some(function (layer) {
+            return (
               layer.active &&
               // To check if it's temporal, we have to find a layer with the same UUID in
               // DataService.dataLayers, and check its .temporal property.
-              DataService.dataLayers.some((dl) =>
-                dl.uuid == layer.uuid && dl.temporal
-              ));
+              DataService.dataLayers.some(function (dl) {
+                return (dl.uuid == layer.uuid && dl.temporal);
+              });
+            )
+          });
         }
 
         State.temporal.showingTemporalData = !!showTemporalData;
