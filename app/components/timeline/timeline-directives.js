@@ -474,29 +474,62 @@ angular.module('lizard-nxt')
         return JSON.stringify([
           State.layers,
           State.selected.timeseries
-        ])
+        ]);
       },
       function (n, o) {
-        var showTemporalData = false;
 
-        if (State.selected.timeseries && State.selected.timeseries.length) {
-          // Showing an asset with a timeseries
-          showTemporalData = true;
-        } else if (State.layers && DataService.dataLayers) {
-          showTemporalData = State.layers.some(function (layer) {
+        var showTemporalData, check1, check2, check3;
+
+        // 1) set boolean 1: has active asset with timeseries?
+        check1 = State.selected.timeseries && State.selected.timeseries.length;
+
+        // 2) set boolean 2: has active temporal raster(s)?
+        if (State.layers && DataService.dataLayers) {
+          check2 = State.layers.some(function (layer) {
             return (
               layer.active &&
-              // To check if it's temporal, we have to find a layer with the same UUID in
-              // DataService.dataLayers, and check its .temporal property.
+              // To check if it's temporal, we have to find a layer with the
+              // same UUID in DataService.dataLayers, and check its .temporal
+              // property.
               DataService.dataLayers.some(function (dl) {
-                return (dl.uuid == layer.uuid && dl.temporal);
-              });
-            )
+                return (dl.uuid === layer.uuid && dl.temporal);
+              })
+            );
           });
         }
 
-        State.temporal.showingTemporalData = !!showTemporalData;
-      });
+        // 3) set boolean 3: has active eventseries?
+        if (State.layers && State.layers.some(function (layer) {
+          return layer.active && layer.type === 'eventseries';
+        })) {
+          check3 = true;
+        } else {
+          check3 = false;
+        }
+
+        showTemporalData = !!(check1 || check2 || check3);
+
+        // Only toggle TL visibility when needed too:
+        if (State.temporal.showingTemporalData !== showTemporalData) {
+          State.temporal.showingTemporalData = showTemporalData;
+          toggleTimeline(showTemporalData);
+        }
+      }
+    );
+
+    /* Animate the timeline (dis-)appearance:
+     *
+     * The only arg passed to the function is read as a boolean:
+     * If true, we show the timeline; else we hide the timeline
+     */
+    var toggleTimeline = function (mustShow) {
+      var elem = angular.element('#timeline');
+      if (mustShow) {
+        elem.removeClass('must-hide');
+      } else {
+        elem.addClass('must-hide');
+      }
+    };
 
     /**
      * The timeline can be too early on initialization.

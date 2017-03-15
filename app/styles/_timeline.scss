@@ -293,3 +293,8 @@
   stroke-opacity: 0.95;
   fill-opacity: 0.75;
 }
+
+#timeline.must-hide {
+  transform: translateY(+100px);
+}
+
