@@ -2,8 +2,8 @@
  * Lizard-client global state object.
  */
 angular.module('global-state')
-  .service('State', ['UtilService', 'gettextCatalog',
-    function (UtilService, gettextCatalog) {
+  .service('State', ['UtilService', 'gettextCatalog', '$http',
+    function (UtilService, gettextCatalog, $http) {
 
     var state = {};
 
@@ -60,6 +60,7 @@ angular.module('global-state')
       set: function (language) {
         if (gettextCatalog.strings[language]) {
           gettextCatalog.setCurrentLanguage(language);
+          $http.defaults.headers.common["Accept-Language"] = state.language;
         }
       }
     });
