@@ -241,9 +241,7 @@ angular.module('timeseries')
       );
       return asset;
     };
-
   }
-
 ]);
 
 
@@ -274,7 +272,6 @@ angular.module('timeseries')
       var setAssetAndTs = function (asset) {
         ts = _.find(asset.timeseries, { 'uuid': graphTimeseries.id });
         if (ts) { assetOfTs = asset; }
-
         if (!ts && asset.selectedAsset) { return setAssetAndTs(asset.selectedAsset); }
         return ts === undefined; // Break out early
       };
@@ -282,6 +279,7 @@ angular.module('timeseries')
       _.forEach(DataService.assets, setAssetAndTs);
 
       if (ts) {
+
         graphTimeseries.parameter = ts.parameter || EMPTY;
         graphTimeseries.unit = ts.unit || EMPTY;
         graphTimeseries.location = ts.location || EMPTY;
@@ -290,6 +288,12 @@ angular.module('timeseries')
           graphTimeseries.unit += ' (' + ts.reference_frame + ')';
         }
         graphTimeseries.thresholds = [];
+
+        var tsActive = _.find(State.selected.timeseries, {'uuid': ts.uuid });
+        if (tsActive && tsActive.active) {
+          console.log("HIERRR HOERRRR");
+          assetOfTs.ts = graphTimeseries.ts;
+        }
       }
 
       if (assetOfTs) {
@@ -300,9 +304,7 @@ angular.module('timeseries')
             if (attr.valueSuffix === graphTimeseries.unit) {
               var value = parseFloat(assetOfTs[attr.attrName]);
               if (!isNaN(value)) {
-
                 var name = assetOfTs.name === '' ? '...' : assetOfTs.name;
-
                 threshold = {
                   value: value,
                   name: name + ': ' + attr.keyName
@@ -348,13 +350,22 @@ angular.module('timeseries')
       var result = [];
       timeseries.forEach(function (ts) {
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
+
         graphTimeseries.data = ts.events;
         graphTimeseries.id = ts.uuid;
         graphTimeseries.valueType = ts.value_type;
         graphTimeseries.measureScale = ts.observation_type.scale;
+
+        graphTimeseries.start = ts.start;
+        graphTimeseries.end = ts.end;
+
+        graphTimeseries.url = ts.url;
+        graphTimeseries.ts = ts;
+
         graphTimeseries = addTimeseriesProperties(graphTimeseries);
         result.push(graphTimeseries);
       });
+      console.log("RESULT:", result);
       return result;
     };
 
