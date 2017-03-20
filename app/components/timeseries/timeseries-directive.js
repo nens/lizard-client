@@ -3,8 +3,8 @@
  * Timeseries directive.
  */
 angular.module('timeseries')
-.directive('timeseries', ['TimeseriesService', 'Timeline', 'State',
-  function (TimeseriesService, Timeline, State) {
+.directive('timeseries', ['TimeseriesService', 'Timeline', 'State', '$timeout',
+  function (TimeseriesService, Timeline, State, $timeout) {
   return {
     link: function (scope) {
 
@@ -26,7 +26,6 @@ angular.module('timeseries')
             var start = selectedTs.start;
             var end = selectedTs.end;
 
-            var intialTimelineMoving = State.temporal.timelineMoving;
             State.temporal.timelineMoving = true;
             State.temporal.at = start;
             State.temporal.start = start;
@@ -36,15 +35,31 @@ angular.module('timeseries')
               ? Timeline.prototype.getAggWindow()
               : DEFAULT_AGG_WINDOW;
 
+            //////////////////////////////////////////
+            ///////////////////////////////////////////
+
             // Option 1; use Timeline.prototype.Zoomto()
             // => Is this construction responsible for the 'this._svg error'???
 
-            Timeline.prototype.zoomTo(
-              State.temporal.start,
-              State.temporal.end,
-              aggWindow,
-              true
-            );
+            $timeout(function () {
+              console.log('FINISHED $timeout');
+
+              try {
+
+                Timeline.prototype.zoomTo(
+                  State.temporal.start,
+                  State.temporal.end,
+                  aggWindow
+                );
+
+              } catch (e) {
+                console.log("error caught:", e);
+              }
+
+              State.temporal.timelineMoving = false;
+            });
+
+
 
             // Option 2: use Timeline.prototype.resize()
             // => Leads to even greater w0rld of pain... x(
@@ -56,14 +71,19 @@ angular.module('timeseries')
             // var nEvents = 0;
 
             // Timeline.prototype.resize(
-            //   dimensions,
+            //   undefined,
             //   start,
             //   aggWindow,
             //   nEvents
             // );
 
-            State.temporal.timelineMoving = false;
-            State.temporal.timelineMoving = intialTimelineMoving;
+            // if (scope.$$phase) {
+            //   console.log("[scope.$$phase] TRUE");
+            // } else {
+            //   console.log("[scope.$$phase] FALSE");
+            // }
+
+
           }
         }
       };
