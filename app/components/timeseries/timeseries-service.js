@@ -291,7 +291,6 @@ angular.module('timeseries')
 
         var tsActive = _.find(State.selected.timeseries, {'uuid': ts.uuid });
         if (tsActive && tsActive.active) {
-          console.log("HIERRR HOERRRR");
           assetOfTs.ts = graphTimeseries.ts;
         }
       }
@@ -365,7 +364,6 @@ angular.module('timeseries')
         graphTimeseries = addTimeseriesProperties(graphTimeseries);
         result.push(graphTimeseries);
       });
-      console.log("RESULT:", result);
       return result;
     };
 

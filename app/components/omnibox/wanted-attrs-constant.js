@@ -402,13 +402,13 @@ angular.module('omnibox')
       {
         keyName: gettext("Start"),
         attrName: "start",
-        ngBindValue: "waterchain.ts.start | date:'yyyy-MM-dd HH:mm:ss Z'",
+        ngBindValue: "waterchain.ts.start",
         valueSuffix: ""
       },
       {
         keyName: gettext("End"),
         attrName: "end",
-        ngBindValue: "waterchain.ts.end | date:'yyyy-MM-dd HH:mm:ss Z'",
+        ngBindValue: "waterchain.ts.end",
         valueSuffix: ""
       },
     ]

@@ -3,10 +3,44 @@
  * Timeseries directive.
  */
 angular.module('timeseries')
-.directive('timeseries', ['TimeseriesService', 'State',
-  function (TimeseriesService, State) {
+.directive('timeseries', ['TimeseriesService', 'Timeline', 'State',
+  function (TimeseriesService, Timeline, State) {
   return {
     link: function (scope) {
+
+      scope.zoomToMagic = function () {
+        if (State.context === 'map') {
+          if (State.selected.timeseries &&
+              State.selected.timeseries.length >= 1) {
+
+            var selectedTsUuid = State.selected.timeseries[0].uuid;
+            var selectedTs = _.find(TimeseriesService.timeseries, {
+              id: selectedTsUuid });
+
+            if (selectedTs === undefined) {
+              console.log("[E] selectedTs === undefined (Skipping further actions...");
+              return;
+            }
+
+            var start = selectedTs.start;
+            var end = selectedTs.end;
+
+            State.temporal.timelineMoving = true;
+            State.temporal.at = start; // + Math.round((end - start) / 2);
+            State.temporal.start = start;
+            State.temporal.end = end;
+
+            console.log("[dbg] State.temporal:", State.temporal);
+
+            Timeline.prototype.zoomTo(
+              State.temporal.start,
+              State.temporal.end,
+              360000);
+
+            State.temporal.timelineMoving = false;
+          }
+        }
+      };
 
       scope.$watch('asset', function () {
         TimeseriesService.initializeTimeseriesOfAsset(scope.asset);
@@ -24,7 +58,7 @@ angular.module('timeseries')
         }
       });
     },
-    restrict: 'E', // Timeseries can be an element with single-select or
+    restrict: 'E',  // Timeseries can be an element with single-select or
                     // multi select as an attribute or without in which
                     // case it only sets the color and order of timeseries of
                     // new assets.
