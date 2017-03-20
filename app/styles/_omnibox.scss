@@ -824,25 +824,11 @@ input[type=file] {
   padding-left: 15px;
 }
 
-.relativate-ts-icon {
-  color: #428bca;
-  position: relative;
-  top: 1px;
-}
-
-.zoom-to-time-icon {
-  position: relative;
-  top: 1px;
-  color: #e74c3c;
-  font-size: 18px !important;
-  margin-right: 8px;
-}
-
 .omnibox-ts-icon {
   color: #7f8c8d;
 }
 
-.zoom-to-time-icon:hover {
-  color: #7f8c8d;
+.omnibox-ts-icon:hover {
+  color: #e74c3c;
   cursor: pointer;
 }

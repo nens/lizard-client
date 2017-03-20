@@ -13,6 +13,7 @@ angular.module('timeseries')
           if (State.selected.timeseries &&
               State.selected.timeseries.length >= 1) {
 
+            var DEFAULT_AGG_WINDOW = 360000;
             var selectedTsUuid = State.selected.timeseries[0].uuid;
             var selectedTs = _.find(TimeseriesService.timeseries, {
               id: selectedTsUuid });
@@ -25,19 +26,44 @@ angular.module('timeseries')
             var start = selectedTs.start;
             var end = selectedTs.end;
 
+            var intialTimelineMoving = State.temporal.timelineMoving;
             State.temporal.timelineMoving = true;
-            State.temporal.at = start; // + Math.round((end - start) / 2);
+            State.temporal.at = start;
             State.temporal.start = start;
             State.temporal.end = end;
 
-            console.log("[dbg] State.temporal:", State.temporal);
+            var aggWindow = Timeline.prototype.hasAggWindow()
+              ? Timeline.prototype.getAggWindow()
+              : DEFAULT_AGG_WINDOW;
+
+            // Option 1; use Timeline.prototype.Zoomto()
+            // => Is this construction responsible for the 'this._svg error'???
 
             Timeline.prototype.zoomTo(
               State.temporal.start,
               State.temporal.end,
-              360000);
+              aggWindow,
+              true
+            );
+
+            // Option 2: use Timeline.prototype.resize()
+            // => Leads to even greater w0rld of pain... x(
+
+            // var dimensions = Timeline.prototype.dimensions;
+            // console.log("[dbg] arg 'dimensions':", dimensions);
+            // console.log("[dbg] arg 'timestamp':", start);
+
+            // var nEvents = 0;
+
+            // Timeline.prototype.resize(
+            //   dimensions,
+            //   start,
+            //   aggWindow,
+            //   nEvents
+            // );
 
             State.temporal.timelineMoving = false;
+            State.temporal.timelineMoving = intialTimelineMoving;
           }
         }
       };

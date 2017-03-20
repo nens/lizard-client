@@ -358,6 +358,18 @@ angular.module('lizard-nxt')
       }
     },
 
+    hasAggWindow: {
+      value: function () {
+        return !!aggWindow;
+      }
+    },
+
+    getAggWindow: {
+      value: function () {
+        return aggWindow;
+      }
+    },
+
     addZoomListener: {
       value: function (zoomFn, zoomEndFn) {
         if (zoomFn) {

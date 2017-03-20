@@ -2,14 +2,15 @@
   <div class="card-content">
 
     <div class="timeseries-header-container">
-      <i class="fa fa-crosshairs zoom-to-time-icon"
-         title="Zoom time to data"
-         ng-click="zoomToMagic()"></i>
-      <i class="fa omnibox-ts-icon" ng-class="{
-        'fa-spin': fetching && timeseries.selected.value_type !== image,
-        'fa-clock-o': timeseries.selected.value_type !== 'image',
-        'fa-file-image-o': timeseries.selected.value_type === 'image'
-      }"></i>
+      <i class="fa omnibox-ts-icon"
+         title="Zoom to timeseries"
+         ng-click="zoomToMagic()"
+         ng-class="{
+          'fa-spin': fetching && timeseries.selected.value_type !== image,
+          'fa-clock-o': timeseries.selected.value_type !== 'image',
+          'fa-file-image-o': timeseries.selected.value_type === 'image'
+         }">
+      </i>
       <select
         class="timeseries"
         ng-if="asset.timeseries.length > 1"
