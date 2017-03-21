@@ -38,52 +38,19 @@ angular.module('timeseries')
             //////////////////////////////////////////
             ///////////////////////////////////////////
 
-            // Option 1; use Timeline.prototype.Zoomto()
-            // => Is this construction responsible for the 'this._svg error'???
-
             $timeout(function () {
-              console.log('FINISHED $timeout');
-
               try {
-
                 Timeline.prototype.zoomTo(
                   State.temporal.start,
                   State.temporal.end,
                   aggWindow
                 );
-
               } catch (e) {
-                console.log("error caught:", e);
+                console.log("[E] EXCEPTION CAUGHT:", e);
+              } finally {
+                State.temporal.timelineMoving = false;
               }
-
-              State.temporal.timelineMoving = false;
             });
-
-
-
-            // Option 2: use Timeline.prototype.resize()
-            // => Leads to even greater w0rld of pain... x(
-
-            // var dimensions = Timeline.prototype.dimensions;
-            // console.log("[dbg] arg 'dimensions':", dimensions);
-            // console.log("[dbg] arg 'timestamp':", start);
-
-            // var nEvents = 0;
-
-            // Timeline.prototype.resize(
-            //   undefined,
-            //   start,
-            //   aggWindow,
-            //   nEvents
-            // );
-
-            // if (scope.$$phase) {
-            //   console.log("[scope.$$phase] TRUE");
-            // } else {
-            //   console.log("[scope.$$phase] FALSE");
-            // }
-
-
           }
         }
       };

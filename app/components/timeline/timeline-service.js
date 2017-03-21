@@ -36,9 +36,6 @@ angular.module('lizard-nxt')
   zoomed = null,
   zoomend = null,
 
-  // experimental:
-  // _interaction = null,
-
   // Timeline elements
   futureIndicator,
   aggWindow, // aggregation window
@@ -47,7 +44,6 @@ angular.module('lizard-nxt')
   tickmarks,
   TICKMARK_HEIGHT = 5, // data availability indicators
   MAX_CIRCLE_SIZE = 16;
-
 
   /**
    * @constructor
@@ -79,15 +75,11 @@ angular.module('lizard-nxt')
     drawTimelineAxes(this._svg, xScale, dimensions);
     this.addFutureIndicator();
     this.addInteraction(interaction);
-
-    _interaction = interaction;
   }
 
   Timeline.prototype = Object.create(NxtD3.prototype, {
 
     constructor: Timeline,
-
-
 
     /**
      * @attribute
@@ -227,19 +219,9 @@ angular.module('lizard-nxt')
      */
     resize: {
       value: function (newDimensions, timestamp, interval, nEvents) {
-        // console.log("[F] resize");
-        // console.log("*** this.dimensions =", this.dimensions);
-        // console.log("*** this._initDimensions =", this._initDimensions);
-
         var oldDimensions = angular.copy(this.dimensions);
-        // if (newDimensions) {
-        //   NxtD3.prototype.resize.call(this, newDimensions);
-        // } else {
-        //   newDimensions = oldDimensions;
-        // }
         this.updateElements(oldDimensions, timestamp, interval);
         this._svg = resizeTimelineCanvas(this._svg, oldDimensions, this.dimensions);
-
         ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
         xScale.range([0, newDimensions.width - newDimensions.padding.right]);
         drawTimelineAxes(this._svg, xScale, newDimensions);
