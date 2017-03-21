@@ -3,55 +3,32 @@
  * Timeseries directive.
  */
 angular.module('timeseries')
-.directive('timeseries', ['TimeseriesService', 'Timeline', 'State', '$timeout',
-  function (TimeseriesService, Timeline, State, $timeout) {
+.directive('timeseries', ['TimeseriesService', 'State', '$timeout',
+  function (TimeseriesService, State, $timeout) {
   return {
     link: function (scope) {
 
       scope.zoomToMagic = function () {
-        if (State.context === 'map') {
-          if (State.selected.timeseries &&
-              State.selected.timeseries.length >= 1) {
+        if (State.context === 'map' &&
+            State.selected.timeseries &&
+            State.selected.timeseries.length >= 1) {
 
-            var DEFAULT_AGG_WINDOW = 360000;
-            var selectedTsUuid = State.selected.timeseries[0].uuid;
-            var selectedTs = _.find(TimeseriesService.timeseries, {
-              id: selectedTsUuid });
+          var selectedTsUUID = State.selected.timeseries[0].uuid,
+              selectedTs = _.find(TimeseriesService.timeseries, { id:
+                selectedTsUUID });
 
-            if (selectedTs === undefined) {
-              console.log("[E] selectedTs === undefined (Skipping further actions...");
-              return;
-            }
+          // We toggle State.temporal.timelineMoving to trigger the correct
+          // angular $watch in the timeline-directive.
+          State.temporal.timelineMoving = !State.temporal.timelineMoving;
 
-            var start = selectedTs.start;
-            var end = selectedTs.end;
+          State.temporal.at = selectedTs.start;
+          State.temporal.start = selectedTs.start;
+          State.temporal.end = selectedTs.end;
 
-            State.temporal.timelineMoving = true;
-            State.temporal.at = start;
-            State.temporal.start = start;
-            State.temporal.end = end;
-
-            var aggWindow = Timeline.prototype.hasAggWindow()
-              ? Timeline.prototype.getAggWindow()
-              : DEFAULT_AGG_WINDOW;
-
-            //////////////////////////////////////////
-            ///////////////////////////////////////////
-
-            $timeout(function () {
-              try {
-                Timeline.prototype.zoomTo(
-                  State.temporal.start,
-                  State.temporal.end,
-                  aggWindow
-                );
-              } catch (e) {
-                console.log("[E] EXCEPTION CAUGHT:", e);
-              } finally {
-                State.temporal.timelineMoving = false;
-              }
-            });
-          }
+          $timeout(function () {
+            // We reset State.temporal.timelineMoving a-sync.
+            State.temporal.timelineMoving = !State.temporal.timelineMoving;
+          });
         }
       };
 

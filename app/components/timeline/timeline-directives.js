@@ -429,7 +429,6 @@ angular.module('lizard-nxt')
     scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
       if (!timelineSetsTime) {
-
         timeline.zoomTo(
           State.temporal.start,
           State.temporal.end,
