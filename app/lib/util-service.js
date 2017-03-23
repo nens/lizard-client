@@ -755,7 +755,10 @@ angular.module('lizard-nxt')
    * @return {number} - A number denoting the extent's corresponding perimeter
    *                   (expressed in Km^2)
    */
-  this.extent2kilometers = function (leafletBounds, minValue=1) {
+  this.extent2kilometers = function (leafletBounds, minValue) {
+    if (typeof minValue === 'undefined') {
+      minValue = 1;
+    }
 
     var northWest = L.latLng({
           lat: leafletBounds._southWest.lat,

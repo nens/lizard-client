@@ -384,15 +384,15 @@ angular.module('lizard-nxt')
         value[keys.x] = pixels / total; // Percentage, is percentage of area with data
 
         var selectedGeometries = State.selected.geometries;
-        if (selectedGeometries && selectedGeometries.length == 1 &&
+        if (selectedGeometries && selectedGeometries.length === 1 &&
             selectedGeometries[0].geometry.type === 'Polygon') {
-          var selectedPolygon = selectedGeometries[0]
+          var selectedPolygon = selectedGeometries[0];
           var totalArea = selectedPolygon.area;
-          if (value["total"]) {
+          if (value.total) {
             // This is the percentage of the whole requested area
-            var percentageOfArea = pixels / value["total"];
+            var percentageOfArea = pixels / value.total;
 
-            value["extraLabel"] = "(" + Math.round(percentageOfArea * totalArea / 10000) + " ha)";
+            value.extraLabel = "(" + Math.round(percentageOfArea * totalArea / 10000) + " ha)";
           }
         }
       });
@@ -981,8 +981,8 @@ angular.module('lizard-nxt')
         label = Math.round(d[keys.x] * 100) + '% ' + labelstr[labelstr.length - 1];
       }
 
-      if (d["extraLabel"]) {
-        label += ' ' + d["extraLabel"];
+      if (d.extraLabel) {
+        label += ' ' + d.extraLabel;
       }
 
       svg.select('#xlabel')
