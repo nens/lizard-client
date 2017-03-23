@@ -16,8 +16,8 @@
  * Everything in the graphs is animated according to NxtD3.transTime.
  */
 angular.module('lizard-nxt')
-  .factory("Graph", ["$timeout", "NxtD3", "ChartContainer", "UtilService",
-  function ($timeout, NxtD3, ChartContainer, UtilService) {
+  .factory("Graph", ["$timeout", "NxtD3", "ChartContainer", "UtilService", "State",
+  function ($timeout, NxtD3, ChartContainer, UtilService, State) {
 
   var MIN_WIDTH_INTERACTIVE_GRAPHS = 400; // Only graphs bigger get mouseover
                                           // and click interaction.
@@ -358,7 +358,7 @@ angular.module('lizard-nxt')
    *                        label and sets up a mousemove listener.
    *                        It draws the rectangles.
    */
-  Graph.prototype.drawHorizontalStack = function (content) {
+    Graph.prototype.drawHorizontalStack = function (content) {
       var data = content[0].data,
           keys = content[0].keys,
           labels = { x: content.xLabel, y: content.unit };
@@ -380,8 +380,23 @@ angular.module('lizard-nxt')
       var dataCopy = angular.copy(data);
 
       angular.forEach(dataCopy, function (value, key) {
-        value[keys.x] = value[keys.x] / total;
+        var pixels = value[keys.x];
+        value[keys.x] = pixels / total; // Percentage, is percentage of area with data
+
+        var selectedGeometries = State.selected.geometries;
+        if (selectedGeometries && selectedGeometries.length == 1 &&
+            selectedGeometries[0].geometry.type === 'Polygon') {
+          var selectedPolygon = selectedGeometries[0]
+          var totalArea = selectedPolygon.area;
+          if (value["total"]) {
+            // This is the percentage of the whole requested area
+            var percentageOfArea = pixels / value["total"];
+
+            value["extraLabel"] = "(" + Math.round(percentageOfArea * totalArea / 10000) + " ha)";
+          }
+        }
       });
+
       drawHorizontalRects(this._svg, this.dimensions, this.transTime, this._x.scale, dataCopy, keys, labels);
   };
 
@@ -966,6 +981,10 @@ angular.module('lizard-nxt')
         label = Math.round(d[keys.x] * 100) + '% ' + labelstr[labelstr.length - 1];
       }
 
+      if (d["extraLabel"]) {
+        label += ' ' + d["extraLabel"];
+      }
+
       svg.select('#xlabel')
         .text(label)
         .attr("class", "selected");
@@ -1452,7 +1471,7 @@ angular.module('lizard-nxt')
    * @param  {string}       (optional) label, if undefined uupdates current.
    * @param  {boolean}      draw on y axis, else x-axis.
    */
-  var drawLabel = function (svg, dimensions, label, y) {
+    var drawLabel = function (svg, dimensions, label, y) {
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
         mv,

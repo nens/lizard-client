@@ -748,13 +748,14 @@ angular.module('lizard-nxt')
   /**
    * @function
    * @description - Get amount of Km^2 in the current spatial extent
-   *                (bottom-limit = 1)
+   *                (bottom-limit = 1, or given as second parameter)
    * @param {latLngBounds} leafletBounds - A leaflet bounds object denoting the
    *                                       current spatial extent.
+   * @param {minValue} minValue - The minimum value, usually 1, but can be changed
    * @return {number} - A number denoting the extent's corresponding perimeter
    *                   (expressed in Km^2)
    */
-  this.extent2kilometers = function (leafletBounds) {
+  this.extent2kilometers = function (leafletBounds, minValue=1) {
 
     var northWest = L.latLng({
           lat: leafletBounds._southWest.lat,
@@ -769,7 +770,7 @@ angular.module('lizard-nxt')
 
     // On high zoomlevels, we limit the area to 1km^2 since that's the
     // spatial resolution ("pixel") for radar data in the rasterstore.
-    return Math.max(1, latDistance * lngDistance);
+    return Math.max(minValue, latDistance * lngDistance);
   };
 
   /*
