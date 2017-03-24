@@ -15,7 +15,7 @@
 
       <tr class="attr-row"
           ng-repeat="obj in wanted[waterchain.entity_name].rows"
-          >
+          ng-if="obj.attrName !== 'start' && obj.attrName !== 'end'">
 
         <td class="fixed-width-card-table">
           <div class="attr-row-content">
