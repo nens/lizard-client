@@ -16,8 +16,8 @@
  * Everything in the graphs is animated according to NxtD3.transTime.
  */
 angular.module('lizard-nxt')
-  .factory("Graph", ["$timeout", "NxtD3", "ChartContainer", "UtilService", "State",
-  function ($timeout, NxtD3, ChartContainer, UtilService, State) {
+  .factory("Graph", ["$timeout", "NxtD3", "ChartContainer", "UtilService", "State", "$filter",
+  function ($timeout, NxtD3, ChartContainer, UtilService, State, $filter) {
 
   var MIN_WIDTH_INTERACTIVE_GRAPHS = 400; // Only graphs bigger get mouseover
                                           // and click interaction.
@@ -391,8 +391,9 @@ angular.module('lizard-nxt')
           if (value.total) {
             // This is the percentage of the whole requested area
             var percentageOfArea = pixels / value.total;
-
-            value.extraLabel = "(" + Math.round(percentageOfArea * totalArea / 10000) + " ha)";
+            var formattedArea = $filter('number')(
+              Math.round(percentageOfArea * totalArea / 10000));
+            value.extraLabel = "(" + formattedArea + " ha)";
           }
         }
       });
