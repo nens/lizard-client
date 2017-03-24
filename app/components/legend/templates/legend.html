@@ -48,7 +48,7 @@
             {{ datum.label === -1 ? 'other' : (datum.label | truncate: 42) }}
           </div>
 
-          <div class="discrete-legend-area" ng-if="datum.areaHa">{{ datum.areaHa | number }} ha</div>
+          <div class="discrete-legend-area" ng-if="datum.areaHa != null">{{ datum.areaHa | number }} ha</div>
         </div>
       </div>
     </div>
