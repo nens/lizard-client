@@ -700,12 +700,12 @@
   min-width: 100%;
   /*margin-bottom: 10px;*/
   /*background-color: $deprecated-gray4;*/
-  padding-left: 10px;
+  padding-left: 5px;
 }
 
 .timeseries-header-container .fa-clock-o,
 .timeseries-header-container .fa-file-image-o {
-  color: $alizarin;
+  color: $asbestos;
   font-size: 1.5em;
   top: 2px;
   position: relative;
@@ -824,8 +824,11 @@ input[type=file] {
   padding-left: 15px;
 }
 
-.relativate-ts-icon {
-  color: #428bca;
-  position: relative;
-  top: 1px;
+.omnibox-ts-icon {
+  color: #7f8c8d;
+}
+
+.omnibox-ts-icon:hover {
+  color: #e74c3c;
+  cursor: pointer;
 }
