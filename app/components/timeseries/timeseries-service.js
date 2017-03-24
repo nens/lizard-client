@@ -358,9 +358,6 @@ angular.module('timeseries')
         graphTimeseries.start = ts.start;
         graphTimeseries.end = ts.end;
 
-        graphTimeseries.url = ts.url;
-        graphTimeseries.ts = ts;
-
         graphTimeseries = addTimeseriesProperties(graphTimeseries);
         result.push(graphTimeseries);
       });
