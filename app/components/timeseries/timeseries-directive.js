@@ -48,7 +48,8 @@ angular.module('timeseries')
           // timeseries with only a single measured value), we "pad" the space
           // to have decent visualization.
           if (start === end) {
-            var aggWindow = State.temporal.aggWindow || 360000;
+            var defaultAggWindow = 3600000; // 1 hour, in ms
+            var aggWindow = State.temporal.aggWindow || defaultAggWindow;
             end = start + aggWindow * 10;
           }
 
