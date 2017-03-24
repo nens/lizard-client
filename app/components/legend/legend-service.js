@@ -140,8 +140,8 @@ angular.module('legend')
         boundsGJ = selectedPolygon.geometry;
         this.rasterData.totalAreaOfGeometry = selectedPolygon.area;
 
-        options.boundaryType = selectedPolygon.regionType;  // "MUNICIPALITY", etc
-        options.geomId = selectedPolygon.id;
+        options.boundary_type = selectedPolygon.regionType;  // "MUNICIPALITY", etc
+        options.id = selectedPolygon.id;
       } else {
         try {
           boundsGJ = UtilService.lLatLngBoundsToGJ(bounds);

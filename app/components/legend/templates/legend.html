@@ -34,8 +34,7 @@
           ng-repeat="datum in rasterData track by $index"
           ng-click="rasterIsVectorized(uuid) ? setDiscreteRasterCategory(uuid, datum.class) : _.noop();"
           class="discrete-legend-datum"
-           ng-if="$index < getAmountOfDiscreteCategories(uuid)"
-          style="width: 100%;">
+           ng-if="$index < getAmountOfDiscreteCategories(uuid)">
 
           <div title="{{ datum.label === -1 ? 'other' : datum.label }}"
                class="discrete-legend-color-rect"
