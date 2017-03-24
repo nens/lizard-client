@@ -220,10 +220,8 @@ angular.module('lizard-nxt')
     resize: {
       value: function (newDimensions, timestamp, interval, nEvents) {
         var oldDimensions = angular.copy(this.dimensions);
-        NxtD3.prototype.resize.call(this, newDimensions);
         this.updateElements(oldDimensions, timestamp, interval);
         this._svg = resizeTimelineCanvas(this._svg, oldDimensions, this.dimensions);
-
         ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
         xScale.range([0, newDimensions.width - newDimensions.padding.right]);
         drawTimelineAxes(this._svg, xScale, newDimensions);
@@ -358,6 +356,18 @@ angular.module('lizard-nxt')
       }
     },
 
+    hasAggWindow: {
+      value: function () {
+        return !!aggWindow;
+      }
+    },
+
+    getAggWindow: {
+      value: function () {
+        return aggWindow;
+      }
+    },
+
     addZoomListener: {
       value: function (zoomFn, zoomEndFn) {
         if (zoomFn) {
@@ -371,6 +381,7 @@ angular.module('lizard-nxt')
         if (zoomEndFn) {
           zoomend = setZoomEndFunction(zoomEndFn);
         }
+
         this._svg.select('#listeners').call(d3.behavior.zoom()
           .x(xScale)
           .on("zoom", zoomed)

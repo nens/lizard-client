@@ -397,7 +397,19 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.code",
         valueSuffix: ""
-      }
+      },
+      {
+        keyName: gettext("Start"),
+        attrName: "start",
+        ngBindValue: "waterchain.ts.start",
+        valueSuffix: ""
+      },
+      {
+        keyName: gettext("End"),
+        attrName: "end",
+        ngBindValue: "waterchain.ts.end",
+        valueSuffix: ""
+      },
     ]
   };
 

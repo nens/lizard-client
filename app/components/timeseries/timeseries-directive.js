@@ -3,10 +3,67 @@
  * Timeseries directive.
  */
 angular.module('timeseries')
-.directive('timeseries', ['TimeseriesService', 'State',
-  function (TimeseriesService, State) {
+.directive('timeseries', ['TimeseriesService', 'State', '$timeout', 'gettextCatalog', 'notie',
+  function (TimeseriesService, State, $timeout, gettextCatalog, notie) {
   return {
     link: function (scope) {
+
+      scope.zoomToMagic = function (value_type) {
+
+        // For the DDSC-only "timeseries-with-images" we currently not support
+        // zooming to the data. Since this data is not available locally/in
+        // dev, because Ijkeldijk never payed for this new functionality, I
+        // cannot *guarantee* it's correct working. In theory, though, it should
+        // already work as-is.
+        //
+        // However, when we can have our (read: Roel's) shared data set
+        // updated to contain at least one timeseries with images I'll be more
+        // than happy to build it.
+        if (value_type === 'image') {
+          notie.alert(3,
+            gettextCatalog.getString(
+              "Timeseries with images cannot be zoomed to."
+            )
+          );
+          return;
+        }
+
+        if (State.context === 'map' &&
+            State.selected.timeseries &&
+            State.selected.timeseries.length >= 1) {
+
+          var activeTsUUID = _.find(State.selected.timeseries,
+            { active: true }).uuid;
+          var activeTs = _.find(TimeseriesService.timeseries,
+            { id: activeTsUUID });
+
+          // We toggle State.temporal.timelineMoving to trigger the correct
+          // angular $watch in the timeline-directive.
+          State.temporal.timelineMoving = !State.temporal.timelineMoving;
+
+          var start = activeTs.start;
+          var end = activeTs.end;
+
+          // If start and end are at the same point in time (i.e. we have a
+          // timeseries with only a single measured value), we "pad" the space
+          // to have decent visualization.
+          if (start === end) {
+            var defaultAggWindow = 3600000; // 1 hour, in ms
+            var aggWindow = State.temporal.aggWindow || defaultAggWindow;
+            end = start + aggWindow * 10;
+          }
+
+          State.temporal.at = start;
+          State.temporal.start = start;
+          State.temporal.end = end;
+
+          $timeout(function () {
+            // We reset State.temporal.timelineMoving (a-sync, compliant with
+            // angular $digest cycle).
+            State.temporal.timelineMoving = !State.temporal.timelineMoving;
+          });
+        }
+      };
 
       scope.$watch('asset', function () {
         TimeseriesService.initializeTimeseriesOfAsset(scope.asset);
@@ -24,7 +81,7 @@ angular.module('timeseries')
         }
       });
     },
-    restrict: 'E', // Timeseries can be an element with single-select or
+    restrict: 'E',  // Timeseries can be an element with single-select or
                     // multi select as an attribute or without in which
                     // case it only sets the color and order of timeseries of
                     // new assets.
