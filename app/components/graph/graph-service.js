@@ -370,11 +370,13 @@ angular.module('lizard-nxt')
       };
       this._x = createXGraph(this._svg, this.dimensions, labels, options);
 
-      if (data === null) { return; } // We are done here.
+      if (data === null || data.length === 1 && data[0] === null) {
+        return; // We are done here.
+      }
 
-      // normalize data
-      var total = d3.sum(data, function (d) {
-        return Number(d[keys.x]);
+        // normalize data
+        var total = d3.sum(data, function (d) {
+        return d ? Number(d[keys.x]) : 0;
       });
 
       var dataCopy = angular.copy(data);
