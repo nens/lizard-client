@@ -5,7 +5,8 @@ angular.module('legend')
 
     this.rasterData = {
       continuous: {},
-      discrete: {}
+      discrete: {},
+      totalAreaOfGeometry: null
     };
 
     var activeCategories = {}; // Per discrete raster we keep track of the
@@ -93,6 +94,23 @@ angular.module('legend')
           _.orderBy(obj.data, function (datum) {
             return datum.data;
           });
+
+          var totalArea = this.rasterData.totalAreaOfGeometry;
+          _.forEach(obj.data, function (datum) {
+            if (!totalArea) {
+              datum.areaHa = null;
+            } else {
+              var pixels = datum.data;
+              var totalPixels = datum.total;
+
+              if (!pixels || !totalPixels) {
+                datum.areaHa = 0;
+              } else {
+                datum.areaHa = Math.round((pixels/totalPixels) * totalArea / 10000);
+              }
+            }
+          });
+
           this.rasterData.discrete[raster] = obj.data;
         } else {
           this.rasterData.discrete[raster] = undefined;
@@ -105,30 +123,51 @@ angular.module('legend')
       delete this.rasterData.continuous[uuid];
     };
 
-    this.updateLegendData = function (bounds, layers) {
-      var GEOMETRY;
-      try {
-        GEOMETRY = UtilService.lLatLngBoundsToGJ(bounds);
-      } catch (e) {
-        // On initial load, the arg called 'bounds' is not fit for deriving the
-        // GEOMETRY constant used here.
-        return;
+    this.updateLegendData = function (bounds, selectedGeometries, layers) {
+      var boundsGJ;
+
+      var options = {
+        // XXX this is probably also set in updateLayerData.
+        start: State.temporal.start,
+        end: State.temporal.end
+      };
+
+      if (selectedGeometries && selectedGeometries.length === 1 &&
+          selectedGeometries[0].geometry &&
+          selectedGeometries[0].geometry.type === 'Polygon') {
+        // If we have a selected region, base the legend on that.
+        var selectedPolygon = selectedGeometries[0];
+        boundsGJ = selectedPolygon.geometry;
+        this.rasterData.totalAreaOfGeometry = selectedPolygon.area;
+
+        options.boundary_type = selectedPolygon.regionType;  // "MUNICIPALITY", etc
+        options.id = selectedPolygon.id;
+      } else {
+        try {
+          boundsGJ = UtilService.lLatLngBoundsToGJ(bounds);
+
+          // Getting area data over a leaflet bounds is too imprecise,
+          // so by setting this to null the areas aren't shown.
+          this.rasterData.totalAreaOfGeometry = null;
+
+          options.geom = boundsGJ;
+        } catch (e) {
+          // On initial load, the arg called 'bounds' is not fit for deriving the
+          // GEOMETRY constant used here.
+          return;
+        }
       }
 
       var defer = $q.defer();
       var dataLayerObj;
       var promises = [];
-      var geo = {
-        type: 'Feature',
-        geometry: GEOMETRY
-      };
-      var options = {
-        start: State.temporal.start,
-        end: State.temporal.end,
-        geom: GEOMETRY
-      };
       var uuid;
       var name;
+
+      var geo = {
+        type: 'Feature',
+        geometry: boundsGJ
+      };
 
       angular.forEach(layers, function (layerObj) {
         if (layerObj.type === 'raster') {

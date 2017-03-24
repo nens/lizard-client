@@ -191,17 +191,30 @@ angular.module('legend')
       return LegendService.getActiveCategory(uuid);
     };
 
-    scope.$watch(scope.state.toString('layers.active'), function (n, o) {
+    scope.$watch(scope.state.toString('layers'), function (n, o) {
       if (n === o) { return; }
       LegendService.updateLegendData(
         scope.state.spatial.bounds,
+        scope.state.selected.geometries,
         scope.state.layers
       );
     });
 
+    scope.$watch(scope.state.toString('selected.geometries'), function (n, o) {
+      if (n === o) { return; }
+
+      LegendService.updateLegendData(
+        scope.state.spatial.bounds,
+        scope.state.selected.geometries,
+        scope.state.layers);
+    });
+
     scope.$watch('state.spatial.bounds', function (n, o) {
       if (n === o) { return; }
-      LegendService.updateLegendData(n, scope.state.layers);
+      LegendService.updateLegendData(
+        n,
+        scope.state.selected.geometries,
+        scope.state.layers);
     });
 
     scope.$watch('state.temporal.at', function (n, o) {
@@ -212,13 +225,17 @@ angular.module('legend')
           temporalLayers.push(layer);
         }
       });
-      LegendService.updateLegendData(scope.state.spatial.bounds, temporalLayers);
+      LegendService.updateLegendData(
+        scope.state.spatial.bounds,
+        scope.state.selected.geometries,
+        temporalLayers);
     });
 
     scope.legend.data = LegendService.rasterData;
 
     LegendService.updateLegendData(
       scope.state.spatial.bounds,
+      scope.state.selected.geometries,
       scope.state.layers
     );
   };

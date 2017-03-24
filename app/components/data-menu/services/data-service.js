@@ -72,8 +72,6 @@ angular.module('data-menu')
         if (instance.onAssetsChange) {
           instance.onAssetsChange();
         }
-
-        console.log('DataService.assets:', instance.assets);
       };
 
       // Define assets on State and update DataService.assets.
@@ -90,8 +88,6 @@ angular.module('data-menu')
           assetPromise.then(assetChange);
         });
         _assets = assets;
-
-        console.log('State.selected.assets:', State.selected.assets);
 
         rebindAssetFunctions();
       };
@@ -157,7 +153,7 @@ angular.module('data-menu')
           promise.then(function (geometries) {
             // Dedupe instance.geometries asynchronous.
             instance.geometries = _.uniqWith(geometries, isDuplicateGeometry);
-            console.log('DataService.geometries:', instance.geometries);
+
             if (instance.onGeometriesChange) {
               instance.onGeometriesChange();
             }
@@ -165,7 +161,7 @@ angular.module('data-menu')
         });
 
         _geometries = geometries;
-        console.log('State.selected.geometries:', State.selected.geometries);
+
         State.selected.geometries.addGeometry = addGeometry;
         State.selected.geometries.removeGeometry = removeGeometry;
       };
@@ -258,7 +254,6 @@ angular.module('data-menu')
             instance.geometries.forEach(function (old, i) {
               if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
                 instance.geometries[i] = newGeo;
-                console.log('DataService.geometries:', instance.geometries);
               }
             });
           });
@@ -346,7 +341,6 @@ angular.module('data-menu')
       };
 
       this.updateLayerData = function (geo, layer, options, promises) {
-
         if (!layer.active) {
           return;
         }
