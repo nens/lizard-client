@@ -382,8 +382,6 @@ angular.module('lizard-nxt')
           zoomend = setZoomEndFunction(zoomEndFn);
         }
 
-        console.log("[dbg] some var called 'this':", this);
-
         this._svg.select('#listeners').call(d3.behavior.zoom()
           .x(xScale)
           .on("zoom", zoomed)
