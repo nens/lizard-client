@@ -62,20 +62,37 @@ angular.module('legend')
       if (!COLORMAP_URL) {
         COLORMAP_URL = getColormapUrl();
       }
-      var formattedStyles = UtilService.formatRasterStyles(styles);
-      var singleColormapUrl = COLORMAP_URL + formattedStyles + "/";
+      var colormapName = UtilService.extractColormapName(styles);
+      var styleMin, styleMax;
+      if (UtilService.isCompoundStyles(styles)) {
+        var styleParts = styles.split(":");
+        styleMin = styleParts[1];
+        styleMax = styleParts[2];
+      }
+
+      var singleColormapUrl = COLORMAP_URL + colormapName + "/";
       $http.get(singleColormapUrl).then(function (result) {
         var colormap = result.data.definition;
         colormaps[uuid] = colormap;
-        var layer = _.find(State.layers, {uuid: uuid});
+        var layer = _.find(State.layers, { uuid: uuid });
         if (layer && layer.active) {
           this.rasterData.continuous[uuid].colormap = colormap;
+
           if (this.rasterData.continuous[uuid].min === null) {
-            this.rasterData.continuous[uuid].min = colormap.data[0][0];
+            if (styleMin === undefined) {
+              this.rasterData.continuous[uuid].min = colormap.data[0][0];
+            } else {
+              this.rasterData.continuous[uuid].min = parseFloat(styleMin);
+            }
+
           }
           if (this.rasterData.continuous[uuid].max === null) {
-            this.rasterData.continuous[uuid].max = colormap.data[
-              colormap.data.length - 1][0];
+            if (styleMax === undefined) {
+              this.rasterData.continuous[uuid].max = colormap.data[
+                colormap.data.length - 1][0];
+            } else {
+              this.rasterData.continuous[uuid].max = parseFloat(styleMax);
+            }
           }
         }
       }.bind(this));
@@ -136,15 +153,7 @@ angular.module('legend')
           uuid = layerObj.uuid;
           if (layerObj.active) {
             dataLayerObj = _.find(DataService.dataLayers, {uuid: uuid});
-            if (!dataLayerObj) {
-              return;
-            }
-            if (typeof(dataLayerObj.styles) === 'object') {
-              // NB! Compound values for raster "styles" option (currently only
-              // in place for rain), as opposed to a single string, imply we
-              // don't want to draw legend data.
-              return;
-            }
+            if (!dataLayerObj) { return; }
             this.uuidMapping[uuid] = name;
             if (rasterIsDiscrete(dataLayerObj)) {
               DataService.updateLayerData(geo, layerObj, options, promises);
@@ -153,17 +162,22 @@ angular.module('legend')
                 this.initContinuousRasterData(uuid, dataLayerObj.unit);
               }
               if (!colormaps[uuid]) {
-                // IF colormap for the current layer isn't already defined,
-                // retrieve it via the API's colormaps endpoint:
                 this.setColormap(uuid, dataLayerObj.styles);
               } else {
-                // ELSE, retrieve it from local dict:
                 this.rasterData.continuous[uuid].colormap = colormaps[uuid];
-                this.rasterData.continuous[uuid].min =
-                  this.rasterData.continuous[uuid].min || colormaps[uuid].data[0][0];
-                this.rasterData.continuous[uuid].max =
-                  this.rasterData.continuous[uuid].max ||colormaps[uuid].data[
-                    colormaps[uuid].data.length - 1][0];
+
+                if (UtilService.isCompoundStyles()) {
+                  var minMax = dataLayerObj.styles.split(":");
+                  this.rasterData.continuous[uuid].min = minMax[0];
+                  this.rasterData.continuous[uuid].max = minMax[1];
+                } else {
+                  this.rasterData.continuous[uuid].min =
+                    this.rasterData.continuous[uuid].min ||
+                      colormaps[uuid].data[0][0];
+                  this.rasterData.continuous[uuid].max =
+                    this.rasterData.continuous[uuid].max ||
+                      colormaps[uuid].data[colormaps[uuid].data.length - 1][0];
+                }
               }
             }
           } else {

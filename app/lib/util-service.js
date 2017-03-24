@@ -1084,7 +1084,7 @@ angular.module('lizard-nxt')
   };
 
   /**
-    * @description  This function is used to format a raster config's "styles"
+    * @description  This function is used to format a raster configs "styles"
     *               value. This should be used for e.g. colormap API calls, where
     *               the value is parsed differently than when used for the WMS.
     *               E.g:
@@ -1097,12 +1097,41 @@ angular.module('lizard-nxt')
     *
     * @param {string} styles
     */
-  this.formatRasterStyles = function (styles) {
+  this.extractColormapName = function (styles) {
     var parts = styles.split(":");
     if (parts.length > 1) {
       return parts[0];
     } else {
       return styles;
     }
+  };
+
+  this.extractStylesMinMax = function (styles) {
+    var parts = styles.split(":");
+    if (parts.length === 3) {
+      return [parts[1], parts[2]];
+    } else {
+      throw new Error("Cannot extract min/max value for 'styles' string: '"
+        + styles + "'");
+    }
+  };
+
+  /**
+    * @description  This function is used to inspect a raster config "styles"
+    *               value. It returns a boolean indicating whteher the string
+    *               defined as value for the "styles" key has min/max
+    *               configured:
+    *
+    *               "dem-nl"     => false
+    *               "dem-nl:8:9" => true
+    *               "dem-nl:8:"  => true
+    *               "abcd"       => false
+    *               "abcd:0:23"  => true
+    *
+    * @param {string} styles
+    */
+  this.isCompoundStyles = function (styles) {
+    var parts = styles.split(":");
+    return parts.length > 1;
   };
 }]);
