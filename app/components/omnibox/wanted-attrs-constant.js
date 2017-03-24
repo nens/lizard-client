@@ -398,7 +398,6 @@ angular.module('omnibox')
           "waterchain.code",
         valueSuffix: ""
       },
-
       {
         keyName: gettext("Start"),
         attrName: "start",
