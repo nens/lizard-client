@@ -259,7 +259,8 @@ angular.module('omnibox')
 }]);
 
 angular.module('omnibox')
-  .directive('rain', ['State', 'RasterService', function (State, RasterService) {
+       .directive('rain', ['State', 'RasterService', 'UtilService',
+                           function (State, RasterService, UtilService) {
   return {
     link: function (scope) {
 
@@ -294,7 +295,7 @@ angular.module('omnibox')
       var RAW_RAIN_RASTER_UUID = '730d6675-35dd-4a35-aa9b-bfb8155f9ca7';
 
       scope.getRawDataUrl = function (event) {
-        var coords = scope.geometry.coordinates;
+        var wkt = UtilService.geomToWkt(scope.geometry);
         // hack to make it testable on staging :( and gets the correct hostname
         // on production
         var hostname = window.location.hostname.replace('nxt.staging', 'demo');
@@ -305,7 +306,7 @@ angular.module('omnibox')
           new Date(State.temporal.start).toISOString().split('.')[0] +
           '&stop=' +
           new Date(State.temporal.end).toISOString().split('.')[0] +
-          '&geom=' + 'POINT(' + coords[0] + ' ' + coords[1] +')' +
+          '&geom=' + wkt +
           '&srs=EPSG:4326';
       };
       // ENDHACK
