@@ -162,12 +162,15 @@ npm run release -- -b fixes_<bugged version you want to fix>
 The `CHANGELOG.md` would have to be merged with master after the release, which might give some merge conflicts. C'est la vie.
 
 
-## Deployment
-For the deployment of frontend repositories we make use of the client
-deployment repository https://github.com/nens/client-deployment. It is already
-included as a git submodule in this repo.
+# Release
 
-Init the git submodule if you haven't done `clone --recursive`  or ran this command earlier:
+0. Go to the correct place in your local filesystem:
+
+```sh
+cd ~/Projects/nxt-2016/lizard-client/
+```
+
+1. Init the git submodule if you haven't done `clone --recursive`  or ran this command earlier:
 
 ```sh
 git submodule init
@@ -186,34 +189,77 @@ Deployment is done with `ansible`. Make sure to install ansible with eg:
 pip install ansible
 ```
 
-Copy `deploy/hosts.example` to `deploy/hosts` and `deploy/production_hosts.example` to `deploy/production_hosts` and edit to match your server layout. Also copy the `deploy/group_vars\all.example` to `deploy/group_vars/all`:
+**OPTIONALLY** (when solely updating the transifex translations):
 
 ```sh
-cp deploy/hosts.example deploy/hosts
-cp deploy/production_hosts.example deploy/production_hosts
-cp deploy/group_vars/all.example deploy/group_vars/all
+npm run translate
+npm run transifex -- --txusername=<your transifex username> --txpassword=<your transifex password>
 ```
 
-Adjust the variables to reflect your layout. E.g. fill in build_user: `build_user: 'jeanjacquesmarieantoinette'`
-
-Deploy to staging:
+2. Build/create dist folder:
 
 ```sh
-ansible-playbook -i deploy/hosts --limit=staging -K deploy/deploy.yml --extra-vars="version=2.7.1"
+git pull origin
+git checkout master
+npm run dist -- --txusername=<transifex username> --txpassword=<transifex password>
 ```
 
-Deploy to production:
+3. Make sure ./deploy/auth.json is present and has a correct Github key in it. When generating a new authorization key for the Github API (the key to be inserted into the auth.json file), make sure to check the "repo" checkbox.
 
 ```sh
-ansible-playbook -i deploy/production_hosts -K deploy/deploy.yml --extra-vars="version=2.7.1"
+npm run release
 ```
 
-_NOTE: When deploying to a remote server for the first time it is required to
-either (i) provide the remote server with with your public SSH key (locally
-generated with `$ ssh-keygen`, transferable to each server with
-`$ ssh-copy-id <REMOTE_USERNAME>@<HOSTNAME>`), or (ii) use the -k flag to have
-Ansible launch an interactive prompt._
+4. Put the correct hosts into the deploy/hosts file (copy a first version from hosts.example), e.g.:
 
+```
+[staging]
+s-web-ws-d8.external-nens.local
+```
+
+5. Put the correct variables into the deploy/group_vars/all file. A copy from all.example can be used, but only the following four variables should be present (the others are set from the command line):
+
+```
+build_user: buildout
+
+repo_name: lizard-client
+
+project_path: "/srv/{{ sitename }}"
+deploy_path: "{{ project_path }}/src/lizard-client/dist"
+```
+
+
+6. Make sure the new release version is shown on GH, either by going to the webpage or run:
+
+```sh
+git describe
+```
+
+# Deployment
+
+7. **OPTIONALLY** Ansible deployment to "new" server requires your localhost user's public key to be sent to the server using:
+
+```sh
+ssh-copy-id <USERNAME>@<SERVER_NAME>
+```
+
+e.g:
+
+```
+ssh-copy-id john.doe@s-web-ws-d8.external-nens.local
+```
+
+8. Let Ansible transfer the new sourcecode (i.e. the newly created dist folder) to the server:
+
+```
+ansible-playbook -i deploy/hosts -K deploy/deploy.yml --limit=<ENVIRONMENT> --extra-vars="sitename<DOMAIN_NAME> version=<VERSION_NR>"
+```
+
+e.g:
+
+```
+ansible-playbook -i deploy/hosts -K deploy/deploy.yml --limit=staging --extra-vars="sitename=staging.nxt.lizard.net version=v4.12.0"
+```
 
 ## Commit Message Convention, at a Glance
 Lizard-client compiles its CHANGELOG.md directly from the commits. Therefore commits have to be atomic and follow a strict convention:
