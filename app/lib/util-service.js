@@ -569,7 +569,6 @@ angular.module('lizard-nxt')
     }
   };
 
-
   this.preventOldIEUsage = function () {
     if (this.serveToOldIE()) {
       document.querySelector("#dark-overlay").style.display = "inline";
@@ -729,7 +728,6 @@ angular.module('lizard-nxt')
     styleElement.innerHTML = "";
     styleElement.appendChild(document.createTextNode(newStyle));
   };
-
 
   /*
    * @description - Convert string ending in px to value expressed in pixels,
@@ -1106,16 +1104,6 @@ angular.module('lizard-nxt')
     }
   };
 
-  this.extractStylesMinMax = function (styles) {
-    var parts = styles.split(":");
-    if (parts.length === 3) {
-      return [parts[1], parts[2]];
-    } else {
-      throw new Error("Cannot extract min/max value for 'styles' string: '"
-        + styles + "'");
-    }
-  };
-
   /**
     * @description  This function is used to inspect a raster config "styles"
     *               value. It returns a boolean indicating whteher the string
@@ -1131,7 +1119,11 @@ angular.module('lizard-nxt')
     * @param {string} styles
     */
   this.isCompoundStyles = function (styles) {
-    var parts = styles.split(":");
-    return parts.length > 1;
+    if (styles) {
+      var parts = styles.split(":");
+      return parts.length === 3;
+    } else {
+      return false;
+    }
   };
 }]);

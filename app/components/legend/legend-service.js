@@ -3,14 +3,17 @@ angular.module('legend')
   'DataService', 'UtilService', 'RasterService', 'State', '$q', '$http',
   function (DataService, UtilService, RasterService, State, $q, $http) {
 
-    this.rasterData = {
-      continuous: {},
-      discrete: {}
-    };
 
+    this.rasterData = { continuous: {}, discrete: {} };
     var activeCategories = {}; // Per discrete raster we keep track of the
                                // selected category, so we can show this for
                                // each legend.
+
+    // TMP! ////////////////////////
+    var that = this;
+    window.dbgLegend = function () {
+      console.log("[dbg] LegendService.rasterData:", that.rasterData);
+    };
 
     this.setActiveCategory = function (uuid, category) {
       var layer = _.find(State.layers, {uuid: uuid});
@@ -50,48 +53,52 @@ angular.module('legend')
     };
 
     this.rasterIsTemporal = function (uuid) {
-      var dataLayerObj = _.find(DataService.dataLayers, {uuid: uuid});
+      var dataLayerObj = _.find(DataService.dataLayers, { uuid: uuid });
       return dataLayerObj && dataLayerObj.temporal;
     };
 
     var rasterIsDiscrete = function (dataLayerObj) {
-      return dataLayerObj.scale === "nominal" || dataLayerObj.scale === "ordinal";
+      return _.includes(["nominal", "ordinal"], dataLayerObj.scale);
     };
 
     this.setColormap = function (uuid, styles) {
-      if (!COLORMAP_URL) {
-        COLORMAP_URL = getColormapUrl();
-      }
-      var colormapName = UtilService.extractColormapName(styles);
-      var styleMin, styleMax;
+
+      if (!COLORMAP_URL) { COLORMAP_URL = getColormapUrl(); }
+
+      var styleMin,
+          styleMax,
+          styleParts,
+          colormapName = UtilService.extractColormapName(styles),
+          singleColormapUrl = COLORMAP_URL + colormapName + "/";
+
       if (UtilService.isCompoundStyles(styles)) {
-        var styleParts = styles.split(":");
+        styleParts = styles.split(":");
         styleMin = styleParts[1];
         styleMax = styleParts[2];
       }
 
-      var singleColormapUrl = COLORMAP_URL + colormapName + "/";
       $http.get(singleColormapUrl).then(function (result) {
         var colormap = result.data.definition;
         colormaps[uuid] = colormap;
         var layer = _.find(State.layers, { uuid: uuid });
         if (layer && layer.active) {
-          this.rasterData.continuous[uuid].colormap = colormap;
 
-          if (this.rasterData.continuous[uuid].min === null) {
+          var contRasterData = this.rasterData.continuous[uuid];
+          contRasterData.colormap = colormap;
+
+          if (contRasterData.min === null) {
             if (styleMin === undefined) {
-              this.rasterData.continuous[uuid].min = colormap.data[0][0];
+              contRasterData.min = _.first(colormap.data)[0];
             } else {
-              this.rasterData.continuous[uuid].min = parseFloat(styleMin);
+              contRasterData.min = parseFloat(styleMin);
             }
-
           }
-          if (this.rasterData.continuous[uuid].max === null) {
+
+          if (contRasterData.max === null) {
             if (styleMax === undefined) {
-              this.rasterData.continuous[uuid].max = colormap.data[
-                colormap.data.length - 1][0];
+              contRasterData.max = _.last(colormap.data)[0];
             } else {
-              this.rasterData.continuous[uuid].max = parseFloat(styleMax);
+              contRasterData.max = parseFloat(styleMax);
             }
           }
         }
@@ -132,9 +139,6 @@ angular.module('legend')
         return;
       }
 
-      var defer = $q.defer();
-      var dataLayerObj;
-      var promises = [];
       var geo = {
         type: 'Feature',
         geometry: GEOMETRY
@@ -144,39 +148,49 @@ angular.module('legend')
         end: State.temporal.end,
         geom: GEOMETRY
       };
-      var uuid;
-      var name;
+      var uuid,
+          name,
+          defer = $q.defer(),
+          dataLayerObj,
+          promises = [],
+          contRasterData,
+          styleParts;
 
       angular.forEach(layers, function (layerObj) {
         if (layerObj.type === 'raster') {
           name = layerObj.name;
           uuid = layerObj.uuid;
           if (layerObj.active) {
-            dataLayerObj = _.find(DataService.dataLayers, {uuid: uuid});
+            dataLayerObj = _.find(DataService.dataLayers, { uuid: uuid });
             if (!dataLayerObj) { return; }
             this.uuidMapping[uuid] = name;
             if (rasterIsDiscrete(dataLayerObj)) {
               DataService.updateLayerData(geo, layerObj, options, promises);
             } else {
-              if (this.rasterData.continuous[uuid] === undefined) {
+              console.log("[A]");
+              contRasterData = this.rasterData.continuous[uuid];
+              if (contRasterData === undefined) {
+                console.log("[B]");
                 this.initContinuousRasterData(uuid, dataLayerObj.unit);
               }
               if (!colormaps[uuid]) {
+                console.log("[C]");
                 this.setColormap(uuid, dataLayerObj.styles);
               } else {
-                this.rasterData.continuous[uuid].colormap = colormaps[uuid];
+                console.log("[D]");
+                contRasterData.colormap = colormaps[uuid];
+                if (!contRasterData.min && !contRasterData.max) {
 
-                if (UtilService.isCompoundStyles()) {
-                  var minMax = dataLayerObj.styles.split(":");
-                  this.rasterData.continuous[uuid].min = minMax[0];
-                  this.rasterData.continuous[uuid].max = minMax[1];
-                } else {
-                  this.rasterData.continuous[uuid].min =
-                    this.rasterData.continuous[uuid].min ||
-                      colormaps[uuid].data[0][0];
-                  this.rasterData.continuous[uuid].max =
-                    this.rasterData.continuous[uuid].max ||
-                      colormaps[uuid].data[colormaps[uuid].data.length - 1][0];
+                  if (UtilService.isCompoundStyles(dataLayerObj.styles)) {
+                    console.log("[D1] dataLayerObj.styles =", dataLayerObj.styles);
+                    styleParts = dataLayerObj.styles.split(":");
+                    contRasterData.min = parseFloat(styleParts[1]);
+                    contRasterData.max = parseFloat(styleParts[2]);
+                  } else {
+                    console.log("[D2]");
+                    contRasterData.min = _.first(colormaps[uuid].data)[0];
+                    contRasterData.max = _.last(colormaps[uuid].data)[0];
+                  }
                 }
               }
             }
@@ -194,6 +208,5 @@ angular.module('legend')
           this.setDiscreteRasterData(geo.properties);
         }.bind(this));
       }
-
     };
 }]);
