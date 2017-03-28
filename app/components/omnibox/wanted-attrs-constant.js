@@ -204,6 +204,19 @@ angular.module('omnibox')
   this.filter = {
     rows: [
       {
+        keyName: gettext("Aquifer confinement"),
+        attrName: "aquifer_confiment",
+        ngBindValue: "waterchain.aquifer_confiment",
+        valueSuffix: ""
+      },
+      {
+        /// bodemsoort
+        keyName: gettext("Lithology"),
+        attrName: "litology",
+        ngBindValue: "waterchain.litology",
+        valueSuffix: ""
+      },
+      {
         /// Bovenkant filter
         keyName: gettext("Filter top level"),
         attrName: "filter_top_level",
@@ -217,20 +230,6 @@ angular.module('omnibox')
         ngBindValue: "waterchain.filter_bottom_level | niceNumberOrEllipsis: 2",
         valueSuffix: "m (NAP)"
       },
-      {
-        keyName: gettext("Aquifer confinement"),
-        attrName: "aquifer_confiment",
-        ngBindValue: "waterchain.aquifer_confiment",
-        valueSuffix: ""
-      },
-      {
-        /// bodemsoort
-        keyName: gettext("Lithology"),
-        attrName: "litology",
-        ngBindValue: "waterchain.litology",
-        valueSuffix: ""
-      },
-
     ]
   };
 
@@ -250,6 +249,12 @@ angular.module('omnibox')
         valueSuffix: ""
       },
       {
+        keyName: gettext("Type"),
+        attrName: "type",
+        ngBindValue: "waterchain.type",
+        valueSuffix: ""
+      },
+      {
         keyName: gettext("Surface level"),
         attrName: "surface_level",
         ngBindValue: "waterchain.surface_level",
@@ -263,7 +268,7 @@ angular.module('omnibox')
         valueSuffix: "m (NAP)"
       },
       {
-        /// Onderkan buis
+        /// Onderkant buis
         keyName: gettext("Bottom level"),
         attrName: "bottom_level",
         ngBindValue: "waterchain.bottom_level",
