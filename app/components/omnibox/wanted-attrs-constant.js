@@ -217,6 +217,15 @@ angular.module('omnibox')
         valueSuffix: ""
       },
       {
+        /// Bovenkant buis
+        //////////////////
+        keyName: gettext("Top level"),
+        attrName: "top_level",
+        // ngBindValue: "waterchain.top_level | niceNumberOrEllipsis: 2",
+        ngBindValue: "waterchain.top_level",
+        valueSuffix: "m (NAP)"
+      },
+      {
         /// Bovenkant filter
         keyName: gettext("Filter top level"),
         attrName: "filter_top_level",
@@ -252,6 +261,12 @@ angular.module('omnibox')
         keyName: gettext("Type"),
         attrName: "type",
         ngBindValue: "waterchain.type",
+        valueSuffix: ""
+      },
+      {
+        keyName: gettext("Status"),
+        attrName: "status",
+        ngBindValue: "waterchain.status",
         valueSuffix: ""
       },
       {
