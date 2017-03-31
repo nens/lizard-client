@@ -222,7 +222,6 @@ angular.module('omnibox')
         keyName: gettext("Top level"),
         attrName: "top_level",
         ngBindValue: "waterchain.top_level | niceNumberOrEllipsis: 2",
-        // ngBindValue: "waterchain.top_level",
         valueSuffix: "m (NAP)"
       },
       {
