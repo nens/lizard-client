@@ -120,8 +120,8 @@ angular.module('lizard-nxt')
   // End bind to global scope.
 
   // Do some things that need to happen, but IMHO not necessarily here.
-
   UtilService.preventOldIEUsage();
+  UtilService.preventMousewheelZoom();
 
   // catch window.load event
   window.addEventListener("load", function () {
