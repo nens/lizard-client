@@ -1109,4 +1109,16 @@ angular.module('lizard-nxt')
       return styles;
     }
   };
+
+  /*
+   * @description This function is called once to make sure that the user can't
+   *              zoom in/out using the mouse's scrollwheel. Take note that this
+   *              does not interfere with the designed functionality of either
+   *              panning nor zooming the timeline nor map.
+   */
+  this.preventMousewheelZoom = function () {
+    var noZoomFn = function (e) { e.preventDefault(); };
+    $('body').bind('mousewheel', noZoomFn); // Chrome/IE
+    $('body').bind('DOMMouseScroll', noZoomFn); // Firefox
+  };
 }]);
