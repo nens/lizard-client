@@ -221,8 +221,8 @@ angular.module('omnibox')
         //////////////////
         keyName: gettext("Top level"),
         attrName: "top_level",
-        // ngBindValue: "waterchain.top_level | niceNumberOrEllipsis: 2",
-        ngBindValue: "waterchain.top_level",
+        ngBindValue: "waterchain.top_level | niceNumberOrEllipsis: 2",
+        // ngBindValue: "waterchain.top_level",
         valueSuffix: "m (NAP)"
       },
       {
@@ -258,9 +258,15 @@ angular.module('omnibox')
         valueSuffix: ""
       },
       {
-        keyName: gettext("Type"),
-        attrName: "type",
-        ngBindValue: "waterchain.type",
+        keyName: gettext("Station type"),
+        attrName: "station_type",
+        ngBindValue: "waterchain.station_type",
+        valueSuffix: ""
+      },
+      {
+        keyName: gettext("Scale"),
+        attrName: "scale",
+        ngBindValue: "waterchain.scale",
         valueSuffix: ""
       },
       {
