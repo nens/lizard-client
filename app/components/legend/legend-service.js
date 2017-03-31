@@ -172,7 +172,7 @@ angular.module('legend')
           options.geom = boundsGJ;
         } catch (e) {
           // On initial load, the arg called 'bounds' is not fit for deriving
-          // teh value for options.geom
+          // the value for options.geom
           return;
         }
       }
