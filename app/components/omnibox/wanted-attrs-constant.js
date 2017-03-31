@@ -258,15 +258,15 @@ angular.module('omnibox')
         valueSuffix: ""
       },
       {
-        keyName: gettext("Station type"),
-        attrName: "station_type",
-        ngBindValue: "waterchain.station_type",
-        valueSuffix: ""
-      },
-      {
         keyName: gettext("Scale"),
         attrName: "scale",
         ngBindValue: "waterchain.scale",
+        valueSuffix: ""
+      },
+      {
+        keyName: gettext("Station type"),
+        attrName: "station_type",
+        ngBindValue: "waterchain.station_type",
         valueSuffix: ""
       },
       {
