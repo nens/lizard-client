@@ -2,6 +2,45 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.12.0"></a>
+# [4.12.0](https://github.com/nens/lizard-client/compare/v4.6.4...v4.12.0) (2017-03-27)
+
+
+### Bug Fixes
+
+* **dependency:** fixes angular-sanitize dependency bug by going back to 1.6.2. ([7e92948](https://github.com/nens/lizard-client/commit/7e92948))
+
+
+### Features
+
+* **timeline:** timeline (dis)appears when need with nice animation ([42ea0b8](https://github.com/nens/lizard-client/commit/42ea0b8))
+* **translation:** cleaned up filters and wated-attrs-constant and adds accept-language to angular http request. Fixes nens/lizard-nxt[#2184](https://github.com/nens/lizard-client/issues/2184) ([444bcba](https://github.com/nens/lizard-client/commit/444bcba))
+* **zoom-to-temporal-data:** User can zoom to timeseries data ([b9c1226](https://github.com/nens/lizard-client/commit/b9c1226))
+
+
+
+<a name="4.11.1"></a>
+## [4.11.1](https://github.com/nens/lizard-client/compare/v4.11.0...v4.11.1) (2017-03-27)
+
+
+
+<a name="4.11.0"></a>
+# [4.11.0](https://github.com/nens/lizard-client/compare/v4.6.4...v4.11.0) (2017-03-27)
+
+
+### Bug Fixes
+
+* **dependency:** fixes angular-sanitize dependency bug by going back to 1.6.2. ([7e92948](https://github.com/nens/lizard-client/commit/7e92948))
+
+
+### Features
+
+* **timeline:** timeline (dis)appears when need with nice animation ([42ea0b8](https://github.com/nens/lizard-client/commit/42ea0b8))
+* **translation:** cleaned up filters and wated-attrs-constant and adds accept-language to angular http request. Fixes nens/lizard-nxt[#2184](https://github.com/nens/lizard-client/issues/2184) ([444bcba](https://github.com/nens/lizard-client/commit/444bcba))
+* **zoom-to-temporal-data:** User can zoom to timeseries data ([b9c1226](https://github.com/nens/lizard-client/commit/b9c1226))
+
+
+
 <a name="4.10.0"></a>
 # [4.10.0](https://github.com/nens/lizard-client/compare/v4.9.2...v4.10.0) (2017-03-13)
 
