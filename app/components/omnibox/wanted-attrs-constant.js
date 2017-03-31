@@ -237,7 +237,7 @@ angular.module('omnibox')
         attrName: "litology",
         ngBindValue: "waterchain.litology",
         valueSuffix: ""
-      },
+      }
     ]
   };
 
