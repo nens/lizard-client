@@ -155,7 +155,8 @@ angular.module('legend')
 
       if (selectedGeometries && selectedGeometries.length === 1 &&
           selectedGeometries[0].geometry &&
-          selectedGeometries[0].geometry.type === 'Polygon') {
+          (selectedGeometries[0].geometry.type === 'Polygon' ||
+           selectedGeometries[0].geometry.type === 'MultiPolygon')) {
         // If we have a selected region, base the legend on that.
         var selectedPolygon = selectedGeometries[0];
         boundsGJ = selectedPolygon.geometry;
