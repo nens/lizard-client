@@ -387,7 +387,8 @@ angular.module('lizard-nxt')
 
         var selectedGeometries = State.selected.geometries;
         if (selectedGeometries && selectedGeometries.length === 1 &&
-            selectedGeometries[0].geometry.type === 'Polygon') {
+            (selectedGeometries[0].geometry.type === 'Polygon' ||
+             selectedGeometries[0].geometry.type === 'MultiPolygon')) {
           var selectedPolygon = selectedGeometries[0];
           var totalArea = selectedPolygon.area;
           if (value.total) {
