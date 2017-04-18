@@ -66,38 +66,36 @@ angular.module('legend')
       var styleMin,
           styleMax,
           styleParts,
-          colormapName = UtilService.extractColormapName(styles),
+          stylesString = UtilService.extractStylesString(
+            styles, State.temporal.aggWindow),
+          colormap,
+          colormapName = UtilService.extractColormapName(stylesString),
+          layer,
+          contRasterData,
           singleColormapUrl = COLORMAP_URL + colormapName + "/";
 
-      if (UtilService.isCompoundStyles(styles)) {
-        styleParts = styles.split(":");
+      if (UtilService.isCompoundStyles(stylesString)) {
+        styleParts = stylesString.split(":");
         styleMin = styleParts[1];
         styleMax = styleParts[2];
       }
 
       $http.get(singleColormapUrl).then(function (result) {
-        var colormap = result.data.definition;
+        colormap = result.data.definition;
         colormaps[uuid] = colormap;
-        var layer = _.find(State.layers, { uuid: uuid });
+        layer = _.find(State.layers, { uuid: uuid });
         if (layer && layer.active) {
-
-          var contRasterData = this.rasterData.continuous[uuid];
+          contRasterData = this.rasterData.continuous[uuid];
           contRasterData.colormap = colormap;
-
           if (contRasterData.min === null) {
-            if (styleMin === undefined) {
-              contRasterData.min = _.first(colormap.data)[0];
-            } else {
-              contRasterData.min = parseFloat(styleMin);
-            }
+            contRasterData.min = styleMin === undefined
+              ? _.first(colormap.data)[0]
+              : parseFloat(styleMin)
           }
-
           if (contRasterData.max === null) {
-            if (styleMax === undefined) {
-              contRasterData.max = _.last(colormap.data)[0];
-            } else {
-              contRasterData.max = parseFloat(styleMax);
-            }
+            contRasterData.max = styleMax === undefined
+              ? _.last(colormap.data)[0]
+              : parseFloat(styleMax)
           }
         }
       }.bind(this));
@@ -189,6 +187,7 @@ angular.module('legend')
           dataLayerObj,
           promises = [],
           contRasterData,
+          stylesString,
           styleParts,
           rasterLayers = _.filter(layers, { type: 'raster' });
 
@@ -202,22 +201,21 @@ angular.module('legend')
           if (rasterIsDiscrete(dataLayerObj)) {
             DataService.updateLayerData(geo, layerObj, options, promises);
           } else {
-            if (dataLayerObj.temporal) {
-              // The raster is temporal AND continuous (e.g. "rain"); currently
-              // we do not support legends for this types of rasters.
-              return;
-            }
             contRasterData = this.rasterData.continuous[uuid];
             if (contRasterData === undefined) {
               this.initContinuousRasterData(uuid, dataLayerObj.unit);
+              contRasterData = this.rasterData.continuous[uuid];
             }
             if (!colormaps[uuid]) {
               this.setColormap(uuid, dataLayerObj.styles);
             } else {
               contRasterData.colormap = colormaps[uuid];
               if (!contRasterData.min && !contRasterData.max) {
-                if (UtilService.isCompoundStyles(dataLayerObj.styles)) {
-                  styleParts = dataLayerObj.styles.split(":");
+                stylesString = UtilService.extractStylesString(
+                  dataLayerObj.styles,
+                  State.temporal.aggWindow);
+                if (UtilService.isCompoundStyles(stylesString)) {
+                  styleParts = stylesString.split(":");
                   contRasterData.min = parseFloat(styleParts[1]);
                   contRasterData.max = parseFloat(styleParts[2]);
                 } else {

@@ -1085,6 +1085,12 @@ angular.module('lizard-nxt')
     return closest;
   };
 
+  this.extractStylesString = function (styles, aggWindow) {
+    return typeof styles === typeof {}
+      ? styles[0][aggWindow]
+      : styles;
+  };
+
   /**
     * @description  This function is used to format a raster configs "styles"
     *               value. This should be used for e.g. colormap API calls, where
@@ -1099,13 +1105,11 @@ angular.module('lizard-nxt')
     *
     * @param {string} styles
     */
-  this.extractColormapName = function (styles) {
-    var parts = styles.split(":");
-    if (parts.length > 1) {
-      return parts[0];
-    } else {
-      return styles;
-    }
+  this.extractColormapName = function (stylesString) {
+    var parts = stylesString.split(":");
+    return parts.length > 2
+      ? parts[0]
+      : stylesString;
   };
 
   /**
@@ -1116,19 +1120,16 @@ angular.module('lizard-nxt')
     *
     *               "dem-nl"     => false
     *               "dem-nl:8:9" => true
-    *               "dem-nl:8:"  => true
+    *               "dem-nl:8:"  => false
     *               "abcd"       => false
     *               "abcd:0:23"  => true
     *
     * @param {string} styles
     */
-  this.isCompoundStyles = function (styles) {
-    if (styles) {
-      var parts = styles.split(":");
-      return parts.length === 3;
-    } else {
-      return false;
-    }
+  this.isCompoundStyles = function (stylesString) {
+    return stylesString
+      ? stylesString.split(":").length === 3
+      : false
   };
 
   /*
