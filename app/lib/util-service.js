@@ -1120,7 +1120,7 @@ angular.module('lizard-nxt')
     *
     *               "dem-nl"     => false
     *               "dem-nl:8:9" => true
-    *               "dem-nl:8:"  => false
+    *               "dem-nl:8:"  => true => THIS SHOULD BE CAUGHT IN DJANGO..
     *               "abcd"       => false
     *               "abcd:0:23"  => true
     *
