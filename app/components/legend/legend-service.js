@@ -3,6 +3,34 @@ angular.module('legend')
   'DataService', 'UtilService', 'RasterService', 'State', '$q', '$http',
   function (DataService, UtilService, RasterService, State, $q, $http) {
 
+    /* COMMENT CONCERING MIN/MAX FOR CONTINUOUS RASTERS (d.d. 18-04-2017):
+
+    Continuous rasters can now handle the following 4 formats for the "styles"
+    option, as configurable in the Django admin:
+
+    1) "styles": "dem_nl"
+    2) "styles": "dem_nl:[MIN]:[MAX]"
+    3) "styles": {"0":
+                   {"0": "radar-5min",
+                    "3600000": "radar-hour",
+                    "86400000": "radar-day"}
+                  ...
+                 }
+    4) "styles": {"0":
+                   {"0": "radar-5min:[MIN]:[MAX]",
+                    "3600000": "radar-hour:[MIN]:[MAX]",
+                    "86400000": "radar-day:[MIN]:[MAX]"}
+                  ...
+                 }
+
+      In the case (1) and (3), the (normalized) MIN and MAX values used for the
+      legend are retrieved from the colormaps API endpoint, while in case (2)
+      and (4) they are readily available in the frontend.
+
+      TODO: extract all things "styles" related to a sepecrate class!
+     */
+
+
     this.rasterData = {
       continuous: {},
       discrete: {},
@@ -88,14 +116,18 @@ angular.module('legend')
           contRasterData = this.rasterData.continuous[uuid];
           contRasterData.colormap = colormap;
           if (contRasterData.min === null) {
-            contRasterData.min = styleMin === undefined
-              ? _.first(colormap.data)[0]
-              : parseFloat(styleMin);
+            if (styleMin === undefined) {
+              contRasterData.min = _.first(colormap.data)[0];
+            } else {
+              contRasterData.min = parseFloat(styleMin);
+            }
           }
           if (contRasterData.max === null) {
-            contRasterData.max = styleMax === undefined
-              ? _.last(colormap.data)[0]
-              : parseFloat(styleMax);
+            if (styleMax === undefined) {
+              contRasterData.max = _.last(colormap.data)[0];
+            } else {
+              contRasterData.max = parseFloat(styleMax);
+            }
           }
         }
       }.bind(this));
