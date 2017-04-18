@@ -3,6 +3,34 @@ angular.module('legend')
   'DataService', 'UtilService', 'RasterService', 'State', '$q', '$http',
   function (DataService, UtilService, RasterService, State, $q, $http) {
 
+    /* COMMENT CONCERING MIN/MAX FOR CONTINUOUS RASTERS (d.d. 18-04-2017):
+
+    Continuous rasters can now handle the following 4 formats for the "styles"
+    option, as configurable in the Django admin:
+
+    1) "styles": "dem_nl"
+    2) "styles": "dem_nl:[MIN]:[MAX]"
+    3) "styles": {"0":
+                   {"0": "radar-5min",
+                    "3600000": "radar-hour",
+                    "86400000": "radar-day"}
+                  ...
+                 }
+    4) "styles": {"0":
+                   {"0": "radar-5min:[MIN]:[MAX]",
+                    "3600000": "radar-hour:[MIN]:[MAX]",
+                    "86400000": "radar-day:[MIN]:[MAX]"}
+                  ...
+                 }
+
+      In the case (1) and (3), the (normalized) MIN and MAX values used for the
+      legend are retrieved from the colormaps API endpoint, while in case (2)
+      and (4) they are readily available in the frontend.
+
+      TODO: extract all things "styles" related to a sepecrate class!
+     */
+
+
     this.rasterData = {
       continuous: {},
       discrete: {},
@@ -66,24 +94,27 @@ angular.module('legend')
       var styleMin,
           styleMax,
           styleParts,
-          colormapName = UtilService.extractColormapName(styles),
+          stylesString = UtilService.extractStylesString(
+            styles, State.temporal.aggWindow),
+          colormap,
+          colormapName = UtilService.extractColormapName(stylesString),
+          layer,
+          contRasterData,
           singleColormapUrl = COLORMAP_URL + colormapName + "/";
 
-      if (UtilService.isCompoundStyles(styles)) {
-        styleParts = styles.split(":");
+      if (UtilService.isCompoundStyles(stylesString)) {
+        styleParts = stylesString.split(":");
         styleMin = styleParts[1];
         styleMax = styleParts[2];
       }
 
       $http.get(singleColormapUrl).then(function (result) {
-        var colormap = result.data.definition;
+        colormap = result.data.definition;
         colormaps[uuid] = colormap;
-        var layer = _.find(State.layers, { uuid: uuid });
+        layer = _.find(State.layers, { uuid: uuid });
         if (layer && layer.active) {
-
-          var contRasterData = this.rasterData.continuous[uuid];
+          contRasterData = this.rasterData.continuous[uuid];
           contRasterData.colormap = colormap;
-
           if (contRasterData.min === null) {
             if (styleMin === undefined) {
               contRasterData.min = _.first(colormap.data)[0];
@@ -91,7 +122,6 @@ angular.module('legend')
               contRasterData.min = parseFloat(styleMin);
             }
           }
-
           if (contRasterData.max === null) {
             if (styleMax === undefined) {
               contRasterData.max = _.last(colormap.data)[0];
@@ -189,6 +219,7 @@ angular.module('legend')
           dataLayerObj,
           promises = [],
           contRasterData,
+          stylesString,
           styleParts,
           rasterLayers = _.filter(layers, { type: 'raster' });
 
@@ -202,22 +233,21 @@ angular.module('legend')
           if (rasterIsDiscrete(dataLayerObj)) {
             DataService.updateLayerData(geo, layerObj, options, promises);
           } else {
-            if (dataLayerObj.temporal) {
-              // The raster is temporal AND continuous (e.g. "rain"); currently
-              // we do not support legends for this types of rasters.
-              return;
-            }
             contRasterData = this.rasterData.continuous[uuid];
             if (contRasterData === undefined) {
               this.initContinuousRasterData(uuid, dataLayerObj.unit);
+              contRasterData = this.rasterData.continuous[uuid];
             }
             if (!colormaps[uuid]) {
               this.setColormap(uuid, dataLayerObj.styles);
             } else {
               contRasterData.colormap = colormaps[uuid];
               if (!contRasterData.min && !contRasterData.max) {
-                if (UtilService.isCompoundStyles(dataLayerObj.styles)) {
-                  styleParts = dataLayerObj.styles.split(":");
+                stylesString = UtilService.extractStylesString(
+                  dataLayerObj.styles,
+                  State.temporal.aggWindow);
+                if (UtilService.isCompoundStyles(stylesString)) {
+                  styleParts = stylesString.split(":");
                   contRasterData.min = parseFloat(styleParts[1]);
                   contRasterData.max = parseFloat(styleParts[2]);
                 } else {
