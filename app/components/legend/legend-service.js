@@ -155,7 +155,8 @@ angular.module('legend')
 
       if (selectedGeometries && selectedGeometries.length === 1 &&
           selectedGeometries[0].geometry &&
-          selectedGeometries[0].geometry.type === 'Polygon') {
+          (selectedGeometries[0].geometry.type === 'Polygon' ||
+           selectedGeometries[0].geometry.type === 'MultiPolygon')) {
         // If we have a selected region, base the legend on that.
         var selectedPolygon = selectedGeometries[0];
         boundsGJ = selectedPolygon.geometry;
@@ -201,6 +202,11 @@ angular.module('legend')
           if (rasterIsDiscrete(dataLayerObj)) {
             DataService.updateLayerData(geo, layerObj, options, promises);
           } else {
+            if (dataLayerObj.temporal) {
+              // The raster is temporal AND continuous (e.g. "rain"); currently
+              // we do not support legends for this types of rasters.
+              return;
+            }
             contRasterData = this.rasterData.continuous[uuid];
             if (contRasterData === undefined) {
               this.initContinuousRasterData(uuid, dataLayerObj.unit);
