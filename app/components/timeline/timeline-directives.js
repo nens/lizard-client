@@ -476,57 +476,103 @@ angular.module('lizard-nxt')
         ]);
       },
       function (n, o) {
-
-        var showTemporalData, check1, check2, check3;
-
-        // 1) set boolean 1: has active asset with timeseries?
-        check1 = State.selected.timeseries && State.selected.timeseries.length;
-
-        // 2) set boolean 2: has active temporal raster(s)?
-        if (State.layers && DataService.dataLayers) {
-          check2 = State.layers.some(function (layer) {
-            return (
-              layer.active &&
-              // To check if it's temporal, we have to find a layer with the
-              // same UUID in DataService.dataLayers, and check its .temporal
-              // property.
-              DataService.dataLayers.some(function (dl) {
-                return (dl.uuid === layer.uuid && dl.temporal);
-              })
-            );
-          });
-        }
-
-        // 3) set boolean 3: has active eventseries?
-        if (State.layers && State.layers.some(function (layer) {
-          return layer.active && layer.type === 'eventseries';
-        })) {
-          check3 = true;
+        if (State.context === 'dashboard') {
+          var showTemporalData = needToShowTimelineInDashboard();
         } else {
-          check3 = false;
+          var showTemporalData = needToShowTimelineInMap();
         }
-
-        showTemporalData = !!(check1 || check2 || check3);
-
         // Only toggle TL visibility when needed too:
         if (State.temporal.showingTemporalData !== showTemporalData) {
           State.temporal.showingTemporalData = showTemporalData;
-          toggleTimeline(showTemporalData);
+          toggleTimeline();
         }
       }
     );
 
-    /* Animate the timeline (dis-)appearance:
+    /**
+     * Decide whether we show the timeline after switching context (i.e.
+     * when switching: State.context="map" <=> State.context="dashboard")
      *
-     * The only arg passed to the function is read as a boolean:
-     * If true, we show the timeline; else we hide the timeline
+     * This depends on the presence of active temporal layers and on
+     * on selected assets with timeseries.
      */
-    var toggleTimeline = function (mustShow) {
-      var elem = angular.element('#timeline');
-      if (mustShow) {
-        elem.removeClass('must-hide');
+
+    scope.$watch(State.context, function (n, o) {
+      if (State.context === 'dashboard') {
+        State.temporal.showingTemporalData = needToShowTimelineInDashboard();
       } else {
-        elem.addClass('must-hide');
+        State.temporal.showingTemporalData = needToShowTimelineInMap();
+      }
+      $(document).ready(function () { toggleTimeline(); });
+    });
+
+
+    /**
+     * Check whether we need to show/hide the timeline because of the presence
+     * of timeseries:
+     */
+    var tlNeededBecauseTimeseries = function () {
+      return State.selected.timeseries && State.selected.timeseries.length;
+    };
+
+    /**
+     * Check whether we need to show/hide the timeline because of the presence
+     * of temporal rasters:
+     */
+    var tlNeededBecauseTemporalRasters = function () {
+      if (State.layers && DataService.dataLayers) {
+        return State.layers.some(function (layer) {
+          return (
+            layer.active &&
+            // To check if it's temporal, we have to find a layer with the
+            // same UUID in DataService.dataLayers, and check its .temporal
+            // property.
+            DataService.dataLayers.some(function (dl) {
+              return (dl.uuid === layer.uuid && dl.temporal);
+            })
+          );
+        });
+      }
+      return false;
+    };
+
+    /**
+     * Check whether we need to show/hide the timeline because of the presence
+     * of eventseries:
+     */
+    var tlNeededBecauseEventseries = function () {
+      if (State.layers && State.layers.some(function (layer) {
+        return layer.active && layer.type === 'eventseries';
+      })) {
+        return true;
+      }
+      return false;
+    };
+
+    /* Check whether we want to show the timeline in map ctx;
+     */
+    var needToShowTimelineInMap = function () {
+      var check1 = tlNeededBecauseTimeseries(),
+          check2 = tlNeededBecauseTemporalRasters(),
+          check3 = tlNeededBecauseEventseries();
+      return !!(check1 || check2 || check3);
+    };
+
+    /* Check whether we want to show the timeline in dashboard ctx;
+     */
+    var needToShowTimelineInDashboard = function () {
+      var check1 = tlNeededBecauseTimeseries(),
+          check2 = tlNeededBecauseEventseries();
+      return !!(check1 || check2);
+    };
+
+    /* Animate the timeline (dis-)appearance:
+     */
+    var toggleTimeline = function () {
+      if (State.temporal.showingTemporalData) {
+        angular.element('#timeline').removeClass('must-hide');
+      } else {
+        angular.element('#timeline').addClass('must-hide');
       }
     };
 
