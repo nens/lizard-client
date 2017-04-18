@@ -202,6 +202,11 @@ angular.module('legend')
           if (rasterIsDiscrete(dataLayerObj)) {
             DataService.updateLayerData(geo, layerObj, options, promises);
           } else {
+            if (dataLayerObj.temporal) {
+              // The raster is temporal AND continuous (e.g. "rain"); currently
+              // we do not support legends for this types of rasters.
+              return;
+            }
             contRasterData = this.rasterData.continuous[uuid];
             if (contRasterData === undefined) {
               this.initContinuousRasterData(uuid, dataLayerObj.unit);
