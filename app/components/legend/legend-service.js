@@ -90,12 +90,12 @@ angular.module('legend')
           if (contRasterData.min === null) {
             contRasterData.min = styleMin === undefined
               ? _.first(colormap.data)[0]
-              : parseFloat(styleMin)
+              : parseFloat(styleMin);
           }
           if (contRasterData.max === null) {
             contRasterData.max = styleMax === undefined
               ? _.last(colormap.data)[0]
-              : parseFloat(styleMax)
+              : parseFloat(styleMax);
           }
         }
       }.bind(this));
