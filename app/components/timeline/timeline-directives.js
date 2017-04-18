@@ -472,7 +472,7 @@ angular.module('lizard-nxt')
       function () {
         return JSON.stringify([
           State.layers,
-          State.selected.timeseries,
+          State.selected.timeseries
         ]);
       },
       function (n, o) {
