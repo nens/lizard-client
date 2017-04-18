@@ -472,61 +472,95 @@ angular.module('lizard-nxt')
       function () {
         return JSON.stringify([
           State.layers,
-          State.selected.timeseries
+          State.selected.timeseries,
         ]);
       },
       function (n, o) {
 
-        var showTemporalData, check1, check2, check3;
-
-        // 1) set boolean 1: has active asset with timeseries?
-        check1 = State.selected.timeseries && State.selected.timeseries.length;
-
-        // 2) set boolean 2: has active temporal raster(s)?
-        if (State.layers && DataService.dataLayers) {
-          check2 = State.layers.some(function (layer) {
-            return (
-              layer.active &&
-              // To check if it's temporal, we have to find a layer with the
-              // same UUID in DataService.dataLayers, and check its .temporal
-              // property.
-              DataService.dataLayers.some(function (dl) {
-                return (dl.uuid === layer.uuid && dl.temporal);
-              })
-            );
-          });
-        }
-
-        // 3) set boolean 3: has active eventseries?
-        if (State.layers && State.layers.some(function (layer) {
-          return layer.active && layer.type === 'eventseries';
-        })) {
-          check3 = true;
-        } else {
-          check3 = false;
-        }
-
-        showTemporalData = !!(check1 || check2 || check3);
+        if (n === o) return;
+        console.log("[W] temporal data changed!");
+        var showTemporalData = needToShowTimeline();
+        console.log("[dbg] showTemporalData?", showTemporalData);
 
         // Only toggle TL visibility when needed too:
         if (State.temporal.showingTemporalData !== showTemporalData) {
+          var elem = angular.element('#timeline');
+          console.log("[dbg] elem =", elem);
           State.temporal.showingTemporalData = showTemporalData;
-          toggleTimeline(showTemporalData);
+          toggleTimeline(elem, showTemporalData);
         }
       }
     );
+
+    /**
+     * Decide whether we show the timeline after switching context (i.e.
+     * when switching: State.context="map" <=> State.context="dashboard")
+     *
+     * This depends on the presence of active temporal layers and on
+     * on selected assets with timeseries, so we watch those.
+     */
+
+    scope.$watch(State.context, function (n, o) {
+
+      if (n === o) return;
+      console.log("[W] context changed!");
+
+      $(document).ready(function () {
+        var showTemporalData = needToShowTimeline();
+        console.log("[dbg] showTemporalData?", showTemporalData);
+        State.temporal.showingTemporalData = showTemporalData;
+        toggleTimeline(showTemporalData);
+      });
+    });
+
+
+
+    var needToShowTimeline = function () {
+
+      var check1, check2, check3;
+
+      // 1) set boolean 1: has active asset with timeseries?
+      check1 = State.selected.timeseries && State.selected.timeseries.length;
+
+      // 2) set boolean 2: has active temporal raster(s)?
+      if (State.layers && DataService.dataLayers) {
+        check2 = State.layers.some(function (layer) {
+          return (
+            layer.active &&
+            // To check if it's temporal, we have to find a layer with the
+            // same UUID in DataService.dataLayers, and check its .temporal
+            // property.
+            DataService.dataLayers.some(function (dl) {
+              return (dl.uuid === layer.uuid && dl.temporal);
+            })
+          );
+        });
+      }
+
+      // 3) set boolean 3: has active eventseries?
+      if (State.layers && State.layers.some(function (layer) {
+        return layer.active && layer.type === 'eventseries';
+      })) {
+        check3 = true;
+      } else {
+        check3 = false;
+      }
+
+      return !!(check1 || check2 || check3);
+    };
+
 
     /* Animate the timeline (dis-)appearance:
      *
      * The only arg passed to the function is read as a boolean:
      * If true, we show the timeline; else we hide the timeline
      */
-    var toggleTimeline = function (mustShow) {
-      var elem = angular.element('#timeline');
+    var toggleTimeline = function (timelineElem, mustShow) {
+
       if (mustShow) {
-        elem.removeClass('must-hide');
+        timelineElem.removeClass('must-hide');
       } else {
-        elem.addClass('must-hide');
+        timelineElem.addClass('must-hide');
       }
     };
 
