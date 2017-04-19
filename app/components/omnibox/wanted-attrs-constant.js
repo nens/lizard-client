@@ -372,12 +372,6 @@ angular.module('omnibox')
         valueSuffix: ""
       },
       {
-        keyName: gettext("Category"),
-        attrName: "category",
-        ngBindValue: "waterchain.category",
-        valueSuffix: ""
-      },
-      {
           keyName: gettext("Node"),
           attrName: "node",
           ngBindValue:
