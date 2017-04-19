@@ -74,76 +74,112 @@ angular.module('omnibox')
           // Dropping outside of dropzone
           return;
         }
-        var order = Number(target.getAttribute('data-order'));
-        var uuid = el.getAttribute('data-uuid');
+        console.log("*** GoGoGo! *******************************************");
+        console.log("*** arg 'el' =", el);
+        console.log("*** arg 'target' =", target);
 
-        // El either represents a timeseries or another plottable item.
-        //
-        // NOTE: there is only one drop callback for all the possible assets. So
-        // instead of searching for the ts in scope.asset.timeseries, all the
-        // assets are searched.
-        // timeseries
-        var ts, otherGraphTS, otherCompatibleGraph;
+        // Order for el/target: ///////////////////////////////////////////////
+        var orderEl = Number(el.getAttribute('data-order'));
+        console.log("*** orderEl =", orderEl);
+        var orderTarget = Number(target.getAttribute('data-order'));
+        console.log("*** orderTarget =", orderTarget);
 
-        // timeseries representend by el.
-        ts = _.find(State.selected.timeseries, function (ts) {
-          return ts.uuid === uuid;
+        var uuidEl = el.getAttribute('data-uuid');
+
+        // Timeseries representend by el/target: //////////////////////////////
+        var tsEl = _.find(State.selected.timeseries, function (ts) {
+          return ts.uuid === uuidEl;
         });
-
-        // Possible other graph in target.
-        otherGraphTS = _.find(State.selected.timeseries, function (ts) {
-          return ts.order === order && ts.active;
+        var tsTarget = _.find(State.selected.timeseries, function (ts) {
+          return ts.order === orderTarget && ts.active;
         });
+        console.log("*** tsEl =", tsEl);
+        console.log("*** tsTarget =", tsTarget);
 
-        if (otherGraphTS === undefined) {
-          // No other graph, just turn ts to active.
-          emulateClick(el);
-          el.parentNode.removeChild(el);
+        // UUID for el/target ts: /////////////////////////////////////////////
+        var uuidTarget = tsTarget.uuid;
+        console.log("*** uuidEl =", uuidEl);
+        console.log("*** uuidTarget =", uuidTarget);
+
+        if (uuidTarget === uuidEl) {
+          // Same graph, just return.
+          console.log("[E] uuidEl === uuidTarget; return!");
           return;
         }
 
-        // If ts was already active: first remove and rearrange plots in
-        // dashboard, then continue adding it to the dragged plot.
-        if (ts.active) {
-          var otherTSInOrigninalPlot = _.find(
+        // Reset order since we now have sensible values to be read:
+        orderEl = tsEl.order;
+        orderTarget = tsTarget.order;
+        console.log("*** orderEl (2) =", orderEl);
+        console.log("*** orderTarget (2) =", orderTarget);
+
+        var hasDataEl = TimeseriesService.tsHasData(tsEl.uuid);
+        var hasDataTarget = TimeseriesService.tsHasData(tsTarget.uuid);
+
+        if (!hasDataEl && !hasDataTarget) {
+          return;
+        } else {
+          if (orderEl < orderTarget) {
+            if (!hasDataEl) {
+              target.parentNode.removeChild(target);
+              el.setAttribute('data-order', orderEl || 0);
+              TimeseriesService.syncTime();
+              return;
+            }
+          } else if (orderEl > orderTarget) {
+            if (!hasDataTarget) {
+              target.parentNode.removeChild(target);
+              el.setAttribute('data-order', orderEl || 0);
+              TimeseriesService.syncTime();
+              return;
+            }
+          }
+        }
+
+        if (tsEl.active) {
+
+          var otherTSInOriginalPlot = _.find(
+
             State.selected.timeseries,
+
             function (_ts) {
               return _ts.active
-                && _ts.order === ts.order
-                && _ts.uuid !== ts.uuid;
+                && _ts.order === orderEl
+                && _ts.uuid !== uuidEl;
             }
           );
-          if (otherTSInOrigninalPlot === undefined) {
+
+          console.log("****** otherTSInOriginalPlot =", otherTSInOriginalPlot);
+
+          if (otherTSInOriginalPlot === undefined) {
             // Plot where ts came from is now empty and removed.
-            order = order < ts.order ? order : order - 1;
+            console.log("****** orderTarget (1):", orderTarget);
+            orderTarget = orderTarget < orderEl ? orderTarget : orderTarget - 1;
+            console.log("****** orderTarget (2):", orderTarget);
           }
 
-          ts.active = false;
-          DBCardsService.removeItemFromPlot(ts);
-        }
+          tsEl.active = false; // ??? O RLY?
+          DBCardsService.removeItemFromPlot(tsEl);
 
-        var tsMetaData = getTsMetaData(ts.uuid);
-        var otherGraphTsMetaData = getTsMetaData(otherGraphTS.uuid);
-        if (tsMetaData.value_type !== otherGraphTsMetaData.value_type) {
-          notie.alert(2,
-            gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!'));
-          emulateClick(el);
-        } else {
-          // Set new order and tell TimeSeriesService to get data.
-          ts.order = order || 0; // dashboard could be empty
-          ts.active = true;
-          TimeseriesService.syncTime();
+          var tsMetaData = getTsMetaData(uuidEl);
+          var otherGraphTsMetaData = getTsMetaData(uuidTarget);
+          if (tsMetaData.value_type !== otherGraphTsMetaData.value_type) {
+            notie.alert(2,
+              gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!'));
+            emulateClick(tsEl);
+          } else {
+            // Set new order and tell TimeSeriesService to get data.
+            tsEl.order = orderTarget || 0; // dashboard could be empty
+            tsEl.active = true;
+            TimeseriesService.syncTime();
+          }
         }
-
-        // Remove drag element.
         el.parentNode.removeChild(el);
-
       });
 
       scope.$on('$destroy', function () {
         DragService.destroy();
       });
-
     },
     restrict: 'E',
     replace: true,

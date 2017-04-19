@@ -1475,7 +1475,7 @@ angular.module('lizard-nxt')
    * @param  {string}       (optional) label, if undefined uupdates current.
    * @param  {boolean}      draw on y axis, else x-axis.
    */
-    var drawLabel = function (svg, dimensions, label, y) {
+  var drawLabel = function (svg, dimensions, label, y) {
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
         mv,
@@ -1504,9 +1504,20 @@ angular.module('lizard-nxt')
         .attr('y', dimensions.height);
     }
 
-    mv = y
-      ? 0.5 * el.node().getBBox().height + PIXEL_CORRECTION
-      : - 0.5 * el.node().getBBox().height + PIXEL_CORRECTION;
+    try {
+      var h = el.node().getBBox().height;
+      console.log("[!] h =", h);
+      mv = y
+        ? (0.5 * h) + PIXEL_CORRECTION
+        : (-0.5 * h) + PIXEL_CORRECTION;
+
+    } catch (e) {
+      console.log("[E] e =", e);
+      return el;
+    }
+
+    console.log("[dbg] mv =", mv);
+
     el.attr('dy', mv);
     return el;
   };

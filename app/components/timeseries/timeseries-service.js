@@ -241,6 +241,14 @@ angular.module('timeseries')
       );
       return asset;
     };
+
+    this.tsHasData = function (uuid) {
+      // NB! This assumes the only form an empty timeseries' data can have is
+      // the empty list:
+      var ts = _.find(this.timeseries, { id: uuid });
+      var data = ts.data;
+      return !(_.isEmpty(data));
+    };
   }
 ]);
 
@@ -351,6 +359,11 @@ angular.module('timeseries')
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
 
         graphTimeseries.data = ts.events;
+
+        // if (_.isEmpty(ts.events)) {
+        //   console.log("re-order:");
+        // }
+
         graphTimeseries.id = ts.uuid;
         graphTimeseries.valueType = ts.value_type;
         graphTimeseries.measureScale = ts.observation_type.scale;
