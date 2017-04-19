@@ -257,12 +257,6 @@ angular.module('omnibox')
         valueSuffix: ""
       },
       {
-        keyName: gettext("Scale"),
-        attrName: "scale",
-        ngBindValue: "waterchain.scale",
-        valueSuffix: ""
-      },
-      {
         keyName: gettext("Station type"),
         attrName: "station_type",
         ngBindValue: "waterchain.station_type",
@@ -278,20 +272,6 @@ angular.module('omnibox')
         keyName: gettext("Surface level"),
         attrName: "surface_level",
         ngBindValue: "waterchain.surface_level",
-        valueSuffix: "m (NAP)"
-      },
-      {
-        /// Bovenkant buis
-        keyName: gettext("Top level"),
-        attrName: "top_level",
-        ngBindValue: "waterchain.top_level",
-        valueSuffix: "m (NAP)"
-      },
-      {
-        /// Onderkant buis
-        keyName: gettext("Bottom level"),
-        attrName: "bottom_level",
-        ngBindValue: "waterchain.bottom_level",
         valueSuffix: "m (NAP)"
       }
     ]
