@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.13.0"></a>
+# [4.13.0](https://github.com/nens/lizard-client/compare/v4.12.0...v4.13.0) (2017-04-19)
+
+
+### Bug Fixes
+
+* **legend:** min/max from styles str, else via data ([924bee3](https://github.com/nens/lizard-client/commit/924bee3))
+* **legend:** min/max from styles str, else via data ([ceca1dc](https://github.com/nens/lizard-client/commit/ceca1dc))
+* **legend:** temp commit --> fix ON HOLD ([98bcb03](https://github.com/nens/lizard-client/commit/98bcb03))
+* **overflowing bar charts:** no more browser-zooming via scrollwheel ([95b6802](https://github.com/nens/lizard-client/commit/95b6802))
+* **tests:** fix failing date-parser test ([d78b46d](https://github.com/nens/lizard-client/commit/d78b46d))
+* MultiPolygons didn't work, probably because we explicitly checked that the geometry was a Polygon. Most likely fixed by this small change. ([46c389b](https://github.com/nens/lizard-client/commit/46c389b))
+* **timeline:** raster "styles" option can handle client's highest aggwindow ([a0c46a5](https://github.com/nens/lizard-client/commit/a0c46a5))
+
+
+### Features
+
+* **legend:** legend can handle style-per-aggWindow-per-zoomLevel (e.g: rain) ([4b7cb91](https://github.com/nens/lizard-client/commit/4b7cb91))
+* **vitens extra attributes:** the new attrs get in omnibox correct ([acd884a](https://github.com/nens/lizard-client/commit/acd884a))
+
+
+
 <a name="4.12.0"></a>
 # [4.12.0](https://github.com/nens/lizard-client/compare/v4.6.4...v4.12.0) (2017-03-27)
 
