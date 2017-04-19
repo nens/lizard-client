@@ -1086,9 +1086,28 @@ angular.module('lizard-nxt')
   };
 
   this.extractStylesString = function (styles, aggWindow) {
-    return typeof styles === typeof {}
-      ? styles[0][aggWindow]
-      : styles;
+    var stylesString;
+    if (typeof styles === typeof {}) {
+      // The "styles" option for the raster has datatype Object:
+      var styleObjForSomeZoomLevel = styles[0];
+      if (styleObjForSomeZoomLevel.hasOwnProperty(aggWindow)) {
+        stylesString = styleObjForSomeZoomLevel[aggWindow];
+      } else {
+        var availableAggWindows = Object.keys(styleObjForSomeZoomLevel);
+        var sortedAggWindows = _.sortBy(availableAggWindows);
+        var minAggWindow = _.first(sortedAggWindows);
+        var maxAggWindow = _.last(sortedAggWindows);
+        if (aggWindow > maxAggWindow) {
+          stylesString = styleObjForSomeZoomLevel[maxAggWindow];
+        } else {
+          stylesString = styleObjForSomeZoomLevel[minAggWindow];
+        }
+      }
+    } else {
+      // The "styles" option for the raster has datatype String:
+      stylesString = styles;
+    }
+    return stylesString;
   };
 
   /**
@@ -1129,7 +1148,7 @@ angular.module('lizard-nxt')
   this.isCompoundStyles = function (stylesString) {
     return stylesString
       ? stylesString.split(":").length === 3
-      : false
+      : false;
   };
 
   /*
