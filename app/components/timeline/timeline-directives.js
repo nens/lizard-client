@@ -476,10 +476,11 @@ angular.module('lizard-nxt')
         ]);
       },
       function (n, o) {
+        var showTemporalData;
         if (State.context === 'dashboard') {
-          var showTemporalData = needToShowTimelineInDashboard();
+          showTemporalData = needToShowTimelineInDashboard();
         } else {
-          var showTemporalData = needToShowTimelineInMap();
+          showTemporalData = needToShowTimelineInMap();
         }
         // Only toggle TL visibility when needed too:
         if (State.temporal.showingTemporalData !== showTemporalData) {
