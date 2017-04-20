@@ -137,11 +137,8 @@ angular.module('omnibox')
         }
 
         if (tsEl.active) {
-
           var otherTSInOriginalPlot = _.find(
-
             State.selected.timeseries,
-
             function (_ts) {
               return _ts.active
                 && _ts.order === orderEl

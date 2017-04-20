@@ -360,10 +360,6 @@ angular.module('timeseries')
 
         graphTimeseries.data = ts.events;
 
-        // if (_.isEmpty(ts.events)) {
-        //   console.log("re-order:");
-        // }
-
         graphTimeseries.id = ts.uuid;
         graphTimeseries.valueType = ts.value_type;
         graphTimeseries.measureScale = ts.observation_type.scale;

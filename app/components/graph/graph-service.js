@@ -1504,20 +1504,9 @@ angular.module('lizard-nxt')
         .attr('y', dimensions.height);
     }
 
-    try {
-      var h = el.node().getBBox().height;
-      console.log("[!] h =", h);
-      mv = y
-        ? (0.5 * h) + PIXEL_CORRECTION
-        : (-0.5 * h) + PIXEL_CORRECTION;
-
-    } catch (e) {
-      console.log("[E] e =", e);
-      return el;
-    }
-
-    console.log("[dbg] mv =", mv);
-
+    mv = y
+      ? 0.5 * el.node().getBBox().height + PIXEL_CORRECTION
+      : - 0.5 * el.node().getBBox().height + PIXEL_CORRECTION;
     el.attr('dy', mv);
     return el;
   };
