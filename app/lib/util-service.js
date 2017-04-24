@@ -1178,4 +1178,22 @@ angular.module('lizard-nxt')
     $('body').bind('mousewheel', noZoomFn); // Chromium/IE
     $('body').bind('DOMMouseScroll', noZoomFn); // Firefox
   };
+
+  var getOffsetInMsec = function (step) {
+    var offsetInMinutes =  new Date(step).getTimezoneOffset();
+    var offsetInMsec = 1000 * 60 * offsetInMinutes;
+    return offsetInMsec;
+  };
+
+  /**
+   * @description Used for converting timesteps (representing points in time,
+   *              saved according to the UTC standard) to the client's
+   *              localtime (=local time at the point in space where the
+   *              end-user is located when using the Lizard-client).
+   */
+  this.subtractOffsetUTC = function (timesteps) {
+    return _.map(timesteps, function (step) {
+      return step - getOffsetInMsec(step); // "subtract"
+    });
+  };
 }]);
