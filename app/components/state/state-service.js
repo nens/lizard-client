@@ -62,7 +62,8 @@ angular.module('global-state')
           gettextCatalog.setCurrentLanguage(language);
           $http.defaults.headers.common["Accept-Language"] = state.language;
         }
-      }
+      },
+      enumerable: true
     });
 
     // Default language.
