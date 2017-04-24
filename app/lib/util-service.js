@@ -1192,8 +1192,12 @@ angular.module('lizard-nxt')
    *              end-user is located when using the Lizard-client).
    */
   this.subtractOffsetUTC = function (timesteps) {
+    var offsetInMinutes,
+        offsetInMsec;
     return _.map(timesteps, function (step) {
-      return step - getOffsetInMsec(step); // "subtract"
+      offsetInMinutes = new Date(step).getTimezoneOffset();
+      offsetInMsec = 1000 * 60 * offsetInMinutes;
+      return step - getOffsetInMsec(step);
     });
   };
 }]);
