@@ -1197,7 +1197,7 @@ angular.module('lizard-nxt')
     return _.map(timesteps, function (step) {
       offsetInMinutes = new Date(step).getTimezoneOffset();
       offsetInMsec = 1000 * 60 * offsetInMinutes;
-      return step - getOffsetInMsec(step);
+      return step - offsetInMsec;
     });
   };
 }]);
