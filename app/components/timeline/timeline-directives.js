@@ -370,19 +370,18 @@ angular.module('lizard-nxt')
       var offsetInMsec;
 
       var convertFromUTC = function (steps) {
+        console.log("[F] convertFromUTC; arg 'steps' =", steps);
         return _.map(steps, function (step) {
           offsetInMinutes =  new Date(step).getTimezoneOffset();
           offsetInMsec = 1000 * 60 * offsetInMinutes;
-          return step + offsetInMsec;
+          return step - offsetInMsec;
         });
       };
 
       rasterLayers.forEach(function (raster) {
-
         if (!raster.temporal) {
           return;
         }
-
         raster.getTimesteps({
           start: State.temporal.start,
           end: State.temporal.end
