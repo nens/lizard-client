@@ -1153,13 +1153,29 @@ angular.module('lizard-nxt')
 
   /*
    * @description This function is called once to make sure that the user can't
-   *              zoom in/out using the mouse's scrollwheel. Take note that this
-   *              does not interfere with the designed functionality of either
-   *              panning nor zooming the timeline nor map.
+   *              zoom in/out using the ctrl key + the mouse's scrollwheel.
+   *              Take note that this does not interfere with the designed
+   *              functionality of either panning nor zooming the timeline nor
+   *              map.
    */
   this.preventMousewheelZoom = function () {
-    var noZoomFn = function (e) { e.preventDefault(); };
-    $('body').bind('mousewheel', noZoomFn); // Chrome/IE
+    var ctrlIsPressed = null;
+    var isCtrlPressed = function () {
+      return ctrlIsPressed;
+    };
+    var noZoomFn = function (e) {
+      if (isCtrlPressed()) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    $(document).keydown(function (e) {
+      if (e.keyCode === 17 || e.key === 'Control') { ctrlIsPressed = true; }
+    });
+    $(document).keyup(function (e) {
+      if (e.keyCode === 17 || e.key === 'Control') { ctrlIsPressed = false; }
+    });
+    $('body').bind('mousewheel', noZoomFn); // Chromium/IE
     $('body').bind('DOMMouseScroll', noZoomFn); // Firefox
   };
 }]);
