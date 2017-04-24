@@ -86,7 +86,6 @@ angular.module('data-menu')
 
           var dates = UtilService.subtractOffsetUTC(
             [response.first_value_timestamp, response.last_value_timestamp]);
-
           scope.zoomToBounds = LayerAdderService.zoomToBounds.bind({
             bounds: response.spatial_bounds,
             temporal: response.temporal,

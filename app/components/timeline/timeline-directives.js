@@ -367,10 +367,7 @@ angular.module('lizard-nxt')
           start: State.temporal.start,
           end: State.temporal.end
         }).then(function (response) {
-          if (response && response !== null &&
-              response.data && response.data !== null &&
-              response.data.steps && response.data.steps !== null)
-          {
+          if (response && response !== 'null') {
             timeline.drawTickMarks(response.data.steps);
           }
         });
