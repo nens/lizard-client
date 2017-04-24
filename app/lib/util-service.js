@@ -1179,12 +1179,6 @@ angular.module('lizard-nxt')
     $('body').bind('DOMMouseScroll', noZoomFn); // Firefox
   };
 
-  var getOffsetInMsec = function (step) {
-    var offsetInMinutes =  new Date(step).getTimezoneOffset();
-    var offsetInMsec = 1000 * 60 * offsetInMinutes;
-    return offsetInMsec;
-  };
-
   /**
    * @description Used for converting timesteps (representing points in time,
    *              saved according to the UTC standard) to the client's
