@@ -485,7 +485,6 @@ angular.module('lizard-nxt')
       $(document).ready(function () { toggleTimeline(); });
     });
 
-
     /**
      * Check whether we need to show/hide the timeline because of the presence
      * of timeseries:
