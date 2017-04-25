@@ -2,10 +2,10 @@
 
 angular.module('data-menu')
 .directive('rasterlayer', ['MapService', 'DataService', 'LayerAdderService',
-'rasterMapLayer', 'rasterDataLayer',
+'rasterMapLayer', 'rasterDataLayer', 'UtilService',
 
   function (MapService, DataService, LayerAdderService,
-  rasterMapLayer, rasterDataLayer) {
+  rasterMapLayer, rasterDataLayer, UtilService) {
 
   var link = function (scope) {
 
@@ -84,11 +84,13 @@ angular.module('data-menu')
             scope.rescale = MapService.rescaleLayer;
           }
 
+          var dates = UtilService.subtractOffsetUTC(
+            [response.first_value_timestamp, response.last_value_timestamp]);
           scope.zoomToBounds = LayerAdderService.zoomToBounds.bind({
             bounds: response.spatial_bounds,
             temporal: response.temporal,
-            first: response.first_value_timestamp,
-            last: response.last_value_timestamp
+            first: dates[0],
+            last: dates[1]
           });
 
         })

@@ -359,42 +359,19 @@ angular.module('lizard-nxt')
      * @param {object} rasterLayer - rasterLayer object.
      */
     var getTemporalRasterDates = function (rasterLayers) {
-
-      var dates = [];
-
-      var draw = function () {
-        timeline.drawTickMarks(dates);
-      };
-
-      var offsetInMinutes;
-      var offsetInMsec;
-
-      var convertFromUTC = function (steps) {
-        return _.map(steps, function (step) {
-          offsetInMinutes =  new Date(step).getTimezoneOffset();
-          offsetInMsec = 1000 * 60 * offsetInMinutes;
-          return step + offsetInMsec;
-        });
-      };
-
       rasterLayers.forEach(function (raster) {
-
         if (!raster.temporal) {
           return;
         }
-
         raster.getTimesteps({
           start: State.temporal.start,
           end: State.temporal.end
         }).then(function (response) {
           if (response && response !== 'null') {
-            dates = convertFromUTC(response.data.steps);
+            timeline.drawTickMarks(response.data.steps);
           }
-          draw(dates);
         });
-
       });
-
     };
 
     // END HELPER FUNCTIONS
