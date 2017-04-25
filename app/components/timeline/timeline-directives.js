@@ -532,8 +532,9 @@ angular.module('lizard-nxt')
     var needToShowTimelineInMap = function () {
       var check1 = tlNeededBecauseTimeseries(),
           check2 = tlNeededBecauseTemporalRasters(),
-          check3 = tlNeededBecauseEventseries();
-      return !!(check1 || check2 || check3);
+          check3 = tlNeededBecauseEventseries(),
+          check4 = State.annotations.active;
+      return !!(check1 || check2 || check3 || check4);
     };
 
     /* Check whether we want to show the timeline in dashboard ctx;
