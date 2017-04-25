@@ -10,12 +10,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 * **language:** no longer hide state.language when printing ([4e89e5e](https://github.com/nens/lizard-client/commit/4e89e5e))
 * **layermenu:** scroll through list using scrollwheel ([7c0755a](https://github.com/nens/lizard-client/commit/7c0755a))
-* **tickmarks:** subtract (a.o.t. add) value for getTimezoneOffset for tickmarks ([e7d904a](https://github.com/nens/lizard-client/commit/e7d904a))
-* **timezones:** cleanup ([488dbf4](https://github.com/nens/lizard-client/commit/488dbf4))
-* **timezones:** cleanup ([436375c](https://github.com/nens/lizard-client/commit/436375c))
-* **timezones:** cleanup/simpler NODATA check ([b33de79](https://github.com/nens/lizard-client/commit/b33de79))
-* **timezones:** FTFY ([f9df685](https://github.com/nens/lizard-client/commit/f9df685))
-* **timezones:** minor stuff ([9ed3200](https://github.com/nens/lizard-client/commit/9ed3200))
+* **tickmarks:** consistent values for getTimezoneOffset for tickmarks/zoom-to-tmp-magic ([e7d904a](https://github.com/nens/lizard-client/commit/e7d904a))
 
 
 
