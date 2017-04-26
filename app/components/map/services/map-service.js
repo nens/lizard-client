@@ -61,17 +61,22 @@ angular.module('map')
         this._initializeNxtMapEvents(eventCallbackFns);
       },
 
-      updateLayers: function (layers) {
+      updateLayers: function (layers, rebuildTMS) {
+        var mapLayer;
         layers.forEach(function (layer) {
-          var mapLayer = _.find(service.mapLayers, { uuid: layer.uuid });
+          mapLayer = _.find(service.mapLayers, { uuid: layer.uuid });
           if (mapLayer) {
             if (layer.active) {
-              mapLayer.update(service._map, State.temporal, layer);
+              mapLayer.update(service._map, State.temporal, layer, rebuildTMS);
             } else {
               mapLayer.remove(service._map, layer);
             }
           }
         });
+      },
+
+      updateAssetGroups: function (layers) {
+        service.updateLayers(layers, true);
       },
 
       updateBaselayers: function () {

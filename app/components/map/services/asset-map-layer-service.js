@@ -8,8 +8,8 @@
  * Additional methods used to extend nxtLayer with leaflet/map specific methods.
  */
 angular.module('map')
-.factory('assetMapLayer', ['$q', 'LeafletService', 'MapLayerService',
-  function ($q, LeafletService, MapLayerService) {
+.factory('assetMapLayer', ['$q', 'MapLayerService',
+  function ($q, MapLayerService) {
 
     return function (options) {
 
@@ -21,7 +21,12 @@ angular.module('map')
 
       assetMapLayer.utf = MapLayerService.createUtfLayer(options);
 
-      assetMapLayer.update = function (map, timeState, options) {
+      assetMapLayer.update = function (map, timeState, options, rebuildTMS) {
+
+        if (rebuildTMS && map.hasLayer(assetMapLayer.tms)) {
+          map.removeLayer(assetMapLayer.tms);
+        }
+
         var defer = $q.defer();
 
         assetMapLayer.tms.setOpacity(options.opacity);
@@ -63,6 +68,5 @@ angular.module('map')
 
       return assetMapLayer;
     };
-
-    }
-  ]);
+  }
+]);
