@@ -1,6 +1,8 @@
 
 /**
- * Service to draw click feedback.
+ * Service to draw click feedback. The map uses it too draw a line when user is
+ * using line tool mode and the omnibox uses it to display geometries and assets
+ * on the map.
  */
 angular.module('lizard-nxt')
   .service('ClickFeedbackService', ['$rootScope', 'LeafletService',

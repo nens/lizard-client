@@ -2,6 +2,34 @@
 
 /**
  * Collects crosssection data from api and creates a graph content object.
+ *
+ * Background: crosssections were build as a high level visualisation of
+ * timeseries data from monitoring_wells in the context of a levee. This was
+ * done specifically for Livedijk XL project in 2015-2016.
+ *
+ * Configuration: Create a levee_crossection. Create monitoring_wells along the
+ * crossection. Create locations with timeseries and connect them to the wells.
+ * Timeseries parameter must be "Stijghoogte".
+ *
+ * Result:
+ *
+ * |          ____
+ * |      ___/    \
+ * |    _/     |*\ \__
+ * | __/   -*--   --- \_____
+ * | ---*-|          \-*--- \
+ * ---------------------------
+ *
+ * Legend:
+ * ___: levee elevation from raster "Hoogte"
+ * *  : timeseries value at temporal.at at distance along crossection of well.
+ * ---: interpolated line between timeseries value.
+ *
+ * If you click play on timeline you will see the crossection "dance".
+ *
+ * NOTE: if raster "Hoogte" changes, the crossection breaks.
+ * NOTE: the usecases for this feature are very limited, in other words. Nobody
+ * uses it and it will inevitably break.
  */
 angular.module('dashboard')
 .directive('crossSection', [

@@ -26,6 +26,7 @@
 
 .discrete-legend-datum {
   height: 25px;
+  width: 100%;
 }
 
 .discrete-legend-datum-omitted {
@@ -61,6 +62,12 @@
 .discrete-legend-label-selectable:hover {
   color: $alizarin;
   cursor: pointer;
+}
+
+.discrete-legend-area {
+  float: right;
+  margin-right: 10px;
+  color: #777;
 }
 
 .single-continuous-legend {
@@ -148,4 +155,3 @@
           user-select: none; /* Non-prefixed version, currently
                                 not supported by any browser */
 }
-

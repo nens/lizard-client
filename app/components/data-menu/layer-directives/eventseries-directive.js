@@ -26,14 +26,14 @@ angular.module('data-menu')
           MapService.mapLayers.push(eventseriesMapLayer({
             color: response.color,
             uuid: scope.layer.uuid,
-            url: 'api/v2/events/?event_series=' + scope.layer.uuid,
+            url: 'api/v3/events/?event_series=' + scope.layer.uuid,
             spatialSelect: MapService.spatialSelect,
             zIndex: LayerAdderService.getZIndex(scope.layer)
           }));
 
           DataService.dataLayers.push(eventseriesDataLayer({
             uuid: scope.layer.uuid,
-            url: 'api/v2/events/?event_series=' + scope.layer.uuid,
+            url: 'api/v3/events/?event_series=' + scope.layer.uuid,
             agg: response.aggregation_type,
             format: 'Vector',
             color: response.color,
@@ -41,9 +41,9 @@ angular.module('data-menu')
             scale: response.observation_type
               && response.observation_type.scale,
             quantity: response.observation_type
-              && response.observation_type.parameter_short_display_name,
+              && response.observation_type.parameter,
             unit: response.observation_type
-              && response.observation_type.referenced_unit_short_display_name
+              && response.observation_type.unit
           }));
 
           MapService.updateLayers([scope.layer]);

@@ -35,7 +35,7 @@ describe('Testing resource service', function () {
 
   describe('buildOptions', function () {
     it('should make a valid options dict', function () {
-      var options = resourceService.buildOptions('api/v2/dummy/',
+      var options = resourceService.buildOptions('api/v3/dummy/',
           {q: 'testqparam'}, 'PATCH');
       expect('url' in options).toBe(true);
       expect('params' in options).toBe(true);

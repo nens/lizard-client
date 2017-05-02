@@ -1,4 +1,7 @@
-
+/**
+ * Controls dashboard drawing area. The dashboard context consists of two parts
+ * the omnibox in db-mode and this dashboard component.
+ */
 angular.module('dashboard')
 .directive('dashboard', [
   'State',
@@ -16,6 +19,15 @@ angular.module('dashboard')
 
     var link = function (scope, element, attrs) {
 
+      /**
+       * Connect State to scope and store an array representation of timeseries,
+       * raster and assets.
+       *
+       * Timeseries have an order property which should correspond to the index
+       * in scope.dashboard.graphs.
+       *
+       * @type {Object}
+       */
       scope.dashboard = {
         graphs: [],
         state: State

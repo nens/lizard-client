@@ -39,15 +39,16 @@
       <div class="card-tools">
          <a
            class="btn btn-default btn-xs"
-           title="<% 'Export info card data' | translate %>"
+           title="{{ 'Export info card data' | translate }}"
            ng-csv="formatLineCSV(properties)"
            field-separator=";"
-           filename="<% properties.uuid %>.csv"
+           filename="{{ properties.uuid }}.csv"
            csv-header="getLineCSVHeaders(properties)">
            <i class="fa fa-share-square-o"></i>
            <span translate>Export</span>
         </a>
       </div>
+
     </div>
 
     <div
@@ -61,8 +62,8 @@
         <div ng-if="properties.type === 'eventseries'">
           <span class="card-title">
             <span><i class="fa fa-circle" ng-style="{'color': properties.color }"></i></span>
-            <span><% properties.data.length %></span>
-            <span><% properties.quantity %></span>
+            <span>{{ properties.data.length }}</span>
+            <span>{{ properties.quantity }}</span>
           </span>
           <full-details class="table-details-toggler"></full-details>
           <table ng-if="fullDetails" class="table table-hover table-condensed" >
@@ -70,19 +71,19 @@
               <tr ng-repeat="event in properties.data">
                 <td rel="tooltip"
                     data-placement="left"
-                    title="<% 'Start' | translate %>: <% event.properties.timestamp_start | date:'dd/MM/yyyy' %>
-                           <% 'End' | translate %>: <% event.properties.timestamp_end | date:'dd/MM/yyyy' %>">
-                    <% event.properties.timestamp_start | date:'dd/MM/yyyy' %>
+                    title="{{ 'Start' | translate }}: {{ event.properties.timestamp_start | date:'dd/MM/yyyy' }}
+                           {{ 'End' | translate }}: {{ event.properties.timestamp_end | date:'dd/MM/yyyy' }}">
+                    {{ event.properties.timestamp_start | date:'dd/MM/yyyy' }}
                 </td>
                 <td rel="tooltip"
                     data-placement="left"
-                    title="<% event.properties.category %>">
-                    <% event.properties.category %>
+                    title="{{ event.properties.category }}">
+                    {{ event.properties.category }}
                 </td>
                 <td rel="tooltip"
                     data-placement="left"
-                    title="<% event.properties.value %>">
-                    <% event.properties.value | truncate:17 %>
+                    title="{{ event.properties.value }}">
+                    {{ event.properties.value | truncate:17 }}
                 </td>
               </tr>
             </tbody>

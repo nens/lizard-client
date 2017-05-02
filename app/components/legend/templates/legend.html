@@ -9,7 +9,7 @@
         <div class="legend-header">
           <a href="#"
              ng-click="switchSelectedRaster(uuid)">
-            <% legend.uuidMapping[uuid] %>
+            {{ legend.uuidMapping[uuid] }}
             &nbsp;
             <i class="fa fa-star"
                ng-if="rasterIsVectorized(uuid)">
@@ -34,15 +34,21 @@
           ng-repeat="datum in rasterData track by $index"
           ng-click="rasterIsVectorized(uuid) ? setDiscreteRasterCategory(uuid, datum.class) : _.noop();"
           class="discrete-legend-datum"
-          ng-if="$index < getAmountOfDiscreteCategories(uuid)">
-          <div class="discrete-legend-color-rect"
-               style="background-color: <% datum.color %>; border: <% getBorderStyle(datum) %>">
+           ng-if="$index < getAmountOfDiscreteCategories(uuid)">
+
+          <div title="{{ datum.label === -1 ? 'other' : datum.label }}"
+               class="discrete-legend-color-rect"
+               ng-style="getColoredRect(datum)">
           </div>
+
           <div class="discrete-legend-label"
+               title="{{ datum.label === -1 ? 'other' : datum.label }}"
                ng-class="{'discrete-legend-label-selected': getDiscreteRasterCategory(uuid) === datum.class,
-                          'discrete-legend-label-selectable': rasterIsVectorized(uuid)}">
-            <% datum.label === -1 ? 'other' : datum.label %>
+                         'discrete-legend-label-selectable': rasterIsVectorized(uuid)}">
+            {{ datum.label === -1 ? 'other' : (datum.label | truncate: 42) }}
           </div>
+
+          <div class="discrete-legend-area" ng-if="datum.areaHa != null">{{ datum.areaHa | number }} ha</div>
         </div>
       </div>
     </div>
@@ -57,12 +63,12 @@
           <div class="legend-header">
             <a href="#"
                ng-click="switchSelectedRaster(uuid)">
-              <% legend.uuidMapping[uuid] %>
+              {{ legend.uuidMapping[uuid] }}
             </a>
           </div>
 
           <div class="gradient-bar"
-               style="<% getGradient(uuid) %>">
+               ng-style="{{ getGradient(uuid) }}">
           </div>
 
           <div class="continuous-raster-numeric-data">

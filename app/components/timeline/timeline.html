@@ -1,5 +1,6 @@
+
 <div id="timeline"
-     class="timeline navbar-fixed-bottom material-shadow hidden-sm hidden-xs" 
+     class="timeline must-hide navbar-fixed-bottom material-shadow hidden-sm hidden-xs"
      ng-controller="TimeCtrl as timeline">
 
   <div class="timeline-wrapper">
@@ -11,8 +12,8 @@
             'active': timeline.state.temporal.playing,
             'hidden': !timeline.animatable
            }"
-           title="<% timeline.state.temporal.playing ? tooltips.stopAnim : tooltips.startAnim %>"
-           data-original-title="<% 'Play/pause' | translate %>">
+           title="{{ timeline.state.temporal.playing ? tooltips.stopAnim : tooltips.startAnim }}"
+           data-original-title="{{ 'Play/pause' | translate }}">
           <span
             class="fa"
             ng-class="{
@@ -31,19 +32,19 @@
       <div class="btn-group-vertical">
           <a class="btn btn-default btn-xss" ng-click="timeline.zoom('in')"
             class="extra-padding timeline-button"
-            title="<% tooltips.zoomInTimeline %>"
+            title="{{ tooltips.zoomInTimeline }}"
             data-original-title="Zoom in">
             <i class="fa fa-plus"></i>
           </a>
           <a class="btn btn-default btn-xss" ng-mousedown="timeline.zoomToNow()"
             class="extra-padding timeline-button"
-            title="<% tooltips.goToNow %>"
+            title="{{ tooltips.goToNow }}"
             data-original-title="Naar nu">
             <i class="fa fa-clock-o"></i>
           </a>
           <a class="btn btn-default btn-xss" ng-click="timeline.zoom('out')"
             class="extra-padding timeline-button"
-            title="<% tooltips.zoomOutTimeline %>"
+            title="{{ tooltips.zoomOutTimeline }}"
             data-original-title="Zoom uit">
             <i class="fa fa-minus"></i>
           </a>

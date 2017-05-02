@@ -2,15 +2,11 @@
  * Service to handle favourites retrieval, creation and deletion.
  */
 angular.module('favourites')
-  // NOTE: inject TimeseriesService even though it is not used.
-  // TimeseriesService defines State.selections which may be restored
-  // from favourite.
   .service("FavouritesService", [
     '$resource',
     'State',
     'gettextCatalog',
     'UtilService',
-    'TimeseriesService',
     'notie',
     '$window',
     function (
@@ -18,7 +14,6 @@ angular.module('favourites')
         State,
         gettextCatalog,
         UtilService,
-        TimeseriesService,
         notie,
         $window)
     {
@@ -28,7 +23,7 @@ angular.module('favourites')
        *
        * Use a reconfigured 'query' so it actually returns an array of items.
        */
-      var Favourites = $resource('/api/v2/favourites/:uuid/', {uuid:'@uuid'}, {
+      var Favourites = $resource('/api/v3/favourites/:uuid/', {uuid:'@uuid'}, {
         'query': {
           method:'GET',
           isArray:true,

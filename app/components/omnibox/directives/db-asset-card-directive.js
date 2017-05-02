@@ -1,5 +1,7 @@
+// TODO: THIS IS ONE IN FOUR FILES THAT NEEDS SCRUTINY
 
 angular.module('omnibox')
+<<<<<<< HEAD
   .directive('dbAssetCard', [
     'State',
     'DataService',
@@ -36,13 +38,65 @@ angular.module('omnibox')
           scope.noData = noRasterData && scope.geom.entity_name === undefined;
         }, true);
       }
+=======
+  .directive('dbAssetCard', [ 'State', 'DataService', 'DragService', 'DBCardsService', 'TimeseriesService', 'AssetService',
+    function (State, DataService, DragService, DBCardsService, TimeseriesService, AssetService) {
+  return {
+    link: function (scope, element) {
+
+      scope.selected = State.selected;
+      scope.relativeTimeseries = TimeseriesService.relativeTimeseries;
+
+      scope.toggleRelativeTimeseries = function () {
+
+        var activeBefore = TimeseriesService.relativeTimeseries.value;
+        TimeseriesService.relativeTimeseries.value = !activeBefore;
+        scope.relativeTimeseries = TimeseriesService.relativeTimeseries;
+
+        var uuidList = _.map(TimeseriesService.timeseries, function (ts) {
+          return ts.id;
+        });
+        TimeseriesService.syncTime(uuidList);
+      };
+>>>>>>> master
 
       scope.state = State;
       scope.getSelectionMetaData = SelectionService.getMetaDataFunction(
         scope.assetGeom);
       scope.toggleSelection = SelectionService.toggle;
 
+<<<<<<< HEAD
      /**
+=======
+      scope.getTsLongName = function (uuid) {
+        var metaData = scope.getTsMetaData(uuid);
+        return metaData.location + ',' + metaData.parameter;
+      };
+
+      scope.assetHasSurfaceLevel = function () {
+        return ('surface_level' in scope.asset);
+      };
+
+      scope.parentAssetHasSurfaceLevel = function () {
+
+        if (scope.asset.parentAsset) {
+
+          var parentAssetKey = scope.asset.parentAsset;
+          var splittedKey = parentAssetKey.split("$");
+          var parentAssetEntity = splittedKey[0];
+          var parentAssetId = parseInt(splittedKey[1]);
+
+          var parentAsset = _.find(DataService.assets, {
+            entity_name: parentAssetEntity,
+            id: parentAssetId
+          });
+        }
+
+        return parentAsset && ('surface_level' in parentAsset);
+      };
+
+      /**
+>>>>>>> master
        * Returns true if selection with uuid is one the first three in the list.
        *
        * This is used to bypass ngRepeat which loops over one big list of
@@ -53,7 +107,9 @@ angular.module('omnibox')
        * @return {Boolean} is in first three of DOM list.
        */
       scope.isOneOfFirstThree = function (uuid) {
+        var MAX = 3;
         var items = element.find('.draggable-ts');
+<<<<<<< HEAD
         var index = _.findIndex(items, function (item) {
           return item.dataset.uuid === uuid; });
         return index < 3;
@@ -74,6 +130,65 @@ angular.module('omnibox')
       //   scope.extended = true;
       //   scope.showExtender = false;
       // }
+=======
+        if (!items || items.length <= MAX) {
+          return true;
+        } else {
+          var result = false;
+          _.forEach(items, function (item, key) {
+            if (parseInt(key) < MAX) {
+              result = result || item.id === uuid;
+            }
+          });
+          return result;
+        }
+      };
+
+      scope.toggleTimeseries = function (timeseries) {
+
+        if (!timeseries.active) {
+
+          var plots = DBCardsService.getActiveCountAndOrder();
+
+          timeseries.order = plots.count > 0
+            ? plots.order + 1
+            : 0;
+
+        }
+
+        else {
+
+          DBCardsService.removeItemFromPlot(timeseries);
+
+        }
+
+        timeseries.active = !timeseries.active;
+        TimeseriesService.syncTime();
+
+      };
+
+      scope.noTimeseries = scope.asset.timeseries.length === 0;
+
+      // Extender is the button at the bottom of the timeseries list to show
+      // more or less items.
+
+      scope.showExtender = false;
+      scope.extended = true;
+
+      var MANY = 3;
+
+      // If there are a few timeseries, show them all and do not show the
+      // extender button.
+      if (scope.asset.timeseries.length < MANY) {
+        scope.showExtender = false;
+      } else {
+        scope.showExtender = true;
+      }
+>>>>>>> master
+
+      scope.toggleExtended = function () {
+        scope.extended = !scope.extended;
+      };
 
       /**
        * Specific toggle for crosssection

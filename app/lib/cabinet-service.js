@@ -1,5 +1,13 @@
 'use strict';
 
+/**
+ * This mythical portal goes back to the early days of lizard-client. It never
+ * had a clear scope, but it should function as a simple wrapper around
+ * endpoints. Abstracting away api versions and backend location.
+ *
+ * NOTE this service also includes tooltips used in element titles.
+ * NOTE not all lizard resources are queried through this service.
+ */
 angular.module('lizard-nxt')
   .service("CabinetService", [
            "$q", "Resource", "backendDomain", "gettextCatalog",
@@ -12,8 +20,8 @@ angular.module('lizard-nxt')
     Resource.setDefaultHttpFields({withCredentials: true});
   }
 
-  var timeseriesResource = new Resource.Endpoint('api/v2/timeseries/');
-  var regions = new Resource.Endpoint('api/v2/regions/?page_size=500');
+  var timeseriesResource = new Resource.Endpoint('api/v3/timeseries/');
+  var regions = new Resource.Endpoint('api/v3/regions/?page_size=500');
 
   // Wms getFeatureInfo goes through a proxy. Specify url as a param.
   var wmsGetFeatureInfo = new Resource.Endpoint('proxy/');
@@ -42,10 +50,10 @@ angular.module('lizard-nxt')
       abortGet = $q.defer();
       localPromise = abortGet;
     }
-    return new Resource.Endpoint('api/v2/raster-aggregates/');
+    return new Resource.Endpoint('api/v3/raster-aggregates/');
   };
 
-  var rasterInfoResource = new Resource.Endpoint('api/v2/rasters/?page_size=500');
+  var rasterInfoResource = new Resource.Endpoint('api/v3/rasters/?page_size=500');
 
   /**
    * Create tooltips for the current language.

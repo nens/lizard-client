@@ -9,12 +9,10 @@
  * @requires $q, dataLayers, LayerGroup, getNestedAssets and State
  * @summary Encapsulates dataLayers
  * @description NxtData service encapsulates dataLayers from the server side
- *              configuration of dataLayers. It enables to perform actions
- *              on all dataLayers simultaneously. When provided with a string
- *              representation of the service containing the global map it
- *              it performs these actions on the map from this service, else
- *              it needs a map object when calling toggleLayerGroup and
- *              syncTime.
+ *              configuration of dataLayers. It keeps most data alligned with
+ *              state. Timeseries are treated seperately in timeseries-service.
+ *
+ *              It performs actions on all dataLayers simultaneously.
  */
 
 angular.module('data-menu')
@@ -60,7 +58,28 @@ angular.module('data-menu')
 
       // Callback for when assets are being retrieved from api
       var assetChange = function (asset) {
+
         if (asset) {
+
+          asset.parentAsset = null;
+
+          _.forEach(AssetService.NESTED_ASSET_PREFIXES, function (prefix) {
+
+            var plural = prefix + 's';
+            var parentAssetKey = asset.entity_name + '$' + asset.id;
+
+            if (asset[plural]) {
+              // Apparently, either asset.filters/asset.pumps/asset.monitoring_wells
+              // is defined: this implies the current asset IS a parentAsset and
+              // HAS nestedAssets; for each nestedAsset we set the 'parentAsset'
+              // property with value equal to parentAssetKey
+              // (e.g 'groundwater_station$303')
+              _.forEach(asset[plural], function (nestedAsset) {
+                nestedAsset.parentAsset = parentAssetKey;
+              });
+            }
+          });
+
           instance.assets.push(asset);
         }
 
@@ -76,8 +95,6 @@ angular.module('data-menu')
         if (instance.onAssetsChange) {
           instance.onAssetsChange();
         }
-
-        console.log('DataService.assets:', instance.assets);
       };
 
       // Define assets on State and update DataService.assets.
@@ -162,7 +179,7 @@ angular.module('data-menu')
           promise.then(function (geometries) {
             // Dedupe instance.geometries asynchronous.
             instance.geometries = _.uniqWith(geometries, isDuplicateGeometry);
-            console.log('DataService.geometries:', instance.geometries);
+
             if (instance.onGeometriesChange) {
               instance.onGeometriesChange();
             }
@@ -267,7 +284,6 @@ angular.module('data-menu')
             instance.geometries.forEach(function (old, i) {
               if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
                 instance.geometries[i] = newGeo;
-                console.log('DataService.geometries:', instance.geometries);
               }
             });
           });
@@ -370,7 +386,6 @@ angular.module('data-menu')
       };
 
       this.updateLayerData = function (geo, layer, options, promises) {
-
         if (!layer.active) {
           return;
         }
@@ -393,26 +408,30 @@ angular.module('data-menu')
           }
 
           promises.push(
-            dataLayer.getData(options).then(function (response) {
-              // async so remove anything obsolete.
-              geo.properties = geo.properties || {};
-              geo.properties[layer.uuid] = geo.properties[layer.uuid] || _.clone(dataLayer);
-              // Replace data and merge everything with existing state of
-              // property.
-              if (response.data) {
-                geo.properties[layer.uuid].data = [];
-                _.merge(geo.properties[layer.uuid], response);
-              } else {
-                geo.properties[layer.uuid].data = response;
-              }
-              if ((!layer.active && layer.uuid in Object.keys(geo.properties))
-                || geo.properties[layer.uuid].data === null) {
+            dataLayer.getData(options).then(
+              function (response) {
+                // async so remove anything obsolete.
+                geo.properties = geo.properties || {};
+                geo.properties[layer.uuid] = geo.properties[layer.uuid] || _.clone(dataLayer);
+                // Replace data and merge everything with existing state of
+                // property.
+                if (response.data) {
+                  geo.properties[layer.uuid].data = [];
+                  _.merge(geo.properties[layer.uuid], response);
+                } else {
+                  geo.properties[layer.uuid].data = response;
+                }
+                if ((!layer.active && layer.uuid in Object.keys(geo.properties))
+                  || geo.properties[layer.uuid].data === null) {
 
-                // Use delete to remove the key and the value and the omnibox
-                // can show a nodata message.
-                delete geo.properties[layer.uuid];
-              }
-            })
+                  // Use delete to remove the key and the value and the omnibox
+                  // can show a nodata message.
+                  delete geo.properties[layer.uuid];
+                }
+              },
+              // Catch rejections, otherwise $.all(promises) is never resolved.
+              _.noop
+            )
           );
         }
       };

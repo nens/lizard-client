@@ -11,6 +11,16 @@ angular.module('timeseries')
   'DataService',
   'TimeseriesUtilService',
   function ($q, State, $http, notie, UtilService, DataService, TsUService) {
+    // TODO: THIS IS ONE IN FOUR FILES THAT NEEDS EXTRA SCRUTINY
+    // *wrapped* boolean indicating we want the timeseries value (y-axis) to be
+    // relative to the asset's "surface_level" value (boolean set to true) or
+    // we want it to be the absolute value (boolean set to false);
+
+    // NB! This wrapping is required for syncing multiple directive scopes to
+    // this value: if the boolean does not gets wrapped, every directive's scope
+    // gets a local copy and will tehrefor not be updated in-sync with updating
+    // the value in the service
+    this.relativeTimeseries = { 'value': false };
 
     var service = this;
 
@@ -61,6 +71,7 @@ angular.module('timeseries')
      * @param  {object}  selection   a selection from State.selections
      * @return {object} asset or geometry data.
      */
+    // TODO: THIS IS BAD PRACTICE!
     this.findProperty = function (selection) {
       if (selection.timeseries) {
         return _.find(this.timeseries, function (ts) {
@@ -108,7 +119,8 @@ angular.module('timeseries')
             actives,
             State.temporal,
             minPoints && service.minPoints,
-            chartType
+            noDefer,
+            graphType
           );
         }
 
@@ -158,7 +170,6 @@ angular.module('timeseries')
       }
     };
 
-
     /**
      * @function
      * @memberOf timeseries.TimeseriesService
@@ -187,6 +198,11 @@ angular.module('timeseries')
         start: timeState.start ? parseInt(timeState.start, 10): undefined,
         end: timeState.end ? parseInt(timeState.end, 10): undefined,
       };
+
+      if (graphType === 'temporalLines' && service.relativeTimeseries.value) {
+        params.relative_to = 'surface_level';
+      }
+
       if (minPoints) {
         params.min_points = minPoints;
       } else {
@@ -217,7 +233,7 @@ angular.module('timeseries')
       }
 
       return $http({
-        url: 'api/v2/timeseries/',
+        url: 'api/v3/timeseries/',
         method: 'GET',
         params: params,
         timeout: localPromise[chartType].promise
@@ -249,7 +265,6 @@ angular.module('timeseries')
     };
 
   }
-
 ]);
 
 
@@ -280,7 +295,6 @@ angular.module('timeseries')
       var setAssetAndTs = function (asset) {
         ts = _.find(asset.timeseries, { 'uuid': graphTimeseries.id });
         if (ts) { assetOfTs = asset; }
-
         if (!ts && asset.selectedAsset) { return setAssetAndTs(asset.selectedAsset); }
         return ts === undefined; // Break out early
       };
@@ -288,6 +302,7 @@ angular.module('timeseries')
       _.forEach(DataService.assets, setAssetAndTs);
 
       if (ts) {
+
         graphTimeseries.parameter = ts.parameter || EMPTY;
         graphTimeseries.unit = ts.unit || EMPTY;
         graphTimeseries.location = ts.location || EMPTY;
@@ -296,6 +311,11 @@ angular.module('timeseries')
           graphTimeseries.unit += ' (' + ts.reference_frame + ')';
         }
         graphTimeseries.thresholds = [];
+
+        var tsActive = _.find(State.selected.timeseries, {'uuid': ts.uuid });
+        if (tsActive && tsActive.active) {
+          assetOfTs.ts = graphTimeseries.ts;
+        }
       }
 
       if (assetOfTs) {
@@ -306,9 +326,7 @@ angular.module('timeseries')
             if (attr.valueSuffix === graphTimeseries.unit) {
               var value = parseFloat(assetOfTs[attr.attrName]);
               if (!isNaN(value)) {
-
                 var name = assetOfTs.name === '' ? '...' : assetOfTs.name;
-
                 threshold = {
                   value: value,
                   name: name + ': ' + attr.keyName
@@ -356,12 +374,17 @@ angular.module('timeseries')
         var tsSelection = _.find(State.selections, function (s) {
           return s.timeseries === ts.uuid });
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
+
         graphTimeseries.data = ts.events;
         graphTimeseries.order = tsSelection.order;
         graphTimeseries.color = tsSelection.color;
         graphTimeseries.id = ts.uuid;
         graphTimeseries.valueType = ts.value_type;
         graphTimeseries.measureScale = ts.observation_type.scale;
+
+        graphTimeseries.start = ts.start;
+        graphTimeseries.end = ts.end;
+
         graphTimeseries = addTimeseriesProperties(graphTimeseries);
         result.push(graphTimeseries);
       });
@@ -383,8 +406,8 @@ angular.module('timeseries')
           filteredResult.push(ts);
         } else if (ts.events.length < MAX_NR_TIMESERIES_EVENTS) {
 
-          if (ts.parameter_referenced_unit === null) {
-            ts.parameter_referenced_unit = {};
+          if (ts.observation_type === null) {
+            ts.observation_type = {};
           }
 
           filteredResult.push(ts);

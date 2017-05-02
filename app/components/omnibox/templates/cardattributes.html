@@ -3,15 +3,23 @@
   <cardheader ng-if="showHeader" asset="waterchain"></cardheader>
 
   <div class="card active card-attributes">
+
+    <div class="structure-image-wrapper text-center"
+         ng-if="waterchain.image_url">
+
+        <img class="structure-image"
+             ng-src="{{waterchain.image_url}}" />
+    </div>
+
     <table id="kunstwerk-table" class="table table-condensed table-hover">
 
       <tr class="attr-row"
           ng-repeat="obj in wanted[waterchain.entity_name].rows"
-          >
+          ng-if="obj.attrName !== 'start' && obj.attrName !== 'end'">
 
         <td class="fixed-width-card-table">
           <div class="attr-row-content">
-            <% obj.keyName | translate %>
+            {{ obj.keyName | translate }}
           </div>
         </td>
 
@@ -24,15 +32,6 @@
 
       </tr>
     </table>
-
-    <div class="structure-image-wrapper text-center"
-         ng-if="!!waterchain.image_url && fullDetails">
-
-        <img class="structure-image"
-             ng-src="{{waterchain.image_url}}" />
-
-    </div>
   </div>
 
 </div>
-

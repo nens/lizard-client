@@ -2,8 +2,8 @@
  * Lizard-client global state object.
  */
 angular.module('global-state')
-  .service('State', ['UtilService', 'gettextCatalog',
-    function (UtilService, gettextCatalog) {
+  .service('State', ['UtilService', 'gettextCatalog', '$http',
+    function (UtilService, gettextCatalog, $http) {
 
     var state = {};
 
@@ -11,6 +11,11 @@ angular.module('global-state')
      * returns a function that returns a string representation of the provided
      * attribute of the state. When the state. does not exist, it returns a
      * function that returns "undefined". Useful to $watch the state.
+     *
+     * NOTE: this was used to watch for state changes. Do not use this anymore.
+     * Instead bind a state property to the scope of your directive and use a
+     * watch or watchCollection as intended.
+     * https://docs.angularjs.org/api/ng/type/$rootScope.Scope
      */
     state.toString = function (stateStr) {
       return function () {
@@ -55,8 +60,10 @@ angular.module('global-state')
       set: function (language) {
         if (gettextCatalog.strings[language]) {
           gettextCatalog.setCurrentLanguage(language);
+          $http.defaults.headers.common["Accept-Language"] = state.language;
         }
-      }
+      },
+      enumerable: true
     });
 
     // Default language.
@@ -184,7 +191,8 @@ angular.module('global-state')
       playing: false,
       start: null, // defined below
       end: null, // defined below
-      relative: true // relative or absolut offset.
+      relative: true, // relative or absolute offset.
+      showingTemporalData: false
     };
 
     Object.defineProperty(state.temporal, 'aggWindow', {

@@ -1,5 +1,19 @@
 'use strict';
 
+/**
+ * The attributes you want.
+ *
+ * Retrieving asset information from the server returns many attributes not
+ * necessarily all relevant in the omnibox asset cards. These objects include
+ * relevant attributes per entity with display names, filters an suffixes. Used
+ * by cardattributes.
+ *
+ * keyNam is displayed to the user and therefore annotated for translation in
+ * transifex using gettext(). In the template they are fetched from the
+ * dictionary using the translate filter.
+ *
+ * NOTE: this service contains logic that belongs on the server.
+ */
 angular.module('omnibox')
 .service("WantedAttributes", ["gettext", function (gettext) {
 
@@ -13,6 +27,7 @@ angular.module('omnibox')
         valueSuffix: "m<sup>3</sup> / uur"
       },
       {
+        // use tripple slashes to include comment in transifex.
         /// Aanslagpeil
         keyName: gettext("Start level"),
         attrName: "start_level",
@@ -189,6 +204,14 @@ angular.module('omnibox')
   this.filter = {
     rows: [
       {
+        /// Bovenkant buis
+        //////////////////
+        keyName: gettext("Top level"),
+        attrName: "top_level",
+        ngBindValue: "waterchain.top_level | niceNumberOrEllipsis: 2",
+        valueSuffix: "m (NAP)"
+      },
+      {
         /// Bovenkant filter
         keyName: gettext("Filter top level"),
         attrName: "filter_top_level",
@@ -206,16 +229,15 @@ angular.module('omnibox')
         keyName: gettext("Aquifer confinement"),
         attrName: "aquifer_confiment",
         ngBindValue: "waterchain.aquifer_confiment",
-        valueSuffix: "m"
+        valueSuffix: ""
       },
       {
         /// bodemsoort
         keyName: gettext("Lithology"),
         attrName: "litology",
         ngBindValue: "waterchain.litology",
-        valueSuffix: "m"
-      },
-
+        valueSuffix: ""
+      }
     ]
   };
 
@@ -235,23 +257,21 @@ angular.module('omnibox')
         valueSuffix: ""
       },
       {
+        keyName: gettext("Station type"),
+        attrName: "station_type",
+        ngBindValue: "waterchain.station_type",
+        valueSuffix: ""
+      },
+      {
+        keyName: gettext("Status"),
+        attrName: "status",
+        ngBindValue: "waterchain.status",
+        valueSuffix: ""
+      },
+      {
         keyName: gettext("Surface level"),
         attrName: "surface_level",
         ngBindValue: "waterchain.surface_level",
-        valueSuffix: "m (NAP)"
-      },
-      {
-        /// Bovenkant buis
-        keyName: gettext("Top level"),
-        attrName: "top_level",
-        ngBindValue: "waterchain.top_level",
-        valueSuffix: "m (NAP)"
-      },
-      {
-        /// Onderkan buis
-        keyName: gettext("Bottom level"),
-        attrName: "bottom_level",
-        ngBindValue: "waterchain.bottom_level",
         valueSuffix: "m (NAP)"
       }
     ]
@@ -328,7 +348,14 @@ angular.module('omnibox')
         keyName: gettext("Material"),
         attrName: "material",
         ngBindValue:
-          "waterchain.material",
+          "waterchain.material | lookupManholeMaterial",
+        valueSuffix: ""
+      },
+      {
+        keyName: gettext("Shape"),
+        attrName: "shape",
+        ngBindValue:
+          "waterchain.shape | lookupManholeShape",
         valueSuffix: ""
       },
       {
@@ -337,13 +364,6 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.width | niceNumberOrEllipsis: 2",
         valueSuffix: "m"
-      },
-      {
-        keyName: gettext("Shape"),
-        attrName: "shape",
-        ngBindValue:
-          "waterchain.shape | lookupManholeShape",
-        valueSuffix: ""
       },
       {
         /// Putbodem
@@ -382,7 +402,19 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.code",
         valueSuffix: ""
-      }
+      },
+      {
+        keyName: gettext("Start"),
+        attrName: "start",
+        ngBindValue: "waterchain.ts.start",
+        valueSuffix: ""
+      },
+      {
+        keyName: gettext("End"),
+        attrName: "end",
+        ngBindValue: "waterchain.ts.end",
+        valueSuffix: ""
+      },
     ]
   };
 
@@ -399,14 +431,14 @@ angular.module('omnibox')
         keyName: gettext("Well top level"),
         attrName: "well_top_level",
         ngBindValue: "waterchain.well_top_level",
-        valueSuffix: ""
+        valueSuffix: "m (NAP)"
       },
       {
         keyName: gettext("Well bottom level"),
         attrName: "well_bottom_level",
         ngBindValue:
           "waterchain.well_bottom_level",
-        valueSuffix: ""
+        valueSuffix: "m (NAP)"
       }
     ]
   };
@@ -516,7 +548,7 @@ angular.module('omnibox')
         keyName: gettext("Type"),
         attrName: "type",
         ngBindValue:
-          "waterchain.type | lookupPipeType",
+          "waterchain.type",
         valueSuffix: ""
       },
       {
@@ -585,7 +617,7 @@ angular.module('omnibox')
         keyName: gettext("Type"),
         attrName: "type",
         ngBindValue:
-          "waterchain.type | lookupPressurePipeType",
+          "waterchain.type",
         valueSuffix: ""
       },
       {
@@ -603,18 +635,18 @@ angular.module('omnibox')
         valueSuffix: ""
       },
       {
-        keyName: gettext("Diameter"),
-        attrName: "diameter",
-        ngBindValue:
-          "waterchain.diameter | niceNumberOrEllipsis: 2",
-        valueSuffix: "m"
-      },
-      {
         keyName: gettext("Shape"),
         attrName: "shape",
         ngBindValue:
           "waterchain.shape",
         valueSuffix: ""
+      },
+      {
+        keyName: gettext("Diameter"),
+        attrName: "diameter",
+        ngBindValue:
+          "waterchain.diameter | niceNumberOrEllipsis: 2",
+        valueSuffix: "m"
       },
       {
         keyName: gettext("Length"),
@@ -699,7 +731,7 @@ angular.module('omnibox')
         keyName: gettext("Sewer system"),
         attrName: "sewer_system ",
         ngBindValue:
-          "waterchain.sewer_system | translate",
+          "waterchain.sewer_system",
         valueSuffix: ""
       },
       {

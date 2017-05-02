@@ -2,10 +2,10 @@
 
 angular.module('data-menu')
 .directive('rasterlayer', ['MapService', 'DataService', 'LayerAdderService',
-'rasterMapLayer', 'rasterDataLayer',
+'rasterMapLayer', 'rasterDataLayer', 'UtilService',
 
   function (MapService, DataService, LayerAdderService,
-  rasterMapLayer, rasterDataLayer) {
+  rasterMapLayer, rasterDataLayer, UtilService) {
 
   var link = function (scope) {
 
@@ -45,7 +45,7 @@ angular.module('data-menu')
 
           mapLayer = rasterMapLayer({
             uuid: scope.layer.uuid,
-            url: 'api/v2/wms/',
+            url: 'api/v3/wms/',
             slug: response.slug,
             bounds: response.spatial_bounds,
             temporal: response.temporal,
@@ -65,9 +65,9 @@ angular.module('data-menu')
             scale: response.observation_type
               && response.observation_type.scale,
             quantity: response.observation_type
-              && response.observation_type.parameter_short_display_name,
+              && response.observation_type.parameter,
             unit: response.observation_type
-              && response.observation_type.referenced_unit_short_display_name,
+              && response.observation_type.unit,
             styles: response.options.styles,
             //showVectorized: false
           }));
@@ -84,11 +84,13 @@ angular.module('data-menu')
             scope.rescale = MapService.rescaleLayer;
           }
 
+          var dates = UtilService.subtractOffsetUTC(
+            [response.first_value_timestamp, response.last_value_timestamp]);
           scope.zoomToBounds = LayerAdderService.zoomToBounds.bind({
             bounds: response.spatial_bounds,
             temporal: response.temporal,
-            first: response.first_value_timestamp,
-            last: response.last_value_timestamp
+            first: dates[0],
+            last: dates[1]
           });
 
         })

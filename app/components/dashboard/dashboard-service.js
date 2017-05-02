@@ -152,7 +152,9 @@ angular.module('dashboard')
    */
   this._setAllContentToNotUpdated = function (graphs) {
     _.forEach(graphs, function (g, i) {
-      _.forEach(g.content, function (c) { c.updated = false; });
+      _.forEach(g.content, function (c) {
+        c.updated = false;
+      });
     });
     return graphs;
   };

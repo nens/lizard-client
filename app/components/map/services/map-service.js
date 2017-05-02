@@ -307,13 +307,15 @@ angular.module('map')
         }
       },
 
-      vectorClickCb: function (layer) {
+      vectorClickCb: function (layer, clearGeometries) {
         for (var key in layer.feature.properties) {
           var newkey = key === 'type' ? 'regionType' : key;
           layer.feature[newkey] = layer.feature.properties[key];
         }
         layer.feature.properties = {};
         State.geometries = []; // empty first.
+        if (clearGeometries)
+          return;
         State.geometries = [layer.feature];
       },
 

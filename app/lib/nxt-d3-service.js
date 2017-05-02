@@ -6,7 +6,9 @@
   .NxtD3
  * @memberOf app
  *
- * @summary Service to create and update common d3 elements.
+ * @summary Service to create and update common d3 elements. It is an
+ * abstraction over d3 to share certain d3 operations between timeline and
+ * graph.
  *
  * @description Inject "NxtD3Service" and either extend this service
  * by calling: Child.prototype = Object.create(NxtD3Service.prototype) as

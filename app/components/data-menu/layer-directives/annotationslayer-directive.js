@@ -7,13 +7,13 @@ angular.module('data-menu')
     MapService.annotationsLayer = eventseriesMapLayer({
       color: '#e67e22', // Orange
       uuid: 'annotations',
-      url: 'api/v2/annotations/',
+      url: 'api/v3/annotations/',
       spatialSelect: MapService.spatialSelect
     });
 
     DataService.annotationsLayer = eventseriesDataLayer({
       uuid: 'annotations',
-      url: 'api/v2/annotations/'
+      url: 'api/v3/annotations/'
     });
 
     // If annotations are active, turn it on after creating it. Only once, map-

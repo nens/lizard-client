@@ -2,6 +2,223 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.13.3"></a>
+## [4.13.3](https://github.com/nens/lizard-client/compare/v4.13.2...v4.13.3) (2017-04-25)
+
+
+
+<a name="4.13.2"></a>
+## [4.13.2](https://github.com/nens/lizard-client/compare/v4.13.1...v4.13.2) (2017-04-25)
+
+
+### Bug Fixes
+
+* **language:** no longer hide state.language when printing ([4e89e5e](https://github.com/nens/lizard-client/commit/4e89e5e))
+* **layermenu:** scroll through list using scrollwheel ([7c0755a](https://github.com/nens/lizard-client/commit/7c0755a))
+* **tickmarks:** consistent values for getTimezoneOffset for tickmarks/zoom-to-tmp-magic ([e7d904a](https://github.com/nens/lizard-client/commit/e7d904a))
+
+
+
+<a name="4.13.1"></a>
+## [4.13.1](https://github.com/nens/lizard-client/compare/v4.13.0...v4.13.1) (2017-04-20)
+
+
+
+<a name="4.13.0"></a>
+# [4.13.0](https://github.com/nens/lizard-client/compare/v4.12.0...v4.13.0) (2017-04-19)
+
+
+### Bug Fixes
+
+* **legend:** min/max from styles str, else via data ([924bee3](https://github.com/nens/lizard-client/commit/924bee3))
+* **legend:** min/max from styles str, else via data ([ceca1dc](https://github.com/nens/lizard-client/commit/ceca1dc))
+* **legend:** temp commit --> fix ON HOLD ([98bcb03](https://github.com/nens/lizard-client/commit/98bcb03))
+* **overflowing bar charts:** no more browser-zooming via scrollwheel ([95b6802](https://github.com/nens/lizard-client/commit/95b6802))
+* **tests:** fix failing date-parser test ([d78b46d](https://github.com/nens/lizard-client/commit/d78b46d))
+* MultiPolygons didn't work, probably because we explicitly checked that the geometry was a Polygon. Most likely fixed by this small change. ([46c389b](https://github.com/nens/lizard-client/commit/46c389b))
+* **timeline:** raster "styles" option can handle client's highest aggwindow ([a0c46a5](https://github.com/nens/lizard-client/commit/a0c46a5))
+
+
+### Features
+
+* **legend:** legend can handle style-per-aggWindow-per-zoomLevel (e.g: rain) ([4b7cb91](https://github.com/nens/lizard-client/commit/4b7cb91))
+* **vitens extra attributes:** the new attrs get in omnibox correct ([acd884a](https://github.com/nens/lizard-client/commit/acd884a))
+
+
+
+<a name="4.12.0"></a>
+# [4.12.0](https://github.com/nens/lizard-client/compare/v4.6.4...v4.12.0) (2017-03-27)
+
+
+### Bug Fixes
+
+* **dependency:** fixes angular-sanitize dependency bug by going back to 1.6.2. ([7e92948](https://github.com/nens/lizard-client/commit/7e92948))
+
+
+### Features
+
+* **timeline:** timeline (dis)appears when need with nice animation ([42ea0b8](https://github.com/nens/lizard-client/commit/42ea0b8))
+* **translation:** cleaned up filters and wated-attrs-constant and adds accept-language to angular http request. Fixes nens/lizard-nxt[#2184](https://github.com/nens/lizard-client/issues/2184) ([444bcba](https://github.com/nens/lizard-client/commit/444bcba))
+* **zoom-to-temporal-data:** User can zoom to timeseries data ([b9c1226](https://github.com/nens/lizard-client/commit/b9c1226))
+
+
+
+<a name="4.11.1"></a>
+## [4.11.1](https://github.com/nens/lizard-client/compare/v4.11.0...v4.11.1) (2017-03-27)
+
+
+
+<a name="4.11.0"></a>
+# [4.11.0](https://github.com/nens/lizard-client/compare/v4.6.4...v4.11.0) (2017-03-27)
+
+
+### Bug Fixes
+
+* **dependency:** fixes angular-sanitize dependency bug by going back to 1.6.2. ([7e92948](https://github.com/nens/lizard-client/commit/7e92948))
+
+
+### Features
+
+* **timeline:** timeline (dis)appears when need with nice animation ([42ea0b8](https://github.com/nens/lizard-client/commit/42ea0b8))
+* **translation:** cleaned up filters and wated-attrs-constant and adds accept-language to angular http request. Fixes nens/lizard-nxt[#2184](https://github.com/nens/lizard-client/issues/2184) ([444bcba](https://github.com/nens/lizard-client/commit/444bcba))
+* **zoom-to-temporal-data:** User can zoom to timeseries data ([b9c1226](https://github.com/nens/lizard-client/commit/b9c1226))
+
+
+
+<a name="4.10.0"></a>
+# [4.10.0](https://github.com/nens/lizard-client/compare/v4.9.2...v4.10.0) (2017-03-13)
+
+
+### Bug Fixes
+
+* **observation_type:** fixes referenced_unit to unit ([f8392b1](https://github.com/nens/lizard-client/commit/f8392b1))
+* **timeline:** plotted tickmarks are converted to local time ([b70884e](https://github.com/nens/lizard-client/commit/b70884e))
+
+
+### Features
+
+* **api:** Client connects to  api/v3. ([8000f5b](https://github.com/nens/lizard-client/commit/8000f5b))
+
+
+
+<a name="4.9.2"></a>
+## [4.9.2](https://github.com/nens/lizard-client/compare/v4.9.1...v4.9.2) (2017-02-24)
+
+
+### Bug Fixes
+
+* **timeseries:** fixed downloading timeseries when timeline moves. ([6679e7c](https://github.com/nens/lizard-client/commit/6679e7c))
+
+
+
+<a name="4.9.1"></a>
+## [4.9.1](https://github.com/nens/lizard-client/compare/v4.9.0...v4.9.1) (2017-02-17)
+
+
+### Bug Fixes
+
+* **dashboard:** favorite with both bars and lines can be restored ([503ba21](https://github.com/nens/lizard-client/commit/503ba21))
+* **searchbar:** differentiate between english and dutch ([050fc1c](https://github.com/nens/lizard-client/commit/050fc1c))
+
+
+
+<a name="4.9.0"></a>
+# [4.9.0](https://github.com/nens/lizard-client/compare/v4.8.1...v4.9.0) (2017-02-13)
+
+
+### Bug Fixes
+
+* **dashboard:** timeseries listing can be collapsed ([ce07654](https://github.com/nens/lizard-client/commit/ce07654))
+* **waterlayer:** selecting a asset via search activates the waterlayer if needed ([b92f31f](https://github.com/nens/lizard-client/commit/b92f31f))
+
+
+### Features
+
+* **timeseries:** timeseries can be exported when not logged in ([bc17357](https://github.com/nens/lizard-client/commit/bc17357))
+
+
+
+<a name="4.8.1"></a>
+## [4.8.1](https://github.com/nens/lizard-client/compare/v4.8.0...v4.8.1) (2017-01-30)
+
+
+### Bug Fixes
+
+* **relative timeseries:** checkboxes for relativation are always in s… ([#831](https://github.com/nens/lizard-client/issues/831)) ([41bbe98](https://github.com/nens/lizard-client/commit/41bbe98))
+
+
+
+<a name="4.8.0"></a>
+# [4.8.0](https://github.com/nens/lizard-client/compare/v4.6.3...v4.8.0) (2017-01-24)
+
+
+### Bug Fixes
+
+* **build:** /scripts to /static/client/scripts ([0a44bdb](https://github.com/nens/lizard-client/commit/0a44bdb))
+* **relative timeseries:** both parent asset and nested assets are checked for surface_level ([e5efaff](https://github.com/nens/lizard-client/commit/e5efaff))
+* **translations:** get transifex credentials from environment or prompt. Get language in chunks. ([bdb042d](https://github.com/nens/lizard-client/commit/bdb042d))
+
+
+### Features
+
+* **relative timeseries:** render in dashboard and dowload relative timeseries ([c064bcc](https://github.com/nens/lizard-client/commit/c064bcc))
+
+
+
+<a name="4.7.1"></a>
+## [4.7.1](https://github.com/nens/lizard-client/compare/v4.7.0...v4.7.1) (2017-01-19)
+
+
+### Bug Fixes
+
+* **build:** /scripts to /static/client/scripts ([0a44bdb](https://github.com/nens/lizard-client/commit/0a44bdb))
+
+
+
+<a name="4.7.0"></a>
+# [4.7.0](https://github.com/nens/lizard-client/compare/v4.6.3...v4.7.0) (2017-01-19)
+
+
+### Bug Fixes
+
+* **translations:** get transifex credentials from environment or prompt. Get language in chunks. ([bdb042d](https://github.com/nens/lizard-client/commit/bdb042d))
+
+
+### Features
+
+* **relative timeseries:** render in dashboard and dowload relative timeseries ([c064bcc](https://github.com/nens/lizard-client/commit/c064bcc))
+
+
+
+<a name="4.6.3"></a>
+## [4.6.3](https://github.com/nens/lizard-client/compare/v4.6.2...v4.6.3) (2017-01-09)
+
+
+### Bug Fixes
+
+* **dashboard:** other syntax for label in graph ([1ad556f](https://github.com/nens/lizard-client/commit/1ad556f))
+* **edge:** browser determination by useragent. ([bd5f257](https://github.com/nens/lizard-client/commit/bd5f257))
+* **legend:** both MS Edge and IE11 can draw the continuous legend OK ([e34502b](https://github.com/nens/lizard-client/commit/e34502b))
+* **legend:** category indicators aren't hidden in IE11 ([4ba0c09](https://github.com/nens/lizard-client/commit/4ba0c09))
+
+
+
+## [4.6.2](https://github.com/nens/lizard-client/compare/v4.6.1...v4.6.2) (2016-12-22)
+
+
+### Bug Fixes
+
+* **graph:** use correct key for bar data. (Fixes nens/lizard-nxt[#2160](https://github.com/nens/lizard-client/issues/2160) ([#811](https://github.com/nens/lizard-client/issues/811)) ([2ce0c3c](https://github.com/nens/lizard-client/commit/2ce0c3c))
+* **omnibox:** consistent use of 'm (NAP)' where applicable ([44534a9](https://github.com/nens/lizard-client/commit/44534a9))
+* **regions:** cancel consecutive requests to vectorize raster regions. ([85d9aa8](https://github.com/nens/lizard-client/commit/85d9aa8))
+* **regions:** decrease region requests from two to one on zoom: do not update all layers on zoom, wmslayer calls update himself when the map zooms ([c0c7d24](https://github.com/nens/lizard-client/commit/c0c7d24))
+* **timeseries:** click on colorpicker is not a click on timeseries ([ad43367](https://github.com/nens/lizard-client/commit/ad43367))
+* **timeseries:** show only location name and parameter in timeseries lists. (nens/lizard-nxt[#2164](https://github.com/nens/lizard-client/issues/2164)) ([8577da6](https://github.com/nens/lizard-client/commit/8577da6))
+* **timeseries:** transition timeseries colorhandle to indicate changes ([0dad638](https://github.com/nens/lizard-client/commit/0dad638))
+* **vectorized rasters:** visualize selected region on map ([#809](https://github.com/nens/lizard-client/issues/809)) ([0f7246a](https://github.com/nens/lizard-client/commit/0f7246a))
+
+
+
 <a name="4.6.1"></a>
 ## [4.6.1](https://github.com/nens/lizard-client/compare/v4.6.0...v4.6.1) (2016-12-16)
 

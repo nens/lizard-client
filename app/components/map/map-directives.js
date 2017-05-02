@@ -6,9 +6,7 @@
  * Overview
  * ========
  *
- * Defines the map. Directive does all the watching and DOM binding, MapDirCtrl
- * holds all the testable logic. Ideally the directive has no logic and the
- * MapDirCtrl is independent of the rest of the application.
+ * Defines the map. Directive does all the watching and DOM binding.
  *
  */
 angular.module('map')
@@ -298,8 +296,25 @@ angular.module('map')
 
       scope.$watchCollection('state.geometries', function (n, o) {
         if (n === o) { return true; }
-        if (State.box.type === 'line' && State.geometries[0] === undefined) {
-          lineCleanup();
+        if (State.geometries[0] === undefined) {
+
+          if (State.box.type === 'line') { lineCleanup(); }
+
+          // When state.geometries updates, we might need to update
+          // vectorized raster layers: e.g., a selected region gets deselected
+          // and then we need to update the map to show this deselection.
+          // NB! This works for multiple vectorizedRasterLayers at once.
+
+          var theRasterMapLayer,
+              vectorizedRasterLayers = _.filter(State.layers,
+                { type: 'raster', vectorized: true });
+
+          _.forEach(vectorizedRasterLayers, function (layer) {
+            theRasterMapLayer = _.find(MapService.mapLayers, { uuid: layer.uuid });
+            theRasterMapLayer.resetActiveRegionId();
+          });
+
+          MapService.updateLayers(vectorizedRasterLayers);
         }
       });
 

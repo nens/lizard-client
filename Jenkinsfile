@@ -2,19 +2,19 @@ node ('nxt'){
     stage "Checkout"
     checkout scm
 
-    stage "Build"
-    sh "sudo su buildout"
+    stage "Install"
     sh "rm -rf node_modules"
     sh "rm -rf vendor"
-    sh "npm install"
+    sh "npm install --optional=false"
     sh "bower install"
 
-    stage "JSLint"
-    sh "grunt jshint"
-
     stage "Test"
-    sh "grunt test"
+    sh "npm test"
 
-    stage "Docs"
-    sh "grunt docs"
+    if (env.BRANCH_NAME == "master") {
+      stage "Install transifex tools"
+      sh "npm install --optional=true"
+      stage "Transifex"  
+      sh "npm run transifex"
+    }
 }

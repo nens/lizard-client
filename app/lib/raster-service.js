@@ -1,5 +1,7 @@
 /**
- * Service to handle raster requests.
+ * Low-level service to handle raster requests and build wms parameters. It is
+ * used by raster-data-layer to implement its getData interface, but also by the
+ * timeline to make raster requests for rain data and temporal raster timesteps.
  */
 angular.module('lizard-nxt')
   .service("RasterService", ["State",
@@ -79,7 +81,7 @@ angular.module('lizard-nxt')
   var getTimesteps = function (options) {
     return $http({
         method: 'GET',
-        url: 'api/v2/rasters/' + options.uuid + '/timesteps/',
+        url: 'api/v3/rasters/' + options.uuid + '/timesteps/',
         params: {start: options.start, end: options.end}
       });
   };

@@ -6,7 +6,7 @@
  * @summary Service to create and update a graph
  *
  * @description Inject "Graph" and call new graph(<args>) to create a
- * graph. Currently the graph supports lines, bars, donut, and a flat
+ * graph. Currently the graph supports lines, bars, and a flat
  * donut called horizontal stacked bar. The user may interact with
  * the graph through click and hover functions. Graph inherits from
  * NxtD3, a lower level d3 helper class.
@@ -16,8 +16,8 @@
  * Everything in the graphs is animated according to NxtD3.transTime.
  */
 angular.module('lizard-nxt')
-  .factory("Graph", ["$timeout", "NxtD3", "ChartContainer", "UtilService",
-  function ($timeout, NxtD3, ChartContainer, UtilService) {
+  .factory("Graph", ["$timeout", "NxtD3", "ChartContainer", "UtilService", "State", "$filter",
+  function ($timeout, NxtD3, ChartContainer, UtilService, State, $filter) {
 
   var MIN_WIDTH_INTERACTIVE_GRAPHS = 400; // Only graphs bigger get mouseover
                                           // and click interaction.
@@ -225,7 +225,7 @@ angular.module('lizard-nxt')
     drawMultipleAxes(graph);
 
     if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
-      addLineInteraction(graph, temporal);
+      addLineInteraction(graph, temporal, content);
     }
   };
 
@@ -358,7 +358,7 @@ angular.module('lizard-nxt')
    *                        label and sets up a mousemove listener.
    *                        It draws the rectangles.
    */
-  Graph.prototype.drawHorizontalStack = function (content) {
+    Graph.prototype.drawHorizontalStack = function (content) {
       var data = content[0].data,
           keys = content[0].keys,
           labels = { x: content.xLabel, y: content.unit };
@@ -370,18 +370,37 @@ angular.module('lizard-nxt')
       };
       this._x = createXGraph(this._svg, this.dimensions, labels, options);
 
-      if (data === null) { return; } // We are done here.
+      if (data === null || data.length === 1 && data[0] === null) {
+        return; // We are done here.
+      }
 
-      // normalize data
-      var total = d3.sum(data, function (d) {
-        return Number(d[keys.x]);
+        // normalize data
+        var total = d3.sum(data, function (d) {
+        return d ? Number(d[keys.x]) : 0;
       });
 
       var dataCopy = angular.copy(data);
 
       angular.forEach(dataCopy, function (value, key) {
-        value[keys.x] = value[keys.x] / total;
+        var pixels = value[keys.x];
+        value[keys.x] = pixels / total; // Percentage, is percentage of area with data
+
+        var selectedGeometries = State.selected.geometries;
+        if (selectedGeometries && selectedGeometries.length === 1 &&
+            (selectedGeometries[0].geometry.type === 'Polygon' ||
+             selectedGeometries[0].geometry.type === 'MultiPolygon')) {
+          var selectedPolygon = selectedGeometries[0];
+          var totalArea = selectedPolygon.area;
+          if (value.total) {
+            // This is the percentage of the whole requested area
+            var percentageOfArea = pixels / value.total;
+            var formattedArea = $filter('number')(
+              Math.round(percentageOfArea * totalArea / 10000));
+            value.extraLabel = "(" + formattedArea + " ha)";
+          }
+        }
       });
+
       drawHorizontalRects(this._svg, this.dimensions, this.transTime, this._x.scale, dataCopy, keys, labels);
   };
 
@@ -966,6 +985,10 @@ angular.module('lizard-nxt')
         label = Math.round(d[keys.x] * 100) + '% ' + labelstr[labelstr.length - 1];
       }
 
+      if (d.extraLabel) {
+        label += ' ' + d.extraLabel;
+      }
+
       svg.select('#xlabel')
         .text(label)
         .attr("class", "selected");
@@ -1223,7 +1246,7 @@ angular.module('lizard-nxt')
    *
    * @params {object} - the graph object (all-encompassing, ever-faithful)
    */
-  var addLineInteraction = function (graph, temporal) {
+  var addLineInteraction = function (graph, temporal, content) {
     var height = graph._getHeight(graph.dimensions),
         fg = graph._svg.select('#feature-group'),
         MIN_LABEL_Y = 50,
@@ -1327,11 +1350,31 @@ angular.module('lizard-nxt')
             .attr('stroke', 'none')
             .attr('fill', v.color);
 
-        var location = (v.location) ? '' + ' - ' + v.location : '';
-        var name = (v.name) ? '' + ', ' + v.name : '';
+        var location = (v.location) ? v.location : '';
+        var name = (v.name) ? ', ' + v.name : '';
+
+        var parameter;
+        try {
+          parameter = content[0].parameter;
+        } catch (e) {
+          parameter = '';
+        }
+
+        var unit;
+        if (v.ylabel) {
+          unit = v.ylabel;
+        } else {
+          unit = v.unit;
+        }
+
+        var boxText = value + ' ' + unit + ' - ' + location;
+        if (parameter !== '') {
+          boxText += ", " + parameter;
+        }
+
         var tspan = valuebox.select('text')
           .append('tspan')
-            .text(value + ' ' + v.ylabel + v.unit + location + name)
+            .text(boxText)
             .attr('class', 'graph-tooltip-y')
             .attr('x', 25)
             .attr('y', 15 + 15 * i);
@@ -1432,7 +1475,7 @@ angular.module('lizard-nxt')
    * @param  {string}       (optional) label, if undefined uupdates current.
    * @param  {boolean}      draw on y axis, else x-axis.
    */
-  var drawLabel = function (svg, dimensions, label, y) {
+    var drawLabel = function (svg, dimensions, label, y) {
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
         mv,
@@ -1516,6 +1559,7 @@ angular.module('lizard-nxt')
     var axisEl;
     // Make graph specific changes to the x and y axis
     if (y) {
+
       axisEl = svg.select('#yaxis')
         .attr("class", "y-axis y axis")
         .selectAll("text")

@@ -3,7 +3,12 @@
  * @class UtilService
  * @name UtilService
  * @summary Generic util functions.
- * @description Generic util functions.
+ * @description Generic util functions. A file where developers put hacky code
+ * because data formats are messed up. Nobody ever checks if a function is still
+ * relevant after removing logic somewhere else or after introducing helper
+ * libs.
+ *
+ * NOTE: this file probably contains lots of stale code.
  */
 angular.module('lizard-nxt')
   .service("UtilService", ["NxtD3", "$timeout", function (NxtD3, $timeout) {
@@ -564,7 +569,6 @@ angular.module('lizard-nxt')
     }
   };
 
-
   this.preventOldIEUsage = function () {
     if (this.serveToOldIE()) {
       document.querySelector("#dark-overlay").style.display = "inline";
@@ -725,7 +729,6 @@ angular.module('lizard-nxt')
     styleElement.appendChild(document.createTextNode(newStyle));
   };
 
-
   /*
    * @description - Convert string ending in px to value expressed in pixels,
    *                it denotes.
@@ -743,13 +746,17 @@ angular.module('lizard-nxt')
   /**
    * @function
    * @description - Get amount of Km^2 in the current spatial extent
-   *                (bottom-limit = 1)
+   *                (bottom-limit = 1, or given as second parameter)
    * @param {latLngBounds} leafletBounds - A leaflet bounds object denoting the
    *                                       current spatial extent.
+   * @param {minValue} minValue - The minimum value, usually 1, but can be changed
    * @return {number} - A number denoting the extent's corresponding perimeter
    *                   (expressed in Km^2)
    */
-  this.extent2kilometers = function (leafletBounds) {
+  this.extent2kilometers = function (leafletBounds, minValue) {
+    if (typeof minValue === 'undefined') {
+      minValue = 1;
+    }
 
     var northWest = L.latLng({
           lat: leafletBounds._southWest.lat,
@@ -764,7 +771,7 @@ angular.module('lizard-nxt')
 
     // On high zoomlevels, we limit the area to 1km^2 since that's the
     // spatial resolution ("pixel") for radar data in the rasterstore.
-    return Math.max(1, latDistance * lngDistance);
+    return Math.max(minValue, latDistance * lngDistance);
   };
 
   /*
@@ -1078,8 +1085,33 @@ angular.module('lizard-nxt')
     return closest;
   };
 
+  this.extractStylesString = function (styles, aggWindow) {
+    var stylesString;
+    if (typeof styles === typeof {}) {
+      // The "styles" option for the raster has datatype Object:
+      var styleObjForSomeZoomLevel = styles[0];
+      if (styleObjForSomeZoomLevel.hasOwnProperty(aggWindow)) {
+        stylesString = styleObjForSomeZoomLevel[aggWindow];
+      } else {
+        var availableAggWindows = Object.keys(styleObjForSomeZoomLevel);
+        var sortedAggWindows = _.sortBy(availableAggWindows);
+        var minAggWindow = _.first(sortedAggWindows);
+        var maxAggWindow = _.last(sortedAggWindows);
+        if (aggWindow > maxAggWindow) {
+          stylesString = styleObjForSomeZoomLevel[maxAggWindow];
+        } else {
+          stylesString = styleObjForSomeZoomLevel[minAggWindow];
+        }
+      }
+    } else {
+      // The "styles" option for the raster has datatype String:
+      stylesString = styles;
+    }
+    return stylesString;
+  };
+
   /**
-    * @description  This function is used to format a raster config's "styles"
+    * @description  This function is used to format a raster configs "styles"
     *               value. This should be used for e.g. colormap API calls, where
     *               the value is parsed differently than when used for the WMS.
     *               E.g:
@@ -1092,12 +1124,74 @@ angular.module('lizard-nxt')
     *
     * @param {string} styles
     */
-  this.formatRasterStyles = function (styles) {
-    var parts = styles.split(":");
-    if (parts.length > 1) {
-      return parts[0];
-    } else {
-      return styles;
-    }
+  this.extractColormapName = function (stylesString) {
+    var parts = stylesString.split(":");
+    return parts.length > 2
+      ? parts[0]
+      : stylesString;
+  };
+
+  /**
+    * @description  This function is used to inspect a raster config "styles"
+    *               value. It returns a boolean indicating whteher the string
+    *               defined as value for the "styles" key has min/max
+    *               configured:
+    *
+    *               "dem-nl"     => false
+    *               "dem-nl:8:9" => true
+    *               "dem-nl:8:"  => true => Though this probably not work well.
+    *               "abcd"       => false
+    *               "abcd:0:23"  => true
+    *
+    * @param {string} styles
+    */
+  this.isCompoundStyles = function (stylesString) {
+    return stylesString
+      ? stylesString.split(":").length === 3
+      : false;
+  };
+
+  /*
+   * @description This function is called once to make sure that the user can't
+   *              zoom in/out using the ctrl key + the mouse's scrollwheel.
+   *              Take note that this does not interfere with the designed
+   *              functionality of either panning nor zooming the timeline nor
+   *              map.
+   */
+  this.preventMousewheelZoom = function () {
+    var ctrlIsPressed = null;
+    var isCtrlPressed = function () {
+      return ctrlIsPressed;
+    };
+    var noZoomFn = function (e) {
+      if (isCtrlPressed()) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    $(document).keydown(function (e) {
+      if (e.keyCode === 17 || e.key === 'Control') { ctrlIsPressed = true; }
+    });
+    $(document).keyup(function (e) {
+      if (e.keyCode === 17 || e.key === 'Control') { ctrlIsPressed = false; }
+    });
+    $('body').bind('mousewheel', noZoomFn); // Chromium/IE
+    $('body').bind('DOMMouseScroll', noZoomFn); // Firefox
+  };
+
+  /**
+   * @description Used for converting timesteps (representing points in time,
+   *              saved according to the UTC standard) to the client's
+   *              localtime (=local time at the point in space where the
+   *              end-user is located when using the Lizard-client).
+   */
+  this.subtractOffsetUTC = function (timesteps) {
+    var offsetInMinutes,
+        offsetInMsec;
+    return _.map(timesteps, function (step) {
+      offsetInMinutes = new Date(step).getTimezoneOffset();
+      offsetInMsec = 1000 * 60 * offsetInMinutes;
+      return step - offsetInMsec;
+    });
   };
 }]);

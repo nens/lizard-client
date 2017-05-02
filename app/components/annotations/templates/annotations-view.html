@@ -10,20 +10,20 @@
         <td ng-click="showFullText = !showFullText"
             ng-class="{'show-full-text': showFullText}"
             class="clickable">
-          <% obj.properties.text %>
+          {{ obj.properties.text }}
         </td>
         <td class="text-right">
           <span ng-bind="obj.properties.timestamp | date: formatDatetime()"></span>
         </td>
         <td class="text-right">
           <a target="_blank"
-             href="<% obj.properties.attachment_url %>"
-             title="<% 'Download attachment.'|translate %>"
+             href="{{ obj.properties.attachment_url }}"
+             title="{{ 'Download attachment.'|translate }}"
              ng-if="obj.properties.attachment_url">
             <i class="fa fa-download"></i>
           </a>&nbsp;
           <a class="clickable"
-             title="<% 'Delete this annotation from the database.'|translate %>"
+             title="{{ 'Delete this annotation from the database.'|translate }}"
              ng-click="deleteAnnotation(obj)">
             <i class="fa fa-trash text-danger"></i>
           </a>
