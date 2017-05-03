@@ -1,7 +1,6 @@
 // TODO: THIS IS ONE IN FOUR FILES THAT NEEDS SCRUTINY
 
 angular.module('omnibox')
-<<<<<<< HEAD
   .directive('dbAssetCard', [
     'State',
     'DataService',
@@ -38,15 +37,8 @@ angular.module('omnibox')
           scope.noData = noRasterData && scope.geom.entity_name === undefined;
         }, true);
       }
-=======
-  .directive('dbAssetCard', [ 'State', 'DataService', 'DragService', 'DBCardsService', 'TimeseriesService', 'AssetService',
-    function (State, DataService, DragService, DBCardsService, TimeseriesService, AssetService) {
-  return {
-    link: function (scope, element) {
 
-      scope.selected = State.selected;
       scope.relativeTimeseries = TimeseriesService.relativeTimeseries;
-
       scope.toggleRelativeTimeseries = function () {
 
         var activeBefore = TimeseriesService.relativeTimeseries.value;
@@ -58,16 +50,12 @@ angular.module('omnibox')
         });
         TimeseriesService.syncTime(uuidList);
       };
->>>>>>> master
 
       scope.state = State;
       scope.getSelectionMetaData = SelectionService.getMetaDataFunction(
         scope.assetGeom);
       scope.toggleSelection = SelectionService.toggle;
 
-<<<<<<< HEAD
-     /**
-=======
       scope.getTsLongName = function (uuid) {
         var metaData = scope.getTsMetaData(uuid);
         return metaData.location + ',' + metaData.parameter;
@@ -96,7 +84,6 @@ angular.module('omnibox')
       };
 
       /**
->>>>>>> master
        * Returns true if selection with uuid is one the first three in the list.
        *
        * This is used to bypass ngRepeat which loops over one big list of
@@ -109,28 +96,6 @@ angular.module('omnibox')
       scope.isOneOfFirstThree = function (uuid) {
         var MAX = 3;
         var items = element.find('.draggable-ts');
-<<<<<<< HEAD
-        var index = _.findIndex(items, function (item) {
-          return item.dataset.uuid === uuid; });
-        return index < 3;
-      };
-
-      // TODO: check the code below, this might have been left out because of
-      // the long time this branch has existed seperately from master.
-
-      // // Extender is the button at the bottom of the timeseries list to show
-      // // more or less items.
-      // scope.showExtender = true;
-      //
-      // var MANY = 5;
-      //
-      // // If there are a few timeseries, show them all and do not show the
-      // // extender button.
-      // if (scope.asset.timeseries.length < MANY) {
-      //   scope.extended = true;
-      //   scope.showExtender = false;
-      // }
-=======
         if (!items || items.length <= MAX) {
           return true;
         } else {
@@ -143,31 +108,31 @@ angular.module('omnibox')
           return result;
         }
       };
-
-      scope.toggleTimeseries = function (timeseries) {
-
-        if (!timeseries.active) {
-
-          var plots = DBCardsService.getActiveCountAndOrder();
-
-          timeseries.order = plots.count > 0
-            ? plots.order + 1
-            : 0;
-
-        }
-
-        else {
-
-          DBCardsService.removeItemFromPlot(timeseries);
-
-        }
-
-        timeseries.active = !timeseries.active;
-        TimeseriesService.syncTime();
-
-      };
-
-      scope.noTimeseries = scope.asset.timeseries.length === 0;
+      // TODO: REMOVED THIS
+      // scope.toggleTimeseries = function (timeseries) {
+      //
+      //   if (!timeseries.active) {
+      //
+      //     var plots = DBCardsService.getActiveCountAndOrder();
+      //
+      //     timeseries.order = plots.count > 0
+      //       ? plots.order + 1
+      //       : 0;
+      //
+      //   }
+      //
+      //   else {
+      //
+      //     DBCardsService.removeItemFromPlot(timeseries);
+      //
+      //   }
+      //
+      //   timeseries.active = !timeseries.active;
+      //   TimeseriesService.syncTime();
+      //
+      // };
+      //
+      // scope.noTimeseries = scope.asset.timeseries.length === 0;
 
       // Extender is the button at the bottom of the timeseries list to show
       // more or less items.
@@ -184,7 +149,6 @@ angular.module('omnibox')
       } else {
         scope.showExtender = true;
       }
->>>>>>> master
 
       scope.toggleExtended = function () {
         scope.extended = !scope.extended;

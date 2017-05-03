@@ -38,24 +38,10 @@
      <div id="drag-container">
 
       <div
-<<<<<<< HEAD
         ng-repeat="selection in state.selections | orderBy : ['-active', '+order']"
         ng-init="metaData = getSelectionMetaData(selection)"
         ng-if="getSelectionMetaData(selection).match"
         ng-show="extended || selection.active || isOneOfFirstThree(selection.uuid)">
-=======
-        ng-repeat="ts in selected.timeseries | orderBy : ['-active', '+order']"
-        ng-if="getTsMetaData(ts.uuid)"
-        data-uuid="{{ ts.uuid }}"
-        ng-show="extended || ts.active || isOneOfFirstThree(ts.uuid)">
-        <div
-          ng-class="{active: mouseIsOver}"
-          class="draggable-ts animate-repeat card-content-list clickable"
-          id="{{ ts.uuid }}"
-          ng-click="toggleTimeseries(ts);"
-          ng-mouseover="mouseIsOver = true"
-          ng-mouseleave="mouseIsOver = false">
->>>>>>> master
 
         <div data-uuid="<% selection.uuid %>" class="draggable-ts animate-repeat">
           <div
@@ -80,28 +66,14 @@
             <span
               title="<% metaData.location %>, <% metaData.uuid %>, <% metaData.parameter %>"
               ng-class="{'text-primary': selection.active}">
-              <% metaData.location %>,
-              <% metaData.parameter %>
+              ng-init="displayName = (getTsLongName(ts.uuid) | truncate: 50)">
+              {{ displayName }}&nbsp;
             </span>
-          </div>
-<<<<<<< HEAD
-=======
-          <i class="fa" ng-class="{
-            'fa-clock-o': getTsMetaData(ts.uuid).value_type !== 'image',
-            'fa-file-image-o': getTsMetaData(ts.uuid).value_type === 'image'
-          }"></i>
-
-          <span
-            title="{{ getTsMetaData(ts.uuid).location }}, {{ getTsMetaData(ts.uuid).name }}, {{ getTsMetaData(ts.uuid).parameter }}"
-            ng-class="{'text-primary': ts.active}"
-            ng-init="displayName = (getTsLongName(ts.uuid) | truncate: 50)">
-
-            {{ displayName }}&nbsp;
 
             <i class="fa relativate-ts-icon"
                ng-class="{ 'fa-check-square': relativeTimeseries.value, 'fa-square': !relativeTimeseries.value }"
                ng-click="toggleRelativeTimeseries(); $event.stopPropagation();"
-               ng-if="ts.active && ts.measureScale === 'interval' &&
+               ng-if="selection.active && selection.measureScale === 'interval' &&
                  (assetHasSurfaceLevel() || parentAssetHasSurfaceLevel())"
                title="{{ relativeTimeseries
                  && 'Deselect to show absolute values for all timeseries'
@@ -110,7 +82,7 @@
                translate>
             </i>
           </span>
->>>>>>> master
+        </div>
 
           <div
             ng-if="metaData.type === 'raster'"
