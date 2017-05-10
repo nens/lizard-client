@@ -164,7 +164,7 @@ angular.module('global-state')
     state.resetObjects = function () {
       // Selected items
       state.assets = []; // hydra-core asset id <entity>$<id>,
-                // is defined in DataService use state.selected.asset.addAsset
+                // is defined in DataService use state.asset.addAsset
                 // to add and state.asset.removeAsset to remove
                 // asset, or reset by calling state.resetObjects()
       state.geometries = []; // geojson with points, lines, polygons. Same as

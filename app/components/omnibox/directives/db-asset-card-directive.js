@@ -7,12 +7,15 @@ angular.module('omnibox')
     'DragService',
     'DBCardsService',
     'SelectionService',
+    'TimeseriesService',
     function (
         State,
         DataService,
         DragService,
         DBCardsService,
-        SelectionService) {
+        SelectionService,
+        TimeseriesService
+    ) {
   return {
     link: function (scope, element) {
 
@@ -20,12 +23,12 @@ angular.module('omnibox')
 
       // geometry or asset administration
       if (scope.assetType === "asset") {
-        scope.asset = scope.assetGeom;
+
         scope.noData = scope.asset.timeseries.length === 0;
         scope.assetTypeName = "asset";
         scope.noDataType = "timeseries";
       } else {
-        scope.geom = scope.assetGeom;
+        scope.geom = scope.asset;
         scope.assetTypeName = "geometry";
         scope.noDataType = "raster";
 
@@ -53,11 +56,11 @@ angular.module('omnibox')
 
       scope.state = State;
       scope.getSelectionMetaData = SelectionService.getMetaDataFunction(
-        scope.assetGeom);
+        scope.asset);
       scope.toggleSelection = SelectionService.toggle;
 
-      scope.getTsLongName = function (uuid) {
-        var metaData = scope.getTsMetaData(uuid);
+      scope.getTsLongName = function (selection) {
+        var metaData = scope.getSelectionMetaData(selection);
         return metaData.location + ',' + metaData.parameter;
       };
 
@@ -182,7 +185,7 @@ angular.module('omnibox')
       };
 
       // Init crosssection
-      if (scope.assetGeom.entity_name === 'leveecrosssection') {
+      if (scope.asset.entity_name === 'leveecrosssection') {
         scope.asset.crosssection = {
           active: false, // set to true by  toggle
           order: 0
@@ -194,7 +197,7 @@ angular.module('omnibox')
     },
     restrict: 'E',
     scope: {
-      assetGeom: '=',
+      asset: '=',
       assetType: '=',
       timeState: '='
     },

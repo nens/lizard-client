@@ -6,7 +6,7 @@
     timeseries-single-select
     ng-if="showTimeseries && asset.timeseries.length > 0"
     asset-type="assetType"
-    asset-geom="asset"
+    asset="asset"
     time-state="timeState">
   </timeseries>
 
@@ -16,11 +16,6 @@
     time-state="timeState">
   </nestedasset>
 
-  <geometry-cards
-    geom="asset"
-    header="false"
-    time-state="timeState">
-  </geometry-cards>
 
   <annotations
     ng-if="showAnnotations"

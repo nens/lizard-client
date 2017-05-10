@@ -5,13 +5,26 @@
 // TODO: THIS IS ONE IN FOUR FILES THAT NEEDS SCRUTINY
 
 angular.module('timeseries')
-.directive('timeseries', ['TimeseriesService', 'State', '$timeout', 'gettextCatalog', 'notie',
-  function (TimeseriesService, State, $timeout, gettextCatalog, notie) {
+.directive('timeseries', [
+  '$timeout',
+  'gettextCatalog',
+  'notie',
+  'SelectionService',
+  'State',
+  'TimeseriesService',
+  function (
+    $timeout,
+    gettextCatalog,
+    notie,
+    SelectionService,
+    State,
+    TimeseriesService
+  ) {
   return {
     link: function (scope) {
       scope.state = State; // TODO: only done this to watch state.layers. There is a better place for this.
       scope.$watch('state.layers', function () { // TODO: There is a better place for this.
-        SelectionService.initializeRaster(scope.assetGeom, scope.assetType);
+        SelectionService.initializeRaster(scope.asset, scope.assetType);
       });
 
       scope.zoomToMagic = function (value_type) {
@@ -35,11 +48,12 @@ angular.module('timeseries')
         }
 
         if (State.context === 'map' &&
-            State.selected.timeseries &&
-            State.selected.timeseries.length >= 1) {
+            State.selections &&
+            State.selections.length >= 1) {
 
-          var activeTsUUID = _.find(State.selected.timeseries,
-            { active: true }).uuid;
+          var activeTsUUID = _.find(State.selections,
+            { active: true }).timeseries;
+
           var activeTs = _.find(TimeseriesService.timeseries,
             { id: activeTsUUID });
 
@@ -71,11 +85,11 @@ angular.module('timeseries')
         }
       };
 
-      scope.$watch("assetGeom", function () {
+      scope.$watch("asset", function () {
         if (scope.assetType === 'asset'){
-          SelectionService.initializeAsset(scope.assetGeom);
+          SelectionService.initializeAsset(scope.asset);
         }
-        SelectionService.initializeRaster(scope.assetGeom, scope.assetType);
+        SelectionService.initializeRaster(scope.asset, scope.assetType);
         if (State.context === 'map') {
           scope.timeseries.change();
         }
@@ -91,7 +105,7 @@ angular.module('timeseries')
         }
       });
     },
-    restrict: 'E',  // Timeseries can be an element with single-select or
+    restrict: 'E', // Timeseries can be an element with single-select or
                     // multi select as an attribute or without in which
                     // case it only sets the color and order of timeseries of
                     // new assets.
@@ -145,32 +159,35 @@ angular.module('timeseries')
         }
       };
 
-      scope.$watch('asset', function () {
+      scope.$watch('asset', function (aG) {
+        if(scope.asset) {
 
-        var setFirstTSAsSelected = function () {
-          scope.timeseries.selected = scope.asset.timeseries[0];
-        };
+          var setFirstTSAsSelected = function () {
+            scope.timeseries.selected = scope.asset.timeseries[0];
+          };
 
-        var activeSelections = _.find(State.selections, {active: true});
-        if (activeSelections) {
-           var tsInAsset = _.find(
-            scope.asset.timeseries,
-            function (selection) { return selection.timeseries === activeSelections.timeseries;}
-          );
-          if (tsInAsset) {
-            scope.timeseries.selected = tsInAsset;
+          var activeSelections = _.find(State.selections, {active: true});
+          if (activeSelections) {
+            var tsInAsset = _.find(
+              scope.asset.timeseries,
+              function (selection) {
+                return selection.timeseries === activeSelections.timeseries;
+              }
+            );
+            if (tsInAsset) {
+              scope.timeseries.selected = tsInAsset;
+            }
+            else {
+              setFirstTSAsSelected();
+            }
           }
           else {
             setFirstTSAsSelected();
           }
-        }
-        else {
-          setFirstTSAsSelected();
-        }
 
-        scope.timeseries.change();
+          scope.timeseries.change();
 
-      });
+        }});
 
       /**
        * Get new ts when time changes

@@ -95,6 +95,8 @@ angular.module('data-menu')
         if (instance.onAssetsChange) {
           instance.onAssetsChange();
         }
+
+        console.log('DataService.assets:', instance.assets);
       };
 
       // Define assets on State and update DataService.assets.
@@ -179,7 +181,7 @@ angular.module('data-menu')
           promise.then(function (geometries) {
             // Dedupe instance.geometries asynchronous.
             instance.geometries = _.uniqWith(geometries, isDuplicateGeometry);
-
+            console.log('DataService.geometries:', instance.geometries);
             if (instance.onGeometriesChange) {
               instance.onGeometriesChange();
             }
@@ -284,6 +286,7 @@ angular.module('data-menu')
             instance.geometries.forEach(function (old, i) {
               if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
                 instance.geometries[i] = newGeo;
+                console.log('DataService.geometries:', instance.geometries);
               }
             });
           });

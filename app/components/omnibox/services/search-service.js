@@ -193,7 +193,7 @@ angular.module('omnibox')
       var ZOOM_FOR_OBJECT = 19;
 
       if (state.box.type !== 'multi-point' && state.context !== 'dashboard') {
-        state.selected.reset();
+        state.resetObjects();
       }
 
       state.spatial.view = {

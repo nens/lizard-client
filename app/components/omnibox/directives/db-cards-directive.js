@@ -55,7 +55,6 @@ angular.module('omnibox')
           _.map(scope.omnibox.data.geometries, mapGeoms('geom')),
           _.map(localAssets, mapGeoms('asset'))
         );
-        console.log(scope.localAssets);
       });
 
 

@@ -119,8 +119,7 @@ angular.module('timeseries')
             actives,
             State.temporal,
             minPoints && service.minPoints,
-            noDefer,
-            graphType
+            chartType
           );
         }
 
@@ -199,7 +198,7 @@ angular.module('timeseries')
         end: timeState.end ? parseInt(timeState.end, 10): undefined,
       };
 
-      if (graphType === 'temporalLines' && service.relativeTimeseries.value) {
+      if (chartType === 'temporalLines' && service.relativeTimeseries.value) {
         params.relative_to = 'surface_level';
       }
 
@@ -312,7 +311,7 @@ angular.module('timeseries')
         }
         graphTimeseries.thresholds = [];
 
-        var tsActive = _.find(State.selected.timeseries, {'uuid': ts.uuid });
+        var tsActive = _.find(State.selections, {'uuid': ts.uuid });
         if (tsActive && tsActive.active) {
           assetOfTs.ts = graphTimeseries.ts;
         }
