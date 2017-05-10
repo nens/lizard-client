@@ -193,9 +193,9 @@ angular.module('favourites')
         // favourites. This could fix this:
         // DashboardService.resetGraphs();
 
-        // TODO: This fixes things. But it is bad practice. These objects
-        // shouldn't be reset.
-        State.resetObjects();
+        // // TODO: This fixes things. But it is bad practice. These objects
+        // // shouldn't be reset.
+        // State.resetObjects();
 
         if (favourite.state.temporal && favourite.state.temporal.relative) {
           favourite.state.temporal = adhereTemporalStateToInterval(
