@@ -37,23 +37,24 @@
     <div id="drag-container">
 
       <div
-        ng-repeat="selection in state.selections | orderBy : ['-active', '+order']"
-        ng-init="metaData = getSelectionMetaData(selection)"
-        ng-if="getSelectionMetaData(selection).match"
-        ng-show="extended || selection.active || isOneOfFirstThree(selection.uuid)"
-        data-uuid="{{ selection.uuid }}" class="draggable-ts animate-repeat">
+          ng-repeat="selection in state.selections | orderBy : ['-active', '+order']"
+          ng-init="metaData = getSelectionMetaData(selection)"
+          ng-if="getSelectionMetaData(selection).match"
+          ng-show="extended || selection.active || isOneOfFirstThree(selection.uuid)"
+          data-uuid="{{ selection.uuid }}" class="draggable-ts animate-repeat">
         <div
-          ng-if="metaData.type === 'timeseries'"
-          id="{{ selection.timeseries }}"
-          ng-click="toggleSelection(selection);"
-          ng-class="{active: mouseIsOver}"
-          ng-mouseover="mouseIsOver = true"
-          ng-mouseleave="mouseIsOver = false"
-          class="card-content-list clickable">
-          <div class="card-content-colorhandle"
-               ng-show="selection.active"
-               ng-style="{'background-color': selection.color}"
-               ng-click="toggleColorPicker(); $event.stopPropagation();">
+            ng-if="metaData.type === 'timeseries'"
+            id="{{ selection.timeseries }}"
+            ng-click="toggleSelection(selection);"
+            ng-class="{active: mouseIsOver}"
+            ng-mouseover="mouseIsOver = true"
+            ng-mouseleave="mouseIsOver = false"
+            class="card-content-list clickable">
+          <div
+              class="card-content-colorhandle"
+              ng-show="selection.active"
+              ng-style="{'background-color': selection.color}"
+              ng-click="toggleColorPicker(); $event.stopPropagation();">
           </div>
 
           <i class="fa" ng-class="{
@@ -80,7 +81,6 @@
              translate>
           </i>
         </div>
-      </div>
 
         <div
             ng-if="metaData.type === 'raster'"
@@ -90,15 +90,15 @@
             id="{{ selection.raster }}"
             ng-click="toggleSelection(selection)"
             class="card-content-list clickable">
-            <div class="card-content-colorhandle"
-                 ng-show="selection.active"
-                 ng-style="{'background-color': selection.color}"
-                 ng-click="toggleColorPicker(); $event.stopPropagation();">
-            </div>
-            <i class="fa fa-line-chart"></i>
-            <span ng-class="{'text-primary bg-warning': selection.active}">
-              {{ metaData.quantity }}, ({{ metaData.unit }})
-            </span>
+          <div class="card-content-colorhandle"
+               ng-show="selection.active"
+               ng-style="{'background-color': selection.color}"
+               ng-click="toggleColorPicker(); $event.stopPropagation();">
+          </div>
+          <i class="fa fa-line-chart"></i>
+          <span ng-class="{'text-primary bg-warning': selection.active}">
+            {{ metaData.quantity }}, ({{ metaData.unit }})
+          </span>
         </div>
 
         <color-picker></color-picker>

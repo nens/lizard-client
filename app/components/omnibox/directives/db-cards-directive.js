@@ -72,7 +72,7 @@ angular.module('omnibox')
           return;
         }
         var order = Number(target.getAttribute('data-order'));
-        var uuid = el.children[0].getAttribute('data-uuid');
+        var uuid = el.getAttribute('data-uuid');
         // El either represents a timeseries or another plottable item.
         //
         // NOTE: there is only one drop callback for all the possible assets. So
