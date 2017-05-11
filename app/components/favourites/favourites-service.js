@@ -190,12 +190,9 @@ angular.module('favourites')
       this.applyFavourite = function (favourite) {
         // TODO: Because we do not reset the graphs here. The old and new
         // dasboard-graph 'states' are merged. Which introduces buggy dashboard
-        // favourites. This could fix this:
-        // DashboardService.resetGraphs();
-
-        // // TODO: This fixes things. But it is bad practice. These objects
-        // // shouldn't be reset.
-        // State.resetObjects();
+        // favourites. We could fix this by resetting the graphs (and perhaps
+        // also the data service).
+        State.resetObjects();
 
         if (favourite.state.temporal && favourite.state.temporal.relative) {
           favourite.state.temporal = adhereTemporalStateToInterval(

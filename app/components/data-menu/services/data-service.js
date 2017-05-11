@@ -31,13 +31,6 @@ angular.module('data-menu')
 
       var instance = this;
 
-      var idParsers = {
-        assets: function (asset) {return asset.entity_name + "$" + asset.id},
-        geometries: function (geom) {
-          return geom.geometry.coordinates.toString()}
-      };
-
-
       /**
        * Finds asset or geometry data for a selection.
        *
@@ -45,13 +38,19 @@ angular.module('data-menu')
        * @return {object} asset or geometry data.
        */
       this.findProperty = function (selection) {
-        var name = selection.asset ? "assets" : selection.geom ? "geometries": undefined;
-        var geomID = selection.asset || selection.geom;
-        var data = instance[name];
-        var idParser = idParsers[name];
-        return _.find(data, function (obj) {
-          return geomID === idParser(obj)
-        });
+        if (selection.asset) {
+          return _.find(
+            instance.assets, function(asset) {
+              return selection.asset === asset.entity_name + "$" + asset.id
+            }
+          )
+        } else if (selection.geom) {
+          return _.find(
+            instance.geometries, function(geom) {
+              return selection.geom === geom.geometry.coordinates.toString()
+            }
+          )
+        }
       };
 
       instance.dataLayers = [];
@@ -356,6 +355,8 @@ angular.module('data-menu')
        * @param  {object} changedSelection selection object
        */
       this.onColorChange = function (changedSelection) {
+        // TODO: bad practice: color should imho be defined in the state and
+        // the state alone.
         var property = this.findProperty(changedSelection);
         if (property) {
           property.color = changedSelection.color;
