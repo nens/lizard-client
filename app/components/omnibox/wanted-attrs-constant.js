@@ -237,7 +237,19 @@ angular.module('omnibox')
         attrName: "litology",
         ngBindValue: "waterchain.litology",
         valueSuffix: ""
-      }
+      },
+      {
+        keyName: gettext("GHG"), // TODO: translation, although only used for Vitens!?
+        attrName: "high_groundwater_level",
+        ngBindValue: "waterchain.high_groundwater_level",
+        valueSuffix: "m (NAP)"
+      },
+      {
+        keyName: gettext("GLG"), // TODO: translation, although only used for Vitens!?
+        attrName: "low_groundwater_level",
+        ngBindValue: "waterchain.low_groundwater_level",
+        valueSuffix: "m (NAP)"
+      },
     ]
   };
 
