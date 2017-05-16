@@ -239,13 +239,15 @@ angular.module('omnibox')
         valueSuffix: ""
       },
       {
-        keyName: gettext("GHG"), // TODO: translation, although only used for Vitens!?
+        // Percentile calculation
+        keyName: gettext("High groundwater level"),
         attrName: "high_groundwater_level",
         ngBindValue: "waterchain.high_groundwater_level",
         valueSuffix: "m (NAP)"
       },
       {
-        keyName: gettext("GLG"), // TODO: translation, although only used for Vitens!?
+        // Percentile calculation
+        keyName: gettext("Low groundwater level"),
         attrName: "low_groundwater_level",
         ngBindValue: "waterchain.low_groundwater_level",
         valueSuffix: "m (NAP)"
