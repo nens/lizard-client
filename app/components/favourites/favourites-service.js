@@ -199,6 +199,7 @@ angular.module('favourites')
           'temporal.start',
           'temporal.end',
           'temporal.at',
+          'temporal.playing',
           'selected.assets',
           'selected.geometries',
           'selected.timeseries',
