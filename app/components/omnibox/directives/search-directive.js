@@ -47,7 +47,7 @@ angular.module('omnibox')
         var results = SearchService.search(scope.query, State);
         setResultsOnBox(results);
       } else {
-        scope.cleanInput();
+        scope.cleanInputAndResults();
       }
     };
 
@@ -64,11 +64,25 @@ angular.module('omnibox')
      * (4) - Clear mapState.points arr (used for updating the Url);
      * (5) - Clear the click feedback.
      */
-    scope.cleanInput = function () {
+    scope.cleanInputAndResults = function () {
       SearchService.cancel();
       scope.query = "";
       scope.omnibox.searchResults = {};
     };
+
+    /**
+     * @description - Returns true when either (i) a query is currently (being)
+     *                entered in the text input-field or (ii) there are more
+     *                than 0 (spatial) search-results available.
+     */
+    scope.mayCleanInputAndResults = function () {
+      return scope.query || (
+        scope.omnibox &&
+        scope.omnibox.searchResults &&
+        scope.omnibox.searchResults.spatial &&
+        scope.omnibox.searchResults.spatial.length > 0
+      );
+    }
 
     /**
      * @description zooms to search resulit without clearing search or selecting the item.
@@ -140,7 +154,7 @@ angular.module('omnibox')
         // from happening when typing.
 
         if ($event.which === KEYPRESS.ESC) {
-          scope.cleanInput();
+          scope.cleanInputAndResults();
         }
 
         else if ($event.which === KEYPRESS.SPACE) {
@@ -166,7 +180,7 @@ angular.module('omnibox')
                 scope.omnibox.searchResults.spatial[0]
               );
             }
-            scope.cleanInput();
+            scope.cleanInputAndResults();
           }
         }
       }
