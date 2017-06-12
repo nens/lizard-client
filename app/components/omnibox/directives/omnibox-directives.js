@@ -44,7 +44,7 @@ angular.module("omnibox")
         switch (e.keyCode) {
             case KeyCodes.ESC:
                 $target.blur();
-                scope.cleanInput();
+                scope.cleanInputAndResults();
                 break;
             case KeyCodes.UPARROW:
                 nextTab = - 1;
