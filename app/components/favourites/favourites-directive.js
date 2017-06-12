@@ -77,7 +77,7 @@ angular.module('favourites')
      *                              GET request.
      */
     var fetchFavouritesError = function(httpResponse) {
-      console.log(httpResponse);
+      console.log("[E] fetchFavouritesError:", httpResponse);
       notie.alert(
         3, gettextCatalog.getString(
           "Oops! Something went wrong while fetching the favourites."));
@@ -114,7 +114,7 @@ angular.module('favourites')
      *                              DELETE.
      */
     var deleteFavouriteError = function(httpResponse) {
-      console.log(httpResponse);
+      console.log("[E] deleteFavouriteError:", httpResponse);
       notie.alert(3,
         gettextCatalog.getString(
           "Oops! Something went wrong while deleting the favourite."));
