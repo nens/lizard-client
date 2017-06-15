@@ -48,7 +48,7 @@
       </div>
       <baselayers state="state"></baselayers>
 
-      <div ng-repeat="layer in state.layers track by layer.uuid">
+      <div ng-repeat="layer in filterScenarioRasters(state.layers)">
         <assetlayer
           ng-if="layer.type === 'assetgroup'"
           layer="layer">
