@@ -340,8 +340,19 @@ angular.module('lizard-nxt')
        *              h) -2Days11Hours              // start -> NOW
        *              i) 2Days11Hours               // equal to (g)
        */
-      _parseRelTimestamp: function (time) {
-        console.log("WIP...Have a nice fiday!")
+      _parseRelTimestamp: function (time_) {
+        console.log("[F] _parseRelTimestamp; ")
+
+        var time,
+            part1isPos = null,
+            part2isPos = null;
+
+        if (time_[0] === "+") {
+          time = time_.slice(1, time_.length)
+
+        } else if(time_[1] === "-") {
+          time = time_.slice(1, time_.length)
+        }
       },
 
       /**
