@@ -153,6 +153,7 @@ angular.module('lizard-nxt')
       * @param {bool} relative time or absolute
       */
       setTimeStateUrl: function (state, start, end, relative) {
+        console.log("[F] setTimeStateUrl")
         var startDate = new Date(start);
         var endDate = new Date(end);
 
@@ -256,6 +257,8 @@ angular.module('lizard-nxt')
         );
       },
 
+
+
       /**
        * @function
        * @memberOf UrlState
@@ -276,6 +279,71 @@ angular.module('lizard-nxt')
           layers.join(',')
         );
       },
+
+      /**
+       * @function
+       * @description Count substring occurrences.
+       */
+      _countOccurrences: function (str, subStr) {
+        return (str.match(new RegExp(subStr, "g")) || []).length;
+      },
+
+      /**
+       * @function
+       * @description Decide whether the timestamp part (read from the URL)
+       *              uses relative time. This has nothing to do with whether
+       *              the timestamp part of the URL has either one or two
+       *              timestamps.
+       */
+      _urlTimestampIsRelative: function (urlTimestamp) {
+        return this._countOccurrences(urlTimestamp, ",") === 0;
+      },
+
+      /**
+       * @function
+       * @description Parse the timestamp part of the URL given that this part
+       *              denotes time in an absolute manner, e.g:
+       *
+       *              a) Jul,23,2016-Jul,25,2016
+       *              b) Jul,23,2016
+       */
+      _parseAbsTimestamp: function (time) {
+        timeState = {}
+        // Browser independent. IE requires datestrings in a certain format.
+        times = time.replace(/,/g, ' ').split('-');
+        msStartTime = Date.parse(times[0]);
+        // bail if time is not parsable, but return timeState
+        if (isNaN(msStartTime)) { return timeState; }
+        timeState.start = msStartTime;
+
+        msEndTime = Date.parse(times[1]);
+        if (isNaN(msEndTime)) { return timeState; }
+        if (msEndTime <= timeState.start) {
+          msEndTime = timeState.start + 43200000; // half a day
+        }
+        timeState.end = msEndTime;
+        return timeState;
+      },
+
+      /**
+       * @function
+       * @description Parse the timestamp part of the URL given that this part
+       *              denotes time in an absolute manner, e.g:
+       *
+       *              a) -2Days11Hours-2Days7Hours  // start -> end -> NOW
+       *              b) -2Days11Hours+2Days7Hours  // start -> NOW -> end
+       *              c) +2Days11Hours-2Days7Hours  // CAN NEVAR HAPPEN!
+       *              d) +2Days10Hours+2Days11Hours // NOW -> start -> end
+       *              e) 2Days11Hours-2Days7Hours   // CAN NEVAR HAPPuN!
+       *              f) 2Days10Hours+2Days11Hours  // equal to (d)
+       *              g) +2Days11Hours              // NOW -> end
+       *              h) -2Days11Hours              // start -> NOW
+       *              i) 2Days11Hours               // equal to (g)
+       */
+      _parseRelTimestamp: function (time) {
+        console.log("WIP...Have a nice fiday!")
+      },
+
       /**
        * @function
        * @memberOf UrlState
@@ -285,37 +353,46 @@ angular.module('lizard-nxt')
        * @return {object} nxt timeState
        */
       parseTimeState: function (time) {
+        console.log("[F] parseTimeState; arg 'time' = '" + time + "'");
         if (!time) { return; }
-        var timeState = {};
-        var times, msStartTime, msEndTime;
-        if (time.split('Days').length > 1) {
-          times = time.split('-')[1].split('+');
-          var past = times[0];
-          var future = times[1];
+        var times, msStartTime, msEndTime, timeState = {};
 
-          msStartTime = UtilService.parseDaysHours(past);
-          msEndTime = UtilService.parseDaysHours(future);
-
-          timeState.start = Date.now() - msStartTime;
-          timeState.end = Date.now() + msEndTime;
-        } else {
-          // Browser independent. IE requires datestrings in a certain format.
-          times = time.replace(/,/g, ' ').split('-');
-          msStartTime = Date.parse(times[0]);
-          // bail if time is not parsable, but return timeState
-          if (isNaN(msStartTime)) { return timeState; }
-          timeState.start = msStartTime;
-
-          msEndTime = Date.parse(times[1]);
-          if (isNaN(msEndTime)) { return timeState; }
-          if (msEndTime <= timeState.start) {
-            msEndTime = timeState.start + 43200000; // half a day
-          }
-          timeState.end = msEndTime;
-        }
-
-        return timeState;
+        return this._urlTimestampIsRelative(time)
+          ? this._parseRelTimestamp(time)
+          : this._parseAbsTimestamp(time)
       },
+
+      // parseTimeState: function (time) {
+      //   if (!time) { return; }
+      //   var timeState = {};
+      //   var times, msStartTime, msEndTime;
+      //   if (time.split('Days').length > 1) {
+      //     times = time.split('-')[1].split('+');
+      //     var past = times[0];
+      //     var future = times[1];
+
+      //     msStartTime = UtilService.parseDaysHours(past);
+      //     msEndTime = UtilService.parseDaysHours(future);
+
+      //     timeState.start = Date.now() - msStartTime;
+      //     timeState.end = Date.now() + msEndTime;
+      //   } else {
+      //     // Browser independent. IE requires datestrings in a certain format.
+      //     times = time.replace(/,/g, ' ').split('-');
+      //     msStartTime = Date.parse(times[0]);
+      //     // bail if time is not parsable, but return timeState
+      //     if (isNaN(msStartTime)) { return timeState; }
+      //     timeState.start = msStartTime;
+
+      //     msEndTime = Date.parse(times[1]);
+      //     if (isNaN(msEndTime)) { return timeState; }
+      //     if (msEndTime <= timeState.start) {
+      //       msEndTime = timeState.start + 43200000; // half a day
+      //     }
+      //     timeState.end = msEndTime;
+      //   }
+      //   return timeState;
+      // },
       /**
        * @function
        * @memberOf UrlState
