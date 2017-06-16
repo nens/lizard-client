@@ -33,7 +33,9 @@ angular.module('lizard-nxt')
   var getData = function (layer, options) {
 
     if (options.geom === undefined
-      || options.geom.coordinates.length !== 2) {
+        || options.geom.coordinates === undefined
+        || options.geom.coordinates.length < 2
+        || options.geom.coordinates.length > 3) {
       var defer = $q.defer();
       defer.reject();
       return defer.promise;
@@ -67,7 +69,7 @@ angular.module('lizard-nxt')
       url += key + "=" + params[key];
     }
 
-    return CabinetService.wmsGetFeatureInfo.get({url:url});
+    return CabinetService.wmsGetFeatureInfo.get({url: url});
   };
 
   return {
