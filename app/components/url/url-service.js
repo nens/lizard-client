@@ -153,43 +153,101 @@ angular.module('lizard-nxt')
       * @param {bool} relative time or absolute
       */
       setTimeStateUrl: function (state, start, end, relative) {
-        console.log("[F] setTimeStateUrl")
-        var startDate = new Date(start);
-        var endDate = new Date(end);
+        console.log("[F] setTimeStateUrl");
+
+        // var startDate = new Date(start);
+        // var endDate = new Date(end);
+
+        // console.log("*** startDate...:", start);
+        // console.log("*** endDate.....:", end);
 
         if (relative) {
+          // var now = Date.now(),
+          //     past = now - start,
+          //     future = now - end;
+
+          // past = UtilService.getTimeIntervalAsText(start, now);
+          // future = UtilService.getTimeIntervalAsText(now, end);
+
+          // var pastString = '-' + past.days + 'Days' + past.hours + 'Hours';
+          // var futureString = '';
+
+          // if (future.days !== '' && future.hours !== '') {
+          //   futureString = '+' + future.days + 'Days' + future.hours + 'Hours';
+          // }
+
+          // LocationGetterFUtilService.getSetter.setUrlValue(
+          //   state.timeState.part,
+          //   state.timeState.index,
+          //   pastString + futureString
+          // );
+
           var now = Date.now(),
-              past = now - start,
-              future = now - end;
+              // pastIntervalMs = now - start,
+              firstInterval,
+              firstIntervalObj,
+              firstIntervalStr,
+              // futureIntervalMs = now - end,
+              lastInterval,
+              lastIntervalObj,
+              lastIntervalStr,
+              totalIntervalStr;
 
-          past = UtilService.getTimeIntervalAsText(start, now);
-          future = UtilService.getTimeIntervalAsText(now, end);
+          this._printHrTimestamp(start, 'start');
+          this._printHrTimestamp(end, 'end');
+          this._printHrTimestamp(now, 'now');
 
-          var pastString = '-' + past.days + 'Days' + past.hours + 'Hours';
-          var futureString = '';
-
-          if (future.days !== '' && future.hours !== '') {
-            futureString = '+' + future.days + 'Days' + future.hours + 'Hours';
+          if (start <= now && now <= end) {
+            console.log("AAA");
+            pastIntervalObj = UtilService.getTimeIntervalAsObj(start, now);
+            pastIntervalStr = "-" + pastIntervalObj.days + "Days"
+                                  + pastIntervalObj.hours + "Hours";
+            futureIntervalObj = UtilService.getTimeIntervalAsObj(now, end);
+            futureIntervalStr = "+" + futureIntervalObj.days + "Days"
+                                    + futureIntervalObj.hours + "Hours";
+          } else if (start <= end && end <= now) {
+            console.log("BBB");
+            pastIntervalObj = UtilService.getTimeIntervalAsObj(start, end);
+            pastIntervalStr = "-" + pastIntervalObj.days + "Days"
+                                  + pastIntervalObj.hours + "Hours";
+            futureIntervalObj = UtilService.getTimeIntervalAsObj(start, now);
+            futureIntervalStr = "-" + futureIntervalObj.days + "Days"
+                                    + futureIntervalObj.hours + "Hours";
+          } else if (now <= start && start <= end) {
+            console.log("CCC");
+            pastIntervalObj = UtilService.getTimeIntervalAsObj(now, start);
+            pastIntervalStr = "+" + pastIntervalObj.days + "Days"
+                                  + pastIntervalObj.hours + "Hours";
+            futureIntervalObj = UtilService.getTimeIntervalAsObj(start, end);
+            futureIntervalStr = "+" + futureIntervalObj.days + "Days"
+                                    + futureIntervalObj.hours + "Hours";
+          } else {
+            console.log("DDD\n[E] Oh noes! invalid triplet: start vs. now vs. end");
           }
+
+          totalIntervalStr = pastIntervalStr + futureIntervalStr;
 
           LocationGetterSetter.setUrlValue(
             state.timeState.part,
             state.timeState.index,
-            pastString + futureString
+            totalIntervalStr
           );
+
         } else {
+          var startDate = new Date(start);
+          var endDate = new Date(end);
           var startDateString = startDate.toDateString()
-          .slice(4) // Cut off day name
-          .split(' ') // Replace spaces by hyphens
-          .join(',');
+            .slice(4) // Cut off day name
+            .split(' ') // Replace spaces by hyphens
+            .join(',');
           var endDateString = endDate.toDateString()
-          .slice(4) // Cut off day name
-          .split(' ') // Replace spaces by hyphens
-          .join(',');
+            .slice(4) // Cut off day name
+            .split(' ') // Replace spaces by hyphens
+            .join(',');
           LocationGetterSetter.setUrlValue(
-          state.timeState.part,
-          state.timeState.index,
-          startDateString + '-' + endDateString);
+            state.timeState.part,
+            state.timeState.index,
+            startDateString + '-' + endDateString);
         }
       },
 
@@ -257,8 +315,6 @@ angular.module('lizard-nxt')
         );
       },
 
-
-
       /**
        * @function
        * @memberOf UrlState
@@ -282,21 +338,13 @@ angular.module('lizard-nxt')
 
       /**
        * @function
-       * @description Count substring occurrences.
-       */
-      _countOccurrences: function (str, subStr) {
-        return (str.match(new RegExp(subStr, "g")) || []).length;
-      },
-
-      /**
-       * @function
        * @description Decide whether the timestamp part (read from the URL)
        *              uses relative time. This has nothing to do with whether
        *              the timestamp part of the URL has either one or two
        *              timestamps.
        */
       _urlTimestampIsRelative: function (urlTimestamp) {
-        return this._countOccurrences(urlTimestamp, ",") === 0;
+        return UtilService.countSubstringOccurrences(urlTimestamp, ",") === 0;
       },
 
       /**
@@ -308,15 +356,15 @@ angular.module('lizard-nxt')
        *              b) Jul,23,2016
        */
       _parseAbsTimestamp: function (time) {
-        timeState = {}
+        var timeState = {};
         // Browser independent. IE requires datestrings in a certain format.
-        times = time.replace(/,/g, ' ').split('-');
-        msStartTime = Date.parse(times[0]);
+        var times = time.replace(/,/g, ' ').split('-');
+        var msStartTime = Date.parse(times[0]);
         // bail if time is not parsable, but return timeState
         if (isNaN(msStartTime)) { return timeState; }
         timeState.start = msStartTime;
 
-        msEndTime = Date.parse(times[1]);
+        var msEndTime = Date.parse(times[1]);
         if (isNaN(msEndTime)) { return timeState; }
         if (msEndTime <= timeState.start) {
           msEndTime = timeState.start + 43200000; // half a day
@@ -325,10 +373,16 @@ angular.module('lizard-nxt')
         return timeState;
       },
 
+      _printHrTimestamp: function (unixTimestamp, msg) {
+        var hrTimestamp = new Date(unixTimestamp).toString();
+        console.log("[dbg] HR timestamp:", unixTimestamp, "=>", hrTimestamp,
+          (msg ? "(=" + msg + ")" : ""));
+      },
+
       /**
        * @function
        * @description Parse the timestamp part of the URL given that this part
-       *              denotes time in an absolute manner, e.g:
+       *              denotes time in an relative manner, e.g:
        *
        *              a) -2Days11Hours-2Days7Hours  // start -> end -> NOW
        *              b) -2Days11Hours+2Days7Hours  // start -> NOW -> end
@@ -341,18 +395,69 @@ angular.module('lizard-nxt')
        *              i) 2Days11Hours               // equal to (g)
        */
       _parseRelTimestamp: function (time_) {
-        console.log("[F] _parseRelTimestamp; ")
 
         var time,
+            times,
+            msStartTime,
+            msEndTime,
+            hasTwoParts,
+            now = Date.now(),
             part1isPos = null,
-            part2isPos = null;
+            part2isPos = null,
+            timeState = {};
+
+        var writeLocalVars = function () {
+          times = time.split("-");
+          if (times.length === 1) {
+            times = time.split("+")
+            if (times.length === 1) {
+              times = [time];
+              hasTwoParts = false;
+            } else if (times.length === 2) {
+              part2isPos = true;
+              hasTwoParts = true;
+            }
+          } else if (times.length === 2) {
+            part2isPos = false;
+            hasTwoParts = true;
+          }
+        }
 
         if (time_[0] === "+") {
-          time = time_.slice(1, time_.length)
+          part1isPos = true;
+          time = time_.slice(1, time_.length);
+          writeLocalVars();
 
-        } else if(time_[1] === "-") {
-          time = time_.slice(1, time_.length)
+        } else if(time_[0] === "-") {
+          part1isPos = false;
+          time = time_.slice(1, time_.length);
+          writeLocalVars();
+
+        } else {
+          part1isPos = true;
+          time = time_;
+          writeLocalVars();
         }
+
+        msStartTime = UtilService.parseDaysHours(times[0]);
+        timeState.start = part1isPos
+          ? now + msStartTime
+          : now - msStartTime;
+
+        if (hasTwoParts) {
+          msEndTime = UtilService.parseDaysHours(times[1]);
+          timeState.end = part2isPos
+            ? now + msEndTime
+            : now - msEndTime;
+        } else {
+          timeState.end = now;
+        }
+        console.log("[dbg] rel. timeState (after parsing URL):", timeState);
+        this._printHrTimestamp(timeState.start, 'start');
+        this._printHrTimestamp(now, 'now');
+        this._printHrTimestamp(timeState.end, 'end');
+
+        return timeState;
       },
 
       /**
@@ -366,11 +471,11 @@ angular.module('lizard-nxt')
       parseTimeState: function (time) {
         console.log("[F] parseTimeState; arg 'time' = '" + time + "'");
         if (!time) { return; }
-        var times, msStartTime, msEndTime, timeState = {};
+        var times, msStartTime, msEndTime;
 
         return this._urlTimestampIsRelative(time)
           ? this._parseRelTimestamp(time)
-          : this._parseAbsTimestamp(time)
+          : this._parseAbsTimestamp(time);
       },
 
       // parseTimeState: function (time) {
@@ -585,7 +690,6 @@ angular.module('lizard-nxt')
       return present;
     };
 
-
     var getBoxType = function () {
       var boxType = LocationGetterSetter.getUrlValue(
         config.boxType.part,
@@ -611,15 +715,30 @@ angular.module('lizard-nxt')
     };
 
     var getTemporal = function () {
+      console.log("[F] getTemporal");
       var time = LocationGetterSetter.getUrlValue(
         config.timeState.part,
         config.timeState.index
       );
-      return UrlState.parseTimeState(time);
+      console.log("*** time....:", time);
+      var result = UrlState.parseTimeState(time);
+      console.log("*** result..:", result);
+      return result;
     };
 
     return {
       setUrl: function (state) {
+        console.log("[F] setUrl; arg 'state':", state);
+
+        // Decide upon time=relative true/false:
+        var time = LocationGetterSetter.getUrlValue(
+          config.timeState.part,
+          config.timeState.index
+        );
+        var TIME_IS_RELATIVE = UrlState._urlTimestampIsRelative(time);
+
+        console.log("[dbg] TIME_IS_RELATIVE =", TIME_IS_RELATIVE);
+
 
         LocationGetterSetter.setUrlValue(
           config.language.part,
@@ -638,16 +757,17 @@ angular.module('lizard-nxt')
         );
 
         if (!state.temporal.timelineMoving) {
-          if (Date.now() - state.temporal.start > 7 * UtilService.day) {
-            state.temporal.relative = false;
-          } else {
-            state.temporal.relative = true;
-          }
+          // if (Date.now() - state.temporal.start > 7 * UtilService.day) {
+          //   state.temporal.relative = false;
+          // } else {
+          //   state.temporal.relative = true;
+          // }
+          console.log("[dbg] Abpout to call 'setTimeStateUrl'; state.temporal:", state.temporal);
           UrlState.setTimeStateUrl(
             config,
             state.temporal.start,
             state.temporal.end,
-            state.temporal.relative
+            TIME_IS_RELATIVE
           );
         }
 

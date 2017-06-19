@@ -257,26 +257,45 @@ angular.module('lizard-nxt')
     return totalMS;
   };
 
-  /**
+  // /**
+  //  * @function getTimeIntervalAsText
+  //  * @param {int} Start time
+  //  * @param {int} End time
+  //  * @return {string} Difference in format of: 7 days 3 hours
+  //  */
+  // this.getTimeIntervalAsText = function (start, end) {
+  //   var days = '',
+  //       hours = '';
+
+  //   // only calculate if the end is larger than start
+  //   if (end > start) {
+  //     var interval = end - start;
+  //     days = Math.floor(interval / this.day);
+  //     hours = Math.floor((interval % this.day) / this.hour);
+  //   }
+  //   return {
+  //     days: days,
+  //     hours: hours
+  //   };
+  // };
+
+    /**
    * @function getTimeIntervalAsText
    * @param {int} Start time
    * @param {int} End time
    * @return {string} Difference in format of: 7 days 3 hours
    */
-  this.getTimeIntervalAsText = function (start, end) {
-    var days = '',
-        hours = '';
-
+  this.getTimeIntervalAsObj = function (start, end) {
     // only calculate if the end is larger than start
     if (end > start) {
       var interval = end - start;
-      days = Math.floor(interval / this.day);
-      hours = Math.floor((interval % this.day) / this.hour);
+      return {
+        days: Math.floor(interval / this.day),
+        hours: Math.floor((interval % this.day) / this.hour)
+      };
+    } else {
+      console.log("[E] Oh noes! impossible tuple: start vs. end");
     }
-    return {
-      days: days,
-      hours: hours
-    };
   };
 
   /**
@@ -1193,5 +1212,13 @@ angular.module('lizard-nxt')
       offsetInMsec = 1000 * 60 * offsetInMinutes;
       return step - offsetInMsec;
     });
+  };
+
+  /**
+   * @function
+   * @description Count substring occurrences.
+   */
+  this.countSubstringOccurrences = function (str, subStr) {
+    return (str.match(new RegExp(subStr, "g")) || []).length;
   };
 }]);
