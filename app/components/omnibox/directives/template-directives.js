@@ -236,7 +236,6 @@ angular.module('omnibox')
       };
 
       scope.selectedAssetChanged = function (newAsset) {
-        console.log("[dbg] scope.list (BBB):", scope.list);
         scope.list.forEach(function (asset) {
           if (asset.entity_name === newAsset.entity_name
             && asset.id === newAsset.id) {
