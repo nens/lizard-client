@@ -7,6 +7,93 @@ angular.module('global-state')
 
     var state = {};
 
+    // Current language.
+    state.language = null;
+    // slug of active baselayer, watched by baselayers directive. It is not
+    // enumarable iteratees only encounter arrays.
+    state.baselayer = null;
+
+    state.annotations = {present: false, active: false};
+
+    // Collection of layers
+    state.layers = [];
+
+    // Box
+    state.box = {};
+
+    // Spatial
+    state.spatial = {
+      bounds: { // leaflet bounds object, initialized with a validity check
+                // function.
+        isValid: function () { return false; }
+      },
+      view: {lat: 0, lng: 0, zoom: 0}, // { lat: <int>, lng:<int>, zoom:<int> }
+      userHere: {}, // Geographical location of the users mouse only set by
+                    // map-directive when box type is 'line'
+      mapMoving: false
+    };
+
+    // there is one selected feature which is not being described here.
+    // and is being set in MapDirective (in the _mouseMove function).
+    // This is only relevant for drawing an intersection line in the map.
+    // The location and the distance of the location to the first point of the
+    // is being calculated and set on mouseOnLine for the graph.
+
+    // hydra-core asset id <entity>$<id>,
+    // is defined in DataService use state.asset.addAsset
+    // to add and state.asset.removeAsset to remove
+    // asset, or reset by calling state.resetObjects()
+    state.assets = [];
+
+    // geojson with points, lines, polygons. Same as
+    // asset, is redefined in dataservice. use addGeometry and
+    // removegeometry on state.geometries to add or
+    // remove individual geometries or use reset function.
+    state.geometries = [];
+
+    // {<uuid>, <active>, <order>, <color>}
+    // Redefined in timeseriesService. mirrored asynchronously
+    // by timeseriesService.timeseries. Array contains all
+    // timeseries of all assets in a flat list.
+    state.selections = [];
+
+    state.temporal = null;  // Given value in resetState();
+
+    state.resetState = function resetState() {
+        state.language = 'nl';
+        state.baselayer = 'topography';
+        state.annotations.present = false;
+        state.annotations.active = false;
+        state.box = {};
+        state.layers.length = 0;
+
+        state.spatial.view.lat = 0;
+        state.spatial.view.lng = 0;
+        state.spatial.view.zoom = 0;
+        state.spatial.bounds = {
+            isValid: function() { return false; }
+        }
+        state.spatial.userHere = {};
+        state.spatial.mapMoving = false;
+
+        state.assets.length = 0;
+        state.geometries.length = 0;
+        state.selections.length = 0;
+
+        state.temporal = {
+          at: Date.now(),
+          buffering: false,
+          timelineMoving: false,
+          playing: false,
+          start: null, // defined below
+          end: null, // defined below
+          relative: true, // relative or absolute offset.
+          showingTemporalData: false
+        };
+    };
+
+    state.resetState();
+
     /**
      * returns a function that returns a string representation of the provided
      * attribute of the state. When the state. does not exist, it returns a
@@ -66,18 +153,6 @@ angular.module('global-state')
       enumerable: true
     });
 
-    // Default language.
-    state.language = 'nl';
-
-    // slug of active baselayer, watched by baselayers directive. It is not
-    // enumarable iteratees only encounter arrays.
-    state.baselayer = 'topography';
-
-    state.annotations = {present: false, active: false};
-
-    // Collection of layers
-    state.layers = [];
-
     var getLayerSlugs = function (stateLayers) {
       var slugs = [];
       _.forEach(stateLayers, function (layers, type) {
@@ -122,9 +197,6 @@ angular.module('global-state')
       enumerable: false
     });
 
-    // Box
-    state.box = {};
-
     var _type = 'point'; // Default box type
     var TYPE_VALUES = ["point", "line", "region", "multi-point"];
     Object.defineProperty(state.box, 'type', {
@@ -144,55 +216,12 @@ angular.module('global-state')
       enumerable: true
     });
 
-    // Spatial
-    state.spatial = {
-      bounds: { // leaflet bounds object, initialized with a validity check
-                // function.
-        isValid: function () { return false; }
-      },
-      view: {lat: 0, lng: 0, zoom: 0}, // { lat: <int>, lng:<int>, zoom:<int> }
-      userHere: {}, // Geographical location of the users mouse only set by
-                    // map-directive when box type is 'line'
-      mapMoving: false
-    };
-
-    // there is one selected feature which is not being described here.
-    // and is being set in MapDirective (in the _mouseMove function).
-    // This is only relevant for drawing an intersection line in the map.
-    // The location and the distance of the location to the first point of the
-    // is being calculated and set on mouseOnLine for the graph.
     state.resetObjects = function () {
-      // Selected items
-      state.assets = []; // hydra-core asset id <entity>$<id>,
-                // is defined in DataService use state.asset.addAsset
-                // to add and state.asset.removeAsset to remove
-                // asset, or reset by calling state.resetObjects()
-      state.geometries = []; // geojson with points, lines, polygons. Same as
-                // asset, is redefined in dataservice. use addGeometry and
-                // removegeometry on state.geometries to add or
-                // remove individual geometries or use reset function.
-      state.selections = [];  // {<uuid>, <active>, <order>, <color>}
-                // Redefined in timeseriesService. mirrored asynchronously
-                // by timeseriesService.timeseries. Array contains all
-                // timeseries of all assets in a flat list.
-    };
-
-    state.resetObjects();
-
-    // Temporal
-    var now = Date.now(),
-        INITIAL_START_FOR_EXTENT = now - 2 * UtilService.day,
-        INITIAL_END_FOR_EXTENT = now + 3 * UtilService.hour;
-
-    state.temporal = {
-      at: now,
-      buffering: false,
-      timelineMoving: false,
-      playing: false,
-      start: null, // defined below
-      end: null, // defined below
-      relative: true, // relative or absolute offset.
-      showingTemporalData: false
+      // Make arrays empty by setting their length. Don't assign a new list, because
+      // there may be variables elsewhere that still hold a reference to the old one.
+      state.assets.length = 0;
+      state.geometries.length = 0;
+      state.selections.length = 0;
     };
 
     Object.defineProperty(state.temporal, 'aggWindow', {
@@ -213,7 +242,7 @@ angular.module('global-state')
     });
 
     // State.temporal.start must be higher than MIN_TIME_FOR_EXTENT
-    var _start = INITIAL_START_FOR_EXTENT;
+    var _start = state.temporal.at - 2 * UtilService.day;
     Object.defineProperty(state.temporal, 'start', {
       get: function () { return _start; },
       set: function (start) {
@@ -224,7 +253,7 @@ angular.module('global-state')
     });
 
     // State.temporal.end must be lower than MAX_TIME_FOR_EXTENT
-    var _end = INITIAL_END_FOR_EXTENT;
+    var _end = state.temporal.at + 3 * UtilService.hour;
     Object.defineProperty(state.temporal, 'end', {
       get: function () { return _end; },
       set: function (end) {
