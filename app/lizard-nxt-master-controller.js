@@ -40,7 +40,10 @@ angular.module('lizard-nxt')
 
   $scope.state = State;
 
-  $scope.$watch('state', function () {
+  $scope.$watch('state', function (n, o) {
+    if (!window.loaded || n === o) {
+      return;
+    }
     UrlService.setUrl($scope.state);
   }, true);
 
@@ -123,12 +126,14 @@ angular.module('lizard-nxt')
   UtilService.preventOldIEUsage();
   UtilService.preventMousewheelZoom();
 
-  // catch window.load event
-  window.addEventListener("load", function () {
-    window.loaded = true;
-  });
-
   window.debug = function () {
     console.log("Currently, the State object looks like:", State);
   };
+
+  $(document).ready(function () {
+    $timeout(function () {
+      window.loaded = true;
+    }, 5000);
+  });
+
 }]);
