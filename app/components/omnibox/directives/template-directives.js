@@ -214,12 +214,16 @@ angular.module('omnibox')
       scope.wanted = WantedAttributes;
       scope.longFormat = false;
 
+      var sortNestedAssets = function (nestedAssets) {
+        return _.sortBy(nestedAssets, ['code', 'serial', 'id']);
+      };
+
       /**
        * Watch asset unpack json string, add entity name and select first child
        * asset.
        */
       scope.$watch('asset', function () {
-        scope.list = getNestedAssets(scope.asset);
+        scope.list = sortNestedAssets(getNestedAssets(scope.asset));
         scope.asset.selectedAsset = scope.list[0];
       });
 
