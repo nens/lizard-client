@@ -9,13 +9,8 @@ angular.module('omnibox')
       scope.relativeTimeseries = TimeseriesService.relativeTimeseries;
 
       scope.toggleRelativeTimeseries = function () {
-        var activeBefore = TimeseriesService.relativeTimeseries.value;
-        TimeseriesService.relativeTimeseries.value = !activeBefore;
-
-        // This line shouldn't have any effect as relativeTimeseries is already
-        // a reference to that object.
-        scope.relativeTimeseries = TimeseriesService.relativeTimeseries;
-
+        // Note that this is the same object as TimeseriesService.relativeTimeseries
+        scope.relativeTimeseries.value = !scope.relativeTimeseries.value;
         TimeseriesService.syncTime();
       };
 
