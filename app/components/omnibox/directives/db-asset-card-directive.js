@@ -9,15 +9,14 @@ angular.module('omnibox')
       scope.relativeTimeseries = TimeseriesService.relativeTimeseries;
 
       scope.toggleRelativeTimeseries = function () {
-
         var activeBefore = TimeseriesService.relativeTimeseries.value;
         TimeseriesService.relativeTimeseries.value = !activeBefore;
+
+        // This line shouldn't have any effect as relativeTimeseries is already
+        // a reference to that object.
         scope.relativeTimeseries = TimeseriesService.relativeTimeseries;
 
-        var uuidList = _.map(TimeseriesService.timeseries, function (ts) {
-          return ts.id;
-        });
-        TimeseriesService.syncTime(uuidList);
+        TimeseriesService.syncTime();
       };
 
       scope.getTsMetaData = function (uuid) {

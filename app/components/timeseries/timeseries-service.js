@@ -39,12 +39,12 @@ angular.module('timeseries')
       set: function (timeseries) {
         console.log('State.selected.timeseries:', timeseries);
         _timeseries = timeseries;
-        service.syncTime(timeseries);
+        service.syncTime();
       },
       enumerable: true
     });
 
-    this.syncTime = function (timeseries) {
+    this.syncTime = function () {
       var groupedTimeseries = {temporalBars: [], temporalLines: []};
       _.forEach(State.selected.timeseries, function(ts){
         if(ts.active){
