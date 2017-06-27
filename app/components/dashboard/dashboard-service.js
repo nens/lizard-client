@@ -30,7 +30,6 @@ angular.module('dashboard')
    * @return {array} graph
    */
   this.buildGraphs = function (graphs, timeseries, assets, geometries) {
-
     graphs = this._setAllContentToNotUpdated(graphs);
 
     timeseries.forEach(function (ts) {

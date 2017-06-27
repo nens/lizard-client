@@ -10,9 +10,8 @@ angular.module('timeseries')
   'UtilService',
   'DataService',
   'TimeseriesUtilService',
-  function ($q, State, $http, notie, UtilService, DataService, TsUService) {
-    var that = this;
-
+  'RelativeToSurfaceLevelService',
+  function ($q, State, $http, notie, UtilService, DataService, TsUService, RTSLService) {
     var GRAPH_WIDTH = 320; // Width of drawing area of box graphs.
 
     // Contains timeseries metadata and data as comes from api. It mirrors
@@ -20,16 +19,6 @@ angular.module('timeseries')
     this.timeseries = [];
 
     this.minPoints = GRAPH_WIDTH; // default
-
-    // *wrapped* boolean indicating we want the timeseries value (y-axis) to be
-    // relative to the asset's "surface_level" value (boolean set to true) or
-    // we want it to be the absolute value (boolean set to false);
-
-    // NB! This wrapping is required for syncing multiple directive scopes to
-    // this value: if the boolean does not gets wrapped, every directive's scope
-    // gets a local copy and will tehrefor not be updated in-sync with updating
-    // the value in the service
-    this.relativeTimeseries = { 'value': false };
 
     var service = this;
 
@@ -46,11 +35,14 @@ angular.module('timeseries')
 
     this.syncTime = function () {
       var groupedTimeseries = {temporalBars: [], temporalLines: []};
-      _.forEach(State.selected.timeseries, function(ts){
-        if(ts.active){
-          var scale = ts.measureScale === "ratio" ? "temporalBars" :
-            "temporalLines";
-          groupedTimeseries[scale].push(ts.uuid);
+
+      _.forEach(State.selected.timeseries, function(ts) {
+        if (ts.active) {
+          if (ts.measureScale === "ratio") {
+            groupedTimeseries.temporalBars.push(ts.uuid);
+          } else {
+            groupedTimeseries.temporalLines.push(ts.uuid);
+          }
         }
       });
 
@@ -60,7 +52,7 @@ angular.module('timeseries')
           defer.resolve([]);
           return defer.promise;
         } else {
-          return that._getTimeseries(
+          return service._getTimeseries(
             actives,
             State.temporal,
             useMinPoints && service.minPoints,
@@ -159,7 +151,7 @@ angular.module('timeseries')
         end: timeState.end ? parseInt(timeState.end, 10): undefined,
       };
 
-      if (graphType === 'temporalLines' && service.relativeTimeseries.value) {
+      if (graphType === 'temporalLines' && RTSLService.get()) {
         params.relative_to = 'surface_level';
       }
 
@@ -249,8 +241,9 @@ angular.module('timeseries')
  * Service to handle timeseries retrieval.
  */
 angular.module('timeseries')
-.service('TimeseriesUtilService', ['WantedAttributes', 'DataService', 'State',
-  function (WantedAttributes, DataService, State) {
+       .service('TimeseriesUtilService', [
+         'WantedAttributes', 'DataService', 'State', 'RelativeToSurfaceLevelService',
+         function (WantedAttributes, DataService, State, RTSLService) {
 
     /**
      * Looks up timeseries in State.selected.timeseries and copies color and order.
@@ -279,14 +272,11 @@ angular.module('timeseries')
       _.forEach(DataService.assets, setAssetAndTs);
 
       if (ts) {
-
         graphTimeseries.parameter = ts.parameter || EMPTY;
         graphTimeseries.unit = ts.unit || EMPTY;
         graphTimeseries.location = ts.location || EMPTY;
         graphTimeseries.name = ts.name || EMPTY;
-        if (ts.reference_frame) {
-          graphTimeseries.unit += ' (' + ts.reference_frame + ')';
-        }
+        graphTimeseries.reference_frame = ts.reference_frame;
         graphTimeseries.thresholds = [];
 
         var tsActive = _.find(State.selected.timeseries, {'uuid': ts.uuid });
@@ -410,4 +400,30 @@ angular.module('timeseries')
 
   }
 
+]);
+
+
+/* Service that stores whether we are currently showing heights relative to surface level */
+angular.module('timeseries').service('RelativeToSurfaceLevelService', [
+  function () {
+    // *wrapped* boolean indicating we want the timeseries value (y-axis) to be
+    // relative to the asset's "surface_level" value (boolean set to true) or
+    // we want it to be the absolute value (boolean set to false);
+
+    // NB! This wrapping is required for syncing multiple directive scopes to
+    // this value: if the boolean does not gets wrapped, every directive's scope
+    // gets a local copy and will tehrefor not be updated in-sync with updating
+    // the value in the service
+    var service = this;
+
+    this.relativeToSurfaceLevel = {'value': false};
+
+    this.get = function() {
+      return service.relativeToSurfaceLevel.value;
+    };
+
+    this.toggle = function() {
+      service.relativeToSurfaceLevel.value = !service.relativeToSurfaceLevel.value;
+    };
+  }
 ]);

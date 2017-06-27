@@ -31,6 +31,7 @@ angular.module('lizard-nxt')
     this.keys = chartContent.keys || defaultKeys;
     this.color = chartContent.color || DEFAULT_GREEN;
     this.unit = chartContent.unit;
+    this.reference_frame = chartContent.reference_frame;
     this.thresholds = chartContent.thresholds;
     this.location = chartContent.location;
     this.name = chartContent.name;
@@ -44,6 +45,7 @@ angular.module('lizard-nxt')
     this.data = chartContent.data;
     this.keys = chartContent.keys || defaultKeys;
     this.color = chartContent.color || DEFAULT_GREEN;
+    this.unit = chartContent.unit;
     this.yMaxMin = NxtD3.prototype._maxMin(this.data, this.keys.y);
   };
 

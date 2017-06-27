@@ -16,8 +16,10 @@
  * Everything in the graphs is animated according to NxtD3.transTime.
  */
 angular.module('lizard-nxt')
-  .factory("Graph", ["$timeout", "NxtD3", "ChartContainer", "UtilService", "State", "$filter",
-  function ($timeout, NxtD3, ChartContainer, UtilService, State, $filter) {
+  .factory("Graph", [
+    "$timeout", "NxtD3", "ChartContainer", "UtilService", "State", "$filter",
+    "RelativeToSurfaceLevelService",
+  function ($timeout, NxtD3, ChartContainer, UtilService, State, $filter, RTSLService) {
 
   var MIN_WIDTH_INTERACTIVE_GRAPHS = 400; // Only graphs bigger get mouseover
                                           // and click interaction.
@@ -1288,6 +1290,7 @@ angular.module('lizard-nxt')
           location: chart.location,
           ylabel: chart.labels.y,
           unit: chart.unit,
+          reference_frame: chart.reference_frame,
           name: chart.name,
           value: value,
           color: chart.color
@@ -1364,7 +1367,7 @@ angular.module('lizard-nxt')
         if (v.ylabel) {
           unit = v.ylabel;
         } else {
-          unit = v.unit;
+          unit = addReferenceFrameToUnit(v.unit, v.reference_frame);
         }
 
         var boxText = value + ' ' + unit + ' - ' + location;
@@ -1627,14 +1630,32 @@ angular.module('lizard-nxt')
     }
   };
 
-  /**
-   * Determines which axis should be drawn and includes label and circles for
-   * active datasets.
-   *
-   * @param  {Graph}        Graph instance.
-   * @param  {int}          integer 0 to keep current unit, 1 for next.
-   */
-  var setActiveAxis = function (graph, up) {
+    /* Combine unit and reference frame into a single string, or use
+       "MV" (maaiveld) as reference frame if the graph is relative to
+       ground level.
+
+      TODO: The 'MV' string isn't translated yet.
+     */
+    var addReferenceFrameToUnit = function (unit, reference_frame) {
+      if (!reference_frame) {
+        return unit;
+      }
+      if (RTSLService.get()) {
+        return unit + ' (MV)'; // TODO: translate this string
+      } else {
+        return unit + ' (' + reference_frame + ')';
+      }
+    }
+
+
+   /**
+     * Determines which axis should be drawn and includes label and circles for
+     * active datasets.
+     *
+     * @param  {Graph}        Graph instance.
+     * @param  {int}          integer 0 to keep current unit, 1 for next.
+     */
+    var setActiveAxis = function (graph, up) {
     var units = Object.keys(graph._yPerUnit);
     var indexOfUnit = units.indexOf(graph._activeUnit) + up;
     if (indexOfUnit >= units.length || indexOfUnit === -1) {
@@ -1649,10 +1670,11 @@ angular.module('lizard-nxt')
       graph.transTime,
       graph._activeUnit
     );
+
     var label = drawLabel(
       graph._svg,
       graph.dimensions,
-      graph._activeUnit,
+      addReferenceFrameToUnit(graph._activeUnit, graph._containers[0].reference_frame),
       true
     );
     var activeCharts = graph._containers.filter(function (chart) {
