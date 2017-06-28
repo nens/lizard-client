@@ -695,7 +695,25 @@ angular.module('lizard-nxt')
       charts.forEach(function (chart) {
         if (chart.unit === activeUnit) {
           chart.thresholds.forEach(function (threshold) {
-            thresholds.push(threshold);
+            // If we are looking at heights relative to ground level, we may need
+            // to adjust the value here.
+            var isRelative = (RTSLService.get() && threshold.reference_frame &&
+                              !isNaN(threshold.surface_level));
+            var value = threshold.value;
+            if (isRelative) {
+              value -= threshold.surface_level;
+            }
+
+            // addReferenceFrameToUnit also changes the reference frame depending on
+            // relativity.
+            var label = threshold.name + " " +
+                        value.toFixed(2) + " " +
+                        addReferenceFrameToUnit(activeUnit, threshold.reference_frame);
+
+            thresholds.push({
+              value: value,
+              label: label
+            });
           });
         }
       });
@@ -705,7 +723,7 @@ angular.module('lizard-nxt')
       thresholds = _.uniq(thresholds);
 
       // Create, update and remove thresholds.
-      lines = lines.data(thresholds, function(d) { return d.name; });
+      lines = lines.data(thresholds, function(d) { return d.label; });
 
       lines.enter().append('line')
         .attr('x1', 0)
@@ -717,16 +735,13 @@ angular.module('lizard-nxt')
         .remove();
 
       // Create, update, remove labels on threshold.
-      labels = labels.data(thresholds, function(d) { return d.name; });
+      labels = labels.data(thresholds, function(d) { return d.label; });
 
       labels.enter().append('text')
         .attr('x', PADDING)
-        .text(function (d) {
-          return d.name + ' ' + d.value.toFixed(2) + ' ' + activeUnit;
-        });
+        .text(function (d) { return d.label; });
 
-      labels.exit()
-        .remove();
+      labels.exit().remove();
     }
 
     lines.transition()
@@ -1645,7 +1660,7 @@ angular.module('lizard-nxt')
       } else {
         return unit + ' (' + reference_frame + ')';
       }
-    }
+    };
 
 
    /**

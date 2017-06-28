@@ -286,17 +286,29 @@ angular.module('timeseries')
       }
 
       if (assetOfTs) {
-        var threshold = {value: null, name: ''};
         _.forEach(
           WantedAttributes[assetOfTs.entity_name].rows,
           function (attr) {
-            if (attr.valueSuffix === graphTimeseries.unit) {
+            // Construct a string like "m (NAP)" to compare to valueSuffix, as
+            // the timeseries object has that in two separate values now.
+            var unitAndReference = (
+              graphTimeseries.unit +
+               (graphTimeseries.reference_frame ? ' ('+graphTimeseries.reference_frame+')' : '')
+            );
+
+            if (attr.valueSuffix === unitAndReference) {
+              // This attribute is to be shown in a chart with this unit and reference
               var value = parseFloat(assetOfTs[attr.attrName]);
+
               if (!isNaN(value)) {
-                var name = assetOfTs.name === '' ? '...' : assetOfTs.name;
-                threshold = {
+                var name = assetOfTs.name || '...';
+                var threshold = {
                   value: value,
-                  name: name + ': ' + attr.keyName
+                  name: name + ': ' + attr.keyName,
+                  // These two are added so thresholds can optionally be
+                  // shown relative to surface level.
+                  reference_frame: graphTimeseries.reference_frame,
+                  surface_level: parseFloat(assetOfTs.surface_level)
                 };
                 graphTimeseries.thresholds.push(threshold);
               }
