@@ -9,7 +9,7 @@ angular.module('omnibox')
     link: function (scope, element) {
 
       scope.selected = State.selected;
-      scope.relativeTimeSeries = RTSLService.relativeToSurfaceLevel;
+      scope.relativeTimeseries = RTSLService.relativeToSurfaceLevel;
 
       scope.toggleRelativeTimeseries = function () {
         RTSLService.toggle();

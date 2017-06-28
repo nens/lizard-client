@@ -68,7 +68,7 @@
             {{ displayName }}&nbsp;
 
             <i class="fa relativate-ts-icon"
-               ng-class="{ 'fa-check-square': relativeTimeSeries.value, 'fa-square': !relativeTimeseries.value }"
+               ng-class="{ 'fa-check-square': relativeTimeseries.value, 'fa-square': !relativeTimeseries.value }"
                ng-click="toggleRelativeTimeseries(); $event.stopPropagation();"
                ng-if="ts.active && ts.measureScale === 'interval' &&
                  (assetHasSurfaceLevel() || parentAssetHasSurfaceLevel())"
