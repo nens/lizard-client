@@ -1,23 +1,19 @@
 
 angular.module('omnibox')
-  .directive('dbAssetCard', [ 'State', 'DataService', 'DragService', 'DBCardsService', 'TimeseriesService', 'AssetService',
-    function (State, DataService, DragService, DBCardsService, TimeseriesService, AssetService) {
+       .directive('dbAssetCard', [
+         'State', 'DataService', 'DragService', 'DBCardsService',
+         'TimeseriesService', 'AssetService', 'RelativeToSurfaceLevelService',
+         function (State, DataService, DragService, DBCardsService,
+                   TimeseriesService, AssetService, RTSLService) {
   return {
     link: function (scope, element) {
 
       scope.selected = State.selected;
-      scope.relativeTimeseries = TimeseriesService.relativeTimeseries;
+      scope.relativeTimeseries = RTSLService.relativeToSurfaceLevel;
 
       scope.toggleRelativeTimeseries = function () {
-
-        var activeBefore = TimeseriesService.relativeTimeseries.value;
-        TimeseriesService.relativeTimeseries.value = !activeBefore;
-        scope.relativeTimeseries = TimeseriesService.relativeTimeseries;
-
-        var uuidList = _.map(TimeseriesService.timeseries, function (ts) {
-          return ts.id;
-        });
-        TimeseriesService.syncTime(uuidList);
+        RTSLService.toggle();
+        TimeseriesService.syncTime();
       };
 
       scope.getTsMetaData = function (uuid) {
