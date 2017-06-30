@@ -214,6 +214,7 @@ angular.module('favourites')
           'temporal.start',
           'temporal.end',
           'temporal.at',
+          'temporal.playing',
           'assets',
           'geometries',
           'selections',

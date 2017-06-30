@@ -44,7 +44,6 @@ angular.module('dashboard')
    */
   this.buildGraphs = function (graphs, timeseries, assets, geometries,
                                selections) {
-
     graphs = this._setAllContentToNotUpdated(graphs);
 
   /**

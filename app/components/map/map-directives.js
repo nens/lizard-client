@@ -199,6 +199,13 @@ angular.module('map')
         MapService.updateLayers(scope.state.layers);
       }, true);
 
+      scope.$watch('state.context', function () {
+        // When switching back into the map ctx, we want to rebuild the TMS
+        // layer for 'Water' and other assetgroups
+        var assetGroups = _.filter(scope.state.layers, { type: 'assetgroup' });
+        MapService.updateAssetGroups(assetGroups);
+      }, true);
+
       scope.$watch('state.baselayer', function () {
         MapService.updateBaselayers();
       });

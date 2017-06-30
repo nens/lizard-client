@@ -62,17 +62,14 @@ describe('Service: DateParser', function () {
 
   // Don't perform this test around the 1st of April it will break ...
   /////////////////////////////////////////////////////////////////////////////
-  // NB! (28-03-2017) --> Yes, the test broke indeed: Until next month we
-  // keep it commented. A trello ticket serves as a reminder..
-
-  // it('should return a valid moment when provided with a month name', function () {
-  //   var d = dateParser('April');
-  //   var now = new Date();
-  //   expect(d.isValid()).toBe(true);
-  //   if (!(moment(now).dayOfYear() > 90 && moment(now).dayOfYear() < 93)) {
-  //     expect(d.calendar()).toBe('01-04-' + now.getFullYear());
-  //   }
-  // });
+  it('should return a valid moment when provided with a month name', function () {
+    var d = dateParser('April');
+    var now = new Date();
+    expect(d.isValid()).toBe(true);
+    if (!(moment(now).dayOfYear() > 90 && moment(now).dayOfYear() < 93)) {
+      expect(d.calendar()).toBe('01-04-' + now.getFullYear());
+    }
+  });
 
   it('should contain a duration as interval to zoom to', function () {
     var d = dateParser('April 4');

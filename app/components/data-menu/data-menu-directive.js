@@ -29,6 +29,23 @@ angular.module('data-menu')
 
       scope.state = State;
 
+      scope.filterScenarioRasters = function (stateLayers) {
+        var scenarioRasterUUIDs = [];
+        DataService.dataLayers.forEach(function (dataLayer) {
+          if(dataLayer.slug.indexOf("scenarios") === 0) {
+            scenarioRasterUUIDs.push(dataLayer.uuid);
+          }
+        });
+
+        var result = [];
+        stateLayers.forEach(function (stateLayer) {
+          if (!_.includes(scenarioRasterUUIDs, stateLayer.uuid)) {
+            result.push(stateLayer);
+          }
+        });
+        return result;
+      };
+
       scope.$watch('state.layers', function () {
         DataService.refreshSelected(scope.state.layers);
       }, true);

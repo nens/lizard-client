@@ -57,15 +57,15 @@ describe('Directives: Search with mocked CabinetService', function () {
   });
 
   it('should clean the input field', function () {
-    scope.cleanInput();
+    scope.cleanInputAndResults();
     scope.$digest();
     expect(element[0].querySelector('#searchboxinput').value).toBe("");
   });
 
-  it('should not remove assets only search results from box when calling cleanInput', function () {
+  it('should not remove assets only search results from box when calling cleanInputAndResults', function () {
     scope.omnibox.searchResults = {harry: 'bertenernie'};
     State.assets = ['gemaalomdehoe$666'];
-    scope.cleanInput();
+    scope.cleanInputAndResults();
     expect(State.assets.length).toEqual(1);
     expect(scope.omnibox.searchResults.harry).toBeUndefined();
   });

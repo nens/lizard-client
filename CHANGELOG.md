@@ -2,6 +2,51 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.15.1"></a>
+## [4.15.1](https://github.com/nens/lizard-client/compare/v4.14.0...v4.15.1) (2017-06-22)
+
+
+
+<a name="4.15.0"></a>
+# [4.15.0](https://github.com/nens/lizard-client/compare/v4.13.1...v4.15.0) (2017-06-21)
+
+
+### Bug Fixes
+
+* **assetgroups:** icons reappear in map ctx after F5-ing in dashboard ctx ([5b6e962](https://github.com/nens/lizard-client/commit/5b6e962))
+* **language:** no longer hide state.language when printing ([4e89e5e](https://github.com/nens/lizard-client/commit/4e89e5e))
+* **layermenu:** scroll through list using scrollwheel ([7c0755a](https://github.com/nens/lizard-client/commit/7c0755a))
+* **tickmarks:** subtract (a.o.t. add) value for getTimezoneOffset for tickmarks ([e7d904a](https://github.com/nens/lizard-client/commit/e7d904a))
+* **timezones:** cleanup ([488dbf4](https://github.com/nens/lizard-client/commit/488dbf4))
+* **timezones:** cleanup ([436375c](https://github.com/nens/lizard-client/commit/436375c))
+* **timezones:** cleanup/simpler NODATA check ([b33de79](https://github.com/nens/lizard-client/commit/b33de79))
+* **timezones:** FTFY ([f9df685](https://github.com/nens/lizard-client/commit/f9df685))
+* **timezones:** minor stuff ([9ed3200](https://github.com/nens/lizard-client/commit/9ed3200))
+
+
+### Features
+
+* **timeline:** show timeline when annotations 'layer' is active ([f37ea35](https://github.com/nens/lizard-client/commit/f37ea35))
+* **timeline:** show/hide timeline when annotations 'layer' activity changes ([9e00a49](https://github.com/nens/lizard-client/commit/9e00a49))
+
+
+
+<a name="4.14.0"></a>
+# [4.14.0](https://github.com/nens/lizard-client/compare/v4.13.3...v4.14.0) (2017-05-22)
+
+
+### Bug Fixes
+
+* **assetgroups:** icons reappear in map ctx after F5-ing in dashboard ctx ([5b6e962](https://github.com/nens/lizard-client/commit/5b6e962))
+
+
+### Features
+
+* **timeline:** show timeline when annotations 'layer' is active ([f37ea35](https://github.com/nens/lizard-client/commit/f37ea35))
+* **timeline:** show/hide timeline when annotations 'layer' activity changes ([9e00a49](https://github.com/nens/lizard-client/commit/9e00a49))
+
+
+
 <a name="4.13.3"></a>
 ## [4.13.3](https://github.com/nens/lizard-client/compare/v4.13.2...v4.13.3) (2017-04-25)
 
