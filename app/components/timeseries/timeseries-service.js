@@ -73,7 +73,7 @@ angular.module('timeseries').service("TimeseriesService", [
     this.findProperty = function (selection) {
       if (selection.timeseries) {
         return _.find(this.timeseries, function (ts) {
-          return selection.timeseries === ts.id
+          return selection.timeseries === ts.id;
         });
       }
       return DataService.findProperty(selection);
@@ -95,12 +95,12 @@ angular.module('timeseries').service("TimeseriesService", [
 
       _.forEach(State.selections, function(selection){
         if(selection.active){
-          var scale = selection.measureScale == "ratio" ? "temporalBars" :
+          var scale = selection.measureScale === "ratio" ? "temporalBars" :
                       "temporalLines";
           if (selection.timeseries) {
-            groupedSelections[scale].timeseries.push(selection.timeseries)
+            groupedSelections[scale].timeseries.push(selection.timeseries);
           } else if (selection.rasters) {
-            groupedSelections[scale].rasters.push(selection.timeseries)
+            groupedSelections[scale].rasters.push(selection.timeseries);
           }
         }
       });
@@ -134,7 +134,7 @@ angular.module('timeseries').service("TimeseriesService", [
           return service.timeseries;
         });
 
-        return timeseriesPromise
+        return timeseriesPromise;
       };
 
       return [
@@ -142,7 +142,7 @@ angular.module('timeseries').service("TimeseriesService", [
                          'lines'),
         activeTimeseries(groupedSelections.temporalBars.timeseries, false,
                          'bars')
-      ]
+      ];
 
     };
 
@@ -378,7 +378,7 @@ angular.module('timeseries').service('TimeseriesUtilService', [
       var result = [];
       timeseries.forEach(function (ts) {
         var tsSelection = _.find(State.selections, function (s) {
-          return s.timeseries === ts.uuid });
+          return s.timeseries === ts.uuid; });
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
 
         graphTimeseries.data = ts.events;

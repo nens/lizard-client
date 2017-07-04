@@ -62,7 +62,7 @@ describe('Favourites', function () {
     expect(State.layers[1].uuid).toBe('1sdf32');
   });
 
-  it('should not replace no layers', function () {
+  it('should reset layers', function () {
     State.layers.push({uuid: 'af434g', active: true, name: 'test'});
 
     // Create favourite with temporal in the past, but relative.
@@ -74,8 +74,7 @@ describe('Favourites', function () {
 
     FavService.applyFavourite(angular.copy(favourite));
 
-    expect(State.layers[0].name).toBe('test');
-    expect(State.layers[0].uuid).toBe('af434g');
+    expect(State.layers.length).toBe(0);
   });
 
   it('should replace annotations.active', function () {
@@ -91,7 +90,7 @@ describe('Favourites', function () {
     FavService.applyFavourite(angular.copy(favourite));
 
     expect(State.annotations.active).toBe(true);
-    expect(State.annotations.present).toBe(true);
+    expect(State.annotations.present).toBe(false); // Default, state was reset
   });
 
 

@@ -72,7 +72,7 @@ angular.module('global-state')
         state.spatial.view.zoom = 0;
         state.spatial.bounds = {
             isValid: function() { return false; }
-        }
+        };
         state.spatial.userHere = {};
         state.spatial.mapMoving = false;
 

@@ -1,3 +1,4 @@
+/*jshint bitwise: false */
 /**
  * Lizard-client global state selections.
  */
@@ -152,7 +153,8 @@ angular.module('global-state')
           existingSelection[comparatorType] &&  // prevent undefined === undefined = true for comparator type
           existingSelection.raster === newSelection.raster &&
           existingSelection[comparatorType] === newSelection[comparatorType]; // only keep one selection if both raster and comparator type are equal
-    }};
+      };
+    };
 
     var _timeseriesComparator = function(existingSelection, newSelection){
         return existingSelection.type === "timeseries" &&
@@ -173,7 +175,7 @@ angular.module('global-state')
     var uuidGenerator = function () {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,
       function(c) {
-        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+        var r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8);
         return v.toString(16);
       });
     };
@@ -218,7 +220,7 @@ angular.module('global-state')
       State.selections = _.unionWith(
         State.selections,
         _.filter(State.layers,
-            function(layer) {return layer.type === 'raster'}
+            function(layer) {return layer.type === 'raster';}
         ).map(function (layer, i) {
           var rasterSelection  = {
             uuid: uuidGenerator(),

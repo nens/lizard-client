@@ -142,7 +142,7 @@ angular.module('timeseries')
         _.forEach(TimeseriesService.syncTime(),
             function (tsPromise) {
               tsPromise.then(getContentForAsset);
-        })
+        });
 
       };
 
