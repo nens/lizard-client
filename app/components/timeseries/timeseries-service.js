@@ -302,14 +302,20 @@ angular.module('timeseries')
 
               if (!isNaN(value)) {
                 var name = assetOfTs.name || '...';
+
+                var surface_level = parseFloat(
+                  DataService.getPropFromAssetOrParent(
+                    assetOfTs, 'surface_level'));
+
                 var threshold = {
                   value: value,
                   name: name + ': ' + attr.keyName,
                   // These two are added so thresholds can optionally be
                   // shown relative to surface level.
                   reference_frame: graphTimeseries.reference_frame,
-                  surface_level: parseFloat(assetOfTs.surface_level)
+                  surface_level: surface_level
                 };
+
                 graphTimeseries.thresholds.push(threshold);
               }
             }

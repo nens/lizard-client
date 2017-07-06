@@ -36,14 +36,7 @@ angular.module('omnibox')
         if (scope.asset.parentAsset) {
 
           var parentAssetKey = scope.asset.parentAsset;
-          var splittedKey = parentAssetKey.split("$");
-          var parentAssetEntity = splittedKey[0];
-          var parentAssetId = parseInt(splittedKey[1]);
-
-          var parentAsset = _.find(DataService.assets, {
-            entity_name: parentAssetEntity,
-            id: parentAssetId
-          });
+          var parentAsset = DataService.getAssetByKey(parentAssetKey);
         }
 
         return parentAsset && ('surface_level' in parentAsset);
