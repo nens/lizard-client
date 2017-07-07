@@ -17,10 +17,10 @@ angular.module('export')
 .directive('exportSelector',
 
 ['$http', 'DataService', 'TimeseriesService', 'notie','gettextCatalog',
- 'State', 'user',
+ 'State', 'RelativeToSurfaceLevelService', 'user',
 
 function ($http, DataService, TimeseriesService, notie, gettextCatalog,
-  State, user) {
+  State, RTSLService, user) {
 
   var link = function (scope) {
     // bind the assets with the selected things from the DataService
@@ -72,7 +72,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
         async: 'true'
       };
 
-      if (TimeseriesService.relativeTimeseries.value) {
+      if (RTSLService.get()) {
         params.relative_to = 'surface_level';
       }
 

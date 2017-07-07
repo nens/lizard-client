@@ -490,5 +490,30 @@ angular.module('data-menu')
         return defer.promise;
       };
 
+      this.getAssetByKey = function getAssetByKey(key) {
+        var splitKey = key.split('$');
+        var entity = splitKey[0];
+        var assetId = parseInt(splitKey[1]);
+
+        return _.find(instance.assets, {
+          entity_name: entity,
+          id: assetId
+        });
+      };
+
+      this.getPropFromAssetOrParent = function getAssetByKey(asset, property) {
+        if (property in asset && asset[property] !== undefined) {
+          return asset[property];
+        } else if (asset.parentAsset) {
+          // Call this function on parent recursively
+          var parent = instance.getAssetByKey(asset.parentAsset);
+          if (parent) {
+            return instance.getPropFromAssetOrParent(parent, property);
+          }
+        }
+
+        // Default
+        return undefined;
+      }
     }
   ]);
