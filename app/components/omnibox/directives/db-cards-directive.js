@@ -42,19 +42,12 @@ angular.module('omnibox')
         });
 
         // set it locally so it doesn't show all the dupes
-        var localAssets = _.filter(scope.omnibox.data.assets, function (asset) {
+        scope.localAssets = _.filter(scope.omnibox.data.assets, function (asset) {
           var hasTheSame = nestedAssets.some(function (nesAs) {
             return asset.entity_name + '$' + asset.id === nesAs;
           });
           return !hasTheSame;
         });
-        var mapGeoms = function (type_) {
-          return function (geom) { return {type: type_, asset: geom }; };
-        };
-        scope.localAssets = _.concat(
-          _.map(scope.omnibox.data.geometries, mapGeoms('geom')),
-          _.map(localAssets, mapGeoms('asset'))
-        );
       });
 
 

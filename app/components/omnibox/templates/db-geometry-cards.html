@@ -1,0 +1,37 @@
+<div>
+
+  <em class="card-content-list" ng-if="noData" translate>
+    No raster data available for this geometry
+  </em>
+
+  <div id="drag-container">
+    <div ng-repeat="selection in state.selections | orderBy : ['-active', '+order']"
+         ng-init="metaData = getSelectionMetaData(selection)"
+         ng-if="getSelectionMetaData(selection).match"
+         data-uuid="{{ selection.uuid }}"
+         class="draggable-ts animate-repeat">
+         <div
+            ng-if="metaData.type === 'raster'"
+            ng-class="{active: mouseIsOver}"
+            ng-mouseover="mouseIsOver = true"
+            ng-mouseleave="mouseIsOver = false"
+            id="{{ selection.uuid }}"
+            ng-click="toggleSelection(selection)"
+            class="card-content-list clickable">
+          <div class="card-content-colorhandle"
+               ng-show="selection.active"
+               ng-style="{'background-color': selection.color}"
+               ng-click="toggleColorPicker(); $event.stopPropagation();">
+          </div>
+          <i class="fa fa-line-chart"></i>
+          <span ng-class="{'text-primary bg-warning': selection.active}">
+            {{ metaData.quantity }}, ({{ metaData.unit }})
+          </span>
+        </div>
+
+        <color-picker></color-picker>
+
+    </div>
+  </div>
+
+</div>

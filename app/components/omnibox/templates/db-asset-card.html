@@ -2,8 +2,8 @@
   <div class="card active">
   <!--// TODO: THIS IS ONE IN FOUR FILES THAT NEEDS SCRUTINY -->
 
-    <timeseries asset="asset" asset-type="assetType" time-state="timeState"></timeseries>
-    <cardheader asset="asset" geom="geom"></cardheader>
+    <timeseries asset="asset" time-state="timeState"></timeseries>
+    <cardheader asset="asset"></cardheader>
 
     <!-- crosssections are not draggable and a specific visualization. -->
     <div
@@ -30,7 +30,7 @@
     <em class="card-content-list"
         ng-if="noData && (assetType==='geometry' || asset.entity_name !== 'leveecrosssection')"
         translate>
-      No {{ noDataType }} data available for this {{ assetTypeName }}
+      No timeseries data available for this asset.
     </em>
 
     <!-- use ng-show, so div is present and can be added to drag containers -->
