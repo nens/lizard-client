@@ -18,28 +18,8 @@ angular.module('omnibox').directive('dbAssetCard', [
     return {
       link: function (scope, element) {
 
-        scope.noData = true;
+        scope.noData = scope.asset.timeseries.length === 0;
         scope.relativeTimeseries = RTSLService.relativeToSurfaceLevel;
-
-        // geometry or asset administration
-        if (scope.assetType === "asset") {
-
-          scope.noData = scope.asset.timeseries.length === 0;
-          scope.assetTypeName = "asset";
-          scope.noDataType = "timeseries";
-        } else {
-          scope.geom = scope.asset;
-          scope.assetTypeName = "geometry";
-          scope.noDataType = "raster";
-
-          /**
-           * Properties are asynchronous so watch it to set noData when added.
-           */
-          scope.$watch('geom.properties', function (geoms) {
-            var noRasterData = geoms ? !Object.keys(geoms).length : true;
-            scope.noData = noRasterData && scope.geom.entity_name === undefined;
-          }, true);
-        }
 
         scope.toggleRelativeTimeseries = function () {
           RTSLService.toggle();
@@ -157,7 +137,7 @@ angular.module('omnibox').directive('dbAssetCard', [
       restrict: 'E',
       scope: {
         asset: '=',
-        assetType: '=',
+        assets: '=',
         timeState: '='
       },
       replace: true,

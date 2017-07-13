@@ -23,8 +23,16 @@ angular.module('timeseries')
   return {
     link: function (scope) {
       scope.state = State; // TODO: only done this to watch state.layers. There is a better place for this.
+      var selectionObject, selectionType;
+      if (scope.asset) {
+        selectionObject = scope.asset;
+        selectionType = 'asset';
+      } else if (scope.geom){
+        selectionObject = scope.geom;
+        selectionType = 'geom';
+      }
       scope.$watch('state.layers', function () { // TODO: There is a better place for this.
-        SelectionService.initializeRaster(scope.asset, scope.assetType);
+        SelectionService.initializeRaster(selectionObject, selectionType);
       });
 
       scope.zoomToMagic = function (value_type) {
@@ -85,11 +93,9 @@ angular.module('timeseries')
         }
       };
 
-      scope.$watch("asset", function () {
-        if (scope.assetType === 'asset'){
-          SelectionService.initializeAsset(scope.asset);
-        }
-        SelectionService.initializeRaster(scope.asset, scope.assetType);
+      scope.$watch(selectionType, function () {
+        SelectionService.initializeAsset(scope.asset);
+        SelectionService.initializeRaster(selectionObject, selectionType);
         if (State.context === 'map') {
           scope.timeseries.change();
         }
