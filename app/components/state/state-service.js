@@ -245,12 +245,14 @@ angular.module('global-state').service(
 
        state.layers.length = 0;
 
-       state.spatial.view.lat = 0;
-       state.spatial.view.lng = 0;
-       state.spatial.view.zoom = 0;
-       state.spatial.bounds = {
-         isValid: function() { return false; }
-       };
+       // DO NOT Reset the spatial view or bounds; they are watched and will soon also reset
+       // spatial.bounds, even if that one is loaded from some favourite.
+       /* state.spatial.view.lat = 0;
+        * state.spatial.view.lng = 0;
+        * state.spatial.view.zoom = 0;
+        * state.spatial.bounds = {
+        *   isValid: function() { return false; }
+        * };*/
        state.spatial.userHere = {};
        state.spatial.mapMoving = false;
 
@@ -286,6 +288,54 @@ angular.module('global-state').service(
        state.assets.length = 0;
        state.geometries.length = 0;
        state.selections.length = 0;
+     };
+
+     state.applyUrlToState = function (urlState) {
+       console.log("Applying URL to State:", urlState);
+       // Get state information from the URL and update the state using it.
+       if (urlState.lange) { state.language = urlState.language; }
+       if (urlState.baselayer) { state.baselayer = urlState.baselayer; }
+       if (urlState.context) { state.context = urlState.context; }
+       if (urlState.boxType) { state.box.type = urlState.boxType; }
+       state.annotations.active = urlState.annotationsActive;
+
+       var view = urlState.view;
+       if (view) {
+         state.spatial.view.lat = view.lat;
+         state.spatial.view.lng = view.lng;
+         state.spatial.view.zoom = view.zoom;
+       }
+
+       console.log('Update active layers from', state.layers, 'using', urlState.activeLayers);
+       console.log('Update temporal from', state.temporal, 'using', urlState.temporal);
+       console.log('Update assets from', state.assets, 'using', urlState.assets);
+       console.log('Update geometries from', state.geometries, 'using', urlState.geometries);
+
+       var temporal = urlState.temporal;
+       if (temporal) {
+         if (typeof temporal.start !== 'undefined') {
+           state.temporal.start = temporal.start;
+         }
+         if (typeof temporal.end !== 'undefined') {
+           state.temporal.end = temporal.end;
+         }
+       }
+
+       if (urlState.activeLayers) {
+         setActiveLayers(urlState.activeLayers);
+       }
+
+       if (urlState.geometries) {
+         urlState.geometries.forEach(function (geometry) {
+           state.geometries.addGeometry(geometry);
+         });
+       }
+
+       if (urlState.assets) {
+         urlState.assets.forEach(function (asset) {
+           state.assets.addAsset(asset);
+         });
+       }
      };
 
      return state;

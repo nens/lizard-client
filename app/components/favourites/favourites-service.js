@@ -236,7 +236,12 @@ angular.module('favourites')
           }
         });
 
-        UtilService.announceMovedTimeline(State);
+        if (favourite.state.spatial && !_.isUndefined(favourite.state.spatial.bounds)) {
+          State.spatial.bounds = favourite.state.spatial.bounds;
+          State.spatial.bounds.isValid = function () { return true; };
+        }
+
+          UtilService.announceMovedTimeline(State);
       };
 
       return this;

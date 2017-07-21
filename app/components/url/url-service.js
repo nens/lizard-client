@@ -454,7 +454,7 @@ angular.module('lizard-nxt')
       if (context) { return context; }
     };
 
-    var getLayers = function () {
+    var getActiveLayers = function () {
       var layersFromURL = LocationGetterSetter.getUrlValue(
         config.layers.part,
         config.layers.index
@@ -468,7 +468,7 @@ angular.module('lizard-nxt')
       }
     };
 
-    var getBaselayer = function () {
+    var getBaseLayer = function () {
       var layersFromURL = LocationGetterSetter.getUrlValue(
         config.layers.part,
         config.layers.index
@@ -508,7 +508,10 @@ angular.module('lizard-nxt')
         config.geom.part,
         config.geom.index
       );
-      return UrlState.parseSelection(selected) || {assets: [], geometries: []};
+      console.log('getSelected using urlValue', selected);
+      var result = UrlState.parseSelection(selected) || {assets: [], geometries: []};
+      console.log('result ::', result);
+      return result;
     };
 
     var getView = function () {
@@ -571,19 +574,17 @@ angular.module('lizard-nxt')
 
       },
 
-      getState: function () {
+      getDataForState: function () {
         var selected = getSelected();
         return {
           language: getLanguage(),
+          baselayer: getBaseLayer(),
           context: getContext(),
-          baselayer: getBaselayer(),
-          // If active return an object with active, otherwise leave it. The url
-          // does not contain inactive layers. This is consistent with other
-          // layers.
-          annotations: getAnnotations() ? { active: true } : undefined,
-          layers: {active: getLayers()},
-          box: {type: getBoxType()},
-          spatial: {view: getView()},
+          boxType: getBoxType(),
+          annotationsActive: !!(getAnnotations()),
+          view: getView(),
+
+          activeLayers: getActiveLayers(),
           temporal: getTemporal(),
           assets: selected.assets,
           geometries: selected.geometries
