@@ -9,7 +9,7 @@
  */
 angular.module('data-menu')
 .factory('eventseriesDataLayer', ['VectorService',
-  function (VectorService) {
+  function (VectorScervice) {
 
     return function (options) {
 

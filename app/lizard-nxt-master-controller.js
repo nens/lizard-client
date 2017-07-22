@@ -15,6 +15,7 @@ angular.module('lizard-nxt')
    'State',
    'UrlService',
    'AssetService',
+   'gettextCatalog',
 
   function (
     $scope,
@@ -26,7 +27,8 @@ angular.module('lizard-nxt')
     version,
     State,
     UrlService,
-    AssetService
+    AssetService,
+    gettextCatalog
   ) {
 
   // Bind to the global scope
@@ -93,7 +95,7 @@ angular.module('lizard-nxt')
   };
 
   $scope.getContextComplement = function () {
-    return $scope.context === 'map' ? 'Dashboard' : 'Map';
+    return $scope.context === 'map' ? gettextCatalog.getString('Dashboard') : gettextCatalog.getString('Map');
   };
 
   $scope.getContextComplementIcon = function () {

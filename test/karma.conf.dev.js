@@ -28,6 +28,7 @@ module.exports = function(config) {
       'vendor/angular-mocks/angular-mocks.js',
       'vendor/angular-resource/angular-resource.js',
       'vendor/angular-sanitize/angular-sanitize.js',
+      'vendor/angular-translate/angular-translate.js',
       'vendor/bootstrap/dist/js/bootstrap.js',
       'vendor/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
       'vendor/classList.js/classList.min.js',

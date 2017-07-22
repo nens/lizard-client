@@ -32,12 +32,12 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
 
     var POLL_INTERVAL = 1000;
 
-    var EXPORT_START_MESSAGE =
-      "Export timeseries started, check your inbox"; // user is authenticated
-    var EXPORT_SUCCESS_MESSAGE =
-      "Export timeseries finished succesfully"; // user is NOT authenticated
-    var EXPORT_ERROR_MESSAGE =
-      "Lizard encountered a problem exporting your timeseries";
+    var EXPORT_START_MESSAGE = gettextCatalog.getString(
+      "Export timeseries started, check your inbox"); // user is authenticated
+    var EXPORT_SUCCESS_MESSAGE = gettextCatalog.getString(
+      "Export timeseries finished succesfully"); // user is NOT authenticated
+    var EXPORT_ERROR_MESSAGE = gettextCatalog.getString(
+      "Lizard encountered a problem exporting your timeseries");
 
     // Start and end of data
     var timeState = {

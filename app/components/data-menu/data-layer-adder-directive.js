@@ -17,7 +17,7 @@ angular.module('data-menu')
 
     var link = function (scope, element, attrs) {
       var isEdge = navigator.appVersion.indexOf("Edge") > -1;
-
+      scope.filterlayers = gettextCatalog.toString("Filter layers...");
       /**
        * Throw an alert and error when something went wrong with fetching the
        * layer groups.
