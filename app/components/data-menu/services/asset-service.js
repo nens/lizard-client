@@ -32,7 +32,7 @@ angular.module('data-menu')
        * @param {string} id -  id of the enitity
        * returns {object} promise - thenable with result of the asset API
        */
-      var getAsset = function (entity, id) {
+      this.getAsset = function (entity, id) {
         return $http({
           url: 'api/v3/' + entity + 's' + '/' + id + '/',
           method: 'GET'
@@ -60,44 +60,6 @@ angular.module('data-menu')
           }
           return keep;
         });
-      };
-
-      /**
-       * Updates assets by making requests to asset api.
-       *
-       * @param  {array}  assets       array of assets as from api
-       * @param  {array}  oldSelection old array of assetId of selected assets
-       * @param  {array}  newSelection new array of assetId of selected assets
-       */
-      /**
-       * anonymous function - description
-       *
-       * @param  {type} assets       description
-       * @param  {type} oldSelection description
-       * @param  {type} newSelection description
-       * @return {type}              description
-       */
-
-      this.updateAssets = function (assets, oldSelection, newSelection) {
-
-        var newAssets = newSelection.filter(function (assetId) {
-          return oldSelection.indexOf(assetId) === -1;
-        });
-
-        if (newAssets) {
-          return _.map(newAssets, function (asset) {
-            var entity = asset.split('$')[0];
-            var id = asset.split('$')[1];
-
-            return getAsset(entity, id);
-          });
-        }
-
-        else {
-          var defer = $q.defer();
-          defer.resolve();
-          return [defer.promise];
-        }
       };
 
       /**

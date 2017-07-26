@@ -104,13 +104,21 @@ angular.module('data-menu')
         var assets = _.uniq(assetsIn);
         instance.oldAssets = angular.copy(instance.assets);
 
-        // Synchronously remove assets no longer in selection.
+        // Remove assets no longer in selection.
         instance.assets = AssetService.removeOldAssets(assets, instance.assets);
 
-        AssetService.updateAssets(instance.assets, _assets, assets)
-        .forEach(function (assetPromise) {
-          assetPromise.then(assetChange);
+        var newAssets = assets.filter(function (assetId) {
+          // An asset is only new if it occurs in *neither* instance.assets nor _assets.
+          return _assets.indexOf(assetId) === -1 && !(instance.getAssetByKey(assetId));
         });
+
+        newAssets.forEach(function (asset) {
+          var splitKey = asset.split('$');
+          var entity = splitKey[0];
+          var assetId = parseInt(splitKey[1]);
+          AssetService.getAsset(entity, assetId).then(assetChange);
+        });
+
         _assets = assets;
 
         console.log('State.assets:', State.assets);
