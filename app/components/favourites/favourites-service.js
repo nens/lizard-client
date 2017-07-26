@@ -200,31 +200,46 @@ angular.module('favourites')
           );
         }
 
-        if (_.isArray(favourite.state.layers)) {
-          _.remove(State.layers, undefined); // empties array by mutation.
-
-          favourite.state.layers.forEach(
-            function (l) {
-              State.layers.push(l);
-            }
-          );
+        // Restore assets
+        if (typeof favourite.state.assets !== 'undefined') {
+          favourite.state.assets.forEach(function (asset) {
+            State.assets.addAsset(asset);
+          });
         }
 
+        // Restore layers
+        if (typeof favourite.state.layers !== 'undefined') {
+          favourite.state.layers.forEach(function (layer) {
+            State.layers.push(layer);
+          });
+        }
+
+        // Restore geometries
+        if (typeof favourite.state.geometries !== 'undefined') {
+          favourite.state.geometries.forEach(function (geometry) {
+            State.geometries.push(geometry);
+          });
+        }
+
+        console.log("--> Before changing selections");
+        // Restore selections
+        if (typeof favourite.state.selections !== 'undefined') {
+          State.selections = favourite.state.selections;
+        }
+        console.log("--> After changing selections, it is now", State.selections);
+
+        // Specific attributes
         var ATTRIBUTES = [
           'temporal.start',
           'temporal.end',
           'temporal.at',
           'temporal.playing',
-          'assets',
-          'geometries',
-          'selections',
           'context',
           'box.type',
           'language',
           'baselayer',
           'annotations.active',
           'annotations.present',
-          'spatial.bounds',
           'spatial.view',
           'layers.active'
         ];

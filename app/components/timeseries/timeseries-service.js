@@ -52,11 +52,10 @@ angular.module('timeseries').service("TimeseriesService", [
 
     this.minPoints = GRAPH_WIDTH; // default
 
-    var _selections = [];
+    var _selections = State.selections || [];  // !!! Do not throw away old value!
     Object.defineProperty(State, 'selections', {
       get: function () { return _selections; },
       set: function (selections) {
-        console.log('State.selections:', selections);
         _selections = selections;
         service.syncTime();
       },
@@ -130,7 +129,6 @@ angular.module('timeseries').service("TimeseriesService", [
                 return ts.id === stateTs.timeseries && stateTs.active;
               });
             });
-          console.log('TimeseriesService.timeseries:', service.timeseries);
           return service.timeseries;
         });
 

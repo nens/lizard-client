@@ -291,7 +291,6 @@ angular.module('global-state').service(
      };
 
      state.applyUrlToState = function (urlState) {
-       console.log("Applying URL to State:", urlState);
        // Get state information from the URL and update the state using it.
        if (urlState.lange) { state.language = urlState.language; }
        if (urlState.baselayer) { state.baselayer = urlState.baselayer; }
@@ -305,11 +304,6 @@ angular.module('global-state').service(
          state.spatial.view.lng = view.lng;
          state.spatial.view.zoom = view.zoom;
        }
-
-       console.log('Update active layers from', state.layers, 'using', urlState.activeLayers);
-       console.log('Update temporal from', state.temporal, 'using', urlState.temporal);
-       console.log('Update assets from', state.assets, 'using', urlState.assets);
-       console.log('Update geometries from', state.geometries, 'using', urlState.geometries);
 
        var temporal = urlState.temporal;
        if (temporal) {

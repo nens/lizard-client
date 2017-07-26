@@ -139,7 +139,7 @@ angular.module('data-menu')
       };
 
       instance.assets = instance.oldAssets = [];
-      var _assets = [];
+      var _assets = State.assets || [];
       Object.defineProperty(State, 'assets', {
         get: function () { return _assets; },
         set: setAssets,
