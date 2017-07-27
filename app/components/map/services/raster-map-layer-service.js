@@ -35,7 +35,21 @@ angular.module('map')
       // frequent images it should be large. When having a very sparse
       // resolution, animation will also move slowly, so there is no need
       // for a big buffer.
-      rasterMapLayer._bufferLength = options.frequency >= 3600000 ? 2 : 6;
+      // rasterMapLayer._bufferLength = options.frequency >= 3600000 ? 2 : 6;
+
+      // We set this once, dynamically (=when first call to rasterMapLayer
+      // .update gets made).
+      rasterMapLayer._bufferLength = undefined;
+
+      rasterMapLayer._setBufferLength = function (timeState) {
+        if (this.slug.indexOf('rain') > -1) {
+          rasterMapLayer._bufferLength = this.frequency >= 3600000 ? 2 : 6;
+        } else {
+          var wantedBufferSize = Math.ceil(
+            (timeState.end - timeState.start) / this.frequency);
+          rasterMapLayer._bufferLength = wantedBufferSize;
+        }
+      };
 
       // Number of rasters currently underway.
       rasterMapLayer._nLoadingRasters = 0;
@@ -55,6 +69,11 @@ angular.module('map')
       );
 
       rasterMapLayer.update = function (map, timeState, options) {
+        if (rasterMapLayer.temporal &&
+            rasterMapLayer._bufferLength === undefined) {
+          this._setBufferLength(timeState);
+        }
+
         // Wms options might be different for current zoom and aggWindow.
         // Redraw when wms parameters are different for temporal or spatial
         // zoom.
@@ -457,11 +476,13 @@ angular.module('map')
        * @param  {int}    currentDate ms from epoch
        */
       rasterMapLayer._animateSyncTime = function (timeState, map, currentDate, wmsOptions) {
+
         var newBounds = rasterMapLayer._getAnimationBounds(map);
 
         if (rasterMapLayer._imageOverlays.length < rasterMapLayer._bufferLength
           || newBounds.getNorth() !== rasterMapLayer._animationBounds.getNorth()
           || newBounds.getWest() !== rasterMapLayer._animationBounds.getWest()) {
+
           rasterMapLayer._animationBounds = newBounds;
 
           // add leaflet layers to fill up the buffer and set imageUrlBase
@@ -490,15 +511,15 @@ angular.module('map')
         }
 
         var currentOverlayIndex = rasterMapLayer._frameLookup[currentDate];
+
         if (currentOverlayIndex === undefined) {
-          // Ran out of buffered frames
+          // alert("Fetch initiated");
+          // Ran out of buffered frames:
           rasterMapLayer._imageOverlays = rasterMapLayer._fetchNewFrames(
             currentDate,
             rasterMapLayer._imageOverlays
           );
-        }
-
-        else {
+        } else {
           rasterMapLayer._progressFrame(currentOverlayIndex, wmsOptions);
           // Done!
         }
@@ -594,7 +615,6 @@ angular.module('map')
        */
       rasterMapLayer._progressFrame = function (currentOverlayIndex, wmsOptions) {
         angular.forEach(rasterMapLayer._frameLookup, function (frameIndex, key) {
-
           if (rasterMapLayer._imageOverlays[frameIndex].options.opacity !== 0
             && frameIndex !== currentOverlayIndex) {
             // Delete the old overlay from the lookup, it is gone.
