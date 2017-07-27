@@ -1278,7 +1278,7 @@ angular.module('lizard-nxt')
         fg = graph._svg.select('#feature-group'),
         MIN_LABEL_Y = 50,
         LABEL_PADDING_X = 10,
-        LABEL_PADDING_Y = 5,
+        LABEL_PADDING_Y = 10,
         xy = graph._xy;
 
     var duration = 0.3; // zoing
@@ -1338,6 +1338,7 @@ angular.module('lizard-nxt')
         g.selectAll('circle').remove();
         g.selectAll('tspan').remove();
         g.selectAll('text.graph-tooltip-x').remove();
+        g.selectAll('rect.graph-tooltip-x').remove();
       }
 
       valuebox
@@ -1401,22 +1402,41 @@ angular.module('lizard-nxt')
         }
 
         var tspan = valuebox.select('text')
-          .append('tspan')
-            .text(boxText)
-            .attr('class', 'graph-tooltip-y')
-            .attr('x', 25)
-            .attr('y', 15 + 15 * i);
+                            .append('tspan')
+                            .text(boxText)
+                            .attr('class', 'graph-tooltip-y')
+                            .attr('x', 25)
+                            .attr('y', 15 + 15 * i);
 
         textLength = (textLength) ? textLength : 0;
         textLength = Math.max(tspan[0][0].getComputedTextLength(), textLength);
         valuebox.select('rect')
-          .attr('width', textLength + 25);
+                .attr('width', textLength + 25);
       });
-      g.append('text')
-        .text(xText)
-        .attr('class', 'graph-tooltip-x')
-        .attr('x', x2 + LABEL_PADDING_X)
-        .attr('y', height - LABEL_PADDING_Y);
+      var t = g.append('text')
+               .text(xText)
+               .attr('class', 'graph-tooltip-x')
+               .attr('x', x2 + LABEL_PADDING_X)
+               .attr('y', height - LABEL_PADDING_Y);
+
+      // Let's draw a slightly larger white background behind the text,
+      // for readability in case it overlaps the graph.
+      var PADDING_BACKGROUND = 2;
+      var tHeight = t.node().getBBox().height,
+          tWidth = t.node().getBBox().width;
+
+      g.append('rect')
+      // Tooltip-background makes it white; graph-tooltip-x means it disappears with the label.
+       .attr('class', 'tooltip-background graph-tooltip-x')
+       .attr('x', x2 + LABEL_PADDING_X - PADDING_BACKGROUND)
+       .attr('y', height - LABEL_PADDING_Y - tHeight + PADDING_BACKGROUND)
+       .attr('width', tWidth + 2 * PADDING_BACKGROUND)
+       .attr('height', tHeight + 2 * PADDING_BACKGROUND);
+
+      // We have to re-draw the text, as we just overwrote it. It can't be done in
+      // in another order as we need to know the text's size before drawing the background.
+      t.node().parentNode.appendChild(t.node());
+
     };
 
     graph._svg.select('#listeners').on('click', cb);
