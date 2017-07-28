@@ -496,9 +496,7 @@ angular.module('map')
             currentDate,
             rasterMapLayer._imageOverlays
           );
-        }
-
-        else {
+        } else {
           rasterMapLayer._progressFrame(currentOverlayIndex, wmsOptions);
           // Done!
         }
@@ -585,6 +583,36 @@ angular.module('map')
       };
 
       /**
+       * @description Replaces old frame by looking for a frame that corresponds
+       *              to the timestamp which is equal to the current frames'
+       *              timestamp minus the rasterMapLayer.frequency. The old
+       *              frame is removed from the lookup table and its URL is
+       *              replaced.
+       *
+       * @param {int} currentOverlayIndex index of the overlay in
+       *              _imageOverlays.
+       */
+      rasterMapLayer._replacePreviousFrame = function (currentOverlayIndex) {
+        var i,
+            bufferTimeStamps = Object.keys(rasterMapLayer._frameLookup),
+            timeStamp,
+            previousTimeStamp,
+            previousFrameIndex,
+            previousFrame;
+        for (i = 0; i < bufferTimeStamps.length; i++) {
+          timeStamp = bufferTimeStamps[i];
+          if (currentOverlayIndex === rasterMapLayer._frameLookup[timeStamp]) {
+            previousTimeStamp = timeStamp - rasterMapLayer.frequency;
+            previousFrameIndex = rasterMapLayer._frameLookup[previousTimeStamp];
+            previousFrame = rasterMapLayer._imageOverlays[previousFrameIndex];
+            delete rasterMapLayer._frameLookup[previousTimeStamp];
+            rasterMapLayer._replaceUrlFromFrame(previousFrameIndex);
+            return;
+          }
+        }
+      }
+
+      /**
        * @description Removes old frame by looking for a frame that has an
        *              opacity that is not 0 and setting it to 0, deleting it
        *              from the lookup and replacing the image source. NewFrame
@@ -592,17 +620,8 @@ angular.module('map')
        * @param {int} currentOverlayIndex index of the overlay in
        *              _imageOverlays.
        */
-      rasterMapLayer._progressFrame = function (currentOverlayIndex, wmsOptions) {
-        angular.forEach(rasterMapLayer._frameLookup, function (frameIndex, key) {
-
-          if (rasterMapLayer._imageOverlays[frameIndex].options.opacity !== 0
-            && frameIndex !== currentOverlayIndex) {
-            // Delete the old overlay from the lookup, it is gone.
-            delete rasterMapLayer._frameLookup[key];
-            rasterMapLayer._replaceUrlFromFrame(frameIndex);
-          }
-        });
-
+      rasterMapLayer._progressFrame = function (currentOverlayIndex) {
+        rasterMapLayer._replacePreviousFrame(currentOverlayIndex);
         var newFrame = rasterMapLayer._imageOverlays[currentOverlayIndex];
         // Turn on new frame
         newFrame.setOpacity(rasterMapLayer._opacity);
@@ -624,6 +643,11 @@ angular.module('map')
       rasterMapLayer._replaceUrlFromFrame = function (frameIndex) {
         var url = rasterMapLayer.url + _formatter(new Date(rasterMapLayer._nxtDate));
         var frame = rasterMapLayer._imageOverlays[frameIndex];
+        if (!frame) {
+          // This only occurrs when user changes timeState.at (=clicks in
+          // timeline) while animating.
+          return;
+        }
         frame.off('load');
         frame.setOpacity(0);
         if (url !== frame._url) {
