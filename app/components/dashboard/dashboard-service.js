@@ -61,9 +61,10 @@ angular.module('dashboard')
       return function (rasterId) {
         return _.find(selections, function(selection){
           return selection[selectiontype] === selectionId &&
-            selection.raster === rasterId;
+                 selection.raster === rasterId;
         });
-      };};
+      };
+    };
 
     timeseries.forEach(function (ts) {
       var selection = (findSelection('timeseries', ts.id)());
@@ -90,8 +91,10 @@ angular.module('dashboard')
           graphs[selection.order] = { 'content': content };
         }
 
-      graphs[selection.order].type = ts.valueType === 'image' ? 'image' :
-          ts.measureScale === 'ratio'? 'temporalBar': 'temporalLine';
+        graphs[selection.order].type = (
+          ts.valueType === 'image' ? 'image' :
+          ts.measureScale === 'ratio'? 'temporalBar': 'temporalLine'
+        );
       }
     });
 
@@ -112,11 +115,24 @@ angular.module('dashboard')
       }
     });
 
-    geometries.forEach(function (geometry) {
-      var getSelected = findSelection(
-        'geom', geometry.geometry.coordinates.toString());
-      graphs = addPropertyData(graphs, geometry.properties, getSelected);
+    /* I *think* this is unused now.
+     * geometries.forEach(function (geometry) {
+     *   var getSelected = findSelection(
+     *     'geom', geometry.geometry.coordinates.toString());
+     *   graphs = addPropertyData(graphs, geometry.properties, getSelected);
+     * });*/
+
+    /* Add eventseries graphs from selections. */
+    var eventSelections = _.filter(selections, function (selection) {
+      return selection.type === 'eventseries';
     });
+    if (eventSelections.length) {
+      // I don't understand ordering, just adding these at the end.
+      graphs.push({
+        'type': 'event',
+        'content': eventSelections.map(this._getContentForEventSelection)
+      });
+    }
 
     // Add empty graphs for undefined items.
     _.forEach(graphs, function (graph, i) {
@@ -126,6 +142,23 @@ angular.module('dashboard')
     });
 
     return this._filterActiveGraphs(graphs);
+  };
+
+  this._getContentForEventSelection = function (selection) {
+    return {
+      data: selection.data.map(function (event) {
+        return {
+          x: event.properties.timestamp_start,
+          y: parseFloat(event.properties.value)
+        };
+      }),
+      keys: {x: 'x', y: 'y'},
+      unit: 'some unit',
+      color: selection.color,
+      xLabel: 'events label',
+      id: selection.url,
+      updated: true
+        };
   };
 
   /**

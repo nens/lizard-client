@@ -29,6 +29,24 @@
           </span>
         </div>
 
+         <div
+            ng-if="metaData.type === 'eventseries'"
+            ng-class="{active: mouseIsOver}"
+            ng-mouseover="mouseIsOver = true"
+            ng-mouseleave="mouseIsOver = false"
+            id="{{ selection.uuid }}"
+            ng-click="toggleSelection(selection)"
+            class="card-content-list clickable">
+          <div class="card-content-colorhandle"
+               ng-show="selection.active"
+               ng-style="{'background-color': selection.color}"
+               ng-click="toggleColorPicker(); $event.stopPropagation();">
+          </div>
+          <i class="fa fa-line-chart"></i>
+          <span ng-class="{'text-primary bg-warning': selection.active}">
+            {{ metaData.quantity }} events
+          </span>
+        </div>
         <color-picker></color-picker>
 
     </div>

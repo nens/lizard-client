@@ -101,6 +101,17 @@ angular.module('global-state')
       return props;
     });
 
+      var getEventseriesMetaData = function getEventseriesMetaData(geometry, selection) {
+        if (geometry.geometry.coordinates.toString() !== selection.geomType) {
+          return {match: false};
+        }
+
+        return {
+          type: 'eventseries',
+          quantity: selection.quantity,
+          match: true
+        };
+      }
     /**
      * Returns a function that finds metadata for a selection.
      * metadata search can be limited to a geometry.
@@ -116,7 +127,10 @@ angular.module('global-state')
           return getTimeseriesMetaData(geometry, selection);
         } else if (selection.raster) {
           return getRasterMetaData(geometry, selection);
-        }};
+        } else if (selection.type === 'eventseries') {
+          return getEventseriesMetaData(geometry, selection);
+        }
+      }
     };
 
     /**
@@ -239,11 +253,66 @@ angular.module('global-state')
       return geomObject;
     };
 
+      var initializeGeomEventseriesSelections = function (geomObject) {
+        console.log("initializeGeomEventseriesSelections", geomObject);
+          if (!geomObject.geometry || geomObject.geometry.type !== 'Point' ||
+              !geomObject.properties) {
+          console.log("not a Point or no properties");
+          return false;
+        }
+
+        var eventSelections = [];
+        console.log("Adding selections");
+        var i = 0;
+        _.forOwn(geomObject.properties, function (props, layerUuid) {
+          console.log('layerUuid, props:', layerUuid, props);
+          if (props.type !== 'eventseries') {
+            console.log("Not an eventseries.");
+            return;
+          }
+
+          if (!props.data || !props.data.length) {
+            console.log("No events.");
+            return;
+          }
+
+          eventSelections.push({
+            uuid: uuidGenerator(),
+            type: 'eventseries',
+            active: false,
+            order: 0,
+            data: props.data, // Why not just add it here
+            quantity: props.data.length,
+            measureScale: props.scale,
+            url: props.url,
+            layer: layerUuid,
+            geomType: geomObject.geometry.coordinates.toString(),
+            color: UtilService.GRAPH_COLORS[i % (UtilService.GRAPH_COLORS.length)]
+          });
+          i++;
+        });
+        console.log("eventSelections is", eventSelections);
+
+        State.selections = _.unionWith(
+          State.selections,
+          eventSelections,
+          function (stateSelection, eventSelection) {
+            return (
+              stateSelection.type === eventSelection.type &&
+              stateSelection.url === eventSelection.url &&
+              stateSelection.geomType === eventSelection.geomType &&
+              stateSelection.layer === eventSelection.layer
+            );
+          });
+        console.log("Selections is now", State.selections, "did this work?");
+      };
+
     return {
       timeseriesMetaData: getTimeseriesMetaData,
       rasterMetaData: getRasterMetaData,
       initializeAsset: initializeAssetSelections,
       initializeRaster: initializeRasterSelections,
+      initializeGeomEventseriesSelections: initializeGeomEventseriesSelections,
       getMetaDataFunction: getMetaData,
       dbSupportedData: dbSupportedData,
       toggle: toggleSelection
