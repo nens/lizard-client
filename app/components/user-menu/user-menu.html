@@ -14,7 +14,10 @@
       <i class="fa fa-minus"></i>
     </button>
   </div>
-  <div id="lizard-apps-container" class="lizard-apps-container material-shadow"></div>
+  <div id="lizard-apps-container"
+       class="lizard-apps-container material-shadow"
+       ng-show="isShowingAppsWindow()">
+  </div>
   <div>
     <div class="navbar-header">
       <button type="button"
@@ -30,13 +33,15 @@
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
 
-        <li ng-show="showApps">
+        <li ng-show="hasApps"
+            ng-click="toggleAppsWindow">
           <a id="lizard-apps-button"
              class="lizard-apps-button"
              title="Apps"
              href="">
           </a>
         </li>
+
         <li>
           <a ng-click="toggleExport()"
              title="{{ 'Export all selected timeseries' | translate }}"

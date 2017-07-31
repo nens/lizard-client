@@ -6,6 +6,7 @@ angular.module('user-menu')
   .directive('userMenu',[
     '$http',
     'UtilService',
+    'UserMenuService',
     'MapService',
     '$location',
     'user',
@@ -16,6 +17,7 @@ angular.module('user-menu')
     function (
       $http,
       UtilService,
+      UserMenuService,
       MapService,
       $location,
       user,
@@ -27,7 +29,14 @@ angular.module('user-menu')
     var link = function (scope, element, attrs) {
 
       scope.user = user;
-      scope.showApps = false;
+      // scope.showApps = false;
+      scope.hasApps = false;
+      scope.isShowingAppsWindow = function () {
+        console.log("[F] scope.isShowingAppsWindow");
+        var result = UserMenuService.isShowingAppsWindow.value;
+        console.log("[F] scope.isShowingAppsWindow:", result);
+        return result;
+      }
 
       scope.modal = {
         active: false,
@@ -39,15 +48,22 @@ angular.module('user-menu')
       scope.zoomIn = MapService.zoomIn;
       scope.zoomOut = MapService.zoomOut;
 
+      scope.toggleAppsWindow = UserMenuService.toggleAppsWindow;
+
       /**
        * Turn off either favourites or apps when click the on or the other
        */
       var toggleDashboardOrApps = function (e) {
+        console.log("[F] toggleDashboardOrApps");
         var favs = e === true;
         var lApps = document.querySelector('#lizard-apps-container');
-        if (!lApps.classList.contains('hidden') && favs) {
-          lApps.classList.toggle('hidden');
-        } else if (!favs) {
+        if (!favs) {
+          if (UserMenuService.isShowingAppsWindow.value) {
+            UserMenuService.hideAppsWindow();
+          } else {
+            UserMenuService.showAppsWindow();
+          }
+        } else {
           scope.favourites.enabled = false;
         }
       };
@@ -62,16 +78,29 @@ angular.module('user-menu')
       script.onload = function () {
         if (typeof window.Lizard.startPlugins === 'function') {
           window.Lizard.startPlugins(); // jshint ignore:line
-          scope.showApps = (element
+          scope.hasApps = element
             .find('#lizard-apps-button')
-            .children().length > 0);
-          scope.$digest();
+            .children().length > 0;
 
-          element.find('#lizard-apps-button').click(toggleDashboardOrApps);
+          // angular.element('body').click(function (e) {
+          //   console.log("clicked BODY");
+          //   if (isShowingApps()) {
+          //     e.preventDefault();
+          //     e.stopPropagation();
+          //     // toggleDashboardOrApps(true);
+          //     var lApps = document.querySelector('#lizard-apps-container');
+          //     if (!lApps.classList.contains('hidden')) {
+          //       lApps.classList.add('hidden');
+          //     }
+          //   }
+          // });
+
+          scope.$digest();
+          // UserMenuService.showAppsWindow()
         }
       };
 
-      scope.$watch('favourites.enabled', toggleDashboardOrApps);
+      // scope.$watch('favourites.enabled', toggleDashboardOrApps);
 
       document.head.appendChild(script);
 
@@ -115,14 +144,12 @@ angular.module('user-menu')
           window.location.href;
       };
 
-
       /**
        * toggleExport - start the modal with export stuff
        */
       scope.toggleExport = function () {
         scope.modal.active = true;
       };
-
 
       /**
        * archiveMessage - archives a stored message based on id
@@ -209,6 +236,7 @@ angular.module('user-menu')
       // poll for more messages
       setInterval(getMessages, POLL_INTERVAL);
 
+      scope.$watch();
     };
 
     return {

@@ -17,13 +17,15 @@ angular.module('map')
   'UtilService',
   'State',
   '$timeout',
+  'UserMenuService',
   function (
     MapService,
     DataService,
     ClickFeedbackService,
     UtilService,
     State,
-    $timeout
+    $timeout,
+    UserMenuService
   ) {
 
     var link = function (scope, element, attrs) {
