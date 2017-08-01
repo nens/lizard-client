@@ -46,7 +46,6 @@ angular.module('user-menu')
       angular.element(':not(#lizard-apps-button)').click(function () {
         var lApps = document.querySelector('#lizard-apps-container');
         if (!lApps.classList.contains('hidden')) {
-          var lApps = document.querySelector('#lizard-apps-container');
           lApps.classList.toggle('hidden');
         }
       });
