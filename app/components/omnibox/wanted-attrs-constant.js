@@ -770,11 +770,11 @@ angular.module('omnibox')
         valueSuffix: ""
       },
       {
-        keyName: gettext("Population equivalent"),
-        attrName: "population_equivalent",
+        keyName: gettext("Sanitary load"),
+        attrName: "sanitary_load",
         ngBindValue:
-          "waterchain.population_equivalent | niceNumberOrEllipsis: 2",
-        valueSuffix: ""
+          "waterchain.sanitary_load | niceNumberOrEllipsis: 2",
+        valueSuffix: "m3/h"
       },
       {
         keyName: gettext("Water consumption"),
@@ -784,24 +784,24 @@ angular.module('omnibox')
         valueSuffix: "m3/h"
       },
       {
-        keyName: gettext("Pollution equivalent"),
-        attrName: "pollution_equivalent",
+        keyName: gettext("Population equivalent"),
+        attrName: "population_equivalent",
         ngBindValue:
-          "waterchain.pollution_equivalent | niceNumberOrEllipsis: 2",
+          "waterchain.population_equivalent | niceNumberOrEllipsis: 2",
         valueSuffix: ""
       },
       {
-        keyName: gettext("Sanitary load"),
-        attrName: "sanitary_load",
+        keyName: gettext("Connected impervious surface mixed"),
+        attrName: "connected_impervious_surface_mixed",
         ngBindValue:
-          "waterchain.sanitary_load | niceNumberOrEllipsis: 2",
-        valueSuffix: "m3/h"
+          "waterchain.connected_impervious_surface_mixed | niceNumberOrEllipsis: 2",
+        valueSuffix: "ha"
       },
       {
-        keyName: gettext("Connected impervious surface"),
-        attrName: "connected_impervious_surface",
+        keyName: gettext("Connected impervious surface rainwater"),
+        attrName: "connected_impervious_surface_rainwater",
         ngBindValue:
-          "waterchain.connected_impervious_surface | niceNumberOrEllipsis: 2",
+          "waterchain.connected_impervious_surface_rainwater | niceNumberOrEllipsis: 2",
         valueSuffix: "ha"
       },
       {
@@ -831,13 +831,6 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.downstream_pumped_drainage_area.name",
         valueSuffix: ""
-      },
-      {
-        keyName: gettext("Extraneous water"),
-        attrName: "extraneous_water",
-        ngBindValue:
-          "waterchain.extraneous_water | niceNumberOrEllipsis: 2",
-        valueSuffix: "m3/h"
       },
     ]
   };
