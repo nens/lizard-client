@@ -5,8 +5,8 @@
  * For now it always contains the export-selector directive
  */
 
-angular.module('ui-utils').directive('uiModal', [
-  function () {
+angular.module('ui-utils').directive('uiModal', ['ExportService',
+  function (ExportService) {
     var link = function (scope, el) {
       var mode = (scope.active) ? 'show' : 'hide';
       $(el).modal(mode);
@@ -20,6 +20,10 @@ angular.module('ui-utils').directive('uiModal', [
         var mode = (scope.active) ? 'show' : 'hide';
         $(el).modal(mode);
       };
+
+      scope.mayCloseModal = function () {
+        return !ExportService.isPolling.value;
+      }
 
       // ensures there is no conflict between Bootstrap set state and ng internals
       el.on('hide.bs.modal', function (e) {
