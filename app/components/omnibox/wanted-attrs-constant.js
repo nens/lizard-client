@@ -24,7 +24,7 @@ angular.module('omnibox')
         attrName: "capacity",
         ngBindValue:
           "waterchain.capacity * 3.6 | niceNumberOrEllipsis: 2",
-        valueSuffix: "m<sup>3</sup> / uur"
+        valueSuffix: "m<sup>3</sup>/h"
       },
       {
         // use tripple slashes to include comment in transifex.
@@ -692,7 +692,7 @@ angular.module('omnibox')
         attrName: "capacity",
         ngBindValue:
           "waterchain.capacity * 3.6 | niceNumberOrEllipsis: 2",
-        valueSuffix: "m<sup>3</sup> / uur"
+        valueSuffix: "m<sup>3</sup>/h"
       },
       {
         keyName: gettext("Name"),
@@ -750,17 +750,17 @@ angular.module('omnibox')
       },
       {
         keyName: gettext("Pump station"),
-        attrName: "pump_station.code",
+        attrName: "pump_station.name",
         ngBindValue:
-          "waterchain.pump_station.code",
+          "waterchain.pump_station.name",
         valueSuffix: ""
       },
       {
         keyName: gettext("Pump station capacity"),
         attrName: "pump_station.capacity",
         ngBindValue:
-          "waterchain.pump_station.capacity | niceNumberOrEllipsis: 2",
-        valueSuffix: "m3/h"
+          "waterchain.pump_station.capacity * 3.6 | niceNumberOrEllipsis: 2",
+        valueSuffix: "m<sup>3</sup>/h"
       },
       {
         keyName: gettext("Inhabitants"),
@@ -774,14 +774,14 @@ angular.module('omnibox')
         attrName: "sanitary_load",
         ngBindValue:
           "waterchain.sanitary_load | niceNumberOrEllipsis: 2",
-        valueSuffix: "m3/h"
+        valueSuffix: "m<sup>3</sup>/h"
       },
       {
         keyName: gettext("Water consumption"),
         attrName: "water_consumption",
         ngBindValue:
           "waterchain.water_consumption | niceNumberOrEllipsis: 2",
-        valueSuffix: "m3/h"
+        valueSuffix: "m<sup>3</sup>/h"
       },
       {
         keyName: gettext("Population equivalent"),
@@ -823,10 +823,10 @@ angular.module('omnibox')
         attrName: "upstream_load",
         ngBindValue:
           "waterchain.upstream_load | niceNumberOrEllipsis: 2",
-        valueSuffix: "m3/h"
+        valueSuffix: "m<sup>3</sup>/h"
       },
       {
-        keyName: gettext("Down stream area"),
+        keyName: gettext("Downstream area"),
         attrName: "downstream_pumped_drainage_area.name",
         ngBindValue:
           "waterchain.downstream_pumped_drainage_area.name",
