@@ -39,6 +39,18 @@ angular.module('user-menu')
       scope.zoomIn = MapService.zoomIn;
       scope.zoomOut = MapService.zoomOut;
 
+      angular.element('#lizard-apps-button').click(function (e) {
+        e.stopPropagation();
+      });
+
+      angular.element(':not(#lizard-apps-button)').click(function () {
+        var lApps = document.querySelector('#lizard-apps-container');
+        if (!lApps.classList.contains('hidden')) {
+          var lApps = document.querySelector('#lizard-apps-container');
+          lApps.classList.toggle('hidden');
+        }
+      });
+
       /**
        * Turn off either favourites or apps when click the on or the other
        */
@@ -62,12 +74,10 @@ angular.module('user-menu')
       script.onload = function () {
         if (typeof window.Lizard.startPlugins === 'function') {
           window.Lizard.startPlugins(); // jshint ignore:line
-          scope.showApps = (element
+          scope.showApps = element
             .find('#lizard-apps-button')
-            .children().length > 0);
+            .children().length > 0;
           scope.$digest();
-
-          element.find('#lizard-apps-button').click(toggleDashboardOrApps);
         }
       };
 

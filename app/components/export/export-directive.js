@@ -17,18 +17,16 @@ angular.module('export')
 .directive('exportSelector',
 
 ['$http', 'DataService', 'TimeseriesService', 'notie','gettextCatalog',
- 'State', 'RelativeToSurfaceLevelService', 'user',
+ 'State', 'RelativeToSurfaceLevelService', 'user', 'ExportService',
 
 function ($http, DataService, TimeseriesService, notie, gettextCatalog,
-  State, RTSLService, user) {
+  State, RTSLService, user, ExportService) {
 
   var link = function (scope) {
     // bind the assets with the selected things from the DataService
     scope.assets = DataService.assets;
     scope.isMap = State.context === 'map';
-
     scope.isAuthenticated = user.authenticated;
-    scope.isPolling = false;
 
     var POLL_INTERVAL = 1000;
 
@@ -114,7 +112,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
        */
       var pollForFile = function (taskResponseData) {
 
-        scope.isPolling = true;
+        ExportService.setIsPolling(true);
         scope.resultUrl = null;
 
         hideExportButton();
@@ -130,7 +128,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
               // Apparently, the task (=exporting timeseries) resulted in a
               // downloadable file: we need to stop polling the server now.
 
-              scope.isPolling = false;
+              ExportService.setIsPolling(false);
               clearInterval(poller);
 
               var resultUrl = response.data.result_url;
