@@ -1,8 +1,11 @@
 //layer-directive.js
 
 angular.module('data-menu')
-.directive('baselayers', ['MapService', function (MapService) {
+.directive('baselayers', ['MapService', 'gettextCatalog', function (MapService, gettextCatalog) {
   var link = function (scope) {
+    scope.translations = {
+      baselayer: 'Baselayer'
+    };
 
     scope.next = function () {
 

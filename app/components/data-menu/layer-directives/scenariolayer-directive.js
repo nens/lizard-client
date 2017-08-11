@@ -10,7 +10,8 @@ angular.module('data-menu')
   function ($http, State, LayerAdderService, MapService, gettextCatalog) {
     var link = function (scope) {
 
-      var RESULT_TYPES = {
+      scope.translations = {
+        scenarioData: gettextCatalog.getString('Export scenario data'),
         'arrival': gettextCatalog.getString('arrival times'),
         'maxwdepth': gettextCatalog.getString('max water depth'),
         'depth-first-dtri': gettextCatalog.getString('arrival times'),
@@ -53,7 +54,7 @@ angular.module('data-menu')
           State.layers.push(layer);
         }
         layer.scenario = scope.layer.uuid;
-        layer.name = RESULT_TYPES[resultType];
+        layer.name = scope.translations[resultType];
         return layer;
       };
 

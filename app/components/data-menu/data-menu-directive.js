@@ -9,10 +9,16 @@
  * Defines the data menu.
  */
 angular.module('data-menu')
-.directive('datamenu', ['DataService', 'State', 'LayerAdderService',
-  function (DataService, State, LayerAdderService) {
+.directive('datamenu', ['DataService', 'State', 'LayerAdderService', 'gettextCatalog',
+  function (DataService, State, LayerAdderService, gettextCatalog) {
 
     var link = function (scope, element, attrs) {
+      scope.translations = {
+        pointSelection: gettextCatalog.getString('Point selection'),
+        multiplePoints: gettextCatalog.getString('Select Multiple Points'),
+        lineSelection: gettextCatalog.getString('Line selection'),
+        regionSelection: gettextCatalog.getString('Region selection')
+      };
 
       scope.menu = {
         layerAdderEnabled: false,

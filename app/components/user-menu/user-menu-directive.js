@@ -25,7 +25,15 @@ angular.module('user-menu')
       gettextCatalog) {
 
     var link = function (scope, element, attrs) {
-
+      scope.translations = {
+        apps: gettextCatalog.getString('Apps'),
+        switchTo: gettextCatalog.getString('Switch to') + " ",
+        exportTimeseries: gettextCatalog.getString('Export all selected timeseries'),
+        favourites: gettextCatalog.getString('Favourites'),
+        questionAndManual: gettextCatalog.getString('Question and manual'),
+        showMessages: gettextCatalog.getString('Show messages'),
+        editProfile: gettextCatalog.getString('Edit profile')
+      };
       scope.user = user;
       scope.showApps = false;
 

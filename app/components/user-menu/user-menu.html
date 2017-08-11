@@ -33,13 +33,13 @@
         <li ng-show="showApps">
           <a id="lizard-apps-button"
              class="lizard-apps-button"
-             title="Apps"
+             title="{{ translations.apps }}"
              href="">
           </a>
         </li>
         <li>
           <a ng-click="toggleExport()"
-             title="{{ 'Export all selected timeseries' | translate }}"
+             title="{{ translations.exportTimeseries }}"
              href="">
             <i class="fa fa-space-shuttle"></i>
             <span translate>Export</span>
@@ -47,7 +47,7 @@
         </li>
         <li>
           <a ng-click="toggleDashboard()"
-             title="{{ 'Switch to ' + getContextComplement() | translate }}"
+             title="{{ translations.switchTo + getContextComplement() }}"
              target="_blank"
              accesskey="d"
              href="">
@@ -57,7 +57,7 @@
         </li>
         <li ng-if="user.authenticated"
             ng-class="{'open': favourites.enabled}">
-          <a title="{{ 'Favourites' | translate }}"
+          <a title="{{ translations.favourites }}"
              href=""
              ng-click="toggleFavourites($event)">
             <i class="fa fa-star"></i>
@@ -67,7 +67,7 @@
         <li role="separator" class="divider"></li>
 
         <li ng-if="!user.authenticated">
-          <a title="{{ 'Question and manual' | translate }}"
+          <a title="{{ translations.questionAndManual }}"
              class="clickable"
              ng-click="openAbout()">
             <i class="fa fa-question"></i>
@@ -106,7 +106,7 @@
           </a>
           <ul class="dropdown-menu">
             <li>
-              <a title="{{ 'Show Messages' | translate }}"
+              <a title="{{ translations.showMessages }}"
                  class="clickable"
                  ng-click="showMessage(inbox[0])">
                 <i class="fa fa-envelope"></i>
@@ -114,7 +114,7 @@
               </a>
             </li>
             <li>
-              <a title="{{ 'Question and manual' | translate }}"
+              <a title="{{ translations.questionAndManual }}"
                  class="clickable"
                  ng-click="openAbout()">
                 <i class="fa fa-question"></i>
@@ -123,7 +123,7 @@
             </li>
             <li>
               <a href="http://sso.lizard.net/edit_profile/"
-                 title="{{ 'Edit profile' | translate }}">
+                 title="{{ translations.editProfile }}">
                 <i class="fa fa-pencil"></i>
                 <span translate>Edit profile</span>
               </a>

@@ -66,6 +66,9 @@ angular.module('favourites')
      * @param {dict} responseHeaders - Not actually used but required
      *                                 by $resource.
      */
+    scope.translations = {
+      favouriteLink: gettextCatalog.getString('Share favourite link')
+    };
     var fetchFavouritesSuccess = function (allFavourites, responseHeaders) {
       scope.favourites.data = allFavourites;
     };

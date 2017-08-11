@@ -7,6 +7,9 @@ angular.module('timeseries')
   function (TimeseriesService, State, $timeout, gettextCatalog, notie) {
   return {
     link: function (scope) {
+      scope.translations = {
+        zoomToTimeseries: gettextCatalog.getString("Zoom to timeseries")
+      };
 
       scope.zoomToMagic = function (value_type) {
 

@@ -10,8 +10,10 @@ angular.module('omnibox')
     'ClickFeedbackService',
     'State',
     'UtilService',
+    'gettextCatalog',
     '$timeout',
-  function (SearchService, ClickFeedbackService, State, UtilService, $timeout) {
+  function (SearchService, ClickFeedbackService, State, UtilService,
+            gettextCatalog, $timeout) {
 
   var link = function (scope, element, attrs) {
 
@@ -256,15 +258,8 @@ angular.module('omnibox')
      * Placeholder attr's can not get translated like the rest of the strings
      * appearing in the DOM. Therefore, a beauti-fool hack:
      */
-    scope.setSearchBoxPlaceholder = function () {
-      if (window.location.href.indexOf("/nl/") > -1) {
-        // Apparently, we want dutch placeholder:
-        return "Zoek naar plaatsen, of datums (i.e. 23-10-2013)";
-      } else {
-        // Apparently, we want english (default) placeholder:
-        return "Search for places, or dates (i.e. 23-10-2013)";
-      }
-    };
+    scope.searchBoxPlaceholder = gettextCatalog.getString(
+      "Search for places, or dates (i.e. 23-10-2013)");
 
     /**
      * @description removes location model from box content

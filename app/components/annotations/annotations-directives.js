@@ -4,9 +4,13 @@
  * @description Annotations wrapper for viewing and making annotations.
  */
 angular.module('annotations')
-  .directive('annotations', [function () {
+  .directive('annotations', ['gettextCatalog', function (gettextCatalog) {
     var link = function (scope, element, attrs) {
       scope.annotations = [];
+      scope.translations = {
+        download: gettextCatalog.getString('Download attachment.'),
+        deleteThis: gettextCatalog.getString('Delete this annotation from the database.'),
+      }
     };
 
     return {
