@@ -53,7 +53,6 @@ angular.module("lizard-nxt", [
   'ui.bootstrap',
   'lizard-http-throttler', // Add this $http interceptor befor the loading-bar.
   'angular-loading-bar',
-  'pascalprecht.translate',
   'lizard-bootstrap',
   'ui-utils',
   'export',
