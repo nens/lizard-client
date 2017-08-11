@@ -85,8 +85,8 @@
             <tr ng-repeat="event in content.data">
               <td rel="tooltip"
                   data-placement="left"
-                  title="{{ 'Start' | translate }}: {{ event.properties.timestamp_start | date:'dd/MM/yyyy' }}
-                         {{ 'End' | translate }}: {{ event.properties.timestamp_end | date:'dd/MM/yyyy' }}">
+                  title="{{ translations.start }}: {{ event.properties.timestamp_start | date:'dd/MM/yyyy' }}
+                         {{ translations.end }}: {{ event.properties.timestamp_end | date:'dd/MM/yyyy' }}">
                   {{ event.properties.timestamp_start | date:'dd/MM/yyyy' }}
               </td>
               <td rel="tooltip"

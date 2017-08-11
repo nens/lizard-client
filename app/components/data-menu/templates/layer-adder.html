@@ -2,15 +2,13 @@
   <a class="go-back"
      href=""
      ng-click="menu.layerAdderEnabled = !menu.layerAdderEnabled">
-    <i class="fa fa-angle-left"></i>&nbsp;&nbsp;Go back
+    <i class="fa fa-angle-left"></i>&nbsp;&nbsp;<span translate>Go back</span>
   </a>
   <input autofocus
          id="layer-adder-edge-fix"
          ng-model="searchLayers"
          ng-init="displayName = (getTsLongName(ts.uuid) | truncate: 50)"
-         translate
-         translate-attr-placeholder="Filter layers..."
-         translate-value-browser="{{ filterlayers }}"
+         placeholder="{{ filterlayers }}"
          class="material-shadow" />
   <table class="table table-hover">
     <tbody>

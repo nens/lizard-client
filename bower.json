@@ -29,7 +29,6 @@
     "angular-mocks": "~1.5.0",
     "angular-resource": "~1.5.0",
     "angular-sanitize": "1.6.2",
-    "angular-translate": "2.5.2",
     "bootstrap": "~3.1.1",
     "bootstrap-datepicker": "~1.6.4",
     "classList.js": "https://github.com/nens/classList.js.git#master",

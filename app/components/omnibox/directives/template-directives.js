@@ -80,11 +80,15 @@ angular.module('omnibox')
 
 
 angular.module('omnibox')
-  .directive('geometryCards', ['MapService', 'ClickFeedbackService', 'CSVService', 'user',
-    function (MapService, ClickFeedbackService, CSVService, user) {
+  .directive('geometryCards', ['MapService', 'ClickFeedbackService', 'CSVService', 'user', 'gettextCatalog',
+    function (MapService, ClickFeedbackService, CSVService, user, gettextCatalog) {
   return {
     link: function (scope, element) {
-
+      scope.translations = {
+        exportInfo: gettextCatalog.getString('Export info card data'),
+        start: gettextCatalog.getString('Start'),
+        end: gettextCatalog.getString('End')
+      };
       scope.user = user;
 
       scope.showNoData = false;
@@ -263,11 +267,14 @@ angular.module('omnibox')
 }]);
 
 angular.module('omnibox')
-       .directive('rain', ['State', 'RasterService', 'UtilService',
-                           function (State, RasterService, UtilService) {
+       .directive('rain', ['State', 'RasterService', 'UtilService', 'gettextCatalog',
+                           function (State, RasterService, UtilService, gettextCatalog) {
   return {
     link: function (scope) {
-
+      scope.translations = {
+        rainRecurrence: gettextCatalog.getString('Rain recurrence statistics'),
+        export: gettextCatalog.getString('Export data')
+      };
       scope.rrc = {
         active: false
       };
@@ -344,9 +351,13 @@ angular.module('omnibox')
 }]);
 
 angular.module('omnibox')
-  .directive('defaultpoint', ['UtilService', function (UtilService) {
+  .directive('defaultpoint', ['UtilService', 'gettextCatalog', function (UtilService, gettextCatalog) {
   return {
     link: function (scope) {
+      scope.translations = {
+        start: gettextCatalog.getString('Start'),
+        end: gettextCatalog.getString('End'),
+      };
       scope.isUrl = UtilService.isUrl;
     },
     restrict: 'E',

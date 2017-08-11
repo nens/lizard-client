@@ -2,12 +2,13 @@
 
 angular.module('data-menu')
 .directive('rasterlayer', ['MapService', 'DataService', 'LayerAdderService',
-'rasterMapLayer', 'rasterDataLayer', 'UtilService',
+'rasterMapLayer', 'rasterDataLayer', 'UtilService', 'gettextCatalog',
 
   function (MapService, DataService, LayerAdderService,
-  rasterMapLayer, rasterDataLayer, UtilService) {
+  rasterMapLayer, rasterDataLayer, UtilService, gettextCatalog) {
 
   var link = function (scope) {
+    scope.translations = {noLayerAdd: gettextCatalog.getString('Layer could not be added')};
 
     scope.remove = LayerAdderService.remove;
 

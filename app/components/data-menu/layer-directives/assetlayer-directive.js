@@ -1,9 +1,10 @@
 //layer-directive.js
 
 angular.module('data-menu')
-.directive('assetlayer', ['MapService', 'LayerAdderService', 'assetMapLayer',
-  function (MapService, LayerAdderService, assetMapLayer) {
+.directive('assetlayer', ['MapService', 'LayerAdderService', 'assetMapLayer', 'gettextCatalog',
+  function (MapService, LayerAdderService, assetMapLayer, gettextCatalog) {
     var link = function (scope) {
+      scope.translations = {noLayerAdd: gettextCatalog.getString('Layer could not be added')};
 
       scope.remove = LayerAdderService.remove;
 
