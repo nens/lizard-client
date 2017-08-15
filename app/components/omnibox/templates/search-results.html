@@ -44,7 +44,7 @@
         ng-repeat="result in omnibox.searchResults.api"
         tabindex="{{ $index + omnibox.searchResults.spatial.length + 1 }}"
         ng-focus="onFocus(result)"
-        ng-keydown="selectItem($event, result, 'search')"
+        ng-keydown="selectItem($event, result)"
         class="cluster location">
         <a ng-click="zoomToSearchResult(result)"
           href="">
