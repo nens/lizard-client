@@ -19,6 +19,7 @@ angular.module("omnibox")
       };
 
       scope.onFocus = function(item, $event) {
+        console.log("onFocus!");
         item.selected = "selected";
         if (item.hasOwnProperty('formatted_address')) {
           scope.zoomToSpatialResultWithoutClearingSeach(item);
@@ -29,6 +30,7 @@ angular.module("omnibox")
       };
 
       scope.selectItem = function($event, result) {
+        console.log("selectdItem");
         var e = $event;
         switch (e.keyCode) {
           case KeyCodes.RETURNKEY:
