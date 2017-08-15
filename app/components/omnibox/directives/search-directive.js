@@ -98,7 +98,6 @@ angular.module('omnibox')
      * @param {object} one search result.
      */
     scope.zoomToSearchResult = function (result) {
-      console.log("[F] zoomToSearchResult; arg result = " + JSON.stringify(result));
       State = SearchService.zoomToSearchResult(result, State);
       scope.cleanInputAndResults();
     };
@@ -108,7 +107,6 @@ angular.module('omnibox')
      * @param {object} one search result.
      */
     scope.zoomToSearchResultWithoutClearingSearch = function (result) {
-      console.log("[F] zoomToSearchResultWithoutClearingSearch");
       State = SearchService.zoomToSearchResultWithoutSelecting(result, State);
     };
 
@@ -117,7 +115,6 @@ angular.module('omnibox')
      * @param {object} one search result.
      */
     scope.zoomToSpatialResult = function (result) {
-      console.log("[F] zoomToSpatialResult");
       State = SearchService.zoomToGoogleGeocoderResult(result, State);
       scope.cleanInputAndResults();
     };
@@ -127,7 +124,6 @@ angular.module('omnibox')
      * @param {object} one search result.
      */
     scope.zoomToSpatialResultWithoutClearingSeach = function (result) {
-      console.log("[F] zoomToSpatialResultWithoutClearingSearch");
       State = SearchService.zoomToGoogleGeocoderResult(result, State);
     };
 
@@ -138,18 +134,12 @@ angular.module('omnibox')
      *                              duration.
      */
     scope.zoomToTemporalResult = function(m) {
-      console.log("[F] zoomToTemporalResult");
       scope.omnibox.searchResults = {};
       scope.query = "";
       State.temporal.start = m.valueOf();
       State.temporal.end = m.valueOf() + m.nxtInterval.valueOf();
       UtilService.announceMovedTimeline(State);
     };
-
-
-    var prevKey; // stores the previously pressed key.
-    var prevKeyTimeout; // resets the key after TIMEOUT.
-    var TIMEOUT = 300; // 300 ms
 
     /**
      * @description event handler for key presses.
@@ -158,9 +148,6 @@ angular.module('omnibox')
      * 13 refers to the RETURN key.
      */
     scope.searchKeyPress = function ($event) {
-      console.log("[F] searchKeyPress");
-      clearTimeout(prevKeyTimeout);
-
 
       if ($event.target.id === "searchboxinput") {
         // Intercept keyPresses *within* searchbox,do xor prevent animation
@@ -176,7 +163,6 @@ angular.module('omnibox')
         }
 
         else if ($event.which === KEYPRESS.ENTER) {
-          console.log('KEYPRESS.ENTER')
           var results = scope.omnibox.searchResults;
           if (results.temporal || results.spatial || results.api) {
             if (results.temporal) {
