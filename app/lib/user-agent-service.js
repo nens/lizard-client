@@ -2,6 +2,8 @@ angular.module('lizard-nxt')
 .service("UserAgentService", function () {
 
   var DESKTOP_URL_TO_LEAVE = 'sat4rice.lizard.net';
+  // After 01-09-2017, when having a working production environment, make sure
+  // to use that URL instead of the one below:
   var MOBILE_URL_TO_VISIT  = 'https://nxt.staging.lizard.net/clients/g4aw/';
 
   if (window.location.href.indexOf(DESKTOP_URL_TO_LEAVE) > -1) {
