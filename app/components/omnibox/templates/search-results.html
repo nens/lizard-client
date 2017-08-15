@@ -25,6 +25,7 @@
         ng-repeat="result in omnibox.searchResults.spatial"
         tabindex="{{ $index + 1 }}"
         ng-focus="onFocus(result)"
+        ng-keydown="selectItem($event, result, 'spatial')"
         class="cluster location">
         <i class="fa fa-location-arrow">&nbsp;</i>
         <a ng-click="zoomToSpatialResult(result)"
@@ -43,7 +44,7 @@
         ng-repeat="result in omnibox.searchResults.api"
         tabindex="{{ $index + omnibox.searchResults.spatial.length + 1 }}"
         ng-focus="onFocus(result)"
-        ng-keydown="selectItem($event, result)"
+        ng-keydown="selectItem($event, result, 'search')"
         class="cluster location">
         <a ng-click="zoomToSearchResult(result)"
           href="">
