@@ -17,10 +17,10 @@ angular.module('export')
 .directive('exportSelector',
 
 ['$http', 'DataService', 'TimeseriesService', 'notie','gettextCatalog',
- 'State', 'RelativeToSurfaceLevelService', 'user', 'ExportService',
+ 'State', 'RelativeToSurfaceLevelService', 'user', 'ExportService', '$timeout',
 
 function ($http, DataService, TimeseriesService, notie, gettextCatalog,
-  State, RTSLService, user, ExportService) {
+  State, RTSLService, user, ExportService, $timeout) {
 
   var link = function (scope) {
     // bind the assets with the selected things from the DataService
@@ -45,6 +45,25 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
 
     // Contains the selected timeseries to export
     scope.toExport = {};
+
+    var countExportableTimeseries = function () {
+      var count = 0;
+      angular.forEach(scope.assets, function (asset) {
+        count += asset.timeseries ? asset.timeseries.length : 0;
+        if (asset.filters) {
+          angular.forEach(asset.filters, function (filter) {
+            count += filter.timeseries ? filter.timeseries.length : 0;
+          });
+        }
+      });
+      return count;
+    };
+
+    $timeout(function () {
+      if (countExportableTimeseries() === 1) {
+        $('.timeseries-checkbox')[0].checked = true;
+      }
+    });
 
     /**
      * startExport - Finds all the timeseries and gets the uuids
