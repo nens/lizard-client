@@ -78,14 +78,32 @@ angular.module('omnibox')
     scope.mayCleanInputAndResults = function () {
       return scope.query || (
         scope.omnibox &&
-        scope.omnibox.searchResults &&
-        scope.omnibox.searchResults.spatial &&
-        scope.omnibox.searchResults.spatial.length > 0
+        scope.omnibox.searchResults && (
+          (
+            scope.omnibox.searchResults.spatial &&
+            scope.omnibox.searchResults.spatial.length
+          ) || (
+            scope.omnibox.searchResults.api &&
+            scope.omnibox.searchResults.api.length
+          ) || (
+            scope.omnibox.searchResults.temporal &&
+            scope.omnibox.searchResults.temporal.length
+          )
+        )
       );
     }
 
     /**
-     * @description zooms to search resulit without clearing search or selecting the item.
+     * @description zooms to search resulit
+     * @param {object} one search result.
+     */
+    scope.zoomToSearchResult = function (result) {
+      State = SearchService.zoomToSearchResult(result, State);
+      scope.cleanInputAndResults();
+    };
+
+        /**
+     * @description zooms to search result without clearing search or selecting the item.
      * @param {object} one search result.
      */
     scope.zoomToSearchResultWithoutClearingSearch = function (result) {
@@ -93,23 +111,12 @@ angular.module('omnibox')
     };
 
     /**
-     * @description zooms to search resulit
-     * @param {object} one search result.
-     */
-    scope.zoomToSearchResult = function (result) {
-      scope.omnibox.searchResults = {};
-      scope.query = "";
-      State = SearchService.zoomToSearchResult(result, State);
-    };
-
-    /**
      * @description zooms to geocoder search result
      * @param {object} one search result.
      */
     scope.zoomToSpatialResult = function (result) {
-      scope.omnibox.searchResults = {};
-      scope.query = "";
       State = SearchService.zoomToGoogleGeocoderResult(result, State);
+      scope.cleanInputAndResults();
     };
 
     /**
@@ -134,11 +141,6 @@ angular.module('omnibox')
       UtilService.announceMovedTimeline(State);
     };
 
-
-    var prevKey; // stores the previously pressed key.
-    var prevKeyTimeout; // resets the key after TIMEOUT.
-    var TIMEOUT = 300; // 300 ms
-
     /**
      * @description event handler for key presses.
      * checks if enter is pressed, does search.
@@ -146,8 +148,6 @@ angular.module('omnibox')
      * 13 refers to the RETURN key.
      */
     scope.searchKeyPress = function ($event) {
-      clearTimeout(prevKeyTimeout);
-
 
       if ($event.target.id === "searchboxinput") {
         // Intercept keyPresses *within* searchbox,do xor prevent animation
@@ -166,20 +166,13 @@ angular.module('omnibox')
           var results = scope.omnibox.searchResults;
           if (results.temporal || results.spatial || results.api) {
             if (results.temporal) {
-              scope.zoomToTemporalResult(
-                scope.omnibox.searchResults.temporal
-              );
+              scope.zoomToTemporalResult(results.temporal);
+            } else if (results.spatial) {
+              scope.zoomToSpatialResult(results.spatial[0]);
+            } else if (results.api) {
+              scope.zoomToSearchResult(results.api[0]);
             }
-            else if (results.api) {
-              scope.zoomToSearchResult(
-                scope.omnibox.searchResults.api[0]
-              );
-            }
-            else if (results.spatial) {
-              scope.zoomToSpatialResult(
-                scope.omnibox.searchResults.spatial[0]
-              );
-            }
+
             scope.cleanInputAndResults();
           }
         }

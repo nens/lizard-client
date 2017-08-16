@@ -28,38 +28,56 @@ angular.module("omnibox")
         }
       };
 
-      scope.selectItem = function($event, result) {
+      scope.selectItem = function($event, result, spatialOrSearchMode) {
         var e = $event;
         switch (e.keyCode) {
           case KeyCodes.RETURNKEY:
-            scope.zoomToSearchResult(result);
-            break;
+            if (spatialOrSearchMode === 'spatial') {
+              scope.zoomToSpatialResult(result);
+            } else {
+              scope.zoomToSearchResult(result);
+            }
         }
       };
 
       scope.onKeydown = function($event) {
         var e = $event;
         var $target = $(e.target);
-        var nextTab;
+        var tabIncrement;
         switch (e.keyCode) {
-            case KeyCodes.ESC:
-                $target.blur();
-                scope.cleanInputAndResults();
-                break;
-            case KeyCodes.UPARROW:
-                nextTab = - 1;
-                break;
-            case KeyCodes.DOWNARROW:
-                nextTab = 1;
-                break;
+          case KeyCodes.ESC:
+            $target.blur();
+            scope.cleanInputAndResults();
+            return;
+          case KeyCodes.UPARROW:
+            tabIncrement = -1;
+            break;
+          case KeyCodes.DOWNARROW:
+            tabIncrement = 1;
+            break
+          default:
+            return
         }
-        if (nextTab !== undefined) {
-            // Do this outside the current $digest cycle:
-            // focus the next element by tabindex
-           $timeout(function() {
-             $('[tabindex=' + (parseInt($target.attr('tabindex')) + nextTab) + ']').focus();
-           });
+
+        var resultCount = 0;
+        if (scope.omnibox.searchResults.spatial) {
+          resultCount += scope.omnibox.searchResults.spatial.length;
         }
+        if (scope.omnibox.searchResults.api) {
+          resultCount += scope.omnibox.searchResults.api.length;
+        }
+        if (scope.omnibox.searchResults.temporal) {
+          resultCount += scope.omnibox.searchResults.temporal.length
+        }
+
+        var newTabIndex = parseInt($target.attr('tabindex')) + tabIncrement;
+        if (newTabIndex > resultCount) {
+          newTabIndex = 1
+        } else if (newTabIndex < 1) {
+          newTabIndex = resultCount
+        }
+
+        $timeout(function() { $('[tabindex=' + newTabIndex + ']').focus() });
       };
 
       scope.showAnnotations = function () {
