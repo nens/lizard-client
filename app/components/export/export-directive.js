@@ -30,12 +30,12 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
 
     var POLL_INTERVAL = 1000;
 
-    var EXPORT_START_MESSAGE =
-      "Export timeseries started, check your inbox"; // user is authenticated
-    var EXPORT_SUCCESS_MESSAGE =
-      "Export timeseries finished succesfully"; // user is NOT authenticated
-    var EXPORT_ERROR_MESSAGE =
-      "Lizard encountered a problem exporting your timeseries";
+    // var EXPORT_START_MESSAGE =
+    //   "Export timeseries started, check your inbox"; // user is authenticated
+    // var EXPORT_SUCCESS_MESSAGE =
+    //   "Export timeseries finished succesfully"; // user is NOT authenticated
+    // var EXPORT_ERROR_MESSAGE =
+    //   "Lizard encountered a problem exporting your timeseries";
 
     // Start and end of data
     var timeState = {
@@ -145,7 +145,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
                 enableDownloadButton();
 
                 notie.alert(4,
-                  gettextCatalog.getString(EXPORT_SUCCESS_MESSAGE), 2);
+                  gettextCatalog.getString("Export timeseries finished succesfully."), 2);
 
               } else {
 
@@ -160,7 +160,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
                 scope.resultUrl = null;
                 motherModal.modal('hide');
                 notie.alert(3,
-                  gettextCatalog.getString(EXPORT_ERROR_MESSAGE), 3);
+                  gettextCatalog.getString("Lizard encountered a problem exporting your timeseries."), 3);
               }
             }
           });
@@ -195,9 +195,9 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
       var exportCbAuthenticatedUser = function (response) {
         motherModal.modal('hide');
         if (response && response.status === 200) {
-          notie.alert(4, gettextCatalog.getString(EXPORT_START_MESSAGE), 2);
+          notie.alert(4, gettextCatalog.getString("Export timeseries started, check your inbox."), 2);
         } else {
-          notie.alert(3, gettextCatalog.getString(EXPORT_ERROR_MESSAGE), 3);
+          notie.alert(3, gettextCatalog.getString("Lizard encountered a problem exporting your timeseries."), 3);
         }
       };
 
@@ -215,7 +215,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
           pollForFile(response.data);
         } else {
           motherModal.modal('hide');
-          notie.alert(3, gettextCatalog.getString(EXPORT_ERROR_MESSAGE), 3);
+          notie.alert(3, gettextCatalog.getString("Lizard encountered a problem exporting your timeseries."), 3);
         }
       };
 
