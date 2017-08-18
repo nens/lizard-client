@@ -570,9 +570,8 @@ module.exports = function (grunt) {
     ' for credentials.',
     function () {
 
-    var username = process.env.TRANSIFEX_USERNAME;
-
-    var password = process.env.TRANSIFEX_PASSWORD;
+    var username = grunt.option('txusername') || process.env.TRANSIFEX_USERNAME;
+    var password = grunt.option('txpassword') || process.env.TRANSIFEX_PASSWORD;
 
     if (!username || !password) {
       grunt.log.error('Define environment variables TRANSIFEX_USERNAME or TRANSIFEX_PASSWORD to skip this prompt');
@@ -600,9 +599,10 @@ module.exports = function (grunt) {
         done();
       });
     } else {
+      process.env.TRANSIFEX_USERNAME = username;
+      process.env.TRANSIFEX_PASSWORD = password;
       grunt.log.oklns('Got transifex credentials for user:', username);
     }
-
   });
 
   grunt.registerTask(

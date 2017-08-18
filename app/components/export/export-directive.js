@@ -9,7 +9,7 @@
 // 2) When a user is not logged in: the a-sync task started in the backend can
 //    not have the user notified because the user doen't have an inbox
 //    available. The strategy for solving this problem is to have the JS poll
-//    the server until the file is actually finished (WIP...).
+//    the server until the file is actually finished.
 
 var ASYNC_FORMAT = 'xlsx';
 
