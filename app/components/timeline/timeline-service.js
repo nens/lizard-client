@@ -87,10 +87,11 @@ angular.module('lizard-nxt')
      */
     format: {
       value: NxtD3
-        .prototype._localeFormatter.nl_NL.timeFormat("%a %e %b %Y %H:%M")
+        .prototype._getLocaleFormatter().timeFormat("%a %e %b %Y %H:%M")
     },
     format_aggwindow: {
-      value: NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%e %b %-H:%M")
+      value: NxtD3
+        .prototype._getLocaleFormatter().timeFormat("%e %b %-H:%M")
     },
 
     /**

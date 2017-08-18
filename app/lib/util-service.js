@@ -62,15 +62,13 @@ angular.module('lizard-nxt')
       timestamp += coefficient / 2;
     }
     if (coefficient === 2635200000) { // One month
-      format = NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%m/01/%Y");
+      format = NxtD3.prototype._getLocaleFormatter().timeFormat("%m/01/%Y");
       return new Date(format(new Date(timestamp))).getTime();
     } else if (coefficient === 86400000) { // One day
-      format = NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%m/%d/%Y");
+      format = NxtD3.prototype._getLocaleFormatter().timeFormat("%m/%d/%Y");
       return new Date(format(new Date(timestamp))).getTime();
     }
-    var roundedTimestamp = parseInt(timestamp / coefficient, 10) * coefficient;
-
-    return roundedTimestamp;
+    return parseInt(timestamp / coefficient, 10) * coefficient;
   };
 
   // List of graph colors used to color timeseries
