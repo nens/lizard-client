@@ -54,6 +54,17 @@ angular.module('lizard-nxt')
     /**
      * @attribute
      * @memberOf angular.module('lizard-nxt')
+     * @description The locale we are currently using. i.e. dutch if the URL \
+     *              explicitly says so, english otherwise.
+     */
+
+    _locale: window.location.href.indexOf('/nl/') > -1
+      ? 'nl_NL'
+      : 'en_US',
+
+    /**
+     * @attribute
+     * @memberOf angular.module('lizard-nxt')
   .NxtD3
      * @description        Locales. Used in the axes. Currently only Dutch
      *                     is supported (and d3's default english/US en_US).
@@ -72,7 +83,25 @@ angular.module('lizard-nxt')
         "shortDays": ["zo", "ma", "di", "wo", "do", "vr", "za"],
         "months": ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"],
         "shortMonths": ["jan", "feb", "mar", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
+      }),
+      'en_US': d3.locale({
+        "decimal": ".",
+        "thousands": ",",
+        "grouping": [3],
+        "currency": ["$", ""],
+        "dateTime": "%a %b %e %X %Y",
+        "date": "%m-%d-%Y",
+        "time": "%H:%M:%S",
+        "periods": ["AM", "PM"],
+        "days": ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"],
+        "shortDays": ["sun", "mon", "tue", "wed", "thu", "fri", "sat"],
+        "months": ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"],
+        "shortMonths": ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
       })
+    },
+
+    _getLocaleFormatter: function () {
+      return this._localeFormatter[this._locale];
     },
 
 
@@ -310,6 +339,8 @@ angular.module('lizard-nxt')
       return scale;
     },
 
+
+
     /**
      * @function
      * @memberOf angular.module('lizard-nxt')
@@ -323,18 +354,16 @@ angular.module('lizard-nxt')
      * @return {object} d3 axis
      */
     _makeAxis: function (scale, options, dimensions) {
+      var localeFormatter = this._getLocaleFormatter();
       // Make an axis for d3 based on a scale
       var decimalCount,
           axis = d3.svg.axis()
-          .scale(scale)
-          .orient(options.orientation);
-      if (options.ticks) {
-        axis.ticks(options.ticks);
-      } else {
-        axis.ticks(5);
-      }
+            .scale(scale)
+            .orient(options.orientation);
+      axis.ticks(options.ticks || 5);
+
       if (scale.domain()[0] instanceof Date) {
-        var tickFormat = this._localeFormatter.nl_NL.timeFormat.multi([
+        var tickFormat = localeFormatter.timeFormat.multi([
           ["%H:%M", function (d) { return d.getMinutes(); }],
           ["%H:%M", function (d) { return d.getHours(); }],
           ["%a %d", function (d) { return d.getDay() && d.getDate() !== 1; }],
@@ -358,7 +387,7 @@ angular.module('lizard-nxt')
             });
           } else {
             axis.tickFormat(
-              this._localeFormatter.nl_NL.numberFormat()
+              localeFormatter.numberFormat()
             );
           }
         }
