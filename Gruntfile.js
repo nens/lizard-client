@@ -35,7 +35,13 @@ module.exports = function (grunt) {
     // Templates that need to be converted reside in components and core
     templateFileDirs: 'components/**/{,*/}*.html',
     // Files reside in components, lib and in several subdirectories.
-    jsFileDirs: '{,components, lib}/{,*/}*.js'
+    ///////////////////////////////////////////////////////////////////////////
+    // NB! Changing the frankenstein expression below in an incorrect manner and
+    // subsequently running the command `$ npm run transifex` will make the rest
+    // of your day living hell: Grunt will assume there are no translatable
+    // strings in your JS and will consider all translated strings on Transifex
+    // redundant: all those translated strings will be deleted.
+    jsFileDirs: '{,components, lib}/**/{,*/}*.js'
   };
 
   // Project configuration.
@@ -160,13 +166,11 @@ module.exports = function (grunt) {
 
     // Config for angular-gettext
     nggettext_extract: {
-      pot: {
-        options: {
-          startDelim: '<%',
-          endDelim: '%>'
-        },
+      all: {
         files: {
-          '.tmp/po/template.pot': ['<%= yeoman.app %>/<%= yeoman.jsFileDirs %>', '<%= yeoman.app %>/<%= yeoman.templateFileDirs %>']
+          '.tmp/po/template.pot': [
+            '<%= yeoman.app %>/<%= yeoman.jsFileDirs %>',
+            '<%= yeoman.app %>/<%= yeoman.templateFileDirs %>']
         }
       },
     },
@@ -236,7 +240,6 @@ module.exports = function (grunt) {
         }]
       }
     },
-
 
     // Automatically inject Bower components into the app
     wiredep: {
@@ -635,11 +638,10 @@ module.exports = function (grunt) {
     function () {
       var request = require('request');
       var chalk = require('chalk');
-
       var done = this.async();
       var fs = require('fs');
 
-      grunt.log.verbose.ok('Getting available languages');
+      grunt.log.ok('Getting available languages');
 
       var response = '';
 
@@ -666,7 +668,7 @@ module.exports = function (grunt) {
 
           writeStream.on('finish', function () {
             if (completed_request === languages.length) {
-              grunt.log.verbose.ok('Received all languages');
+              grunt.log.ok('Received all languages');
               done();
             }
           });
