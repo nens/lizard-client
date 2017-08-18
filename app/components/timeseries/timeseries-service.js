@@ -11,7 +11,9 @@ angular.module('timeseries')
   'DataService',
   'TimeseriesUtilService',
   'RelativeToSurfaceLevelService',
-  function ($q, State, $http, notie, UtilService, DataService, TsUService, RTSLService) {
+  'gettextCatalog',
+  function ($q, State, $http, notie, UtilService, DataService, TsUService,
+    RTSLService, gettextCatalog) {
     var GRAPH_WIDTH = 320; // Width of drawing area of box graphs.
 
     // Contains timeseries metadata and data as comes from api. It mirrors
@@ -89,7 +91,6 @@ angular.module('timeseries')
         if (service.onTimeseriesChange) {
           service.onTimeseriesChange();
         }
-        // accomadate chaining;
         return ts;
       });
       return promise;
@@ -208,7 +209,12 @@ angular.module('timeseries')
         return $q.reject(err);
       }
       else if (err.status >= 500 && err.status < 600) {
-        notie.alert(3, 'Lizard encountered a problem retrieving your timeseries.', 3);
+        notie.alert(
+          3,
+          gettextCatalog.getString(
+            'Lizard encountered a problem retrieving your timeseries.'),
+          3
+        );
         // Cancel normal operations
         return $q.reject(err);
       }
@@ -415,9 +421,7 @@ angular.module('timeseries')
       formatTimeseriesForGraph: formatTimeseriesForGraph,
       addTimeseriesProperties: addTimeseriesProperties
     };
-
   }
-
 ]);
 
 
