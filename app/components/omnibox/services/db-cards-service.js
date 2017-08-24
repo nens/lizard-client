@@ -5,6 +5,23 @@ angular.module('omnibox')
   'TimeseriesService',
   function (State, DataService, TimeseriesService) {
 
+  colorPickersSettings = {}
+
+  var openColorPicker = function (index) {
+    closeAllColorPickers();
+    colorPickersSettings[index] = true;
+  }
+
+  var closeColorPicker = function (index) {
+    colorPickersSettings[index] = false;
+  }
+
+  var closeAllColorPickers = function () {
+    for (var idx in colorPickersSettings) {
+      colorPickersSettings[idx] = false;
+    }
+  }
+
   /**
    * Loops over all the items that can be plotted and return the count and the
    * highest order.
@@ -122,7 +139,13 @@ angular.module('omnibox')
 
   return {
     getActiveCountAndOrder: getActiveCountAndOrder,
-    removeItemFromPlot: removeItemFromPlot
+    removeItemFromPlot: removeItemFromPlot,
+    // colorPickerEnabled: colorPickerEnabled,
+    // toggleColorPicker: toggleColorPicker
+    colorPickersSettings: colorPickersSettings,
+    openColorPicker: openColorPicker,
+    closeColorPicker: closeColorPicker,
+    closeAllColorPickers: closeAllColorPickers
   };
 
 }]);

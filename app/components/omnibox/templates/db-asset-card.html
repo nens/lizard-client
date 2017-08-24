@@ -1,12 +1,42 @@
 <div>
-  <div class="card active">
+  <div class="card active db-card">
+
+    <!-- NEW -->
 
     <timeseries asset="asset" time-state="timeState"></timeseries>
-
     <cardheader asset="asset"></cardheader>
 
+    <!--
 
-    <!-- crosssections are not draggable and a specific visualization. -->
+    <div ng-if="!noTimeseries && !assetIsNested(asset)" class="db-card-inner">
+      <div class="db-ts-collection">
+        <div class="db-card-single-ts"
+             ng-click="toggleTimeseries(ts)"
+             ng-repeat="ts in selected.timeseries track by $index"
+             ng-class="{'color-picker-is-open': colorPickersSettings[$index], 'active': ts.active}">
+
+          <div class="db-card-color-picker-btn"
+               ng-style="{'background-color': ts.color}"
+               ng-click="toggleColorPicker($index); $event.stopPropagation()" />
+
+          <div class="db-card-single-ts-name">
+            {{getTsShortName(ts.uuid)}}
+          </div>
+
+          <color-picker index="{{$index}}" />
+        </div>
+      </div>
+    </div>
+
+    <div ng-if="noTimeseries && !assetIsNested(asset)" class="db-card-inner">
+      <div class="db-ts-collection">
+        <em translate>No timeseries available for this asset</em>
+      </div>
+    </div>
+
+    -->
+
+    <!--
     <div
       ng-if="asset.entity_name === 'leveecrosssection'"
       ng-click="toggleCrosssection(asset)"
@@ -94,7 +124,6 @@
         </a>
       </div>
 
-      <!--
       <div class="card-content-list clickable lessmore" ng-show="showExtender">
         <a style='cursor:pointer;'
            translate
@@ -102,7 +131,6 @@
           {{ extended ? '▴' : '▸' }}&nbsp;&nbsp;{{ extended ? 'Less' : 'More' }} timeseries
         </a>
       </div>
-      -->
 
     </div>
 
@@ -111,9 +139,10 @@
       geom="asset"
       header="false">
     </db-geometry-cards>
+    -->
 
   </div>
 
-  <db-nested-asset asset="asset" time-state="timeState"></db-nested-asset>
+  <!-- <db-nested-asset asset="asset" time-state="timeState"></db-nested-asset> -->
 
 </div>

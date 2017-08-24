@@ -10,6 +10,31 @@ angular.module('omnibox')
 
       scope.selected = State.selected;
       scope.relativeTimeseries = RTSLService.relativeToSurfaceLevel;
+      scope.assetIsNested = AssetService.assetIsNested;
+
+      // scope.isColorPickerEnabled = function (index) {
+      //   // return index === DBCardsService.colorPickerEnabled.index
+      //   //   && DBCardsService.colorPickerEnabled.value;
+      //   return DBCardsService.colorPickerEnabled[index];
+      // };
+
+      scope.colorPickersSettings = DBCardsService.colorPickersSettings;
+      scope.openColorPicker = DBCardsService.openColorPicker
+      scope.closeColorPicker = DBCardsService.closeColorPicker;
+
+      scope.toggleColorPicker = function (index) {
+        if (scope.colorPickersSettings[index]) {
+          scope.closeColorPicker(index);
+        } else {
+          scope.openColorPicker(index);
+        }
+      }
+
+      scope.assetIsNested = function (asset) {
+        var assetName = asset.entity_name + "$" + asset.id;
+        var allNestedAssetNames = AssetService.getAllNestedAssetNames();
+        return allNestedAssetNames.indexOf(assetName) > -1;
+      };
 
       scope.toggleRelativeTimeseries = function () {
         RTSLService.toggle();
@@ -25,6 +50,12 @@ angular.module('omnibox')
       scope.getTsLongName = function (uuid) {
         var metaData = scope.getTsMetaData(uuid);
         return metaData.location + ',' + metaData.parameter;
+      };
+
+      scope.getTsShortName = function (uuid) {
+        var metaData = scope.getTsMetaData(uuid);
+        var splitted = metaData.parameter.split(",");
+        return splitted.join(", ");
       };
 
       scope.assetHasSurfaceLevel = function () {
@@ -78,17 +109,12 @@ angular.module('omnibox')
             ? plots.order + 1
             : 0;
 
-        }
-
-        else {
-
+        } else {
           DBCardsService.removeItemFromPlot(timeseries);
-
         }
 
         timeseries.active = !timeseries.active;
         TimeseriesService.syncTime();
-
       };
 
       scope.noTimeseries = scope.asset.timeseries.length === 0;

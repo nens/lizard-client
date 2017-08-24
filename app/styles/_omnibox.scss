@@ -832,3 +832,33 @@ input[type=file] {
   color: #e74c3c;
   cursor: pointer;
 }
+
+/* DASHBOARD OMNIBOX REVAMP -- 22-08-2017 *************************************
+
+- darkest-gray    #7A7A7A (asset-header)
+- medium-gray     #DADADA (single ts 'button'/item)
+- lightest-gray   #F2F2F2 (background)
+
+*/
+
+.card-header {
+  background-color: #7A7A7A;
+  height: 60px;
+}
+
+.iconcircle {
+  position: relative;
+  top: -5px;
+}
+
+.asset-icon {
+  position: relative;
+  top: 30px;
+}
+
+.asset-entity-name {
+  position: relative;
+  left: -30px;
+  color: white;
+}
+

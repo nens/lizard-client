@@ -123,5 +123,6 @@ angular.module('data-menu')
         return _.difference(State.selected.assets,
           this.getAllNestedAssetNames());
       };
+
   }
 ]);
