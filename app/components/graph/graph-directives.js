@@ -186,7 +186,6 @@ angular.module('lizard-nxt')
    * @description       Stores the graph directives data and update functions
    */
   var graphCtrl = function ($scope, Graph) {
-
     this.setData = function (scope) {
       // Provide defaults for backwards compatability
       this.content = scope.content || [];

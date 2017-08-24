@@ -17,6 +17,7 @@ angular.module('omnibox')
     'DateParser',
     'DataService',
     'notie',
+    'gettextCatalog',
     function SearchService (
       $q,
       $http,
@@ -24,7 +25,8 @@ angular.module('omnibox')
       CabinetService,
       dateParser,
       DataService,
-      notie
+      notie,
+      gettextCatalog
       ) {
 
     this.responseStatus = {
@@ -91,7 +93,14 @@ angular.module('omnibox')
           return $q.reject(err);
         }
         else if (err.status >= 500 && err.status < 600) {
-          notie.alert(3, 'Lizard encountered a problem while searching your query.', 3);
+
+          notie.alert(
+            3,
+            gettextCatalog.getString(
+              'Lizard encountered a problem while searching your query.'
+            ),
+            3
+          );
           // Cancel normal operations
           return $q.reject(err);
         }

@@ -555,7 +555,6 @@ angular.module('lizard-nxt')
       }
 
       var width = this._getWidth(this.dimensions);
-
       var xy = {x: {}, y: {}};
 
       angular.forEach(xy, function (value, key) {
@@ -1635,7 +1634,7 @@ angular.module('lizard-nxt')
    * Draws or updates graph axis labels, with multiple y's.
    * @param  {object}       d3 selection svg
    * @param  {object}       dimensions
-   * @param  {string}       (optional) label, if undefined uupdates current.
+   * @param  {string}       (optional) label, if undefined updates current.
    * @param  {boolean}      draw on y axis, else x-axis.
    * @param  {string}       unit (e.g. mNAP)
    * @param  {object}       axes - keeps track of active axis.
@@ -1659,6 +1658,7 @@ angular.module('lizard-nxt')
         }
       });
     }
+
     clickRect
       .attr('width', graph.dimensions.padding.left)
       .attr('height', graph.dimensions.height);

@@ -9,7 +9,7 @@
 // 2) When a user is not logged in: the a-sync task started in the backend can
 //    not have the user notified because the user doen't have an inbox
 //    available. The strategy for solving this problem is to have the JS poll
-//    the server until the file is actually finished (WIP...).
+//    the server until the file is actually finished.
 
 var ASYNC_FORMAT = 'xlsx';
 
@@ -17,27 +17,28 @@ angular.module('export')
 .directive('exportSelector',
 
 ['$http', 'DataService', 'TimeseriesService', 'notie','gettextCatalog',
- 'State', 'RelativeToSurfaceLevelService', 'user',
+ 'State', 'RelativeToSurfaceLevelService', 'user', 'ExportService', '$timeout',
 
 function ($http, DataService, TimeseriesService, notie, gettextCatalog,
-  State, RTSLService, user) {
+  State, RTSLService, user, ExportService, $timeout) {
 
   var link = function (scope) {
     // bind the assets with the selected things from the DataService
     scope.assets = DataService.assets;
     scope.isMap = State.context === 'map';
-
     scope.isAuthenticated = user.authenticated;
-    scope.isPolling = false;
 
     var POLL_INTERVAL = 1000;
 
     var EXPORT_START_MESSAGE =
-      "Export timeseries started, check your inbox"; // user is authenticated
+      gettextCatalog.getString(
+        "Export timeseries started, check your inbox.");
     var EXPORT_SUCCESS_MESSAGE =
-      "Export timeseries finished succesfully"; // user is NOT authenticated
+      gettextCatalog.getString(
+        "Export timeseries finished succesfully.");
     var EXPORT_ERROR_MESSAGE =
-      "Lizard encountered a problem exporting your timeseries";
+      gettextCatalog.getString(
+        "Lizard encountered a problem exporting your timeseries.");
 
     // Start and end of data
     var timeState = {
@@ -47,6 +48,25 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
 
     // Contains the selected timeseries to export
     scope.toExport = {};
+
+    var countExportableTimeseries = function () {
+      var count = 0;
+      angular.forEach(scope.assets, function (asset) {
+        count += asset.timeseries ? asset.timeseries.length : 0;
+        if (asset.filters) {
+          angular.forEach(asset.filters, function (filter) {
+            count += filter.timeseries ? filter.timeseries.length : 0;
+          });
+        }
+      });
+      return count;
+    };
+
+    $timeout(function () {
+      if (countExportableTimeseries() === 1) {
+        $('.timeseries-checkbox')[0].checked = true;
+      }
+    });
 
     /**
      * startExport - Finds all the timeseries and gets the uuids
@@ -114,7 +134,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
        */
       var pollForFile = function (taskResponseData) {
 
-        scope.isPolling = true;
+        ExportService.setIsPolling(true);
         scope.resultUrl = null;
 
         hideExportButton();
@@ -130,7 +150,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
               // Apparently, the task (=exporting timeseries) resulted in a
               // downloadable file: we need to stop polling the server now.
 
-              scope.isPolling = false;
+              ExportService.setIsPolling(false);
               clearInterval(poller);
 
               var resultUrl = response.data.result_url;
@@ -146,8 +166,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
 
                 enableDownloadButton();
 
-                notie.alert(4,
-                  gettextCatalog.getString(EXPORT_SUCCESS_MESSAGE), 2);
+                notie.alert(4, EXPORT_SUCCESS_MESSAGE, 2);
 
               } else {
 
@@ -161,8 +180,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
 
                 scope.resultUrl = null;
                 motherModal.modal('hide');
-                notie.alert(3,
-                  gettextCatalog.getString(EXPORT_ERROR_MESSAGE), 3);
+                notie.alert(3, EXPORT_ERROR_MESSAGE, 3);
               }
             }
           });
@@ -197,9 +215,9 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
       var exportCbAuthenticatedUser = function (response) {
         motherModal.modal('hide');
         if (response && response.status === 200) {
-          notie.alert(4, gettextCatalog.getString(EXPORT_START_MESSAGE), 2);
+          notie.alert(4, EXPORT_START_MESSAGE, 2);
         } else {
-          notie.alert(3, gettextCatalog.getString(EXPORT_ERROR_MESSAGE), 3);
+          notie.alert(3, EXPORT_ERROR_MESSAGE, 3);
         }
       };
 
@@ -217,7 +235,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
           pollForFile(response.data);
         } else {
           motherModal.modal('hide');
-          notie.alert(3, gettextCatalog.getString(EXPORT_ERROR_MESSAGE), 3);
+          notie.alert(3, EXPORT_ERROR_MESSAGE, 3);
         }
       };
 

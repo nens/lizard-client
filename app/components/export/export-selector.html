@@ -5,25 +5,34 @@
       <i>"Start Export"</i> button and the exporter will fetch the time series
       behind the scenes.
     </p>
-    <p ng-if="authenticated" translate>
-      When the download is ready, you will be notified with a message.
+    <p ng-if="isAuthenticated" translate>
+      You will be notified with a message when the download is ready.
+    </p>
+    <p ng-if="!isAuthenticated" translate>
+      You can click the download button when the export is ready.
     </p>
     <p translate>
       Pick the date range:
     </p>
     <div class="input-daterange input-group" id="datepicker-export">
       <input type="text" class="input-sm form-control" name="start" id="datepicker-export-start" />
-      <span class="input-group-addon">to</span>
+      <span class="input-group-addon" translate>to</span>
       <input type="text" class="input-sm form-control" name="end" id="datepicker-export-end" />
     </div>
     <div ng-repeat="asset in assets">
       <div ng-repeat="ts in asset.timeseries">
-        <input ng-model="toExport[ts.uuid]" type="checkbox">
+        <input
+          class="timeseries-checkbox"
+          ng-model="toExport[ts.uuid]"
+          type="checkbox">
         <span>{{ ts.location }}, {{ ts.parameter }}</span>
       </div>
       <div ng-repeat="filter in asset.filters" ng-if="isMap">
         <div ng-repeat="fts in filter.timeseries">
-          <input ng-model="toExport[fts.uuid]" type="checkbox">
+          <input
+            class="timeseries-checkbox"
+            ng-model="toExport[fts.uuid]"
+            type="checkbox">
           <span>{{ fts.location }}, {{ fts.parameter }}</span>
         </div>
       </div>

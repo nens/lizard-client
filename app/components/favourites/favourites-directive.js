@@ -77,7 +77,7 @@ angular.module('favourites')
      *                              GET request.
      */
     var fetchFavouritesError = function(httpResponse) {
-      console.log("[E] fetchFavouritesError:", httpResponse);
+      console.error("Error while fetching favorite:", httpResponse);
       notie.alert(
         3, gettextCatalog.getString(
           "Oops! Something went wrong while fetching the favourites."));

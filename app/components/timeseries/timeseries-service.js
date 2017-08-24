@@ -9,9 +9,10 @@ angular.module('timeseries').service("TimeseriesService", [
   'UtilService',
   'DataService',
   'TimeseriesUtilService',
-  'RelativeToSurfaceLevelService',
+    'RelativeToSurfaceLevelService',
+    'gettextCatalog',
   function ($q, State, $http, notie, UtilService,
-            DataService, TsUService, RTSLService) {
+            DataService, TsUService, RTSLService, gettextCatalog) {
     // *wrapped* boolean indicating we want the timeseries value (y-axis) to be
     // relative to the asset's "surface_level" value (boolean set to true) or
     // we want it to be the absolute value (boolean set to false);
@@ -129,6 +130,7 @@ angular.module('timeseries').service("TimeseriesService", [
                 return ts.id === stateTs.timeseries && stateTs.active;
               });
             });
+<<<<<<< HEAD
           return service.timeseries;
         });
 
@@ -142,6 +144,18 @@ angular.module('timeseries').service("TimeseriesService", [
                          'bars')
       ];
 
+=======
+          });
+        return service.timeseries;
+      })
+      .then(function (ts) {
+        if (service.onTimeseriesChange) {
+          service.onTimeseriesChange();
+        }
+        return ts;
+      });
+      return promise;
+>>>>>>> master
     };
 
     var localPromise = {lines: {}, bars: {}, crosssections: {}};
@@ -251,7 +265,12 @@ angular.module('timeseries').service("TimeseriesService", [
         return $q.reject(err);
       }
       else if (err.status >= 500 && err.status < 600) {
-        notie.alert(3, 'Lizard encountered a problem retrieving your timeseries.', 3);
+        notie.alert(
+          3,
+          gettextCatalog.getString(
+            'Lizard encountered a problem retrieving your timeseries.'),
+          3
+        );
         // Cancel normal operations
         return $q.reject(err);
       }

@@ -60,12 +60,9 @@ angular.module('data-menu')
         var type = entity === 'eventseries' ?
           'eventseries' :
           entity.slice(0, -1);
-        var msg = ['Failed', 'to fetch', type, name || id];
-        notie.alert(
-          3,
-          gettextCatalog.getString(msg.join(' ')),
-          3
-        );
+        var msgPrefix = gettextCatalog.getString('Failed to fetch');
+        var msg = [msgPrefix, type, name || id];
+        notie.alert(3, msg.join(' '), 3);
         // Explicitly throw error to break promise chaining.
         throw new Error(msg.join(' '));
       };
@@ -73,10 +70,9 @@ angular.module('data-menu')
       return $http({
         url: 'api/v3/' + entity + '/' + id + '/',
         method: 'GET'
-      })
-
-      .then(function (response) { return response.data; })
-      .catch(onError);
+        })
+        .then(function (response) { return response.data; })
+        .catch(onError);
     };
 
     this.remove = function (layer) {
@@ -95,7 +91,7 @@ angular.module('data-menu')
       });
       notie.alert(
         4,
-        gettextCatalog.getString("Added layer " + searchLayer.title),
+        gettextCatalog.getString("Added layer") + " " + searchLayer.title,
         2
       );
     };

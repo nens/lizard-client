@@ -10,8 +10,10 @@
  */
 angular.module('lizard-bootstrap', ['favourites'])
 .run([
-  '$http', 'UrlService', 'State', 'FavouritesService', 'user', 'version', 'debug',
-  function ($http, UrlService, State, FavouritesService, user, version, debug) {
+    '$http', 'UrlService', 'State', 'FavouritesService', 'user', 'version', 'debug',
+    'UserAgentService',
+    function ($http, UrlService, State, FavouritesService, user, version, debug,
+	     UserAgentService) {
 
     var showErrorModal = function () {
       var overlay = document.getElementById('dark-overlay');

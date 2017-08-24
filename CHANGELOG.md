@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.15.12"></a>
+## [4.15.12](https://github.com/nens/lizard-client/compare/v4.15.10...v4.15.12) (2017-08-14)
+
+
+
+<a name="4.15.11"></a>
+## [4.15.11](https://github.com/nens/lizard-client/compare/v4.15.10...v4.15.11) (2017-08-14)
+
+
+
+<a name="4.15.10"></a>
+## [4.15.10](https://github.com/nens/lizard-client/compare/v4.15.9...v4.15.10) (2017-08-14)
+
+
+
+<a name="4.15.9"></a>
+## [4.15.9](https://github.com/nens/lizard-client/compare/v4.15.8...v4.15.9) (2017-08-14)
+
+
+
+<a name="4.15.8"></a>
+## [4.15.8](https://github.com/nens/lizard-client/compare/v4.15.7...v4.15.8) (2017-08-01)
+
+
+
+<a name="4.15.7"></a>
+## [4.15.7](https://github.com/nens/lizard-client/compare/v4.15.6...v4.15.7) (2017-08-01)
+
+
+
+<a name="4.15.6"></a>
+## [4.15.6](https://github.com/nens/lizard-client/compare/v4.15.1...v4.15.6) (2017-08-01)
+
+
+
 <a name="4.15.5"></a>
 ## [4.15.5](https://github.com/nens/lizard-client/compare/v4.15.4...v4.15.5) (2017-07-07)
 
