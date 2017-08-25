@@ -23,8 +23,7 @@ angular.module('data-menu')
         );
         State.selections = _.filter(State.selections, function(selection) {
             return selection.asset !== asset.entity_name + "$" + asset.id;
-          }
-        )
+        });
       };
 
       /**

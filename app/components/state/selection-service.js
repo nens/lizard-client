@@ -111,7 +111,8 @@ angular.module('global-state')
           quantity: selection.quantity,
           match: true
         };
-      }
+      };
+	
     /**
      * Returns a function that finds metadata for a selection.
      * metadata search can be limited to a geometry.
@@ -121,8 +122,8 @@ angular.module('global-state')
      * @return {function} function that returns either asset or geometry
      *                    metadata or timeseries metadata.
      */
-    var getMetaData = function(geometry){
-      return function(selection){
+    var getMetaData = function(geometry) {
+      return function(selection) {
         if (selection.timeseries) {
           return getTimeseriesMetaData(geometry, selection);
         } else if (selection.raster) {
@@ -130,7 +131,7 @@ angular.module('global-state')
         } else if (selection.type === 'eventseries') {
           return getEventseriesMetaData(geometry, selection);
         }
-      }
+      };
     };
 
     /**

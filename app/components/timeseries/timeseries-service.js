@@ -130,10 +130,14 @@ angular.module('timeseries').service("TimeseriesService", [
                 return ts.id === stateTs.timeseries && stateTs.active;
               });
             });
-<<<<<<< HEAD
           return service.timeseries;
-        });
-
+        }).then(function (ts) {
+            if (service.onTimeseriesChange) {
+		service.onTimeseriesChange();
+            }
+            return ts;
+	});
+  
         return timeseriesPromise;
       };
 
@@ -143,19 +147,6 @@ angular.module('timeseries').service("TimeseriesService", [
         activeTimeseries(groupedSelections.temporalBars.timeseries, false,
                          'bars')
       ];
-
-=======
-          });
-        return service.timeseries;
-      })
-      .then(function (ts) {
-        if (service.onTimeseriesChange) {
-          service.onTimeseriesChange();
-        }
-        return ts;
-      });
-      return promise;
->>>>>>> master
     };
 
     var localPromise = {lines: {}, bars: {}, crosssections: {}};

@@ -91,7 +91,7 @@ angular.module('omnibox')
           )
         )
       );
-    }
+    };
 
     /**
      * @description zooms to search resulit
