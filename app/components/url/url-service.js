@@ -110,7 +110,7 @@ angular.module('lizard-nxt')
   .service("UrlState", ["LocationGetterSetter", "UtilService", function (LocationGetterSetter, UtilService) {
 
     // Amount of decimals of coordinates stored in url.
-    var COORD_PRECISION = 4;
+    var COORD_PRECISION = 6;
 
     var service = {
 
@@ -306,7 +306,7 @@ angular.module('lizard-nxt')
           msEndTime = Date.parse(times[1]);
           if (isNaN(msEndTime)) { return timeState; }
           if (msEndTime <= timeState.start) {
-            msEndTime = timeState.start + 43200000; // half a day
+            msEndTime = timeState.start + 86399999; // A day, minus one
           }
           timeState.end = msEndTime;
         }

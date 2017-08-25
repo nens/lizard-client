@@ -419,27 +419,37 @@ angular.module('data-menu')
             options.end = State.temporal.end;
           }
 
+          console.log("1. Going to get data on dataLayer", dataLayer, "with options", options);
           promises.push(
             dataLayer.getData(options).then(
               function (response) {
+                console.log("2. Got response ", response);
+                var newProps = geo.properties ? _.clone(geo.properties) : {};
+
                 // async so remove anything obsolete.
-                geo.properties = geo.properties || {};
-                geo.properties[layer.uuid] = geo.properties[layer.uuid] || _.clone(dataLayer);
+                if (!newProps[layer.uuid]) {
+                  newProps[layer.uuid] = _.clone(dataLayer);
+                }
+
                 // Replace data and merge everything with existing state of
                 // property.
                 if (response.data) {
-                  geo.properties[layer.uuid].data = [];
-                  _.merge(geo.properties[layer.uuid], response);
+                  newProps[layer.uuid].data = [];
+                  _.merge(newProps[layer.uuid], response);
                 } else {
-                  geo.properties[layer.uuid].data = response;
+                  newProps[layer.uuid].data = response;
                 }
-                if ((!layer.active && layer.uuid in Object.keys(geo.properties))
-                  || geo.properties[layer.uuid].data === null) {
+
+                console.log("3. newProps[layer.uuid].data is now", newProps[layer.uuid].data);
+                if ((!layer.active && layer.uuid in Object.keys(newProps))
+                  || newProps[layer.uuid].data === null) {
 
                   // Use delete to remove the key and the value and the omnibox
                   // can show a nodata message.
-                  delete geo.properties[layer.uuid];
+                  delete newProps[layer.uuid];
                 }
+
+                geo.properties = newProps; // This way the reference is updated, and watches work.
               },
               // Catch rejections, otherwise $.all(promises) is never resolved.
               _.noop
