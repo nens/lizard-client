@@ -39,7 +39,8 @@
           ng-init="metaData = getSelectionMetaData(selection)"
           ng-if="getSelectionMetaData(selection).match"
           ng-show="extended || selection.active || isOneOfFirstThree(selection.uuid)"
-          data-uuid="{{ selection.uuid }}" class="draggable-ts animate-repeat">
+          id="{{ selection.uuid }}"
+	  data-uuid="{{ selection.uuid }}" class="draggable-ts animate-repeat">
         <div
             ng-if="metaData.type === 'timeseries'"
             id="{{ selection.timeseries }}"
