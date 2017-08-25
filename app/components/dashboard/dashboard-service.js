@@ -153,9 +153,9 @@ angular.module('dashboard')
         };
       }),
       keys: {x: 'x', y: 'y'},
-      unit: 'some unit',
+      unit: '',
       color: selection.color,
-      xLabel: 'events label',
+      xLabel: '',
       id: selection.url,
       updated: true
         };
