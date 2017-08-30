@@ -2,9 +2,10 @@ angular.module('lizard-nxt')
 .service("UserAgentService", function () {
 
   var DESKTOP_URL_TO_LEAVE = 'sat4rice.lizard.net';
-  var MOBILE_URL_TO_VISIT  = 'https://demo.lizard.net/clients/g4aw/';
+  var MOBILE_URL_TO_VISIT  = 'https://sat4rice.lizard.net/clients/g4aw/';
 
-  if (window.location.href.indexOf(DESKTOP_URL_TO_LEAVE) > -1) {
+  if (window.location.href.indexOf(DESKTOP_URL_TO_LEAVE) > -1 &&
+      window.location.href.indexOf('lizard.net/clients/g4aw/') === -1) {
     var uaString = window.navigator.userAgent.toLowerCase();
     if (uaString.indexOf('ipad') > -1) {
       console.log('Device detected: iPad (=> not redirecting user)');
