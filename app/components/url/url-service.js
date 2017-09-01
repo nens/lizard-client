@@ -13,9 +13,7 @@
 angular.module('lizard-nxt')
   .service('LocationGetterSetter', ['$location', function ($location) {
 
-    var _getPath, _getPathParts,
-
-    service = {
+    var service = {
 
      /**
       * @function
@@ -74,14 +72,12 @@ angular.module('lizard-nxt')
     * @param {str} part, part url looking for currently <path | @>
     * @return {str} the part the path.
     */
-    _getPath = function (part) {
+    var _getPath = function (part) {
 
-      var paths,
-          pathPart,
-          path = $location.path();
+      var path = $location.path();
 
-      paths = path.split('@'); //splits path in two at the @.
-      pathPart = paths[part === 'path' ? 0 : 1] || ''; //gets before @ when 'path' after when 'at'
+      var paths = path.split('@'); //splits path in two at the @.
+      var pathPart = paths[part === 'path' ? 0 : 1] || ''; //gets before @ when 'path' after when 'at'
       // we do not want the first slash
       pathPart = part === 'path' ? pathPart.slice(1) : pathPart;
       return pathPart;
@@ -95,7 +91,7 @@ angular.module('lizard-nxt')
     * @param {str} part of the path without first slash.
     * @return {array} the values in the part of the path.
     */
-    _getPathParts = function (part) {
+    var _getPathParts = function (part) {
       var pathPart = _getPath(part);
       if (!pathPart) { return []; }
       return pathPart.split('/');
@@ -114,7 +110,7 @@ angular.module('lizard-nxt')
   .service("UrlState", ["LocationGetterSetter", "UtilService", function (LocationGetterSetter, UtilService) {
 
     // Amount of decimals of coordinates stored in url.
-    var COORD_PRECISION = 4;
+    var COORD_PRECISION = 6;
 
     var service = {
 
@@ -219,13 +215,14 @@ angular.module('lizard-nxt')
        * @memberOf UrlState
        * @description Sets the selected items part of the url
        * @param {object} state config object
-       * @param {object} selected object (containing, assets, and geoms)
+       * @param {object} assets selected asset objects
+       * @param {object} geoms selected geoms
        */
-      setSelectedUrl: function (state, selected) {
-        var newHash = angular.copy(selected.assets);
+      setSelectedUrl: function (state, assets, geometries) {
+        var newHash = angular.copy(assets);
         var n = Math.pow(10, COORD_PRECISION);
         var coords;
-        angular.forEach(selected.geometries, function (geom) {
+        angular.forEach(geometries, function (geom) {
           if (geom.geometry.type === 'Point') {
             coords = angular.copy(geom.geometry.coordinates);
             coords.forEach(function (point, i) {
@@ -309,7 +306,7 @@ angular.module('lizard-nxt')
           msEndTime = Date.parse(times[1]);
           if (isNaN(msEndTime)) { return timeState; }
           if (msEndTime <= timeState.start) {
-            msEndTime = timeState.start + 43200000; // half a day
+            msEndTime = timeState.start + 86399999; // A day, minus one
           }
           timeState.end = msEndTime;
         }
@@ -457,7 +454,7 @@ angular.module('lizard-nxt')
       if (context) { return context; }
     };
 
-    var getLayers = function () {
+    var getActiveLayers = function () {
       var layersFromURL = LocationGetterSetter.getUrlValue(
         config.layers.part,
         config.layers.index
@@ -471,7 +468,7 @@ angular.module('lizard-nxt')
       }
     };
 
-    var getBaselayer = function () {
+    var getBaseLayer = function () {
       var layersFromURL = LocationGetterSetter.getUrlValue(
         config.layers.part,
         config.layers.index
@@ -511,7 +508,10 @@ angular.module('lizard-nxt')
         config.geom.part,
         config.geom.index
       );
-      return UrlState.parseSelection(selected);
+      console.log('getSelected using urlValue', selected);
+      var result = UrlState.parseSelection(selected) || {assets: [], geometries: []};
+      console.log('result ::', result);
+      return result;
     };
 
     var getView = function () {
@@ -539,7 +539,7 @@ angular.module('lizard-nxt')
           state.language
         );
 
-        UrlState.setSelectedUrl(config, state.selected);
+        UrlState.setSelectedUrl(config, state.assets, state.geometries);
 
         LocationGetterSetter.setUrlValue(
           config.context.part, config.context.index, state.context
@@ -574,20 +574,20 @@ angular.module('lizard-nxt')
 
       },
 
-      getState: function () {
+      getDataForState: function () {
+        var selected = getSelected();
         return {
           language: getLanguage(),
+          baselayer: getBaseLayer(),
           context: getContext(),
-          baselayer: getBaselayer(),
-          // If active return an object with active, otherwise leave it. The url
-          // does not contain inactive layers. This is consistent with other
-          // layers.
-          annotations: getAnnotations() ? { active: true } : undefined,
-          layers: {active: getLayers()},
-          box: {type: getBoxType()},
-          selected: getSelected(),
-          spatial: {view: getView()},
-          temporal: getTemporal()
+          boxType: getBoxType(),
+          annotationsActive: !!(getAnnotations()),
+          view: getView(),
+
+          activeLayers: getActiveLayers(),
+          temporal: getTemporal(),
+          assets: selected.assets,
+          geometries: selected.geometries
         };
       },
 

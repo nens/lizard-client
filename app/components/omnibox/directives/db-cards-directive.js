@@ -2,7 +2,7 @@
 angular.module('omnibox')
   .directive('dbCards', [
     'State',
-    'DataService',
+    'SelectionService',
     'DragService',
     'gettextCatalog',
     'notie',
@@ -11,7 +11,7 @@ angular.module('omnibox')
     'DBCardsService',
     function (
       State,
-      DataService,
+      SelectionService,
       DragService,
       gettextCatalog,
       notie,
@@ -50,16 +50,6 @@ angular.module('omnibox')
         });
       });
 
-      var getTsMetaData = function (uuid) {
-        var tsMetaData;
-        _.forEach(DataService.assets, function (asset) {
-          tsMetaData = _.find(asset.timeseries, function (ts) {
-            return ts.uuid === uuid;
-          });
-          return !tsMetaData;
-        });
-        return tsMetaData;
-      };
 
       /**
        * Turn ts on and give it the order of the dropped plot. Ts could already
@@ -76,26 +66,24 @@ angular.module('omnibox')
         }
         var order = Number(target.getAttribute('data-order'));
         var uuid = el.getAttribute('data-uuid');
-
         // El either represents a timeseries or another plottable item.
         //
         // NOTE: there is only one drop callback for all the possible assets. So
         // instead of searching for the ts in scope.asset.timeseries, all the
         // assets are searched.
         // timeseries
-        var ts, otherGraphTS, otherCompatibleGraph;
 
         // timeseries representend by el.
-        ts = _.find(State.selected.timeseries, function (ts) {
-          return ts.uuid === uuid;
+        var selection = _.find(State.selections, function (selection) {
+          return selection.uuid === uuid;
         });
 
         // Possible other graph in target.
-        otherGraphTS = _.find(State.selected.timeseries, function (ts) {
-          return ts.order === order && ts.active;
+        var otherGraphSelections = _.find(State.selections, function (selection) {
+          return selection.order === order && selection.active;
         });
 
-        if (otherGraphTS === undefined) {
+        if (otherGraphSelections === undefined) {
           // No other graph, just turn ts to active.
           emulateClick(el);
           el.parentNode.removeChild(el);
@@ -104,34 +92,40 @@ angular.module('omnibox')
 
         // If ts was already active: first remove and rearrange plots in
         // dashboard, then continue adding it to the dragged plot.
-        if (ts.active) {
+        if (selection.active) {
           var otherTSInOrigninalPlot = _.find(
-            State.selected.timeseries,
-            function (_ts) {
-              return _ts.active
-                && _ts.order === ts.order
-                && _ts.uuid !== ts.uuid;
+            State.selections,
+            function (_selection) {
+              return _selection.active
+                && _selection.order === selection.order
+                && _selection.timeseries !== selection.timeseries;
             }
           );
           if (otherTSInOrigninalPlot === undefined) {
             // Plot where ts came from is now empty and removed.
-            order = order < ts.order ? order : order - 1;
+            order = order < selection.order ? order : order - 1;
           }
 
-          ts.active = false;
-          DBCardsService.removeItemFromPlot(ts);
+          selection.active = false;
+          DBCardsService.removeSelectionFromPlot(selection);
         }
 
-        var tsMetaData = getTsMetaData(ts.uuid);
-        var otherGraphTsMetaData = getTsMetaData(otherGraphTS.uuid);
-        if (tsMetaData.value_type !== otherGraphTsMetaData.value_type) {
+        var tsMetaData = SelectionService.timeseriesMetaData(
+            TimeseriesService.timeseries, selection);
+        var otherGraphTsMetaData = SelectionService.timeseriesMetaData(
+            TimeseriesService.timeseries, otherGraphSelections);
+        if (tsMetaData.valueType !== otherGraphTsMetaData.valueType) {
           notie.alert(2,
             gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!'));
           emulateClick(el);
+        } else if (selection.raster) {
+          notie.alert(2,
+            gettextCatalog.getString('Whoops, bar charts cannot be combined. Try again!'));
+          emulateClick(el);
         } else {
           // Set new order and tell TimeSeriesService to get data.
-          ts.order = order || 0; // dashboard could be empty
-          ts.active = true;
+          selection.order = order || 0; // dashboard could be empty
+          selection.active = true;
           TimeseriesService.syncTime();
         }
 

@@ -54,8 +54,13 @@ angular.module('lizard-nxt')
           var latLng = new LeafletService.LatLng(
             feature.geometry.coordinates[1],
             feature.geometry.coordinates[0]
-            );
-          withinBounds = spatial[query](latLng);
+          );
+          if (spatial instanceof LeafletService.LatLngBounds) {
+            withinBounds = spatial.contains(latLng);
+          } else {
+            console.log("Comparing ", spatial, " and ", latLng);
+            withinBounds = spatial.equals(latLng);
+          }
         }
 
         if (objectFilter) {
@@ -142,9 +147,12 @@ angular.module('lizard-nxt')
     var filterSet = function (filteredSet, spatial, objectFilter, temporal) {
       if (!spatial && !temporal && !objectFilter) { return filteredSet; }
 
+      console.log("FILTERING SET!", filteredSet, "on:", spatial, objectFilter, temporal);
+
       // First filter temporal.
       if (temporal.hasOwnProperty('start') || temporal.hasOwnProperty('end')) {
         filteredSet = filterTemporal(filteredSet, temporal);
+        console.log("After temporal, there are", filteredSet.length, "left");
       } else if (temporal) {
         throw new Error(temporal + "is an invalid time to query VectorService");
       }
@@ -156,13 +164,12 @@ angular.module('lizard-nxt')
       if (spatial && spatial.type === 'Point') {
         geom = L.latLng(spatial.coordinates[1], spatial.coordinates[0]);
         filteredSet = filterSpatial(filteredSet, geom, objectFilter);
+        console.log("After spatial point, there are", filteredSet.length, "left.");
       }
-
       else if (spatial && spatial.type === 'Polygon') {
         geom = L.geoJson(spatial).getBounds();
         filteredSet = filterSpatial(filteredSet, geom, objectFilter);
       }
-
       else if (spatial) {
         filteredSet = [];
       }
@@ -185,6 +192,12 @@ angular.module('lizard-nxt')
      * @return {object}
      */
     var getData = function (options) {
+      // Options is an object with parameters:
+      // uuid: Django pk for event series
+      // url: where to get the events
+      // geom: optional, L.LatLngBound or L.LatLng to filter them with
+      // objectFilter: optional {type: ..., id: ...} object to filter them with
+      // start, end: optional timestamps to filter them with
       var deferred = $q.defer(),
           layerSlug;
       layerSlug = options.uuid;

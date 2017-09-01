@@ -1,10 +1,7 @@
 <div>
   <div class="card active">
-
     <timeseries asset="asset" time-state="timeState"></timeseries>
-
     <cardheader asset="asset"></cardheader>
-
 
     <!-- crosssections are not draggable and a specific visualization. -->
     <div
@@ -28,45 +25,47 @@
       </dl>
     </div>
 
-    <div class="card-content-list"
-        ng-if="noTimeseries && asset.entity_name !== 'leveecrosssection'"
+    <em class="card-content-list"
+        ng-if="noData && (assetType==='geometry' || asset.entity_name !== 'leveecrosssection')"
         translate>
-      <em>No timeseries available for this asset</em>
-    </div>
+      No timeseries data available for this asset.
+    </em>
 
+    <!-- use ng-show, so div is present and can be added to drag containers -->
     <div id="drag-container">
 
       <div
-        ng-repeat="ts in selected.timeseries | orderBy : ['-active', '+order']"
-        ng-if="getTsMetaData(ts.uuid)"
-        data-uuid="{{ ts.uuid }}"
-        ng-show="extended || ts.active || isOneOfFirstThree(ts.uuid)">
+          ng-repeat="selection in state.selections | orderBy : ['-active', '+order']"
+          ng-init="metaData = getSelectionMetaData(selection)"
+          ng-if="getSelectionMetaData(selection).match"
+          ng-show="extended || selection.active || isOneOfFirstThree(selection.uuid)"
+          id="{{ selection.uuid }}"
+	  data-uuid="{{ selection.uuid }}" class="draggable-ts animate-repeat">
         <div
-          ng-class="{active: mouseIsOver}"
-          class="draggable-ts animate-repeat card-content-list clickable"
-          id="{{ ts.uuid }}"
-          ng-click="toggleTimeseries(ts);"
-          ng-mouseover="mouseIsOver = true"
-          ng-mouseleave="mouseIsOver = false">
-
+            ng-if="metaData.type === 'timeseries'"
+            id="{{ selection.timeseries }}"
+            ng-click="toggleSelection(selection);"
+            ng-class="{active: mouseIsOver}"
+            ng-mouseover="mouseIsOver = true"
+            ng-mouseleave="mouseIsOver = false"
+            class="card-content-list clickable">
           <div
-            class="card-content-colorhandle"
-            ng-show="ts.active"
-            ng-style="{'background-color': ts.color}"
-            ng-click="toggleColorPicker(); $event.stopPropagation();">
+              class="card-content-colorhandle"
+              ng-show="selection.active"
+              ng-style="{'background-color': selection.color}"
+              ng-click="toggleColorPicker(); $event.stopPropagation();">
           </div>
+
           <i class="fa" ng-class="{
-            'fa-clock-o': getTsMetaData(ts.uuid).value_type !== 'image',
-            'fa-file-image-o': getTsMetaData(ts.uuid).value_type === 'image'
+            'fa-clock-o': metaData.value_type !== 'image',
+            'fa-file-image-o': metaData.value_type === 'image'
           }"></i>
 
           <span
-            title="{{ getTsMetaData(ts.uuid).location }}, {{ getTsMetaData(ts.uuid).name }}, {{ getTsMetaData(ts.uuid).parameter }}"
-            ng-class="{'text-primary': ts.active}"
-            ng-init="displayName = (getTsLongName(ts.uuid) | truncate: 50)">
-
+            title="{{ metaData.location }}, {{ metaData.uuid }}, {{ metaData.parameter }}"
+            ng-class="{'text-primary': selection.active}"
+            ng-init="displayName = (getTsLongName(selection) | truncate: 50)">
             {{ displayName }}&nbsp;
-
             <i class="fa relativate-ts-icon"
                ng-class="{ 'fa-check-square': relativeTimeseries.value, 'fa-square': !relativeTimeseries.value }"
                ng-click="toggleRelativeTimeseries(); $event.stopPropagation();"
@@ -80,6 +79,36 @@
             </i>
           </span>
 
+          <i class="fa relativate-ts-icon"
+             ng-class="{ 'fa-check-square': relativeTimeseries.value, 'fa-square': !relativeTimeseries.value }"
+             ng-click="toggleRelativeTimeseries(); $event.stopPropagation();"
+             ng-if="selection.active && selection.measureScale === 'interval' &&
+               (assetHasSurfaceLevel() || parentAssetHasSurfaceLevel())"
+             title="{{ relativeTimeseries
+               && 'Deselect to show absolute values for all timeseries'
+               || 'Select to show all timeseries relative to surface level'
+             }}"
+             translate>
+          </i>
+        </div>
+
+        <div
+            ng-if="metaData.type === 'raster'"
+            ng-class="{active: mouseIsOver}"
+            ng-mouseover="mouseIsOver = true"
+            ng-mouseleave="mouseIsOver = false"
+            id="{{ selection.raster }}"
+            ng-click="toggleSelection(selection)"
+            class="card-content-list clickable">
+          <div class="card-content-colorhandle"
+               ng-show="selection.active"
+               ng-style="{'background-color': selection.color}"
+               ng-click="toggleColorPicker(); $event.stopPropagation();">
+          </div>
+          <i class="fa fa-line-chart"></i>
+          <span ng-class="{'text-primary bg-warning': selection.active}">
+            {{ metaData.quantity }}, ({{ metaData.unit }})
+          </span>
         </div>
 
         <color-picker></color-picker>
@@ -94,23 +123,7 @@
         </a>
       </div>
 
-      <!--
-      <div class="card-content-list clickable lessmore" ng-show="showExtender">
-        <a style='cursor:pointer;'
-           translate
-           ng-click="extended = !extended">
-          {{ extended ? '▴' : '▸' }}&nbsp;&nbsp;{{ extended ? 'Less' : 'More' }} timeseries
-        </a>
-      </div>
-      -->
-
     </div>
-
-    <db-geometry-cards
-      time-state="timeState"
-      geom="asset"
-      header="false">
-    </db-geometry-cards>
 
   </div>
 

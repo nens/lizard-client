@@ -34,8 +34,7 @@ angular.module('dashboard')
       };
 
       /**
-       * Take timeseries, assets, geometries and current graphs to remove or add
-       * items to build scope.dashboard.graphs.
+       * Updates dashboard graphs on the scope when called.
        */
       var buildDashboard = function () {
 
@@ -46,7 +45,8 @@ angular.module('dashboard')
           scope.dashboard.graphs,
           TimeseriesService.timeseries,
           DataService.assets,
-          DataService.geometries
+          DataService.geometries,
+          State.selections
         );
 
         _.forEach(scope.dashboard.graphs, function (graph) {
@@ -58,6 +58,7 @@ angular.module('dashboard')
         });
       };
 
+      DataService.onSelectionsChange = buildDashboard;
       DataService.onAssetsChange = buildDashboard;
       DataService.onGeometriesChange = buildDashboard;
       TimeseriesService.onTimeseriesChange = buildDashboard;

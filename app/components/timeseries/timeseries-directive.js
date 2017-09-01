@@ -2,11 +2,38 @@
 /**
  * Timeseries directive.
  */
+// TODO: THIS IS ONE IN FOUR FILES THAT NEEDS SCRUTINY
+
 angular.module('timeseries')
-.directive('timeseries', ['TimeseriesService', 'State', '$timeout', 'gettextCatalog', 'notie',
-  function (TimeseriesService, State, $timeout, gettextCatalog, notie) {
+.directive('timeseries', [
+  '$timeout',
+  'gettextCatalog',
+  'notie',
+  'SelectionService',
+  'State',
+  'TimeseriesService',
+  function (
+    $timeout,
+    gettextCatalog,
+    notie,
+    SelectionService,
+    State,
+    TimeseriesService
+  ) {
   return {
     link: function (scope) {
+      scope.state = State; // TODO: only done this to watch state.layers. There is a better place for this.
+      var selectionObject, selectionType;
+      if (scope.asset) {
+        selectionObject = scope.asset;
+        selectionType = 'asset';
+      } else if (scope.geom){
+        selectionObject = scope.geom;
+        selectionType = 'geom';
+      }
+      scope.$watch('state.layers', function () { // TODO: There is a better place for this.
+        SelectionService.initializeRaster(selectionObject, selectionType);
+      });
 
       scope.zoomToMagic = function (value_type) {
 
@@ -29,11 +56,12 @@ angular.module('timeseries')
         }
 
         if (State.context === 'map' &&
-            State.selected.timeseries &&
-            State.selected.timeseries.length >= 1) {
+            State.selections &&
+            State.selections.length >= 1) {
 
-          var activeTsUUID = _.find(State.selected.timeseries,
-            { active: true }).uuid;
+          var activeTsUUID = _.find(State.selections,
+            { active: true }).timeseries;
+
           var activeTs = _.find(TimeseriesService.timeseries,
             { id: activeTsUUID });
 
@@ -65,23 +93,25 @@ angular.module('timeseries')
         }
       };
 
-      scope.$watch('asset', function () {
-        TimeseriesService.initializeTimeseriesOfAsset(scope.asset);
+      scope.$watch(selectionType, function () {
+        SelectionService.initializeAsset(scope.asset);
+        SelectionService.initializeRaster(selectionObject, selectionType);
         if (State.context === 'map') {
           scope.timeseries.change();
         }
       });
 
       scope.$on('$destroy', function () {
-        if (State.selected.assets.length > 1 && State.context === 'map') {
-          _.forEach(State.selected.timeseries, function (ts) {
-            ts.active = false;
+
+        if (State.assets.length > 1 && State.context === 'map') {
+          _.forEach(State.selections, function (selection) {
+            selection.active = false;
           });
           TimeseriesService.syncTime();
         }
       });
     },
-    restrict: 'E',  // Timeseries can be an element with single-select or
+    restrict: 'E', // Timeseries can be an element with single-select or
                     // multi select as an attribute or without in which
                     // case it only sets the color and order of timeseries of
                     // new assets.
@@ -109,13 +139,16 @@ angular.module('timeseries')
       var selectTimeseries = function () {
         var selectedTimeseriesUuid = scope.timeseries.selected.uuid;
 
-        State.selected.timeseries.forEach(function (ts) {
-          if (_.find(scope.asset.timeseries, {uuid: ts.uuid})) {
-            ts.active = ts.uuid === selectedTimeseriesUuid;
+        State.selections.forEach(function (selection) {
+          if (_.find(scope.asset.timeseries, {uuid: selection.timeseries})) {
+            selection.active = selection.timeseries === selectedTimeseriesUuid;
           }
         });
 
-        TimeseriesService.syncTime().then(getContentForAsset);
+        _.forEach(TimeseriesService.syncTime(),
+            function (tsPromise) {
+              tsPromise.then(getContentForAsset);
+        });
 
       };
 
@@ -132,40 +165,45 @@ angular.module('timeseries')
         }
       };
 
+      scope.$watch('asset', function (aG) {
+        if(scope.asset) {
 
-      scope.$watch('asset', function () {
+          var setFirstTSAsSelected = function () {
+            scope.timeseries.selected = scope.asset.timeseries[0];
+          };
 
-        var setFirstTSAsSelected = function () {
-          scope.timeseries.selected = scope.asset.timeseries[0];
-        };
-
-        var activeTs = _.find(State.selected.timeseries, {active: true});
-        if (activeTs) {
-           var tsInAsset = _.find(
-            scope.asset.timeseries,
-            function (ts) { return ts.uuid === activeTs.uuid;}
-          );
-          if (tsInAsset) {
-            scope.timeseries.selected = tsInAsset;
+          var activeSelections = _.find(State.selections, {active: true});
+          if (activeSelections) {
+            var tsInAsset = _.find(
+              scope.asset.timeseries,
+              function (selection) {
+                return selection.timeseries === activeSelections.timeseries;
+              }
+            );
+            if (tsInAsset) {
+              scope.timeseries.selected = tsInAsset;
+            }
+            else {
+              setFirstTSAsSelected();
+            }
           }
           else {
             setFirstTSAsSelected();
           }
-        }
-        else {
-          setFirstTSAsSelected();
-        }
 
-        scope.timeseries.change();
+          scope.timeseries.change();
 
-      });
+        }});
 
       /**
        * Get new ts when time changes
        */
       scope.$watch('timeState.timelineMoving', function (newValue, oldValue) {
         if (!newValue && newValue !== oldValue) {
-          TimeseriesService.syncTime().then(getContentForAsset);
+          _.forEach(TimeseriesService.syncTime(),
+            function (tsPromise) {
+              tsPromise.then(getContentForAsset);
+          });
           }
       });
 

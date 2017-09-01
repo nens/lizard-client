@@ -8,20 +8,20 @@ angular.module('data-menu')
 function (State) {
 
   return function () {
-    State.selected.assets.forEach(function (asset) {
-      if (State.selected.assets.length > 1) {
-        State.selected.assets.removeAsset(asset);
+    State.assets.forEach(function (asset) {
+      if (State.assets.length > 1) {
+        State.assets.removeAsset(asset);
       }
     });
-    if (State.selected.assets.length === 0) {
-      State.selected.geometries.forEach(function (geom) {
-        if (State.selected.geometries.length > 1) {
-          State.selected.geometries.removeGeometry(geom);
+    if (State.assets.length === 0) {
+      State.geometries.forEach(function (geom) {
+        if (State.geometries.length > 1) {
+          State.geometries.removeGeometry(geom);
         }
       });
     }
     else {
-      State.selected.geometries = [];
+      State.geometries = [];
     }
   };
 

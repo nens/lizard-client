@@ -3,14 +3,14 @@
  * @description Directive for a color picker.
  */
 angular.module('omnibox')
-.directive('colorPicker', ['UtilService', 'TimeseriesService',
-  function (UtilService, TimeseriesService) {
+.directive('colorPicker', ['UtilService', 'TimeseriesService', 'DataService',
+  function (UtilService, TimeseriesService, DataService) {
 
     var link = function(scope, element, attrs) {
       scope.colorPicker = {
         enabled: false,
         availableColors: UtilService.GRAPH_COLORS,
-        selectedColor: scope.ts.color
+        selectedColor: scope.selection.color
       };
 
       var toggleColorPicker = function () {
@@ -25,8 +25,12 @@ angular.module('omnibox')
       };
 
       scope.$watch('colorPicker.selectedColor', function() {
-        scope.ts.color = scope.colorPicker.selectedColor;
-        TimeseriesService.onColorChange(scope.ts);
+        scope.selection.color = scope.colorPicker.selectedColor;
+        if (scope.selection.timeseries){
+          TimeseriesService.onColorChange(scope.selection);
+        } else {
+          DataService.onColorChange(scope.selection);
+        }
       });
     };
 

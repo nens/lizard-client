@@ -1,36 +1,54 @@
-
 angular.module('omnibox')
-.directive('dbGeometryCards', [ 'State', 'DBCardsService', 'DataService',
-  function (State, DBCardsService, DataService) {
+.directive('dbGeometryCards', [
+  'State',
+  'DBCardsService',
+  'DataService',
+  'SelectionService',
+  'DragService',
+  function (
+      State,
+      DBCardsService,
+      DataService,
+      SelectionService,
+      DragService) {
+    // TODO: This whole directive is a copy of parts of the asset-card-directive
     return {
-      link: function (scope) {
+      link: function (scope, element) {
+
+        scope.state = State;
 
         scope.noData = true;
 
-        scope.dbSupportedData = function (type, property) {
-          var temporal = property.temporal && type === 'Point';
+        scope.getSelectionMetaData = SelectionService.getMetaDataFunction(
+          scope.geom);
 
-          var events = property.format === 'Vector' && type !== 'LineString';
+        // Make sure all event series data etc gets updated on geo.
+        DataService.getGeomData(scope.geom).then(function (geo) {
+          console.log("Updated geo:", geo, scope.geom);
+        });
 
-          var other = type !== 'Point'
-            && property.scale !== 'nominal'
-            && property.scale !== 'ordinal';
-
-          return temporal || events || other;
-        };
+        scope.$watch('geom', function () {
+          SelectionService.initializeRaster(scope.geom, "geom");
+        });
 
         /**
          * Properties are asynchronous so watch it to set noData when added.
          */
         scope.$watch('geom.properties', function (n, o) {
+          console.log("scope.$watch('geom.properties', function (n, o) { triggered.");
 
-          _.forEach(scope.geom.properties, function (property, slug) {
-            if (property.active === undefined
-              && scope.dbSupportedData(
+          scope.geomSelections = SelectionService.initializeGeomEventseriesSelections(scope.geom);
+
+          _.forEach(scope.geom.properties, function (property, uuid) {
+            var selection = _.find(State.selections, function(s) {
+		return s.geom === scope.geom.geometry.coordinates.toString() && s.raster === uuid;
+            });
+            if (selection && selection.active === undefined
+              && SelectionService.dbSupportedData(
                 scope.geom.geometry.type,
                 property
               )) {
-              scope.toggleProperty(property);
+              scope.toggleSelection(selection);
             }
           });
 
@@ -39,44 +57,27 @@ angular.module('omnibox')
           var noRasterData = scope.geom.properties
             ? !Object.keys(scope.geom.properties).length
             : true;
-
           scope.noData = noRasterData && scope.geom.entity_name === undefined;
-
         }, true);
 
-
-        scope.toggleProperty = function (property) {
-
-          if (!property.active) {
-            var plots = DBCardsService.getActiveCountAndOrder();
-
-            // On toggle, add seperate graph. Give order of highest order + 1.
-            property.order = plots.count > 0
-              ? plots.order + 1
-              : 0;
-            property.active = true;
-          }
-
-          else {
-            DBCardsService.removeItemFromPlot(property);
-            property.active = false;
-          }
-
-          if (DataService.onGeometriesChange) {
-            DataService.onGeometriesChange();
-          }
-
-        };
+        scope.toggleSelection = SelectionService.toggle;
 
         scope.$on('$destroy', function () {
-          _.forEach(scope.geom.properties, function (property) {
-            property.active = true;
-            scope.toggleProperty(property);
-            // Activity of property should not be defined when creating
-            // dashboard.
-            property.active = undefined;
+          _.forEach(scope.geom.properties, function (property, uuid) {
+            var selection = _.find(State.selections, function(s) {
+		return s.geom === scope.geom.geometry.coordinates.toString() && s.raster === uuid;
+            });
+            if (selection) {
+              selection.active = true;
+              scope.toggleSelection(selection);
+              // Activity of selection should not be defined when creating
+              // dashboard.
+              selection.active = undefined;
+            }
           });
         });
+
+        DragService.addDraggableContainer(element.find('#drag-container'));
 
       },
       restrict: 'E',

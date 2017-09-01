@@ -101,16 +101,15 @@ describe('Testing UrlService', function () {
                       // languages, it returns the first part of the path.
       context: 'dashboard',
       baselayer: 'neutral',
-      annotations: {active: true},
-      layers: {active : ['assetgroup$0037b5f']},
-      box: {type : 'region'},
-      selected: undefined,
-      spatial: {
-        view: { lat: 4, lng: 6, zoom: 8 }
-      },
+      annotationsActive: true,
+      activeLayers: ['assetgroup$0037b5f'],
+      boxType: 'region',
+      view: { lat: 4, lng: 6, zoom: 8 },
+      assets: [],
+      geometries: [],
       temporal: { start :1199401200000, end :1468447200000 }
     };
-    var state = service.getState();
+    var state = service.getDataForState();
 
     expect(state).toEqual(expectedUrlState);
   });

@@ -1,8 +1,7 @@
 /**
  * Service to handle timeseries retrieval.
  */
-angular.module('timeseries')
-.service("TimeseriesService", [
+angular.module('timeseries').service("TimeseriesService", [
   '$q',
   'State',
   '$http',
@@ -10,94 +9,147 @@ angular.module('timeseries')
   'UtilService',
   'DataService',
   'TimeseriesUtilService',
-  'RelativeToSurfaceLevelService',
-  'gettextCatalog',
-  function ($q, State, $http, notie, UtilService, DataService, TsUService,
-    RTSLService, gettextCatalog) {
+    'RelativeToSurfaceLevelService',
+    'gettextCatalog',
+  function ($q, State, $http, notie, UtilService,
+            DataService, TsUService, RTSLService, gettextCatalog) {
+    // *wrapped* boolean indicating we want the timeseries value (y-axis) to be
+    // relative to the asset's "surface_level" value (boolean set to true) or
+    // we want it to be the absolute value (boolean set to false);
+
+    // NB! This wrapping is required for syncing multiple directive scopes to
+    // this value: if the boolean does not gets wrapped, every directive's scope
+    // gets a local copy and will tehrefor not be updated in-sync with updating
+    // the value in the service
+    var service = this;
+
     var GRAPH_WIDTH = 320; // Width of drawing area of box graphs.
 
-    // Contains timeseries metadata and data as comes from api. It mirrors
-    // State.seletected.timeseries.
-    this.timeseries = [];
+    // Contains timeseries metadata and data as comes from api. Since bars and
+    // lines
+
+    var _barTimeseries = [];
+    var _lineTimeseries = [];
+
+    var _setTimeseries = function (timeseriesIn) {
+      if (timeseriesIn !== undefined && timeseriesIn.length > 0 &&
+          timeseriesIn[0].measureScale) {
+        if (timeseriesIn[0].measureScale !== "ratio") {
+          _barTimeseries = timeseriesIn;
+        } else {
+          _lineTimeseries = timeseriesIn;
+        }
+        if (service.onTimeseriesChange) {
+          service.onTimeseriesChange();
+        }
+      }
+    };
+
+    Object.defineProperty(service, 'timeseries', {
+      get: function () { return _barTimeseries.concat(_lineTimeseries); },
+      set: _setTimeseries,
+      enumerable: true
+    });
 
     this.minPoints = GRAPH_WIDTH; // default
 
-    var service = this;
-
-    var _timeseries = [];
-    Object.defineProperty(State.selected, 'timeseries', {
-      get: function () { return _timeseries; },
-      set: function (timeseries) {
-        console.log('State.selected.timeseries:', timeseries);
-        _timeseries = timeseries;
+    var _selections = State.selections || [];  // !!! Do not throw away old value!
+    Object.defineProperty(State, 'selections', {
+      get: function () { return _selections; },
+      set: function (selections) {
+        _selections = selections;
         service.syncTime();
       },
       enumerable: true
     });
 
-    this.syncTime = function () {
-      var groupedTimeseries = {temporalBars: [], temporalLines: []};
+    /**
+     * Finds timeseries, asset or geometry data for a selection.
+     *
+     * @param  {object}  selection   a selection from State.selections
+     * @return {object} asset or geometry data.
+     */
+    // TODO: THIS IS BAD PRACTICE!
+    this.findProperty = function (selection) {
+      if (selection.timeseries) {
+        return _.find(this.timeseries, function (ts) {
+          return selection.timeseries === ts.id;
+        });
+      }
+      return DataService.findProperty(selection);
+    };
 
-      _.forEach(State.selected.timeseries, function(ts) {
-        if (ts.active) {
-          if (ts.measureScale === "ratio") {
-            groupedTimeseries.temporalBars.push(ts.uuid);
-          } else {
-            groupedTimeseries.temporalLines.push(ts.uuid);
+
+    /**
+     * Collects timeseries data from the backend.
+     *
+     * @return {array} array of two angular promises: the first one for lines,
+     *                 the second one for bars (data with a ratio scale).
+     */
+    this.syncTime = function () {
+
+      var groupedSelections = {
+        temporalBars: {timeseries: [], rasters: []},
+        temporalLines: {timeseries: [], rasters: []}
+      };
+
+      _.forEach(State.selections, function(selection){
+        if(selection.active){
+          var scale = selection.measureScale === "ratio" ? "temporalBars" :
+                      "temporalLines";
+          if (selection.timeseries) {
+            groupedSelections[scale].timeseries.push(selection.timeseries);
+          } else if (selection.rasters) {
+            groupedSelections[scale].rasters.push(selection.timeseries);
           }
         }
       });
 
-      var getActiveTimeseries = function(actives, useMinPoints, noDefer, graphType) {
+      var activeTimeseries = function(actives, minPoints, chartType){
+        // Return empty timeseries when empty selection
+        var timeseriesPromise;
         if (actives.length === 0) {
           var defer = $q.defer();
           defer.resolve([]);
-          return defer.promise;
+          timeseriesPromise = defer.promise;
         } else {
-          return service._getTimeseries(
+          timeseriesPromise =  service._getTimeseries(
             actives,
             State.temporal,
-            useMinPoints && service.minPoints,
-            noDefer,
-            graphType
+            minPoints && service.minPoints,
+            chartType
           );
         }
+
+        timeseriesPromise.then(function (response) {
+          service.timeseries = _.filter(
+            response,
+            function (ts) { return _.some(
+              State.selections,
+              function (stateTs) {
+                return ts.id === stateTs.timeseries && stateTs.active;
+              });
+            });
+          return service.timeseries;
+        }).then(function (ts) {
+            if (service.onTimeseriesChange) {
+		service.onTimeseriesChange();
+            }
+            return ts;
+	});
+  
+        return timeseriesPromise;
       };
 
-      var promise = $q.all([
-        getActiveTimeseries(
-          groupedTimeseries.temporalLines, true, false, 'temporalLines'),
-        getActiveTimeseries(
-          groupedTimeseries.temporalBars, false, true, 'temporalBars')
-      ]).then(function (response) {
-        var barsAndLinesTimeseries = _.concat(response[0], response[1]);
-        console.log('TimeseriesService.timeseries:', service.timeseries);
-        return barsAndLinesTimeseries;
-      })
-      .then(function (barsAndLinesTimeseries) {
-        // Called asynchronously, so check if timeseries is still in state and
-        // active.
-        service.timeseries = _.filter(
-          barsAndLinesTimeseries,
-          function (ts) { return _.some(
-            State.selected.timeseries,
-            function (stateTs) {
-              return ts.id === stateTs.uuid && stateTs.active;
-            });
-          });
-        return service.timeseries;
-      })
-      .then(function (ts) {
-        if (service.onTimeseriesChange) {
-          service.onTimeseriesChange();
-        }
-        return ts;
-      });
-      return promise;
+      return [
+        activeTimeseries(groupedSelections.temporalLines.timeseries, true,
+                         'lines'),
+        activeTimeseries(groupedSelections.temporalBars.timeseries, false,
+                         'bars')
+      ];
     };
 
-    var localPromiseLines = {};
-    var localPromiseBars = {};
+    var localPromise = {lines: {}, bars: {}, crosssections: {}};
 
     /**
      * Color is stored with the ts metadata in asset.timeseries of every asset
@@ -108,11 +160,13 @@ angular.module('timeseries')
      */
     this.onColorChange = function (changedTS) {
       var ts = _.find(service.timeseries, function (o) {
-        return o.id === changedTS.uuid;
+        return o.id === changedTS.timeseries;
       });
       if (ts) {
         ts.color = changedTS.color;
-        service.onTimeseriesChange();
+        if (service.onTimeseriesChange) {
+          service.onTimeseriesChange();
+        }
       }
     };
 
@@ -131,19 +185,12 @@ angular.module('timeseries')
      *                        lines, ask for minimally the graphs width amount
      *                        of pixels.
      */
-    this._getTimeseries = function (uuids, timeState, minPoints, noReject, graphType) {
-
-      var localPromise = graphType === 'temporalLines'
-        ? localPromiseLines
-        : localPromiseBars;
-
-      if (!noReject){
-        // Cancel consecutive calls.
-        if (localPromise.reject) {
-          localPromise.resolve({data: {results: []}});
-        }
-        localPromise = $q.defer();
+    this._getTimeseries = function (uuids, timeState, minPoints, chartType) {
+      // Cancel consecutive calls.
+      if (localPromise[chartType].reject) {
+        localPromise[chartType].resolve({data: {results: []}});
       }
+      localPromise[chartType] = $q.defer();
 
       var id = uuids.join(',');
       var params = {
@@ -152,7 +199,7 @@ angular.module('timeseries')
         end: timeState.end ? parseInt(timeState.end, 10): undefined,
       };
 
-      if (graphType === 'temporalLines' && RTSLService.get()) {
+      if (chartType === 'temporalLines' && RTSLService.get()) {
         params.relative_to = 'surface_level';
       }
 
@@ -189,18 +236,18 @@ angular.module('timeseries')
         url: 'api/v3/timeseries/',
         method: 'GET',
         params: params,
-        timeout: localPromise.promise
+        timeout: localPromise[chartType].promise
       })
 
       // Bind field to succes function so we can use it as the y key for graphs.
-      .then(function (response) {
-        var result = response.data.results;
-        result.field = this.field;
-        return result;
-      }.bind({field: params.fields}), errorFn)
+        .then(function (response) {
+          var result = response.data.results;
+          result.field = this.field;
+          return result;
+        }.bind({field: params.fields}), errorFn)
 
-      .then(TsUService.filterTimeseries, errorFn)
-      .then(TsUService.formatTimeseriesForGraph);
+        .then(TsUService.filterTimeseries, errorFn)
+        .then(TsUService.formatTimeseriesForGraph);
     };
 
     var errorFn = function (err) {
@@ -222,23 +269,6 @@ angular.module('timeseries')
       return err; // continue anyway
     };
 
-    this.initializeTimeseriesOfAsset = function (asset) {
-      var colors = UtilService.GRAPH_COLORS;
-      State.selected.timeseries = _.unionBy(
-        State.selected.timeseries,
-        asset.timeseries.map(function (ts, i) {
-          return {
-            uuid: ts.uuid,
-            active: false,
-            order: 0,
-            color: colors[i % (colors.length - 1)],
-            measureScale: ts.scale
-          };
-        }),
-        'uuid'
-      );
-      return asset;
-    };
   }
 ]);
 
@@ -246,13 +276,12 @@ angular.module('timeseries')
 /**
  * Service to handle timeseries retrieval.
  */
-angular.module('timeseries')
-       .service('TimeseriesUtilService', [
-         'WantedAttributes', 'DataService', 'State', 'RelativeToSurfaceLevelService',
-         function (WantedAttributes, DataService, State, RTSLService) {
+angular.module('timeseries').service('TimeseriesUtilService', [
+  'WantedAttributes', 'DataService', 'State', 'RelativeToSurfaceLevelService',
+  function (WantedAttributes, DataService, State, RTSLService) {
 
     /**
-     * Looks up timeseries in State.selected.timeseries and copies color and order.
+     * Looks up timeseries in State.selections and copies color and order.
      * TimeseriesService.timeseries are not persistent when toggled.
      * asset.timeseries is persistent till a user removes it from selection.
      *
@@ -285,7 +314,7 @@ angular.module('timeseries')
         graphTimeseries.reference_frame = ts.reference_frame;
         graphTimeseries.thresholds = [];
 
-        var tsActive = _.find(State.selected.timeseries, {'uuid': ts.uuid });
+        var tsActive = _.find(State.selections, {'uuid': ts.uuid });
         if (tsActive && tsActive.active) {
           assetOfTs.ts = graphTimeseries.ts;
         }
@@ -299,7 +328,7 @@ angular.module('timeseries')
             // the timeseries object has that in two separate values now.
             var unitAndReference = (
               graphTimeseries.unit +
-               (graphTimeseries.reference_frame ? ' ('+graphTimeseries.reference_frame+')' : '')
+                 (graphTimeseries.reference_frame ? ' ('+graphTimeseries.reference_frame+')' : '')
             );
 
             if (attr.valueSuffix === unitAndReference) {
@@ -330,8 +359,8 @@ angular.module('timeseries')
       }
 
       var tsState = _.find(
-        State.selected.timeseries,
-        { 'uuid': graphTimeseries.id }
+        State.selections,
+        { 'timeseries': graphTimeseries.id }
       );
 
       // In db with crosssections it is possible to not have state of a ts.
@@ -350,8 +379,8 @@ angular.module('timeseries')
         id: '', //uuid
         data: [],
         unit: '',
-        color: '', // Defined on asset.timeseries
-        order: '', // Defined on asset.timeseries
+        color: '', // Defined on State.selections
+        order: '', // Defined on State.selections
         valueType: '',
         labels: {
           x: '',
@@ -362,9 +391,13 @@ angular.module('timeseries')
 
       var result = [];
       timeseries.forEach(function (ts) {
+        var tsSelection = _.find(State.selections, function (s) {
+          return s.timeseries === ts.uuid; });
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
 
         graphTimeseries.data = ts.events;
+        graphTimeseries.order = tsSelection.order;
+        graphTimeseries.color = tsSelection.color;
         graphTimeseries.id = ts.uuid;
         graphTimeseries.valueType = ts.value_type;
         graphTimeseries.measureScale = ts.observation_type.scale;
@@ -399,15 +432,15 @@ angular.module('timeseries')
 
           filteredResult.push(ts);
 
-        // Else: output a message to the console and an error to sentry.
+          // Else: output a message to the console and an error to sentry.
         } else if (ts.events.length > MAX_NR_TIMESERIES_EVENTS) {
           msg = 'Timeseries: '
-            + ts.uuid
-            + ' has: '
-            + ts.events.length
-            + ' events, while '
-            + MAX_NR_TIMESERIES_EVENTS
-            + ' is the maximum supported amount';
+              + ts.uuid
+              + ' has: '
+              + ts.events.length
+              + ' events, while '
+              + MAX_NR_TIMESERIES_EVENTS
+              + ' is the maximum supported amount';
           window.Raven.captureException(new Error(msg));
           console.info(msg);
         }

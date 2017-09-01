@@ -23,7 +23,7 @@ angular.module('ui-utils').directive('uiModal', ['ExportService',
 
       scope.mayCloseModal = function () {
         return !ExportService.isPolling.value;
-      }
+      };
 
       // ensures there is no conflict between Bootstrap set state and ng internals
       el.on('hide.bs.modal', function (e) {

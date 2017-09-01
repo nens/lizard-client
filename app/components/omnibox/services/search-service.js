@@ -165,10 +165,10 @@ angular.module('omnibox')
       var ZOOM_FOR_OBJECT = 19;
 
       if (state.box.type !== 'multi-point' && state.context !== 'dashboard') {
-        state.selected.reset();
+        state.resetObjects();
       }
 
-      state.selected.assets.addAsset(
+      state.assets.addAsset(
         result.entity_name + '$' + result.entity_id);
 
       // If an assetgroup layer is present in the layer menu, but it is not
@@ -202,7 +202,7 @@ angular.module('omnibox')
       var ZOOM_FOR_OBJECT = 19;
 
       if (state.box.type !== 'multi-point' && state.context !== 'dashboard') {
-        state.selected.reset();
+        state.resetObjects();
       }
 
       state.spatial.view = {
