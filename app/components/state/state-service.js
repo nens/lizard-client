@@ -5,6 +5,17 @@ angular.module('global-state').service(
   'State',
   ['UtilService', 'gettextCatalog', '$http',
    function (UtilService, gettextCatalog, $http) {
+
+    var CURRENT_STATE_VERSION = 1;
+    /* State version change log -- if something about State changes, update
+       the version number and document below. Makes it possible to see which
+       state version a favourite was saved with.
+
+    1 - First version number, after merging the "improved geom state" PR.
+        Way to recognize that a favourite was saved by the new client or the old
+        one.
+    */
+
      /**
       * Checks given temporal state object whether `at` is within extent. If not
       * returns rounded `at` at start or end of time extent depending on
@@ -48,7 +59,9 @@ angular.module('global-state').service(
        });
      };
 
-     var state = {};
+     var state = {
+         VERSION: CURRENT_STATE_VERSION
+     };
 
      // Current language.
      state.language = null;
