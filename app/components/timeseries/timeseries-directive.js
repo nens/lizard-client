@@ -99,7 +99,7 @@ angular.module('timeseries')
               "Unknown interval '" +
               intervalText +
               "' for temporal zoom; allowed values are " +
-              "'one_year', 'three_months', 'two_weeks'"
+              "'one_year', 'three_months', 'two_weeks' and 'timesteps_range'"
             );
         }
 
