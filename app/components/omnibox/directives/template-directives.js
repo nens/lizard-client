@@ -16,6 +16,7 @@ angular.module('omnibox')
   return {
     link: function (scope, element) {
 
+      scope.assetType = 'asset';
       scope.user = user;
 
       var clickId;
@@ -228,10 +229,10 @@ angular.module('omnibox')
       });
 
       var removeTSofAsset = function (asset) {
-        State.selected.timeseries = _.differenceBy(
-          State.selected.timeseries,
+        State.selections = _.differenceBy(
+          State.selections,
           asset.timeseries,
-          'uuid'
+          'timeseries'
         );
       };
 

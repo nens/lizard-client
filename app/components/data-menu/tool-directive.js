@@ -19,8 +19,8 @@ angular.module('data-menu')
       }
       // TODO: enable line with others, only clicklayer is bitching.
       else if (!(scope.boxType === 'point' && scope.type === 'multi-point')) {
-        State.selected.geometries = [];
-        State.selected.assets = [];
+        State.geometries = [];
+        State.assets = [];
       }
       scope.boxType = scope.type;
     };

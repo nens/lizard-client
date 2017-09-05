@@ -387,7 +387,7 @@ angular.module('lizard-nxt')
         var pixels = value[keys.x];
         value[keys.x] = pixels / total; // Percentage, is percentage of area with data
 
-        var selectedGeometries = State.selected.geometries;
+        var selectedGeometries = State.geometries;
         if (selectedGeometries && selectedGeometries.length === 1 &&
             (selectedGeometries[0].geometry.type === 'Polygon' ||
              selectedGeometries[0].geometry.type === 'MultiPolygon')) {
@@ -692,7 +692,7 @@ angular.module('lizard-nxt')
       var thresholds = [];
 
       charts.forEach(function (chart) {
-        if (chart.unit === activeUnit) {
+        if (chart.unit === activeUnit && chart.thresholds) {
           chart.thresholds.forEach(function (threshold) {
             // XXX There is a bug
             // (https://github.com/nens/lizard-nxt/issues/2215#issuecomment-313606175)

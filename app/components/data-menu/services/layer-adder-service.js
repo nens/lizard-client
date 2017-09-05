@@ -50,11 +50,10 @@ angular.module('data-menu')
     };
 
     /**
-     * Get single layergroup from the API.
-     * @param {string} params - slug for layergroup you are looking for.
-     * @param {function} success - Execute this function on a successful GET.
-     * @param {function} error - Execute this function on an unsuccessful
-     *                           GET.
+     * Get single layer from the API.
+     * @param {string} entity - layer type you are looking for.
+     * @param {string} id - id of the layer.
+     * @param {string} name - layer name for errorhandling.
      */
     this.fetchLayer = function (entity, id, name) {
       var onError = function (err) {

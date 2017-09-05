@@ -449,7 +449,7 @@ angular.module('lizard-nxt')
       function () {
         return JSON.stringify([
           State.layers,
-          State.selected.timeseries,
+          State.selections,
           State.annotations.active
         ]);
       },
@@ -490,7 +490,7 @@ angular.module('lizard-nxt')
      * of timeseries:
      */
     var tlNeededBecauseTimeseries = function () {
-      return State.selected.timeseries && State.selected.timeseries.length;
+      return State.selections && State.selections.length;
     };
 
     /**

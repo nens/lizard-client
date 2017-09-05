@@ -10,10 +10,10 @@
  */
 angular.module('lizard-bootstrap', ['favourites'])
 .run([
-  '$http', 'UrlService', 'FavouritesService', 'user', 'version', 'debug',
+    '$http', 'UrlService', 'State', 'FavouritesService', 'user', 'version', 'debug',
     'UserAgentService',
-  function ($http, UrlService, FavouritesService, user, version, debug,
-    UserAgentService) {
+    function ($http, UrlService, State, FavouritesService, user, version, debug,
+	     UserAgentService) {
 
     var showErrorModal = function () {
       var overlay = document.getElementById('dark-overlay');
@@ -40,7 +40,7 @@ angular.module('lizard-bootstrap', ['favourites'])
           version.revision = bootstrap.revision;
           if (applyState) {
             FavouritesService.applyFavourite(bootstrap);
-            FavouritesService.applyFavourite({state: urlState});
+            State.applyUrlToState(urlDataForState);
           }
         },
         function (response) {
@@ -49,12 +49,7 @@ angular.module('lizard-bootstrap', ['favourites'])
       );
     };
 
-    /**
-     * Gets a favourite state object from the url. Containing a subset of a
-     * complete json serialized state object.
-     * @type {{} favourite like}
-     */
-    var urlState = UrlService.getState();
+    var urlDataForState = UrlService.getDataForState();
 
     /**
      * Is undefined or a string containing the uuid of a favourite.
@@ -64,7 +59,6 @@ angular.module('lizard-bootstrap', ['favourites'])
     var urlFavourite = UrlService.getFavourite();
 
     if (urlFavourite) {
-
       var gotFavourite = function (favourite, getResponseHeaders) {
         getBootstrap(false);
         FavouritesService.applyFavourite(favourite);
@@ -78,8 +72,7 @@ angular.module('lizard-bootstrap', ['favourites'])
        * @return {[type]} [description]
        */
       var failedToGetFavourite = function () {
-        urlState = UrlService.getState();
-        getBootstrap(true);
+        getBootstrap(true, urlDataForState);
       };
 
       FavouritesService.getFavourite(
@@ -91,8 +84,7 @@ angular.module('lizard-bootstrap', ['favourites'])
     else {
       // We are not bootstrapping on the basis of an explicit favourite. Instead
       // bootstrap a portal with overwrites from the url.
-      getBootstrap(true);
+      getBootstrap(true, urlDataForState);
     }
-
   }
 ]);

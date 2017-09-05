@@ -99,7 +99,6 @@ angular.module('lizard-nxt')
         graphCtrl.setFormattedContent(scope);
       }
 
-
       // UpdateData is called with temporal.timelineMoving to draw subset for
       // performance reasons.
       graphCtrl.updateData.call(

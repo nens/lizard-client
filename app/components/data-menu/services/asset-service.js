@@ -8,17 +8,22 @@ angular.module('data-menu')
       this.NESTED_ASSET_PREFIXES = ['pump', 'filter', 'monitoring_well'];
 
       /**
-       * Removes all the ts from the selection of the asset. It should not be
-       * possible to select ts of assets.
+       * Removes all the selections of the asset. It should not be
+       * possible to select timeseries or asset selections that belong to this
+       * asset.
        *
        * @param  {object} asset
        */
-      var removeTSofAsset = function (asset) {
-        State.selected.timeseries = _.differenceBy(
-          State.selected.timeseries,
+      var removeAssetSelections = function (asset) {
+        State.selections = _.differenceWith(
+          State.selections,
           asset.timeseries,
-          'uuid'
+          function(selectionTs, assetTs) {
+            return selectionTs.timeseries === assetTs.uuid;}
         );
+        State.selections = _.filter(State.selections, function(selection) {
+            return selection.asset !== asset.entity_name + "$" + asset.id;
+        });
       };
 
       /**
@@ -26,7 +31,7 @@ angular.module('data-menu')
        * @param {string} id -  id of the enitity
        * returns {object} promise - thenable with result of the asset API
        */
-      var getAsset = function (entity, id) {
+      this.getAsset = function (entity, id) {
         return $http({
           url: 'api/v3/' + entity + 's' + '/' + id + '/',
           method: 'GET'
@@ -41,7 +46,7 @@ angular.module('data-menu')
       /**
        * Removes assets from service when not selected.
        *
-       * @param  {array}  selectedAssets State.selected.asssets.
+       * @param  {array}  selectedAssets State.asssets.
        * @param  {array}  currentAssets  DataService.assets
        * @return {array}                 Updated DataService.assets.
        */
@@ -50,52 +55,14 @@ angular.module('data-menu')
           var assetId = asset.entity_name + '$' + asset.id;
           var keep = selectedAssets.indexOf(assetId) !== -1;
           if (!keep) {
-            removeTSofAsset(asset);
+            removeAssetSelections(asset);
           }
           return keep;
         });
       };
 
       /**
-       * Updates assets by making requests to asset api.
-       *
-       * @param  {array}  assets       array of assets as from api
-       * @param  {array}  oldSelection old array of assetId of selected assets
-       * @param  {array}  newSelection new array of assetId of selected assets
-       */
-      /**
-       * anonymous function - description
-       *
-       * @param  {type} assets       description
-       * @param  {type} oldSelection description
-       * @param  {type} newSelection description
-       * @return {type}              description
-       */
-
-      this.updateAssets = function (assets, oldSelection, newSelection) {
-
-        var newAssets = newSelection.filter(function (assetId) {
-          return oldSelection.indexOf(assetId) === -1;
-        });
-
-        if (newAssets) {
-          return _.map(newAssets, function (asset) {
-            var entity = asset.split('$')[0];
-            var id = asset.split('$')[1];
-
-            return getAsset(entity, id);
-          });
-        }
-
-        else {
-          var defer = $q.defer();
-          defer.resolve();
-          return [defer.promise];
-        }
-      };
-
-      /**
-       * Given State.selected.assets, get the names for the assets that are
+       * Given State.assets, get the names for the assets that are
        * nested within other assets (e.g. 'filter$23').
        *
        * @return {array} Names of currently selected assets that are nested.
@@ -103,7 +70,7 @@ angular.module('data-menu')
       this.getAllNestedAssetNames = function () {
         var nestedAssetPrefixes = this.NESTED_ASSET_PREFIXES,
             nestedAssetNames = [];
-        State.selected.assets.forEach(function (assetName) {
+        State.assets.forEach(function (assetName) {
           nestedAssetPrefixes.forEach(function (nestedAssetPrefix) {
             if (assetName.startsWith(nestedAssetPrefix)) {
               nestedAssetNames.push(assetName);
@@ -114,13 +81,13 @@ angular.module('data-menu')
       };
 
       /**
-       * Given State.selected.assets, get the names for the assets that are not
+       * Given State.assets, get the names for the assets that are not
        * nested within other assets (e.g. 'pumpstation$303').
        *
        * @return {array} Names of currently selected assets that aren't nested.
        */
       this.getAllNonNestedAssetNames = function () {
-        return _.difference(State.selected.assets,
+        return _.difference(State.assets,
           this.getAllNestedAssetNames());
       };
 

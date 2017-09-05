@@ -195,17 +195,17 @@ angular.module('legend')
       if (n === o) { return; }
       LegendService.updateLegendData(
         scope.state.spatial.bounds,
-        scope.state.selected.geometries,
+        scope.state.geometries,
         scope.state.layers
       );
     });
 
-    scope.$watch(scope.state.toString('selected.geometries'), function (n, o) {
+    scope.$watch(scope.state.toString('geometries'), function (n, o) {
       if (n === o) { return; }
 
       LegendService.updateLegendData(
         scope.state.spatial.bounds,
-        scope.state.selected.geometries,
+        scope.state.geometries,
         scope.state.layers);
     });
 
@@ -213,7 +213,7 @@ angular.module('legend')
       if (n === o) { return; }
       LegendService.updateLegendData(
         n,
-        scope.state.selected.geometries,
+        scope.state.geometries,
         scope.state.layers);
     });
 
@@ -227,7 +227,7 @@ angular.module('legend')
       });
       LegendService.updateLegendData(
         scope.state.spatial.bounds,
-        scope.state.selected.geometries,
+        scope.state.geometries,
         temporalLayers);
     });
 
@@ -235,7 +235,7 @@ angular.module('legend')
 
     LegendService.updateLegendData(
       scope.state.spatial.bounds,
-      scope.state.selected.geometries,
+      scope.state.geometries,
       scope.state.layers
     );
   };

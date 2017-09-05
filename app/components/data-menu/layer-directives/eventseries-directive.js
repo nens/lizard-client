@@ -43,7 +43,8 @@ angular.module('data-menu')
             quantity: response.observation_type
               && response.observation_type.parameter,
             unit: response.observation_type
-              && response.observation_type.unit
+               && response.observation_type.unit,
+            slug: ''  // Should have a value because .indexOf is called sometimes
           }));
 
           MapService.updateLayers([scope.layer]);

@@ -2,12 +2,21 @@
  * Service to handle favourites retrieval, creation and deletion.
  */
 angular.module('favourites')
-  // NOTE: inject TimeseriesService even though it is not used.
-  // TimeseriesService defines State.selected.timeseries which may be restored
-  // from favourite. If timeseriesService is not injected it might not be
-  // defined.
-  .service("FavouritesService", ['$resource', 'State', 'gettextCatalog', 'UtilService', 'notie', '$window', 'TimeseriesService',
-    function ($resource, State, gettextCatalog, UtilService, notie, $window) {
+  .service("FavouritesService", [
+    '$resource',
+    'State',
+    'gettextCatalog',
+    'UtilService',
+    'notie',
+    '$window',
+    function (
+        $resource,
+        State,
+        gettextCatalog,
+        UtilService,
+        notie,
+        $window)
+    {
 
       /* Create a resource for interacting with the favourites endpoint of the
        * API.
@@ -179,37 +188,58 @@ angular.module('favourites')
        * @param {object} favourite - The favourite to apply with a state.
        */
       this.applyFavourite = function (favourite) {
+        // TODO: Because we do not reset the graphs here. The old and new
+        // dasboard-graph 'states' are merged. Which introduces buggy dashboard
+        // favourites. We could fix this by resetting the graphs (and perhaps
+        // also the data service).
+        State.resetState();
+
         if (favourite.state.temporal && favourite.state.temporal.relative) {
           favourite.state.temporal = adhereTemporalStateToInterval(
             favourite.state.temporal
           );
         }
 
-        if (_.isArray(favourite.state.layers)) {
-          _.remove(State.layers, undefined); // empties array by mutation.
-
-          favourite.state.layers.forEach(
-            function (l) {
-              State.layers.push(l);
-            }
-          );
+        // Restore assets
+        if (typeof favourite.state.assets !== 'undefined') {
+          favourite.state.assets.forEach(function (asset) {
+            State.assets.addAsset(asset);
+          });
         }
 
+        // Restore layers
+        if (typeof favourite.state.layers !== 'undefined') {
+          favourite.state.layers.forEach(function (layer) {
+            State.layers.push(layer);
+          });
+        }
+
+        // Restore geometries
+        if (typeof favourite.state.geometries !== 'undefined') {
+          favourite.state.geometries.forEach(function (geometry) {
+            State.geometries.push(geometry);
+          });
+        }
+
+        console.log("--> Before changing selections");
+        // Restore selections
+        if (typeof favourite.state.selections !== 'undefined') {
+          State.selections = favourite.state.selections;
+        }
+        console.log("--> After changing selections, it is now", State.selections);
+
+        // Specific attributes
         var ATTRIBUTES = [
           'temporal.start',
           'temporal.end',
           'temporal.at',
           'temporal.playing',
-          'selected.assets',
-          'selected.geometries',
-          'selected.timeseries',
           'context',
           'box.type',
           'language',
           'baselayer',
           'annotations.active',
           'annotations.present',
-          'spatial.bounds',
           'spatial.view',
           'layers.active'
         ];
@@ -221,7 +251,12 @@ angular.module('favourites')
           }
         });
 
-        UtilService.announceMovedTimeline(State);
+        if (favourite.state.spatial && !_.isUndefined(favourite.state.spatial.bounds)) {
+          State.spatial.bounds = favourite.state.spatial.bounds;
+          State.spatial.bounds.isValid = function () { return true; };
+        }
+
+          UtilService.announceMovedTimeline(State);
       };
 
       return this;

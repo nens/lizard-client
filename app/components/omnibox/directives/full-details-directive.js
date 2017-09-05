@@ -45,8 +45,8 @@ angular.module('lizard-nxt')
        * Minimize boxes when lots of cards.
        */
       scope.$watch(State.toString('selected'), function () {
-        var boxLength = State.selected.assets.length
-         + State.selected.geometries.length;
+        var boxLength = State.assets.length
+         + State.geometries.length;
 
         if (!toggledByUser && boxLength > 2) {
           scope.fullDetails = false;

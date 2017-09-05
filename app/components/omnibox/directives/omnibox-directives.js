@@ -54,9 +54,9 @@ angular.module("omnibox")
             break;
           case KeyCodes.DOWNARROW:
             tabIncrement = 1;
-            break
+            break;
           default:
-            return
+            return;
         }
 
         var resultCount = 0;
@@ -67,24 +67,23 @@ angular.module("omnibox")
           resultCount += scope.omnibox.searchResults.api.length;
         }
         if (scope.omnibox.searchResults.temporal) {
-          resultCount += scope.omnibox.searchResults.temporal.length
+            resultCount += scope.omnibox.searchResults.temporal.length;
         }
 
         var newTabIndex = parseInt($target.attr('tabindex')) + tabIncrement;
         if (newTabIndex > resultCount) {
-          newTabIndex = 1
+            newTabIndex = 1;
         } else if (newTabIndex < 1) {
-          newTabIndex = resultCount
+            newTabIndex = resultCount;
         }
 
-        $timeout(function() { $('[tabindex=' + newTabIndex + ']').focus() });
+          $timeout(function() { $('[tabindex=' + newTabIndex + ']').focus(); });
       };
 
       scope.showAnnotations = function () {
         return (
           user.authenticated &&
-          (State.selected.assets.length ||
-           State.annotations.active) &&
+          (State.assets.length || State.annotations.active) &&
           (scope.omnibox.data.geometries.length +
            scope.omnibox.data.assets.length) < 2
         );

@@ -15,7 +15,7 @@ angular.module('omnibox')
 
       nestedAssets.forEach(function (asset) {
         asset.name = scope.asset.name;
-        State.selected.assets.addAsset(asset.entity_name + '$' + asset.id);
+        State.assets.addAsset(asset.entity_name + '$' + asset.id);
       });
 
       scope.$watch('asset', function () {
@@ -25,7 +25,7 @@ angular.module('omnibox')
         scope.list = scope.list.map(function (asset) {
           asset.name = scope.asset.name;
           console.log(scope.asset.name, asset.name);
-          State.selected.assets.addAsset(asset.entity_name + '$' + asset.id);
+          State.assets.addAsset(asset.entity_name + '$' + asset.id);
           return asset;
         });
       });
@@ -33,9 +33,9 @@ angular.module('omnibox')
       scope.$on('$destroy', function () {
         nestedAssets.forEach(function (asset) {
           var assetId = asset.entity_name + '$' + asset.id;
-          var i = State.selected.assets.indexOf(assetId);
+          var i = State.assets.indexOf(assetId);
           if (i !== -1) {
-            State.selected.assets.removeAsset(assetId);
+            State.assets.removeAsset(assetId);
           }
         });
       });

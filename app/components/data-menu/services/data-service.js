@@ -31,6 +31,28 @@ angular.module('data-menu')
 
       var instance = this;
 
+      /**
+       * Finds asset or geometry data for a selection.
+       *
+       * @param  {object}  selection   a selection from State.selections
+       * @return {object} asset or geometry data.
+       */
+      this.findProperty = function (selection) {
+        if (selection.asset) {
+          return _.find(
+            instance.assets, function(asset) {
+		return selection.asset === asset.entity_name + "$" + asset.id;
+            }
+          );
+        } else if (selection.geom) {
+          return _.find(
+            instance.geometries, function(geom) {
+		return selection.geom === geom.geometry.coordinates.toString();
+            }
+          );
+        }
+      };
+
       instance.dataLayers = [];
 
       // Callback for when assets are being retrieved from api
@@ -72,6 +94,8 @@ angular.module('data-menu')
         if (instance.onAssetsChange) {
           instance.onAssetsChange();
         }
+
+        console.log('DataService.assets:', instance.assets);
       };
 
       // Define assets on State and update DataService.assets.
@@ -80,23 +104,34 @@ angular.module('data-menu')
         var assets = _.uniq(assetsIn);
         instance.oldAssets = angular.copy(instance.assets);
 
-        // Synchronously remove assets no longer in selection.
+        // Remove assets no longer in selection.
         instance.assets = AssetService.removeOldAssets(assets, instance.assets);
 
-        AssetService.updateAssets(instance.assets, _assets, assets)
-        .forEach(function (assetPromise) {
-          assetPromise.then(assetChange);
+        var newAssets = assets.filter(function (assetId) {
+          // An asset is only new if it occurs in *neither* instance.assets nor _assets.
+          return _assets.indexOf(assetId) === -1 && !(instance.getAssetByKey(assetId));
         });
+
+        newAssets.forEach(function (asset) {
+          var splitKey = asset.split('$');
+          var entity = splitKey[0];
+          var assetId = parseInt(splitKey[1]);
+          AssetService.getAsset(entity, assetId).then(assetChange);
+        });
+
         _assets = assets;
+
+        console.log('State.assets:', State.assets);
 
         rebindAssetFunctions();
       };
 
-      // Rebind add and remove because selected.assets might have been
-      // redefined when calling state.selected.assets = []
+
+      // Rebind add and remove because state.assets might have been
+      // redefined when calling state.assets = []
       var rebindAssetFunctions = function () {
-        State.selected.assets.addAsset = addAsset;
-        State.selected.assets.removeAsset = removeAsset;
+        State.assets.addAsset = addAsset;
+        State.assets.removeAsset = removeAsset;
       };
 
       var addAsset = function (asset) {
@@ -112,15 +147,15 @@ angular.module('data-menu')
       };
 
       instance.assets = instance.oldAssets = [];
-      var _assets = [];
-      Object.defineProperty(State.selected, 'assets', {
+      var _assets = State.assets || [];
+      Object.defineProperty(State, 'assets', {
         get: function () { return _assets; },
         set: setAssets,
         enumerable: true
       });
 
-      State.selected.assets.addAsset = addAsset;
-      State.selected.assets.removeAsset = removeAsset;
+      State.assets.addAsset = addAsset;
+      State.assets.removeAsset = removeAsset;
 
       /**
        * Return true if geometry is of same type (point, line etc) and has the
@@ -153,7 +188,7 @@ angular.module('data-menu')
           promise.then(function (geometries) {
             // Dedupe instance.geometries asynchronous.
             instance.geometries = _.uniqWith(geometries, isDuplicateGeometry);
-
+            console.log('DataService.geometries:', instance.geometries);
             if (instance.onGeometriesChange) {
               instance.onGeometriesChange();
             }
@@ -161,9 +196,9 @@ angular.module('data-menu')
         });
 
         _geometries = geometries;
-
-        State.selected.geometries.addGeometry = addGeometry;
-        State.selected.geometries.removeGeometry = removeGeometry;
+        console.log('State.geometries:', State.geometries);
+        State.geometries.addGeometry = addGeometry;
+        State.geometries.removeGeometry = removeGeometry;
       };
 
       var addGeometry = function (geometry) {
@@ -173,6 +208,10 @@ angular.module('data-menu')
       };
 
       var removeGeometry = function (geometry) {
+        State.selections = _.filter(State.selections, function(selection) {
+            return selection.geom !== geometry.geometry.coordinates.toString();
+          }
+        );
         var newGeometries = angular.copy(_geometries);
         var index = -1;
         _geometries.forEach(function(geom, i) {
@@ -188,13 +227,13 @@ angular.module('data-menu')
 
       instance.geometries = [];
       var _geometries = [];
-      Object.defineProperty(State.selected, 'geometries', {
+      Object.defineProperty(State, 'geometries', {
         get: function () { return _geometries; },
         set: setGeometries
       });
 
-      State.selected.geometries.addGeometry = addGeometry;
-      State.selected.geometries.removeGeometry = removeGeometry;
+      State.geometries.addGeometry = addGeometry;
+      State.geometries.removeGeometry = removeGeometry;
 
       this.REJECTION_REASONS = {};
 
@@ -254,6 +293,7 @@ angular.module('data-menu')
             instance.geometries.forEach(function (old, i) {
               if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
                 instance.geometries[i] = newGeo;
+                console.log('DataService.geometries:', instance.geometries);
               }
             });
           });
@@ -315,6 +355,23 @@ angular.module('data-menu')
         return promises;
       };
 
+      /**
+       * Color is stored with the asset or geom metadata
+       * This function searches in the selected object
+       * in to update the color.
+       *
+       * @param  {object} changedSelection selection object
+       */
+      this.onColorChange = function (changedSelection) {
+        // TODO: bad practice: color should imho be defined in the state and
+        // the state alone.
+        var property = this.findProperty(changedSelection);
+        if (property) {
+          property.color = changedSelection.color;
+          instance.onSelectionsChange();
+        }
+      };
+
       this.getGeomDataForAssets = function (oldAssets, assets) {
         var newAssets = assets.filter(function (asset) {
           return !oldAssets.filter(function (oldAsset) {
@@ -362,27 +419,37 @@ angular.module('data-menu')
             options.end = State.temporal.end;
           }
 
+          console.log("1. Going to get data on dataLayer", dataLayer, "with options", options);
           promises.push(
             dataLayer.getData(options).then(
               function (response) {
+                console.log("2. Got response ", response);
+                var newProps = geo.properties ? _.clone(geo.properties) : {};
+
                 // async so remove anything obsolete.
-                geo.properties = geo.properties || {};
-                geo.properties[layer.uuid] = geo.properties[layer.uuid] || _.clone(dataLayer);
+                if (!newProps[layer.uuid]) {
+                  newProps[layer.uuid] = _.clone(dataLayer);
+                }
+
                 // Replace data and merge everything with existing state of
                 // property.
                 if (response.data) {
-                  geo.properties[layer.uuid].data = [];
-                  _.merge(geo.properties[layer.uuid], response);
+                  newProps[layer.uuid].data = [];
+                  _.merge(newProps[layer.uuid], response);
                 } else {
-                  geo.properties[layer.uuid].data = response;
+                  newProps[layer.uuid].data = response;
                 }
-                if ((!layer.active && layer.uuid in Object.keys(geo.properties))
-                  || geo.properties[layer.uuid].data === null) {
+
+                console.log("3. newProps[layer.uuid].data is now", newProps[layer.uuid].data);
+                if ((!layer.active && layer.uuid in Object.keys(newProps))
+                  || newProps[layer.uuid].data === null) {
 
                   // Use delete to remove the key and the value and the omnibox
                   // can show a nodata message.
-                  delete geo.properties[layer.uuid];
+                  delete newProps[layer.uuid];
                 }
+
+                geo.properties = newProps; // This way the reference is updated, and watches work.
               },
               // Catch rejections, otherwise $.all(promises) is never resolved.
               _.noop
@@ -465,6 +532,6 @@ angular.module('data-menu')
 
         // Default
         return undefined;
-      }
+      };
     }
   ]);

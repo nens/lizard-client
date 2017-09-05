@@ -1,4 +1,32 @@
+angular.module('omnibox').directive('dbAssetCard', [
+  'State',
+  'DataService',
+  'DragService',
+  'DBCardsService',
+  'SelectionService',
+  'TimeseriesService',
+  'RelativeToSurfaceLevelService',
+  function (
+    State,
+    DataService,
+    DragService,
+    DBCardsService,
+    SelectionService,
+    TimeseriesService,
+    RTSLService
+  ) {
+    return {
+      link: function (scope, element) {
 
+        scope.noData = scope.asset.timeseries.length === 0;
+        scope.relativeTimeseries = RTSLService.relativeToSurfaceLevel;
+
+        scope.toggleRelativeTimeseries = function () {
+          RTSLService.toggle();
+          TimeseriesService.syncTime();
+        };
+
+<<<<<<< HEAD
 angular.module('omnibox')
        .directive('dbAssetCard', [
          'State', 'DataService', 'DragService', 'DBCardsService',
@@ -63,52 +91,61 @@ angular.module('omnibox')
       };
 
       scope.parentAssetHasSurfaceLevel = function () {
+=======
+        scope.state = State;
+        scope.getSelectionMetaData = SelectionService.getMetaDataFunction(
+          scope.asset);
+        scope.toggleSelection = SelectionService.toggle;
+>>>>>>> 448da3c0af3160dcf5b0381ccc5795d4a4e3dcba
 
-        if (scope.asset.parentAsset) {
+        scope.getTsLongName = function (selection) {
+          var metaData = scope.getSelectionMetaData(selection);
+          return metaData.location + ',' + metaData.parameter;
+        };
 
-          var parentAssetKey = scope.asset.parentAsset;
-          var parentAsset = DataService.getAssetByKey(parentAssetKey);
-        }
+        scope.assetHasSurfaceLevel = function () {
+          return ('surface_level' in scope.asset);
+        };
 
-        return parentAsset && ('surface_level' in parentAsset);
-      };
-
-      /**
-       * Returns true if selection with uuid is one the first three in the list.
-       *
-       * This is used to bypass ngRepeat which loops over one big list of
-       * selections multiple times, once for each asset. It should draw the
-       * first three of each asset or more if more than three are active.
-       *
-       * @param  {str}  uuid uuid of selection.
-       * @return {Boolean} is in first three of DOM list.
-       */
-      scope.isOneOfFirstThree = function (uuid) {
-        var MAX = 3;
-        var items = element.find('.draggable-ts');
-        if (!items || items.length <= MAX) {
-          return true;
-        } else {
-          var result = false;
-          _.forEach(items, function (item, key) {
-            if (parseInt(key) < MAX) {
-              result = result || item.id === uuid;
+        scope.parentAssetHasSurfaceLevel = function () {
+	    var parentAsset;
+	    var parentAssetKey;
+	    
+            if (scope.asset.parentAsset) {
+		parentAssetKey = scope.asset.parentAsset;
+		parentAsset = DataService.getAssetByKey(parentAssetKey);
             }
-          });
-          return result;
-        }
-      };
 
-      scope.toggleTimeseries = function (timeseries) {
+            return parentAsset && ('surface_level' in parentAsset);
+        };
 
-        if (!timeseries.active) {
+        /**
+         * Returns true if selection with uuid is one the first three in the list.
+         *
+         * This is used to bypass ngRepeat which loops over one big list of
+         * selections multiple times, once for each asset. It should draw the
+         * first three of each asset or more if more than three are active.
+         *
+         * @param  {str}  uuid uuid of selection.
+         * @return {Boolean} is in first three of DOM list.
+         */
+        scope.isOneOfFirstThree = function (uuid) {
+          var MAX = 3;
+          var items = element.find('.draggable-ts');
+          if (!items || items.length <= MAX) {
+            return true;
+          } else {
+            var result = false;
+            _.forEach(items, function (item, key) {
+              if (parseInt(key) < MAX) {
+                result = result || item.id === uuid;
+              }
+            });
+            return result;
+          }
+        };
 
-          var plots = DBCardsService.getActiveCountAndOrder();
-
-          timeseries.order = plots.count > 0
-            ? plots.order + 1
-            : 0;
-
+<<<<<<< HEAD
         } else {
           DBCardsService.removeItemFromPlot(timeseries);
         }
@@ -134,56 +171,73 @@ angular.module('omnibox')
       } else {
         scope.showExtender = true;
       }
+=======
+        // Extender is the button at the bottom of the timeseries list to show
+        // more or less items.
 
-      scope.toggleExtended = function () {
-        scope.extended = !scope.extended;
-      };
+        scope.showExtender = false;
+        scope.extended = true;
 
-      /**
-       * Specific toggle for crosssection
-       *
-       * @param  {object} asset with entity_name crossection and a crossection
-       *                        model.
-       */
-      scope.toggleCrosssection = function (asset) {
+        var MANY = 3;
 
-        if (!asset.crosssection.active) {
-          var plots = DBCardsService.getActiveCountAndOrder();
-
-          asset.crosssection.order = plots.count > 0
-            ? plots.order + 1
-            : 0;
-
-          asset.crosssection.active = true;
-
+        // If there are a few timeseries, show them all and do not show the
+        // extender button.
+        if (scope.asset.timeseries.length < MANY) {
+          scope.showExtender = false;
         } else {
-          DBCardsService.removeItemFromPlot(asset.crosssection);
-          asset.crosssection.active = false;
+          scope.showExtender = true;
         }
 
-        if (DataService.onGeometriesChange) {
-          DataService.onGeometriesChange();
-        }
-      };
-
-      // Init crosssection
-      if (scope.asset.entity_name === 'leveecrosssection') {
-        scope.asset.crosssection = {
-          active: false, // set to true by  toggle
-          order: 0
+        scope.toggleExtended = function () {
+          scope.extended = !scope.extended;
         };
-        scope.toggleCrosssection(scope.asset);
-      }
-      DragService.addDraggableContainer(element.find('#drag-container'));
+>>>>>>> 448da3c0af3160dcf5b0381ccc5795d4a4e3dcba
 
-    },
-    restrict: 'E',
-    scope: {
-      asset: '=',
-      timeState: '=',
-      assets: '='
-    },
-    replace: true,
-    templateUrl: 'omnibox/templates/db-asset-card.html'
-  };
-}]);
+        /**
+         * Specific toggle for crosssection
+         *
+         * @param  {object} asset with entity_name crossection and a crossection
+         *                        model.
+         */
+        scope.toggleCrosssection = function (asset) {
+
+          if (!asset.crosssection.active) {
+            var plots = DBCardsService.getActiveCountAndOrder();
+
+            asset.crosssection.order = plots.count > 0
+                                     ? plots.order + 1
+                                     : 0;
+
+            asset.crosssection.active = true;
+
+          } else {
+            DBCardsService.removeSelectionFromPlot(asset.crosssection);
+            asset.crosssection.active = false;
+          }
+
+          if (DataService.onGeometriesChange) {
+            DataService.onGeometriesChange();
+          }
+        };
+
+        // Init crosssection
+        if (scope.asset.entity_name === 'leveecrosssection') {
+          scope.asset.crosssection = {
+            active: false, // set to true by  toggle
+            order: 0
+          };
+          scope.toggleCrosssection(scope.asset);
+        }
+        DragService.addDraggableContainer(element.find('#drag-container'));
+
+      },
+      restrict: 'E',
+      scope: {
+        asset: '=',
+        assets: '=',
+        timeState: '='
+      },
+      replace: true,
+      templateUrl: 'omnibox/templates/db-asset-card.html'
+    };
+  }]);
