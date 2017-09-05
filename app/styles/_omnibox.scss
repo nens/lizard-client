@@ -575,19 +575,21 @@
     .asset-icon {
         top: -4px;
         left: 5px;
-        color: #94A5A6;
+        /*color: #94A5A6;*/
+        color: #7B7B7B;
         position: absolute;
-        top: 20px;
-        left: 8px;
+        top: 16px;
+        left: 13px;
     }
 
     .asset-code {
-      color: #727272;
+      /*color: #727272;*/
       font-weight: lighter;
     }
 
     .asset-entity-name {
-      margin-left: 38px;
+      margin-left: 45px;
+      margin-top: -10px;
       font-size: 0.75em;
       font-weight: lighter;
     }
@@ -831,4 +833,62 @@ input[type=file] {
 .omnibox-ts-icon:hover {
   color: #e74c3c;
   cursor: pointer;
+}
+
+/* Related to: dashboard re-design 08-2017
+
+  Grey colors in use (light to dark):
+
+  - #FFF
+  - #EDEDED -> omnibox background
+  - #DBDBDB -> single ts background
+  - #B0B0B0 -> nested asset header
+  - #7B7B7B -> card header
+
+  TODO: eliminate old CSS for selectors mentioned underneath:
+
+*/
+
+/*.card-header {
+  background-color: #7B7B7B;
+}
+
+.card-header-center .icons {
+  position: relative;
+  left: 20px;
+}
+
+.card-header-center .icons .asset-icon {
+  position: relative;
+  left: 0px;
+}
+*/
+
+.card-header {
+  background-color: #7A7A7A;
+  height: 60px;
+}
+
+.iconcircle {
+  position: relative;
+  top: -5px;
+}
+
+.asset-icon {
+  position: relative;
+  top: 30px;
+}
+
+.asset-entity-name {
+  position: relative;
+  left: -30px;
+  top: -5px;
+  color: white;
+}
+
+.asset-title {
+  position: relative;
+  top: 18px;
+  left: -128px;
+  color: #fff;
 }

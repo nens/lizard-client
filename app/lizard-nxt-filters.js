@@ -47,6 +47,16 @@ angular.module('lizard-nxt-filters')
 });
 
 /**
+ * Filter to uppercase strings.
+ */
+angular.module('lizard-nxt-filters')
+  .filter('upper', function () {
+  return function (s) {
+    return s.toUpperCase();
+  };
+});
+
+/**
  * Returns a rounded number or a '...' based on input type.
  *
  * @param {string} input to round or convert to dash, can be string or number
