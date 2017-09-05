@@ -824,6 +824,7 @@ input[type=file] {
   padding-left: 15px;
 }
 
+/*
 .omnibox-ts-icon {
   color: #7f8c8d;
 }
@@ -832,3 +833,39 @@ input[type=file] {
   color: #e74c3c;
   cursor: pointer;
 }
+*/
+
+.omnibox-ts-icon {
+  position: relative;
+  left: -2px;
+  top: -2px;
+}
+
+.timeseries-controls-container {
+  position: relative;
+  top: -15px;
+  left: 180px;
+  height: 20px;
+  margin-bottom: -20px;
+}
+
+.timeseries-interval-btn {
+  position: relative;
+  height: 20px;
+  border: 1px solid #aaa;
+  float: left;
+  margin-left: 5px;
+  padding: 3px;
+  font-size: 11px;
+
+  color: #7C8C8D;
+  background-color: #fff;
+}
+
+.timeseries-interval-btn:hover {
+  cursor: pointer;
+
+  color: #fff;
+  background-color: #7C8C8D;
+}
+
