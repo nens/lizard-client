@@ -927,27 +927,50 @@ input[type=file] {
   margin-left: 10px;
   margin-bottom: 10px;
 
-  height: 30px;
-  max-height: 30px;
-  min-height: 30px;
+  height: 40px;
+  max-height: 40px;
+  min-height: 40px;
 
-  padding-top: 6px;
+  padding-top: 12px;
   background-color: #DBDBDB;
+
+  border: 2px solid #FFF;
 }
 
-*/
+.db-card-single-ts.active {
+
+  height: 36px;
+  max-height: 36px;
+  min-height: 36px;
+
+  border: 2px solid #B0B0B0;
+  border-radius: 2px;
+}
+
 .db-card-single-ts:hover {
   cursor: pointer;
 }
 
 .db-card-color-picker-btn {
-/*  position: relative;
-  top: 0;
-  left: 0;*/
+  position: relative;
+  top: -2px;
+  left: 12px;
 
   width: 16px;
   height: 16px;
   border: 2px solid #fff;
 
   background-color: #16a085;
+  /*background-color: #f00;*/
+}
+
+.db-card-single-ts-name {
+  position: absolute;
+  top: 8px;
+  left: 40px;
+  width: 90%;
+
+  color: #7B7B7B;
+
+  /*background-color: #f00;*/
 }

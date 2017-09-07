@@ -31,6 +31,10 @@ angular.module('omnibox').directive('dbAssetCard', [
           scope.asset);
         scope.toggleSelection = SelectionService.toggle;
 
+        scope.getSelectionForTS = function (tsUuid) {
+          return _.find(State.selections, { timeseries: tsUuid });
+        }
+
         scope.getTsLongName = function (selection) {
           var metaData = scope.getSelectionMetaData(selection);
           return metaData.location + ',' + metaData.parameter;
@@ -51,7 +55,7 @@ angular.module('omnibox').directive('dbAssetCard', [
         };
 
         scope.getTsShortName = function (ts) {
-          console.log("[dbg] ts =", ts);
+          // console.log("[dbg] ts =", ts);
           var splitted = ts.parameter.split(",");
           return splitted.join(", ");
         };

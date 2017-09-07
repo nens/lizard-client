@@ -8,17 +8,20 @@
         <!-- Enen collectie van tijdseries! Hoeveel zitten erin?? {{asset.timeseries.length}} -->
         <div
           class="db-card-single-ts"
-          ng-repeat="ts in asset.timeseries track by $index">
+          ng-repeat="ts in asset.timeseries track by $index"
+          ng-init="selection = getSelectionForTS(ts.uuid)"
+          ng-class="{'active': selection.active}"
+          ng-click="toggleSelection(selection)">
 
-          <div class="db-card-color-picker-btn">
+          <div
+            class="db-card-color-picker-btn"
+            ng-style="{'background-color': selection.color}"
+            ng-click="toggleColorPicker($index); $event.stopPropagation();">
           </div>
 
-
-          <!--
           <div class="db-card-single-ts-name">
             {{getTsShortName(ts)}}
           </div>
-          -->
 
         </div>
 
