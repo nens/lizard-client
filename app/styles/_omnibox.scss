@@ -840,7 +840,7 @@ input[type=file] {
   Grey colors in use (light to dark):
 
   - #FFF
-  - #EDEDED -> omnibox background
+  - #EDEDED -> omnibox background  (orig: #F1F2F3)
   - #DBDBDB -> single ts background
   - #B0B0B0 -> nested asset header
   - #7B7B7B -> card header
@@ -849,24 +849,16 @@ input[type=file] {
 
 */
 
-/*.card-header {
-  background-color: #7B7B7B;
-}
-
-.card-header-center .icons {
-  position: relative;
-  left: 20px;
-}
-
-.card-header-center .icons .asset-icon {
-  position: relative;
-  left: 0px;
-}
-*/
 
 .card-header {
   background-color: #7A7A7A;
   height: 60px;
+}
+
+.db-card-inner {
+  padding-top: 10px;
+  background-color: #F1F2F3;
+  border-right: 1px solid #DBDBDB;
 }
 
 .iconcircle {
@@ -891,4 +883,49 @@ input[type=file] {
   top: 18px;
   left: -128px;
   color: #fff;
+}
+
+.db-ts-collection {
+  position: relative;
+  width: calc(100% - 20px);
+  margin-left: 10px;
+  /*margin-bottom: 10px;*/
+  padding-top: 10px;
+  border: 1px solid #DBDBDB;
+  border-radius: 2px;
+  background-color: #fff;
+}
+
+.db-card-single-ts {
+  position: relative;
+  width: calc(100% - 20px);
+  margin-left: 10px;
+  margin-bottom: 10px;
+
+  height: 30px;
+  max-height: 30px;
+  min-height: 30px;
+
+  padding-top: 6px;
+  background-color: #DBDBDB;
+}
+
+/*.db-card-single-ts-name {
+
+}
+*/
+.db-card-single-ts-name:hover {
+  cursor: pointer;
+}
+
+.db-card-color-picker-btn {
+/*  position: relative;
+  top: 0;
+  left: 0;*/
+
+  width: 20px;
+  height: 20px;
+  border: 2px solid #fff;
+
+  background-color: #16a085;
 }

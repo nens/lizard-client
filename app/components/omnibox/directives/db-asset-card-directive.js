@@ -41,15 +41,20 @@ angular.module('omnibox').directive('dbAssetCard', [
         };
 
         scope.parentAssetHasSurfaceLevel = function () {
-	    var parentAsset;
-	    var parentAssetKey;
-	    
-            if (scope.asset.parentAsset) {
-		parentAssetKey = scope.asset.parentAsset;
-		parentAsset = DataService.getAssetByKey(parentAssetKey);
-            }
+	        var parentAsset;
+	        var parentAssetKey;
 
-            return parentAsset && ('surface_level' in parentAsset);
+          if (scope.asset.parentAsset) {
+		        parentAssetKey = scope.asset.parentAsset;
+	   	      parentAsset = DataService.getAssetByKey(parentAssetKey);
+          }
+          return parentAsset && ('surface_level' in parentAsset);
+        };
+
+        scope.getTsShortName = function (ts) {
+          console.log("[dbg] ts =", ts);
+          var splitted = ts.parameter.split(",");
+          return splitted.join(", ");
         };
 
         /**
@@ -97,6 +102,8 @@ angular.module('omnibox').directive('dbAssetCard', [
         scope.toggleExtended = function () {
           scope.extended = !scope.extended;
         };
+
+        scope.noTimeseries = scope.asset.timeseries.length === 0;
 
         /**
          * Specific toggle for crosssection

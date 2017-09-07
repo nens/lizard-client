@@ -3,6 +3,48 @@
     <timeseries asset="asset" time-state="timeState"></timeseries>
     <cardheader asset="asset"></cardheader>
 
+    <div ng-if="!noTimeseries && !assetIsNested(asset)" class="db-card-inner">
+      <div class="db-ts-collection">
+        <!-- Enen collectie van tijdseries! Hoeveel zitten erin?? {{asset.timeseries.length}} -->
+        <div
+          class="db-card-single-ts"
+          ng-repeat="ts in asset.timeseries track by $index">
+
+          <div class="db-card-color-picker-btn">
+          </div>
+
+
+          <!--
+          <div class="db-card-single-ts-name">
+            {{getTsShortName(ts)}}
+          </div>
+          -->
+
+        </div>
+
+
+        <!--
+        <div class="db-card-single-ts"
+             ng-click="toggleTimeseries(ts)"
+             ng-repeat="ts in selected.timeseries track by $index"
+             ng-class="{'color-picker-is-open': colorPickersSettings[$index], 'active': ts.active}">
+             Heej kijk een tijdseries!
+
+          <div class="db-card-color-picker-btn"
+               ng-style="{'background-color': ts.color}"
+               ng-click="toggleColorPicker($index); $event.stopPropagation()" />
+
+          <div class="db-card-single-ts-name">
+            {{getTsShortName(ts.uuid)}}
+          </div>
+
+          <color-picker index="{{$index}}" />
+        </div>
+        -->
+
+      </div>
+    </div>
+
 
     <!-- crosssections are not draggable and a specific visualization. -->
     <!--
