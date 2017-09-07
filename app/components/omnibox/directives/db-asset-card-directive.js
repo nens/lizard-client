@@ -6,6 +6,9 @@ angular.module('omnibox').directive('dbAssetCard', [
   'SelectionService',
   'TimeseriesService',
   'RelativeToSurfaceLevelService',
+  'AssetService',
+  'getNestedAssets',
+  'UtilService',
   function (
     State,
     DataService,
@@ -13,7 +16,10 @@ angular.module('omnibox').directive('dbAssetCard', [
     DBCardsService,
     SelectionService,
     TimeseriesService,
-    RTSLService
+    RTSLService,
+    AssetService,
+    getNestedAssets,
+    UtilService
   ) {
     return {
       link: function (scope, element) {
@@ -24,15 +30,26 @@ angular.module('omnibox').directive('dbAssetCard', [
         scope.colorPickersSettings = DBCardsService.colorPickersSettings;
         scope.openColorPicker = DBCardsService.openColorPicker
         scope.closeColorPicker = DBCardsService.closeColorPicker;
+        scope.getNestedAssets = getNestedAssets;
+
+        scope.getIconClass = UtilService.getIconClass;
 
         scope.toggleColorPicker = function (index) {
-          console.log("[F] scope.colorPickersSettings =", scope.colorPickersSettings);
           if (scope.colorPickersSettings[index]) {
             scope.closeColorPicker(index);
           } else {
             scope.openColorPicker(index);
           }
         }
+
+        scope.assetIsNested = function (asset) {
+          return !!asset.parentAsset;
+        };
+
+        scope.assetHasChildren = function (asset) {
+          var nestedAssets = getNestedAssets(asset);
+          return nestedAssets.length > 0;
+        };
 
         scope.toggleRelativeTimeseries = function () {
           RTSLService.toggle();

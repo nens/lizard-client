@@ -1,11 +1,12 @@
 <div>
   <div class="card active">
     <timeseries asset="asset" time-state="timeState"></timeseries>
-    <cardheader asset="asset"></cardheader>
+    <cardheader asset="asset" ng-if="!assetIsNested(asset)"></cardheader>
 
-    <div ng-if="!noTimeseries && !assetIsNested(asset)" class="db-card-inner">
-      <div class="db-ts-collection">
-        <!-- Enen collectie van tijdseries! Hoeveel zitten erin?? {{asset.timeseries.length}} -->
+    <div ng-if="!assetIsNested(asset)" class="db-card-inner">
+
+      <div class="db-ts-collection"
+           ng-if="!noTimeseries">
         <div
           class="db-card-single-ts"
           ng-repeat="ts in asset.timeseries track by $index"
@@ -26,29 +27,23 @@
           <color-picker
             ng-show="colorPickersSettings[$index]"
             index="{{$index}}" />
+        </div>
+      </div>
+
+      <div
+        class="db-card-nested-asset-collection"
+        ng-show="assetHasChildren(asset)"
+        ng-init="nestedAssets = getNestedAssets(asset)">
+
+        <!-- nestedAssets; amt = {{nestedAssets.length}} -->
+
+        <div
+          class="db-card-single-nested-asset"
+          ng-repeat="nestedAsset in nestedAssets track by $index">
+
+          <nested-cardheader asset="nestedAsset"></nested-cardheader>
 
         </div>
-
-
-        <!--
-        <div class="db-card-single-ts"
-             ng-click="toggleTimeseries(ts)"
-             ng-repeat="ts in selected.timeseries track by $index"
-             ng-class="{'color-picker-is-open': colorPickersSettings[$index], 'active': ts.active}">
-             Heej kijk een tijdseries!
-
-          <div class="db-card-color-picker-btn"
-               ng-style="{'background-color': ts.color}"
-               ng-click="toggleColorPicker($index); $event.stopPropagation()" />
-
-          <div class="db-card-single-ts-name">
-            {{getTsShortName(ts.uuid)}}
-          </div>
-
-          <color-picker index="{{$index}}" />
-        </div>
-        -->
-
       </div>
     </div>
 
@@ -185,6 +180,6 @@
 
   </div>
 
-  <db-nested-asset asset="asset" time-state="timeState"></db-nested-asset>
+  <!-- <db-nested-asset asset="asset" time-state="timeState"></db-nested-asset> -->
 
 </div>

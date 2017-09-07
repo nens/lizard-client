@@ -175,7 +175,7 @@ angular.module('omnibox')
   .directive('cardheader', ['UtilService',
     function (UtilService) {
   return {
-    link: function (scope) {
+    link: function (scope, elem, attrs) {
       scope.getIconClass = UtilService.getIconClass;
     },
     restrict: 'E',
@@ -188,7 +188,22 @@ angular.module('omnibox')
   };
 }]);
 
-
+angular.module('omnibox')
+  .directive('nestedCardheader', ['UtilService',
+    function (UtilService) {
+  return {
+    link: function (scope) {
+      scope.getIconClass = UtilService.getIconClass;
+    },
+    restrict: 'E',
+    scope: {
+      asset: '=',
+      geom: '='
+    },
+    replace: true,
+    templateUrl: 'omnibox/templates/nested-asset-header.html'
+  };
+}]);
 
 
 angular.module('omnibox')
