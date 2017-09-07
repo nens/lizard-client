@@ -10,7 +10,7 @@
           class="db-card-single-ts"
           ng-repeat="ts in asset.timeseries track by $index"
           ng-init="selection = getSelectionForTS(ts.uuid)"
-          ng-class="{'active': selection.active}"
+          ng-class="{'active': selection.active, 'color-picker-is-open': colorPickersSettings[$index]}"
           ng-click="toggleSelection(selection)">
 
           <div
@@ -22,6 +22,10 @@
           <div class="db-card-single-ts-name">
             {{getTsShortName(ts)}}
           </div>
+
+          <color-picker
+            ng-show="colorPickersSettings[$index]"
+            index="{{$index}}" />
 
         </div>
 

@@ -21,6 +21,19 @@ angular.module('omnibox').directive('dbAssetCard', [
         scope.noData = scope.asset.timeseries.length === 0;
         scope.relativeTimeseries = RTSLService.relativeToSurfaceLevel;
 
+        scope.colorPickersSettings = DBCardsService.colorPickersSettings;
+        scope.openColorPicker = DBCardsService.openColorPicker
+        scope.closeColorPicker = DBCardsService.closeColorPicker;
+
+        scope.toggleColorPicker = function (index) {
+          console.log("[F] scope.colorPickersSettings =", scope.colorPickersSettings);
+          if (scope.colorPickersSettings[index]) {
+            scope.closeColorPicker(index);
+          } else {
+            scope.openColorPicker(index);
+          }
+        }
+
         scope.toggleRelativeTimeseries = function () {
           RTSLService.toggle();
           TimeseriesService.syncTime();
