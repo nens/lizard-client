@@ -827,12 +827,37 @@ input[type=file] {
 }
 
 .omnibox-ts-icon {
-  color: #7f8c8d;
+  position: relative;
+  left: -2px;
+  top: -2px;
 }
 
-.omnibox-ts-icon:hover {
-  color: #e74c3c;
+.timeseries-controls-container {
+  position: relative;
+  top: -15px;
+  left: 180px;
+  height: 20px;
+  margin-bottom: -20px;
+}
+
+.timeseries-interval-btn {
+  position: relative;
+  height: 20px;
+  border: 1px solid #aaa;
+  float: left;
+  margin-left: 5px;
+  padding: 3px;
+  font-size: 11px;
+
+  color: #7C8C8D;
+  background-color: #fff;
+}
+
+.timeseries-interval-btn:hover {
   cursor: pointer;
+
+  color: #fff;
+  background-color: #7C8C8D;
 }
 
 /* Related to: dashboard re-design 08-2017
@@ -910,11 +935,8 @@ input[type=file] {
   background-color: #DBDBDB;
 }
 
-/*.db-card-single-ts-name {
-
-}
 */
-.db-card-single-ts-name:hover {
+.db-card-single-ts:hover {
   cursor: pointer;
 }
 
