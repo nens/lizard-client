@@ -24,6 +24,7 @@
         <input
           class="timeseries-checkbox"
           ng-model="toExport[ts.uuid]"
+          data-uuid="{{ts.uuid}}"
           type="checkbox">
         <span>{{ ts.location }}, {{ ts.parameter }}</span>
       </div>
@@ -32,6 +33,7 @@
           <input
             class="timeseries-checkbox"
             ng-model="toExport[fts.uuid]"
+            data-uuid="{{fts.uuid}}"
             type="checkbox">
           <span>{{ fts.location }}, {{ fts.parameter }}</span>
         </div>
