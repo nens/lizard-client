@@ -64,7 +64,9 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
 
     $timeout(function () {
       if (countExportableTimeseries() === 1) {
-        $('.timeseries-checkbox')[0].checked = true;
+        var checkboxElem = $('.timeseries-checkbox')[0];
+        var uuid = $(checkboxElem).data('uuid');
+        scope.toExport[uuid] = checkboxElem.checked = true;
       }
     });
 
@@ -74,7 +76,6 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
      * link to see status updates of the task
      */
     scope.startExport = function () {
-
       var uuids = _.map(scope.toExport, function (yes, uuid) {
         if (yes) { return uuid; }
       }).join(',');
