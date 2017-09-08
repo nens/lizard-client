@@ -20,14 +20,14 @@ angular.module('omnibox')
 
       // scope.toggleColorPicker = toggleColorPicker; ....OUD!
 
-      scope.openColorPicker = function (index) {
+      scope.openColorPicker = function (tsUuid) {
         scope.colorPicker.enabled = true;
-        DBCardsService.openColorPicker(index);
+        DBCardsService.openColorPicker(tsUuid);
       };
 
-      scope.closeColorPicker = function (index) {
+      scope.closeColorPicker = function (tsUuid) {
         scope.colorPicker.enabled = false;
-        DBCardsService.closeColorPicker(index);
+        DBCardsService.closeColorPicker(tsUuid);
       };
 
       scope.selectColor = function(color) {
@@ -46,7 +46,7 @@ angular.module('omnibox')
 
       scope.colorPickersSettings = DBCardsService.colorPickersSettings;
 
-      scope.$watch('colorPickersSettings[' + attrs.index + ']', function (n) {
+      scope.$watch('colorPickersSettings["' + attrs.index + '"]', function (n) {
         scope.colorPicker.enabled = n;
       });
     };

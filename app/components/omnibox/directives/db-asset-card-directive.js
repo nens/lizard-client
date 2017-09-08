@@ -34,11 +34,11 @@ angular.module('omnibox').directive('dbAssetCard', [
 
         scope.getIconClass = UtilService.getIconClass;
 
-        scope.toggleColorPicker = function (index) {
-          if (scope.colorPickersSettings[index]) {
-            scope.closeColorPicker(index);
+        scope.toggleColorPicker = function (tsUuid) {
+          if (scope.colorPickersSettings[tsUuid]) {
+            scope.closeColorPicker(tsUuid);
           } else {
-            scope.openColorPicker(index);
+            scope.openColorPicker(tsUuid);
           }
         }
 

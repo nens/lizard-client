@@ -11,13 +11,13 @@
           class="db-card-single-ts"
           ng-repeat="ts in asset.timeseries track by $index"
           ng-init="selection = getSelectionForTS(ts.uuid)"
-          ng-class="{'active': selection.active, 'color-picker-is-open': colorPickersSettings[$index]}"
+          ng-class="{'active': selection.active, 'color-picker-is-open': colorPickersSettings[ts.uuid]}"
           ng-click="toggleSelection(selection)">
 
           <div
             class="db-card-color-picker-btn"
             ng-style="{'background-color': selection.color}"
-            ng-click="toggleColorPicker($index); $event.stopPropagation();">
+            ng-click="toggleColorPicker(ts.uuid); $event.stopPropagation();">
           </div>
 
           <div class="db-card-single-ts-name">
@@ -25,8 +25,8 @@
           </div>
 
           <color-picker
-            ng-show="colorPickersSettings[$index]"
-            index="{{$index}}" />
+            ng-show="colorPickersSettings[ts.uuid]"
+            index="{{ts.uuid}}" />
         </div>
       </div>
 
@@ -46,25 +46,29 @@
           <div ng-if="nestedAsset.timeseries.length === 0"
                class="no-ts-message"
                translate>
-            No timeseries available for this {{nestedAsset.entity_name}}
+            No timeseries data available for this {{nestedAsset.entity_name}}
           </div>
 
           <div ng-repeat="ts in nestedAsset.timeseries track by $index"
                ng-init="selection = getSelectionForTS(ts.uuid)"
                ng-if="nestedAsset.timeseries.length > 0"
                class="db-card-single-ts"
-               ng-class="{'active': selection.active, 'color-picker-is-open': colorPickersSettings[$index]}"
+               ng-class="{'active': selection.active, 'color-picker-is-open': colorPickersSettings[ts.uuid]}"
                ng-click="toggleSelection(selection)">
 
             <div
               class="db-card-color-picker-btn"
               ng-style="{'background-color': selection.color}"
-              ng-click="toggleColorPicker($index); $event.stopPropagation();">
+              ng-click="toggleColorPicker(ts.uuid); $event.stopPropagation();">
             </div>
 
             <div class="db-card-single-ts-name">
               {{getTsShortName(ts)}}
             </div>
+
+            <color-picker
+              ng-show="colorPickersSettings[ts.uuid]"
+              index="{{ts.uuid}}" />
           </div>
 
         </div>
