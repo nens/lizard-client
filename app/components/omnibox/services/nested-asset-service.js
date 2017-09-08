@@ -46,6 +46,8 @@ angular.module('omnibox')
         nestedAsset.entity_name = attr; // Store to remove asset from selection.
       });
 
+      // console.log("[dbg] First of the nested assets retuned by getNestedAssets:", nestedAssets[0]);
+
       return nestedAssets;
 
     };

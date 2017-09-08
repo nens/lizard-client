@@ -43,6 +43,30 @@
 
           <nested-cardheader asset="nestedAsset"></nested-cardheader>
 
+          <div ng-if="nestedAsset.timeseries.length === 0"
+               class="no-ts-message"
+               translate>
+            No timeseries available for this {{nestedAsset.entity_name}}
+          </div>
+
+          <div ng-repeat="ts in nestedAsset.timeseries track by $index"
+               ng-init="selection = getSelectionForTS(ts.uuid)"
+               ng-if="nestedAsset.timeseries.length > 0"
+               class="db-card-single-ts"
+               ng-class="{'active': selection.active, 'color-picker-is-open': colorPickersSettings[$index]}"
+               ng-click="toggleSelection(selection)">
+
+            <div
+              class="db-card-color-picker-btn"
+              ng-style="{'background-color': selection.color}"
+              ng-click="toggleColorPicker($index); $event.stopPropagation();">
+            </div>
+
+            <div class="db-card-single-ts-name">
+              {{getTsShortName(ts)}}
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
