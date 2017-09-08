@@ -62,11 +62,11 @@ angular.module('omnibox').directive('dbAssetCard', [
         scope.toggleSelection = SelectionService.toggle;
 
         scope.getSelectionForTS = function (tsUuid) {
-          // console.log("[F] getSelectionForTS");
-          // console.log("*** arg 'tsUuid':", tsUuid);
-          // console.log("*** State.selections:", State.selections);
+          console.log("[F] getSelectionForTS");
+          console.log("*** arg 'tsUuid':", tsUuid);
+          console.log("*** State.selections:", State.selections);
           var result = _.find(State.selections, { timeseries: tsUuid });
-          // console.log("*** result:", result);
+          console.log("*** result:", result);
           return result;
         }
 

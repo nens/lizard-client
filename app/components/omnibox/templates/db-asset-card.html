@@ -1,16 +1,16 @@
 <div>
-  <div class="card active">
+  <div class="card active" ng-if="!assetIsNested(asset)">
     <timeseries asset="asset" time-state="timeState"></timeseries>
-    <cardheader asset="asset" ng-if="!assetIsNested(asset)"></cardheader>
+    <cardheader asset="asset"></cardheader>
 
-    <div ng-if="!assetIsNested(asset)" class="db-card-inner">
+    <div class="db-card-inner">
 
       <div class="db-ts-collection"
            ng-if="!noTimeseries">
         <div
           class="db-card-single-ts"
           ng-repeat="ts in asset.timeseries track by $index"
-          ng-init="selection = getSelectionForTS(ts.uuid)"
+          ng-init="selection = getSelectionForTS(ts.uuid); metaData = getSelectionMetaData(selection)"
           ng-class="{'active': selection.active, 'color-picker-is-open': colorPickersSettings[ts.uuid]}"
           ng-click="toggleSelection(selection)">
 
@@ -49,8 +49,8 @@
             No timeseries data available for this {{nestedAsset.entity_name}}
           </div>
 
-          <div ng-repeat="ts in nestedAsset.timeseries track by $index"
-               ng-init="selection = getSelectionForTS(ts.uuid)"
+          <div ng-repeat="ts in nestedAsset.timeseries"
+               ng-init="selection = getSelectionForTS(ts.uuid); metaData = getSelectionMetaData(selection)"
                ng-if="nestedAsset.timeseries.length > 0"
                class="db-card-single-ts"
                ng-class="{'active': selection.active, 'color-picker-is-open': colorPickersSettings[ts.uuid]}"
@@ -74,7 +74,6 @@
         </div>
       </div>
     </div>
-
 
     <!-- crosssections are not draggable and a specific visualization. -->
     <!--

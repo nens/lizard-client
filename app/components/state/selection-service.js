@@ -42,9 +42,13 @@ angular.module('global-state')
      *                  to the geometry.
      */
     var getTimeseriesMetaData = _.curry(function (geometry, selection) {
+      // console.log("[F] getTimeseriesMetaData");
+      // console.log("*** geometry:", geometry);
+      // console.log("*** selection:", selection);
       // if no asset is given, iterate over all assets if the asset is a
       // geometry instead no timeseries are found so this will return undefined
       var assets = geometry !== undefined ? [geometry] : DataService.assets;
+      // console.log("*** assets:", assets);
       var tsMetaData = { match: false };
       _.forEach(assets, function (a) {
         tsMetaData = _.find(a.timeseries, function (ts) {
@@ -55,8 +59,10 @@ angular.module('global-state')
         } else {
           tsMetaData.match = true;
         }
+
         tsMetaData.type = 'timeseries';
       });
+
       return tsMetaData;
     });
 
@@ -203,7 +209,6 @@ angular.module('global-state')
      * @return {object} asset or geometry data.
      */
     var initializeAssetSelections = function (asset) {
-      console.log("[F] initializeAssetSelections: asset =", asset);
       var colors = UtilService.GRAPH_COLORS;
       State.selections = _.unionWith(
         State.selections,
