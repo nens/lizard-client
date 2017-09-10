@@ -556,23 +556,22 @@
 .card-header-center {
     position: absolute;
     top: 9px;
-    width: 390px;
     padding-left: 9px;
     color: #606162;
     line-height: 1;
 
-    .icons {
+/*    .icons {
         font-size: 0.8em;
         padding-left: 3px;
         padding-top: 10px;
-    }
+    }*/
 
-    .iconcircle {
+/*    .iconcircle {
       color: #ffffff;
       font-size: 2.4em;
-    }
+    }*/
 
-    .asset-icon {
+/*    .asset-icon {
         top: -4px;
         left: 5px;
         color: #94A5A6;
@@ -580,8 +579,8 @@
         top: 20px;
         left: 8px;
     }
-
-    .asset-code {
+*/
+/*    .asset-code {
       color: #727272;
       font-weight: lighter;
     }
@@ -591,8 +590,9 @@
       font-size: 0.75em;
       font-weight: lighter;
     }
+    */
 
-    .asset-name {
+/*    .asset-name {
       font-weight: bolder;
     }
 
@@ -600,7 +600,7 @@
         padding-left: 5px;
         padding-top: 5px;
         font-size: .85em;
-    }
+    }*/
 
     em {
         font-size: 12px;
@@ -869,3 +869,204 @@ input[type=file] {
   background-color: #7C8C8D;
 }
 
+/* Related to: dashboard re-design 08-2017
+
+  Grey colors in use (light to dark):
+
+  - #FFF
+  - #F1F2F3 -> omnibox background  #F1F2F3 is actual lizard bg, in Gijs design it's #EDEDED
+  - #DBDBDB -> single ts background
+  - #B0B0B0 -> nested asset header
+  - #7B7B7B -> card header
+
+  TODO: eliminate old CSS for selectors mentioned underneath:
+
+*/
+
+.db-card {
+  background-color: #F1F2F3;
+  border-right: 1px solid #DBDBDB;
+}
+
+.card-header {
+  background-color: #7A7A7A;
+  height: 60px;
+  margin-bottom: 10px;
+}
+
+.nested-card-header {
+  background-color: #B0B0B0;
+  width: calc(100% - 20px);
+  height: 50px;
+  margin-left: 10px;
+  margin-bottom: -10px;
+}
+
+.icons,
+.icons-nested {
+  font-size: 0.8em;
+}
+
+.icons > .iconcircle {
+  position: absolute;
+  top: 2px;
+  left: 17px;
+  font-size: 2.8em;
+
+  color: #fff;
+}
+
+.icons-nested > .iconcircle {
+  position: absolute;
+  top: 2px;
+  left: 10px;
+  font-size: 1.8em;
+
+  color: #B0B0B0;
+
+  border: 2px solid #fff;
+  border-radius: 22px;
+}
+
+.icons > .asset-icon {
+  position: absolute;
+  top: 16px;
+  left: 27px;
+
+  color: #7B7B7B;
+}
+
+.icons-nested > .asset-icon {
+  position: absolute;
+  top: 10px;
+  left: 18px;
+  color: #fff;
+}
+
+.asset-entity-name {
+  position: relative;
+  top: -4px;
+  left: 29px;
+
+  font-size: 0.75em;
+  font-weight: lighter;
+  color: #fff;
+}
+
+.asset-title {
+  position: relative;
+  top: -6px;
+  left: 62px;
+
+  color: #fff;
+  font-size: .85em;
+  max-width: 250px;
+}
+
+/*.nested-asset-title {
+  position: relative;
+  top: -4px;
+  left: 62px;
+
+  color: #fff;
+  font-size: .85em;
+  max-width: 250px;
+}*/
+
+.nested-card-header-txt {
+  position: relative;
+  height: 50px;
+  top: -38px;
+  left: 52px;
+
+  color: #fff;
+  font-size: .85em;
+
+  .nested-asset-title {
+    height: 25px;
+    max-width: 250px;
+    /*background-color: red;*/
+    line-height: 25px;
+    padding-top: 5px;
+  }
+
+  .nested-asset-ts-count {
+    height: 25px;
+    max-width: 250px;
+    /*background-color: blue;*/
+    font-size: .8em;
+    line-height: 25px;
+    padding-bottom: 3px;
+  }
+}
+
+
+.db-ts-collection, .db-ts-collection-empty {
+  position: relative;
+  width: calc(100% - 20px);
+  margin-left: 10px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border: 1px solid #DBDBDB;
+  border-radius: 2px;
+  background-color: #fff;
+}
+
+.db-ts-collection-empty {
+  height: 50px;
+  color: #7B7B7B;
+}
+
+.no-ts-message {
+  margin-top: 5px;
+  margin-left: 20px;
+}
+
+.db-card-single-ts {
+  position: relative;
+  width: calc(100% - 20px);
+  margin-left: 10px;
+  margin-bottom: 6px;
+  height: 40px;
+  min-height: 40px;
+
+  padding-top: 12px;
+  background-color: #DBDBDB;
+
+  border: 2px solid #FFF;
+}
+
+.db-card-single-ts:last-child {
+  margin-bottom: 10px;
+}
+
+.db-card-single-ts.active {
+  border: 2px solid #B0B0B0;
+  border-radius: 2px;
+}
+
+.db-card-color-picker-btn {
+  position: relative;
+  top: -2px;
+  left: 12px;
+
+  width: 16px;
+  height: 16px;
+  border: 2px solid #fff;
+}
+
+.db-card-single-ts-name {
+  position: absolute;
+  top: 8px;
+  left: 40px;
+  width: 90%;
+
+  color: #7B7B7B;
+}
+
+.close-card {
+  position: absolute;
+  left: 375px;
+  top: 0;
+}

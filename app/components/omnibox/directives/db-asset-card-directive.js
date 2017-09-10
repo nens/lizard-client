@@ -6,6 +6,8 @@ angular.module('omnibox').directive('dbAssetCard', [
   'SelectionService',
   'TimeseriesService',
   'RelativeToSurfaceLevelService',
+  'getNestedAssets',
+  'UtilService',
   function (
     State,
     DataService,
@@ -13,10 +15,17 @@ angular.module('omnibox').directive('dbAssetCard', [
     DBCardsService,
     SelectionService,
     TimeseriesService,
-    RTSLService
+    RTSLService,
+    getNestedAssets,
+    UtilService
   ) {
     return {
-      link: function (scope, element) {
+      link: function (scope, element, attrs) {
+
+        scope.getIconClass = UtilService.getIconClass;
+
+        scope.isNested = !!attrs['nested'];
+        console.log("scope.isNested:", scope.isNested);
 
         scope.noData = scope.asset.timeseries.length === 0;
         scope.relativeTimeseries = RTSLService.relativeToSurfaceLevel;
@@ -26,30 +35,40 @@ angular.module('omnibox').directive('dbAssetCard', [
           TimeseriesService.syncTime();
         };
 
+        scope.assetHasChildren = function (asset) {
+          return getNestedAssets(asset).length > 0;
+        }
+
         scope.state = State;
         scope.getSelectionMetaData = SelectionService.getMetaDataFunction(
           scope.asset);
         scope.toggleSelection = SelectionService.toggle;
 
-        scope.getTsLongName = function (selection) {
+        scope.getTsDisplayName = function (selection) {
           var metaData = scope.getSelectionMetaData(selection);
-          return metaData.location + ',' + metaData.parameter;
+          // console.log("metaData:", metaData);
+          // return metaData.location + ', ' + metaData.parameter;
+          if (metaData.parameter) {
+            return metaData.parameter.split(",").join(", ");
+          }
+          return "...";
         };
+
 
         scope.assetHasSurfaceLevel = function () {
           return ('surface_level' in scope.asset);
         };
 
         scope.parentAssetHasSurfaceLevel = function () {
-	    var parentAsset;
-	    var parentAssetKey;
-	    
-            if (scope.asset.parentAsset) {
-		parentAssetKey = scope.asset.parentAsset;
-		parentAsset = DataService.getAssetByKey(parentAssetKey);
-            }
+    	    var parentAsset;
+    	    var parentAssetKey;
 
-            return parentAsset && ('surface_level' in parentAsset);
+          if (scope.asset.parentAsset) {
+        		parentAssetKey = scope.asset.parentAsset;
+        		parentAsset = DataService.getAssetByKey(parentAssetKey);
+          }
+
+          return parentAsset && ('surface_level' in parentAsset);
         };
 
         /**

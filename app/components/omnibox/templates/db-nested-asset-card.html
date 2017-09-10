@@ -1,9 +1,44 @@
 <div>
-  <db-asset-card ng-repeat="a in list"
+
+  <db-asset-card
+    ng-repeat="a in list"
     ng-if="asset.selectedAsset"
     asset="a"
+    nested="true"
     timeseries
     time-state="omnibox.state.temporal">
   </db-asset-card>
+
+
+  <!--
+  <div
+    asset="asset"
+    class="active card db-card"
+    ng-repeat="asset in list">
+    <timeseries asset="asset" time-state="timeState"></timeseries>
+    <cardheader asset="asset"></cardheader>
+
+    <header class="card-header nested-card-header">
+
+      <div ng-if="asset" class="card-header-center">
+        <span class="icons fa-stack fa-lg">
+          <i class="fa fa-circle fa-stack-2x iconcircle"></i>
+          <i class="asset-icon"
+             ng-class="getIconClass(asset.entity_name, asset)">
+          </i>
+        </span>
+
+        <span class="nested-asset-title">
+          <strong class="asset-name">{{ asset.entity_name | objectTitle | translate }}</strong>
+          <span ng-if="asset.name">&nbsp;</span>
+          <span class="asset-code">{{ asset.code | objectTitle | translate }}</span>
+        </span>
+
+      </div>
+
+    </header>
+
+  </div>
+  -->
 
 </div>
