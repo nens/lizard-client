@@ -989,7 +989,7 @@ input[type=file] {
     max-width: 250px;
     /*background-color: red;*/
     line-height: 25px;
-    padding-top: 5px;
+    padding-top: 6px;
   }
 
   .nested-asset-ts-count {
@@ -998,7 +998,7 @@ input[type=file] {
     /*background-color: blue;*/
     font-size: .8em;
     line-height: 25px;
-    padding-bottom: 3px;
+    padding-bottom: 4px;
   }
 }
 
@@ -1039,6 +1039,12 @@ input[type=file] {
   border: 2px solid #FFF;
 }
 
+.db-card-single-ts.color-picker-is-open {
+  height: 65px;
+  max-height: 65px;
+  min-height: 65px;
+}
+
 .db-card-single-ts:last-child {
   margin-bottom: 10px;
 }
@@ -1056,7 +1062,6 @@ input[type=file] {
   position: relative;
   top: -2px;
   left: 12px;
-
   width: 16px;
   height: 16px;
   border: 2px solid #fff;
@@ -1069,7 +1074,7 @@ input[type=file] {
 .db-card-single-ts-name {
   position: absolute;
   top: 8px;
-  left: 40px;
+  left: 48px;
   width: 90%;
 
   color: #7B7B7B;

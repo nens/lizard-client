@@ -52,7 +52,7 @@
         id="{{ selection.uuid }}"
         data-uuid="{{ selection.uuid }}"
         class="draggable-ts db-card-single-ts"
-        ng-class="{'active': selection.active}">
+        ng-class="{'color-picker-is-open': colorPickersSettings[selection.timeseries], 'active': selection.active}">
 
         <div
           ng-if="metaData.type === 'timeseries'"
@@ -63,7 +63,7 @@
           <div
             class="db-card-color-picker-btn"
             ng-style="{'background-color': selection.color}"
-            ng-click="toggleColorPicker(ts.uuid); $event.stopPropagation();">
+            ng-click="toggleColorPicker(selection.timeseries); $event.stopPropagation();">
           </div>
 
           <div
@@ -73,12 +73,12 @@
             {{ displayName }}
           </div>
 
-          <!--
+
           <color-picker
-              ng-show="colorPickersSettings[ts.uuid]"
-              index="{{ts.uuid}}" />
-          -->
-          <color-picker />
+              ng-show="colorPickersSettings[selection.timeseries]"
+              index="{{selection.timeseries}}" />
+
+<!--           <color-picker /> -->
         </div>
       </div>
     </div>

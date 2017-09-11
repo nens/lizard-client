@@ -23,22 +23,23 @@ angular.module('omnibox').directive('dbAssetCard', [
       link: function (scope, element, attrs) {
 
         scope.colorPickersSettings = DBCardsService.colorPickersSettings;
-        scope.openColorPicker = DBCardsService.openColorPicker
+        scope.openColorPicker = DBCardsService.openColorPicker;
         scope.closeColorPicker = DBCardsService.closeColorPicker;
 
         scope.getIconClass = UtilService.getIconClass;
-        scope.isNested = !!attrs['nested'];
+        scope.isNested = !!attrs.nested;
         scope.noData = scope.asset.timeseries.length === 0;
         scope.relativeTimeseries = RTSLService.relativeToSurfaceLevel;
 
         scope.toggleColorPicker = function (tsUuid) {
-          console.log("toggle clr pick");
+          console.log("[F] toggleColorPicker");
           if (scope.colorPickersSettings[tsUuid]) {
             scope.closeColorPicker(tsUuid);
           } else {
             scope.openColorPicker(tsUuid);
           }
-        }
+          console.log("[dbg] scope.colorPickersSettings:", scope.colorPickersSettings);
+        };
 
         scope.toggleRelativeTimeseries = function () {
           RTSLService.toggle();
@@ -47,7 +48,7 @@ angular.module('omnibox').directive('dbAssetCard', [
 
         scope.assetHasChildren = function (asset) {
           return getNestedAssets(asset).length > 0;
-        }
+        };
 
         scope.state = State;
         scope.getSelectionMetaData = SelectionService.getMetaDataFunction(

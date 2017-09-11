@@ -13,14 +13,7 @@ angular.module('omnibox')
         selectedColor: scope.selection.color
       };
 
-      // var toggleColorPicker = function () {
-      //   scope.colorPicker.enabled = !scope.colorPicker.enabled;
-      // };
-
-      // scope.toggleColorPicker = toggleColorPicker;
-
       scope.openColorPicker = function (tsUuid) {
-        console.log("[F] colorPickerDirective.openColorPicker");
         scope.colorPicker.enabled = true;
         DBCardsService.openColorPicker(tsUuid);
       };
