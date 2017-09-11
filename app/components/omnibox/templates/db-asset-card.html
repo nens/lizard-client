@@ -3,11 +3,11 @@
     <timeseries asset="asset" time-state="timeState"></timeseries>
     <cardheader
       asset="asset"
+      ng-init="foo = checkAsset(asset)"
       ng-if="!isNested">
     </cardheader>
 
     <div ng-if="isNested">
-
       <header class="card-header nested-card-header">
         <div ng-if="asset" class="card-header-center">
           <span class="icons-nested fa-stack fa-lg">
@@ -16,8 +16,6 @@
                ng-class="getIconClass(asset.entity_name, asset)">
             </i>
           </span>
-
-
           <div class="nested-card-header-txt">
             <div class="nested-asset-title">
               {{ asset.code | objectTitle | translate }}
@@ -26,11 +24,8 @@
               {{asset.timeseries.length}} TIMESERIES
             </div>
           </div>
-
-
         </div>
       </header>
-
     </div>
 
     <div class="db-ts-collection-empty"
@@ -48,12 +43,16 @@
         ng-repeat="selection in state.selections"
         ng-init="metaData = getSelectionMetaData(selection)"
         ng-if="getSelectionMetaData(selection).match"
-        ng-show="extended || selection.active || isOneOfFirstThree(selection.uuid)"
+        ng-show="metaData.type === 'timeseries' && (extended || selection.active || isOneOfFirstThree(selection.uuid))"
         id="{{ selection.uuid }}"
         data-uuid="{{ selection.uuid }}"
         class="draggable-ts db-card-single-ts"
-        ng-class="{'color-picker-is-open': colorPickersSettings[selection.timeseries], 'active': selection.active}">
+        ng-class="{
+          'color-picker-is-open': colorPickersSettings[selection.timeseries],
+          'active': selection.active
+        }">
 
+        <!-- asset/nested-asset TS card: START -->
         <div
           ng-if="metaData.type === 'timeseries'"
           id="{{ selection.timeseries }}"
@@ -72,13 +71,14 @@
             {{ displayName }}
           </div>
 
-
           <color-picker
               ng-show="colorPickersSettings[selection.timeseries]"
               index="{{selection.timeseries}}">
           </color-picker>
         </div>
+        <!-- asset/nested-asset TS card: END -->
 
+        <!-- raster TS card: START
         <div
           ng-if="metaData.type === 'raster'"
           id="{{ selection.raster }}"
@@ -92,9 +92,7 @@
           </div>
 
         </div>
-
-
-
+         raster TS card: END -->
 
         <!--
         <div

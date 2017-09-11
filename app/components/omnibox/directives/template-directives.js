@@ -159,8 +159,8 @@ angular.module('omnibox')
     function (WantedAttributes) {
   return {
     link: function (scope) {
-
-      scope.wanted = WantedAttributes; },
+      scope.wanted = WantedAttributes;
+    },
     restrict: 'E',
     scope: {
       waterchain: '=',
@@ -175,7 +175,12 @@ angular.module('omnibox')
   .directive('cardheader', ['UtilService',
     function (UtilService) {
   return {
-    link: function (scope) {
+    link: function (scope, element, attrs) {
+      // console.log("[F] cardheaderDirective.link");
+      // console.log("*** attrs.asset:", attrs.asset);
+      scope.checkAsset = function (asset) {
+        console.log("[F] cardheaderDirective.scope.checkAsset; arg 'asset':", asset);
+      };
       scope.getIconClass = UtilService.getIconClass;
     },
     restrict: 'E',
