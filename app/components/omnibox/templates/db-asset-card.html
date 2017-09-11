@@ -57,8 +57,7 @@
         <div
           ng-if="metaData.type === 'timeseries'"
           id="{{ selection.timeseries }}"
-          ng-click="toggleSelection(selection);"
-          class="">
+          ng-click="toggleSelection(selection);">
 
           <div
             class="db-card-color-picker-btn"
@@ -76,10 +75,49 @@
 
           <color-picker
               ng-show="colorPickersSettings[selection.timeseries]"
-              index="{{selection.timeseries}}" />
-
-<!--           <color-picker /> -->
+              index="{{selection.timeseries}}">
+          </color-picker>
         </div>
+
+        <div
+          ng-if="metaData.type === 'raster'"
+          id="{{ selection.raster }}"
+          ng-click="toggleSelection(selection)"
+          class="clickable">
+
+          <div
+            class="db-card-color-picker-btn"
+            ng-style="{'background-color': selection.color}"
+            ng-click="toggleColorPicker(selection.raster); $event.stopPropagation();">
+          </div>
+
+        </div>
+
+
+
+
+        <!--
+        <div
+          ng-if="metaData.type === 'raster'"
+          ng-class="{active: mouseIsOver}"
+          ng-mouseover="mouseIsOver = true"
+          ng-mouseleave="mouseIsOver = false"
+          id="{{ selection.raster }}"
+          ng-click="toggleSelection(selection)"
+          class="card-content-list clickable">
+          <div
+            class="card-content-colorhandle"
+            ng-show="selection.active"
+            ng-style="{'background-color': selection.color}"
+            ng-click="toggleColorPicker(); $event.stopPropagation();">
+          </div>
+          <i class="fa fa-line-chart"></i>
+          <span ng-class="{'text-primary bg-warning': selection.active}">
+            {{ metaData.quantity }}, ({{ metaData.unit }})
+          </span>
+        </div>
+        -->
+
       </div>
     </div>
   </div>
