@@ -22,13 +22,23 @@ angular.module('omnibox').directive('dbAssetCard', [
     return {
       link: function (scope, element, attrs) {
 
+        scope.colorPickersSettings = DBCardsService.colorPickersSettings;
+        scope.openColorPicker = DBCardsService.openColorPicker
+        scope.closeColorPicker = DBCardsService.closeColorPicker;
+
         scope.getIconClass = UtilService.getIconClass;
-
         scope.isNested = !!attrs['nested'];
-        console.log("scope.isNested:", scope.isNested);
-
         scope.noData = scope.asset.timeseries.length === 0;
         scope.relativeTimeseries = RTSLService.relativeToSurfaceLevel;
+
+        scope.toggleColorPicker = function (tsUuid) {
+          console.log("toggle clr pick");
+          if (scope.colorPickersSettings[tsUuid]) {
+            scope.closeColorPicker(tsUuid);
+          } else {
+            scope.openColorPicker(tsUuid);
+          }
+        }
 
         scope.toggleRelativeTimeseries = function () {
           RTSLService.toggle();

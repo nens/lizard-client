@@ -58,7 +58,7 @@
           ng-if="metaData.type === 'timeseries'"
           id="{{ selection.timeseries }}"
           ng-click="toggleSelection(selection);"
-          class="clickable">
+          class="">
 
           <div
             class="db-card-color-picker-btn"
@@ -73,12 +73,13 @@
             {{ displayName }}
           </div>
 
+          <!--
           <color-picker
               ng-show="colorPickersSettings[ts.uuid]"
               index="{{ts.uuid}}" />
+          -->
+          <color-picker />
         </div>
-
-        <color-picker></color-picker>
       </div>
     </div>
   </div>

@@ -560,6 +560,8 @@
     color: #606162;
     line-height: 1;
 
+    max-height: 60px;
+
 /*    .icons {
         font-size: 0.8em;
         padding-left: 3px;
@@ -1046,6 +1048,10 @@ input[type=file] {
   border-radius: 2px;
 }
 
+.db-card-single-ts:hover {
+  cursor: pointer;
+}
+
 .db-card-color-picker-btn {
   position: relative;
   top: -2px;
@@ -1054,6 +1060,10 @@ input[type=file] {
   width: 16px;
   height: 16px;
   border: 2px solid #fff;
+}
+
+.db-card-color-picker-btn:hover {
+  cursor: pointer;
 }
 
 .db-card-single-ts-name {

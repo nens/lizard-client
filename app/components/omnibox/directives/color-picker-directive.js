@@ -3,8 +3,8 @@
  * @description Directive for a color picker.
  */
 angular.module('omnibox')
-.directive('colorPicker', ['UtilService', 'TimeseriesService', 'DataService',
-  function (UtilService, TimeseriesService, DataService) {
+.directive('colorPicker', ['UtilService', 'TimeseriesService', 'DataService', 'DBCardsService',
+  function (UtilService, TimeseriesService, DataService, DBCardsService) {
 
     var link = function(scope, element, attrs) {
       scope.colorPicker = {
@@ -13,15 +13,26 @@ angular.module('omnibox')
         selectedColor: scope.selection.color
       };
 
-      var toggleColorPicker = function () {
-        scope.colorPicker.enabled = !scope.colorPicker.enabled;
+      // var toggleColorPicker = function () {
+      //   scope.colorPicker.enabled = !scope.colorPicker.enabled;
+      // };
+
+      // scope.toggleColorPicker = toggleColorPicker;
+
+      scope.openColorPicker = function (tsUuid) {
+        console.log("[F] colorPickerDirective.openColorPicker");
+        scope.colorPicker.enabled = true;
+        DBCardsService.openColorPicker(tsUuid);
       };
 
-      scope.toggleColorPicker = toggleColorPicker;
+      scope.closeColorPicker = function (tsUuid) {
+        scope.colorPicker.enabled = false;
+        DBCardsService.closeColorPicker(tsUuid);
+      };
 
       scope.selectColor = function(color) {
         scope.colorPicker.selectedColor = color;
-        toggleColorPicker();
+        scope.closeColorPicker(attrs.index);
       };
 
       scope.$watch('colorPicker.selectedColor', function() {
@@ -31,6 +42,11 @@ angular.module('omnibox')
         } else {
           DataService.onColorChange(scope.selection);
         }
+      });
+
+      scope.colorPickersSettings = DBCardsService.colorPickersSettings;
+      scope.$watch('colorPickersSettings["' + attrs.index + '"]', function (n) {
+        scope.colorPicker.enabled = n;
       });
     };
 
