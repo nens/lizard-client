@@ -9,8 +9,9 @@ angular.module('global-state')
     'TimeseriesService',
     'UtilService',
     'State',
+    'getNestedAssets',
     function (
-      DataService, DBCardsService, TimeseriesService, UtilService, State) {
+      DataService, DBCardsService, TimeseriesService, UtilService, State, getNestedAssets) {
 
     /**
      * Checks whether this datatype is supported for graphs.
@@ -41,9 +42,13 @@ angular.module('global-state')
      *                  to the geometry.
      */
     var getTimeseriesMetaData = _.curry(function (geometry, selection) {
+      // console.log("[F] getTimeseriesMetaData");
+      // console.log("*** geometry:", geometry);
+      // console.log("*** selection:", selection);
       // if no asset is given, iterate over all assets if the asset is a
       // geometry instead no timeseries are found so this will return undefined
       var assets = geometry !== undefined ? [geometry] : DataService.assets;
+      // console.log("*** assets:", assets);
       var tsMetaData = { match: false };
       _.forEach(assets, function (a) {
         tsMetaData = _.find(a.timeseries, function (ts) {
@@ -54,8 +59,10 @@ angular.module('global-state')
         } else {
           tsMetaData.match = true;
         }
+
         tsMetaData.type = 'timeseries';
       });
+
       return tsMetaData;
     });
 
@@ -101,18 +108,18 @@ angular.module('global-state')
       return props;
     });
 
-      var getEventseriesMetaData = function getEventseriesMetaData(geometry, selection) {
-        if (geometry.geometry.coordinates.toString() !== selection.geomType) {
-          return {match: false};
-        }
+    var getEventseriesMetaData = function getEventseriesMetaData(geometry, selection) {
+      if (geometry.geometry.coordinates.toString() !== selection.geomType) {
+        return {match: false};
+      }
 
-        return {
-          type: 'eventseries',
-          quantity: selection.quantity,
-          match: true
-        };
+      return {
+        type: 'eventseries',
+        quantity: selection.quantity,
+        match: true
       };
-	
+    };
+
     /**
      * Returns a function that finds metadata for a selection.
      * metadata search can be limited to a geometry.
@@ -218,6 +225,14 @@ angular.module('global-state')
         }),
         _timeseriesComparator
       );
+
+      var nestedAssets = getNestedAssets(asset);
+      if (nestedAssets && nestedAssets.length > 0) {
+        for (var i = 0; i < nestedAssets.length; i++) {
+          initializeAssetSelections(nestedAssets[i]);
+        }
+      }
+
       return asset;
     };
 
@@ -254,59 +269,59 @@ angular.module('global-state')
       return geomObject;
     };
 
-      var initializeGeomEventseriesSelections = function (geomObject) {
-        console.log("initializeGeomEventseriesSelections", geomObject);
-          if (!geomObject.geometry || geomObject.geometry.type !== 'Point' ||
-              !geomObject.properties) {
-          console.log("not a Point or no properties");
-          return false;
+    var initializeGeomEventseriesSelections = function (geomObject) {
+      console.log("initializeGeomEventseriesSelections", geomObject);
+        if (!geomObject.geometry || geomObject.geometry.type !== 'Point' ||
+            !geomObject.properties) {
+        console.log("not a Point or no properties");
+        return false;
+      }
+
+      var eventSelections = [];
+      console.log("Adding selections");
+      var i = 0;
+      _.forOwn(geomObject.properties, function (props, layerUuid) {
+        console.log('layerUuid, props:', layerUuid, props);
+        if (props.type !== 'eventseries') {
+          console.log("Not an eventseries.");
+          return;
         }
 
-        var eventSelections = [];
-        console.log("Adding selections");
-        var i = 0;
-        _.forOwn(geomObject.properties, function (props, layerUuid) {
-          console.log('layerUuid, props:', layerUuid, props);
-          if (props.type !== 'eventseries') {
-            console.log("Not an eventseries.");
-            return;
-          }
+        if (!props.data || !props.data.length) {
+          console.log("No events.");
+          return;
+        }
 
-          if (!props.data || !props.data.length) {
-            console.log("No events.");
-            return;
-          }
-
-          eventSelections.push({
-            uuid: uuidGenerator(),
-            type: 'eventseries',
-            active: false,
-            order: 0,
-            data: props.data, // Why not just add it here
-            quantity: props.data.length,
-            measureScale: props.scale,
-            url: props.url,
-            layer: layerUuid,
-            geomType: geomObject.geometry.coordinates.toString(),
-            color: UtilService.GRAPH_COLORS[i % (UtilService.GRAPH_COLORS.length)]
-          });
-          i++;
+        eventSelections.push({
+          uuid: uuidGenerator(),
+          type: 'eventseries',
+          active: false,
+          order: 0,
+          data: props.data, // Why not just add it here
+          quantity: props.data.length,
+          measureScale: props.scale,
+          url: props.url,
+          layer: layerUuid,
+          geomType: geomObject.geometry.coordinates.toString(),
+          color: UtilService.GRAPH_COLORS[i % (UtilService.GRAPH_COLORS.length)]
         });
-        console.log("eventSelections is", eventSelections);
+        i++;
+      });
+      console.log("eventSelections is", eventSelections);
 
-        State.selections = _.unionWith(
-          State.selections,
-          eventSelections,
-          function (stateSelection, eventSelection) {
-            return (
-              stateSelection.type === eventSelection.type &&
-              stateSelection.url === eventSelection.url &&
-              stateSelection.geomType === eventSelection.geomType &&
-              stateSelection.layer === eventSelection.layer
-            );
-          });
-        console.log("Selections is now", State.selections, "did this work?");
-      };
+      State.selections = _.unionWith(
+        State.selections,
+        eventSelections,
+        function (stateSelection, eventSelection) {
+          return (
+            stateSelection.type === eventSelection.type &&
+            stateSelection.url === eventSelection.url &&
+            stateSelection.geomType === eventSelection.geomType &&
+            stateSelection.layer === eventSelection.layer
+          );
+        });
+      console.log("Selections is now", State.selections, "did this work?");
+    };
 
     return {
       timeseriesMetaData: getTimeseriesMetaData,

@@ -6,6 +6,9 @@ angular.module('omnibox').directive('dbAssetCard', [
   'SelectionService',
   'TimeseriesService',
   'RelativeToSurfaceLevelService',
+  'AssetService',
+  'getNestedAssets',
+  'UtilService',
   function (
     State,
     DataService,
@@ -13,13 +16,40 @@ angular.module('omnibox').directive('dbAssetCard', [
     DBCardsService,
     SelectionService,
     TimeseriesService,
-    RTSLService
+    RTSLService,
+    AssetService,
+    getNestedAssets,
+    UtilService
   ) {
     return {
       link: function (scope, element) {
 
         scope.noData = scope.asset.timeseries.length === 0;
         scope.relativeTimeseries = RTSLService.relativeToSurfaceLevel;
+
+        scope.colorPickersSettings = DBCardsService.colorPickersSettings;
+        scope.openColorPicker = DBCardsService.openColorPicker
+        scope.closeColorPicker = DBCardsService.closeColorPicker;
+        scope.getNestedAssets = getNestedAssets;
+
+        scope.getIconClass = UtilService.getIconClass;
+
+        scope.toggleColorPicker = function (tsUuid) {
+          if (scope.colorPickersSettings[tsUuid]) {
+            scope.closeColorPicker(tsUuid);
+          } else {
+            scope.openColorPicker(tsUuid);
+          }
+        }
+
+        scope.assetIsNested = function (asset) {
+          return !!asset.parentAsset;
+        };
+
+        scope.assetHasChildren = function (asset) {
+          var nestedAssets = getNestedAssets(asset);
+          return nestedAssets.length > 0;
+        };
 
         scope.toggleRelativeTimeseries = function () {
           RTSLService.toggle();
@@ -31,6 +61,15 @@ angular.module('omnibox').directive('dbAssetCard', [
           scope.asset);
         scope.toggleSelection = SelectionService.toggle;
 
+        scope.getSelectionForTS = function (tsUuid) {
+          console.log("[F] getSelectionForTS");
+          console.log("*** arg 'tsUuid':", tsUuid);
+          console.log("*** State.selections:", State.selections);
+          var result = _.find(State.selections, { timeseries: tsUuid });
+          console.log("*** result:", result);
+          return result;
+        }
+
         scope.getTsLongName = function (selection) {
           var metaData = scope.getSelectionMetaData(selection);
           return metaData.location + ',' + metaData.parameter;
@@ -41,15 +80,19 @@ angular.module('omnibox').directive('dbAssetCard', [
         };
 
         scope.parentAssetHasSurfaceLevel = function () {
-	    var parentAsset;
-	    var parentAssetKey;
-	    
-            if (scope.asset.parentAsset) {
-		parentAssetKey = scope.asset.parentAsset;
-		parentAsset = DataService.getAssetByKey(parentAssetKey);
-            }
+          var parentAsset;
+          var parentAssetKey;
+          if (scope.asset.parentAsset) {
+		        parentAssetKey = scope.asset.parentAsset;
+	   	      parentAsset = DataService.getAssetByKey(parentAssetKey);
+          }
+          return parentAsset && ('surface_level' in parentAsset);
+        };
 
-            return parentAsset && ('surface_level' in parentAsset);
+        scope.getTsShortName = function (ts) {
+          var splitted = ts.parameter.split(",");
+          var result = splitted.join(", ");
+          return result || '...';
         };
 
         /**
@@ -97,6 +140,8 @@ angular.module('omnibox').directive('dbAssetCard', [
         scope.toggleExtended = function () {
           scope.extended = !scope.extended;
         };
+
+        scope.noTimeseries = scope.asset.timeseries.length === 0;
 
         /**
          * Specific toggle for crosssection

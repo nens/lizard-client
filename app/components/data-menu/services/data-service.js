@@ -95,7 +95,7 @@ angular.module('data-menu')
           instance.onAssetsChange();
         }
 
-        console.log('DataService.assets:', instance.assets);
+        // console.log('DataService.assets:', instance.assets);
       };
 
       // Define assets on State and update DataService.assets.
@@ -120,8 +120,6 @@ angular.module('data-menu')
         });
 
         _assets = assets;
-
-        console.log('State.assets:', State.assets);
 
         rebindAssetFunctions();
       };

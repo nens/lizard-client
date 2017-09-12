@@ -1,0 +1,22 @@
+<header class="card-header nested-asset">
+
+  <div ng-if="asset" class="card-header-center">
+    <span class="icons fa-stack fa-lg">
+      <i class="fa fa-circle fa-stack-2x iconcircle"></i>
+      <i class="asset-icon"
+         ng-class="getIconClass(asset.entity_name, asset)">
+      </i>
+    </span>
+
+    <span class="asset-code">
+      {{ asset.code | objectTitle | translate }}
+    </span>
+
+    <span
+      class="asset-title"
+      ng-init="tsCount = asset.timeseries.length; noNestedTimeseries = tsCount === 0">
+      {{tsCount}} timeseries
+    </span>
+
+  </div>
+</header>
