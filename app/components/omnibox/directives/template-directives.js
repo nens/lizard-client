@@ -185,11 +185,6 @@ angular.module('omnibox')
     function (UtilService) {
   return {
     link: function (scope, element, attrs) {
-      // console.log("[F] cardheaderDirective.link");
-      // console.log("*** attrs.asset:", attrs.asset);
-      scope.checkAsset = function (asset) {
-        console.log("[F] cardheaderDirective.scope.checkAsset; arg 'asset':", asset);
-      };
       scope.getIconClass = UtilService.getIconClass;
     },
     restrict: 'E',

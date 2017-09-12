@@ -22,7 +22,6 @@ angular.module("omnibox")
       scope.relativeToSurfaceLevel = RTSLService.get;
 
       scope.toggleRelativeTimeseries = function () {
-        console.log("[F] omniboxDirective.toggleRelativeTimeseries");
         RTSLService.toggle();
         TimeseriesService.syncTime();
       };
