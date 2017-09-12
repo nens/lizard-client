@@ -41,13 +41,13 @@ angular.module('data-menu')
         if (selection.asset) {
           return _.find(
             instance.assets, function(asset) {
-		return selection.asset === asset.entity_name + "$" + asset.id;
+		          return selection.asset === asset.entity_name + "$" + asset.id;
             }
           );
         } else if (selection.geom) {
           return _.find(
             instance.geometries, function(geom) {
-		return selection.geom === geom.geometry.coordinates.toString();
+		          return selection.geom === geom.geometry.coordinates.toString();
             }
           );
         }

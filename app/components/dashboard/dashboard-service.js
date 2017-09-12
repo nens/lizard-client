@@ -44,19 +44,18 @@ angular.module('dashboard')
    */
   this.buildGraphs = function (graphs, timeseries, assets, geometries,
                                selections) {
-    graphs = this._setAllContentToNotUpdated(graphs);
 
-  /**
-   * Checks if a selectable data item is in selections and returns it.
-   *
-   * @param  {array} selectiontype  timeseries, geom, asset, ... etc.
-   * @param  {array} selectionId    Data source timeseries from timseriesService.
-   * @param  {array} rasterId       Data source DataService.assets.
-   * @return {function}             returns a function that returns a selection
-   *                                based on a raster uuid or undefined () if
-   *                                no raster is available for that selection
-   *                                type.
-   */
+    /**
+     * Checks if a selectable data item is in selections and returns it.
+     *
+     * @param  {array} selectiontype  timeseries, geom, asset, ... etc.
+     * @param  {array} selectionId    Data source timeseries from timseriesService.
+     * @param  {array} rasterId       Data source DataService.assets.
+     * @return {function}             returns a function that returns a selection
+     *                                based on a raster uuid or undefined () if
+     *                                no raster is available for that selection
+     *                                type.
+     */
     var findSelection = function (selectiontype, selectionId) {
       return function (rasterId) {
         return _.find(selections, function(selection){
@@ -65,6 +64,8 @@ angular.module('dashboard')
         });
       };
     };
+
+    graphs = this._setAllContentToNotUpdated(graphs);
 
     timeseries.forEach(function (ts) {
       var selection = (findSelection('timeseries', ts.id)());
@@ -93,7 +94,7 @@ angular.module('dashboard')
 
         graphs[selection.order].type = (
           ts.valueType === 'image' ? 'image' :
-          ts.measureScale === 'ratio'? 'temporalBar': 'temporalLine'
+            ts.measureScale === 'ratio'? 'temporalBar': 'temporalLine'
         );
       }
     });
@@ -115,12 +116,11 @@ angular.module('dashboard')
       }
     });
 
-    /* I *think* this is unused now.
-     * geometries.forEach(function (geometry) {
-     *   var getSelected = findSelection(
-     *     'geom', geometry.geometry.coordinates.toString());
-     *   graphs = addPropertyData(graphs, geometry.properties, getSelected);
-     * });*/
+    geometries.forEach(function (geometry) {
+      var getSelected = findSelection(
+        'geom', geometry.geometry.coordinates.toString());
+      graphs = addPropertyData(graphs, geometry.properties, getSelected);
+    });
 
     /* Add eventseries graphs from selections. */
     var eventSelections = _.filter(selections, function (selection) {

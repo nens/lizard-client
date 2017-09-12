@@ -112,7 +112,7 @@ angular.module('global-state')
           match: true
         };
       };
-	
+
     /**
      * Returns a function that finds metadata for a selection.
      * metadata search can be limited to a geometry.
