@@ -199,7 +199,7 @@ angular.module('timeseries').service("TimeseriesService", [
         end: timeState.end ? parseInt(timeState.end, 10): undefined,
       };
 
-      if ((chartType === 'lines' || chartType === 'temporalLines') && RTSLService.get()) {
+      if (chartType === 'lines' && RTSLService.get()) {
         params.relative_to = 'surface_level';
       }
 
