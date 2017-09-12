@@ -41,9 +41,14 @@ angular.module('global-state')
      *                  to the geometry.
      */
     var getTimeseriesMetaData = _.curry(function (geometry, selection) {
+      console.log("[F] SelService.getTimeseriesMetaData");
       // if no asset is given, iterate over all assets if the asset is a
       // geometry instead no timeseries are found so this will return undefined
+
+
       var assets = geometry !== undefined ? [geometry] : DataService.assets;
+
+
       var tsMetaData = { match: false };
       _.forEach(assets, function (a) {
         tsMetaData = _.find(a.timeseries, function (ts) {
@@ -90,14 +95,18 @@ angular.module('global-state')
       geometry = geometry || geomRaster;
       var props = { match: false };
       if (geomRaster && geomRaster.properties) {
+        // console.log("AAAAAAAAAAAAAAAAA");
         var assetProps = geomRaster.properties[selection.raster];
         if (assetProps) {
+          // console.log("BBBBBBBBBBBBBBBBBB");
           props = assetProps;
           var assetCode = idGeomFunction(geometry);
+
           props.match = selection[geomType] === assetCode &&
             dbSupportedData(geometry.geometry.type, props);
         }
       }
+      // console.log("PROPS now looks like:", props);
       return props;
     });
 
@@ -152,7 +161,7 @@ angular.module('global-state')
           ? plots.order + 1
           : 0;
       } else {
-        DBCardsService.removeSelectionFromPlot(selection);
+        // DBCardsService.removeSelectionFromPlot(selection);
       }
       selection.active = !selection.active;
 
@@ -202,7 +211,9 @@ angular.module('global-state')
      * @return {object} asset or geometry data.
      */
     var initializeAssetSelections = function (asset) {
+      console.log("[F] initializeAssetSelections; asset:", asset);
       var colors = UtilService.GRAPH_COLORS;
+      console.log("[dbg] 3 (pre): State.selections:", State.selections);
       State.selections = _.unionWith(
         State.selections,
         asset.timeseries.map(function (ts, i) {
@@ -218,6 +229,7 @@ angular.module('global-state')
         }),
         _timeseriesComparator
       );
+      console.log("[dbg] 3 (post): State.selections:", State.selections);
       return asset;
     };
 
@@ -228,15 +240,24 @@ angular.module('global-state')
      * @return {object} asset or geometry data.
      */
     var initializeRasterSelections = function (geomObject, geomType) {
+      console.log("[F] initializeRasterSelections; geomObject:", geomObject);
+
+      // We clicked an asset while also having a temporal raster active:
+      // a selection comes into existence with e.g. the following two attrs:
+      //
+      // selection.asset = 'pumpstation$303'
+      // selection.type = 'raster'
       var geomId = geomType === 'asset' ?
         geomObject.entity_name + "$" + geomObject.id :
         geomObject.geometry.coordinates.toString();
       var colors = UtilService.GRAPH_COLORS;
+      console.log("[dbg] 2 (pre): State.selections:", State.selections);
       State.selections = _.unionWith(
         State.selections,
         _.filter(State.layers,
-            function(layer) {return layer.type === 'raster';}
+            function(layer) {return layer.type === 'raster' && !layer.asset;}
         ).map(function (layer, i) {
+
           var rasterSelection  = {
             uuid: uuidGenerator(),
             type: "raster",
@@ -251,10 +272,12 @@ angular.module('global-state')
         }),
         _rasterComparatorFactory(geomType)
       );
+      console.log("[dbg] 2 (post): State.selections:", State.selections);
       return geomObject;
     };
 
     var initializeGeomEventseriesSelections = function (geomObject) {
+      console.log("[F] initializeGeomEventseriesSelections; geomObject:", geomObject);
       if (!geomObject.geometry || geomObject.geometry.type !== 'Point' ||
             !geomObject.properties) {
         return false;
@@ -287,7 +310,7 @@ angular.module('global-state')
 
         i++;
       });
-
+      console.log("[dbg] 1 (pre): State.selections:", State.selections);
       State.selections = _.unionWith(
         State.selections,
         eventSelections,
@@ -300,6 +323,7 @@ angular.module('global-state')
           );
         }
       );
+      console.log("[dbg] 1 (post): State.selections:", State.selections);
       };
 
     return {
