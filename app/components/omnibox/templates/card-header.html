@@ -19,22 +19,4 @@
       <span class="asset-code">{{ asset.code | objectTitle | translate }}</span>
     </div>
   </div>
-
-  <!--
-
-  <div ng-if="geom" class="card-header-center">
-    <close-card geometry="geom"></close-card>
-
-    <span ng-if="geom.geometry.type === 'Point'" class="asset-title">
-      {{ geom.geometry.coordinates[1] | number : 2 }}, {{ geom.geometry.coordinates[0] | number : 2 }}
-    </span>
-    <span ng-if="geom.geometry.type === 'LineString'">
-      {{ geom.geometry.coordinates[0][1] | number : 2 }}, {{ geom.geometry.coordinates[0][0] | number : 2 }} - {{ geom.geometry.coordinates[1][1] | number : 2 }}, {{ geom.geometry.coordinates[1][0] | number : 2 }}</span>
-    <span ng-if="geom.name">{{ geom.name }}</span>
-    <span ng-if="geom.name && geom.area">: </span>
-    <span ng-if="geom.area">{{ geom.area / 10000 | number : 0 }} ha.</span>
-  </div>
-
-  -->
-
 </header>

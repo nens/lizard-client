@@ -102,7 +102,7 @@ angular.module('omnibox')
         } else {
           return geom.geometry.type;
         }
-      }
+      };
 
       var clickId = 0;
       var destroy = function () {

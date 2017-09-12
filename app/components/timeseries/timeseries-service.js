@@ -283,14 +283,6 @@ angular.module('timeseries').service("TimeseriesService", [
         return;
       }
 
-      // return early - if we're not in map ctx
-      // return early - if we don't have a timeseries selected
-      // if (!(State.context === 'map' &&
-      //       State.selections &&
-      //       State.selections.length >= 1)) {
-      //   return;
-      // }
-
       var now = (new Date()).getTime();
       var start, end, intervalMs;
       switch(intervalText) {

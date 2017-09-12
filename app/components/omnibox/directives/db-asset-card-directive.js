@@ -55,8 +55,6 @@ angular.module('omnibox').directive('dbAssetCard', [
 
         scope.getTsDisplayName = function (selection) {
           var metaData = scope.getSelectionMetaData(selection);
-          // console.log("metaData:", metaData);
-          // return metaData.location + ', ' + metaData.parameter;
           if (metaData.parameter) {
             return metaData.parameter.split(",").join(", ");
           }
