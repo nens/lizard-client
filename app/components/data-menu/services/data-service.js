@@ -94,8 +94,6 @@ angular.module('data-menu')
         if (instance.onAssetsChange) {
           instance.onAssetsChange();
         }
-
-        console.log('DataService.assets:', instance.assets);
       };
 
       // Define assets on State and update DataService.assets.
@@ -120,9 +118,6 @@ angular.module('data-menu')
         });
 
         _assets = assets;
-
-        console.log('State.assets:', State.assets);
-
         rebindAssetFunctions();
       };
 
@@ -188,7 +183,6 @@ angular.module('data-menu')
           promise.then(function (geometries) {
             // Dedupe instance.geometries asynchronous.
             instance.geometries = _.uniqWith(geometries, isDuplicateGeometry);
-            console.log('DataService.geometries:', instance.geometries);
             if (instance.onGeometriesChange) {
               instance.onGeometriesChange();
             }
@@ -196,7 +190,6 @@ angular.module('data-menu')
         });
 
         _geometries = geometries;
-        console.log('State.geometries:', State.geometries);
         State.geometries.addGeometry = addGeometry;
         State.geometries.removeGeometry = removeGeometry;
       };
@@ -293,7 +286,6 @@ angular.module('data-menu')
             instance.geometries.forEach(function (old, i) {
               if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
                 instance.geometries[i] = newGeo;
-                console.log('DataService.geometries:', instance.geometries);
               }
             });
           });
@@ -419,11 +411,9 @@ angular.module('data-menu')
             options.end = State.temporal.end;
           }
 
-          console.log("1. Going to get data on dataLayer", dataLayer, "with options", options);
           promises.push(
             dataLayer.getData(options).then(
               function (response) {
-                console.log("2. Got response ", response);
                 var newProps = geo.properties ? _.clone(geo.properties) : {};
 
                 // async so remove anything obsolete.
@@ -440,7 +430,6 @@ angular.module('data-menu')
                   newProps[layer.uuid].data = response;
                 }
 
-                console.log("3. newProps[layer.uuid].data is now", newProps[layer.uuid].data);
                 if ((!layer.active && layer.uuid in Object.keys(newProps))
                   || newProps[layer.uuid].data === null) {
 

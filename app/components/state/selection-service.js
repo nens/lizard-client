@@ -254,58 +254,52 @@ angular.module('global-state')
       return geomObject;
     };
 
-      var initializeGeomEventseriesSelections = function (geomObject) {
-        console.log("initializeGeomEventseriesSelections", geomObject);
-          if (!geomObject.geometry || geomObject.geometry.type !== 'Point' ||
-              !geomObject.properties) {
-          console.log("not a Point or no properties");
-          return false;
+    var initializeGeomEventseriesSelections = function (geomObject) {
+      if (!geomObject.geometry || geomObject.geometry.type !== 'Point' ||
+            !geomObject.properties) {
+        return false;
+      }
+
+      var eventSelections = [];
+      var i = 0;
+      _.forOwn(geomObject.properties, function (props, layerUuid) {
+        if (props.type !== 'eventseries') {
+          return;
         }
 
-        var eventSelections = [];
-        console.log("Adding selections");
-        var i = 0;
-        _.forOwn(geomObject.properties, function (props, layerUuid) {
-          console.log('layerUuid, props:', layerUuid, props);
-          if (props.type !== 'eventseries') {
-            console.log("Not an eventseries.");
-            return;
-          }
+        if (!props.data || !props.data.length) {
+          return;
+        }
 
-          if (!props.data || !props.data.length) {
-            console.log("No events.");
-            return;
-          }
-
-          eventSelections.push({
-            uuid: uuidGenerator(),
-            type: 'eventseries',
-            active: false,
-            order: 0,
-            data: props.data, // Why not just add it here
-            quantity: props.data.length,
-            measureScale: props.scale,
-            url: props.url,
-            layer: layerUuid,
-            geomType: geomObject.geometry.coordinates.toString(),
-            color: UtilService.GRAPH_COLORS[i % (UtilService.GRAPH_COLORS.length)]
-          });
-          i++;
+        eventSelections.push({
+          uuid: uuidGenerator(),
+          type: 'eventseries',
+          active: false,
+          order: 0,
+          data: props.data, // Why not just add it here
+          quantity: props.data.length,
+          measureScale: props.scale,
+          url: props.url,
+          layer: layerUuid,
+          geomType: geomObject.geometry.coordinates.toString(),
+          color: UtilService.GRAPH_COLORS[i % (UtilService.GRAPH_COLORS.length)]
         });
-        console.log("eventSelections is", eventSelections);
 
-        State.selections = _.unionWith(
-          State.selections,
-          eventSelections,
-          function (stateSelection, eventSelection) {
-            return (
-              stateSelection.type === eventSelection.type &&
-              stateSelection.url === eventSelection.url &&
-              stateSelection.geomType === eventSelection.geomType &&
-              stateSelection.layer === eventSelection.layer
-            );
-          });
-        console.log("Selections is now", State.selections, "did this work?");
+        i++;
+      });
+
+      State.selections = _.unionWith(
+        State.selections,
+        eventSelections,
+        function (stateSelection, eventSelection) {
+          return (
+            stateSelection.type === eventSelection.type &&
+            stateSelection.url === eventSelection.url &&
+            stateSelection.geomType === eventSelection.geomType &&
+            stateSelection.layer === eventSelection.layer
+          );
+        }
+      );
       };
 
     return {

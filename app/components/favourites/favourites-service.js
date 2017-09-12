@@ -221,12 +221,10 @@ angular.module('favourites')
           });
         }
 
-        console.log("--> Before changing selections");
         // Restore selections
         if (typeof favourite.state.selections !== 'undefined') {
           State.selections = favourite.state.selections;
         }
-        console.log("--> After changing selections, it is now", State.selections);
 
         // Specific attributes
         var ATTRIBUTES = [
