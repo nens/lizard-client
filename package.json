@@ -1,6 +1,6 @@
 {
   "name": "lizard-client",
-  "version": "4.15.21",
+  "version": "4.15.22",
   "scripts": {
     "test": "grunt test",
     "start": "grunt serve",
@@ -53,7 +53,6 @@
     "phantomjs-prebuilt": "2.1.13"
   },
   "optionalDependencies": {
-    "buck-trap": "^1.0.11",
     "chalk": "^1.1.1",
     "colors": "^1.1.2",
     "grunt-angular-gettext": "^2.1.0",
