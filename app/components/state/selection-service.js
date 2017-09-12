@@ -172,8 +172,8 @@ angular.module('global-state')
     };
 
     var _timeseriesComparator = function(existingSelection, newSelection){
-        return existingSelection.type === "timeseries" &&
-            existingSelection.timeseries === newSelection.timeseries;
+      return existingSelection.type === "timeseries" &&
+        existingSelection.timeseries === newSelection.timeseries;
     };
 
     /**
