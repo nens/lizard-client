@@ -33,9 +33,58 @@
 
     </div>
 
-    <div ng-if="omnibox.context === 'dashboard'">
+    <div ng-if="omnibox.context === 'dashboard'" class="db-omnibox">
 
       <db-cards></db-cards>
+
+      <div class="db-omnibox-time-controls">
+        <div class="left-controls">
+          <div class="dashboard-timeseries-interval-btn dashboard"
+             ng-click="zoomToInterval(timeseries.selected.value_type, 'one_year')"
+             translate>
+             1Y
+          </div>
+          <div class="dashboard-timeseries-interval-btn"
+               ng-click="zoomToInterval(timeseries.selected.value_type, 'three_months')"
+               translate>
+            3M
+          </div>
+          <div class="dashboard-timeseries-interval-btn"
+               ng-click="zoomToInterval(timeseries.selected.value_type, 'two_weeks')"
+               translate>
+            2W
+          </div>
+          <div class="dashboard-timeseries-interval-btn"
+             ng-click="zoomToInterval(timeseries.selected.value_type, 'timesteps_range_all_active')"
+             translate>
+            ZOOM TO EXTENT
+          </div>
+        </div>
+        <div class="right-controls">
+          <div
+            class="dashboard-timeseries-interval-btn"
+            ng-click="toggleRelativeTimeseries(); $event.stopPropagation();"
+            translate>
+            RELATIVE
+          </div>
+
+
+          <!--
+          <i
+            class="fa relativate-ts-icon"
+            ng-class="{ 'fa-check-square': relativeTimeseries.value, 'fa-square': !relativeTimeseries.value }"
+            ng-click="toggleRelativeTimeseries(); $event.stopPropagation();"
+            ng-if="ts.active && ts.measureScale === 'interval' &&
+              (assetHasSurfaceLevel() || parentAssetHasSurfaceLevel())"
+            title="{{ relativeTimeseries.value
+                ? 'Deselect to show absolute values for all timeseries'
+                : 'Select to show all timeseries relative to surface level'
+              }}"
+            translate>
+          </i>
+          -->
+        </div>
+      </div>
 
     </div>
 

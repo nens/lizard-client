@@ -16,8 +16,11 @@ angular.module('omnibox')
       link: function (scope, element) {
 
         scope.state = State;
-
         scope.noData = true;
+
+        scope.colorPickersSettings = DBCardsService.colorPickersSettings;
+        scope.openColorPicker = DBCardsService.openColorPicker;
+        scope.closeColorPicker = DBCardsService.closeColorPicker;
 
         scope.getSelectionMetaData = SelectionService.getMetaDataFunction(
           scope.geom);
@@ -30,6 +33,17 @@ angular.module('omnibox')
         scope.$watch('geom', function () {
           SelectionService.initializeRaster(scope.geom, "geom");
         });
+
+        scope.toggleColorPicker = function (selectionUuid) {
+          console.log("[F] dbGeometryCards.scope.toggleColorPicker");
+          if (scope.colorPickersSettings[selectionUuid]) {
+            scope.closeColorPicker(selectionUuid);
+          } else {
+            scope.openColorPicker(selectionUuid);
+          }
+          console.log("[dbg] dbGeometryCards.scope.colorPickersSettings:", scope.colorPickersSettings);
+        };
+
 
         /**
          * Properties are asynchronous so watch it to set noData when added.

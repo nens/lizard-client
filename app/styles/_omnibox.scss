@@ -866,7 +866,6 @@ input[type=file] {
 
 .timeseries-interval-btn:hover {
   cursor: pointer;
-
   color: #fff;
   background-color: #7C8C8D;
 }
@@ -938,6 +937,15 @@ input[type=file] {
   color: #7B7B7B;
 }
 
+.icons > .raster-icon {
+  position: absolute;
+  top: 14px;
+  left: 29px;
+
+  font-size: 1.2em;
+  color: #7B7B7B;
+}
+
 .icons-nested > .asset-icon {
   position: absolute;
   top: 10px;
@@ -1002,6 +1010,32 @@ input[type=file] {
   }
 }
 
+.nested-card-header-txt.raster-card-header-txt {
+  position: relative;
+  left: 62px;
+  top: -34px;
+  height: 60px;
+  /*background-color: red;*/
+
+  .nested-asset-title {
+    height: 25px;
+    max-width: 250px;
+    /*background-color: red;*/
+    line-height: 25px;
+    padding-top: 6px;
+  }
+
+  .nested-asset-ts-count {
+    height: 25px;
+    max-width: 250px;
+    /*background-color: blue;*/
+    font-size: .8em;
+    line-height: 28px;
+    /*padding-bottom: 2px;*/
+    /*margin-bottom: -10px !important;*/
+  }
+}
+
 
 .db-ts-collection, .db-ts-collection-empty {
   position: relative;
@@ -1013,6 +1047,10 @@ input[type=file] {
   border: 1px solid #DBDBDB;
   border-radius: 2px;
   background-color: #fff;
+}
+
+.db-ts-collection.raster-ts-collection {
+  min-height: 62px; /* herp-a-derp */
 }
 
 .db-ts-collection-empty {
@@ -1032,6 +1070,7 @@ input[type=file] {
   margin-bottom: 6px;
   height: 40px;
   min-height: 40px;
+  max-height: 40px;
 
   padding-top: 12px;
   background-color: #DBDBDB;
@@ -1084,4 +1123,68 @@ input[type=file] {
   position: absolute;
   left: 375px;
   top: 0;
+}
+
+.color-picker-wrapper {
+  position: absolute;
+  top: 39px;
+  left: 12px;
+}
+
+.db-omnibox {
+  min-height: 100%;
+  position: relative;
+}
+
+.db-omnibox-time-controls {
+  position: fixed;
+  bottom: 0;
+  width: 400px;
+  height: 50px;
+
+  background-color: #DBDBDB;
+
+  .left-controls {
+    width: 50%;
+    height: 100%;
+    float: left;
+    /*background-color: red;*/
+  }
+
+  .right-controls {
+    width: 50%;
+    height: 100%;
+    float: right;
+/*    background-color: green;*/
+  }
+}
+
+.dashboard-timeseries-interval-btn {
+  position: relative;
+  top: 16px;
+  height: 20px;
+  border: 1px solid #aaa;
+  float: left;
+  margin-left: 5px;
+  padding: 4px;
+  padding-bottom: 16px;
+  font-size: 11px;
+
+  color: #7C8C8D;
+  background-color: #fff;
+}
+
+.left-controls > .dashboard-timeseries-interval-btn {
+  float: left;
+}
+
+.right-controls > .dashboard-timeseries-interval-btn {
+  float: right;
+  margin-right: 6px;
+}
+
+.dashboard-timeseries-interval-btn:hover {
+  cursor: pointer;
+  color: #fff;
+  background-color: #7C8C8D;
 }

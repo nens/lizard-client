@@ -32,13 +32,11 @@ angular.module('omnibox').directive('dbAssetCard', [
         scope.relativeTimeseries = RTSLService.relativeToSurfaceLevel;
 
         scope.toggleColorPicker = function (tsUuid) {
-          console.log("[F] toggleColorPicker");
           if (scope.colorPickersSettings[tsUuid]) {
             scope.closeColorPicker(tsUuid);
           } else {
             scope.openColorPicker(tsUuid);
           }
-          console.log("[dbg] scope.colorPickersSettings:", scope.colorPickersSettings);
         };
 
         scope.toggleRelativeTimeseries = function () {

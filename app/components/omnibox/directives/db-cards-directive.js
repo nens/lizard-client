@@ -50,6 +50,21 @@ angular.module('omnibox')
         });
       });
 
+      scope.getGeomCardHeader = function (geom) {
+        console.log("[F] getGeomCardHeader; arg 'geom':", geom);
+        var M = 100000;
+        var x = Math.round(geom.geometry.coordinates[0] * M) / M;
+        var y = Math.round(geom.geometry.coordinates[1] * M) / M;
+        if (geom.geometry.type === 'Point') {
+          return '(' + x + ', ' + y + ')';
+        } else {
+          console.error("We only support (dashboard) omnibox cards for Point geometries, but encountered a geom with type: '" + geom.geometry.type + "'");
+        }
+      }
+
+      scope.countRasters = function (geom) {
+        return Object.keys(geom.properties).length;
+      }
 
       /**
        * Turn ts on and give it the order of the dropped plot. Ts could already

@@ -9,25 +9,30 @@
   </db-asset-card>
 
   <div
-    class="card active animate-repeat"
+    class="card db-card active animate-repeat"
     ng-repeat="geom in omnibox.data.geometries">
 
     <!-- <cardheader geom="geom"></cardheader> -->
 
     <header class="card-header geom-card-header">
-      <div ng-if="geom" class="card-header-center">
+      <div ng-if="geom"
+           class="card-header-center">
         <close-card geometry="geom"></close-card>
 
         <span class="icons fa-stack fa-lg">
           <i class="fa fa-circle fa-stack-2x iconcircle"></i>
-          <i class="fa fa-th raster-icon"></i>
-
-
-<!--           <i class="asset-icon"
-             ng-class="getIconClass(asset.entity_name, asset)">
-          </i> -->
-
+          <!-- <i class="fa fa-th raster-icon"></i> -->
+          <i class="fa fa-map-marker raster-icon"></i>
         </span>
+
+        <div class="nested-card-header-txt raster-card-header-txt">
+          <div class="nested-asset-title">
+            {{getGeomCardHeader(geom)}}
+          </div>
+          <div class="nested-asset-ts-count" translate>
+            {{countRasters(geom)}} {{ countRasters(geom) === 1 ? 'RASTER' : 'RASTERS' }}
+          </div>
+        </div>
 
 <!--         <div class="nested-card-header-txt">
           <div class="nested-asset-title">

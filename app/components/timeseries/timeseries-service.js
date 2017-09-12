@@ -9,10 +9,11 @@ angular.module('timeseries').service("TimeseriesService", [
   'UtilService',
   'DataService',
   'TimeseriesUtilService',
-    'RelativeToSurfaceLevelService',
-    'gettextCatalog',
+  'RelativeToSurfaceLevelService',
+  'gettextCatalog',
+  '$timeout',
   function ($q, State, $http, notie, UtilService,
-            DataService, TsUService, RTSLService, gettextCatalog) {
+            DataService, TsUService, RTSLService, gettextCatalog, $timeout) {
     // *wrapped* boolean indicating we want the timeseries value (y-axis) to be
     // relative to the asset's "surface_level" value (boolean set to true) or
     // we want it to be the absolute value (boolean set to false);
@@ -137,7 +138,7 @@ angular.module('timeseries').service("TimeseriesService", [
             }
             return ts;
 	});
-  
+
         return timeseriesPromise;
       };
 
@@ -269,6 +270,126 @@ angular.module('timeseries').service("TimeseriesService", [
       return err; // continue anyway
     };
 
+
+    this.zoomToInterval = function (value_type, intervalText) {
+
+      // return early - if the timeseries consists of images
+      if (value_type === 'image') {
+        notie.alert(3,
+          gettextCatalog.getString(
+            "Timeseries with images cannot be zoomed to."
+          )
+        );
+        return;
+      }
+
+      // return early - if we're not in map ctx
+      // return early - if we don't have a timeseries selected
+      // if (!(State.context === 'map' &&
+      //       State.selections &&
+      //       State.selections.length >= 1)) {
+      //   return;
+      // }
+
+      var now = (new Date()).getTime();
+      var start, end, intervalMs;
+      switch(intervalText) {
+        case "one_year":
+          intervalMs = 31536000000; // one year in ms
+          end = now;
+          start = end - intervalMs;
+          break;
+        case "three_months":
+          intervalMs = 7884000000; // three months in ms (avg)
+          end = now;
+          start = end - intervalMs;
+          break;
+        case "two_weeks":
+          intervalMs = 1209600000; // two weeks in ms
+          end = now;
+          start = end - intervalMs;
+          break;
+        case "timesteps_range":
+
+          var activeTsUUID = _.find(State.selections,
+            { active: true }).timeseries;
+
+          var activeTs = _.find(service.timeseries,
+            { id: activeTsUUID });
+
+          start = activeTs.start;
+          end = activeTs.end;
+
+          // If start and end are at the same point in time (i.e. we have a
+          // timeseries with only a single measured value), we "pad" the space
+          // to have decent visualization.
+          if (start === end) {
+            var defaultAggWindow = 3600000; // 1 hour, in ms
+            var aggWindow = State.temporal.aggWindow || defaultAggWindow;
+            end = start + aggWindow * 10;
+          }
+
+          break;
+        case 'timesteps_range_all_active':
+          console.log("CASE 'timesteps_range_all_active'... wip");
+
+          var start;
+          var end;
+          var activeTimeseriesUuids = [];
+          if (State.selections) {
+            State.selections.forEach(function (selection) {
+              if (selection.active && selection.timeseries) {
+                activeTimeseriesUuids.push(selection.timeseries);
+              }
+            });
+            // console.log("[dbg] After inspecting all selections ("
+            //   + State.selections.length
+            //   + "x), we get list 'activeTimeseries': "
+            //   + (activeTimeseriesUuids || "[]")
+            //   + " ("
+            //   + activeTimeseriesUuids.length
+            //   + "x)"
+            // );
+
+            service.timeseries.forEach(function (ts) {
+              if (_.includes(activeTimeseriesUuids, ts.id)) {
+                if (!start || ts.start < start) {
+                  start = ts.start;
+                }
+                if (!end || ts.end > end) {
+                  end = ts.end;
+                }
+              }
+            });
+          }
+
+          if (!(start || end)) {
+            return;
+          }
+
+          break;
+        default:
+          console.error(
+            "Unknown interval '" +
+            intervalText +
+            "' for temporal zoom; allowed values are " +
+            "'one_year', 'three_months', 'two_weeks' and 'timesteps_range'"
+          );
+      }
+
+      // We toggle State.temporal.timelineMoving to trigger the correct
+      // angular $watch in the timeline-directive.
+      State.temporal.timelineMoving = !State.temporal.timelineMoving;
+      State.temporal.at = start;
+      State.temporal.start = start;
+      State.temporal.end = end;
+
+      $timeout(function () {
+        // We reset State.temporal.timelineMoving (a-sync, compliant with
+        // angular $digest cycle).
+        State.temporal.timelineMoving = !State.temporal.timelineMoving;
+      });
+    }
   }
 ]);
 
@@ -474,11 +595,16 @@ angular.module('timeseries').service('RelativeToSurfaceLevelService', [
     this.relativeToSurfaceLevel = {'value': false};
 
     this.get = function() {
+      console.log("[F] RTSLService.get");
+      console.log("*** value:", service.relativeToSurfaceLevel.value);
       return service.relativeToSurfaceLevel.value;
     };
 
     this.toggle = function() {
+      console.log("[F] RTSLService.toggle");
+      console.log("*** value (pre):", service.relativeToSurfaceLevel.value);
       service.relativeToSurfaceLevel.value = !service.relativeToSurfaceLevel.value;
+      console.log("*** value (post):", service.relativeToSurfaceLevel.value);
     };
   }
 ]);
