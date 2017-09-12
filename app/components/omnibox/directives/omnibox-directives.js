@@ -19,6 +19,7 @@ angular.module("omnibox")
       };
 
       scope.zoomToInterval = TimeseriesService.zoomToInterval;
+      scope.relativeToSurfaceLevel = RTSLService.get;
 
       scope.toggleRelativeTimeseries = function () {
         console.log("[F] omniboxDirective.toggleRelativeTimeseries");

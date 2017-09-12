@@ -64,6 +64,7 @@
           <div
             class="dashboard-timeseries-interval-btn"
             ng-click="toggleRelativeTimeseries(); $event.stopPropagation();"
+            ng-class="{'active': relativeToSurfaceLevel() }"
             translate>
             RELATIVE
           </div>

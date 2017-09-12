@@ -331,8 +331,6 @@ angular.module('timeseries').service("TimeseriesService", [
 
           break;
         case 'timesteps_range_all_active':
-          console.log("CASE 'timesteps_range_all_active'... wip");
-
           var start;
           var end;
           var activeTimeseriesUuids = [];
@@ -342,15 +340,6 @@ angular.module('timeseries').service("TimeseriesService", [
                 activeTimeseriesUuids.push(selection.timeseries);
               }
             });
-            // console.log("[dbg] After inspecting all selections ("
-            //   + State.selections.length
-            //   + "x), we get list 'activeTimeseries': "
-            //   + (activeTimeseriesUuids || "[]")
-            //   + " ("
-            //   + activeTimeseriesUuids.length
-            //   + "x)"
-            // );
-
             service.timeseries.forEach(function (ts) {
               if (_.includes(activeTimeseriesUuids, ts.id)) {
                 if (!start || ts.start < start) {
@@ -363,7 +352,7 @@ angular.module('timeseries').service("TimeseriesService", [
             });
           }
 
-          if (!(start || end)) {
+          if (!(start && end)) {
             return;
           }
 
@@ -595,16 +584,11 @@ angular.module('timeseries').service('RelativeToSurfaceLevelService', [
     this.relativeToSurfaceLevel = {'value': false};
 
     this.get = function() {
-      console.log("[F] RTSLService.get");
-      console.log("*** value:", service.relativeToSurfaceLevel.value);
       return service.relativeToSurfaceLevel.value;
     };
 
     this.toggle = function() {
-      console.log("[F] RTSLService.toggle");
-      console.log("*** value (pre):", service.relativeToSurfaceLevel.value);
       service.relativeToSurfaceLevel.value = !service.relativeToSurfaceLevel.value;
-      console.log("*** value (post):", service.relativeToSurfaceLevel.value);
     };
   }
 ]);

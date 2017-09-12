@@ -946,6 +946,11 @@ input[type=file] {
   color: #7B7B7B;
 }
 
+.icons > .raster-icon.lz-line-tool {
+  position: absolute;
+  left: 26px;
+}
+
 .icons-nested > .asset-icon {
   position: absolute;
   top: 10px;
@@ -1148,14 +1153,12 @@ input[type=file] {
     width: 50%;
     height: 100%;
     float: left;
-    /*background-color: red;*/
   }
 
   .right-controls {
     width: 50%;
     height: 100%;
     float: right;
-/*    background-color: green;*/
   }
 }
 
@@ -1183,8 +1186,13 @@ input[type=file] {
   margin-right: 6px;
 }
 
-.dashboard-timeseries-interval-btn:hover {
+.dashboard-timeseries-interval-btn:hover,
+.dashboard-timeseries-interval-btn.active {
   cursor: pointer;
   color: #fff;
   background-color: #7C8C8D;
+}
+
+.default-point-card {
+  margin-top: 10px;
 }

@@ -14,9 +14,9 @@
 
     <!-- <cardheader geom="geom"></cardheader> -->
 
-    <header class="card-header geom-card-header">
-      <div ng-if="geom"
-           class="card-header-center">
+    <header class="card-header geom-card-header"
+            ng-if="geom && geom.geometry.type === 'Point'">
+      <div class="card-header-center">
         <close-card geometry="geom"></close-card>
 
         <span class="icons fa-stack fa-lg">
@@ -33,20 +33,11 @@
             {{countRasters(geom)}} {{ countRasters(geom) === 1 ? 'RASTER' : 'RASTERS' }}
           </div>
         </div>
-
-<!--         <div class="nested-card-header-txt">
-          <div class="nested-asset-title">
-            {{ asset.code | objectTitle | translate }}
-          </div>
-          <div class="nested-asset-ts-count" translate>
-            {{asset.timeseries.length}} TIMESERIES
-          </div>
-        </div> -->
-
       </div>
     </header>
 
     <db-geometry-cards
+      ng-if="geom && geom.geometry.type === 'Point'"
       time-state="state.temporal"
       geom="geom"
       header="true">

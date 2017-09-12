@@ -1,6 +1,31 @@
 <div class="animate-repeat">
 
-  <cardheader ng-if="header" geom="geom"></cardheader>
+  <!-- <cardheader ng-if="header" geom="geom"></cardheader> -->
+
+  <header class="card-header geom-card-header" style="margin-bottom: -10px;">
+    <div ng-if="geom"
+         class="card-header-center">
+      <close-card geometry="geom"></close-card>
+
+      <span class="icons fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x iconcircle"></i>
+        <i ng-if="geom.geometry.type === 'Point'"
+           class="fa fa-map-marker raster-icon"></i>
+
+        <i ng-if="geom.geometry.type === 'LineString'"
+           class="lz lz-line-tool raster-icon "></i>
+      </span>
+
+      <div class="nested-card-header-txt raster-card-header-txt">
+        <div class="nested-asset-title">
+          {{getGeomCardHeader(geom)}}
+        </div>
+        <div class="nested-asset-ts-count" translate>
+          geometry
+        </div>
+      </div>
+    </div>
+  </header>
 
   <div
     ng-if="showNoData && header"
@@ -26,7 +51,8 @@
 
     <div
       ng-if="geom.geometry.type === 'LineString' && (properties.scale === 'interval' || properties.scale === 'ratio')"
-      class="card active card-content">
+      class="card active card-content"
+      style="margin-top: 10px;">
 
       <graph
         line
@@ -37,7 +63,7 @@
       </graph>
 
       <div class="card-tools">
-         <a
+        <a
            class="btn btn-default btn-xs"
            title="{{ 'Export info card data' | translate }}"
            ng-csv="formatLineCSV(properties)"
