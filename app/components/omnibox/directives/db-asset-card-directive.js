@@ -61,7 +61,6 @@ angular.module('omnibox').directive('dbAssetCard', [
           return "...";
         };
 
-
         scope.assetHasSurfaceLevel = function () {
           return ('surface_level' in scope.asset);
         };
