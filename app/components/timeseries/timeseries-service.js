@@ -80,7 +80,6 @@ angular.module('timeseries').service("TimeseriesService", [
       return DataService.findProperty(selection);
     };
 
-
     /**
      * Collects timeseries data from the backend.
      *
@@ -187,6 +186,7 @@ angular.module('timeseries').service("TimeseriesService", [
      *                        of pixels.
      */
     this._getTimeseries = function (uuids, timeState, minPoints, chartType) {
+
       // Cancel consecutive calls.
       if (localPromise[chartType].reject) {
         localPromise[chartType].resolve({data: {results: []}});
@@ -200,7 +200,7 @@ angular.module('timeseries').service("TimeseriesService", [
         end: timeState.end ? parseInt(timeState.end, 10): undefined,
       };
 
-      if (chartType === 'temporalLines' && RTSLService.get()) {
+      if (chartType === 'lines' && RTSLService.get()) {
         params.relative_to = 'surface_level';
       }
 
