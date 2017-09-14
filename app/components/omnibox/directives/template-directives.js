@@ -87,15 +87,24 @@ angular.module('omnibox')
     link: function (scope, element) {
 
       scope.user = user;
-
       scope.showNoData = false;
 
       // expose CSV functions for export
       scope.formatLineCSV = CSVService.formatLineCSV;
       scope.getLineCSVHeaders = CSVService.getLineCSVHeaders;
 
-      var clickId = 0;
+      scope.getGeomCardHeader = function (geom) {
+        var M = 100000;
+        var x = Math.round(geom.geometry.coordinates[0] * M) / M;
+        var y = Math.round(geom.geometry.coordinates[1] * M) / M;
+        if (geom.geometry.type === 'Point') {
+          return '(' + x + ', ' + y + ')';
+        } else {
+          return geom.geometry.type;
+        }
+      };
 
+      var clickId = 0;
       var destroy = function () {
         if (clickId) {
           ClickFeedbackService.removeClickFromClickLayer(clickId);
@@ -159,8 +168,8 @@ angular.module('omnibox')
     function (WantedAttributes) {
   return {
     link: function (scope) {
-
-      scope.wanted = WantedAttributes; },
+      scope.wanted = WantedAttributes;
+    },
     restrict: 'E',
     scope: {
       waterchain: '=',
@@ -175,7 +184,7 @@ angular.module('omnibox')
   .directive('cardheader', ['UtilService',
     function (UtilService) {
   return {
-    link: function (scope) {
+    link: function (scope, element, attrs) {
       scope.getIconClass = UtilService.getIconClass;
     },
     restrict: 'E',

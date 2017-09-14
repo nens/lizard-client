@@ -1,7 +1,10 @@
 <div>
-  <db-asset-card ng-repeat="a in list"
+
+  <db-asset-card
+    ng-repeat="a in list"
     ng-if="asset.selectedAsset"
     asset="a"
+    nested="true"
     timeseries
     time-state="omnibox.state.temporal">
   </db-asset-card>

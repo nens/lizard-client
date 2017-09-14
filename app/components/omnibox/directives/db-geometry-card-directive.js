@@ -16,8 +16,11 @@ angular.module('omnibox')
       link: function (scope, element) {
 
         scope.state = State;
-
         scope.noData = true;
+
+        scope.colorPickersSettings = DBCardsService.colorPickersSettings;
+        scope.openColorPicker = DBCardsService.openColorPicker;
+        scope.closeColorPicker = DBCardsService.closeColorPicker;
 
         scope.getSelectionMetaData = SelectionService.getMetaDataFunction(
           scope.geom);
@@ -31,6 +34,14 @@ angular.module('omnibox')
           SelectionService.initializeRaster(scope.geom, "geom");
         });
 
+        scope.toggleColorPicker = function (selectionUuid) {
+          if (scope.colorPickersSettings[selectionUuid]) {
+            scope.closeColorPicker(selectionUuid);
+          } else {
+            scope.openColorPicker(selectionUuid);
+          }
+        };
+
         /**
          * Properties are asynchronous so watch it to set noData when added.
          */
@@ -41,7 +52,7 @@ angular.module('omnibox')
 
           _.forEach(scope.geom.properties, function (property, uuid) {
             var selection = _.find(State.selections, function(s) {
-		return s.geom === scope.geom.geometry.coordinates.toString() && s.raster === uuid;
+              return s.geom === scope.geom.geometry.coordinates.toString() && s.raster === uuid;
             });
             if (selection && selection.active === undefined
               && SelectionService.dbSupportedData(
@@ -65,7 +76,8 @@ angular.module('omnibox')
         scope.$on('$destroy', function () {
           _.forEach(scope.geom.properties, function (property, uuid) {
             var selection = _.find(State.selections, function(s) {
-		return s.geom === scope.geom.geometry.coordinates.toString() && s.raster === uuid;
+              return s.geom === scope.geom.geometry.coordinates.toString()
+                && s.raster === uuid;
             });
             if (selection) {
               selection.active = true;

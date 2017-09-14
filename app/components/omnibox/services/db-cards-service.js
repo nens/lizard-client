@@ -4,6 +4,23 @@ angular.module('omnibox')
   'DataService',
   function (State, DataService) {
 
+  colorPickersSettings = {}
+
+  var openColorPicker = function (tsUuid) {
+    closeAllColorPickers();
+    colorPickersSettings[tsUuid] = true;
+  }
+
+  var closeColorPicker = function (tsUuid) {
+    colorPickersSettings[tsUuid] = false;
+  }
+
+  var closeAllColorPickers = function () {
+    for (var tsUuid in colorPickersSettings) {
+      colorPickersSettings[tsUuid] = false;
+    }
+  }
+
   /**
    * Loops over all the items that can be plotted and return the count and the
    * highest order.
@@ -77,7 +94,12 @@ angular.module('omnibox')
 
   return {
     getActiveCountAndOrder: getActiveCountAndOrder,
-    removeSelectionFromPlot: removeSelectionFromPlot
+    removeSelectionFromPlot: removeSelectionFromPlot,
+
+    colorPickersSettings: colorPickersSettings,
+    openColorPicker: openColorPicker,
+    closeColorPicker: closeColorPicker,
+    closeAllColorPickers: closeAllColorPickers
   };
 
 }]);
