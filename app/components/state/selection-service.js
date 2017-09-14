@@ -13,6 +13,31 @@ angular.module('global-state')
       DataService, DBCardsService, TimeseriesService, UtilService, State) {
 
     /**
+     * Count duplicate selections..
+     *
+     * @return {integer} The amount of selections we find twice
+     */
+    var countDuplicateSelections = function () {
+      // console.log("[F] countDuplicateSelections");
+      var uuids = State.selections.map(function (obj) {
+        return obj.uuid;
+      });
+      // console.log("*** uuids.length:", uuids.length);
+      var uuidsNoDupes = rmDupes(uuids);
+      // console.log("*** uuidsNoDupes.length:", uuidsNoDupes.length);
+    };
+
+    function rmDupes (xs) {
+      var result = [];
+      for (var i = 0; i < xs.length; i++) {
+        if (result.indexOf(xs[i]) === -1) {
+          result.push(xs[i]);
+        }
+      }
+      return result;
+    };
+
+    /**
      * Checks whether this datatype is supported for graphs.
      *
      * @return {Boolean} datatype support
@@ -41,9 +66,12 @@ angular.module('global-state')
      *                  to the geometry.
      */
     var getTimeseriesMetaData = _.curry(function (geometry, selection) {
+      // console.log("[F] SelService.getTimeseriesMetaData");
       // if no asset is given, iterate over all assets if the asset is a
       // geometry instead no timeseries are found so this will return undefined
+
       var assets = geometry !== undefined ? [geometry] : DataService.assets;
+
       var tsMetaData = { match: false };
       _.forEach(assets, function (a) {
         tsMetaData = _.find(a.timeseries, function (ts) {
@@ -63,12 +91,11 @@ angular.module('global-state')
      * Finds metadata for a raster selection.
      * metadata search can be limited to a geometry.
      *
-     * @param  {object}  geometry   either an asset or a geometry from the
-     *                              State.
-     * @param  {object}  selection  selection from the State.
-     * @return {object} asset, timeseries or geometry metadata, including a
-     *                  match attribute that states whether a selection belongs
-     *                  to the geometry.
+     * @param  {object} geometry   Either an asset or a geometry from the State.
+     * @param  {object} selection  Selection from the State.
+     * @return {object} props      Asset, timeseries or geometry metadata,
+     *                             including a match attribute that states
+     *                             whether a selection belongs to the geometry.
      */
     var getRasterMetaData = _.curry(function (geometry, selection) {
       var geomRaster, idGeomFunction, geomType, geomAsset;
@@ -81,6 +108,7 @@ angular.module('global-state')
         });
       } else {
         geomType = "geom";
+
         idGeomFunction = function(g) { return g.geometry.coordinates.toString(); };
         geomRaster = _.find(DataService.geometries, function (geom) {
           geomAsset = geom;
@@ -101,17 +129,17 @@ angular.module('global-state')
       return props;
     });
 
-      var getEventseriesMetaData = function getEventseriesMetaData(geometry, selection) {
-        if (geometry.geometry.coordinates.toString() !== selection.geomType) {
-          return {match: false};
-        }
+    var getEventseriesMetaData = function getEventseriesMetaData(geometry, selection) {
+      if (geometry.geometry.coordinates.toString() !== selection.geomType) {
+        return {match: false};
+      }
 
-        return {
-          type: 'eventseries',
-          quantity: selection.quantity,
-          match: true
-        };
+      return {
+        type: 'eventseries',
+        quantity: selection.quantity,
+        match: true
       };
+    };
 
     /**
      * Returns a function that finds metadata for a selection.
@@ -152,7 +180,7 @@ angular.module('global-state')
           ? plots.order + 1
           : 0;
       } else {
-        DBCardsService.removeSelectionFromPlot(selection);
+        // DBCardsService.removeSelectionFromPlot(selection);
       }
       selection.active = !selection.active;
 
@@ -202,7 +230,9 @@ angular.module('global-state')
      * @return {object} asset or geometry data.
      */
     var initializeAssetSelections = function (asset) {
+      // console.log("[F] initializeAssetSelections; asset:", asset);
       var colors = UtilService.GRAPH_COLORS;
+      // console.log("[dbg] 3 (pre): State.selections:", State.selections);
       State.selections = _.unionWith(
         State.selections,
         asset.timeseries.map(function (ts, i) {
@@ -218,6 +248,7 @@ angular.module('global-state')
         }),
         _timeseriesComparator
       );
+      // console.log("[dbg] 3 (post): State.selections:", State.selections);
       return asset;
     };
 
@@ -228,15 +259,24 @@ angular.module('global-state')
      * @return {object} asset or geometry data.
      */
     var initializeRasterSelections = function (geomObject, geomType) {
+      // console.log("[F] initializeRasterSelections; geomObject:", geomObject);
+
+      // We clicked an asset while also having a temporal raster active:
+      // a selection comes into existence with e.g. the following two attrs:
+      //
+      // selection.asset = 'pumpstation$303'
+      // selection.type = 'raster'
       var geomId = geomType === 'asset' ?
         geomObject.entity_name + "$" + geomObject.id :
         geomObject.geometry.coordinates.toString();
       var colors = UtilService.GRAPH_COLORS;
+      // console.log("[dbg] 2 (pre): State.selections:", State.selections);
       State.selections = _.unionWith(
         State.selections,
         _.filter(State.layers,
-            function(layer) {return layer.type === 'raster';}
+            function(layer) {return layer.type === 'raster' && !layer.asset;}
         ).map(function (layer, i) {
+
           var rasterSelection  = {
             uuid: uuidGenerator(),
             type: "raster",
@@ -251,62 +291,68 @@ angular.module('global-state')
         }),
         _rasterComparatorFactory(geomType)
       );
+      // console.log("[dbg] 2 (post): State.selections:", State.selections);
       return geomObject;
     };
 
-      var initializeGeomEventseriesSelections = function (geomObject) {
-        console.log("initializeGeomEventseriesSelections", geomObject);
-          if (!geomObject.geometry || geomObject.geometry.type !== 'Point' ||
-              !geomObject.properties) {
-          console.log("not a Point or no properties");
-          return false;
+    var initializeGeomEventseriesSelections = function (geomObject) {
+      // console.log("[F] initializeGeomEventseriesSelections; geomObject:", geomObject);
+      if (!geomObject.geometry || geomObject.geometry.type !== 'Point' ||
+        !geomObject.properties)
+      {
+        return false;
+      }
+
+      var eventSelections = [];
+      var i = 0;
+      _.forOwn(geomObject.properties, function (props, layerUuid) {
+        if (props.type !== 'eventseries') {
+          return;
         }
 
-        var eventSelections = [];
-        console.log("Adding selections");
-        var i = 0;
-        _.forOwn(geomObject.properties, function (props, layerUuid) {
-          console.log('layerUuid, props:', layerUuid, props);
-          if (props.type !== 'eventseries') {
-            console.log("Not an eventseries.");
-            return;
-          }
+        if (!props.data || !props.data.length) {
+          return;
+        }
 
-          if (!props.data || !props.data.length) {
-            console.log("No events.");
-            return;
-          }
-
-          eventSelections.push({
-            uuid: uuidGenerator(),
-            type: 'eventseries',
-            active: false,
-            order: 0,
-            data: props.data, // Why not just add it here
-            quantity: props.data.length,
-            measureScale: props.scale,
-            url: props.url,
-            layer: layerUuid,
-            geomType: geomObject.geometry.coordinates.toString(),
-            color: UtilService.GRAPH_COLORS[i % (UtilService.GRAPH_COLORS.length)]
-          });
-          i++;
+        eventSelections.push({
+          uuid: uuidGenerator(),
+          type: 'eventseries',
+          active: false,
+          order: 0,
+          data: props.data, // Why not just add it here
+          quantity: props.data.length,
+          measureScale: props.scale,
+          url: props.url,
+          layer: layerUuid,
+          geomType: geomObject.geometry.coordinates.toString(),
+          color: UtilService.GRAPH_COLORS[i % (UtilService.GRAPH_COLORS.length)]
         });
-        console.log("eventSelections is", eventSelections);
 
-        State.selections = _.unionWith(
-          State.selections,
-          eventSelections,
-          function (stateSelection, eventSelection) {
-            return (
-              stateSelection.type === eventSelection.type &&
-              stateSelection.url === eventSelection.url &&
-              stateSelection.geomType === eventSelection.geomType &&
-              stateSelection.layer === eventSelection.layer
-            );
-          });
-        console.log("Selections is now", State.selections, "did this work?");
-      };
+        i++;
+      });
+
+      countDuplicateSelections();
+
+      if (i === 0) {
+        // Since no eventSelections are present, we can GTFO..
+        return;
+      }
+
+      State.selections = _.unionWith(
+        State.selections,
+        eventSelections,
+        function (stateSelection, eventSelection) {
+          return (
+            stateSelection.type === eventSelection.type &&
+            stateSelection.url === eventSelection.url &&
+            stateSelection.geomType === eventSelection.geomType &&
+            stateSelection.layer === eventSelection.layer
+          );
+        }
+      );
+
+      console.log("[dbg] 1 (post): State.selections (" + State.selections.length + "x):", State.selections);
+    };
 
     return {
       timeseriesMetaData: getTimeseriesMetaData,

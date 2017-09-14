@@ -31,23 +31,65 @@ angular.module('data-menu')
 
       var instance = this;
 
+      // this.findGeomByAssetName = function (assetName) {
+      //   console.log("[F] findGeomByAssetName; assetName =", assetName);
+      //   var theAsset;
+      //   instance.assets.forEach(function (asset) {
+      //     var name = asset.entity_name + "$" + asset.id;
+      //     if (assetName === name) {
+      //       theAsset = asset;
+      //     }
+      //   });
+
+      //   if (theAsset) {
+      //     // console.log("*** OK, found asset with name '" + assetName + "'");
+      //   } else {
+      //     // console.log("*** Nope, no asset with name '" + assetName + "'!?");
+      //     return;
+      //   }
+
+      //   var theParentAsset;
+
+      //   // setTimeout(function () {
+      //     instance.assets.forEach(function (asset) {
+      //       // console.log("****** asset:", asset);
+      //       if (asset.selectedAsset) {
+      //         console.log("****** GOT ASSET WITH ATTR 'selectedAsset':", asset);
+      //         var childName = asset.selectedAsset.entity_name + "$" + asset.selectedAsset.id;
+      //         console.log("****** childName:", childName);
+      //         if (assetName === childName) {
+      //           theParentAsset = asset;
+      //         }
+      //       }
+      //     });
+
+      //     if (theParentAsset) {
+      //       console.log("*** OK, found theParentAsset:", theParentAsset);
+      //     } else {
+      //       console.log("*** Nope, no theParentAsset was found...");
+      //       return;
+      //     }
+      //   // }, 500);
+
+      // };
+
       /**
        * Finds asset or geometry data for a selection.
        *
-       * @param  {object}  selection   a selection from State.selections
+       * @param  {object} selection   a selection from State.selections
        * @return {object} asset or geometry data.
        */
       this.findProperty = function (selection) {
         if (selection.asset) {
           return _.find(
             instance.assets, function(asset) {
-		return selection.asset === asset.entity_name + "$" + asset.id;
+              return selection.asset === asset.entity_name + "$" + asset.id;
             }
           );
         } else if (selection.geom) {
           return _.find(
             instance.geometries, function(geom) {
-		return selection.geom === geom.geometry.coordinates.toString();
+              return selection.geom === geom.geometry.coordinates.toString();
             }
           );
         }
@@ -74,6 +116,7 @@ angular.module('data-menu')
               // property with value equal to parentAssetKey
               // (e.g 'groundwater_station$303')
               _.forEach(asset[plural], function (nestedAsset) {
+                console.log("[dbg] Setting parentAsset attr")
                 nestedAsset.parentAsset = parentAssetKey;
               });
             }
@@ -94,8 +137,6 @@ angular.module('data-menu')
         if (instance.onAssetsChange) {
           instance.onAssetsChange();
         }
-
-        console.log('DataService.assets:', instance.assets);
       };
 
       // Define assets on State and update DataService.assets.
@@ -120,12 +161,8 @@ angular.module('data-menu')
         });
 
         _assets = assets;
-
-        console.log('State.assets:', State.assets);
-
         rebindAssetFunctions();
       };
-
 
       // Rebind add and remove because state.assets might have been
       // redefined when calling state.assets = []
@@ -188,7 +225,6 @@ angular.module('data-menu')
           promise.then(function (geometries) {
             // Dedupe instance.geometries asynchronous.
             instance.geometries = _.uniqWith(geometries, isDuplicateGeometry);
-            console.log('DataService.geometries:', instance.geometries);
             if (instance.onGeometriesChange) {
               instance.onGeometriesChange();
             }
@@ -196,7 +232,6 @@ angular.module('data-menu')
         });
 
         _geometries = geometries;
-        console.log('State.geometries:', State.geometries);
         State.geometries.addGeometry = addGeometry;
         State.geometries.removeGeometry = removeGeometry;
       };
@@ -293,7 +328,6 @@ angular.module('data-menu')
             instance.geometries.forEach(function (old, i) {
               if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
                 instance.geometries[i] = newGeo;
-                console.log('DataService.geometries:', instance.geometries);
               }
             });
           });
@@ -382,6 +416,10 @@ angular.module('data-menu')
         newAssets.forEach(function (asset) {
           this.getGeomData(asset)
           .then(function(geo) {
+            console.log("[dbg] Updating geometry for asset");
+            if (!geo.geometry) {
+              console.log("JESUS CHRIST!");
+            }
             asset.geometry = geo.geometry;
             asset.properties = geo.properties;
           });
@@ -405,7 +443,7 @@ angular.module('data-menu')
         var dataLayer = this.getDataLayer(layer.uuid);
 
         if (dataLayer
-          && !(dataLayer.temporal && geo.geometry.type === 'LineString')
+          && !(dataLayer.temporal && geo.geometry && geo.geometry.type === 'LineString')
         ) {
 
           // Request data for point in time when discrete.
@@ -419,11 +457,9 @@ angular.module('data-menu')
             options.end = State.temporal.end;
           }
 
-          console.log("1. Going to get data on dataLayer", dataLayer, "with options", options);
           promises.push(
             dataLayer.getData(options).then(
               function (response) {
-                console.log("2. Got response ", response);
                 var newProps = geo.properties ? _.clone(geo.properties) : {};
 
                 // async so remove anything obsolete.
@@ -440,7 +476,6 @@ angular.module('data-menu')
                   newProps[layer.uuid].data = response;
                 }
 
-                console.log("3. newProps[layer.uuid].data is now", newProps[layer.uuid].data);
                 if ((!layer.active && layer.uuid in Object.keys(newProps))
                   || newProps[layer.uuid].data === null) {
 
@@ -460,12 +495,20 @@ angular.module('data-menu')
 
       this.getGeomData = function (geo) {
 
-        var defer = $q.defer();
+        // console.log("DataService.getGeomData; geo =", geo);
 
+        var defer = $q.defer();
         var promises = [];
         var instance = this;
-
         var options = {};
+
+        if (geo.geometry === undefined) {
+          // console.log("[dbg] UNDEFINED GEOM (=geo.geometry)! geo:", geo);
+          // var foobar = instance.findGeomByAssetName(geo.entity_name + "$" + geo.id);
+          return defer.promise;
+        } else {
+          // console.log("[dbg] SMELLS LIKE valid geometry:", geo.geometry);
+        }
 
         options.geom = geo.geometry;
 
