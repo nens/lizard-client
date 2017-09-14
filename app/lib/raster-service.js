@@ -72,6 +72,8 @@ angular.module('lizard-nxt')
       requestOptions.geom_id = options.id;
       requestOptions.boundary_type = options.boundary_type;
     } else {
+
+      console.log("[dbg] About to geomToWkt; options:", options);
       requestOptions.geom = UtilService.geomToWkt(options.geom);
     }
 

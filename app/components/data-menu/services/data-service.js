@@ -31,10 +31,52 @@ angular.module('data-menu')
 
       var instance = this;
 
+      // this.findGeomByAssetName = function (assetName) {
+      //   console.log("[F] findGeomByAssetName; assetName =", assetName);
+      //   var theAsset;
+      //   instance.assets.forEach(function (asset) {
+      //     var name = asset.entity_name + "$" + asset.id;
+      //     if (assetName === name) {
+      //       theAsset = asset;
+      //     }
+      //   });
+
+      //   if (theAsset) {
+      //     // console.log("*** OK, found asset with name '" + assetName + "'");
+      //   } else {
+      //     // console.log("*** Nope, no asset with name '" + assetName + "'!?");
+      //     return;
+      //   }
+
+      //   var theParentAsset;
+
+      //   // setTimeout(function () {
+      //     instance.assets.forEach(function (asset) {
+      //       // console.log("****** asset:", asset);
+      //       if (asset.selectedAsset) {
+      //         console.log("****** GOT ASSET WITH ATTR 'selectedAsset':", asset);
+      //         var childName = asset.selectedAsset.entity_name + "$" + asset.selectedAsset.id;
+      //         console.log("****** childName:", childName);
+      //         if (assetName === childName) {
+      //           theParentAsset = asset;
+      //         }
+      //       }
+      //     });
+
+      //     if (theParentAsset) {
+      //       console.log("*** OK, found theParentAsset:", theParentAsset);
+      //     } else {
+      //       console.log("*** Nope, no theParentAsset was found...");
+      //       return;
+      //     }
+      //   // }, 500);
+
+      // };
+
       /**
        * Finds asset or geometry data for a selection.
        *
-       * @param  {object}  selection   a selection from State.selections
+       * @param  {object} selection   a selection from State.selections
        * @return {object} asset or geometry data.
        */
       this.findProperty = function (selection) {
@@ -74,6 +116,7 @@ angular.module('data-menu')
               // property with value equal to parentAssetKey
               // (e.g 'groundwater_station$303')
               _.forEach(asset[plural], function (nestedAsset) {
+                console.log("[dbg] Setting parentAsset attr")
                 nestedAsset.parentAsset = parentAssetKey;
               });
             }
@@ -120,7 +163,6 @@ angular.module('data-menu')
         _assets = assets;
         rebindAssetFunctions();
       };
-
 
       // Rebind add and remove because state.assets might have been
       // redefined when calling state.assets = []
@@ -374,6 +416,10 @@ angular.module('data-menu')
         newAssets.forEach(function (asset) {
           this.getGeomData(asset)
           .then(function(geo) {
+            console.log("[dbg] Updating geometry for asset");
+            if (!geo.geometry) {
+              console.log("JESUS CHRIST!");
+            }
             asset.geometry = geo.geometry;
             asset.properties = geo.properties;
           });
@@ -397,7 +443,7 @@ angular.module('data-menu')
         var dataLayer = this.getDataLayer(layer.uuid);
 
         if (dataLayer
-          && !(dataLayer.temporal && geo.geometry.type === 'LineString')
+          && !(dataLayer.temporal && geo.geometry && geo.geometry.type === 'LineString')
         ) {
 
           // Request data for point in time when discrete.
@@ -449,12 +495,20 @@ angular.module('data-menu')
 
       this.getGeomData = function (geo) {
 
-        var defer = $q.defer();
+        // console.log("DataService.getGeomData; geo =", geo);
 
+        var defer = $q.defer();
         var promises = [];
         var instance = this;
-
         var options = {};
+
+        if (geo.geometry === undefined) {
+          // console.log("[dbg] UNDEFINED GEOM (=geo.geometry)! geo:", geo);
+          // var foobar = instance.findGeomByAssetName(geo.entity_name + "$" + geo.id);
+          return defer.promise;
+        } else {
+          // console.log("[dbg] SMELLS LIKE valid geometry:", geo.geometry);
+        }
 
         options.geom = geo.geometry;
 

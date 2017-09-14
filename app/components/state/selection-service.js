@@ -18,16 +18,13 @@ angular.module('global-state')
      * @return {integer} The amount of selections we find twice
      */
     var countDuplicateSelections = function () {
-      console.log("[F] countDuplicateSelections");
+      // console.log("[F] countDuplicateSelections");
       var uuids = State.selections.map(function (obj) {
         return obj.uuid;
       });
-      // console.log("*** State.selections.length:", State.selections.length);
       // console.log("*** uuids.length:", uuids.length);
-
-      console.log("*** uuids.length:", uuids.length);
       var uuidsNoDupes = rmDupes(uuids);
-      console.log("*** uuidsNoDupes.length:", uuidsNoDupes.length);
+      // console.log("*** uuidsNoDupes.length:", uuidsNoDupes.length);
     };
 
     function rmDupes (xs) {
@@ -94,12 +91,11 @@ angular.module('global-state')
      * Finds metadata for a raster selection.
      * metadata search can be limited to a geometry.
      *
-     * @param  {object}  geometry   either an asset or a geometry from the
-     *                              State.
-     * @param  {object}  selection  selection from the State.
-     * @return {object} asset, timeseries or geometry metadata, including a
-     *                  match attribute that states whether a selection belongs
-     *                  to the geometry.
+     * @param  {object} geometry   Either an asset or a geometry from the State.
+     * @param  {object} selection  Selection from the State.
+     * @return {object} props      Asset, timeseries or geometry metadata,
+     *                             including a match attribute that states
+     *                             whether a selection belongs to the geometry.
      */
     var getRasterMetaData = _.curry(function (geometry, selection) {
       var geomRaster, idGeomFunction, geomType, geomAsset;
@@ -112,6 +108,7 @@ angular.module('global-state')
         });
       } else {
         geomType = "geom";
+
         idGeomFunction = function(g) { return g.geometry.coordinates.toString(); };
         geomRaster = _.find(DataService.geometries, function (geom) {
           geomAsset = geom;
@@ -262,7 +259,7 @@ angular.module('global-state')
      * @return {object} asset or geometry data.
      */
     var initializeRasterSelections = function (geomObject, geomType) {
-      console.log("[F] initializeRasterSelections; geomObject:", geomObject);
+      // console.log("[F] initializeRasterSelections; geomObject:", geomObject);
 
       // We clicked an asset while also having a temporal raster active:
       // a selection comes into existence with e.g. the following two attrs:
@@ -299,7 +296,7 @@ angular.module('global-state')
     };
 
     var initializeGeomEventseriesSelections = function (geomObject) {
-      console.log("[F] initializeGeomEventseriesSelections; geomObject:", geomObject);
+      // console.log("[F] initializeGeomEventseriesSelections; geomObject:", geomObject);
       if (!geomObject.geometry || geomObject.geometry.type !== 'Point' ||
         !geomObject.properties)
       {
@@ -335,9 +332,6 @@ angular.module('global-state')
       });
 
       countDuplicateSelections();
-      console.log("[dbg] i =", i);
-      console.log("[dbg] 1 (pre): eventSelections (" + eventSelections.length + "x):", eventSelections);
-      console.log("[dbg] 1 (pre): State.selections (" + State.selections.length + "x):", State.selections);
 
       if (i === 0) {
         // Since no eventSelections are present, we can GTFO..
