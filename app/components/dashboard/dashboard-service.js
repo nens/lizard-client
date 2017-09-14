@@ -115,12 +115,11 @@ angular.module('dashboard')
       }
     });
 
-    /* I *think* this is unused now.
-     * geometries.forEach(function (geometry) {
-     *   var getSelected = findSelection(
-     *     'geom', geometry.geometry.coordinates.toString());
-     *   graphs = addPropertyData(graphs, geometry.properties, getSelected);
-     * });*/
+    geometries.forEach(function (geometry) {
+      var getSelected = findSelection(
+        'geom', geometry.geometry.coordinates.toString());
+      graphs = addPropertyData(graphs, geometry.properties, getSelected);
+    });
 
     /* Add eventseries graphs from selections. */
     var eventSelections = _.filter(selections, function (selection) {
