@@ -112,7 +112,7 @@ angular.module('global-state')
           match: true
         };
       };
-	
+
     /**
      * Returns a function that finds metadata for a selection.
      * metadata search can be limited to a geometry.
@@ -172,8 +172,8 @@ angular.module('global-state')
     };
 
     var _timeseriesComparator = function(existingSelection, newSelection){
-        return existingSelection.type === "timeseries" &&
-            existingSelection.timeseries === newSelection.timeseries;
+      return existingSelection.type === "timeseries" &&
+        existingSelection.timeseries === newSelection.timeseries;
     };
 
     /**
