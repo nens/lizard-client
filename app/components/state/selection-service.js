@@ -41,13 +41,11 @@ angular.module('global-state')
      *                  to the geometry.
      */
     var getTimeseriesMetaData = _.curry(function (geometry, selection) {
-      console.log("[F] SelService.getTimeseriesMetaData");
+      // console.log("[F] SelService.getTimeseriesMetaData");
       // if no asset is given, iterate over all assets if the asset is a
       // geometry instead no timeseries are found so this will return undefined
 
-
       var assets = geometry !== undefined ? [geometry] : DataService.assets;
-
 
       var tsMetaData = { match: false };
       _.forEach(assets, function (a) {
@@ -95,32 +93,28 @@ angular.module('global-state')
       geometry = geometry || geomRaster;
       var props = { match: false };
       if (geomRaster && geomRaster.properties) {
-        // console.log("AAAAAAAAAAAAAAAAA");
         var assetProps = geomRaster.properties[selection.raster];
         if (assetProps) {
-          // console.log("BBBBBBBBBBBBBBBBBB");
           props = assetProps;
           var assetCode = idGeomFunction(geometry);
-
           props.match = selection[geomType] === assetCode &&
             dbSupportedData(geometry.geometry.type, props);
         }
       }
-      // console.log("PROPS now looks like:", props);
       return props;
     });
 
-      var getEventseriesMetaData = function getEventseriesMetaData(geometry, selection) {
-        if (geometry.geometry.coordinates.toString() !== selection.geomType) {
-          return {match: false};
-        }
+    var getEventseriesMetaData = function getEventseriesMetaData(geometry, selection) {
+      if (geometry.geometry.coordinates.toString() !== selection.geomType) {
+        return {match: false};
+      }
 
-        return {
-          type: 'eventseries',
-          quantity: selection.quantity,
-          match: true
-        };
+      return {
+        type: 'eventseries',
+        quantity: selection.quantity,
+        match: true
       };
+    };
 
     /**
      * Returns a function that finds metadata for a selection.
@@ -211,9 +205,9 @@ angular.module('global-state')
      * @return {object} asset or geometry data.
      */
     var initializeAssetSelections = function (asset) {
-      console.log("[F] initializeAssetSelections; asset:", asset);
+      // console.log("[F] initializeAssetSelections; asset:", asset);
       var colors = UtilService.GRAPH_COLORS;
-      console.log("[dbg] 3 (pre): State.selections:", State.selections);
+      // console.log("[dbg] 3 (pre): State.selections:", State.selections);
       State.selections = _.unionWith(
         State.selections,
         asset.timeseries.map(function (ts, i) {
@@ -229,7 +223,7 @@ angular.module('global-state')
         }),
         _timeseriesComparator
       );
-      console.log("[dbg] 3 (post): State.selections:", State.selections);
+      // console.log("[dbg] 3 (post): State.selections:", State.selections);
       return asset;
     };
 
@@ -251,7 +245,7 @@ angular.module('global-state')
         geomObject.entity_name + "$" + geomObject.id :
         geomObject.geometry.coordinates.toString();
       var colors = UtilService.GRAPH_COLORS;
-      console.log("[dbg] 2 (pre): State.selections:", State.selections);
+      // console.log("[dbg] 2 (pre): State.selections:", State.selections);
       State.selections = _.unionWith(
         State.selections,
         _.filter(State.layers,
@@ -272,14 +266,15 @@ angular.module('global-state')
         }),
         _rasterComparatorFactory(geomType)
       );
-      console.log("[dbg] 2 (post): State.selections:", State.selections);
+      // console.log("[dbg] 2 (post): State.selections:", State.selections);
       return geomObject;
     };
 
     var initializeGeomEventseriesSelections = function (geomObject) {
       console.log("[F] initializeGeomEventseriesSelections; geomObject:", geomObject);
       if (!geomObject.geometry || geomObject.geometry.type !== 'Point' ||
-            !geomObject.properties) {
+        !geomObject.properties)
+      {
         return false;
       }
 
@@ -310,7 +305,17 @@ angular.module('global-state')
 
         i++;
       });
-      console.log("[dbg] 1 (pre): State.selections:", State.selections);
+
+
+      console.log("[dbg] i =", i);
+      console.log("[dbg] 1 (pre): eventSelections (" + eventSelections.length + "x):", eventSelections);
+      console.log("[dbg] 1 (pre): State.selections (" + State.selections.length + "x):", State.selections);
+
+      if (i === 0) {
+        // Since no eventSelections are present, we can GTFO..
+        return;
+      }
+
       State.selections = _.unionWith(
         State.selections,
         eventSelections,
@@ -323,8 +328,9 @@ angular.module('global-state')
           );
         }
       );
-      console.log("[dbg] 1 (post): State.selections:", State.selections);
-      };
+
+      console.log("[dbg] 1 (post): State.selections (" + State.selections.length + "x):", State.selections);
+    };
 
     return {
       timeseriesMetaData: getTimeseriesMetaData,
