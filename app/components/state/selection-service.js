@@ -13,6 +13,34 @@ angular.module('global-state')
       DataService, DBCardsService, TimeseriesService, UtilService, State) {
 
     /**
+     * Count duplicate selections..
+     *
+     * @return {integer} The amount of selections we find twice
+     */
+    var countDuplicateSelections = function () {
+      console.log("[F] countDuplicateSelections");
+      var uuids = State.selections.map(function (obj) {
+        return obj.uuid;
+      });
+      // console.log("*** State.selections.length:", State.selections.length);
+      // console.log("*** uuids.length:", uuids.length);
+
+      console.log("*** uuids.length:", uuids.length);
+      var uuidsNoDupes = rmDupes(uuids);
+      console.log("*** uuidsNoDupes.length:", uuidsNoDupes.length);
+    };
+
+    function rmDupes (xs) {
+      var result = [];
+      for (var i = 0; i < xs.length; i++) {
+        if (result.indexOf(xs[i]) === -1) {
+          result.push(xs[i]);
+        }
+      }
+      return result;
+    };
+
+    /**
      * Checks whether this datatype is supported for graphs.
      *
      * @return {Boolean} datatype support
@@ -306,7 +334,7 @@ angular.module('global-state')
         i++;
       });
 
-
+      countDuplicateSelections();
       console.log("[dbg] i =", i);
       console.log("[dbg] 1 (pre): eventSelections (" + eventSelections.length + "x):", eventSelections);
       console.log("[dbg] 1 (pre): State.selections (" + State.selections.length + "x):", State.selections);

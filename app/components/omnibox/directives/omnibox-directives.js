@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module("omnibox")
-.directive("omnibox", ['$window', '$document', 'State', 'user', '$timeout',
-  function ($window, $document, State, user, $timeout) { return {
+.directive("omnibox", ['$window', '$document', 'State', 'user', '$timeout', 'TimeseriesService', 'RelativeToSurfaceLevelService',
+  function ($window, $document, State, user, $timeout, TimeseriesService, RTSLService) { return {
 
     /**
      * Keeps omnibox size in check and creates and maintains a scrollbar.
@@ -16,6 +16,14 @@ angular.module("omnibox")
         UPARROW: 38,
         DOWNARROW: 40,
         RETURNKEY: 13
+      };
+
+      scope.zoomToInterval = TimeseriesService.zoomToInterval;
+      scope.relativeToSurfaceLevel = RTSLService.get;
+
+      scope.toggleRelativeTimeseries = function () {
+        RTSLService.toggle();
+        TimeseriesService.syncTime();
       };
 
       scope.onFocus = function(item, $event) {

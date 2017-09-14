@@ -1,130 +1,84 @@
 <div>
-  <div class="card active">
+  <div class="active card db-card">
     <timeseries asset="asset" time-state="timeState"></timeseries>
-    <cardheader asset="asset"></cardheader>
+    <cardheader
+      asset="asset"
+      ng-if="!isNested">
+    </cardheader>
 
-    <!-- crosssections are not draggable and a specific visualization. -->
-    <div
-      ng-if="asset.entity_name === 'leveecrosssection'"
-      ng-click="toggleCrosssection(asset)"
-      class="card-content-list clickable">
-      <i class="fa fa-line-chart"></i>
-      <span translate ng-class="{'text-primary bg-warning': asset.crosssection.active}">
-        Levee cross section
-      </span>
-    </div>
-
-    <div ng-if="asset.crosssection.active">
-      <dl>
-        <dt translate>Green line</dt>
-        <dd translate>Elevation along crosssection (source: AHN2).</dd>
-        <dt translate>Grey dots</dt>
-        <dd translate>Measured hydraulic head at current time.</dd>
-        <dt translate>Dashed line</dt>
-        <dd translate>indicative interpolation of hydraulic head in the same aquifer.</dd>
-      </dl>
-    </div>
-
-    <em class="card-content-list"
-        ng-if="noData && (assetType==='geometry' || asset.entity_name !== 'leveecrosssection')"
-        translate>
-      No timeseries data available for this asset.
-    </em>
-
-    <!-- use ng-show, so div is present and can be added to drag containers -->
-    <div id="drag-container">
-
-      <div
-          ng-repeat="selection in state.selections | orderBy : ['-active', '+order']"
-          ng-init="metaData = getSelectionMetaData(selection)"
-          ng-if="getSelectionMetaData(selection).match"
-          ng-show="extended || selection.active || isOneOfFirstThree(selection.uuid)"
-          id="{{ selection.uuid }}"
-	  data-uuid="{{ selection.uuid }}" class="draggable-ts animate-repeat">
-        <div
-            ng-if="metaData.type === 'timeseries'"
-            id="{{ selection.timeseries }}"
-            ng-click="toggleSelection(selection);"
-            ng-class="{active: mouseIsOver}"
-            ng-mouseover="mouseIsOver = true"
-            ng-mouseleave="mouseIsOver = false"
-            class="card-content-list clickable">
-          <div
-              class="card-content-colorhandle"
-              ng-show="selection.active"
-              ng-style="{'background-color': selection.color}"
-              ng-click="toggleColorPicker(); $event.stopPropagation();">
-          </div>
-
-          <i class="fa" ng-class="{
-            'fa-clock-o': metaData.value_type !== 'image',
-            'fa-file-image-o': metaData.value_type === 'image'
-          }"></i>
-
-          <span
-            title="{{ metaData.location }}, {{ metaData.uuid }}, {{ metaData.parameter }}"
-            ng-class="{'text-primary': selection.active}"
-            ng-init="displayName = (getTsLongName(selection) | truncate: 50)">
-            {{ displayName }}&nbsp;
-            <i class="fa relativate-ts-icon"
-               ng-class="{ 'fa-check-square': relativeTimeseries.value, 'fa-square': !relativeTimeseries.value }"
-               ng-click="toggleRelativeTimeseries(); $event.stopPropagation();"
-               ng-if="ts.active && ts.measureScale === 'interval' &&
-                 (assetHasSurfaceLevel() || parentAssetHasSurfaceLevel())"
-               title="{{ relativeTimeseries.value ?
-                   'Deselect to show absolute values for all timeseries'
-                 : 'Select to show all timeseries relative to surface level'
-               }}"
-               translate>
+    <div ng-if="isNested">
+      <header class="card-header nested-card-header">
+        <div ng-if="asset" class="card-header-center">
+          <span class="icons-nested fa-stack fa-lg">
+            <i class="fa fa-circle fa-stack-2x iconcircle"></i>
+            <i class="asset-icon"
+               ng-class="getIconClass(asset.entity_name, asset)">
             </i>
           </span>
-
-          <i class="fa relativate-ts-icon"
-             ng-class="{ 'fa-check-square': relativeTimeseries.value, 'fa-square': !relativeTimeseries.value }"
-             ng-click="toggleRelativeTimeseries(); $event.stopPropagation();"
-             ng-if="selection.active && selection.measureScale === 'interval' &&
-               (assetHasSurfaceLevel() || parentAssetHasSurfaceLevel())"
-             title="{{ relativeTimeseries
-               && 'Deselect to show absolute values for all timeseries'
-               || 'Select to show all timeseries relative to surface level'
-             }}"
-             translate>
-          </i>
-        </div>
-
-        <div
-            ng-if="metaData.type === 'raster'"
-            ng-class="{active: mouseIsOver}"
-            ng-mouseover="mouseIsOver = true"
-            ng-mouseleave="mouseIsOver = false"
-            id="{{ selection.raster }}"
-            ng-click="toggleSelection(selection)"
-            class="card-content-list clickable">
-          <div class="card-content-colorhandle"
-               ng-show="selection.active"
-               ng-style="{'background-color': selection.color}"
-               ng-click="toggleColorPicker(); $event.stopPropagation();">
+          <div class="nested-card-header-txt">
+            <div class="nested-asset-title">
+              {{ asset.code | objectTitle | translate }}
+            </div>
+            <div class="nested-asset-ts-count" translate>
+              {{asset.timeseries.length}} {{ 'TIMESERIES' | translate }}
+            </div>
           </div>
-          <i class="fa fa-line-chart"></i>
-          <span ng-class="{'text-primary bg-warning': selection.active}">
-            {{ metaData.quantity }}, ({{ metaData.unit }})
-          </span>
         </div>
-
-        <color-picker></color-picker>
-
-      </div>
-
-      <div class="card-content-list clickable lessmore" ng-show="showExtender">
-        <a style='cursor:pointer;'
-           translate
-           ng-click="toggleExtended()">
-          {{ extended ? '▴' : '▸' }}&nbsp;&nbsp;{{ extended ? 'Less' : 'More' }} timeseries
-        </a>
-      </div>
-
+      </header>
     </div>
 
+    <div class="db-ts-collection-empty"
+        ng-if="!assetHasChildren(asset) && noData && (assetType==='geometry' || asset.entity_name !== 'leveecrosssection')">
+      <div class="no-ts-message">
+        <i translate>No timeseries data available for this asset.</i>
+      </div>
+    </div>
+
+    <div
+      ng-if="asset.timeseries.length > 0"
+      id="drag-container"
+      class="db-ts-collection">
+      <div
+        ng-repeat="selection in state.selections"
+        ng-init="metaData = getSelectionMetaData(selection)"
+        ng-if="getSelectionMetaData(selection).match"
+        ng-show="metaData.type === 'timeseries' && (extended || selection.active || isOneOfFirstThree(selection.uuid))"
+        id="{{ selection.uuid }}"
+        data-uuid="{{ selection.uuid }}"
+        class="draggable-ts db-card-single-ts"
+        ng-class="{
+          'color-picker-is-open': colorPickersSettings[selection.timeseries],
+          'active': selection.active
+        }">
+
+        <!-- asset/nested-asset TS card: START -->
+        <div
+          ng-if="metaData.type === 'timeseries'"
+          id="{{ selection.timeseries }}"
+          ng-click="toggleSelection(selection);">
+
+          <div
+            class="db-card-color-picker-btn"
+            ng-style="{'background-color': selection.color}"
+            ng-click="toggleColorPicker(selection.timeseries); $event.stopPropagation();">
+          </div>
+
+          <div
+            class="db-card-single-ts-name"
+            title="{{ metaData.location }}, {{ metaData.uuid }}, {{ metaData.parameter }}"
+            ng-init="displayName = (getTsDisplayName(selection) | truncate: 50)">
+            {{ displayName }}
+          </div>
+
+          <color-picker
+              ng-show="colorPickersSettings[selection.timeseries]"
+              index="{{selection.timeseries}}">
+          </color-picker>
+        </div>
+        <!-- asset/nested-asset TS card: END -->
+
+      </div>
+    </div>
   </div>
 
   <db-nested-asset asset="asset" time-state="timeState"></db-nested-asset>

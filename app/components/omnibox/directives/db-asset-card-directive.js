@@ -6,6 +6,8 @@ angular.module('omnibox').directive('dbAssetCard', [
   'SelectionService',
   'TimeseriesService',
   'RelativeToSurfaceLevelService',
+  'getNestedAssets',
+  'UtilService',
   function (
     State,
     DataService,
@@ -13,17 +15,37 @@ angular.module('omnibox').directive('dbAssetCard', [
     DBCardsService,
     SelectionService,
     TimeseriesService,
-    RTSLService
+    RTSLService,
+    getNestedAssets,
+    UtilService
   ) {
     return {
-      link: function (scope, element) {
+      link: function (scope, element, attrs) {
 
+        scope.colorPickersSettings = DBCardsService.colorPickersSettings;
+        scope.openColorPicker = DBCardsService.openColorPicker;
+        scope.closeColorPicker = DBCardsService.closeColorPicker;
+
+        scope.getIconClass = UtilService.getIconClass;
+        scope.isNested = !!attrs.nested;
         scope.noData = scope.asset.timeseries.length === 0;
         scope.relativeTimeseries = RTSLService.relativeToSurfaceLevel;
+
+        scope.toggleColorPicker = function (tsUuid) {
+          if (scope.colorPickersSettings[tsUuid]) {
+            scope.closeColorPicker(tsUuid);
+          } else {
+            scope.openColorPicker(tsUuid);
+          }
+        };
 
         scope.toggleRelativeTimeseries = function () {
           RTSLService.toggle();
           TimeseriesService.syncTime();
+        };
+
+        scope.assetHasChildren = function (asset) {
+          return getNestedAssets(asset).length > 0;
         };
 
         scope.state = State;
@@ -31,9 +53,12 @@ angular.module('omnibox').directive('dbAssetCard', [
           scope.asset);
         scope.toggleSelection = SelectionService.toggle;
 
-        scope.getTsLongName = function (selection) {
+        scope.getTsDisplayName = function (selection) {
           var metaData = scope.getSelectionMetaData(selection);
-          return metaData.location + ',' + metaData.parameter;
+          if (metaData.parameter) {
+            return metaData.parameter.split(",").join(", ");
+          }
+          return "...";
         };
 
         scope.assetHasSurfaceLevel = function () {
@@ -41,15 +66,15 @@ angular.module('omnibox').directive('dbAssetCard', [
         };
 
         scope.parentAssetHasSurfaceLevel = function () {
-	    var parentAsset;
-	    var parentAssetKey;
-	    
-            if (scope.asset.parentAsset) {
-		parentAssetKey = scope.asset.parentAsset;
-		parentAsset = DataService.getAssetByKey(parentAssetKey);
-            }
+          var parentAsset;
+          var parentAssetKey;
 
-            return parentAsset && ('surface_level' in parentAsset);
+          if (scope.asset.parentAsset) {
+            parentAssetKey = scope.asset.parentAsset;
+            parentAsset = DataService.getAssetByKey(parentAssetKey);
+          }
+
+          return parentAsset && ('surface_level' in parentAsset);
         };
 
         /**

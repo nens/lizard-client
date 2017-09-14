@@ -1,15 +1,24 @@
 .color-picker {
-    margin: 0;
+    position: relative;
+    top: 5px ;
+    margin: 4px 0 0 0;
     padding: 0;
+    overflow: hidden;
     li {
         display: inline-block;
-        width: 7%;
+        width: 25px;
         height: 25px;
         margin: 0;
         padding: 0;
 
-        &:hover, &.selected {
+        &:hover {
             @include material-shadow-hover();
         }
+    }
+    li:first-child {
+        width: 27px;
+    }
+    li:last-child {
+        width: 26px;
     }
 }

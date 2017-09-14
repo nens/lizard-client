@@ -1148,11 +1148,18 @@ angular.module('lizard-nxt')
 
     else {
       var firstDatum = data[0],
-          lastDatum = data[data.length - 1];
+          lastDatum = data[data.length - 1],
+          result;
 
-      return  Math.floor(
-        (scale(lastDatum[keys.x]) - scale(firstDatum[keys.x])) / (data.length - 1)
-      );
+      try {
+        result = Math.floor(
+          (scale(lastDatum[keys.x]) - scale(firstDatum[keys.x])) / (data.length - 1)
+        );
+      } catch (e) {
+        console.error("[E] Could not derive bar-width for some bar-chart...");
+        result = 10; // TODO; 0
+      }
+      return result;
     }
 
   };

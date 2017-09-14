@@ -5,49 +5,61 @@
   </em>
 
   <div id="drag-container">
-    <div ng-repeat="selection in state.selections | orderBy : ['-active', '+order']"
-         ng-init="metaData = getSelectionMetaData(selection)"
-         ng-if="getSelectionMetaData(selection).match"
-         data-uuid="{{ selection.uuid }}"
-         class="draggable-ts animate-repeat">
-         <div
-            ng-if="metaData.type === 'raster'"
-            ng-class="{active: mouseIsOver}"
-            ng-mouseover="mouseIsOver = true"
-            ng-mouseleave="mouseIsOver = false"
-            id="{{ selection.uuid }}"
-            ng-click="toggleSelection(selection)"
-            class="card-content-list clickable">
-          <div class="card-content-colorhandle"
-               ng-show="selection.active"
-               ng-style="{'background-color': selection.color}"
-               ng-click="toggleColorPicker(); $event.stopPropagation();">
-          </div>
+    <div
+      ng-repeat="selection in state.selections | orderBy : ['-active', '+order']"
+      ng-init="metaData = getSelectionMetaData(selection)"
+      ng-if="getSelectionMetaData(selection).match"
+      data-uuid="{{ selection.uuid }}"
+      class="draggable-ts db-ts-collection raster-ts-collection">
+      <div
+        ng-if="metaData.type === 'raster'"
+        id="{{ selection.uuid }}"
+        ng-click="toggleSelection(selection)"
+        class="draggable-ts db-card-single-ts raster-ts"
+        ng-class="{
+          'color-picker-is-open': colorPickersSettings[selection.uuid],
+          'active': selection.active
+        }">
+
+        <div
+          class="db-card-color-picker-btn"
+          ng-style="{'background-color': selection.color}"
+          ng-click="toggleColorPicker(selection.uuid); $event.stopPropagation();">
+        </div>
+
+        <div class="db-card-single-ts-name ">
           <i class="fa fa-line-chart"></i>
-          <span ng-class="{'text-primary bg-warning': selection.active}">
+          <span>
             {{ metaData.quantity }}, ({{ metaData.unit }})
           </span>
         </div>
+      </div>
 
-         <div
-            ng-if="metaData.type === 'eventseries'"
-            ng-class="{active: mouseIsOver}"
-            ng-mouseover="mouseIsOver = true"
-            ng-mouseleave="mouseIsOver = false"
-            id="{{ selection.uuid }}"
-            ng-click="toggleSelection(selection)"
-            class="card-content-list clickable">
-          <div class="card-content-colorhandle"
-               ng-show="selection.active"
-               ng-style="{'background-color': selection.color}"
-               ng-click="toggleColorPicker(); $event.stopPropagation();">
-          </div>
-          <i class="fa fa-line-chart"></i>
-          <span ng-class="{'text-primary bg-warning': selection.active}">
-            {{ metaData.quantity }} events
-          </span>
+      <div
+          ng-if="metaData.type === 'eventseries'"
+          ng-class="{active: mouseIsOver}"
+          ng-mouseover="mouseIsOver = true"
+          ng-mouseleave="mouseIsOver = false"
+          id="{{ selection.uuid }}"
+          ng-click="toggleSelection(selection)"
+          class="card-content-list clickable">
+        <div class="card-content-colorhandle"
+             ng-show="selection.active"
+             ng-style="{'background-color': selection.color}"
+             ng-click="toggleColorPicker(); $event.stopPropagation();">
         </div>
-        <color-picker></color-picker>
+        <i class="fa fa-line-chart"></i>
+        <span ng-class="{'text-primary bg-warning': selection.active}">
+          {{ metaData.quantity }} events
+        </span>
+      </div>
+
+      <div class="color-picker-wrapper">
+        <color-picker
+          ng-show="colorPickersSettings[selection.uuid]"
+          index="{{selection.uuid}}">
+        </color-picker>
+      </div>
 
     </div>
   </div>
