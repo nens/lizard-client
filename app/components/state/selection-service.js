@@ -295,6 +295,8 @@ angular.module('global-state')
       console.log("eventSelections is", eventSelections);
 
       if (i === 0) {
+        // If eventSelections is empty (this happens if-and-only-if i === 0),
+        // there is no need to update State.selections
         return;
       }
 
