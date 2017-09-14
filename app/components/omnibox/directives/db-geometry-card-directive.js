@@ -52,7 +52,7 @@ angular.module('omnibox')
 
           _.forEach(scope.geom.properties, function (property, uuid) {
             var selection = _.find(State.selections, function(s) {
-		          return s.geom === scope.geom.geometry.coordinates.toString() && s.raster === uuid;
+              return s.geom === scope.geom.geometry.coordinates.toString() && s.raster === uuid;
             });
             if (selection && selection.active === undefined
               && SelectionService.dbSupportedData(
@@ -76,7 +76,7 @@ angular.module('omnibox')
         scope.$on('$destroy', function () {
           _.forEach(scope.geom.properties, function (property, uuid) {
             var selection = _.find(State.selections, function(s) {
-		          return s.geom === scope.geom.geometry.coordinates.toString()
+              return s.geom === scope.geom.geometry.coordinates.toString()
                 && s.raster === uuid;
             });
             if (selection) {

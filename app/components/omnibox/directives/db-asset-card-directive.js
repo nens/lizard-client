@@ -66,12 +66,12 @@ angular.module('omnibox').directive('dbAssetCard', [
         };
 
         scope.parentAssetHasSurfaceLevel = function () {
-    	    var parentAsset;
-    	    var parentAssetKey;
+          var parentAsset;
+          var parentAssetKey;
 
           if (scope.asset.parentAsset) {
-        		parentAssetKey = scope.asset.parentAsset;
-        		parentAsset = DataService.getAssetByKey(parentAssetKey);
+            parentAssetKey = scope.asset.parentAsset;
+            parentAsset = DataService.getAssetByKey(parentAssetKey);
           }
 
           return parentAsset && ('surface_level' in parentAsset);
