@@ -69,7 +69,8 @@ angular.module('data-menu')
             unit: response.observation_type
               && response.observation_type.unit,
             styles: response.options.styles,
-            //showVectorized: false
+            firstValueTimestamp: response.first_value_timestamp,
+            lastValueTimestamp: response.last_value_timestamp
           }));
 
           // If the layer did not have a name, check if the backend has one.
