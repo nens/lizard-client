@@ -324,8 +324,6 @@ angular.module('timeseries').service("TimeseriesService", [
 
           break;
         case 'timesteps_range_all_active':
-          var start;
-          var end;
           var activeTimeseriesUuids = [];
           var activeTempRasterIds = [];
 
@@ -354,10 +352,9 @@ angular.module('timeseries').service("TimeseriesService", [
             var dataLayer, rasterTsStart, rasterTsEnd;
 
             activeTempRasterIds.forEach(function (rasterId) {
-              console.log("HIERRRRRRRRRR");
               dataLayer = _.find(DataService.dataLayers, { uuid: rasterId });
-              rasterTsStart = dataLayer.first_value_timestamp;
-              rasterTsEnd = dataLayer.last_value_timestamp;
+              rasterTsStart = dataLayer.firstValueTimestamp;
+              rasterTsEnd = dataLayer.lastValueTimestamp;
 
               if (!start || rasterTsStart < start) {
                 start = rasterTsStart;
