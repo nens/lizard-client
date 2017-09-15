@@ -272,8 +272,6 @@ angular.module('timeseries').service("TimeseriesService", [
 
 
     this.zoomToInterval = function (value_type, intervalText) {
-      console.log("[F] zoomToInterval");
-
       // return early - if the timeseries consists of images
       if (value_type === 'image') {
         notie.alert(3,
@@ -392,7 +390,7 @@ angular.module('timeseries').service("TimeseriesService", [
         // angular $digest cycle).
         State.temporal.timelineMoving = !State.temporal.timelineMoving;
       });
-    }
+    };
   }
 ]);
 
