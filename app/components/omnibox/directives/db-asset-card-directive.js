@@ -23,8 +23,6 @@ angular.module('omnibox').directive('dbAssetCard', [
 
       link: function (scope, element, attrs) {
 
-        scope.selectionsMetaData = {};
-
         scope.colorPickersSettings = DBCardsService.colorPickersSettings;
         scope.openColorPicker = DBCardsService.openColorPicker;
         scope.closeColorPicker = DBCardsService.closeColorPicker;
@@ -47,19 +45,14 @@ angular.module('omnibox').directive('dbAssetCard', [
           TimeseriesService.syncTime();
         };
 
+        scope.getSelectionMetaData = SelectionService.getMetaDataFunction(
+          scope.asset);
+
         scope.assetHasChildren = function (asset) {
           return getNestedAssets(asset).length > 0;
         };
 
         scope.state = State;
-
-        scope.getSelectionMetaData = function (selection) {
-          if (!this.selectionsMetaData[selection.uuid]) {
-            this.selectionsMetaData[selection.uuid] =
-               SelectionService.getMetaDataFunction(scope.asset)(selection);
-          }
-          return this.selectionsMetaData[selection.uuid];
-        }
 
         scope.toggleSelection = SelectionService.toggle;
 
