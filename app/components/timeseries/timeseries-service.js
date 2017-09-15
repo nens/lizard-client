@@ -272,6 +272,7 @@ angular.module('timeseries').service("TimeseriesService", [
 
 
     this.zoomToInterval = function (value_type, intervalText) {
+      console.log("[F] zoomToInterval");
 
       // return early - if the timeseries consists of images
       if (value_type === 'image') {
@@ -326,11 +327,18 @@ angular.module('timeseries').service("TimeseriesService", [
           var start;
           var end;
           var activeTimeseriesUuids = [];
+          var activeTempRasterIds = [];
+
           if (State.selections) {
             State.selections.forEach(function (selection) {
-              if (selection.active && selection.timeseries) {
-                activeTimeseriesUuids.push(selection.timeseries);
+              if (selection.active) {
+                if (selection.timeseries) {
+                  activeTimeseriesUuids.push(selection.timeseries);
+                } else if (selection.raster) {
+                  activeTempRasterIds.push(selection.raster);
+                }
               }
+
             });
             service.timeseries.forEach(function (ts) {
               if (_.includes(activeTimeseriesUuids, ts.id)) {
@@ -340,6 +348,22 @@ angular.module('timeseries').service("TimeseriesService", [
                 if (!end || ts.end > end) {
                   end = ts.end;
                 }
+              }
+            });
+
+            var dataLayer, rasterTsStart, rasterTsEnd;
+
+            activeTempRasterIds.forEach(function (rasterId) {
+              console.log("HIERRRRRRRRRR");
+              dataLayer = _.find(DataService.dataLayers, { uuid: rasterId });
+              rasterTsStart = dataLayer.first_value_timestamp;
+              rasterTsEnd = dataLayer.last_value_timestamp;
+
+              if (!start || rasterTsStart < start) {
+                start = rasterTsStart;
+              }
+              if (!end || rasterTsEnd > end) {
+                end = rasterTsEnd;
               }
             });
           }
@@ -354,7 +378,8 @@ angular.module('timeseries').service("TimeseriesService", [
             "Unknown interval '" +
             intervalText +
             "' for temporal zoom; allowed values are " +
-            "'one_year', 'three_months', 'two_weeks' and 'timesteps_range'"
+            "'one_year', 'three_months', 'two_weeks', 'timesteps_range' and " +
+            "'timesteps_range_all_active'"
           );
       }
 
