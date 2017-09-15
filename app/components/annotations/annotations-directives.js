@@ -112,7 +112,6 @@ angular.module('annotations')
        *                              DELETE.
        */
       var deleteAnnotationError = function(httpResponse) {
-        console.log(httpResponse);
         notie.alert(3,
           gettextCatalog.getString(
             "Oops! Something went wrong while deleting the annotation."));

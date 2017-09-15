@@ -508,10 +508,7 @@ angular.module('lizard-nxt')
         config.geom.part,
         config.geom.index
       );
-      console.log('getSelected using urlValue', selected);
-      var result = UrlState.parseSelection(selected) || {assets: [], geometries: []};
-      console.log('result ::', result);
-      return result;
+      return UrlState.parseSelection(selected) || {assets: [], geometries: []};
     };
 
     var getView = function () {

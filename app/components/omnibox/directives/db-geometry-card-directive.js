@@ -46,8 +46,6 @@ angular.module('omnibox')
          * Properties are asynchronous so watch it to set noData when added.
          */
         scope.$watch('geom.properties', function (n, o) {
-          console.log("scope.$watch('geom.properties', function (n, o) { triggered.");
-
           scope.geomSelections = SelectionService.initializeGeomEventseriesSelections(scope.geom);
 
           _.forEach(scope.geom.properties, function (property, uuid) {
