@@ -17,19 +17,13 @@ angular.module('omnibox')
 
         scope.state = State;
         scope.noData = true;
-        scope.selectionsMetaData = {};
 
         scope.colorPickersSettings = DBCardsService.colorPickersSettings;
         scope.openColorPicker = DBCardsService.openColorPicker;
         scope.closeColorPicker = DBCardsService.closeColorPicker;
 
-        scope.getSelectionMetaData = function (selection) {
-          if (!this.selectionsMetaData[selection.uuid]) {
-            this.selectionsMetaData[selection.uuid] =
-               SelectionService.getMetaDataFunction(scope.asset)(selection);
-          }
-          return this.selectionsMetaData[selection.uuid];
-        }
+        scope.getSelectionMetaData = SelectionService.getMetaDataFunction(
+          scope.geom);
 
         // Make sure all event series data etc gets updated on geo.
         DataService.getGeomData(scope.geom).then(function (geo) {
