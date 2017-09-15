@@ -20,7 +20,10 @@ angular.module('omnibox').directive('dbAssetCard', [
     UtilService
   ) {
     return {
+
       link: function (scope, element, attrs) {
+
+        scope.selectionsMetaData = {};
 
         scope.colorPickersSettings = DBCardsService.colorPickersSettings;
         scope.openColorPicker = DBCardsService.openColorPicker;
@@ -49,8 +52,15 @@ angular.module('omnibox').directive('dbAssetCard', [
         };
 
         scope.state = State;
-        scope.getSelectionMetaData = SelectionService.getMetaDataFunction(
-          scope.asset);
+
+        scope.getSelectionMetaData = function (selection) {
+          if (!this.selectionsMetaData[selection.uuid]) {
+            this.selectionsMetaData[selection.uuid] =
+               SelectionService.getMetaDataFunction(scope.asset)(selection);
+          }
+          return this.selectionsMetaData[selection.uuid];
+        }
+
         scope.toggleSelection = SelectionService.toggle;
 
         scope.getTsDisplayName = function (selection) {
