@@ -255,25 +255,19 @@ angular.module('global-state')
     };
 
     var initializeGeomEventseriesSelections = function (geomObject) {
-      console.log("initializeGeomEventseriesSelections", geomObject);
-        if (!geomObject.geometry || geomObject.geometry.type !== 'Point' ||
-            !geomObject.properties) {
-        console.log("not a Point or no properties");
+      if (!geomObject.geometry || geomObject.geometry.type !== 'Point' ||
+          !geomObject.properties) {
         return false;
       }
 
       var eventSelections = [];
-      console.log("Adding selections");
       var i = 0;
       _.forOwn(geomObject.properties, function (props, layerUuid) {
-        console.log('layerUuid, props:', layerUuid, props);
         if (props.type !== 'eventseries') {
-          console.log("Not an eventseries.");
           return;
         }
 
         if (!props.data || !props.data.length) {
-          console.log("No events.");
           return;
         }
 
@@ -292,7 +286,6 @@ angular.module('global-state')
         });
         i++;
       });
-      console.log("eventSelections is", eventSelections);
 
       if (i === 0) {
         // If eventSelections is empty (this happens if-and-only-if i === 0),
@@ -311,7 +304,6 @@ angular.module('global-state')
             stateSelection.layer === eventSelection.layer
           );
         });
-      console.log("Selections is now", State.selections, "did this work?");
     };
 
     return {

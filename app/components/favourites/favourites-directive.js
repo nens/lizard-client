@@ -114,7 +114,7 @@ angular.module('favourites')
      *                              DELETE.
      */
     var deleteFavouriteError = function(httpResponse) {
-      console.log("[E] deleteFavouriteError:", httpResponse);
+      console.error("[E] deleteFavouriteError:", httpResponse);
       notie.alert(3,
         gettextCatalog.getString(
           "Oops! Something went wrong while deleting the favourite."));
