@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.16.0"></a>
+# [4.16.0](https://github.com/nens/lizard-client/compare/v4.15.16...v4.16.0) (2017-09-18)
+
+
+### Bug Fixes
+
+* **timeseries:** relativation is repaired ([bf6de22](https://github.com/nens/lizard-client/commit/bf6de22))
+
+
+### Features
+
+* **dashboard:** the omnibox in the db has improved styling ([88d1c08](https://github.com/nens/lizard-client/commit/88d1c08))
+
+
+
 <a name="4.15.22"></a>
 ## [4.15.22](https://github.com/nens/lizard-client/compare/v4.15.17...v4.15.22) (2017-09-11)
 
