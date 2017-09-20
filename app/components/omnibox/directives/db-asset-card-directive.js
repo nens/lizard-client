@@ -59,9 +59,15 @@ angular.module('omnibox').directive('dbAssetCard', [
         scope.getTsDisplayName = function (selection) {
           var metaData = scope.getSelectionMetaData(selection);
           if (metaData.parameter) {
-            return metaData.parameter.split(",").join(", ");
+            var neatParameter = metaData.parameter.split(",").join(", ");
+            if (metaData.location) {
+              return metaData.location + ", " + neatParameter;
+            } else {
+              return neatParameter;
+            }
+          } else {
+            return "...";
           }
-          return "...";
         };
 
         scope.assetHasSurfaceLevel = function () {

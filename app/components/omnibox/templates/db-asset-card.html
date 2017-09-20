@@ -66,8 +66,8 @@
           <div
             class="db-card-single-ts-name"
             title="{{ metaData.location }}, {{ metaData.uuid }}, {{ metaData.parameter }}"
-            ng-init="displayName = (getTsDisplayName(selection) | truncate: 50)">
-            {{ displayName }}
+            ng-init="displayName = getTsDisplayName(selection)">
+            {{ displayName | truncate: 42 }}
           </div>
 
           <color-picker
