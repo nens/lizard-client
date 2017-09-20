@@ -303,7 +303,7 @@ function (UtilService, gettextCatalog, $http) {
 
     state.applyUrlToState = function (urlState) {
       // Get state information from the URL and update the state using it.
-      if (urlState.lange) { state.language = urlState.language; }
+      if (urlState.language) { state.language = urlState.language; }
       if (urlState.baselayer) { state.baselayer = urlState.baselayer; }
       if (urlState.context) { state.context = urlState.context; }
       if (urlState.boxType) { state.box.type = urlState.boxType; }

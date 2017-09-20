@@ -114,16 +114,16 @@ angular.module('lizard-nxt')
 
     var service = {
 
-     /**
-      * @function
-      * @memberOf UrlState
-      * @description Sets the points or the here on the url when
-      *              respectively point or line is specified as type.
-      * @param {object} state config object
-      * @param {str} type box.type
-      * @param {object} here leaflet LatLng object
-      * @param {array} points array of leaflet LatLng objects
-      */
+      /**
+       * @function
+       * @memberOf UrlState
+       * @description Sets the points or the here on the url when
+       *              respectively point or line is specified as type.
+       * @param {object} state config object
+       * @param {str} type box.type
+       * @param {object} here leaflet LatLng object
+       * @param {array} points array of leaflet LatLng objects
+       */
       setgeomUrl: function (state, type, here, points) {
         var pointsStr = '';
         if (type === 'line') {
@@ -139,7 +139,7 @@ angular.module('lizard-nxt')
         LocationGetterSetter.setUrlValue(state.geom.part, state.geom.index, pointsStr);
       },
 
-     /**
+      /**
       * @function
       * @memberOf UrlState
       * @description Sets the start and end epoch ms on the url

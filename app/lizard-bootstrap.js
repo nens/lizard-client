@@ -29,7 +29,7 @@ angular.module('lizard-bootstrap', ['favourites'])
      * @param  {boolean} applyState if true applies bootstrap.state, otherwise
      * only set username and backend version.
      */
-    var getBootstrap = function (applyState) {
+    var getBootstrap = function (mustApplyState, urlData) {
       $http.get('bootstrap/lizard/', {})
       .then(
         function (response) {
@@ -38,14 +38,12 @@ angular.module('lizard-bootstrap', ['favourites'])
           _.merge(user, bootstrap.user);
           version.full = bootstrap.version;
           version.revision = bootstrap.revision;
-          if (applyState) {
+          if (mustApplyState) {
             FavouritesService.applyFavourite(bootstrap);
-            State.applyUrlToState(urlDataForState);
+            State.applyUrlToState(urlData);
           }
         },
-        function (response) {
-          showErrorModal();
-        }
+        showErrorModal
       );
     };
 
@@ -60,7 +58,7 @@ angular.module('lizard-bootstrap', ['favourites'])
 
     if (urlFavourite) {
       var gotFavourite = function (favourite, getResponseHeaders) {
-        getBootstrap(false);
+        getBootstrap(false, null);
         FavouritesService.applyFavourite(favourite);
       };
 
