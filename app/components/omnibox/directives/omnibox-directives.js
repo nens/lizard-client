@@ -106,7 +106,7 @@ angular.module("omnibox")
       var cards = element.find('#cards');
 
       window.Ps.initialize(cards[0], {
-        suppressScrollX: true,
+        suppressScrollX: true
       });
 
       /**

@@ -1,6 +1,6 @@
 <div class="animate-repeat">
 
-  <header class="card-header geom-card-header" style="margin-bottom: -10px;">
+  <header class="card-header geom-card-header">
     <div ng-if="geom"
          class="card-header-center">
       <close-card geometry="geom"></close-card>
@@ -12,6 +12,11 @@
 
         <i ng-if="geom.geometry.type === 'LineString'"
            class="lz lz-line-tool raster-icon "></i>
+
+        <i ng-if="geom.geometry.type === 'Polygon' || geom.geometry.type === 'MultiPolygon'"
+           style="margin-left: -4px"
+           class="lz lz-region-tool raster-icon "></i>
+
       </span>
 
       <div class="nested-card-header-txt raster-card-header-txt">
