@@ -272,15 +272,6 @@ angular.module('timeseries').service("TimeseriesService", [
 
 
     this.zoomToInterval = function (value_type, intervalText) {
-      // return early - if the timeseries consists of images
-      if (value_type === 'image') {
-        notie.alert(3,
-          gettextCatalog.getString(
-            "Timeseries with images cannot be zoomed to."
-          )
-        );
-        return;
-      }
 
       var now = (new Date()).getTime();
       var start, end, intervalMs;
