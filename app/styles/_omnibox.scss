@@ -824,7 +824,6 @@ input[type=file] {
 
 .db-card {
   background-color: #F1F2F3;
-  border-right: 1px solid #DBDBDB;
 }
 
 .card-header {
@@ -1057,11 +1056,6 @@ input[type=file] {
   left: 12px;
 }
 
-.db-omnibox {
-  min-height: 100%;
-  position: relative;
-}
-
 .db-omnibox-time-controls {
   position: fixed;
   bottom: 0;
@@ -1116,4 +1110,13 @@ input[type=file] {
 
 .default-point-card {
   margin-top: 10px;
+}
+
+#cards.db-ctx {
+  height: 100vh;
+  border-right: 1px solid #DBDBDB;
+}
+
+.geom-card-header {
+  margin-bottom: 0;
 }

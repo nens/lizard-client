@@ -105,7 +105,9 @@ angular.module("omnibox")
 
       var cards = element.find('#cards');
 
-      window.Ps.initialize(cards[0]);
+      window.Ps.initialize(cards[0], {
+        suppressScrollX: true
+      });
 
       /**
        * Sets the height of the scroll area to fit between search box and

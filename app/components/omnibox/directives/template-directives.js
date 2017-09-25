@@ -94,11 +94,17 @@ angular.module('omnibox')
       scope.getLineCSVHeaders = CSVService.getLineCSVHeaders;
 
       scope.getGeomCardHeader = function (geom) {
-        var M = 100000;
-        var x = Math.round(geom.geometry.coordinates[0] * M) / M;
-        var y = Math.round(geom.geometry.coordinates[1] * M) / M;
         if (geom.geometry.type === 'Point') {
-          return '(' + x + ', ' + y + ')';
+          var M = 100000;
+          var lon = Math.round(geom.geometry.coordinates[0] * M) / M;
+          var lat = Math.round(geom.geometry.coordinates[1] * M) / M;
+          return '( ' + lat + ', ' + lon + ' )';
+        } else if (geom.geometry.type === 'Polygon' ||
+                   geom.geometry.type === 'MultiPolygon') {
+
+          var name = geom.name;
+          var area = geom.area;
+          return name + ': ' + area / 10000 + ' ha';
         } else {
           return geom.geometry.type;
         }
