@@ -8,6 +8,7 @@ angular.module('omnibox').directive('dbAssetCard', [
   'RelativeToSurfaceLevelService',
   'getNestedAssets',
   'UtilService',
+  '$timeout',
   function (
     State,
     DataService,
@@ -17,7 +18,8 @@ angular.module('omnibox').directive('dbAssetCard', [
     TimeseriesService,
     RTSLService,
     getNestedAssets,
-    UtilService
+    UtilService,
+    $timeout
   ) {
     return {
 
@@ -167,8 +169,10 @@ angular.module('omnibox').directive('dbAssetCard', [
           };
           scope.toggleCrosssection(scope.asset);
         }
-        DragService.addDraggableContainer(element.find('#drag-container'));
 
+        $timeout(function () {
+          DragService.addDraggableContainer(element.find('#drag-container'));
+        });
       },
       restrict: 'E',
       scope: {
