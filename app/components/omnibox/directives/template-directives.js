@@ -94,7 +94,6 @@ angular.module('omnibox')
       scope.getLineCSVHeaders = CSVService.getLineCSVHeaders;
 
       scope.getGeomCardHeader = function (geom) {
-        console.log("[F] getGeomCardHeader; geom =", geom);
         if (geom.geometry.type === 'Point') {
           var M = 100000;
           var lon = Math.round(geom.geometry.coordinates[0] * M) / M;
