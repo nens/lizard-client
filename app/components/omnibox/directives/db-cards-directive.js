@@ -142,15 +142,15 @@ angular.module('omnibox')
         }
 
 
-        console.log("Tot hier gaat het goed? (1)");
+        // console.log("Tot hier gaat het goed? (1)");
         var tsMetaData = SelectionService.timeseriesMetaData(
             TimeseriesService.timeseries, selection);
-        console.log("Tot hier gaat het goed? (2)");
+        // console.log("Tot hier gaat het goed? (2)");
         var otherGraphTsMetaData = SelectionService.timeseriesMetaData(
             TimeseriesService.timeseries, otherGraphSelections);
-        console.log("Tot hier gaat het goed? (3)");
+        // console.log("Tot hier gaat het goed? (3)");
         var check1 = tsMetaData.valueType !== otherGraphTsMetaData.valueType;
-        console.log("Tot hier gaat het goed? (4)");
+        // console.log("Tot hier gaat het goed? (4)");
         if (check1) {
           notie.alert(2,
             gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!'));

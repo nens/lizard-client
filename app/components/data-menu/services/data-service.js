@@ -410,18 +410,12 @@ angular.module('data-menu')
 
           // Experimental:
           ////////////////////////////////////////
-          // if (options.geometry === undefined) {
-          //   if (geo.geometry !== undefined) {
-          //     options.geometry = geo.geometry;
-          //   } else {
-          //     return;
-          //   }
-          // }
-
-          // Ockham's raz0r:
-          /////////////////////////////////////
           if (options.geometry === undefined) {
-            return;
+            if (geo.geometry !== undefined) {
+              options.geometry = geo.geometry;
+            } else {
+              return;
+            }
           }
 
           promises.push(
@@ -463,10 +457,8 @@ angular.module('data-menu')
       this.getGeomData = function (geo) {
 
         var defer = $q.defer();
-
         var promises = [];
         var instance = this;
-
         var options = {};
 
         options.geom = geo.geometry;

@@ -39,14 +39,16 @@ angular.module('dashboard')
   }
 
   this.addSelection = function (chartIndex, selectionId) {
-    // console.log("[F] CCService.addSelection");
+    console.log("[F] CCService.addSelection");
     var chartKey,
         chartValue;
     if (chartIndex === undefined) {
       // This will result in a single new cartesian plane with a single chart:
+      console.log("Add to NEW cartesian plane");
       chartKey = intToString(getNextChartIndex());
       chartValue = [];
     } else {
+      console.log("Add to OLD cartesian plane");
       // This will add a new chart to an existing cartesian plane:
       chartKey = intToString(chartIndex);
       chartValue = service.composedCharts[chartKey] || [];
@@ -54,26 +56,19 @@ angular.module('dashboard')
     chartValue.push(selectionId);
     service.composedCharts[chartKey] = chartValue;
     ///////////////////////////////////////////////////////////////////////////
-    //this.debug(); /////////////////////////////////////////////////////////////
+    this.debug(); /////////////////////////////////////////////////////////////
   };
-
-  // this.dragSelection = function (newChartIndex, selectionUuid) {
-  //   if (service.getChartIndexForSelection(selectionUuid) !== undefined) {
-  //     service.removeSelection(selectionUuid);
-  //   }
-  //   service.addSelection(newChartIndex, selectionUuid);
-  // }
 
   this.dragSelection = function (newChartIndex, selectionUuid) {
     console.log("[F] CCService.dragSelection");
     var oldChartIndex = service.getChartIndexForSelection(selectionUuid);
-    console.log("*** oldChartIndex...:", oldChartIndex, "(type=" + (typeof oldChartIndex) + ")");
-    console.log("*** newChartIndex...:", newChartIndex, "(type=" + (typeof newChartIndex) + ")");
+    // console.log("*** oldChartIndex...:", oldChartIndex, "(type=" + (typeof oldChartIndex) + ")");
+    // console.log("*** newChartIndex...:", newChartIndex, "(type=" + (typeof newChartIndex) + ")");
     if (getNextChartIndex() === 0) {
-      console.log("...returning early (because: no charts yet)!");
+      // console.log("...returning early (because: no charts yet)!");
       return false;
     } else if (oldChartIndex === newChartIndex) {
-      console.log("...returning early (because: chart was dragged into itself)!");
+      // console.log("...returning early (because: chart was dragged into itself)!");
       return false;
     } else if (oldChartIndex !== undefined) {
       service.removeSelection(selectionUuid);
@@ -83,7 +78,7 @@ angular.module('dashboard')
   }
 
   this.removeSelection = function (selectionUuid) {
-    //console.log("[F] CCService.removeSelection");
+    console.log("[F] CCService.removeSelection");
     var selectionIndex,
         someSelectionWasRemoved = false;
     _.forEach(service.composedCharts, function (v, k) {
@@ -101,7 +96,7 @@ angular.module('dashboard')
       console.error("Selection not found! Could not remove selection with uuid =", selectionUuid);
     }
     ///////////////////////////////////////////////////////////////////////////
-    //this.debug(); /////////////////////////////////////////////////////////////
+    this.debug(); /////////////////////////////////////////////////////////////
   };
 
   this.debug = function () {
