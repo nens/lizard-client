@@ -9,6 +9,7 @@ angular.module('omnibox')
     'getNestedAssets',
     'TimeseriesService',
     'DBCardsService',
+    'ChartCompositionService',
     function (
       State,
       SelectionService,
@@ -17,7 +18,8 @@ angular.module('omnibox')
       notie,
       getNestedAssets,
       TimeseriesService,
-      DBCardsService) {
+      DBCardsService,
+      ChartCompositionService) {
   return {
     link: function (scope, element) {
 
@@ -74,12 +76,23 @@ angular.module('omnibox')
        * @param  {DOM}    target  Plot in drop.
        */
       DragService.on('drop', function (el, target) {
+        // console.log("[dbg] DragService.on('drop'...");
+        // console.log("*** el:", el);
+        // console.log("*** target:", target);
+
         if (target === null) {
           // Dropping outside of dropzone
           return;
         }
         var order = Number(target.getAttribute('data-order'));
         var uuid = el.getAttribute('data-uuid');
+
+        ///////////////////////////////////////////////////////////////////////
+        var chartCompositionHasChanged = ChartCompositionService.dragSelection(order, uuid);
+        console.log("Changed?", chartCompositionHasChanged);
+        // ChartCompositionService.debug();
+        ///////////////////////////////////////////
+
         // El either represents a timeseries or another plottable item.
         //
         // NOTE: there is only one drop callback for all the possible assets. So
@@ -94,8 +107,11 @@ angular.module('omnibox')
 
         // Possible other graph in target.
         var otherGraphSelections = _.find(State.selections, function (selection) {
-          return selection.order === order && selection.active;
+          var selectionOrder = ChartCompositionService.getChartIndexForSelection(selection.uuid);
+          return selectionOrder === order && selection.active;
         });
+
+        console.log("otherGraphSelections:", otherGraphSelections);
 
         if (otherGraphSelections === undefined) {
           // No other graph, just turn ts to active.
@@ -107,7 +123,7 @@ angular.module('omnibox')
         // If ts was already active: first remove and rearrange plots in
         // dashboard, then continue adding it to the dragged plot.
         if (selection.active) {
-          var otherTSInOrigninalPlot = _.find(
+          var otherTSInOriginalPlot = _.find(
             State.selections,
             function (_selection) {
               return _selection.active
@@ -115,7 +131,7 @@ angular.module('omnibox')
                 && _selection.timeseries !== selection.timeseries;
             }
           );
-          if (otherTSInOrigninalPlot === undefined) {
+          if (otherTSInOriginalPlot === undefined) {
             // Plot where ts came from is now empty and removed.
             order = order < selection.order ? order : order - 1;
           }
