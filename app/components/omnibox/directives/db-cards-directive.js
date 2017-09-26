@@ -111,8 +111,6 @@ angular.module('omnibox')
           return selectionOrder === order && selection.active;
         });
 
-        console.log("otherGraphSelections:", otherGraphSelections);
-
         if (otherGraphSelections === undefined) {
           // No other graph, just turn ts to active.
           emulateClick(el);
@@ -123,28 +121,37 @@ angular.module('omnibox')
         // If ts was already active: first remove and rearrange plots in
         // dashboard, then continue adding it to the dragged plot.
         if (selection.active) {
-          var otherTSInOriginalPlot = _.find(
-            State.selections,
-            function (_selection) {
-              return _selection.active
-                && _selection.order === selection.order
-                && _selection.timeseries !== selection.timeseries;
-            }
-          );
-          if (otherTSInOriginalPlot === undefined) {
-            // Plot where ts came from is now empty and removed.
-            order = order < selection.order ? order : order - 1;
+
+          var selectionOrder = ChartCompositionService.getChartIndexForSelection(
+            selection.uuid);
+
+          var allSelectionsInCC = ChartCompositionService.composedCharts["" + selectionOrder];
+          // console.log("*** allSelectionsInCC:", allSelectionsInCC);
+
+          var otherSelectionsInCC = _.filter(allSelectionsInCC, function (uuid) {
+            return uuid !== selection.uuid;
+          });
+          // console.log("*** otherSelectionsInCC:", otherSelectionsInCC);
+
+          if (otherSelectionsInCC.length === 0) {
+            order = selectionOrder;
           }
 
           selection.active = false;
           DBCardsService.removeSelectionFromPlot(selection);
         }
 
+
+        console.log("Tot hier gaat het goed? (1)");
         var tsMetaData = SelectionService.timeseriesMetaData(
             TimeseriesService.timeseries, selection);
+        console.log("Tot hier gaat het goed? (2)");
         var otherGraphTsMetaData = SelectionService.timeseriesMetaData(
             TimeseriesService.timeseries, otherGraphSelections);
-        if (tsMetaData.valueType !== otherGraphTsMetaData.valueType) {
+        console.log("Tot hier gaat het goed? (3)");
+        var check1 = tsMetaData.valueType !== otherGraphTsMetaData.valueType;
+        console.log("Tot hier gaat het goed? (4)");
+        if (check1) {
           notie.alert(2,
             gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!'));
           emulateClick(el);
