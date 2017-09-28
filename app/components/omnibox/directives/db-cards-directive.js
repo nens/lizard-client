@@ -10,6 +10,7 @@ angular.module('omnibox')
     'TimeseriesService',
     'DBCardsService',
     'ChartCompositionService',
+    '$timeout',
     function (
       State,
       SelectionService,
@@ -19,17 +20,37 @@ angular.module('omnibox')
       getNestedAssets,
       TimeseriesService,
       DBCardsService,
-      ChartCompositionService) {
+      ChartCompositionService,
+      $timeout) {
   return {
     link: function (scope, element) {
 
       DragService.create();
 
+      // var emulateClick = function (el) {
+      //   console.log("[F] emulateClick");
+      //   console.log("*** arg 'el':", el);
+      //   // other plottable item. Toggle on drag to put element in their own
+      //   // plot.
+      //   var sourceElem = $(element.find('#' + el.getAttribute('data-uuid')))[0];
+      //   console.log("*** sourceElem:", sourceElem);
+
+      //   debugger;
+
+      //   element.find('#' + el.getAttribute('data-uuid')).click();
+      // };
+
       var emulateClick = function (el) {
-        // other plottable item. Toggle on drag to put element in their own
-        // plot.
-        element.find('#' + el.getAttribute('data-uuid')).click();
-      };
+        $timeout(function () {
+          // console.log("[F] emulateClick");
+          // console.log("*** arg 'el':", el);
+          var dataUuid = el.getAttribute('data-uuid');
+          // console.log("*** dataUuid:", dataUuid);
+          var clickableElem = $('#clickable-' + dataUuid);
+          // console.log("*** clickableElem:", clickableElem);
+          clickableElem.click();
+        });
+      }
 
       scope.$watch('omnibox.data.assets', function () {
         // get rid of dupes with nested assets
@@ -88,8 +109,12 @@ angular.module('omnibox')
         var uuid = el.getAttribute('data-uuid');
 
         ///////////////////////////////////////////////////////////////////////
-        var chartCompositionHasChanged = ChartCompositionService.dragSelection(order, uuid);
-        console.log("Changed?", chartCompositionHasChanged);
+        var chartCompositionDragResult = ChartCompositionService.dragSelection(
+          order, uuid);
+        // console.log("[post-drag] Changed?",
+        //   chartCompositionDragResult.changed);
+        // console.log("[post-drag] Must activate selection?",
+        //   chartCompositionDragResult.mustActivateSelection);
         // ChartCompositionService.debug();
         ///////////////////////////////////////////
 
@@ -112,8 +137,18 @@ angular.module('omnibox')
         });
 
         if (otherGraphSelections === undefined) {
+          console.log("[post-drag] otherGraphSelections === undefined !!!");
           // No other graph, just turn ts to active.
-          emulateClick(el);
+          if (chartCompositionDragResult.mustActivateSelection) {
+            console.log("Ola1!!!");
+
+            if (chartCompositionDragResult.mustEmulateClick) {
+              emulateClick(el);
+            } else {
+              TimeseriesService.syncTime();
+            }
+
+          }
           el.parentNode.removeChild(el);
           return;
         }
@@ -121,6 +156,8 @@ angular.module('omnibox')
         // If ts was already active: first remove and rearrange plots in
         // dashboard, then continue adding it to the dragged plot.
         if (selection.active) {
+          console.log("Explicitly DEACTIVATING selection!'");
+
 
           var selectionOrder = ChartCompositionService.getChartIndexForSelection(
             selection.uuid);
@@ -139,6 +176,12 @@ angular.module('omnibox')
 
           selection.active = false;
           DBCardsService.removeSelectionFromPlot(selection);
+
+        } else {
+          if (chartCompositionDragResult.mustActivateSelection) {
+            console.log("Explicitly activating selection!'");
+            selection.active = true;
+          }
         }
 
 
@@ -160,6 +203,7 @@ angular.module('omnibox')
             gettextCatalog.getString('Whoops, bar charts cannot be combined. Try again!'));
           emulateClick(el);
         } else {
+          console.log("HIERRRRRRRRRRRRRRRRRRRR?????????????");
           // Set new order and tell TimeSeriesService to get data.
           selection.order = order || 0; // dashboard could be empty
           selection.active = true;
