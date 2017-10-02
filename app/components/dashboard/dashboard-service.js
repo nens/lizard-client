@@ -130,17 +130,17 @@ function (EventAggregateService,  State,  ChartCompositionService) {
       graphs = addPropertyData(graphs, geometry.properties, getSelected);
     });
 
-    // /* Add eventseries graphs from selections. */
-    // var eventSelections = _.filter(selections, function (selection) {
-    //   return selection.type === 'eventseries';
-    // });
-    // if (eventSelections.length) {
-    //   // I don't understand ordering, just adding these at the end.
-    //   graphs.push({
-    //     'type': 'event',
-    //     'content': eventSelections.map(this._getContentForEventSelection)
-    //   });
-    // }
+    /* Add eventseries graphs from selections. */
+    var eventSelections = _.filter(selections, function (selection) {
+      return selection.type === 'eventseries';
+    });
+    if (eventSelections.length) {
+      // I don't understand ordering, just adding these at the end.
+      graphs.push({
+        'type': 'event',
+        'content': eventSelections.map(this._getContentForEventSelection)
+      });
+    }
 
     // Add empty graphs for undefined items.
     _.forEach(graphs, function (graph, i) {

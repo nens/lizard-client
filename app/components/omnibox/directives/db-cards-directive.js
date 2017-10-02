@@ -50,7 +50,7 @@ angular.module('omnibox')
           console.log("*** clickableElem:", clickableElem);
           clickableElem.click();
         });
-      }
+      };
 
       scope.$watch('omnibox.data.assets', function () {
         // get rid of dupes with nested assets
@@ -82,11 +82,11 @@ angular.module('omnibox')
         } else {
           console.error("We only support (dashboard) omnibox cards for Point geometries, but encountered a geom with type: '" + geom.geometry.type + "'");
         }
-      }
+      };
 
       scope.countRasters = function (geom) {
         return Object.keys(geom.properties).length;
-      }
+      };
 
       /**
        * Turn ts on and give it the order of the dropped plot. Ts could already
@@ -97,8 +97,8 @@ angular.module('omnibox')
        * @param  {DOM}    target  Plot in drop.
        */
       DragService.on('drop', function (el, target) {
-        console.log("[dbg] DragService.on('drop'...");
-        console.log("*** el:", el);
+        // console.log("[dbg] DragService.on('drop'...");
+        // console.log("*** el:", el);
         // console.log("*** target:", target);
 
         if (target === null) {
@@ -110,6 +110,12 @@ angular.module('omnibox')
         var selection = _.find(State.selections, function (selection) {
           return selection.uuid === uuid;
         });
+
+        if (!selection) {
+          console.error("[E] The dragged selection is falsy! selection =", selection);
+          el.parentNode.removeChild(el);
+          return;
+        }
 
         var tsMetaData = SelectionService.timeseriesMetaData(
             TimeseriesService.timeseries, selection);
@@ -131,16 +137,18 @@ angular.module('omnibox')
           var firstTargetSelection = _.find(State.selections, { uuid: targetSelectionUuids[0] });
           // console.log("[DST] 1st target selection:", firstTargetSelection);
 
-          var firstTargetMeasureScale = firstTargetSelection.measureScale;
-          // console.log("[DST] 1st target measure scale:", firstTargetMeasureScale);
-
-          checkMeasureScale = srcMeasureScale !== firstTargetMeasureScale;
+          if (firstTargetSelection) {
+            var firstTargetMeasureScale = firstTargetSelection.measureScale;
+            // console.log("[DST] 1st target measure scale:", firstTargetMeasureScale);
+            checkMeasureScale = srcMeasureScale !== firstTargetMeasureScale;
+          }
         }
 
-        ///////////////////////////////////////////////////////////////////////
+        var currentPlotCount,
+            chartCompositionDragResult;
+
         if (selection.raster) {
-          // alert("Cannot drag rasterz!"); HIERRRRRRRRRRRRRR
-          var currentPlotCount = Object.keys(
+          currentPlotCount = Object.keys(
             ChartCompositionService.composedCharts).length;
           if (currentPlotCount === 0) {
             emulateClick(el);
@@ -153,8 +161,7 @@ angular.module('omnibox')
           return;
 
         } else if (checkMeasureScale) {
-
-          var currentPlotCount = Object.keys(
+          currentPlotCount = Object.keys(
             ChartCompositionService.composedCharts).length;
           if (currentPlotCount === 0) {
             emulateClick(el);
@@ -167,7 +174,7 @@ angular.module('omnibox')
           return;
 
         } else {
-          var chartCompositionDragResult = ChartCompositionService.dragSelection(
+          chartCompositionDragResult = ChartCompositionService.dragSelection(
             order, uuid);
         }
 
@@ -202,14 +209,12 @@ angular.module('omnibox')
             if (chartCompositionDragResult.mustEmulateClick) {
               emulateClick(el);
             } else {
+              // console.log("ABOUT TO SYNC-TIME.. (1)");
               TimeseriesService.syncTime();
             }
-
           }
           el.parentNode.removeChild(el);
           return;
-        } else {
-
         }
 
         // If ts was already active: first remove and rearrange plots in
@@ -281,7 +286,7 @@ angular.module('omnibox')
             gettextCatalog.getString('Whoops, bar charts cannot be combined. Try again!'));
           // emulateClick(el);
         } else {
-          // console.log("HIERRRRRRRRRRRRRRRRRRRR?????????????");
+          // console.log("ABOUT TO SYNC-TIME.. (2)");
           // Set new order and tell TimeSeriesService to get data.
           selection.order = order || 0; // dashboard could be empty
           selection.active = true;

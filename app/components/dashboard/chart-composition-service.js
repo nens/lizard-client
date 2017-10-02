@@ -93,7 +93,7 @@ angular.module('dashboard')
       // if dragging an existing selection unto the *last* plot:
 
       if (newChartIndex === getNextChartIndex() - 1) {
-        console.log("DRAG TS INTO LAST PLOT");
+        // console.log("DRAG TS INTO LAST PLOT");
 
         // service.removeSelection(selectionUuid);
 
@@ -101,8 +101,17 @@ angular.module('dashboard')
         //   service.addSelection(newChartIndex, selectionUuid);
         // });
 
+        var countA = getNextChartIndex();
         removeSelectionFromSpecificPlot(oldChartIndex, selectionUuid);
-        service.addSelection(newChartIndex - 1, selectionUuid);
+        var countB = getNextChartIndex();
+
+        if (countA === countB) {
+          // No plots were deleted
+          service.addSelection(newChartIndex, selectionUuid);
+        } else {
+          // One plot was deleted
+          service.addSelection(newChartIndex - 1, selectionUuid);
+        }
 
         result.changed = true;
         result.mustActivateSelection = true;
@@ -125,14 +134,14 @@ angular.module('dashboard')
       }
     }
 
-    service.debug()
+    // service.debug()
     return result;
   };
 
   var removeSelectionFromSpecificPlot = function (chartIndex, selectionUuid) {
-    console.log("[F] removeSelectionFromSpecificPlot");
-    console.log("*** chartIndex:", chartIndex);
-    console.log("*** selectionUuid:", selectionUuid);
+    // console.log("[F] removeSelectionFromSpecificPlot");
+    // console.log("*** chartIndex:", chartIndex);
+    // console.log("*** selectionUuid:", selectionUuid);
 
     var composedChart = service.composedCharts[intToString(chartIndex)];
     if (composedChart === undefined) {
@@ -153,7 +162,7 @@ angular.module('dashboard')
   }
 
   this.removeSelection = function (selectionUuid) {
-    console.log("[F] CCService.removeSelection");
+    // console.log("[F] CCService.removeSelection");
     var selectionIndex,
         someSelectionWasRemoved = false;
     _.forEach(service.composedCharts, function (v, k) {

@@ -1522,7 +1522,7 @@ angular.module('lizard-nxt')
    * @param  {string}       (optional) label, if undefined uupdates current.
    * @param  {boolean}      draw on y axis, else x-axis.
    */
-    var drawLabel = function (svg, dimensions, label, y) {
+  var drawLabel = function (svg, dimensions, label, y) {
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
         mv,
@@ -1722,6 +1722,7 @@ angular.module('lizard-nxt')
       addReferenceFrameToUnit(graph._activeUnit, graph._containers[0].reference_frame),
       true
     );
+
     var activeCharts = graph._containers.filter(function (chart) {
       return chart.unit === graph._activeUnit;
     });
