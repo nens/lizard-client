@@ -64,7 +64,7 @@ angular.module('dashboard')
   };
 
   this.dragSelection = function (newChartIndex, selectionUuid) {
-    // console.log("[F] CCService.dragSelection");
+    console.log("[F] CCService.dragSelection");
     var oldChartIndex = service.getChartIndexForSelection(selectionUuid);
     console.log("*** oldChartIndex...:", oldChartIndex, "(type=" + (typeof oldChartIndex) + ")");
     console.log("*** newChartIndex...:", newChartIndex, "(type=" + (typeof newChartIndex) + ")");

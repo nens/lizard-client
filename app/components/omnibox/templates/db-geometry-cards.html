@@ -13,7 +13,7 @@
       class="draggable-ts db-ts-collection raster-ts-collection">
       <div
         ng-if="metaData.type === 'raster'"
-        id="{{ selection.uuid }}"
+        id="{{ 'clickable-' + selection.uuid }}"
         ng-click="toggleSelection(selection)"
         class="draggable-ts db-card-single-ts raster-ts"
         ng-class="{
@@ -40,7 +40,7 @@
           ng-class="{active: mouseIsOver}"
           ng-mouseover="mouseIsOver = true"
           ng-mouseleave="mouseIsOver = false"
-          id="{{ selection.uuid }}"
+          id="{{ 'clickable-' + selection.uuid }}"
           ng-click="toggleSelection(selection)"
           class="card-content-list clickable">
         <div class="card-content-colorhandle"

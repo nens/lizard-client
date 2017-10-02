@@ -48,7 +48,7 @@ function (EventAggregateService,  State,  ChartCompositionService) {
                                selections)
   {
 
-    // console.log("[F] buildGraphs");
+    // console.log("[F] buildGraphs; graphs =", graphs);
     graphs = this._setAllContentToNotUpdated(graphs);
 
     /**
@@ -107,22 +107,22 @@ function (EventAggregateService,  State,  ChartCompositionService) {
       }
     });
 
-    // assets.forEach(function (asset) {
+    assets.forEach(function (asset) {
 
-    //   var getSelected = findSelection('asset', asset.entity_name + "$" + asset.id);
-    //   graphs = addPropertyData(graphs, asset.properties, getSelected);
+      var getSelected = findSelection('asset', asset.entity_name + "$" + asset.id);
+      graphs = addPropertyData(graphs, asset.properties, getSelected);
 
-    //   // Specific logic to add crosssections. We could abstract this to all
-    //   // assets with children that have timeseries.
-    //   if (asset.entity_name === 'leveecrosssection'
-    //     && asset.crosssection && asset.crosssection.active) {
-    //     graphs[asset.crosssection.order] = {
-    //       'type': 'crosssection',
-    //       'content': [asset]
-    //     };
-    //     graphs[asset.crosssection.order].content[0].updated = true;
-    //   }
-    // });
+      // Specific logic to add crosssections. We could abstract this to all
+      // assets with children that have timeseries.
+      if (asset.entity_name === 'leveecrosssection'
+        && asset.crosssection && asset.crosssection.active) {
+        graphs[asset.crosssection.order] = {
+          'type': 'crosssection',
+          'content': [asset]
+        };
+        graphs[asset.crosssection.order].content[0].updated = true;
+      }
+    });
 
     geometries.forEach(function (geometry) {
       var getSelected = findSelection(
@@ -207,6 +207,8 @@ function (EventAggregateService,  State,  ChartCompositionService) {
         if (contentElemForSelectionUuid) {
           contentElemForSelectionUuid.updated = true;
           graph.content.push(contentElemForSelectionUuid);
+        } else {
+          console.log("DID NOT GET CONTENT FOR SELECTION-UUID:", selectionUuid);
         }
       });
 
