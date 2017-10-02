@@ -33,6 +33,9 @@ angular.module('data-menu')
         'logfiles': gettextCatalog.getString('log files'),
         'flow-aggregate': gettextCatalog.getString('aggregated output'),
         'id-mapping': gettextCatalog.getString('id mapping'),
+        'rise-velocity-quad': gettextCatalog.getString('rise velocity'),
+        'ucr-max-quad': gettextCatalog.getString('max flow velocity'),
+        'flood-hazard-rating': gettextCatalog.getString('flood hazard rating'),
       };
 
       scope.state = State;
