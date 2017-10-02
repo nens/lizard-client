@@ -54,7 +54,7 @@
         <!-- asset/nested-asset TS card: START -->
         <div
           ng-if="metaData.type === 'timeseries'"
-          id="{{ selection.timeseries }}"
+          id="{{ 'clickable-' + selection.uuid }}"
           ng-click="toggleSelection(selection);">
 
           <div

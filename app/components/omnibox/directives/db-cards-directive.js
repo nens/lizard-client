@@ -9,6 +9,8 @@ angular.module('omnibox')
     'getNestedAssets',
     'TimeseriesService',
     'DBCardsService',
+    'ChartCompositionService',
+    '$timeout',
     function (
       State,
       SelectionService,
@@ -17,17 +19,38 @@ angular.module('omnibox')
       notie,
       getNestedAssets,
       TimeseriesService,
-      DBCardsService) {
+      DBCardsService,
+      ChartCompositionService,
+      $timeout) {
   return {
     link: function (scope, element) {
 
       DragService.create();
 
+      // var emulateClick = function (el) {
+      //   console.log("[F] emulateClick");
+      //   console.log("*** arg 'el':", el);
+      //   // other plottable item. Toggle on drag to put element in their own
+      //   // plot.
+      //   var sourceElem = $(element.find('#' + el.getAttribute('data-uuid')))[0];
+      //   console.log("*** sourceElem:", sourceElem);
+
+      //   debugger;
+
+      //   element.find('#' + el.getAttribute('data-uuid')).click();
+      // };
+
       var emulateClick = function (el) {
-        // other plottable item. Toggle on drag to put element in their own
-        // plot.
-        element.find('#' + el.getAttribute('data-uuid')).click();
-      };
+        $timeout(function () {
+          // console.log("[F] emulateClick");
+          // console.log("*** arg 'el':", el);
+          var dataUuid = el.getAttribute('data-uuid');
+          // console.log("*** dataUuid:", dataUuid);
+          var clickableElem = $('#clickable-' + dataUuid);
+          // console.log("*** clickableElem:", clickableElem);
+          clickableElem.click();
+        });
+      }
 
       scope.$watch('omnibox.data.assets', function () {
         // get rid of dupes with nested assets
@@ -74,12 +97,27 @@ angular.module('omnibox')
        * @param  {DOM}    target  Plot in drop.
        */
       DragService.on('drop', function (el, target) {
+        // console.log("[dbg] DragService.on('drop'...");
+        // console.log("*** el:", el);
+        // console.log("*** target:", target);
+
         if (target === null) {
           // Dropping outside of dropzone
           return;
         }
         var order = Number(target.getAttribute('data-order'));
         var uuid = el.getAttribute('data-uuid');
+
+        ///////////////////////////////////////////////////////////////////////
+        var chartCompositionDragResult = ChartCompositionService.dragSelection(
+          order, uuid);
+        // console.log("[post-drag] Changed?",
+        //   chartCompositionDragResult.changed);
+        // console.log("[post-drag] Must activate selection?",
+        //   chartCompositionDragResult.mustActivateSelection);
+        // ChartCompositionService.debug();
+        ///////////////////////////////////////////
+
         // El either represents a timeseries or another plottable item.
         //
         // NOTE: there is only one drop callback for all the possible assets. So
@@ -94,12 +132,23 @@ angular.module('omnibox')
 
         // Possible other graph in target.
         var otherGraphSelections = _.find(State.selections, function (selection) {
-          return selection.order === order && selection.active;
+          var selectionOrder = ChartCompositionService.getChartIndexForSelection(selection.uuid);
+          return selectionOrder === order && selection.active;
         });
 
         if (otherGraphSelections === undefined) {
+          console.log("[post-drag] otherGraphSelections === undefined !!!");
           // No other graph, just turn ts to active.
-          emulateClick(el);
+          if (chartCompositionDragResult.mustActivateSelection) {
+            console.log("Ola1!!!");
+
+            if (chartCompositionDragResult.mustEmulateClick) {
+              emulateClick(el);
+            } else {
+              TimeseriesService.syncTime();
+            }
+
+          }
           el.parentNode.removeChild(el);
           return;
         }
@@ -107,28 +156,45 @@ angular.module('omnibox')
         // If ts was already active: first remove and rearrange plots in
         // dashboard, then continue adding it to the dragged plot.
         if (selection.active) {
-          var otherTSInOrigninalPlot = _.find(
-            State.selections,
-            function (_selection) {
-              return _selection.active
-                && _selection.order === selection.order
-                && _selection.timeseries !== selection.timeseries;
-            }
-          );
-          if (otherTSInOrigninalPlot === undefined) {
-            // Plot where ts came from is now empty and removed.
-            order = order < selection.order ? order : order - 1;
+          console.log("Explicitly DEACTIVATING selection!'");
+
+
+          var selectionOrder = ChartCompositionService.getChartIndexForSelection(
+            selection.uuid);
+
+          var allSelectionsInCC = ChartCompositionService.composedCharts["" + selectionOrder];
+          // console.log("*** allSelectionsInCC:", allSelectionsInCC);
+
+          var otherSelectionsInCC = _.filter(allSelectionsInCC, function (uuid) {
+            return uuid !== selection.uuid;
+          });
+          // console.log("*** otherSelectionsInCC:", otherSelectionsInCC);
+
+          if (otherSelectionsInCC.length === 0) {
+            order = selectionOrder;
           }
 
           selection.active = false;
           DBCardsService.removeSelectionFromPlot(selection);
+
+        } else {
+          if (chartCompositionDragResult.mustActivateSelection) {
+            console.log("Explicitly activating selection!'");
+            selection.active = true;
+          }
         }
 
+
+        // console.log("Tot hier gaat het goed? (1)");
         var tsMetaData = SelectionService.timeseriesMetaData(
             TimeseriesService.timeseries, selection);
+        // console.log("Tot hier gaat het goed? (2)");
         var otherGraphTsMetaData = SelectionService.timeseriesMetaData(
             TimeseriesService.timeseries, otherGraphSelections);
-        if (tsMetaData.valueType !== otherGraphTsMetaData.valueType) {
+        // console.log("Tot hier gaat het goed? (3)");
+        var check1 = tsMetaData.valueType !== otherGraphTsMetaData.valueType;
+        // console.log("Tot hier gaat het goed? (4)");
+        if (check1) {
           notie.alert(2,
             gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!'));
           emulateClick(el);
@@ -137,6 +203,7 @@ angular.module('omnibox')
             gettextCatalog.getString('Whoops, bar charts cannot be combined. Try again!'));
           emulateClick(el);
         } else {
+          console.log("HIERRRRRRRRRRRRRRRRRRRR?????????????");
           // Set new order and tell TimeSeriesService to get data.
           selection.order = order || 0; // dashboard could be empty
           selection.active = true;

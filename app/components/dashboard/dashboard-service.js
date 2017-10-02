@@ -1,7 +1,9 @@
 'use strict';
 
 angular.module('dashboard')
-.service('DashboardService', ['EventAggregateService', 'State', function (EventAggregateService, State) {
+.service('DashboardService', [
+         'EventAggregateService','State','ChartCompositionService',
+function (EventAggregateService,  State,  ChartCompositionService) {
 
   this.GRAPH_PADDING = 13; // Padding around the graph svg. Not to be confused
                           // with the padding inside the svg which is used for
@@ -43,26 +45,32 @@ angular.module('dashboard')
    * @return {array} graph
    */
   this.buildGraphs = function (graphs, timeseries, assets, geometries,
-                               selections) {
+                               selections)
+  {
+
+    // console.log("[F] buildGraphs");
     graphs = this._setAllContentToNotUpdated(graphs);
 
-  /**
-   * Checks if a selectable data item is in selections and returns it.
-   *
-   * @param  {array} selectiontype  timeseries, geom, asset, ... etc.
-   * @param  {array} selectionId    Data source timeseries from timseriesService.
-   * @param  {array} rasterId       Data source DataService.assets.
-   * @return {function}             returns a function that returns a selection
-   *                                based on a raster uuid or undefined () if
-   *                                no raster is available for that selection
-   *                                type.
-   */
+    /**
+     * Checks if a selectable data item is in selections and returns it.
+     *
+     * @param  {array} selectiontype  timeseries, geom, asset, ... etc.
+     * @param  {array} selectionId    Data source timeseries from timseriesService.
+     * @param  {array} rasterId       Data source DataService.assets.
+     * @return {function}             returns a function that returns a selection
+     *                                based on a raster uuid or undefined () if
+     *                                no raster is available for that selection
+     *                                type.
+     */
     var findSelection = function (selectiontype, selectionId) {
+
       return function (rasterId) {
-        return _.find(selections, function(selection){
+        var theSelection = _.find(selections, function(selection){
           return selection[selectiontype] === selectionId &&
                  selection.raster === rasterId;
         });
+        // console.log("*** found theSelection:", theSelection);
+        return theSelection;
       };
     };
 
@@ -83,12 +91,13 @@ angular.module('dashboard')
             // Keep this graph
             partOfContent.updated = true;
           } else {
+            ts.selectionUuid = selection.uuid;
             graphs[selection.order].content.push(ts);
           }
         }
         else {
-          var content = [ts];
-          graphs[selection.order] = { 'content': content };
+          ts.selectionUuid = selection.uuid;
+          graphs[selection.order] = { content: [ts] };
         }
 
         graphs[selection.order].type = (
@@ -98,22 +107,22 @@ angular.module('dashboard')
       }
     });
 
-    assets.forEach(function (asset) {
+    // assets.forEach(function (asset) {
 
-      var getSelected = findSelection('asset', asset.entity_name + "$" + asset.id);
-      graphs = addPropertyData(graphs, asset.properties, getSelected);
+    //   var getSelected = findSelection('asset', asset.entity_name + "$" + asset.id);
+    //   graphs = addPropertyData(graphs, asset.properties, getSelected);
 
-      // Specific logic to add crosssections. We could abstract this to all
-      // assets with children that have timeseries.
-      if (asset.entity_name === 'leveecrosssection'
-        && asset.crosssection && asset.crosssection.active) {
-        graphs[asset.crosssection.order] = {
-          'type': 'crosssection',
-          'content': [asset]
-        };
-        graphs[asset.crosssection.order].content[0].updated = true;
-      }
-    });
+    //   // Specific logic to add crosssections. We could abstract this to all
+    //   // assets with children that have timeseries.
+    //   if (asset.entity_name === 'leveecrosssection'
+    //     && asset.crosssection && asset.crosssection.active) {
+    //     graphs[asset.crosssection.order] = {
+    //       'type': 'crosssection',
+    //       'content': [asset]
+    //     };
+    //     graphs[asset.crosssection.order].content[0].updated = true;
+    //   }
+    // });
 
     geometries.forEach(function (geometry) {
       var getSelected = findSelection(
@@ -121,26 +130,93 @@ angular.module('dashboard')
       graphs = addPropertyData(graphs, geometry.properties, getSelected);
     });
 
-    /* Add eventseries graphs from selections. */
-    var eventSelections = _.filter(selections, function (selection) {
-      return selection.type === 'eventseries';
-    });
-    if (eventSelections.length) {
-      // I don't understand ordering, just adding these at the end.
-      graphs.push({
-        'type': 'event',
-        'content': eventSelections.map(this._getContentForEventSelection)
-      });
-    }
+    // /* Add eventseries graphs from selections. */
+    // var eventSelections = _.filter(selections, function (selection) {
+    //   return selection.type === 'eventseries';
+    // });
+    // if (eventSelections.length) {
+    //   // I don't understand ordering, just adding these at the end.
+    //   graphs.push({
+    //     'type': 'event',
+    //     'content': eventSelections.map(this._getContentForEventSelection)
+    //   });
+    // }
 
     // Add empty graphs for undefined items.
     _.forEach(graphs, function (graph, i) {
       if (graph === undefined) {
-        graphs[i] = {'type': 'empty', content: [{updated: true}]};
+        graphs[i] = { type: 'empty', content: [{ updated: true, selectionUuid: null }]};
       }
     });
 
-    return this._filterActiveGraphs(graphs);
+    var filteredGraphs = this._filterActiveGraphs(graphs);
+
+    // console.log("*** filteredGraphs:", filteredGraphs);
+
+    var graph,
+        endlosung = [],
+        getTypeForSelectionUuid = function (selectionUuid) {
+          var theType;
+          filteredGraphs.forEach(function (g) {
+            if (_.find(g.content, { selectionUuid: selectionUuid })) {
+              theType = g.type;
+            }
+          });
+          return theType;
+        },
+        getDimensionsForSelectionUuid = function (selectionUuid) {
+          var theDimensions;
+          filteredGraphs.forEach(function (g) {
+            if (_.find(g.content, { selectionUuid: selectionUuid })) {
+              theDimensions = g.dimensions;
+            }
+          });
+          return theDimensions;
+        },
+        getContentElemForSelectionUuid = function (selectionUuid) {
+          var potentialContentElem,
+              theContentElem;
+          filteredGraphs.forEach(function (g) {
+            potentialContentElem = _.find(g.content, { selectionUuid: selectionUuid });
+            if (potentialContentElem) {
+              theContentElem = potentialContentElem;
+            }
+          });
+          return theContentElem;
+        };
+
+    _.forEach(ChartCompositionService.composedCharts, function (v, k) {
+
+      graph = {
+        type: null,
+        content: [],
+        dimensions: null
+      };
+
+      v.forEach(function (selectionUuid) {
+
+        graph.type =
+          graph.type || getTypeForSelectionUuid(selectionUuid);
+
+        graph.dimensions =
+           graph.dimensions || getDimensionsForSelectionUuid(selectionUuid);
+
+        var contentElemForSelectionUuid =
+          getContentElemForSelectionUuid(selectionUuid);
+
+        if (contentElemForSelectionUuid) {
+          contentElemForSelectionUuid.updated = true;
+          graph.content.push(contentElemForSelectionUuid);
+        }
+      });
+
+      if (graph.content.length) {
+        endlosung.push(graph);
+      }
+    });
+
+    // console.log("*** endlosung:", endlosung);
+    return endlosung;
   };
 
   this._getContentForEventSelection = function (selection) {
@@ -290,6 +366,7 @@ angular.module('dashboard')
         }
         var indexOflast = graphs[selection.order].content.length - 1;
         graphs[selection.order].content[indexOflast].updated = true;
+        graphs[selection.order].content[indexOflast].selectionUuid = selection.uuid;
     }});
     return graphs;
   };
