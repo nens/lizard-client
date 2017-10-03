@@ -27,19 +27,6 @@ angular.module('omnibox')
 
       DragService.create();
 
-      // var emulateClick = function (el) {
-      //   console.log("[F] emulateClick");
-      //   console.log("*** arg 'el':", el);
-      //   // other plottable item. Toggle on drag to put element in their own
-      //   // plot.
-      //   var sourceElem = $(element.find('#' + el.getAttribute('data-uuid')))[0];
-      //   console.log("*** sourceElem:", sourceElem);
-
-      //   debugger;
-
-      //   element.find('#' + el.getAttribute('data-uuid')).click();
-      // };
-
       var emulateClick = function (el) {
         $timeout(function () {
           console.log("[F] emulateClick");
@@ -97,10 +84,6 @@ angular.module('omnibox')
        * @param  {DOM}    target  Plot in drop.
        */
       DragService.on('drop', function (el, target) {
-        // console.log("[dbg] DragService.on('drop'...");
-        // console.log("*** el:", el);
-        // console.log("*** target:", target);
-
         if (target === null) {
           // Dropping outside of dropzone
           return;
@@ -112,34 +95,23 @@ angular.module('omnibox')
         });
 
         if (!selection) {
-          console.error("[E] The dragged selection is falsy! selection =", selection);
           el.parentNode.removeChild(el);
           return;
         }
 
         var tsMetaData = SelectionService.timeseriesMetaData(
             TimeseriesService.timeseries, selection);
-
         var otherGraphTsMetaData = SelectionService.timeseriesMetaData(
             TimeseriesService.timeseries, otherGraphSelections);
-
-        // console.log("[SRC] SELECTION:", selection);
         var srcMeasureScale = selection.measureScale;
-
-        // console.log("[DST] otherGraphTsMetaData:", otherGraphTsMetaData);
-
         var targetSelectionUuids = ChartCompositionService.composedCharts["" + order];
-        // console.log("[DST] targetSelectionUuids:", targetSelectionUuids);
-
-
         var checkMeasureScale;
+
         if (targetSelectionUuids) {
           var firstTargetSelection = _.find(State.selections, { uuid: targetSelectionUuids[0] });
-          // console.log("[DST] 1st target selection:", firstTargetSelection);
 
           if (firstTargetSelection) {
             var firstTargetMeasureScale = firstTargetSelection.measureScale;
-            // console.log("[DST] 1st target measure scale:", firstTargetMeasureScale);
             checkMeasureScale = srcMeasureScale !== firstTargetMeasureScale;
           }
         }
@@ -167,7 +139,7 @@ angular.module('omnibox')
             emulateClick(el);
           } else {
             notie.alert(2,
-              gettextCatalog.getString('Whoops, bar charts cannot be combined. Try again!')
+              gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!')
             );
           }
           el.parentNode.removeChild(el);
@@ -176,26 +148,8 @@ angular.module('omnibox')
         } else {
           chartCompositionDragResult = ChartCompositionService.dragSelection(
             order, uuid);
-
           TimeseriesService.syncTime();
-          // return;
         }
-
-        // console.log("[post-drag] Changed?",
-        //   chartCompositionDragResult.changed);
-        // console.log("[post-drag] Must activate selection?",
-        //   chartCompositionDragResult.mustActivateSelection);
-        // ChartCompositionService.debug();
-        ///////////////////////////////////////////
-
-        // El either represents a timeseries or another plottable item.
-        //
-        // NOTE: there is only one drop callback for all the possible assets. So
-        // instead of searching for the ts in scope.asset.timeseries, all the
-        // assets are searched.
-        // timeseries
-
-        // timeseries representend by el.
 
         // Possible other graph in target.
         var otherGraphSelections = _.find(State.selections, function (selection) {
@@ -204,15 +158,10 @@ angular.module('omnibox')
         });
 
         if (otherGraphSelections === undefined) {
-          // console.log("[post-drag] otherGraphSelections === undefined !!!");
-          // No other graph, just turn ts to active.
           if (chartCompositionDragResult.mustActivateSelection) {
-            // console.log("Ola1!!!");
-
             if (chartCompositionDragResult.mustEmulateClick) {
               emulateClick(el);
             } else {
-              // console.log("ABOUT TO SYNC-TIME.. (1)");
               TimeseriesService.syncTime();
             }
           }
@@ -223,18 +172,13 @@ angular.module('omnibox')
         // If ts was already active: first remove and rearrange plots in
         // dashboard, then continue adding it to the dragged plot.
         if (selection.active) {
-          // console.log("Explicitly DEACTIVATING selection!'");
 
           var selectionOrder = ChartCompositionService.getChartIndexForSelection(
             selection.uuid);
-
           var allSelectionsInCC = ChartCompositionService.composedCharts["" + selectionOrder];
-          // console.log("*** allSelectionsInCC:", allSelectionsInCC);
-
           var otherSelectionsInCC = _.filter(allSelectionsInCC, function (uuid) {
             return uuid !== selection.uuid;
           });
-          // console.log("*** otherSelectionsInCC:", otherSelectionsInCC);
 
           if (otherSelectionsInCC.length === 0) {
             order = selectionOrder;
@@ -245,52 +189,17 @@ angular.module('omnibox')
 
         } else {
           if (chartCompositionDragResult.mustActivateSelection) {
-            // console.log("Explicitly activating selection!'");
             selection.active = true;
           }
         }
 
-        // var tsMetaData = SelectionService.timeseriesMetaData(
-        //     TimeseriesService.timeseries, selection);
-
-        // var otherGraphTsMetaData = SelectionService.timeseriesMetaData(
-        //     TimeseriesService.timeseries, otherGraphSelections);
-
-        // console.log("[SRC] SELECTION:", selection);
-        // var srcMeasureScale = selection.measureScale;
-
-        // console.log("[SRC] srcMeasureScale:", srcMeasureScale);
-        // var srcType = selection.type;
-
-        // console.log("[DST] otherGraphTsMetaData:", otherGraphTsMetaData);
-
-        // var targetSelectionUuids = ChartCompositionService.composedCharts["" + order];
-        // console.log("[DST] targetSelectionUuids:", targetSelectionUuids);
-
-        // var firstTargetSelection = _.find(State.selections, { uuid: targetSelectionUuids[0] });
-        // console.log("[DST] 1st target selection:", firstTargetSelection);
-
-        // var firstTargetMeasureScale = firstTargetSelection.measureScale;
-        // console.log("[DST] 1st target measure scale:", firstTargetMeasureScale);
-
-        // var checkMeasureScale = srcMeasureScale !== firstTargetMeasureScale;
-
-        // var check1 = tsMetaData.valueType !== otherGraphTsMetaData.valueType;
-
         if (checkMeasureScale) {
-
           notie.alert(2,
             gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!'));
-          // if (!selection.active) {
-          //   emulateClick(el);
-          // }
         } else if (selection.raster) {
           notie.alert(2,
             gettextCatalog.getString('Whoops, bar charts cannot be combined. Try again!'));
-          // emulateClick(el);
         } else {
-          // console.log("ABOUT TO SYNC-TIME.. (2)");
-          // Set new order and tell TimeSeriesService to get data.
           selection.order = order || 0; // dashboard could be empty
           selection.active = true;
           TimeseriesService.syncTime();
@@ -298,9 +207,6 @@ angular.module('omnibox')
 
         // Remove drag element.
         el.parentNode.removeChild(el);
-
-        console.log("-- le fin --");
-
       });
 
       scope.$on('$destroy', function () {
