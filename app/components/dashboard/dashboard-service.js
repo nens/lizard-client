@@ -47,8 +47,6 @@ function (EventAggregateService,  State,  ChartCompositionService) {
   this.buildGraphs = function (graphs, timeseries, assets, geometries,
                                selections)
   {
-
-    // console.log("[F] buildGraphs; graphs =", graphs);
     graphs = this._setAllContentToNotUpdated(graphs);
 
     /**
@@ -69,7 +67,6 @@ function (EventAggregateService,  State,  ChartCompositionService) {
           return selection[selectiontype] === selectionId &&
                  selection.raster === rasterId;
         });
-        // console.log("*** found theSelection:", theSelection);
         return theSelection;
       };
     };
@@ -151,8 +148,6 @@ function (EventAggregateService,  State,  ChartCompositionService) {
 
     var filteredGraphs = this._filterActiveGraphs(graphs);
 
-    // console.log("*** filteredGraphs:", filteredGraphs);
-
     var graph,
         endlosung = [],
         getTypeForSelectionUuid = function (selectionUuid) {
@@ -215,7 +210,6 @@ function (EventAggregateService,  State,  ChartCompositionService) {
       }
     });
 
-    // console.log("*** endlosung:", endlosung);
     return endlosung;
   };
 

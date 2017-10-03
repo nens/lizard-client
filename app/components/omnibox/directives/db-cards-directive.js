@@ -29,12 +29,8 @@ angular.module('omnibox')
 
       var emulateClick = function (el) {
         $timeout(function () {
-          console.log("[F] emulateClick");
-          // console.log("*** arg 'el':", el);
           var dataUuid = el.getAttribute('data-uuid');
-          console.log("*** dataUuid:", dataUuid);
           var clickableElem = $('#clickable-' + dataUuid);
-          console.log("*** clickableElem:", clickableElem);
           clickableElem.click();
         });
       };

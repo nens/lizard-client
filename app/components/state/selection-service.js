@@ -42,7 +42,6 @@ angular.module('global-state')
      *                  to the geometry.
      */
     var getTimeseriesMetaData = _.curry(function (geometry, selection) {
-      // console.log("[F] getTimeseriesMetaData");
       // if no asset is given, iterate over all assets if the asset is a
       // geometry instead no timeseries are found so this will return undefined
       var assets = geometry !== undefined ? [geometry] : DataService.assets;
@@ -52,8 +51,6 @@ angular.module('global-state')
         tsMetaData = _.find(a.timeseries, function (ts) {
           return ts.uuid === selection.timeseries;
         });
-        // console.log("*** tsMetaData:", tsMetaData);
-
         if (tsMetaData === undefined) {
           tsMetaData = { match: false };
         } else {
