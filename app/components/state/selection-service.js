@@ -153,10 +153,10 @@ angular.module('global-state')
         selection.order = plots.count > 0
           ? plots.order + 1
           : 0;
-        ChartCompositionService.addSelection(undefined, selection.uuid)
+        ChartCompositionService.addSelection(undefined, selection.uuid);
       } else {
         DBCardsService.removeSelectionFromPlot(selection);
-        ChartCompositionService.removeSelection(selection.uuid)
+        ChartCompositionService.removeSelection(selection.uuid);
       }
       selection.active = !selection.active;
 

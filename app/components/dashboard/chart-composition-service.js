@@ -88,8 +88,15 @@ angular.module('dashboard')
           // No plots were deleted
           service.addSelection(newChartIndex, selectionUuid);
         } else if (countA === countB + 1) {
-          // One plot was deleted
-          service.addSelection(newChartIndex - 1, selectionUuid);
+          // One plot was deleted...
+          var correctedChartIndex;
+          if (oldChartIndex < newChartIndex) {
+            // ..and we need to decrement the new chart index:
+            correctedChartIndex = newChartIndex - 1;
+          } else {
+            correctedChartIndex = newChartIndex;
+          }
+          service.addSelection(correctedChartIndex, selectionUuid);
         }
 
         result.changed = true;
@@ -105,9 +112,10 @@ angular.module('dashboard')
           service.addSelection(newChartIndex, selectionUuid);
 
         } else if (countA === countB + 1) {
-          // One plot was deleted
+          // One plot was deleted...
           var correctedChartIndex;
           if (oldChartIndex < newChartIndex) {
+            // ..and we need to decrement the new chart index:
             correctedChartIndex = newChartIndex - 1;
           } else {
             correctedChartIndex = newChartIndex;
