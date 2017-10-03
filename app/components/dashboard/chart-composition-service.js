@@ -129,9 +129,10 @@ angular.module('dashboard')
 
     } else {
       if (newChartIndex !== undefined) {
-        var selections = service.composedCharts[intToString(newChartIndex)]
+        var selections = service.composedCharts[intToString(newChartIndex)];
         selections = selections || [];
         selections.push(selectionUuid);
+        service.composedCharts[intToString(newChartIndex)] = selections;
       }
     }
     return result;
