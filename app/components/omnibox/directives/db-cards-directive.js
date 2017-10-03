@@ -178,6 +178,7 @@ angular.module('omnibox')
             order, uuid);
 
           TimeseriesService.syncTime();
+          // return;
         }
 
         // console.log("[post-drag] Changed?",
