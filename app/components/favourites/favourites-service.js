@@ -217,7 +217,7 @@ angular.module('favourites')
         // Restore geometries
         if (typeof favourite.state.geometries !== 'undefined') {
           favourite.state.geometries.forEach(function (geometry) {
-            State.geometries.push(geometry);
+            State.geometries.addGeometry(geometry);
           });
         }
 
