@@ -9,6 +9,7 @@
   <!-- Store index on dom element for drag and drop functionality -->
   <div
     ng-if="item.type !== 'empty'"
+    ng-init="inspectDbGraphs(dashboard.graphs)"
     ng-repeat="item in dashboard.graphs track by $index"
     data-order="{{ $index }}"
     class="row dashboard-inner drag-target">

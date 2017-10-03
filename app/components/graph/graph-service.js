@@ -87,6 +87,7 @@ angular.module('lizard-nxt')
    *                        supported.
    */
   Graph.prototype.drawLine = function (content, temporal, transitioning) {
+    console.log("[F] Graph.prototype.drawLine; content =", content);
     var graph = this;
     graph._yPerUnit = {}; // one line graph has a y -scale and axis per unit in
                           // content.
@@ -139,6 +140,8 @@ angular.module('lizard-nxt')
       return present;
     });
 
+    console.log("[^^^] PRE -- graph._containers:", graph._containers);
+
     // Update or create charts with content.
     content.forEach(function (item, index) {
       // Update existing.
@@ -149,14 +152,13 @@ angular.module('lizard-nxt')
           chartContainer.path.remove(); // Redraw every path, to prevent mixups.
           chartContainer.path = null; // Redraw every path, to prevent mixups.
         }
-      }
-
-      // Create new ones
-      else {
+      } else {
         graph._containers[index] = new ChartContainer(item, temporal);
       }
 
     });
+
+    console.log("[^^^] POST -- graph._containers:", graph._containers);
 
     if (graph._containers.length === 0) {
       return; // for the love of pete don't let it continue
@@ -1700,7 +1702,8 @@ angular.module('lizard-nxt')
      * @param  {Graph}        Graph instance.
      * @param  {int}          integer 0 to keep current unit, 1 for next.
      */
-    var setActiveAxis = function (graph, up) {
+  var setActiveAxis = function (graph, up) {
+    console.log("[F] setActiveAxis");
     var units = Object.keys(graph._yPerUnit);
     var indexOfUnit = units.indexOf(graph._activeUnit) + up;
     if (indexOfUnit >= units.length || indexOfUnit === -1) {
@@ -1723,27 +1726,35 @@ angular.module('lizard-nxt')
       true
     );
 
+    console.log("}}} graph._containers:", graph._containers);
+
     var activeCharts = graph._containers.filter(function (chart) {
       return chart.unit === graph._activeUnit;
     });
+
+    console.log("}}} activeCharts:", activeCharts);
 
     if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
       var PADDING = 15;
       var SIZE = 6;
       var DELAY = 0.5; // times transTime
       var circles = d3.select(label.node().parentNode).selectAll('circle')
-        .data(activeCharts, function (d) {return d.id; });
+        .data(activeCharts, function (d) { return d.id; });
+
+      // console.log("}}} Drawing circles (1): " + (circles ? circles.length : 0) + "x");
 
       circles
         .enter()
         .append('circle')
         .attr('r', 0)
         .attr('cx', SIZE)
-        .attr('fill', function (d) {return d.color;})
+        .attr('fill', function (d) { console.log("D3 circle *append* - fill =" + d.color); return d.color;})
         .attr('cy', function (d, i) {
           var box = label.node().getBBox();
           return -(box.x + box.width) - PADDING - i * PADDING;
         });
+
+      // console.log("}}} Drawing circles (2): " + (circles ? circles.length : 0) + "x");
 
       circles
         .transition()
@@ -1751,7 +1762,7 @@ angular.module('lizard-nxt')
         .delay(graph.transTime)
         .duration(graph.transTime)
         .attr('r', SIZE)
-        .attr('fill', function (d) {return d.color;})
+        .attr('fill', function (d) { console.log("D3 circle *update* - fill =" + d.color); return d.color;})
         .attr('cy', function (d, i) {
           var box = label.node().getBBox();
           return -(box.x + box.width) - PADDING - i * PADDING;

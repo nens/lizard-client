@@ -10,6 +10,28 @@ function (EventAggregateService,  State,  ChartCompositionService) {
                           // axis and labels.
   var ROW_BOTTOM_MARGIN = 20; // Pixels between graph rows.
 
+  // this.mostRecentArgs = {
+  //   graphs: null,
+  //   timeseries: null,
+  //   assets: null,
+  //   geometries: null,
+  //   selections: null
+  // }
+
+  // var that = this;
+
+  // // DBG only!
+  // window.rebuildGraphs = function () {
+  //   console.log("[F] window.rebuildGraphs");
+  //   that.buildGraphs(
+  //     that.mostRecentArgs.graphs,
+  //     that.mostRecentArgs.timeseries,
+  //     that.mostRecentArgs.assets,
+  //     that.mostRecentArgs.geometries,
+  //     that.mostRecentArgs.selections
+  //   );
+  // }
+
   // TODO: implement graphs in state!
   // Graphs stored in dashboard directive scope for now. Graphs are constructed
   // by the order attribute of each selection in State.selections. It would be
@@ -48,7 +70,14 @@ function (EventAggregateService,  State,  ChartCompositionService) {
                                selections)
   {
 
-    // console.log("[F] buildGraphs; graphs =", graphs);
+    console.log("[F] BUILD_GRAPHS");
+
+    // this.mostRecentArgs.graphs     = _.cloneDeep(this.mostRecentArgs.graphs || graphs, true);
+    // this.mostRecentArgs.timeseries = _.cloneDeep(this.mostRecentArgs.timeseries || timeseries, true);
+    // this.mostRecentArgs.assets     = _.cloneDeep(this.mostRecentArgs.assets || assets, true);
+    // this.mostRecentArgs.geometries = _.cloneDeep(this.mostRecentArgs.geometries || geometries, true);
+    // this.mostRecentArgs.selections = _.cloneDeep(this.mostRecentArgs.selections || selections, true);
+
     graphs = this._setAllContentToNotUpdated(graphs);
 
     /**
@@ -154,6 +183,7 @@ function (EventAggregateService,  State,  ChartCompositionService) {
     // console.log("*** filteredGraphs:", filteredGraphs);
 
     var graph,
+        integrityCheck = true,
         endlosung = [],
         getTypeForSelectionUuid = function (selectionUuid) {
           var theType;
@@ -185,7 +215,18 @@ function (EventAggregateService,  State,  ChartCompositionService) {
           return theContentElem;
         };
 
+
+    var idx = 0;
+
     _.forEach(ChartCompositionService.composedCharts, function (v, k) {
+
+      var keyCheck = parseInt(k) === idx++;
+
+      if (!keyCheck) {
+        console.error("[-] KeyCheck FAIL: k=" + k + "; idx=" + idx);
+      } else {
+        console.log("[+] KeyCheck OK");
+      }
 
       graph = {
         type: null,
@@ -209,6 +250,7 @@ function (EventAggregateService,  State,  ChartCompositionService) {
           graph.content.push(contentElemForSelectionUuid);
         } else {
           console.log("DID NOT GET CONTENT FOR SELECTION-UUID:", selectionUuid);
+          integrityCheck = false;
         }
       });
 
@@ -217,7 +259,24 @@ function (EventAggregateService,  State,  ChartCompositionService) {
       }
     });
 
-    // console.log("*** endlosung:", endlosung);
+    // console.log("--------------------------");
+    // console.log("[!] Resetting selection.order:");
+    endlosung.forEach(function (graph, idx) {
+      // console.log("### graph:", graph);
+      // console.log("### idx:", idx);
+      graph.content.forEach(function (s) {
+        s.order = idx;
+      });
+      // console.log("--------------------------");
+    })
+
+    // if (integrityCheck) {
+    //   console.log("[+] ENDLOSUNG = OK:");
+    // } else {
+    //   console.log("[-] ENDLOSUNG = failed:");
+    // }
+
+    console.log("*** endlosung:", endlosung);
     return endlosung;
   };
 

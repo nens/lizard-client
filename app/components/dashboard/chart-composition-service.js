@@ -6,7 +6,7 @@ angular.module('dashboard')
 
   var getNextChartIndex = function () {
     return Object.keys(service.composedCharts).length;
-  }
+  };
 
   var intToString = function (n) {
     return "" + n;
@@ -18,7 +18,8 @@ angular.module('dashboard')
 
   // TODO: this can be done more efficient
   var reorderComposedCharts = function (startIdx) {
-    // console.log("[F] reorderComposedCharts; startIdx =", startIdx);
+    console.log("[F] reorderComposedCharts");
+    // console.log("*** composedCharts (pre):", JSON.stringify(service.composedCharts));
     var reorderedComposedCharts = {},
         i = 0;
     _.forEach(service.composedCharts, function (v, k) {
@@ -29,6 +30,7 @@ angular.module('dashboard')
       }
     });
     service.composedCharts = reorderedComposedCharts;
+    // console.log("*** composedCharts (post):", JSON.stringify(service.composedCharts));
   }
 
   this.getChartIndexForSelection = function (selectionUuid) {
@@ -75,6 +77,7 @@ angular.module('dashboard')
     }
 
     if (getNextChartIndex() === 0) {
+      console.log("AAAAAAAAAAAAAAA");
       // console.log("...returning early (because: no charts yet)!");
       // service.addSelection(undefined, selectionUuid);
       result.changed = true
@@ -82,17 +85,22 @@ angular.module('dashboard')
       result.mustEmulateClick = true;
 
     } else if (oldChartIndex === newChartIndex) {
+      console.log("BBBBBBBBBBBBBBBBBBBBBBB");
       // console.log("...returning early (because: chart was dragged into itself)!");
       result.changed = false;
       result.mustActivateSelection = false;
 
     } else if (oldChartIndex !== undefined) {
 
+      console.log("CCCCCCCCCCCCCCCCCCCCCCCCC");
+
+
       // if (newChartIndex === ....HIERRRRRRRRRRRRRRR)
 
       // if dragging an existing selection unto the *last* plot:
 
       if (newChartIndex === getNextChartIndex() - 1) {
+        console.log("C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1")
         // console.log("DRAG TS INTO LAST PLOT");
 
         // service.removeSelection(selectionUuid);
@@ -110,6 +118,7 @@ angular.module('dashboard')
           service.addSelection(newChartIndex, selectionUuid);
         } else {
           // One plot was deleted
+          console.log("[!] Entering the DANGER ZONE...");
           service.addSelection(newChartIndex - 1, selectionUuid);
         }
 
@@ -117,13 +126,47 @@ angular.module('dashboard')
         result.mustActivateSelection = true;
 
       } else {
+        console.log("C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2");
+        var countA = getNextChartIndex();
         service.removeSelection(selectionUuid);
-        service.addSelection(newChartIndex, selectionUuid);
+        var countB = getNextChartIndex();
+
+        console.log("[!!!] countA:", countA);
+        console.log("[!!!] countB:", countB);
+        console.log("[!!!] oldChartIndex:", oldChartIndex);
+        console.log("[!!!] newChartIndex:", newChartIndex);
+
+        if (countA === countB) {
+          console.log("[!!!] countA === countB");
+          service.addSelection(newChartIndex, selectionUuid);
+        } else if (countA === countB + 1) {
+          console.log("[!!!] countA === countB + 1... TODO");
+
+          var correctedChartIndex;
+          // if (oldChartIndex <= countB) {
+          if (oldChartIndex < newChartIndex) {
+            console.log("[!!!] case 1; chartindex--");
+            correctedChartIndex = newChartIndex - 1;
+            // service.addSelection(newChartIndex - 1, selectionUuid);
+          } else {
+            console.log("[!!!] case 2; chartindex remains the same");
+            correctedChartIndex = newChartIndex;
+            // service.addSelection(newChartIndex, selectionUuid);
+          }
+          console.log("[!!!] correctedChartIndex:", correctedChartIndex);
+          service.addSelection(correctedChartIndex, selectionUuid);
+
+        } else {
+          console.error("[!!!] This should never print");
+        }
+
         result.changed = true;
         result.mustActivateSelection = false;
       }
 
     } else {
+
+      console.log("DDDDDDDDDDDDDDDDDDDDDDDDDD");
 
       if (newChartIndex !== undefined) {
         var selections = service.composedCharts[intToString(newChartIndex)]
@@ -134,12 +177,12 @@ angular.module('dashboard')
       }
     }
 
-    // service.debug()
+    service.debug()
     return result;
   };
 
   var removeSelectionFromSpecificPlot = function (chartIndex, selectionUuid) {
-    // console.log("[F] removeSelectionFromSpecificPlot");
+    console.log("[F] removeSelectionFromSpecificPlot");
     // console.log("*** chartIndex:", chartIndex);
     // console.log("*** selectionUuid:", selectionUuid);
 
@@ -158,11 +201,11 @@ angular.module('dashboard')
         }
       }
     }
-    service.debug();
+    //service.debug();
   }
 
   this.removeSelection = function (selectionUuid) {
-    // console.log("[F] CCService.removeSelection");
+    console.log("[F] CCService.removeSelection");
     var selectionIndex,
         someSelectionWasRemoved = false;
     _.forEach(service.composedCharts, function (v, k) {
@@ -180,12 +223,12 @@ angular.module('dashboard')
       console.error("Selection not found! Could not remove selection with uuid =", selectionUuid);
     }
     ///////////////////////////////////////////////////////////////////////////
-    this.debug(); /////////////////////////////////////////////////////////////
+    //this.debug(); /////////////////////////////////////////////////////////////
   };
 
   this.debug = function () {
     console.log(">>> DEBUG <<<");
-    console.log("composedCharts =", service.composedCharts);
+    console.log("composedCharts =", JSON.stringify(service.composedCharts));
   }
 
 }]);

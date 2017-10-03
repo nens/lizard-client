@@ -178,6 +178,8 @@ angular.module('omnibox')
             order, uuid);
         }
 
+        console.log("Drag -> RETURNING EARLY!!!!!!");
+
         // console.log("[post-drag] Changed?",
         //   chartCompositionDragResult.changed);
         // console.log("[post-drag] Must activate selection?",

@@ -9,15 +9,21 @@ angular.module('dashboard')
   'TimeseriesService',
   'DashboardService',
   'DragService',
+  'ChartCompositionService',
   function (
     State,
     DataService,
     TimeseriesService,
     DashboardService,
-    DragService
+    DragService,
+    ChartCompositionService
   ) {
 
     var link = function (scope, element, attrs) {
+
+      scope.inspectDbGraphs = function (graphs) {
+        console.log("[FFF] inspectDbGraphs; graphs =", graphs);
+      }
 
       /**
        * Connect State to scope and store an array representation of timeseries,
@@ -41,6 +47,27 @@ angular.module('dashboard')
         TimeseriesService.minPoints =
           element.width() - DashboardService.GRAPH_PADDING;
 
+        // console.log("[***] About to build dashboard; let's prep:");
+        // console.log("[***] ChartCompositionService.composedCharts:", ChartCompositionService.composedCharts)
+
+        var orderWanted,
+            orderActual;
+
+        State.selections.forEach(function (sel) {
+          if (!sel.active) { return; }
+          console.log("[***] Inspecting (active) selection:", sel);
+          orderWanted = ChartCompositionService.getChartIndexForSelection(
+            sel.uuid);
+          orderActual = sel.order;
+
+          if (orderWanted !== orderActual) {
+            console.log("[***] KICK THE BABY -- discrepancy in orderWanted vs. orderActual:");
+            console.log("[***] orderWanted (via CCService).......:", orderWanted);
+            console.log("[***] orderActual (=selection.order)....:", orderActual);
+            sel.order = orderWanted;
+          }
+        });
+
         scope.dashboard.graphs = DashboardService.buildGraphs(
           scope.dashboard.graphs,
           TimeseriesService.timeseries,
@@ -50,6 +77,9 @@ angular.module('dashboard')
         );
 
         _.forEach(scope.dashboard.graphs, function (graph) {
+
+          // console.log("[***] Inspecting graph:", graph);
+
           graph.dimensions = DashboardService.getDimensions(
             element,
             scope.dashboard.graphs.length,
@@ -61,7 +91,7 @@ angular.module('dashboard')
       DataService.onSelectionsChange = buildDashboard;
       DataService.onAssetsChange = buildDashboard;
       DataService.onGeometriesChange = buildDashboard;
-      TimeseriesService.onTimeseriesChange = buildDashboard;
+      TimeseriesService.onTimeseriesChange = function () { console.log("TimeseriesService.onTimeseriesChange called.."); buildDashboard() };
 
       /**
        * Update dashboard when timeline has moved.
