@@ -207,8 +207,6 @@ function (EventAggregateService,  State,  ChartCompositionService) {
         if (contentElemForSelectionUuid) {
           contentElemForSelectionUuid.updated = true;
           graph.content.push(contentElemForSelectionUuid);
-        } else {
-          console.log("DID NOT GET CONTENT FOR SELECTION-UUID:", selectionUuid);
         }
       });
 

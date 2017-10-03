@@ -1700,7 +1700,8 @@ angular.module('lizard-nxt')
      * @param  {Graph}        Graph instance.
      * @param  {int}          integer 0 to keep current unit, 1 for next.
      */
-    var setActiveAxis = function (graph, up) {
+  var setActiveAxis = function (graph, up) {
+
     var units = Object.keys(graph._yPerUnit);
     var indexOfUnit = units.indexOf(graph._activeUnit) + up;
     if (indexOfUnit >= units.length || indexOfUnit === -1) {
@@ -1726,6 +1727,8 @@ angular.module('lizard-nxt')
     var activeCharts = graph._containers.filter(function (chart) {
       return chart.unit === graph._activeUnit;
     });
+
+    console.log("[!] A PLOT SHOULD BE VISIBLE CONTAINING " + activeCharts.length + " LINES/BAR-SETS");
 
     if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
       var PADDING = 15;

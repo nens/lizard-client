@@ -176,6 +176,8 @@ angular.module('omnibox')
         } else {
           chartCompositionDragResult = ChartCompositionService.dragSelection(
             order, uuid);
+
+          TimeseriesService.syncTime();
         }
 
         // console.log("[post-drag] Changed?",

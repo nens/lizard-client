@@ -45,7 +45,7 @@ angular.module('dashboard')
   }
 
   this.addSelection = function (chartIndex, selectionId) {
-    console.log("[F] CCService.addSelection");
+    //console.log("[F] CCService.addSelection");
     var chartKey,
         chartValue;
     if (chartIndex === undefined) {
@@ -93,7 +93,6 @@ angular.module('dashboard')
       // if dragging an existing selection unto the *last* plot:
 
       if (newChartIndex === getNextChartIndex() - 1) {
-        // console.log("DRAG TS INTO LAST PLOT");
 
         // service.removeSelection(selectionUuid);
 
@@ -105,25 +104,60 @@ angular.module('dashboard')
         removeSelectionFromSpecificPlot(oldChartIndex, selectionUuid);
         var countB = getNextChartIndex();
 
+        console.log("[!!!] countA:", countA);
+        console.log("[!!!] countB:", countB);
+        console.log("[!!!] oldChartIndex:", oldChartIndex);
+        console.log("[!!!] newChartIndex:", newChartIndex);
+
         if (countA === countB) {
           // No plots were deleted
           service.addSelection(newChartIndex, selectionUuid);
-        } else {
+        } else if (countA === countB + 1) {
           // One plot was deleted
+          console.log("[!] Entering the DANGER ZONE (1)...");
           service.addSelection(newChartIndex - 1, selectionUuid);
+        } else {
+          console.error("[E] This should nevar print: countA=" + countA + "; countB=" + countB);
         }
 
         result.changed = true;
         result.mustActivateSelection = true;
 
       } else {
+        var countA = getNextChartIndex();
         service.removeSelection(selectionUuid);
-        service.addSelection(newChartIndex, selectionUuid);
+        var countB = getNextChartIndex();
+
+        if (countA === countB) {
+          // No plots were deleted
+          service.addSelection(newChartIndex, selectionUuid);
+
+        } else if (countA === countB + 1) {
+          // One plot was deleted
+          console.log("[!!!] Entering the DANGER ZONE (2)...");
+
+          var correctedChartIndex;
+          if (oldChartIndex < newChartIndex) {
+            console.log("[!!!] case 1; chartindex--");
+            correctedChartIndex = newChartIndex - 1;
+          } else {
+            console.log("[!!!] case 2; chartindex remains the same");
+            correctedChartIndex = newChartIndex;
+          }
+
+          console.log("[!!!] correctedChartIndex:", correctedChartIndex);
+          service.addSelection(correctedChartIndex, selectionUuid);
+        } else {
+          console.error("[E] This should nevar print: countA=" + countA + "; countB=" + countB);
+        }
+
         result.changed = true;
         result.mustActivateSelection = false;
       }
 
     } else {
+
+      console.log("[!] Entering the DANGER ZONE (3)...");
 
       if (newChartIndex !== undefined) {
         var selections = service.composedCharts[intToString(newChartIndex)]
@@ -134,7 +168,7 @@ angular.module('dashboard')
       }
     }
 
-    // service.debug()
+    service.debug()
     return result;
   };
 
@@ -158,7 +192,7 @@ angular.module('dashboard')
         }
       }
     }
-    service.debug();
+    // service.debug();
   }
 
   this.removeSelection = function (selectionUuid) {
@@ -180,12 +214,12 @@ angular.module('dashboard')
       console.error("Selection not found! Could not remove selection with uuid =", selectionUuid);
     }
     ///////////////////////////////////////////////////////////////////////////
-    this.debug(); /////////////////////////////////////////////////////////////
+    //this.debug(); /////////////////////////////////////////////////////////////
   };
 
   this.debug = function () {
     console.log(">>> DEBUG <<<");
-    console.log("composedCharts =", service.composedCharts);
+    console.log("composedCharts =", JSON.stringify(service.composedCharts));
   }
 
 }]);
