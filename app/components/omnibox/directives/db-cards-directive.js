@@ -181,8 +181,6 @@ angular.module('omnibox')
           }
 
           selection.active = false;
-          DBCardsService.removeSelectionFromPlot(selection);
-
         } else {
           if (chartCompositionDragResult.mustActivateSelection) {
             selection.active = true;

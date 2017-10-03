@@ -155,7 +155,6 @@ angular.module('global-state')
           : 0;
         ChartCompositionService.addSelection(undefined, selection.uuid);
       } else {
-        DBCardsService.removeSelectionFromPlot(selection);
         ChartCompositionService.removeSelection(selection.uuid);
       }
       selection.active = !selection.active;
