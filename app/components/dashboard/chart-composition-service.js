@@ -2,6 +2,8 @@ angular.module('dashboard')
 .service('ChartCompositionService', ['$timeout', function ($timeout) {
 
   var service = this;
+  // TODO: This module can be a little simpler of composedCharts is an Array,
+  // so that administration of indices is automatic.
   service.composedCharts = {};
 
   var getNextChartIndex = function () {
