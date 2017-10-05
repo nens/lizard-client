@@ -22,11 +22,12 @@ angular.module('dashboard')
     var reorderedComposedCharts = {},
         i = 0;
     _.forEach(service.composedCharts, function (v, k) {
-      if (i++ < startIdx) {
+      if (i < startIdx) {
         reorderedComposedCharts[k] = v;
       } else {
         reorderedComposedCharts[intToString(parseInt(k) - 1)] = v;
       }
+      i++;
     });
     service.composedCharts = reorderedComposedCharts;
   }
