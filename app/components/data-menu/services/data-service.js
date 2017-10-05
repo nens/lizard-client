@@ -396,18 +396,26 @@ angular.module('data-menu')
         var dataLayer = this.getDataLayer(layer.uuid);
 
         if (dataLayer
-          && !(dataLayer.temporal && geo.geometry.type === 'LineString')
+          && !(dataLayer.temporal && geo.geometry && geo.geometry.type === 'LineString')
         ) {
 
-          // Request data for point in time when discrete.
           if (dataLayer.scale === 'nominal' || dataLayer.scale === 'ordinal') {
+            // Request data for point in time when discrete.
             options.at = State.temporal.at;
-          }
-
-          // Request data for time interval when continuous.
-          else {
+          } else {
+            // Request data for time interval when continuous.
             options.start = State.temporal.start;
             options.end = State.temporal.end;
+          }
+
+          // Experimental:
+          ////////////////////////////////////////
+          if (options.geometry === undefined) {
+            if (geo.geometry !== undefined) {
+              options.geometry = geo.geometry;
+            } else {
+              return;
+            }
           }
 
           promises.push(
@@ -449,10 +457,8 @@ angular.module('data-menu')
       this.getGeomData = function (geo) {
 
         var defer = $q.defer();
-
         var promises = [];
         var instance = this;
-
         var options = {};
 
         options.geom = geo.geometry;

@@ -1522,7 +1522,7 @@ angular.module('lizard-nxt')
    * @param  {string}       (optional) label, if undefined uupdates current.
    * @param  {boolean}      draw on y axis, else x-axis.
    */
-    var drawLabel = function (svg, dimensions, label, y) {
+  var drawLabel = function (svg, dimensions, label, y) {
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
         mv,
@@ -1700,7 +1700,8 @@ angular.module('lizard-nxt')
      * @param  {Graph}        Graph instance.
      * @param  {int}          integer 0 to keep current unit, 1 for next.
      */
-    var setActiveAxis = function (graph, up) {
+  var setActiveAxis = function (graph, up) {
+
     var units = Object.keys(graph._yPerUnit);
     var indexOfUnit = units.indexOf(graph._activeUnit) + up;
     if (indexOfUnit >= units.length || indexOfUnit === -1) {
@@ -1722,9 +1723,12 @@ angular.module('lizard-nxt')
       addReferenceFrameToUnit(graph._activeUnit, graph._containers[0].reference_frame),
       true
     );
+
     var activeCharts = graph._containers.filter(function (chart) {
       return chart.unit === graph._activeUnit;
     });
+
+    console.log("[!] A PLOT SHOULD BE VISIBLE CONTAINING " + activeCharts.length + " LINES/BAR-SETS");
 
     if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
       var PADDING = 15;

@@ -55,46 +55,10 @@ angular.module('omnibox')
       count: actives,
       order: _.max(orders)
     };
-
-  };
-
-  var removeSelectionFromPlot = function (selectedItem) {
-    var order = selectedItem.order;
-    var selectionsInChart = 0;
-    var uuid = selectedItem.uuid;
-
-    // Check if it was the last selection in the chart.
-    selectionsInChart += _.filter(
-      State.selections,
-      function (selection) {
-        return selection.active && selection.order === order &&
-          selection.uuid !== uuid;
-      }
-    ).length;
-
-    if (selectionsInChart === 0) {
-      State.selections.forEach(function (selection) {
-        if (selection.order > order) {
-          selection.order--;
-        }
-      });
-
-      // deal with this for Crossections sake.
-      // TODO: also make crossections into a proper selection
-      DataService.assets.forEach(function (asset) {
-        if (asset.entity_name === 'leveecrosssection' &&
-          asset.crosssection.active && asset.crosssection.order > order) {
-          asset.crosssection.order--;
-        }
-      });
-
-    }
-
   };
 
   return {
     getActiveCountAndOrder: getActiveCountAndOrder,
-    removeSelectionFromPlot: removeSelectionFromPlot,
 
     colorPickersSettings: colorPickersSettings,
     openColorPicker: openColorPicker,

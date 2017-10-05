@@ -9,8 +9,9 @@ angular.module('global-state')
     'TimeseriesService',
     'UtilService',
     'State',
+    'ChartCompositionService',
     function (
-      DataService, DBCardsService, TimeseriesService, UtilService, State) {
+      DataService, DBCardsService, TimeseriesService, UtilService, State, ChartCompositionService) {
 
     /**
      * Checks whether this datatype is supported for graphs.
@@ -45,6 +46,7 @@ angular.module('global-state')
       // geometry instead no timeseries are found so this will return undefined
       var assets = geometry !== undefined ? [geometry] : DataService.assets;
       var tsMetaData = { match: false };
+      var valueType;
       _.forEach(assets, function (a) {
         tsMetaData = _.find(a.timeseries, function (ts) {
           return ts.uuid === selection.timeseries;
@@ -101,17 +103,17 @@ angular.module('global-state')
       return props;
     });
 
-      var getEventseriesMetaData = function getEventseriesMetaData(geometry, selection) {
-        if (geometry.geometry.coordinates.toString() !== selection.geomType) {
-          return {match: false};
-        }
+    var getEventseriesMetaData = function getEventseriesMetaData(geometry, selection) {
+      if (geometry.geometry.coordinates.toString() !== selection.geomType) {
+        return {match: false};
+      }
 
-        return {
-          type: 'eventseries',
-          quantity: selection.quantity,
-          match: true
-        };
+      return {
+        type: 'eventseries',
+        quantity: selection.quantity,
+        match: true
       };
+    };
 
     /**
      * Returns a function that finds metadata for a selection.
@@ -151,8 +153,9 @@ angular.module('global-state')
         selection.order = plots.count > 0
           ? plots.order + 1
           : 0;
+        ChartCompositionService.addSelection(undefined, selection.uuid);
       } else {
-        DBCardsService.removeSelectionFromPlot(selection);
+        ChartCompositionService.removeSelection(selection.uuid);
       }
       selection.active = !selection.active;
 

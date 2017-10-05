@@ -152,7 +152,6 @@ angular.module('omnibox').directive('dbAssetCard', [
             asset.crosssection.active = true;
 
           } else {
-            DBCardsService.removeSelectionFromPlot(asset.crosssection);
             asset.crosssection.active = false;
           }
 
