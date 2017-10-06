@@ -9,13 +9,15 @@ angular.module('favourites')
     'UtilService',
     'notie',
     '$window',
+    '$timeout',
     function (
         $resource,
         State,
         gettextCatalog,
         UtilService,
         notie,
-        $window)
+        $window,
+        $timeout)
     {
 
       /* Create a resource for interacting with the favourites endpoint of the
@@ -192,69 +194,110 @@ angular.module('favourites')
         // dasboard-graph 'states' are merged. Which introduces buggy dashboard
         // favourites. We could fix this by resetting the graphs (and perhaps
         // also the data service).
-        State.resetState();
+        // State.resetState();
 
-        if (favourite.state.temporal && favourite.state.temporal.relative) {
-          favourite.state.temporal = adhereTemporalStateToInterval(
-            favourite.state.temporal
-          );
-        }
+        ///////////////////////////////////////////////////////////////
+        // $timeout(
+        //   function () {
+        //     // var mapCards = document.getElementById('asset-cards-for-map');
+        //     // var mapCards = document.getElementById('cards');
+        //     var cardContainer = document.getElementById('cards');
+        //     var children = cardContainer && cardContainer.childNodes;
 
-        // Restore assets
-        if (typeof favourite.state.assets !== 'undefined') {
-          favourite.state.assets.forEach(function (asset) {
-            State.assets.addAsset(asset);
+        //     if (children) {
+        //       console.log("[+] rm kids");
+
+        //       children.forEach(function (child) {
+        //         child.parentNode.removeChild(child);
+        //       })
+        //     } else {
+        //       console.log("[-] Cannot rm kids")
+        //     }
+        //     State.resetState();
+        //   }
+        // );
+
+        /////////////////////////////////////
+        // $timeout(
+        //   function () {
+        //     var singleCards = document.getElementsByClassName('single-card');
+        //     console.log("[*] Got single cards:", singleCards);
+        //     _.forEach(singleCards, function (c) {
+        //       c.parentNode.removeChild(c);
+        //     });
+        //     State.resetState();
+        //   }
+        // );
+
+        $timeout(function () {
+          var closeCardButtons = document.getElementsByClassName('close-card');
+          _.forEach(closeCardButtons, function (btn) {
+              $(btn).click()
           });
-        }
+          State.resetState();
 
-        // Restore layers
-        if (typeof favourite.state.layers !== 'undefined') {
-          favourite.state.layers.forEach(function (layer) {
-            State.layers.push(layer);
-          });
-        }
-
-        // Restore geometries
-        if (typeof favourite.state.geometries !== 'undefined') {
-          favourite.state.geometries.forEach(function (geometry) {
-            State.geometries.addGeometry(geometry);
-          });
-        }
-
-        // Restore selections
-        if (typeof favourite.state.selections !== 'undefined') {
-          State.selections = favourite.state.selections;
-        }
-
-        // Specific attributes
-        var ATTRIBUTES = [
-          'temporal.start',
-          'temporal.end',
-          'temporal.at',
-          'temporal.playing',
-          'context',
-          'box.type',
-          'language',
-          'baselayer',
-          'annotations.active',
-          'annotations.present',
-          'spatial.view',
-          'layers.active'
-        ];
-
-        ATTRIBUTES.forEach(function (key) {
-          var favState = _.get(favourite.state, key);
-          if (!_.isUndefined(favState)) {
-            _.set(State, key, favState);
+          if (favourite.state.temporal && favourite.state.temporal.relative) {
+            favourite.state.temporal = adhereTemporalStateToInterval(
+              favourite.state.temporal
+            );
           }
-        });
 
-        if (favourite.state.spatial && !_.isUndefined(favourite.state.spatial.bounds)) {
-          State.spatial.bounds = favourite.state.spatial.bounds;
-          State.spatial.bounds.isValid = function () { return true; };
-        }
+          // Restore assets
+          if (typeof favourite.state.assets !== 'undefined') {
+            favourite.state.assets.forEach(function (asset) {
+              State.assets.addAsset(asset);
+            });
+          }
+
+          // Restore layers
+          if (typeof favourite.state.layers !== 'undefined') {
+            favourite.state.layers.forEach(function (layer) {
+              State.layers.push(layer);
+            });
+          }
+
+          // Restore geometries
+          if (typeof favourite.state.geometries !== 'undefined') {
+            favourite.state.geometries.forEach(function (geometry) {
+              State.geometries.addGeometry(geometry);
+            });
+          }
+
+          // Restore selections
+          if (typeof favourite.state.selections !== 'undefined') {
+            State.selections = favourite.state.selections;
+          }
+
+          // Specific attributes
+          var ATTRIBUTES = [
+            'temporal.start',
+            'temporal.end',
+            'temporal.at',
+            'temporal.playing',
+            'context',
+            'box.type',
+            'language',
+            'baselayer',
+            'annotations.active',
+            'annotations.present',
+            'spatial.view',
+            'layers.active'
+          ];
+
+          ATTRIBUTES.forEach(function (key) {
+            var favState = _.get(favourite.state, key);
+            if (!_.isUndefined(favState)) {
+              _.set(State, key, favState);
+            }
+          });
+
+          if (favourite.state.spatial && !_.isUndefined(favourite.state.spatial.bounds)) {
+            State.spatial.bounds = favourite.state.spatial.bounds;
+            State.spatial.bounds.isValid = function () { return true; };
+          }
 
           UtilService.announceMovedTimeline(State);
+        });
       };
 
       return this;

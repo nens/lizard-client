@@ -2,8 +2,8 @@
  * Lizard-client global state object.
  */
 angular.module('global-state').service( 'State',
-['UtilService', 'gettextCatalog', '$http',
-function (UtilService, gettextCatalog, $http) {
+['UtilService', 'gettextCatalog', '$http', 'ChartCompositionService', '$timeout',
+function (UtilService, gettextCatalog, $http, ChartCompositionService, $timeout) {
 
   var CURRENT_STATE_VERSION = 1;
   /* State version change log -- if something about State changes, update
@@ -244,8 +244,11 @@ function (UtilService, gettextCatalog, $http) {
      });
 
     state.resetState = function resetState() {
+      console.log("[F] State.resetState");
       // Because of the defined properties, don't assign new objects
       // to variables, but mutate the existing ones.
+
+
       state.context = 'map';
       state.language = 'nl';
       state.baselayer = 'topography';
@@ -280,8 +283,6 @@ function (UtilService, gettextCatalog, $http) {
       state.temporal.relative = true;
       state.temporal.showingTemporalData = false;
     };
-
-    state.resetState();
 
     var getLayerSlugs = function (stateLayers) {
       var slugs = [];
