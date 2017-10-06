@@ -8,7 +8,7 @@ angular.module('dashboard')
 
   var getNextChartIndex = function () {
     return Object.keys(service.composedCharts).length;
-  }
+  };
 
   var intToString = function (n) {
     return "" + n;
@@ -30,11 +30,12 @@ angular.module('dashboard')
       i++;
     });
     service.composedCharts = reorderedComposedCharts;
-  }
+  };
 
+  // Reset this svc's main data structure
   this.reset = function () {
     service.composedCharts = {};
-  }
+  };
 
   this.getChartIndexForSelection = function (selectionUuid) {
     var chartIndex,
@@ -47,7 +48,7 @@ angular.module('dashboard')
       }
     });
     return chartIndex;
-  }
+  };
 
   this.addSelection = function (chartIndex, selectionId) {
     var chartKey,
@@ -72,10 +73,10 @@ angular.module('dashboard')
       changed: false,
       mustActivateSelection: false,
       mustEmulateClick: false
-    }
+    };
 
     if (getNextChartIndex() === 0) {
-      result.changed = true
+      result.changed = true;
       result.mustActivateSelection = true;
       result.mustEmulateClick = true;
 
@@ -85,18 +86,21 @@ angular.module('dashboard')
 
     } else if (oldChartIndex !== undefined) {
 
+      var countA,
+          countB,
+          correctedChartIndex;
+
       if (newChartIndex === getNextChartIndex() - 1) {
 
-        var countA = getNextChartIndex();
+        countA = getNextChartIndex();
         removeSelectionFromSpecificPlot(oldChartIndex, selectionUuid);
-        var countB = getNextChartIndex();
+        countB = getNextChartIndex();
 
         if (countA === countB) {
           // No plots were deleted
           service.addSelection(newChartIndex, selectionUuid);
         } else if (countA === countB + 1) {
           // One plot was deleted...
-          var correctedChartIndex;
           if (oldChartIndex < newChartIndex) {
             // ..and we need to decrement the new chart index:
             correctedChartIndex = newChartIndex - 1;
@@ -110,9 +114,9 @@ angular.module('dashboard')
         result.mustActivateSelection = true;
 
       } else {
-        var countA = getNextChartIndex();
+        countA = getNextChartIndex();
         service.removeSelection(selectionUuid);
-        var countB = getNextChartIndex();
+        countB = getNextChartIndex();
 
         if (countA === countB) {
           // No plots were deleted
@@ -120,7 +124,6 @@ angular.module('dashboard')
 
         } else if (countA === countB + 1) {
           // One plot was deleted...
-          var correctedChartIndex;
           if (oldChartIndex < newChartIndex) {
             // ..and we need to decrement the new chart index:
             correctedChartIndex = newChartIndex - 1;
@@ -162,7 +165,7 @@ angular.module('dashboard')
         }
       }
     }
-  }
+  };
 
   this.removeSelection = function (selectionUuid) {
     var selectionIndex,
@@ -187,6 +190,6 @@ angular.module('dashboard')
   this.debug = function () {
     console.log(">>> DEBUG <<<");
     console.log("composedCharts =", JSON.stringify(service.composedCharts));
-  }
+  };
 
 }]);
