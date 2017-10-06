@@ -53,8 +53,8 @@ angular.module('favourites')
  */
 angular.module('favourites')
   .directive('showFavourites',
-             ['FavouritesService', 'notie', 'gettextCatalog', 'State',
-              function (FavouritesService, notie, gettextCatalog, State) {
+             ['$window', 'FavouritesService', 'notie', 'gettextCatalog', 'State',
+              function ($window, FavouritesService, notie, gettextCatalog, State) {
 
   var link = function (scope, element, attrs) {
 
@@ -139,7 +139,13 @@ angular.module('favourites')
     };
 
     scope.selectFavourite = function (favourite) {
-      FavouritesService.applyFavourite(favourite);
+      // Actually *redirect* to the 'share favourite' link.
+      // That way we can always be sure everything currently happening
+      // in the application is reset to a pristine state.
+      var newLocation = $window.location.origin +
+                        '/favourites/' +
+                        favourite.uuid;
+      $window.location = newLocation;
     };
   };
 
