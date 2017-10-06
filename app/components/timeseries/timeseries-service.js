@@ -272,7 +272,6 @@ angular.module('timeseries').service("TimeseriesService", [
 
 
     this.zoomToInterval = function (value_type, intervalText) {
-
       var now = (new Date()).getTime();
       var start, end, intervalMs;
       switch(intervalText) {
@@ -302,17 +301,9 @@ angular.module('timeseries').service("TimeseriesService", [
           start = activeTs.start;
           end = activeTs.end;
 
-          // If start and end are at the same point in time (i.e. we have a
-          // timeseries with only a single measured value), we "pad" the space
-          // to have decent visualization.
-          if (start === end) {
-            var defaultAggWindow = 3600000; // 1 hour, in ms
-            var aggWindow = State.temporal.aggWindow || defaultAggWindow;
-            end = start + aggWindow * 10;
-          }
-
           break;
         case 'timesteps_range_all_active':
+
           var activeTimeseriesUuids = [];
           var activeTempRasterIds = [];
 
@@ -354,9 +345,6 @@ angular.module('timeseries').service("TimeseriesService", [
             });
           }
 
-          if (!(start && end)) {
-            return;
-          }
 
           break;
         default:
@@ -367,6 +355,19 @@ angular.module('timeseries').service("TimeseriesService", [
             "'one_year', 'three_months', 'two_weeks', 'timesteps_range' and " +
             "'timesteps_range_all_active'"
           );
+      }
+
+      if (!(start && end)) {
+        return;
+      }
+
+      // If start and end are at the same point in time (i.e. we have a
+      // timeseries with only a single measured value), we "pad" the space
+      // to have decent visualization.
+      if (start === end) {
+        var defaultAggWindow = 3600000 * 24 * 7; // 1 week, in ms
+        var aggWindow = defaultAggWindow;
+        end = start + aggWindow;
       }
 
       // We toggle State.temporal.timelineMoving to trigger the correct

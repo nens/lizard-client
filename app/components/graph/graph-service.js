@@ -87,6 +87,8 @@ angular.module('lizard-nxt')
    *                        supported.
    */
   Graph.prototype.drawLine = function (content, temporal, transitioning) {
+    if (!content) { return; }
+
     var graph = this;
     graph._yPerUnit = {}; // one line graph has a y -scale and axis per unit in
                           // content.
@@ -140,6 +142,11 @@ angular.module('lizard-nxt')
     });
 
     // Update or create charts with content.
+
+    if (!content) {
+      return;
+    }
+
     content.forEach(function (item, index) {
       // Update existing.
       if (graph._containers[index]) {
@@ -534,6 +541,9 @@ angular.module('lizard-nxt')
    *                        current active scale.
    */
   Graph.prototype.drawNow = function (now) {
+
+      if (!this._xy) { return; }
+
       this._drawNow(now, this._xy.x.scale);
       // move to the front
       var el = this._svg.select('.now-indicator').node();
@@ -609,7 +619,12 @@ angular.module('lizard-nxt')
       g.selectAll('circle').remove();
     }
 
+    if (!this._containers) { return; }
+
     var chart = this._containers[0];
+
+    if (!chart) { return; }
+
     var i = UtilService.bisect(chart.data, chart.keys.x, xLocation);
     var d = chart.data[i];
 
@@ -1728,7 +1743,7 @@ angular.module('lizard-nxt')
       return chart.unit === graph._activeUnit;
     });
 
-    console.log("[!] A PLOT SHOULD BE VISIBLE CONTAINING " + activeCharts.length + " LINES/BAR-SETS");
+    // console.log("[!] A PLOT SHOULD BE VISIBLE CONTAINING " + activeCharts.length + " LINES/BAR-SETS");
 
     if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
       var PADDING = 15;
