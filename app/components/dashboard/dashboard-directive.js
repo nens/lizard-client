@@ -76,7 +76,8 @@ angular.module('dashboard')
 
       /**
        * When ctx becomes 'dashboard', we double-click the clickable buttons
-       * in the omnibox for
+       * in the db omnibox for each active selection, thereby triggering
+       * the drawing of these charts
        */
       scope.$watch(State.toString('context'), function () {
         State.selections.forEach(function (selection) {
