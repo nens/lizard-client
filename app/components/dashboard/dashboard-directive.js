@@ -9,12 +9,14 @@ angular.module('dashboard')
   'TimeseriesService',
   'DashboardService',
   'DragService',
+  '$timeout',
   function (
     State,
     DataService,
     TimeseriesService,
     DashboardService,
-    DragService
+    DragService,
+    $timeout
   ) {
 
     var link = function (scope, element, attrs) {
@@ -70,6 +72,25 @@ angular.module('dashboard')
         if (!State.temporal.timelineMoving) {
           TimeseriesService.syncTime();
         }
+      });
+
+      /**
+       * When ctx becomes 'dashboard', we double-click the clickable buttons
+       * in the db omnibox for each active selection, thereby triggering
+       * the drawing of these charts
+       */
+      scope.$watch(State.toString('context'), function () {
+        State.selections.forEach(function (selection) {
+          if (selection.active) {
+            $timeout(function () {
+              var clickableElem = $("#clickable-" + selection.uuid);
+              if (clickableElem) {
+                clickableElem.click(); // Life is...
+                clickableElem.click(); // ...beautiful
+              }
+            });
+          }
+        });
       });
 
       var applyResize = function () {
