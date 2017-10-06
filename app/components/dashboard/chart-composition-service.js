@@ -32,6 +32,10 @@ angular.module('dashboard')
     service.composedCharts = reorderedComposedCharts;
   }
 
+  this.reset = function () {
+    service.composedCharts = {};
+  }
+
   this.getChartIndexForSelection = function (selectionUuid) {
     var chartIndex,
         selectionIndex;

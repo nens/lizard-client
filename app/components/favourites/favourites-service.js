@@ -9,13 +9,17 @@ angular.module('favourites')
     'UtilService',
     'notie',
     '$window',
+    '$timeout',
+    'ChartCompositionService',
     function (
         $resource,
         State,
         gettextCatalog,
         UtilService,
         notie,
-        $window)
+        $window,
+        $timeout,
+        ChartCompositionService)
     {
 
       /* Create a resource for interacting with the favourites endpoint of the
@@ -224,6 +228,14 @@ angular.module('favourites')
         // Restore selections
         if (typeof favourite.state.selections !== 'undefined') {
           State.selections = favourite.state.selections;
+
+          // rebuild composedCharts:
+          ChartCompositionService.reset();
+          State.selections.forEach(function (selection) {
+            if (selection.active) {
+              ChartCompositionService.addSelection(selection.order, selection.uuid);
+            }
+          });
         }
 
         // Specific attributes
@@ -254,7 +266,9 @@ angular.module('favourites')
           State.spatial.bounds.isValid = function () { return true; };
         }
 
+        $timeout(function () {
           UtilService.announceMovedTimeline(State);
+        });
       };
 
       return this;
