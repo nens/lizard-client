@@ -230,12 +230,7 @@ angular.module('favourites')
           State.selections = favourite.state.selections;
 
           // rebuild composedCharts:
-          ChartCompositionService.reset();
-          State.selections.forEach(function (selection) {
-            if (selection.active) {
-              ChartCompositionService.addSelection(selection.order, selection.uuid);
-            }
-          });
+          ChartCompositionService.setMultipleSelections(State.selections);
         }
 
         // Specific attributes

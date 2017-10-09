@@ -2,194 +2,139 @@ angular.module('dashboard')
 .service('ChartCompositionService', ['$timeout', function ($timeout) {
 
   var service = this;
-  // TODO: This module can be a little simpler of composedCharts is an Array,
-  // so that administration of indices is automatic.
-  service.composedCharts = {};
-
-  var getNextChartIndex = function () {
-    return Object.keys(service.composedCharts).length;
-  };
-
-  var intToString = function (n) {
-    return "" + n;
-  };
-
-  var isEmpty = function () {
-    return getNextChartIndex() === 0;
-  };
-
-  var reorderComposedCharts = function (startIdx) {
-    var reorderedComposedCharts = {},
-        i = 0;
-    _.forEach(service.composedCharts, function (v, k) {
-      if (i < startIdx) {
-        reorderedComposedCharts[k] = v;
-      } else {
-        reorderedComposedCharts[intToString(parseInt(k) - 1)] = v;
-      }
-      i++;
-    });
-    service.composedCharts = reorderedComposedCharts;
-  };
+  service.composedCharts = [];
 
   // Reset this svc's main data structure
   this.reset = function () {
-    service.composedCharts = {};
+    service.composedCharts = [];
   };
 
   this.getChartIndexForSelection = function (selectionUuid) {
-    var chartIndex,
+    var chartIndex = -1,
         selectionIndex;
 
-    _.forEach(service.composedCharts, function (v, k) {
-      selectionIndex = v.indexOf(selectionUuid);
+    service.composedCharts.forEach(function (value, index) {
+      selectionIndex = value.indexOf(selectionUuid);
       if (selectionIndex > -1) {
-        chartIndex = parseInt(k);
+        chartIndex = index;
       }
     });
     return chartIndex;
   };
 
-  this.addSelection = function (chartIndex, selectionId) {
-    var chartKey,
-        chartValue;
-
-    if (chartIndex === undefined) {
+  this.addSelection = function (chartIndex, selectionUuid) {
+    // Returns the index of the chart that selectionUuid was inserted into.
+    if (chartIndex === undefined || chartIndex >= service.composedCharts.length) {
       // This will result in a single new cartesian plane with a single chart:
-      chartKey = intToString(getNextChartIndex());
-      chartValue = [];
+      service.composedCharts.push([selectionUuid]);
+      return service.composedCharts.length - 1;
     } else {
       // This will add a new chart to an existing cartesian plane:
-      chartKey = intToString(chartIndex);
-      chartValue = service.composedCharts[chartKey] || [];
+      var chart;
+      chart = service.composedCharts[chartIndex];
+      if (chart.indexOf(selectionUuid) === -1) {
+        chart.push(selectionUuid);
+      }
+      return chartIndex;
     }
-    chartValue.push(selectionId);
-    service.composedCharts[chartKey] = chartValue;
   };
 
   this.dragSelection = function (newChartIndex, selectionUuid) {
     var oldChartIndex = service.getChartIndexForSelection(selectionUuid);
+
     var result = {
+      finalIndex: -1,
       changed: false,
       mustActivateSelection: false,
-      mustEmulateClick: false
+      mustEmulateClick: false // If this is true, then selection is added elsewhere!
     };
 
-    if (getNextChartIndex() === 0) {
+    if (service.composedCharts.length === 0) {
       result.changed = true;
       result.mustActivateSelection = true;
       result.mustEmulateClick = true;
-
     } else if (oldChartIndex === newChartIndex) {
-      result.changed = false;
-      result.mustActivateSelection = false;
-
-    } else if (oldChartIndex !== undefined) {
-
-      var countA,
-          countB,
-          correctedChartIndex;
-
-      if (newChartIndex === getNextChartIndex() - 1) {
-
-        countA = getNextChartIndex();
-        removeSelectionFromSpecificPlot(oldChartIndex, selectionUuid);
-        countB = getNextChartIndex();
-
-        if (countA === countB) {
-          // No plots were deleted
-          service.addSelection(newChartIndex, selectionUuid);
-        } else if (countA === countB + 1) {
-          // One plot was deleted...
-          if (oldChartIndex < newChartIndex) {
-            // ..and we need to decrement the new chart index:
-            correctedChartIndex = newChartIndex - 1;
-          } else {
-            correctedChartIndex = newChartIndex;
-          }
-          service.addSelection(correctedChartIndex, selectionUuid);
-        }
-
-        result.changed = true;
-        result.mustActivateSelection = true;
-
-      } else {
-        countA = getNextChartIndex();
-        service.removeSelection(selectionUuid);
-        countB = getNextChartIndex();
-
-        if (countA === countB) {
-          // No plots were deleted
-          service.addSelection(newChartIndex, selectionUuid);
-
-        } else if (countA === countB + 1) {
-          // One plot was deleted...
-          if (oldChartIndex < newChartIndex) {
-            // ..and we need to decrement the new chart index:
-            correctedChartIndex = newChartIndex - 1;
-          } else {
-            correctedChartIndex = newChartIndex;
-          }
-          service.addSelection(correctedChartIndex, selectionUuid);
-        }
-
-        result.changed = true;
-        result.mustActivateSelection = false;
-      }
-
+      // Do nothing.
+    } else if (oldChartIndex !== -1) {
+      this.addSelection(newChartIndex, selectionUuid);
+      removeSelectionFromSpecificPlot(oldChartIndex, selectionUuid);
+      result.changed = true;
+      result.mustActivateSelection = (newChartIndex === service.composedCharts.length - 1);
     } else {
       if (newChartIndex !== undefined) {
-        var selections = service.composedCharts[intToString(newChartIndex)];
-        selections = selections || [];
-        selections.push(selectionUuid);
-        service.composedCharts[intToString(newChartIndex)] = selections;
+        this.addSelection(newChartIndex, selectionUuid);
+        result.changed = true;
+        result.mustActivateSelection = true;
       }
     }
+
+    result.finalIndex = service.getChartIndexForSelection(selectionUuid);
     return result;
   };
 
   var removeSelectionFromSpecificPlot = function (chartIndex, selectionUuid) {
-    var composedChart = service.composedCharts[intToString(chartIndex)];
+    var composedChart = service.composedCharts[chartIndex];
 
     if (composedChart === undefined) {
       console.error("[E] plot #" + chartIndex + " is empty");
+      return;
+    }
+
+    var selectionIndex = composedChart.indexOf(selectionUuid);
+    if (selectionIndex === -1) {
+      console.error("[E] plot #" + chartIndex + " does not have selection with uuid " + selectionUuid);
     } else {
-      var selectionIndex = composedChart.indexOf(selectionUuid);
-      if (selectionIndex === -1) {
-        console.error("[E] plot #" + chartIndex + " does not have selection with uuid " + selectionUuid);
-      } else {
-        composedChart.splice(selectionIndex, 1);
-        if (composedChart.length === 0) {
-          delete service.composedCharts[chartIndex];
-          reorderComposedCharts(chartIndex);
-        }
+      composedChart.splice(selectionIndex, 1);
+      if (composedChart.length === 0) {
+        // Remove from array.
+        service.composedCharts.splice(chartIndex, 1);
       }
     }
   };
 
   this.removeSelection = function (selectionUuid) {
-    var selectionIndex,
-        someSelectionWasRemoved = false;
-
-    _.forEach(service.composedCharts, function (v, k) {
-      selectionIndex = v.indexOf(selectionUuid);
-      if (selectionIndex > -1) {
-        v.splice(selectionIndex, 1);
-        someSelectionWasRemoved = true;
-        if (v.length === 0) {
-          delete service.composedCharts[k];
-          reorderComposedCharts(parseInt(k));
-        }
-      }
-    });
-    if (!someSelectionWasRemoved) {
+    var selectionIndex = getChartIndexForSelection(selectionUuid);
+    if (selectionIndex !== -1) {
+      removeSelectionFromSpecificPlot(selectionIndex, selectionUuid);
+    } else {
       console.error("[E] Selection not found! Could not remove selection with uuid =", selectionUuid);
     }
   };
 
-  this.debug = function () {
-    console.log(">>> DEBUG <<<");
-    console.log("composedCharts =", JSON.stringify(service.composedCharts));
-  };
+  this.setMultipleSelections = function (selections) {
+    this.reset();
+    // Copy here so that we don't sort the global State.selections unnecessarily.
+    selections = selections.slice();
+    var selectionsWithIndex = selections.map(function (selection, index) {
+      return [selection, index];
+    });
 
+    // Sort them by 'order' so that we insert the ones with the lowest order first.
+    // If orders are equal, sort by index to have a stable sort.
+    selectionsWithIndex.sort(function (a, b) {
+      if (a[0].order === b[0].order) {
+        // Sort by index.
+        return a[1] - b[1];
+      } else {
+        // Sort by order.
+        return a[0].order - b[0].order;
+      }
+    });
+
+    var lastIndex = -1; // Chart index at which the selection will be inserted
+    var lastOrder = -1; // Last order seen, to check if this one has a different order
+    selectionsWithIndex.forEach(function (selectionWithIndex) {
+      var selection = selectionWithIndex[0];
+      if (selection.active) {
+        // Deal correctly with missing orders; e.g. if there are two selections, both
+        // with order 2, insert both at index 0.
+        if (selection.order != lastOrder) {
+          // Order changed, start the next chart.
+          lastOrder = selection.order;
+          lastIndex++;
+        }
+        service.addSelection(lastIndex, selection.uuid);
+      }
+    });
+  };
 }]);

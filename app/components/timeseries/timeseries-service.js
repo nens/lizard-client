@@ -99,8 +99,8 @@ angular.module('timeseries').service("TimeseriesService", [
                       "temporalLines";
           if (selection.timeseries) {
             groupedSelections[scale].timeseries.push(selection.timeseries);
-          } else if (selection.rasters) {
-            groupedSelections[scale].rasters.push(selection.timeseries);
+          } else if (selection.raster) {
+            groupedSelections[scale].rasters.push(selection.raster);
           }
         }
       });
