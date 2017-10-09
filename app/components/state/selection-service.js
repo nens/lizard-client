@@ -154,7 +154,7 @@ angular.module('global-state')
       } else {
         ChartCompositionService.removeSelection(selection.uuid);
         selection.active = false;
-        selection.order = null;
+        selection.order = -1;
       }
 
       if (DataService.onSelectionsChange) {

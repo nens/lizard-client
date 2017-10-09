@@ -52,7 +52,7 @@ angular.module('omnibox')
             var selection = _.find(State.selections, function(s) {
               return s.geom === scope.geom.geometry.coordinates.toString() && s.raster === uuid;
             });
-            if (selection && selection.active === undefined
+            if (selection && !selection.active
               && SelectionService.dbSupportedData(
                 scope.geom.geometry.type,
                 property
@@ -80,9 +80,6 @@ angular.module('omnibox')
             if (selection) {
               selection.active = true;
               scope.toggleSelection(selection);
-              // Activity of selection should not be defined when creating
-              // dashboard.
-              selection.active = undefined;
             }
           });
         });

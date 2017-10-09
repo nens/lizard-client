@@ -24,7 +24,8 @@ angular.module('dashboard')
 
   this.addSelection = function (chartIndex, selectionUuid) {
     // Returns the index of the chart that selectionUuid was inserted into.
-    if (chartIndex === undefined || chartIndex >= service.composedCharts.length) {
+    if (chartIndex === undefined || chartIndex === null || chartIndex < 0 ||
+        chartIndex >= service.composedCharts.length) {
       // This will result in a single new cartesian plane with a single chart:
       service.composedCharts.push([selectionUuid]);
       return service.composedCharts.length - 1;
