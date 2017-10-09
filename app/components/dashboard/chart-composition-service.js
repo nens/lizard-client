@@ -32,10 +32,17 @@ angular.module('dashboard')
       // This will add a new chart to an existing cartesian plane:
       var chart;
       chart = service.composedCharts[chartIndex];
-      if (chart.indexOf(selectionUuid) === -1) {
-        chart.push(selectionUuid);
+      if (!chart) {
+        console.log(
+          "ERROR IN ADDSELECTION", JSON.stringify(service.composedCharts),
+          chartIndex, selectionUuid);
+        return 0;
+      } else {
+        if (chart.indexOf(selectionUuid) === -1) {
+          chart.push(selectionUuid);
+        }
+        return chartIndex;
       }
-      return chartIndex;
     }
   };
 

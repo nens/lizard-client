@@ -118,6 +118,7 @@ angular.module('omnibox')
         if (selection.raster) {
           currentPlotCount = ChartCompositionService.composedCharts.length;
           if (currentPlotCount === 0) {
+            console.log("Emulating click in db-cards-directive 1");
             emulateClick(el);
           } else {
             notie.alert(2,
@@ -130,6 +131,7 @@ angular.module('omnibox')
         } else if (checkMeasureScale) {
           currentPlotCount = ChartCompositionService.composedCharts.length;
           if (currentPlotCount === 0) {
+            console.log("Emulating click in db-cards-directive 2");
             emulateClick(el);
           } else {
             notie.alert(2,
@@ -155,6 +157,7 @@ angular.module('omnibox')
         if (otherGraphSelections === undefined) {
           if (chartCompositionDragResult.mustActivateSelection) {
             if (chartCompositionDragResult.mustEmulateClick) {
+              console.log("Emulating click in db-cards-directive 3");
               emulateClick(el);
             } else {
               TimeseriesService.syncTime();
