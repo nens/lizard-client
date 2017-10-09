@@ -180,7 +180,7 @@ function (EventAggregateService,  State,  ChartCompositionService) {
           return theContentElem;
         };
 
-    _.forEach(ChartCompositionService.composedCharts, function (v, k) {
+    _.forEach(ChartCompositionService.composedCharts, function (value, index) {
 
       graph = {
         type: null,
@@ -188,7 +188,7 @@ function (EventAggregateService,  State,  ChartCompositionService) {
         dimensions: null
       };
 
-      v.forEach(function (selectionUuid) {
+      value.forEach(function (selectionUuid) {
 
         graph.type =
           graph.type || getTypeForSelectionUuid(selectionUuid);

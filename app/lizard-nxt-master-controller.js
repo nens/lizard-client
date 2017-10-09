@@ -15,6 +15,7 @@ angular.module('lizard-nxt')
    'State',
    'UrlService',
    'AssetService',
+   'ChartCompositionService',
 
   function (
     $scope,
@@ -26,7 +27,8 @@ angular.module('lizard-nxt')
     version,
     State,
     UrlService,
-    AssetService
+    AssetService,
+    ChartCompositionService
   ) {
 
   // Bind to the global scope
@@ -130,5 +132,9 @@ angular.module('lizard-nxt')
 
   window.debug = function () {
     console.log("Currently, the State object looks like:", State);
+  };
+
+  window.chartComposition = function () {
+    console.log("The chart composition is:", ChartCompositionService.composedCharts);
   };
 }]);

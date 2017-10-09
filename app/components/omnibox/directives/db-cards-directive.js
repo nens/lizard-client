@@ -100,7 +100,7 @@ angular.module('omnibox')
         var otherGraphTsMetaData = SelectionService.timeseriesMetaData(
             TimeseriesService.timeseries, otherGraphSelections);
         var srcMeasureScale = selection.measureScale;
-        var targetSelectionUuids = ChartCompositionService.composedCharts["" + order];
+        var targetSelectionUuids = ChartCompositionService.composedCharts[order];
         var checkMeasureScale;
 
         if (targetSelectionUuids) {
@@ -116,8 +116,7 @@ angular.module('omnibox')
             chartCompositionDragResult;
 
         if (selection.raster) {
-          currentPlotCount = Object.keys(
-            ChartCompositionService.composedCharts).length;
+          currentPlotCount = ChartCompositionService.composedCharts.length;
           if (currentPlotCount === 0) {
             emulateClick(el);
           } else {
@@ -129,8 +128,7 @@ angular.module('omnibox')
           return;
 
         } else if (checkMeasureScale) {
-          currentPlotCount = Object.keys(
-            ChartCompositionService.composedCharts).length;
+          currentPlotCount = ChartCompositionService.composedCharts.length;
           if (currentPlotCount === 0) {
             emulateClick(el);
           } else {
@@ -171,7 +169,7 @@ angular.module('omnibox')
 
           var selectionOrder = ChartCompositionService.getChartIndexForSelection(
             selection.uuid);
-          var allSelectionsInCC = ChartCompositionService.composedCharts["" + selectionOrder];
+          var allSelectionsInCC = ChartCompositionService.composedCharts[selectionOrder];
           var otherSelectionsInCC = _.filter(allSelectionsInCC, function (uuid) {
             return uuid !== selection.uuid;
           });
