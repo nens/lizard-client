@@ -93,7 +93,7 @@ angular.module('dashboard')
   };
 
   this.removeSelection = function (selectionUuid) {
-    var selectionIndex = getChartIndexForSelection(selectionUuid);
+    var selectionIndex = service.getChartIndexForSelection(selectionUuid);
     if (selectionIndex !== -1) {
       removeSelectionFromSpecificPlot(selectionIndex, selectionUuid);
     } else {
