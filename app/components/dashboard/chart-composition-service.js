@@ -100,4 +100,41 @@ angular.module('dashboard')
       console.error("[E] Selection not found! Could not remove selection with uuid =", selectionUuid);
     }
   };
+
+  this.setMultipleSelections = function (selections) {
+    this.reset();
+    // Copy here so that we don't sort the global State.selections unnecessarily.
+    selections = selections.slice();
+    var selectionsWithIndex = selections.map(function (selection, index) {
+      return [selection, index];
+    });
+
+    // Sort them by 'order' so that we insert the ones with the lowest order first.
+    // If orders are equal, sort by index to have a stable sort.
+    selectionsWithIndex.sort(function (a, b) {
+      if (a[0].order === b[0].order) {
+        // Sort by index.
+        return a[1] - b[1];
+      } else {
+        // Sort by order.
+        return a[0].order - b[0].order;
+      }
+    });
+
+    var lastIndex = -1; // Chart index at which the selection will be inserted
+    var lastOrder = -1; // Last order seen, to check if this one has a different order
+    selectionsWithIndex.forEach(function (selectionWithIndex) {
+      var selection = selectionWithIndex[0];
+      if (selection.active) {
+        // Deal correctly with missing orders; e.g. if there are two selections, both
+        // with order 2, insert both at index 0.
+        if (selection.order != lastOrder) {
+          // Order changed, start the next chart.
+          lastOrder = selection.order;
+          lastIndex++;
+        }
+        service.addSelection(lastIndex, selection.uuid);
+      }
+    });
+  };
 }]);
