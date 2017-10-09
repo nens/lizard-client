@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.16.8"></a>
+## [4.16.8](https://github.com/nens/lizard-client/compare/v4.16.7...v4.16.8) (2017-10-09)
+
+
+
 <a name="4.16.7"></a>
 ## [4.16.7](https://github.com/nens/lizard-client/compare/v4.16.6...v4.16.7) (2017-10-06)
 
