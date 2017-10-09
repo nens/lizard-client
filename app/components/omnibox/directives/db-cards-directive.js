@@ -142,6 +142,7 @@ angular.module('omnibox')
         } else {
           chartCompositionDragResult = ChartCompositionService.dragSelection(
             order, uuid);
+          selection.order = chartCompositionDragResult.finalIndex;
           TimeseriesService.syncTime();
         }
 

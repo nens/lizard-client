@@ -22,19 +22,20 @@ angular.module('dashboard')
     return chartIndex;
   };
 
-  this.addSelection = function (chartIndex, selectionId) {
+  this.addSelection = function (chartIndex, selectionUuid) {
+    // Returns the index of the chart that selectionUuid was inserted into.
     if (chartIndex === undefined || chartIndex >= service.composedCharts.length) {
       // This will result in a single new cartesian plane with a single chart:
-      console.log("Adding ", selectionId, "at new index ", chartIndex);
-      service.composedCharts.push([selectionId]);
+      service.composedCharts.push([selectionUuid]);
+      return service.composedCharts.length - 1;
     } else {
       // This will add a new chart to an existing cartesian plane:
-      console.log("Adding ", selectionId, "at existing index ", chartIndex);
       var chart;
       chart = service.composedCharts[chartIndex];
-      if (chart.indexOf(selectionId) === -1) {
-        chart.push(selectionId);
+      if (chart.indexOf(selectionUuid) === -1) {
+        chart.push(selectionUuid);
       }
+      return chartIndex;
     }
   };
 
@@ -42,6 +43,7 @@ angular.module('dashboard')
     var oldChartIndex = service.getChartIndexForSelection(selectionUuid);
 
     var result = {
+      finalIndex: -1,
       changed: false,
       mustActivateSelection: false,
       mustEmulateClick: false // If this is true, then selection is added elsewhere!
@@ -65,6 +67,8 @@ angular.module('dashboard')
         result.mustActivateSelection = true;
       }
     }
+
+    result.finalIndex = service.getChartIndexForSelection(selectionUuid);
     return result;
   };
 

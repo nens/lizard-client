@@ -149,15 +149,13 @@ angular.module('global-state')
      */
     var toggleSelection = function (selection) {
       if (!selection.active) {
-        var plots = DBCardsService.getActiveCountAndOrder();
-        selection.order = plots.count > 0
-          ? plots.order + 1
-          : 0;
-        ChartCompositionService.addSelection(undefined, selection.uuid);
+        selection.order = ChartCompositionService.addSelection(selection.order, selection.uuid);
+        selection.active = true;
       } else {
         ChartCompositionService.removeSelection(selection.uuid);
+        selection.active = false;
+        selection.order = null;
       }
-      selection.active = !selection.active;
 
       if (DataService.onSelectionsChange) {
         DataService.onSelectionsChange();
