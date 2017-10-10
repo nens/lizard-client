@@ -2,9 +2,7 @@
  * Binds logic and attributes to the global $scope. Keep this clean and put
  * stuff in specific component controllers if it is not global or state-service.
  */
-angular.module('lizard-nxt')
-  .controller('MasterCtrl',
-
+angular.module('lizard-nxt').controller('MasterCtrl',
   ['$scope',
    '$rootScope',
    '$timeout',
@@ -16,7 +14,6 @@ angular.module('lizard-nxt')
    'UrlService',
    'AssetService',
    'ChartCompositionService',
-
   function (
     $scope,
     $rootScope,
@@ -130,8 +127,11 @@ angular.module('lizard-nxt')
     window.loaded = true;
   });
 
-  window.debug = function () {
-    console.log("Currently, the State object looks like:", State);
+    window.debug = function () {
+      // The parse / stringify is to turn it into an object without properties,
+      // for the Firefox console.
+    console.log("Currently, the State object looks like:",
+                JSON.parse(JSON.stringify(State, null, 4)));
   };
 
   window.chartComposition = function () {

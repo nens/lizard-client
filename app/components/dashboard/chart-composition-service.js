@@ -1,5 +1,9 @@
 angular.module('dashboard')
 .service('ChartCompositionService', ['$timeout', function ($timeout) {
+  // We keep the following invariants (hold as post condition of each method IF
+  // they hold as pre condition)
+  // - A given UUID never occurs in multiple charts
+  // - There are no empty charts
 
   var service = this;
   service.composedCharts = [];
@@ -24,11 +28,17 @@ angular.module('dashboard')
 
   this.addSelection = function (chartIndex, selectionUuid) {
     // Returns the index of the chart that selectionUuid was inserted into.
+    var result;
     if (chartIndex === undefined || chartIndex === null || chartIndex < 0 ||
         chartIndex >= service.composedCharts.length) {
       // This will result in a single new cartesian plane with a single chart:
-      service.composedCharts.push([selectionUuid]);
-      return service.composedCharts.length - 1;
+      var alreadyPresent = service.getChartIndexForSelection(selectionUuid)
+      if (alreadyPresent === -1) {
+        service.composedCharts.push([selectionUuid]);
+        result = service.composedCharts.length - 1;
+      } else {
+        result = alreadyPresent;
+      }
     } else {
       // This will add a new chart to an existing cartesian plane:
       var chart;
@@ -37,14 +47,15 @@ angular.module('dashboard')
         console.log(
           "ERROR IN ADDSELECTION", JSON.stringify(service.composedCharts),
           chartIndex, selectionUuid);
-        return 0;
+        result = 0;
       } else {
         if (chart.indexOf(selectionUuid) === -1) {
           chart.push(selectionUuid);
         }
-        return chartIndex;
+        result = chartIndex;
       }
     }
+    return result;
   };
 
   this.dragSelection = function (newChartIndex, selectionUuid) {
@@ -104,8 +115,6 @@ angular.module('dashboard')
     var selectionIndex = service.getChartIndexForSelection(selectionUuid);
     if (selectionIndex !== -1) {
       removeSelectionFromSpecificPlot(selectionIndex, selectionUuid);
-    } else {
-      console.error("[E] Selection not found! Could not remove selection with uuid =", selectionUuid);
     }
   };
 
@@ -141,7 +150,7 @@ angular.module('dashboard')
           lastOrder = selection.order;
           lastIndex++;
         }
-        service.addSelection(lastIndex, selection.uuid);
+        selection.order = service.addSelection(lastIndex, selection.uuid);
       }
     });
   };

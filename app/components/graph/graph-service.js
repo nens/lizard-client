@@ -86,7 +86,7 @@ angular.module('lizard-nxt')
    *                        Currently only a linear scale on the x-axis is
    *                        supported.
    */
-  Graph.prototype.drawLine = function (content, temporal, transitioning) {
+    Graph.prototype.drawLine = function (content, temporal, transitioning) {
     if (!content) { return; }
 
     var graph = this;

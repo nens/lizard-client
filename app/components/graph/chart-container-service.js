@@ -26,7 +26,6 @@ angular.module('lizard-nxt')
    * For now this is a way to keep track of the scales, domains and xy's of the graph
    */
   function ChartContainer (chartContent) {
-
     this.id = chartContent.id;
     this.keys = chartContent.keys || defaultKeys;
     this.color = chartContent.color || DEFAULT_GREEN;

@@ -6,17 +6,9 @@ angular.module('dashboard')
 function (EventAggregateService,  State,  ChartCompositionService) {
 
   this.GRAPH_PADDING = 13; // Padding around the graph svg. Not to be confused
-                          // with the padding inside the svg which is used for
-                          // axis and labels.
+  // with the padding inside the svg which is used for
+  // axis and labels.
   var ROW_BOTTOM_MARGIN = 20; // Pixels between graph rows.
-
-  // TODO: implement graphs in state!
-  // Graphs stored in dashboard directive scope for now. Graphs are constructed
-  // by the order attribute of each selection in State.selections. It would be
-  // better to remove the order attribute altogether and implement a
-  // State.graphs object like: [[selectionID, selectionID, ...], [...], ...].
-  // Where graphs is a list of graphs. For an example see:
-  // https://github.com/nens/lizard-nxt/issues/1801#issuecomment-259432073
 
   /**
    * Combines timeseries, with other chartable active data to dashboard data.
@@ -72,16 +64,23 @@ function (EventAggregateService,  State,  ChartCompositionService) {
     };
 
     timeseries.forEach(function (ts) {
+      if (!ts.unit && ts.reference_frame === undefined && ts.parameter === undefined) {
+        // Timeseries not entirely ready yet, don't draw!
+        return;
+      }
+
       var selection = (findSelection('timeseries', ts.id)());
       if (selection && selection.active) {
+        var order = ChartCompositionService.getChartIndexForSelection(selection.uuid);
+
         ts.updated = true;
         ts.color = selection.color;
-        ts.order = selection.order;
-        if (graphs[selection.order]) {
+        ts.order = order;
+        if (graphs[order]) {
           // Check if timeseries is already in the plot, if so replace data.
 
           var partOfContent =_.find(graphs[selection.order].content,
-            function (c) { return c.id === ts.id; });
+                                    function (c) { return c.id === ts.id; });
           if (partOfContent) {
             partOfContent.data = ts.data;
             partOfContent.color = selection.color;
@@ -89,15 +88,15 @@ function (EventAggregateService,  State,  ChartCompositionService) {
             partOfContent.updated = true;
           } else {
             ts.selectionUuid = selection.uuid;
-            graphs[selection.order].content.push(ts);
+            graphs[order].content.push(ts);
           }
         }
         else {
           ts.selectionUuid = selection.uuid;
-          graphs[selection.order] = { content: [ts] };
+          graphs[order] = { content: [ts] };
         }
 
-        graphs[selection.order].type = (
+        graphs[order].type = (
           ts.valueType === 'image' ? 'image' :
           ts.measureScale === 'ratio'? 'temporalBar': 'temporalLine'
         );
@@ -180,8 +179,7 @@ function (EventAggregateService,  State,  ChartCompositionService) {
           return theContentElem;
         };
 
-    _.forEach(ChartCompositionService.composedCharts, function (value, index) {
-
+      ChartCompositionService.composedCharts.forEach(function (value, index) {
       graph = {
         type: null,
         content: [],
@@ -189,7 +187,6 @@ function (EventAggregateService,  State,  ChartCompositionService) {
       };
 
       value.forEach(function (selectionUuid) {
-
         graph.type =
           graph.type || getTypeForSelectionUuid(selectionUuid);
 

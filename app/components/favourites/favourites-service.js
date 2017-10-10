@@ -235,11 +235,11 @@ angular.module('favourites')
 
         // Specific attributes
         var ATTRIBUTES = [
+          'context',
           'temporal.start',
           'temporal.end',
           'temporal.at',
           'temporal.playing',
-          'context',
           'box.type',
           'language',
           'baselayer',
