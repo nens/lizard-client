@@ -148,14 +148,13 @@ angular.module('global-state')
      *                  to the geometry.
      */
       var toggleSelection = function (selection) {
-        console.log("IN TOGGLE SELECTION OF", selection);
         if (!selection.active) {
-          selection.order = ChartCompositionService.addSelection(selection.order, selection.uuid);
+          // Always add selection to a new chart.
+          selection.order = ChartCompositionService.addSelection(null, selection.uuid);
           selection.active = true;
         } else {
           ChartCompositionService.removeSelection(selection.uuid);
           selection.active = false;
-          console.log("We zetten hem hier letterlijk op -1");
           selection.order = -1;
         }
 
