@@ -131,7 +131,28 @@ angular.module('omnibox').directive('dbAssetCard', [
         }
 
         scope.toggleExtended = function () {
+          console.log("[F] toggleExtended");
           scope.extended = !scope.extended;
+        };
+
+        scope.mustShowTsInCard = function (selection) {
+          console.log("[F] mustShowTsInCard; selection =", selection);
+
+          if (selection.active || scope.extended) {
+            return true;
+          } else {
+            for (var i = 0; i < MANY; i++) {
+              var ts = scope.asset.timeseries[i];
+              console.log("*** ts =", ts);
+              if (!ts) {
+                return false;
+              } else {
+                if (ts.uuid === selection.timeseries) {
+                  return true;
+                }
+              }
+            }
+          }
         };
 
         /**

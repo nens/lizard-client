@@ -34,6 +34,8 @@
       </div>
     </div>
 
+    <!-- ng-show="metaData.type === 'timeseries' && (extended || selection.active || isOneOfFirstThree(selection.uuid))" -->
+
     <div
       ng-if="asset.timeseries.length > 0"
       id="drag-container"
@@ -42,7 +44,7 @@
         ng-repeat="selection in state.selections"
         ng-init="metaData = getSelectionMetaData(selection)"
         ng-if="getSelectionMetaData(selection).match"
-        ng-show="metaData.type === 'timeseries' && (extended || selection.active || isOneOfFirstThree(selection.uuid))"
+        ng-show="metaData.type === 'timeseries' && mustShowTsInCard(selection)"
         id="{{ selection.uuid }}"
         data-uuid="{{ selection.uuid }}"
         class="draggable-ts db-card-single-ts"
@@ -76,7 +78,17 @@
           </color-picker>
         </div>
         <!-- asset/nested-asset TS card: END -->
+      </div>
 
+      <div class="show-less-more-ts-btn">
+        <i ng-if="extended"
+           ng-click="toggleExtended()"
+           class="fa fa-arrow-circle-up"
+           title="{{ 'Show less' | translate }}"/>
+        <i ng-if="!extended"
+           ng-click="toggleExtended()"
+           class="fa fa-arrow-circle-down"
+           title="{{ 'Show more' | translate }}"/>
       </div>
     </div>
   </div>
