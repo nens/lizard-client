@@ -11,6 +11,13 @@ angular.module('ui-utils').directive('uiModal', ['ExportService',
       var mode = (scope.active) ? 'show' : 'hide';
       $(el).modal(mode);
 
+      scope.modus = "timeseries" // scope.modus ::= 'timeseries' | 'rasters'
+
+      scope.setModus = function (modus) {
+        console.log("[F] setModus to:", modus);
+        scope.modus = modus;
+      };
+
       /**
        * closeModal - close the modal with an angular click.
        *

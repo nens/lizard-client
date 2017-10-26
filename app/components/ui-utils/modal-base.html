@@ -12,10 +12,40 @@
           <span aria-hidden="true">&times;</span>
         </button>
         <h4 class="modal-title" translate>
-          Export timeseries
+          Export data
         </h4>
       </div>
-      <export-selector></export-selector>
+
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a ng-click="setModus('timeseries')"
+             href="#home" aria-controls="home" role="tab" data-toggle="tab">
+            Timeseries
+          </a>
+        </li>
+
+        <li role="presentation">
+          <a ng-click="setModus('temporal-rasters')"
+             href="#profile" aria-controls="profile" role="tab" data-toggle="tab">
+            Temporal rasters
+          </a>
+        </li>
+      </ul>
+
+      <!-- Tab panes -->
+      <div class="tab-content" style="margin: 0;">
+        <div role="tabpanel" class="tab-pane active" id="home">
+          <export-selector></export-selector>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="profile">
+          <export-temporal-rasters>
+            foojoj bar baz
+          </export-temporal-rasters>
+        </div>
+      </div>
+
+      <!-- <export-selector></export-selector> -->
+
     </div>
   </div>
 </div>
