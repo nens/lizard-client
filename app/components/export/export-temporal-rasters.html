@@ -1,5 +1,33 @@
 <div>
   <div class="modal-body">
-  toet-toet
+
+    <p aria-label="Help Text" class="help-text" translate>
+      You can select multiple raster intersections to export. Once selected, press the
+      <i>"Start Export"</i> button and the exporter will fetch the raster data
+      behind the scenes.
+    </p>
+
+    <p translate>
+      You will be notified with a message when the download is ready.
+    </p>
+
+    <p translate>
+      Pick the date range:
+    </p>
+
+    <div class="input-daterange input-group" id="datepicker-export">
+      <input type="text" class="input-sm form-control" name="start" id="datepicker-export-start" />
+      <span class="input-group-addon" translate>to</span>
+      <input type="text" class="input-sm form-control" name="end" id="datepicker-export-end" />
+    </div>
+
+    <p translate>
+      <!-- Pick the raster you would like to export: -->
+      <input type="button" ng-click="sayHi()" value="click me" />
+      <div ng-repeat="x in activeTemporalRasters">
+        {{x.uuid}}
+      </div>
+    </p>
+
   </div>
 </div>
