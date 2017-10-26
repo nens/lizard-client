@@ -22,12 +22,46 @@
     </div>
 
     <p translate>
-      <!-- Pick the raster you would like to export: -->
-      <input type="button" ng-click="sayHi()" value="click me" />
-      <div ng-repeat="x in activeTemporalRasters">
-        {{x.uuid}}
-      </div>
+      Pick the raster you would like to export:
     </p>
+
+    <select ng-model="selectedRaster">
+      <option
+        ng-repeat="raster in activeTemporalRasters"
+        value="{{ raster.uuid }}">
+        {{ raster.slug }}
+      </option>
+    </select>
+
+    <br />
+    <br />
+    <p translate>
+      Pick the selected point/asset:
+    </p>
+
+    <select ng-model="selectedGeomIdx">
+      <option
+        ng-repeat="formattedGeom in formattedGeoms track by $index"
+        value="{{ $index }}">
+        {{ formattedGeom.name }}
+      </option>
+    </select>
+
+    <br />
+    <br />
+    <p translate>
+      Debug this bitch
+    </p>
+    <input type="button" ng-click="dbg()" value="dbg" />
+
+    <div class="modal-footer footer-left">
+      <button
+        class="btn btn-primary start-export-button"
+        ng-click="startRasterExport()"
+        translate>
+        Start Raster Export
+      </button>
+    </div>
 
   </div>
 </div>

@@ -1,6 +1,6 @@
 angular.module('export')
-.directive('exportTemporalRasters', ['State', 'DataService',
-function (State, DataService) {
+.directive('exportTemporalRasters', ['State', 'DataService', 'ExportTemporalRastersService',
+function (State, DataService, ExportTemporalRastersService) {
 
   function getSelectedPointGeoms () {
     var pointGeoms = _.filter(State.geometries, function (geom) {
@@ -12,14 +12,16 @@ function (State, DataService) {
   function getSelectedAssetGeoms () {
     var selectedAssetsKeys = State.assets,
         key,
-        assetGeoms = [];
+        assetGeoms = [],
+        assetNames = [];
     DataService.assets.map(function (asset) {
       key = asset.entity_name + "$" + asset.id;
       if (selectedAssetsKeys.indexOf(key) > -1) {
         assetGeoms.push(asset.geometry);
+        assetNames.push(key);
       }
     });
-    return assetGeoms;
+    return [assetGeoms, assetNames];
   };
 
   function getActiveTemporalRasters () {
@@ -52,12 +54,6 @@ function (State, DataService) {
   var link = function (scope) {
     console.log("[F] link");
 
-    scope.sayHi = function () {
-      console.log("Hi there!");
-    }
-
-    scope.ls = ["foo", "bar", "baz"];
-
     // initialize the datepicker
     var dateEl = $('#datepicker-export.input-daterange');
     dateEl.datepicker({
@@ -78,9 +74,52 @@ function (State, DataService) {
       'setDate', timeState.end);
 
     var pointGeoms = getSelectedPointGeoms();
-    var assetGeoms = getSelectedAssetGeoms();
+    var formattedPointGeoms = pointGeoms.map(function (geom) {
+      return {
+        name: 'Point: (' + geom.coordinates[1] + ", " + geom.coordinates[0] + ")",
+        geom: geom
+      }
+    });
 
-    scope.activeTemporalRasters = getActiveTemporalRasters();
+    var assetInfo = getSelectedAssetGeoms();
+    var assetGeoms = assetInfo[0];
+    var assetNames = assetInfo[1];
+
+    var formattedAssetGeoms = assetGeoms.map(function (geom, idx) {
+      return {
+        name: 'Asset: ' + assetNames[idx],
+        geom: geom
+      }
+    });
+
+    scope.formattedGeoms = formattedPointGeoms.concat(formattedAssetGeoms);
+    scope.activeTemporalRasters = getActiveTemporalRasters() || [];
+    scope.hasActiveTemporalRasters = scope.activeTemporalRasters.length > 0;
+
+    if (!scope.hasActiveTemporalRasters) {
+      scope.selectedRaster = null;
+    } else {
+      scope.selectedRaster = scope.activeTemporalRasters[0];
+    }
+
+    scope.dbg = function () {
+      console.log("[F] dbg")
+      console.log("*** scope.selectedRaster....:", scope.selectedRaster);
+      console.log("*****> selectedGeom (idx)...:", scope.selectedGeomIdx);
+      console.log("*****> selectedGeom (obj)...:", scope.formattedGeoms[scope.selectedGeomIdx]);
+    };
+
+    scope.startRasterExport = function () {
+
+      var theSelectedGeom = scope.formattedGeoms[scope.selectedGeomIdx];
+
+      ExportTemporalRastersService.startExport(
+        State.temporal.start,
+        State.temporal.end,
+        scope.selectedRaster,
+        theSelectedGeom.geom
+      );
+    }
   };
 
   return {
