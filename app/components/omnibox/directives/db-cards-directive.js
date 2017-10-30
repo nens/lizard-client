@@ -28,11 +28,8 @@ angular.module('omnibox')
       DragService.create();
 
       var emulateClick = function (clickableUuid) {
-        // $timeout(function () {
         var clickableElem = $('#clickable-' + clickableUuid);
-        console.log('clickableElem:', clickableElem);
         clickableElem.click();
-        // });
       };
 
       scope.$watch('omnibox.data.assets', function () {
@@ -80,9 +77,6 @@ angular.module('omnibox')
        * @param  {DOM}    target  Plot in drop.
        */
       DragService.on('drop', function (el, target) {
-        console.log("[H] DragService.on DROP");
-        console.log("*** el.......:", el);
-        console.log("*** target...:", target);
         if (target === null) {
           // Dropping outside of dropzone
           return;
@@ -94,7 +88,6 @@ angular.module('omnibox')
         });
 
         if (!selection) {
-          console.log("*** return early (because selection is falsy)");
           el.parentNode.removeChild(el);
           return;
         }
@@ -120,9 +113,7 @@ angular.module('omnibox')
             chartCompositionDragResult;
 
         if (selection.raster) {
-          console.log("*** AAAAAAA mode 1/3: selection.raster");
           if (currentPlotCount === 0) {
-            console.log("Emulating click in db-cards-directive 1");
             emulateClick(uuid);
           } else {
             notie.alert(2,
@@ -133,9 +124,7 @@ angular.module('omnibox')
           return;
 
         } else if (checkMeasureScale) {
-          console.log("*** BBBBBBBB mode 2/3: checkMeasureScale");
           if (currentPlotCount === 0) {
-            console.log("Emulating click in db-cards-directive 2");
             emulateClick(uuid);
           } else {
             notie.alert(2,
@@ -146,10 +135,7 @@ angular.module('omnibox')
           return;
 
         } else {
-          console.log("*** CCCCCC mode 3/3: else (=> may need to call emulateClick??)");
           if (currentPlotCount === 0) {
-            console.log("Emulating click in db-cards-directive 3");
-            console.log(el);
             el.parentNode.removeChild(el);
             emulateClick(uuid);
             return;
@@ -170,7 +156,6 @@ angular.module('omnibox')
         if (otherGraphSelections === undefined) {
           if (chartCompositionDragResult.mustActivateSelection) {
             if (chartCompositionDragResult.mustEmulateClick) {
-              console.log("Emulating click in db-cards-directive 4");
               emulateClick(uuid);
             } else {
               TimeseriesService.syncTime();

@@ -2,7 +2,6 @@
 /**
  * Timeseries directive.
  */
-// TODO: THIS IS ONE IN FOUR FILES THAT NEEDS SCRUTINY
 
 angular.module('timeseries')
 .directive('timeseries', [
@@ -24,7 +23,6 @@ angular.module('timeseries')
   ) {
   return {
     link: function (scope) {
-      console.log();
       scope.zoomToInterval = TimeseriesService.zoomToInterval;
       scope.state = State; // TODO: only done this to watch state.layers. There is a better place for this.
 
@@ -41,8 +39,6 @@ angular.module('timeseries')
       });
 
       scope.$watch(selectionType, function (a, b) {
-        console.log("[W] selectionType:");
-
         SelectionService.initializeAsset(scope.asset);
         SelectionService.initializeRaster(selectionObject, selectionType);
         if (State.context === 'map') {
@@ -51,16 +47,14 @@ angular.module('timeseries')
       });
 
       scope.$on('$destroy', function () {
-        console.log("[$destroy] State.selections (PRE):", State.selections);
         if (State.assets.length > 1 && State.context === 'map') {
           _.forEach(State.selections, function (selection) {
-            console.log("... omitting selection deactivation ... skip'm!");
+            // ... omitting selection deactivation ... skip'm!
             // selection.active = false;
             // ChartCompositionService.removeSelection(selection.uuid);
           });
           TimeseriesService.syncTime();
         }
-        console.log("[$destroy] State.selections (POST):", State.selections);
       });
     },
     restrict: 'E', // Timeseries can be an element with single-select or

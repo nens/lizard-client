@@ -206,8 +206,6 @@ angular.module('global-state')
      * @return {object} asset or geometry data.
      */
     var initializeAssetSelections = function (asset) {
-      console.log("[F] initializeAssetSelections");
-
       // IF asset === parentAsset:
       // => voer onderstaande voor zowel parent als nested
       // debugger;
@@ -237,7 +235,6 @@ angular.module('global-state')
      * @return {object} asset or geometry data.
      */
       var initializeRasterSelections = function (geomObject, geomType) {
-        console.log("[F] initializeRasterSelections");
         if (geomType === 'asset' && AssetService.isNestedAsset(geomObject.entity_name)) {
           // Do not care about raster intersections of nested assets, their parent
           // already does that.

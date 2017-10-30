@@ -509,16 +509,10 @@ angular.module('timeseries').service('TimeseriesUtilService', [
           return s.timeseries === ts.uuid; });
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
 
-        if (tsSelection === undefined) {
-          console.log("[dbg] tsSelection is undefined! Oh noes..");
-          console.log("*** State.selections =", State.selections);
-
-        }
-
         graphTimeseries.data = ts.events;
 
         if (tsSelection) {
-          // We're probably on the map, where these two don't matter.
+          // If not, then We're probably on the map, where these two don't matter.
           graphTimeseries.order = tsSelection.order;
           graphTimeseries.color = tsSelection.color;
         }

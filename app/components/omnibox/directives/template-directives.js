@@ -245,15 +245,12 @@ angular.module('omnibox')
       });
 
       var removeTSofAsset = function (asset) {
-        console.log("Removing TS of asset", asset);
         State.selections.forEach(function (selection) {
           if (!selection.active) return; // Already in active
 
-          console.log("Trying selection uuid...", selection.uuid, 'asset.timeseries=', asset.timeseries);
           if (selection.timeseries &&
               (asset.timeseries || []).map(
                 function (asset) { return asset.uuid; }).indexOf(selection.timeseries) !== -1) {
-            console.log("Deactivating!");
             ChartCompositionService.deactivateSelection(selection);
           }
         });
@@ -274,7 +271,6 @@ angular.module('omnibox')
       scope.$on('$destroy', function () {
         scope.list.forEach(function (asset) { removeTSofAsset(asset); });
       });
-
     },
     restrict: 'E',
     scope: {
