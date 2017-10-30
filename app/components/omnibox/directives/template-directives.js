@@ -269,7 +269,11 @@ angular.module('omnibox')
       };
 
       scope.$on('$destroy', function () {
-        scope.list.forEach(function (asset) { removeTSofAsset(asset); });
+        // Either the 'X' in the omnibox was clicked, or we're switching to the Dashboard.
+        // If we are switching to dashboard, we want to keep the selected timeseries.
+        if (State.context === 'map') {
+          scope.list.forEach(function (asset) { removeTSofAsset(asset); });
+        }
       });
     },
     restrict: 'E',
