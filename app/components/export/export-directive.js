@@ -70,15 +70,23 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
       }
     });
 
+    scope.getExportableUuids = function () {
+      var uuids = _.map(scope.toExport, function (yes, uuid) {
+          if (yes) { return uuid; }
+        }).join(',');
+      return uuids;
+    };
+
     /**
      * startExport - Finds all the timeseries and gets the uuids
      * requests a ASYNC_FORMAT task to be setup for these uuids. The API returns a
      * link to see status updates of the task
      */
     scope.startExport = function () {
-      var uuids = _.map(scope.toExport, function (yes, uuid) {
-        if (yes) { return uuid; }
-      }).join(',');
+      // var uuids = _.map(scope.toExport, function (yes, uuid) {
+      //   if (yes) { return uuid; }
+      // }).join(',');
+      var uuids = scope.getExportableUuids();
 
       if (uuids === '') {
         // Don't do anything if no timeseries were selected for export:
@@ -191,7 +199,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
 
       /**
        * downloadFinishedFile - Function to launch the "file download" window
-       *                        in the browser (so users can download their
+       *                        in the browser (so *anon* users can download their
        *                        exported timeseries).
        */
       scope.downloadFinishedFile = function () {

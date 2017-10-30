@@ -1,5 +1,26 @@
 <div>
-  <div class="modal-body">
+  <div ng-if="!(isAuthenticated && userCanExportTemporalRasters)" class="modal-body">
+    <p>
+      You are currently not capable of exporting raster data. The reason for this is:
+    </p>
+    <p ng-if="!isAuthenticated">
+      You are not currently logged in.
+    </p>
+    <p ng-if="isAuthenticated">
+      <span ng-if="!hasGeoms">
+        You haven't selected any assets/points on the map. This selection
+        constitutes the geometric part of the spatio-temporal intersection you
+        were planning to export, and without this, you cannot export temporal
+        raster data.
+      </span>
+      <span ng-if="!hasActiveTemporalRasters">
+        You haven't activated any temporal rasters in the layer menu. Without
+        this, you cannot export temporal raster data.
+      </span>
+    </p>
+  </div>
+
+  <div ng-if="isAuthenticated && userCanExportTemporalRasters" class="modal-body">
 
     <p aria-label="Help Text" class="help-text" translate>
       You can select multiple raster intersections to export. Once selected, press the
@@ -15,7 +36,7 @@
       Pick the date range:
     </p>
 
-    <div class="input-daterange input-group" id="datepicker-export">
+    <div class="input-daterange input-group" id="datepicker-export-rasters">
       <input type="text" class="input-sm form-control" name="start" id="datepicker-export-start" />
       <span class="input-group-addon" translate>to</span>
       <input type="text" class="input-sm form-control" name="end" id="datepicker-export-end" />
@@ -47,21 +68,22 @@
       </option>
     </select>
 
+    <!--
     <br />
     <br />
     <p translate>
       Debug this bitch
     </p>
     <input type="button" ng-click="dbg()" value="dbg" />
+    -->
 
-    <div class="modal-footer footer-left">
-      <button
-        class="btn btn-primary start-export-button"
-        ng-click="startRasterExport()"
-        translate>
-        Start Raster Export
-      </button>
-    </div>
-
+  </div>
+  <div class="modal-footer footer-left">
+    <button
+      class="btn btn-primary start-export-button"
+      ng-click="startRasterExport()"
+      translate>
+      Start Raster Export
+    </button>
   </div>
 </div>

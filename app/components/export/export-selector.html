@@ -55,6 +55,7 @@
     <button
       class="btn btn-primary start-export-button"
       ng-click="startExport()"
+      ng-disabled="getExportableUuids() === ''"
       translate>
       Start Export
     </button>

@@ -1,6 +1,7 @@
 angular.module('export')
-.directive('exportTemporalRasters', ['State', 'DataService', 'ExportTemporalRastersService',
-function (State, DataService, ExportTemporalRastersService) {
+.directive('exportTemporalRasters', ['State', 'DataService',
+  'ExportTemporalRastersService', 'user', '$timeout',
+function (State, DataService, ExportTemporalRastersService, user, $timeout) {
 
   function getSelectedPointGeoms () {
     var pointGeoms = _.filter(State.geometries, function (geom) {
@@ -52,27 +53,40 @@ function (State, DataService, ExportTemporalRastersService) {
   };
 
   var link = function (scope) {
-    console.log("[F] link");
 
-    // initialize the datepicker
-    var dateEl = $('#datepicker-export.input-daterange');
-    dateEl.datepicker({
-      format: 'dd-mm-yyyy'
-    });
-    // bind the hide event to updateDates
-    dateEl.on('hide', function () {});
+    scope.isAuthenticated = user.authenticated;
 
+    // Initialize timeState/make sure that it is updated when user changes the
+    // values in the from/to-datepicker (a.k.a "Prepare the temporal part for
+    // your export"):
     var timeState = {
       start: new Date(State.temporal.start),
       end: new Date(State.temporal.end)
     };
 
-    // initialize the datepicker with the right dates
-    dateEl.find('#datepicker-export-start').datepicker(
-      'setDate', timeState.start);
-    dateEl.find('#datepicker-export-end').datepicker(
-      'setDate', timeState.end);
+    $timeout(function () {
+      var dateEl = $('#datepicker-export-rasters.input-daterange');
+      dateEl.datepicker({ format: 'dd-mm-yyyy' });
+      dateEl.find('#datepicker-export-start').datepicker(
+        'setDate', timeState.start);
+      dateEl.find('#datepicker-export-end').datepicker(
+        'setDate', timeState.end);
+      dateEl.on('hide', function (e) {
+        if (e.target.name === 'end')   { timeState.end = new Date(e.date); }
+        if (e.target.name === 'start') { timeState.start = new Date(e.date); }
+      });
+    });
 
+    // Prepare the spatial part for your export:
+    var assetInfo = getSelectedAssetGeoms();
+    var assetGeoms = assetInfo[0];
+    var assetNames = assetInfo[1];
+    var formattedAssetGeoms = assetGeoms.map(function (geom, idx) {
+      return {
+        name: 'Asset: ' + assetNames[idx],
+        geom: geom
+      }
+    });
     var pointGeoms = getSelectedPointGeoms();
     var formattedPointGeoms = pointGeoms.map(function (geom) {
       return {
@@ -80,30 +94,26 @@ function (State, DataService, ExportTemporalRastersService) {
         geom: geom
       }
     });
-
-    var assetInfo = getSelectedAssetGeoms();
-    var assetGeoms = assetInfo[0];
-    var assetNames = assetInfo[1];
-
-    var formattedAssetGeoms = assetGeoms.map(function (geom, idx) {
-      return {
-        name: 'Asset: ' + assetNames[idx],
-        geom: geom
-      }
-    });
-
     scope.formattedGeoms = formattedPointGeoms.concat(formattedAssetGeoms);
-    scope.activeTemporalRasters = getActiveTemporalRasters() || [];
-    scope.hasActiveTemporalRasters = scope.activeTemporalRasters.length > 0;
 
-    if (!scope.hasActiveTemporalRasters) {
-      scope.selectedRaster = null;
-    } else {
-      scope.selectedRaster = scope.activeTemporalRasters[0];
-    }
+    scope.selectedGeomIdx = null;
+    scope.formattedGeoms = formattedPointGeoms.concat(formattedAssetGeoms);
+    scope.activeTemporalRasters = getActiveTemporalRasters();
+    scope.hasActiveTemporalRasters = scope.activeTemporalRasters.length > 0;
+    console.log("[dbg] scope.hasActiveTemporalRasters:", scope.hasActiveTemporalRasters);
+
+    scope.hasGeoms = scope.formattedGeoms.length > 0;
+    scope.selectedRaster = scope.hasActiveTemporalRasters
+      ? scope.activeTemporalRasters[0]
+      : null;
+
+    scope.userCanExportTemporalRasters =
+      scope.hasActiveTemporalRasters &&
+      scope.hasGeoms
 
     scope.dbg = function () {
       console.log("[F] dbg")
+      console.log("*** scope.isAuthenticated...:", scope.isAuthenticated);
       console.log("*** scope.selectedRaster....:", scope.selectedRaster);
       console.log("*****> selectedGeom (idx)...:", scope.selectedGeomIdx);
       console.log("*****> selectedGeom (obj)...:", scope.formattedGeoms[scope.selectedGeomIdx]);
@@ -111,11 +121,13 @@ function (State, DataService, ExportTemporalRastersService) {
 
     scope.startRasterExport = function () {
 
+      scope.dbg();
+
       var theSelectedGeom = scope.formattedGeoms[scope.selectedGeomIdx];
 
       ExportTemporalRastersService.startExport(
-        State.temporal.start,
-        State.temporal.end,
+        timeState.start.getTime(),
+        timeState.end.getTime(),
         scope.selectedRaster,
         theSelectedGeom.geom
       );

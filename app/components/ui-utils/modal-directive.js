@@ -5,18 +5,13 @@
  * For now it always contains the export-selector directive
  */
 
-angular.module('ui-utils').directive('uiModal', ['ExportService',
-  function (ExportService) {
+angular.module('ui-utils').directive('uiModal', ['ExportService', 'user',
+  function (ExportService, user) {
     var link = function (scope, el) {
       var mode = (scope.active) ? 'show' : 'hide';
       $(el).modal(mode);
 
-      scope.modus = "timeseries" // scope.modus ::= 'timeseries' | 'rasters'
-
-      scope.setModus = function (modus) {
-        console.log("[F] setModus to:", modus);
-        scope.modus = modus;
-      };
+      scope.isAuthenticated = user.authenticated;
 
       /**
        * closeModal - close the modal with an angular click.
