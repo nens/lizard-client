@@ -510,8 +510,12 @@ angular.module('timeseries').service('TimeseriesUtilService', [
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
 
         graphTimeseries.data = ts.events;
-        graphTimeseries.order = tsSelection.order;
-        graphTimeseries.color = tsSelection.color;
+
+        if (tsSelection) {
+          // If not, then We're probably on the map, where these two don't matter.
+          graphTimeseries.order = tsSelection.order;
+          graphTimeseries.color = tsSelection.color;
+        }
         graphTimeseries.id = ts.uuid;
         graphTimeseries.valueType = ts.value_type;
         graphTimeseries.measureScale = ts.observation_type.scale;

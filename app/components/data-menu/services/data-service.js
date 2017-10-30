@@ -201,10 +201,23 @@ angular.module('data-menu')
       };
 
       var removeGeometry = function (geometry) {
-        State.selections = _.filter(State.selections, function(selection) {
-            return selection.geom !== geometry.geometry.coordinates.toString();
+        var keepSelections = []
+
+        var geomString = geometry.geometry.coordinates.toString();
+
+        for (var i = 0; i < State.selections.length; i++) {
+          var selection = State.selections[i];
+
+          if (selection.geom !== geomString) {
+            // Keep
+            keepSelections.push(selection);
+          } else {
+            // Remove
+            ChartCompositionService.removeSelection(selection.uuid);
           }
-        );
+        }
+        State.selections = keepSelections;
+
         var newGeometries = angular.copy(_geometries);
         var index = -1;
         _geometries.forEach(function(geom, i) {

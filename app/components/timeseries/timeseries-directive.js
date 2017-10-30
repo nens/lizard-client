@@ -2,13 +2,13 @@
 /**
  * Timeseries directive.
  */
-// TODO: THIS IS ONE IN FOUR FILES THAT NEEDS SCRUTINY
 
 angular.module('timeseries')
 .directive('timeseries', [
   '$timeout',
   'gettextCatalog',
   'notie',
+  'ChartCompositionService',
   'SelectionService',
   'State',
   'TimeseriesService',
@@ -16,6 +16,7 @@ angular.module('timeseries')
     $timeout,
     gettextCatalog,
     notie,
+    ChartCompositionService,
     SelectionService,
     State,
     TimeseriesService
@@ -37,7 +38,7 @@ angular.module('timeseries')
         SelectionService.initializeRaster(selectionObject, selectionType);
       });
 
-      scope.$watch(selectionType, function () {
+      scope.$watch(selectionType, function (a, b) {
         SelectionService.initializeAsset(scope.asset);
         SelectionService.initializeRaster(selectionObject, selectionType);
         if (State.context === 'map') {
@@ -48,8 +49,9 @@ angular.module('timeseries')
       scope.$on('$destroy', function () {
         if (State.assets.length > 1 && State.context === 'map') {
           _.forEach(State.selections, function (selection) {
-            selection.active = false;
-            ChartCompositionService.removeSelection(selection.uuid);
+            // ... omitting selection deactivation ... skip'm!
+            // selection.active = false;
+            // ChartCompositionService.removeSelection(selection.uuid);
           });
           TimeseriesService.syncTime();
         }

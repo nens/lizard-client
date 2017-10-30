@@ -4,6 +4,7 @@
  */
 angular.module('global-state')
   .service('SelectionService', [
+    'AssetService',
     'DataService',
     'DBCardsService',
     'TimeseriesService',
@@ -11,7 +12,8 @@ angular.module('global-state')
     'State',
     'ChartCompositionService',
     function (
-      DataService, DBCardsService, TimeseriesService, UtilService, State, ChartCompositionService) {
+      AssetService, DataService, DBCardsService, TimeseriesService,
+      UtilService, State, ChartCompositionService) {
 
     /**
      * Checks whether this datatype is supported for graphs.
@@ -204,6 +206,9 @@ angular.module('global-state')
      * @return {object} asset or geometry data.
      */
     var initializeAssetSelections = function (asset) {
+      // IF asset === parentAsset:
+      // => voer onderstaande voor zowel parent als nested
+      // debugger;
       var colors = UtilService.GRAPH_COLORS;
       State.selections = _.unionWith(
         State.selections,
@@ -229,15 +234,24 @@ angular.module('global-state')
      * @param  {object} asset|geometry  a DataService asset with timeseries.
      * @return {object} asset or geometry data.
      */
-    var initializeRasterSelections = function (geomObject, geomType) {
+      var initializeRasterSelections = function (geomObject, geomType) {
+        if (geomType === 'asset' && AssetService.isNestedAsset(geomObject.entity_name)) {
+          // Do not care about raster intersections of nested assets, their parent
+          // already does that.
+          return geomObject;
+        }
+
       var geomId = geomType === 'asset' ?
         geomObject.entity_name + "$" + geomObject.id :
         geomObject.geometry.coordinates.toString();
       var colors = UtilService.GRAPH_COLORS;
+
       State.selections = _.unionWith(
         State.selections,
         _.filter(State.layers,
-            function(layer) {return layer.type === 'raster';}
+                 function(layer) {
+                   return layer.type === 'raster' && layer.active;
+                 }
         ).map(function (layer, i) {
           var rasterSelection  = {
             uuid: uuidGenerator(),

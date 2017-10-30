@@ -27,12 +27,9 @@ angular.module('omnibox')
 
       DragService.create();
 
-      var emulateClick = function (el) {
-        $timeout(function () {
-          var dataUuid = el.getAttribute('data-uuid');
-          var clickableElem = $('#clickable-' + dataUuid);
-          clickableElem.click();
-        });
+      var emulateClick = function (clickableUuid) {
+        var clickableElem = $('#clickable-' + clickableUuid);
+        clickableElem.click();
       };
 
       scope.$watch('omnibox.data.assets', function () {
@@ -112,14 +109,12 @@ angular.module('omnibox')
           }
         }
 
-        var currentPlotCount,
+        var currentPlotCount = ChartCompositionService.composedCharts.length,
             chartCompositionDragResult;
 
         if (selection.raster) {
-          currentPlotCount = ChartCompositionService.composedCharts.length;
           if (currentPlotCount === 0) {
-            console.log("Emulating click in db-cards-directive 1");
-            emulateClick(el);
+            emulateClick(uuid);
           } else {
             notie.alert(2,
               gettextCatalog.getString('Whoops, bar charts cannot be combined. Try again!')
@@ -129,10 +124,8 @@ angular.module('omnibox')
           return;
 
         } else if (checkMeasureScale) {
-          currentPlotCount = ChartCompositionService.composedCharts.length;
           if (currentPlotCount === 0) {
-            console.log("Emulating click in db-cards-directive 2");
-            emulateClick(el);
+            emulateClick(uuid);
           } else {
             notie.alert(2,
               gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!')
@@ -142,9 +135,15 @@ angular.module('omnibox')
           return;
 
         } else {
-          chartCompositionDragResult = ChartCompositionService.dragSelection(
-            order, uuid);
-          selection.order = chartCompositionDragResult.finalIndex;
+          if (currentPlotCount === 0) {
+            el.parentNode.removeChild(el);
+            emulateClick(uuid);
+            return;
+          } else {
+            chartCompositionDragResult = ChartCompositionService.dragSelection(
+              order, uuid);
+            selection.order = chartCompositionDragResult.finalIndex;
+          }
           TimeseriesService.syncTime();
         }
 
@@ -157,8 +156,7 @@ angular.module('omnibox')
         if (otherGraphSelections === undefined) {
           if (chartCompositionDragResult.mustActivateSelection) {
             if (chartCompositionDragResult.mustEmulateClick) {
-              console.log("Emulating click in db-cards-directive 3");
-              emulateClick(el);
+              emulateClick(uuid);
             } else {
               TimeseriesService.syncTime();
             }
