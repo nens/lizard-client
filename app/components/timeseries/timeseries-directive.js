@@ -9,6 +9,7 @@ angular.module('timeseries')
   '$timeout',
   'gettextCatalog',
   'notie',
+  'ChartCompositionService',
   'SelectionService',
   'State',
   'TimeseriesService',
@@ -16,6 +17,7 @@ angular.module('timeseries')
     $timeout,
     gettextCatalog,
     notie,
+    ChartCompositionService,
     SelectionService,
     State,
     TimeseriesService

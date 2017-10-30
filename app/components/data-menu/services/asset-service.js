@@ -90,5 +90,9 @@ angular.module('data-menu')
         return _.difference(State.assets,
           this.getAllNestedAssetNames());
       };
+
+      this.isNestedAsset(entityName) {
+        return this.NESTED_ASSET_PREFIXES.indexOf(entityName) !== -1;
+      }
   }
 ]);
