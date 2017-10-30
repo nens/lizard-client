@@ -28,6 +28,7 @@ angular.module('dashboard')
 
   this.addSelection = function (chartIndex, selectionUuid) {
     // Returns the index of the chart that selectionUuid was inserted into.
+
     var result;
     if (chartIndex === undefined || chartIndex === null || chartIndex < 0 ||
         chartIndex >= service.composedCharts.length) {
@@ -154,4 +155,14 @@ angular.module('dashboard')
       }
     });
   };
+
+  this.deactivateSelection = function(selection) {
+    selection.active = false;
+    service.removeSelection(selection.uuid);
+  }
+
+  this.activateSelection = function(selection, chartIndex = null) {
+    selection.active = true;
+    service.addSelection(chartIndex, selection.uuid);
+  }
 }]);

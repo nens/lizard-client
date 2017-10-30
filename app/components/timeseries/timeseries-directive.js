@@ -42,8 +42,7 @@ angular.module('timeseries')
 
       scope.$watch(selectionType, function (a, b) {
         console.log("[W] selectionType:");
-        console.log("*** a =", a);
-        console.log("*** b =", b);
+
         SelectionService.initializeAsset(scope.asset);
         SelectionService.initializeRaster(selectionObject, selectionType);
         if (State.context === 'map') {

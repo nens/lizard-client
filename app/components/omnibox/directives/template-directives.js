@@ -222,8 +222,9 @@ angular.module('omnibox')
 
 
 angular.module('omnibox')
-  .directive('nestedasset', ['WantedAttributes', 'DataService', 'State', 'getNestedAssets',
-    function (WantedAttributes, DataService, State, getNestedAssets) {
+       .directive('nestedasset', ['WantedAttributes', 'DataService', 'State', 'getNestedAssets',
+                                  'ChartCompositionService',
+    function (WantedAttributes, DataService, State, getNestedAssets, ChartCompositionService) {
   return {
     link: function (scope) {
 
@@ -244,14 +245,18 @@ angular.module('omnibox')
       });
 
       var removeTSofAsset = function (asset) {
-        console.log("[F] removeTSofAsset; asset =", asset, " (returning early!)");
-        return;
-        ///////////////////////////////////
-        State.selections = _.differenceBy(
-          State.selections,
-          asset.timeseries,
-          'timeseries'
-        );
+        console.log("Removing TS of asset", asset);
+        State.selections.forEach(function (selection) {
+          if (!selection.active) return; // Already in active
+
+          console.log("Trying selection uuid...", selection.uuid, 'asset.timeseries=', asset.timeseries);
+          if (selection.timeseries &&
+              (asset.timeseries || []).map(
+                function (asset) { return asset.uuid; }).indexOf(selection.timeseries) !== -1) {
+            console.log("Deactivating!");
+            ChartCompositionService.deactivateSelection(selection);
+          }
+        });
       };
 
       scope.selectedAssetChanged = function (newAsset) {

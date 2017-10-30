@@ -248,12 +248,13 @@ angular.module('global-state')
         geomObject.entity_name + "$" + geomObject.id :
         geomObject.geometry.coordinates.toString();
       var colors = UtilService.GRAPH_COLORS;
-      var activeLayers = _.filter(State.layers, { active: true });
-      console.log("*** active layers?", activeLayers);
+
       State.selections = _.unionWith(
         State.selections,
         _.filter(State.layers,
-            function(layer) {return layer.type === 'raster';}
+                 function(layer) {
+                   return layer.type === 'raster' && layer.active;
+                 }
         ).map(function (layer, i) {
           var rasterSelection  = {
             uuid: uuidGenerator(),

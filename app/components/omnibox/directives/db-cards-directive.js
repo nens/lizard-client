@@ -123,7 +123,7 @@ angular.module('omnibox')
           console.log("*** AAAAAAA mode 1/3: selection.raster");
           if (currentPlotCount === 0) {
             console.log("Emulating click in db-cards-directive 1");
-            emulateClick(el.getAttribute('data-uuid'));
+            emulateClick(uuid);
           } else {
             notie.alert(2,
               gettextCatalog.getString('Whoops, bar charts cannot be combined. Try again!')
@@ -136,7 +136,7 @@ angular.module('omnibox')
           console.log("*** BBBBBBBB mode 2/3: checkMeasureScale");
           if (currentPlotCount === 0) {
             console.log("Emulating click in db-cards-directive 2");
-            emulateClick(el.getAttribute('data-uuid'));
+            emulateClick(uuid);
           } else {
             notie.alert(2,
               gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!')
@@ -150,9 +150,8 @@ angular.module('omnibox')
           if (currentPlotCount === 0) {
             console.log("Emulating click in db-cards-directive 3");
             console.log(el);
-            var dataUuid = el.getAttribute('data-uuid');
             el.parentNode.removeChild(el);
-            emulateClick(dataUuid);
+            emulateClick(uuid);
             return;
           } else {
             chartCompositionDragResult = ChartCompositionService.dragSelection(
@@ -171,8 +170,8 @@ angular.module('omnibox')
         if (otherGraphSelections === undefined) {
           if (chartCompositionDragResult.mustActivateSelection) {
             if (chartCompositionDragResult.mustEmulateClick) {
-              console.log("Emulating click in db-cards-directive 3");
-              emulateClick(el.getAttribute('data-uuid'));
+              console.log("Emulating click in db-cards-directive 4");
+              emulateClick(uuid);
             } else {
               TimeseriesService.syncTime();
             }
