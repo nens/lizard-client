@@ -27,12 +27,12 @@ angular.module('omnibox')
 
       DragService.create();
 
-      var emulateClick = function (el) {
-        $timeout(function () {
-          var dataUuid = el.getAttribute('data-uuid');
-          var clickableElem = $('#clickable-' + dataUuid);
-          clickableElem.click();
-        });
+      var emulateClick = function (clickableUuid) {
+        // $timeout(function () {
+        var clickableElem = $('#clickable-' + clickableUuid);
+        console.log('clickableElem:', clickableElem);
+        clickableElem.click();
+        // });
       };
 
       scope.$watch('omnibox.data.assets', function () {
@@ -80,6 +80,9 @@ angular.module('omnibox')
        * @param  {DOM}    target  Plot in drop.
        */
       DragService.on('drop', function (el, target) {
+        console.log("[H] DragService.on DROP");
+        console.log("*** el.......:", el);
+        console.log("*** target...:", target);
         if (target === null) {
           // Dropping outside of dropzone
           return;
@@ -91,6 +94,7 @@ angular.module('omnibox')
         });
 
         if (!selection) {
+          console.log("*** return early (because selection is falsy)");
           el.parentNode.removeChild(el);
           return;
         }
@@ -112,14 +116,14 @@ angular.module('omnibox')
           }
         }
 
-        var currentPlotCount,
+        var currentPlotCount = ChartCompositionService.composedCharts.length,
             chartCompositionDragResult;
 
         if (selection.raster) {
-          currentPlotCount = ChartCompositionService.composedCharts.length;
+          console.log("*** AAAAAAA mode 1/3: selection.raster");
           if (currentPlotCount === 0) {
             console.log("Emulating click in db-cards-directive 1");
-            emulateClick(el);
+            emulateClick(el.getAttribute('data-uuid'));
           } else {
             notie.alert(2,
               gettextCatalog.getString('Whoops, bar charts cannot be combined. Try again!')
@@ -129,10 +133,10 @@ angular.module('omnibox')
           return;
 
         } else if (checkMeasureScale) {
-          currentPlotCount = ChartCompositionService.composedCharts.length;
+          console.log("*** BBBBBBBB mode 2/3: checkMeasureScale");
           if (currentPlotCount === 0) {
             console.log("Emulating click in db-cards-directive 2");
-            emulateClick(el);
+            emulateClick(el.getAttribute('data-uuid'));
           } else {
             notie.alert(2,
               gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!')
@@ -142,9 +146,19 @@ angular.module('omnibox')
           return;
 
         } else {
-          chartCompositionDragResult = ChartCompositionService.dragSelection(
-            order, uuid);
-          selection.order = chartCompositionDragResult.finalIndex;
+          console.log("*** CCCCCC mode 3/3: else (=> may need to call emulateClick??)");
+          if (currentPlotCount === 0) {
+            console.log("Emulating click in db-cards-directive 3");
+            console.log(el);
+            var dataUuid = el.getAttribute('data-uuid');
+            el.parentNode.removeChild(el);
+            emulateClick(dataUuid);
+            return;
+          } else {
+            chartCompositionDragResult = ChartCompositionService.dragSelection(
+              order, uuid);
+            selection.order = chartCompositionDragResult.finalIndex;
+          }
           TimeseriesService.syncTime();
         }
 
@@ -158,7 +172,7 @@ angular.module('omnibox')
           if (chartCompositionDragResult.mustActivateSelection) {
             if (chartCompositionDragResult.mustEmulateClick) {
               console.log("Emulating click in db-cards-directive 3");
-              emulateClick(el);
+              emulateClick(el.getAttribute('data-uuid'));
             } else {
               TimeseriesService.syncTime();
             }

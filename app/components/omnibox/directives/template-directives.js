@@ -244,6 +244,9 @@ angular.module('omnibox')
       });
 
       var removeTSofAsset = function (asset) {
+        console.log("[F] removeTSofAsset; asset =", asset, " (returning early!)");
+        return;
+        ///////////////////////////////////
         State.selections = _.differenceBy(
           State.selections,
           asset.timeseries,

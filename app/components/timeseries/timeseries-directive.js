@@ -24,6 +24,7 @@ angular.module('timeseries')
   ) {
   return {
     link: function (scope) {
+      console.log();
       scope.zoomToInterval = TimeseriesService.zoomToInterval;
       scope.state = State; // TODO: only done this to watch state.layers. There is a better place for this.
 
@@ -39,7 +40,10 @@ angular.module('timeseries')
         SelectionService.initializeRaster(selectionObject, selectionType);
       });
 
-      scope.$watch(selectionType, function () {
+      scope.$watch(selectionType, function (a, b) {
+        console.log("[W] selectionType:");
+        console.log("*** a =", a);
+        console.log("*** b =", b);
         SelectionService.initializeAsset(scope.asset);
         SelectionService.initializeRaster(selectionObject, selectionType);
         if (State.context === 'map') {
@@ -48,13 +52,16 @@ angular.module('timeseries')
       });
 
       scope.$on('$destroy', function () {
+        console.log("[$destroy] State.selections (PRE):", State.selections);
         if (State.assets.length > 1 && State.context === 'map') {
           _.forEach(State.selections, function (selection) {
-            selection.active = false;
-            ChartCompositionService.removeSelection(selection.uuid);
+            console.log("... omitting selection deactivation ... skip'm!");
+            // selection.active = false;
+            // ChartCompositionService.removeSelection(selection.uuid);
           });
           TimeseriesService.syncTime();
         }
+        console.log("[$destroy] State.selections (POST):", State.selections);
       });
     },
     restrict: 'E', // Timeseries can be an element with single-select or

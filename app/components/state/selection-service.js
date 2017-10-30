@@ -206,6 +206,11 @@ angular.module('global-state')
      * @return {object} asset or geometry data.
      */
     var initializeAssetSelections = function (asset) {
+      console.log("[F] initializeAssetSelections");
+
+      // IF asset === parentAsset:
+      // => voer onderstaande voor zowel parent als nested
+      // debugger;
       var colors = UtilService.GRAPH_COLORS;
       State.selections = _.unionWith(
         State.selections,
@@ -232,7 +237,8 @@ angular.module('global-state')
      * @return {object} asset or geometry data.
      */
       var initializeRasterSelections = function (geomObject, geomType) {
-        if (geomType === 'asset' && AssetService.isNestedAsset(geomObject.entity_name) {
+        console.log("[F] initializeRasterSelections");
+        if (geomType === 'asset' && AssetService.isNestedAsset(geomObject.entity_name)) {
           // Do not care about raster intersections of nested assets, their parent
           // already does that.
           return geomObject;
@@ -242,6 +248,8 @@ angular.module('global-state')
         geomObject.entity_name + "$" + geomObject.id :
         geomObject.geometry.coordinates.toString();
       var colors = UtilService.GRAPH_COLORS;
+      var activeLayers = _.filter(State.layers, { active: true });
+      console.log("*** active layers?", activeLayers);
       State.selections = _.unionWith(
         State.selections,
         _.filter(State.layers,

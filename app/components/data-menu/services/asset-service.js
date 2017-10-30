@@ -91,7 +91,7 @@ angular.module('data-menu')
           this.getAllNestedAssetNames());
       };
 
-      this.isNestedAsset(entityName) {
+      this.isNestedAsset = function (entityName) {
         return this.NESTED_ASSET_PREFIXES.indexOf(entityName) !== -1;
       }
   }
