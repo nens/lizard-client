@@ -15,6 +15,14 @@
     time-state="timeState">
   </nestedasset>
 
+  <div ng-repeat="(uuid, properties) in asset.properties">
+    <defaultpoint
+      ng-if="asset.geometry.type === 'Point' && properties.slug !== 'rain' && uuid !== 'annotations'"
+      content="properties"
+      name="uuid"
+      time-state="timeState">
+    </defaultpoint>
+  </div>
 
   <annotations
     ng-if="showAnnotations"

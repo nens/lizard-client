@@ -385,10 +385,6 @@ angular.module('data-menu')
 
         newAssets.forEach(function (asset) {
           this.getGeomData(asset)
-          .then(function(geo) {
-            asset.geometry = geo.geometry;
-            asset.properties = geo.properties;
-          });
         }, this);
       };
 
