@@ -1,5 +1,9 @@
 angular.module('dashboard')
 .service('ChartCompositionService', ['$timeout', function ($timeout) {
+  // We keep the following invariants (hold as post condition of each method IF
+  // they hold as pre condition)
+  // - A given UUID never occurs in multiple charts
+  // - There are no empty charts
 
   var service = this;
 
