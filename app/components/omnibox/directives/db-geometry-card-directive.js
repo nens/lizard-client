@@ -30,9 +30,7 @@ angular.module('omnibox')
           console.log("Updated geo:", geo, scope.geom);
         });
 
-        scope.$watch('geom', function () {
-          SelectionService.initializeRaster(scope.geom, "geom");
-        });
+        SelectionService.initializeRaster(scope.geom, "geom");
 
         scope.toggleColorPicker = function (selectionUuid) {
           if (scope.colorPickersSettings[selectionUuid]) {

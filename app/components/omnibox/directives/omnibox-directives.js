@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module("omnibox")
-.directive("omnibox", ['$window', '$document', 'State', 'user', '$timeout', 'TimeseriesService', 'RelativeToSurfaceLevelService',
-  function ($window, $document, State, user, $timeout, TimeseriesService, RTSLService) { return {
+.directive("omnibox", ['$window', '$document', 'State', 'user', '$timeout', 'TimeseriesService', 'RelativeToSurfaceLevelService', 'SelectionService',
+  function ($window, $document, State, user, $timeout, TimeseriesService, RTSLService, SelectionService) { return {
 
     /**
      * Keeps omnibox size in check and creates and maintains a scrollbar.
@@ -143,6 +143,17 @@ angular.module("omnibox")
         window.Ps.destroy(cards[0]);
       });
 
+      scope.$watch(
+        function() { return JSON.stringify(State.assets); },
+        function(n, o) {
+          if (n === o) return;
+
+          /* State.assets.forEach(function (assetId) {
+           *   SelectionService.initializeAssetSelections(assetId);
+           * });
+           * console.log("Selections is now:", JSON.stringify(State.selections, null, 2));*/
+        }
+      );
     },
 
     restrict: 'E',

@@ -34,8 +34,9 @@ angular.module('timeseries')
         selectionObject = scope.geom;
         selectionType = 'geom';
       }
-      scope.$watch('state.layers', function () { // TODO: There is a better place for this.
+      scope.$watch(State.toString('layers'), function () { // TODO: There is a better place for this.
         SelectionService.initializeRaster(selectionObject, selectionType);
+        console.log("Updated selections to", State.selections);
       });
 
       scope.$watch(selectionType, function (a, b) {
