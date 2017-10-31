@@ -151,7 +151,6 @@ angular.module("omnibox")
         throttled.cancel();
         window.Ps.destroy(cards[0]);
       });
-
     },
 
     restrict: 'E',
