@@ -144,7 +144,7 @@ angular.module("omnibox")
             selection.active = nextIdx !== -1;
           });
         }
-      })
+      });
 
       // Cancel throttled function and rm scroll bar.
       scope.$on('$destroy', function () {
