@@ -26,13 +26,13 @@ angular.module('data-menu')
 
           if (timeseriesInAsset || selection.asset === asset.entity_name + "$" + asset.id) {
             // Remove
-            ChartCompositionService.removeSelection(selection.uuid);
+            // ChartCompositionService.removeSelection(selection.uuid);
           } else {
             // Keep
             keepSelections.push(selection);
           }
         }
-        State.selections = keepSelections;
+        // State.selections = keepSelections;
       };
 
       /**

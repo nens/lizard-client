@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module("omnibox")
-.directive("omnibox", ['$window', '$document', 'State', 'user', '$timeout', 'TimeseriesService', 'RelativeToSurfaceLevelService',
-  function ($window, $document, State, user, $timeout, TimeseriesService, RTSLService) { return {
+.directive("omnibox", ['$window', '$document', 'State', 'user', '$timeout', 'TimeseriesService', 'RelativeToSurfaceLevelService', 'ChartCompositionService',
+  function ($window, $document, State, user, $timeout, TimeseriesService, RTSLService, ChartCompositionService) { return {
 
     /**
      * Keeps omnibox size in check and creates and maintains a scrollbar.
@@ -136,6 +136,15 @@ angular.module("omnibox")
        * and searchresults and who knows.
        */
       scope.$watch(throttled);
+
+      scope.$watch(State.toString('context'), function (n) {
+        if (n === "dashboard") {
+          State.selections.forEach(function (selection) {
+            var nextIdx = ChartCompositionService.getChartIndexForSelection(selection.uuid);
+            selection.active = nextIdx !== -1;
+          });
+        }
+      })
 
       // Cancel throttled function and rm scroll bar.
       scope.$on('$destroy', function () {

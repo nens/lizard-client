@@ -27,6 +27,7 @@ angular.module('dashboard')
   };
 
   this.addSelection = function (chartIndex, selectionUuid) {
+    console.log("[F] addSelection");
     // Returns the index of the chart that selectionUuid was inserted into.
 
     var result;
@@ -113,6 +114,7 @@ angular.module('dashboard')
   };
 
   this.removeSelection = function (selectionUuid) {
+    console.log("[F] removeSelection");
     var selectionIndex = service.getChartIndexForSelection(selectionUuid);
     if (selectionIndex !== -1) {
       removeSelectionFromSpecificPlot(selectionIndex, selectionUuid);
