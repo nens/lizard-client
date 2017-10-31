@@ -292,14 +292,17 @@ angular.module('timeseries').service("TimeseriesService", [
           break;
         case "timesteps_range":
 
-          var activeTsUUID = _.find(State.selections,
-            { active: true }).timeseries;
+          var firstActiveSelection = _.find(State.selections, { active: true });
 
-          var activeTs = _.find(service.timeseries,
-            { id: activeTsUUID });
+          if (firstActiveSelection) {
 
-          start = activeTs.start;
-          end = activeTs.end;
+            var activeTsUUID = firstActiveSelection.timeseries;
+            var activeTs = _.find(service.timeseries,
+              { id: activeTsUUID });
+
+            start = activeTs.start;
+            end = activeTs.end;
+          }
 
           break;
         case 'timesteps_range_all_active':

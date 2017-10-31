@@ -84,22 +84,18 @@ angular.module('timeseries')
 
       var selectTimeseries = function () {
         var selectedTimeseriesUuid = scope.timeseries.selected.uuid;
-
         State.selections.forEach(function (selection) {
           if (_.find(scope.asset.timeseries, {uuid: selection.timeseries})) {
             selection.active = selection.timeseries === selectedTimeseriesUuid;
-            if (selection.active) {
-              ChartCompositionService.addSelection(null, selection.uuid);
-            } else {
-              ChartCompositionService.removeSelection(selection.uuid);
-            }
           }
         });
 
-        _.forEach(TimeseriesService.syncTime(),
-            function (tsPromise) {
-              tsPromise.then(getContentForAsset);
-        });
+        _.forEach(
+          TimeseriesService.syncTime(),
+          function (tsPromise) {
+            tsPromise.then(getContentForAsset);
+          }
+        );
 
       };
 

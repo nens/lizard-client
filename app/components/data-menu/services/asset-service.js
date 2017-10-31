@@ -8,34 +8,6 @@ angular.module('data-menu')
       this.NESTED_ASSET_PREFIXES = ['pump', 'filter', 'monitoring_well'];
 
       /**
-       * Removes all the selections of the asset. It should not be
-       * possible to select timeseries or asset selections that belong to this
-       * asset.
-       *
-       * @param  {object} asset
-       */
-      var removeAssetSelections = function (asset) {
-        var keepSelections = [];
-
-        for (var i = 0; i < State.selections.length; i++) {
-          var selection = State.selections[i];
-
-          var timeseriesInAsset = (asset.timeseries || []).map(
-            function (ts) { return ts.uuid; }
-          ).indexOf(selection.timeseries) !== -1;
-
-          if (timeseriesInAsset || selection.asset === asset.entity_name + "$" + asset.id) {
-            // Remove
-            ChartCompositionService.removeSelection(selection.uuid);
-          } else {
-            // Keep
-            keepSelections.push(selection);
-          }
-        }
-        State.selections = keepSelections;
-      };
-
-      /**
        * @param {string} entity - name of the entity
        * @param {string} id -  id of the enitity
        * returns {object} promise - thenable with result of the asset API
@@ -63,9 +35,6 @@ angular.module('data-menu')
         return currentAssets.filter(function (asset) {
           var assetId = asset.entity_name + '$' + asset.id;
           var keep = selectedAssets.indexOf(assetId) !== -1;
-          if (!keep) {
-            removeAssetSelections(asset);
-          }
           return keep;
         });
       };
