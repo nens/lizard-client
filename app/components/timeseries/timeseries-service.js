@@ -333,16 +333,13 @@ angular.module('timeseries').service("TimeseriesService", [
             });
 
             var dataLayer, rasterTsStart, rasterTsEnd;
-
             activeTempRasterIds.forEach(function (rasterId) {
               dataLayer = _.find(DataService.dataLayers, { uuid: rasterId });
               rasterTsStart = dataLayer.firstValueTimestamp;
               rasterTsEnd = dataLayer.lastValueTimestamp;
-
               if (rasterTsStart && (!start || rasterTsStart < start)) {
                 start = rasterTsStart;
               }
-
               if (rasterTsStart && (!end || rasterTsEnd > end)) {
                 end = rasterTsEnd;
               }

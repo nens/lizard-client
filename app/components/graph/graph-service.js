@@ -270,6 +270,7 @@ angular.module('lizard-nxt')
     graph._activeUnit = content.unit;
 
     var data = content.data;
+
     var keys = content.keys;
     var labels = { x: content.xLabel, y: content.unit };
     var originalKey = keys.y;
@@ -1068,6 +1069,8 @@ angular.module('lizard-nxt')
      */
   var drawVerticalRects = function (svg, dimensions, xy, keys, data, duration,
                                     xDomain, activeUnit, color) {
+
+    if (data.data === null) { return; }
 
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
