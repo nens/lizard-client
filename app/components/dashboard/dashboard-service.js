@@ -72,15 +72,19 @@ function (EventAggregateService,  State,  ChartCompositionService) {
       var selection = (findSelection('timeseries', ts.id)());
       if (selection && selection.active) {
         var order = ChartCompositionService.getChartIndexForSelection(selection.uuid);
-
         ts.updated = true;
         ts.color = selection.color;
         ts.order = order;
         if (graphs[order]) {
           // Check if timeseries is already in the plot, if so replace data.
 
-          var partOfContent =_.find(graphs[selection.order].content,
-                                    function (c) { return c.id === ts.id; });
+          // This line contains an terror-error?
+          ////////////////////////////////////////////////////////////////////
+          // var partOfContent =_.find(graphs[selection.order].content,
+          //                           function (c) { return c.id === ts.id; });
+
+          var partOfContent =_.find(graphs[order].content, { id: ts.id });
+
           if (partOfContent) {
             partOfContent.data = ts.data;
             partOfContent.color = selection.color;
