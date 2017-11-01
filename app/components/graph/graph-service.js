@@ -1506,8 +1506,8 @@ angular.module('lizard-nxt')
         .attr('x1', 0)
         .attr('x2', x2);
       g.append('line')
-        .attr('y1', height)
-        .attr('y2', y2)
+        .attr('y1', height || 0)
+        .attr('y2', y2 || 0)
         .attr('x1', x2)
         .attr('x2', x2);
 
