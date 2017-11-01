@@ -12,10 +12,12 @@ angular.module('omnibox')
 .directive('closeCard', [
   'State',
   'DataService',
+  'getNestedAssets',
   'TimeseriesService',
-  function (State, DataService, TimeseriesService) {
+  function (State, DataService, getNestedAssets, TimeseriesService) {
 
     var link = function (scope, element, attrs) {
+
 
       /**
        * Removes asset from global State.
@@ -26,7 +28,17 @@ angular.module('omnibox')
         if (scope.geometry) {
           State.geometries.removeGeometry(scope.geometry);
         } else if (scope.asset) {
+
           var assetId = scope.asset.entity_name + '$' + scope.asset.id;
+
+          getNestedAssets(scope.asset).forEach(function (asset) {
+            var assetId = asset.entity_name + '$' + asset.id;
+            var i = State.assets.indexOf(assetId);
+            if (i !== -1) {
+              State.assets.removeAsset(assetId);
+            }
+          });
+
           // Remove the asset from the selection.
           var selectedAssets = State.assets;
           if (selectedAssets.indexOf(assetId) >= 0) {
