@@ -319,16 +319,16 @@ angular.module('timeseries').service("TimeseriesService", [
                   activeTempRasterIds.push(selection.raster);
                 }
               }
-
             });
-            service.timeseries.forEach(function (ts) {
-              if (_.includes(activeTimeseriesUuids, ts.id)) {
-                if (!start || ts.start < start) {
-                  start = ts.start;
-                }
-                if (!end || ts.end > end) {
-                  end = ts.end;
-                }
+
+            var ts;
+            activeTimeseriesUuids.forEach(function (tsUuid) {
+              ts = _.find(service.timeseries, { id: tsUuid });
+              if (ts.start && (!start || ts.start < start)) {
+                start = ts.start;
+              }
+              if (ts.end && (!end || ts.end > end)) {
+                end = ts.end;
               }
             });
 
@@ -339,10 +339,11 @@ angular.module('timeseries').service("TimeseriesService", [
               rasterTsStart = dataLayer.firstValueTimestamp;
               rasterTsEnd = dataLayer.lastValueTimestamp;
 
-              if (!start || rasterTsStart < start) {
+              if (rasterTsStart && (!start || rasterTsStart < start)) {
                 start = rasterTsStart;
               }
-              if (!end || rasterTsEnd > end) {
+
+              if (rasterTsStart && (!end || rasterTsEnd > end)) {
                 end = rasterTsEnd;
               }
             });
