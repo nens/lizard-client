@@ -1761,7 +1761,9 @@ angular.module('lizard-nxt')
         .attr('cy', function (d, i) {
           var box = label.node().getBBox();
           return -(box.x + box.width) - PADDING - i * PADDING;
-        });
+        })
+        .append('title')
+        .text(activeCharts.length + " active chart(s) for current y-axis");
 
       circles
         .transition()
@@ -1773,7 +1775,13 @@ angular.module('lizard-nxt')
         .attr('cy', function (d, i) {
           var box = label.node().getBBox();
           return -(box.x + box.width) - PADDING - i * PADDING;
-        });
+        })
+        .selectAll('title')
+        .text(activeCharts.length + " active chart(s) for current y-axis");
+
+      circles.exit()
+        .selectAll('title')
+        .text(activeCharts.length + " active chart(s) for current y-axis");
 
       circles.exit()
         .transition()
