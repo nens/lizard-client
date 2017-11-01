@@ -10,7 +10,8 @@
 
   <div
     class="card db-card active animate-repeat"
-    ng-repeat="geom in omnibox.data.geometries">
+    ng-repeat="geom in omnibox.data.geometries"
+    ng-if="mustShowGeomCard(geom)">
 
     <header class="card-header geom-card-header"
             ng-if="geom && geom.geometry.type === 'Point'">
