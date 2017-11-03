@@ -292,14 +292,17 @@ angular.module('timeseries').service("TimeseriesService", [
           break;
         case "timesteps_range":
 
-          var activeTsUUID = _.find(State.selections,
-            { active: true }).timeseries;
+          var firstActiveSelection = _.find(State.selections, { active: true });
 
-          var activeTs = _.find(service.timeseries,
-            { id: activeTsUUID });
+          if (firstActiveSelection) {
 
-          start = activeTs.start;
-          end = activeTs.end;
+            var activeTsUUID = firstActiveSelection.timeseries;
+            var activeTs = _.find(service.timeseries,
+              { id: activeTsUUID });
+
+            start = activeTs.start;
+            end = activeTs.end;
+          }
 
           break;
         case 'timesteps_range_all_active':
@@ -316,30 +319,28 @@ angular.module('timeseries').service("TimeseriesService", [
                   activeTempRasterIds.push(selection.raster);
                 }
               }
-
             });
-            service.timeseries.forEach(function (ts) {
-              if (_.includes(activeTimeseriesUuids, ts.id)) {
-                if (!start || ts.start < start) {
-                  start = ts.start;
-                }
-                if (!end || ts.end > end) {
-                  end = ts.end;
-                }
+
+            var ts;
+            activeTimeseriesUuids.forEach(function (tsUuid) {
+              ts = _.find(service.timeseries, { id: tsUuid });
+              if (ts.start && (!start || ts.start < start)) {
+                start = ts.start;
+              }
+              if (ts.end && (!end || ts.end > end)) {
+                end = ts.end;
               }
             });
 
             var dataLayer, rasterTsStart, rasterTsEnd;
-
             activeTempRasterIds.forEach(function (rasterId) {
               dataLayer = _.find(DataService.dataLayers, { uuid: rasterId });
               rasterTsStart = dataLayer.firstValueTimestamp;
               rasterTsEnd = dataLayer.lastValueTimestamp;
-
-              if (!start || rasterTsStart < start) {
+              if (rasterTsStart && (!start || rasterTsStart < start)) {
                 start = rasterTsStart;
               }
-              if (!end || rasterTsEnd > end) {
+              if (rasterTsStart && (!end || rasterTsEnd > end)) {
                 end = rasterTsEnd;
               }
             });
@@ -510,8 +511,12 @@ angular.module('timeseries').service('TimeseriesUtilService', [
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
 
         graphTimeseries.data = ts.events;
-        graphTimeseries.order = tsSelection.order;
-        graphTimeseries.color = tsSelection.color;
+
+        if (tsSelection) {
+          // If not, then We're probably on the map, where these two don't matter.
+          graphTimeseries.order = tsSelection.order;
+          graphTimeseries.color = tsSelection.color;
+        }
         graphTimeseries.id = ts.uuid;
         graphTimeseries.valueType = ts.value_type;
         graphTimeseries.measureScale = ts.observation_type.scale;

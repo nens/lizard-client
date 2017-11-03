@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module("omnibox")
-.directive("omnibox", ['$window', '$document', 'State', 'user', '$timeout', 'TimeseriesService', 'RelativeToSurfaceLevelService',
-  function ($window, $document, State, user, $timeout, TimeseriesService, RTSLService) { return {
+.directive("omnibox", ['$window', '$document', 'State', 'user', '$timeout', 'TimeseriesService', 'RelativeToSurfaceLevelService', 'ChartCompositionService', 'AssetService',
+  function ($window, $document, State, user, $timeout, TimeseriesService, RTSLService, ChartCompositionService, AssetService) { return {
 
     /**
      * Keeps omnibox size in check and creates and maintains a scrollbar.
@@ -137,12 +137,24 @@ angular.module("omnibox")
        */
       scope.$watch(throttled);
 
+      scope.$watch(State.toString('context'), function (n) {
+        if (n === "dashboard") {
+          State.selections.forEach(function (selection) {
+            var nextIdx = ChartCompositionService.getChartIndexForSelection(selection.uuid);
+            selection.active = nextIdx !== -1;
+          });
+        }
+      });
+
       // Cancel throttled function and rm scroll bar.
       scope.$on('$destroy', function () {
         throttled.cancel();
         window.Ps.destroy(cards[0]);
       });
 
+      scope.assetIsNested = function (asset) {
+        return AssetService.isNestedAsset(asset.entity_name);
+      };
     },
 
     restrict: 'E',

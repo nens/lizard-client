@@ -222,8 +222,9 @@ angular.module('omnibox')
 
 
 angular.module('omnibox')
-  .directive('nestedasset', ['WantedAttributes', 'DataService', 'State', 'getNestedAssets',
-    function (WantedAttributes, DataService, State, getNestedAssets) {
+       .directive('nestedasset', ['WantedAttributes', 'DataService', 'State', 'getNestedAssets',
+                                  'ChartCompositionService',
+    function (WantedAttributes, DataService, State, getNestedAssets, ChartCompositionService) {
   return {
     link: function (scope) {
 
@@ -244,11 +245,20 @@ angular.module('omnibox')
       });
 
       var removeTSofAsset = function (asset) {
-        State.selections = _.differenceBy(
-          State.selections,
-          asset.timeseries,
-          'timeseries'
-        );
+        State.selections.forEach(function (selection) {
+          if (!selection.active) return; // Already in active
+
+          if (selection.timeseries &&
+              (asset.timeseries || []).map(
+                function (ts) { return ts.uuid; }).indexOf(selection.timeseries) !== -1) {
+
+            if (State.context === 'map') {
+              selection.active = false;
+            } else {
+              ChartCompositionService.deactivateSelection(selection);
+            }
+          }
+        });
       };
 
       scope.selectedAssetChanged = function (newAsset) {
@@ -264,9 +274,12 @@ angular.module('omnibox')
       };
 
       scope.$on('$destroy', function () {
-        scope.list.forEach(function (asset) { removeTSofAsset(asset); });
+        // Either the 'X' in the omnibox was clicked, or we're switching to the Dashboard.
+        // If we are switching to dashboard, we want to keep the selected timeseries.
+        if (State.context === 'map') {
+          scope.list.forEach(function (asset) { removeTSofAsset(asset); });
+        }
       });
-
     },
     restrict: 'E',
     scope: {
