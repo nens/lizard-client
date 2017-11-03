@@ -74,6 +74,11 @@ angular.module('omnibox')
         return temporalProps.length;
       };
 
+      scope.foo = function () {
+        console.log("[F] foo");
+        return 'x';
+      };
+
       /**
        * Turn ts on and give it the order of the dropped plot. Ts could already
        * be part of a plot above or below it, if so rearrange existing plots.
@@ -210,6 +215,7 @@ angular.module('omnibox')
       });
 
       scope.mustShowGeomCard = function (geom) {
+        console.log("[F] mustShowGeomCard");
         var activeRasters = _.filter(State.layers, function (layer) {
           return layer.active && layer.type === "raster";
         });
