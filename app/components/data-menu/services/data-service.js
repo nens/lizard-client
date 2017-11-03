@@ -21,12 +21,13 @@ angular.module('data-menu')
     'AssetService',
     'LayerAdderService',
     'State',
-
+    'ChartCompositionService',
     function (
       $q,
       AssetService,
       LayerAdderService,
-      State
+      State,
+      ChartCompositionService
     ) {
 
       var instance = this;

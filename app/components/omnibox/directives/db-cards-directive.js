@@ -11,6 +11,7 @@ angular.module('omnibox')
     'DBCardsService',
     'ChartCompositionService',
     '$timeout',
+    'DataService',
     function (
       State,
       SelectionService,
@@ -21,7 +22,8 @@ angular.module('omnibox')
       TimeseriesService,
       DBCardsService,
       ChartCompositionService,
-      $timeout) {
+      $timeout,
+      DataService) {
   return {
     link: function (scope, element) {
 
@@ -65,7 +67,11 @@ angular.module('omnibox')
       };
 
       scope.countRasters = function (geom) {
-        return Object.keys(geom.properties).length;
+        var temporalProps = _.filter(
+          Object.values(geom.properties),
+          { temporal: true }
+        );
+        return temporalProps.length;
       };
 
       /**
@@ -202,6 +208,22 @@ angular.module('omnibox')
         // Remove drag element.
         el.parentNode.removeChild(el);
       });
+
+      scope.mustShowGeomCard = function (geom) {
+        var activeRasters = _.filter(State.layers, function (layer) {
+          return layer.active && layer.type === "raster";
+        });
+        var activeTemporalRasterCount = 0;
+        DataService.dataLayers.forEach(function (dataLayer) {
+          if (dataLayer.temporal) {
+            var activeTemporalraster = _.find(activeRasters, { uuid: dataLayer.uuid });
+            if (activeTemporalraster) {
+              activeTemporalRasterCount += 1;
+            }
+          }
+        });
+        return activeTemporalRasterCount !== 0;
+      };
 
       scope.$on('$destroy', function () {
         DragService.destroy();

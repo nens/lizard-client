@@ -250,8 +250,13 @@ angular.module('omnibox')
 
           if (selection.timeseries &&
               (asset.timeseries || []).map(
-                function (asset) { return asset.uuid; }).indexOf(selection.timeseries) !== -1) {
-            ChartCompositionService.deactivateSelection(selection);
+                function (ts) { return ts.uuid; }).indexOf(selection.timeseries) !== -1) {
+
+            if (State.context === 'map') {
+              selection.active = false;
+            } else {
+              ChartCompositionService.deactivateSelection(selection);
+            }
           }
         });
       };

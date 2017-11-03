@@ -206,9 +206,6 @@ angular.module('global-state')
      * @return {object} asset or geometry data.
      */
     var initializeAssetSelections = function (asset) {
-      // IF asset === parentAsset:
-      // => voer onderstaande voor zowel parent als nested
-      // debugger;
       var colors = UtilService.GRAPH_COLORS;
       State.selections = _.unionWith(
         State.selections,
