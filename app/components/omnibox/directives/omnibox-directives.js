@@ -153,7 +153,7 @@ angular.module("omnibox")
       });
 
       scope.assetIsNested = function (asset) {
-        return AssetService.NESTED_ASSET_PREFIXES.indexOf(asset.entity_name) !== -1;
+        return AssetService.isNestedAsset(asset.entity_name);
       };
     },
 
