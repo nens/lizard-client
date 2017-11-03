@@ -77,12 +77,6 @@ function (EventAggregateService,  State,  ChartCompositionService) {
         ts.order = order;
         if (graphs[order]) {
           // Check if timeseries is already in the plot, if so replace data.
-
-          // This line contains an terror-error?
-          ////////////////////////////////////////////////////////////////////
-          // var partOfContent =_.find(graphs[selection.order].content,
-          //                           function (c) { return c.id === ts.id; });
-
           var partOfContent =_.find(graphs[order].content, { id: ts.id });
 
           if (partOfContent) {
