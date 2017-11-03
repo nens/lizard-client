@@ -67,7 +67,11 @@ angular.module('omnibox')
       };
 
       scope.countRasters = function (geom) {
-        return Object.keys(geom.properties).length;
+        var temporalProps = _.filter(
+          Object.values(geom.properties),
+          { temporal: true }
+        );
+        return temporalProps.length;
       };
 
       /**

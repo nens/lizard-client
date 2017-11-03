@@ -46,7 +46,6 @@ angular.module('omnibox')
           if (selectedAssets.indexOf(assetId) >= 0) {
             selectedAssets.removeAsset(assetId);
           }
-
         }
       };
 

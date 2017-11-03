@@ -28,7 +28,7 @@
             {{getGeomCardHeader(geom)}}
           </div>
           <div class="nested-asset-ts-count" translate>
-            {{countRasters(geom)}} {{ countRasters(geom) === 1 ? 'RASTER' : 'RASTERS' }}
+            {{countRasters(geom)}} {{ 'TEMPORAL ' + (countRasters(geom) === 1 ? 'RASTER' : 'RASTERS') }}
           </div>
         </div>
       </div>
