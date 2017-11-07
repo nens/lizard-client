@@ -66,17 +66,35 @@ angular.module('omnibox')
         }
       };
 
+      /* Function that counts rasters which are relevant to the dashboard cards;
+       * these rasters need to be active AND temporal, because else they don't
+       * get a db card.
+       */
       scope.countRasters = function (geom) {
-        var temporalProps = _.filter(
+        if (!geom.properties) {
+          return 0;
+        }
+        var temporalRasterProps = _.filter(
           Object.values(geom.properties),
-          { temporal: true }
+          {
+            temporal: true,
+            type: 'raster'
+          }
         );
-        return temporalProps.length;
-      };
 
-      scope.foo = function () {
-        console.log("[F] foo");
-        return 'x';
+        var activeUuids = [];
+        State.layers.forEach(function (layer) {
+          if (layer.active && layer.type === 'raster') {
+            activeUuids.push(layer.uuid);
+          }
+        });
+
+        var activeTemporalRasterProps = _.filter(
+          temporalRasterProps,
+          function (prop) { return activeUuids.indexOf(prop.uuid) > -1 }
+        );
+
+        return activeTemporalRasterProps.length;
       };
 
       /**
@@ -191,6 +209,7 @@ angular.module('omnibox')
             order = selectionOrder;
           }
 
+          //console.log("!!! Deactivating selection - poss. #1");
           selection.active = false;
         } else {
           if (chartCompositionDragResult.mustActivateSelection) {

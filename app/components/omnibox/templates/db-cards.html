@@ -42,11 +42,10 @@
     </db-geometry-cards>
   </div>
 
-
-
   <div
     class="card db-card active animate-repeat"
-    ng-repeat="geom in omnibox.data.assets">
+    ng-repeat="geom in omnibox.data.assets"
+    ng-if="countRasters(geom) > 0">
 
     <header class="card-header geom-card-header"
             ng-if="geom && geom.geometry.type === 'Point'">
