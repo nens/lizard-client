@@ -4,11 +4,13 @@
     No raster data available for this geometry
   </em>
 
+  <!-- ng-if="getSelectionMetaData(selection).match" -->
+
   <div id="drag-container">
     <div
       ng-repeat="selection in getIterableSelections()"
       ng-init="metaData = getSelectionMetaData(selection)"
-      ng-if="getSelectionMetaData(selection).match"
+      ng-if="true"
       data-uuid="{{ selection.uuid }}"
       class="draggable-ts db-ts-collection raster-ts-collection">
       <div

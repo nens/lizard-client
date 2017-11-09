@@ -5,15 +5,19 @@ angular.module('omnibox')
   'DataService',
   'SelectionService',
   'DragService',
+  '$timeout',
   function (
       State,
       DBCardsService,
       DataService,
       SelectionService,
-      DragService) {
+      DragService,
+      $timeout) {
     // TODO: This whole directive is a copy of parts of the asset-card-directive
     return {
       link: function (scope, element) {
+
+        console.log("[F] LINK");
 
         scope.state = State;
         scope.noData = true;
@@ -47,6 +51,7 @@ angular.module('omnibox')
           var selection,
               dataLayer,
               wantedSelections = [];
+
           for (var i = 0; i < State.selections.length; i++) {
             selection = State.selections[i];
             if (!selection.raster) {
@@ -91,6 +96,10 @@ angular.module('omnibox')
         }, true);
 
         scope.toggleSelection = SelectionService.toggle;
+
+        // scope.getMetaDataType = function getMetaDataType (selection) {
+
+        // };
 
         DragService.addDraggableContainer(element.find('#drag-container'));
       },
