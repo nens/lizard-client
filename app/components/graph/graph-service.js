@@ -267,6 +267,12 @@ angular.module('lizard-nxt')
     var graph = this;
 
     var content = barData[0];
+
+    if (!content) {
+      // returning early since we received insufficient data from the backend
+      return;
+    }
+
     graph._activeUnit = content.unit;
 
     var data = content.data;

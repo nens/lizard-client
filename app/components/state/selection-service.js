@@ -67,22 +67,45 @@ angular.module('global-state')
      * Finds metadata for a raster selection.
      * metadata search can be limited to a geometry.
      *
-     * @param  {object}  geometry   either an asset or a geometry from the
+     * @param  {object}  geometry   Either an asset or a geometry from the
      *                              State.
-     * @param  {object}  selection  selection from the State.
+     * @param  {object} selection   Selection from the State.
      * @return {object} asset, timeseries or geometry metadata, including a
      *                  match attribute that states whether a selection belongs
      *                  to the geometry.
      */
     var getRasterMetaData = _.curry(function (geometry, selection) {
+      // console.log("[F] getRasterMetaData");
       var geomRaster, idGeomFunction, geomType, geomAsset;
       if (selection.asset) {
         geomType = "asset";
+
         idGeomFunction = function(a) { return a.entity_name + "$" + a.id; };
         geomRaster = _.find(DataService.assets, function (asset) {
           geomAsset = asset;
           return idGeomFunction(geomAsset) === selection.asset;
         });
+
+      } else if (selection.raster) {
+        if (selection.geom) {
+          var assetForCurrentSelection = _.find(DataService.assets, function (asset) {
+            return selection.geom === asset.geometry.coordinates.toString();
+          });
+          if (!assetForCurrentSelection) {
+            assetForCurrentSelection = _.find(DataService.geometries, function (geom) {
+              return selection.geom === geom.geometry.coordinates.toString();
+            });
+          }
+          if (assetForCurrentSelection && assetForCurrentSelection.properties) {
+            var assetProps = assetForCurrentSelection.properties[selection.raster];
+            if (assetProps) {
+              props = assetProps;
+              props.match = true;
+              return props;
+            }
+          }
+        }
+
       } else {
         geomType = "geom";
         idGeomFunction = function(g) { return g.geometry.coordinates.toString(); };
@@ -100,6 +123,27 @@ angular.module('global-state')
           var assetCode = idGeomFunction(geometry);
           props.match = selection[geomType] === assetCode &&
             dbSupportedData(geometry.geometry.type, props);
+        }
+      } else {
+
+        geomRaster = _.find(DataService.geometries, function (geom) {
+          return selection.geom === geom.geometry.coordinates.toString();
+        });
+
+        console.log("*******************************");
+        console.log("*** selection =", selection);
+        console.log("*** selection.raster =", selection.raster);
+        console.log("*** geomRaster =", JSON.stringify(geomRaster));
+        console.log("*** geomRaster.properties =", geomRaster.properties);
+
+        var geomProps = geomRaster.properties[selection.raster];
+        console.log("*** geomProps =", geomProps);
+
+        if (geomProps) {
+          props = geomProps;
+          props.match = true;
+        } else {
+          console.log("*** ELSE-ELSE-ELSE");
         }
       }
       return props;
@@ -138,6 +182,27 @@ angular.module('global-state')
       };
     };
 
+    var getMetadata = function (geometry, selection) {
+      console.log("[F] getMetadata");
+      console.log("*** geometry =", geometry);
+      console.log("*** selection =", selection);
+
+      var metadata;
+      if (selection.timeseries) {
+        console.log("*** selection.timeseries -> WIP");
+      } else if (selection.raster) {
+        var dataLayer = _.find(DataService.dataLayers, { uuid: selection.raster });
+        console.log("*** dataLayer =", dataLayer);
+        metadata = dataLayer;
+      } else if (selection.type === 'eventseries') {
+        console.log("*** selection.eventseries -> WIP");
+      }
+
+      metadata = metadata || {};
+      metadata.match = true;
+      return metadata;
+    };
+
     /**
      * Toggles selection active state and keeps track of the graph order for
      * selections.
@@ -149,21 +214,23 @@ angular.module('global-state')
      *                  match attribute that states whether a selection belongs
      *                  to the geometry.
      */
-      var toggleSelection = function (selection) {
-        if (!selection.active) {
-          // Always add selection to a new chart.
-          selection.order = ChartCompositionService.addSelection(null, selection.uuid);
-          selection.active = true;
-        } else {
-          ChartCompositionService.removeSelection(selection.uuid);
-          selection.active = false;
-          selection.order = -1;
-        }
+    var toggleSelection = function (selection) {
+      // console.log("[F] toggleSelection; selection =", selection);
+      if (!selection.active) {
+        // Always add selection to a new chart.
+        selection.order = ChartCompositionService.addSelection(null, selection.uuid);
+        selection.active = true;
+      } else {
+        ChartCompositionService.removeSelection(selection.uuid);
+        // console.log("!!! Deactivating selection - poss. #2");
+        selection.active = false;
+        selection.order = -1;
+      }
 
-        if (DataService.onSelectionsChange) {
-          DataService.onSelectionsChange();
-        }
-        TimeseriesService.syncTime();
+      if (DataService.onSelectionsChange) {
+        DataService.onSelectionsChange();
+      }
+      TimeseriesService.syncTime();
     };
 
     var _rasterComparatorFactory = function (comparatorType) {
@@ -206,6 +273,9 @@ angular.module('global-state')
      * @return {object} asset or geometry data.
      */
     var initializeAssetSelections = function (asset) {
+      // console.log("!!! Deactivating selection - poss. #4");
+      // console.log("*** State.selections (pre):", State.selections);
+
       var colors = UtilService.GRAPH_COLORS;
       State.selections = _.unionWith(
         State.selections,
@@ -222,7 +292,41 @@ angular.module('global-state')
         }),
         _timeseriesComparator
       );
+      // console.log("*** State.selections (post):", State.selections);
       return asset;
+    };
+
+    var mayInitializeRasterSelection = function (geomObject, geomType) {
+      // We don't want duplicate selections for a point in space: when creating
+      // a new selection for a geom we check whether we not already have an
+      // equivalent selection for an asset, and vice versa when making a new
+      // selection for an asset:
+      if (geomType === 'geom') {
+        // ..and this geom might correspond to an already present asset
+        if (geomObject.entity_name && geomObject.id) {
+          // OK, this geomObject corresponds to an asset
+          var assetKey = geomObject.entity_name + '$' + geomObject.id;
+          // Do we already have an selection with type='raster' && asset=<assetKey> ???
+          // If so, we GTFO
+          if (_.find(State.selections, { type: 'raster', asset: assetKey })) {
+            // OK, this geomObject corresponds to an asset that is already present
+            console.log("[!] Skipped making geom-selection(s) since it/they would be redundant");
+            return false;
+          }
+        }
+      } else if (geomType === 'asset') {
+        // ..and this asset might correspond to an already present geom
+        var coordString = geomObject.geometry.coordinates[0]
+          + ","
+          + geomObject.geometry.coordinates[1];
+        if (_.find(State.selections, { type: 'raster', geom: coordString })) {
+          // OK, we already have selection(s) for the point in space corresponding
+          // to the asset's geometry
+          console.log("[!] Skipped making asset-selection(s) since it/they would be redundant");
+          return false;
+        }
+      }
+      return true;
     };
 
     /**
@@ -231,17 +335,25 @@ angular.module('global-state')
      * @param  {object} asset|geometry  a DataService asset with timeseries.
      * @return {object} asset or geometry data.
      */
-      var initializeRasterSelections = function (geomObject, geomType) {
-        if (geomType === 'asset' && AssetService.isNestedAsset(geomObject.entity_name)) {
-          // Do not care about raster intersections of nested assets, their parent
-          // already does that.
-          return geomObject;
-        }
+    var initializeRasterSelections = function (geomObject, geomType) {
+      // console.log("[F] initializeRasterSelections");
+      // console.log("*** geomObject:", geomObject);
+      if (geomType === 'asset' && AssetService.isNestedAsset(geomObject.entity_name)) {
+        // Do not care about raster intersections of nested assets, their parent
+        // already does that.
+        return geomObject;
+      }
 
-      var geomId = geomType === 'asset' ?
-        geomObject.entity_name + "$" + geomObject.id :
-        geomObject.geometry.coordinates.toString();
+      if (!mayInitializeRasterSelection(geomObject, geomType)) {
+        return geomObject;
+      }
+
+      var geomId = geomType === 'asset'
+        ? geomObject.entity_name + "$" + geomObject.id
+        : geomObject.geometry.coordinates.toString();
       var colors = UtilService.GRAPH_COLORS;
+
+      var initialUUIDs = _.sortBy(State.selections.map(function (s) { return s.uuid }));
 
       State.selections = _.unionWith(
         State.selections,
@@ -254,7 +366,7 @@ angular.module('global-state')
             uuid: uuidGenerator(),
             type: "raster",
             raster: layer.uuid,
-            active: false,
+            active: true,
             order: 0,
             color: colors[i + 8 % (colors.length - 1)],
             measureScale: layer.scale
@@ -264,6 +376,32 @@ angular.module('global-state')
         }),
         _rasterComparatorFactory(geomType)
       );
+
+      var finalUUIDs = _.sortBy(State.selections.map(function (s) { return s.uuid }));
+
+      var removedSelections = _.difference(initialUUIDs, finalUUIDs);
+      // console.log("*** var removedSelections:", removedSelections);
+
+      var addedSelections = _.difference(finalUUIDs, initialUUIDs);
+      // console.log("*** var addedSelections:", addedSelections);
+
+      if (removedSelections.length === 0 && addedSelections.length === 0) {
+        // console.log("*** OK, selections didn't change");
+      } else {
+        // console.log("*** selections changed => update ComposedCharts");
+
+        if (removedSelections.length !== 0 && addedSelections.length !== 0) {
+          console.log("THIS SHOULD NEVER PRINT xD");
+        } else if (addedSelections.length > 0) {
+          addedSelections.forEach(function (uuid) {
+            ChartCompositionService.addSelection(null, uuid);
+          });
+        } else if (removedSelections.length > 0) {
+          removedSelections.forEach(ChartCompositionService.removeSelection);
+        }
+      }
+
+      // console.log("*** State.selections (post):", State.selections);
       return geomObject;
     };
 
@@ -316,7 +454,74 @@ angular.module('global-state')
             stateSelection.geomType === eventSelection.geomType &&
             stateSelection.layer === eventSelection.layer
           );
-        });
+        }
+      );
+    };
+
+    var updateForLayerActivity = function (newStateLayers, oldStateLayers) {
+      // console.log("[F] updateForLayerActivity");
+      // console.log("*** newStateLayers:", newStateLayers);
+      // console.log("*** oldStateLayers:", oldStateLayers);
+
+      newStateLayers.forEach(function (layer) {
+        var oldStateLayer = _.find(oldStateLayers, { uuid: layer.uuid });
+        if (!layer.active) {
+          if (oldStateLayer && oldStateLayer.active) {
+            // console.log("[!] Found deactivated layer:", layer);
+            if (layer.type === 'raster') {
+              // We remove all raster selections for the deactivated layer:
+              var newSelections = [];
+              State.selections.forEach(function (selection) {
+                if (selection.raster !== layer.uuid) {
+                  newSelections.push(selection);
+                }
+              });
+              State.selections = newSelections;
+            } else if (layer.type === 'assetgroup') {
+              if (layer.name === 'Water') {
+
+                // We update the ChartComposition, we make it forget all
+                // unwanted selections; i.e. all TS selections are no longer
+                // wanted since the Water layer was "closed"/deactivated.
+                var unwantedSelections = _.filter(State.selections, { type: 'timeseries' });
+                var unwantedSelectionsIDs = unwantedSelections.map(function (selection) {
+                  return selection.uuid;
+                });
+                unwantedSelectionsIDs.map(ChartCompositionService.removeSelection);
+
+                // We update the State object accordingly: i.e. we (i) filter out
+                // all selections based on timeseries and (ii) we clear all assets:
+                State.selections = _.reject(State.selections, { type: 'timeseries' });
+                State.assets = [];
+
+                // We update the DataService accordingly:
+                DataService.assets = [];
+              } else {
+                console.warn("[!] Encountered assetgroup that isn't 'Water'. Selections might not be updated properly.");
+              }
+            }
+          }
+        } else {
+          if (oldStateLayer && !oldStateLayer.active) {
+            // console.log("[!] Found activated layer:", layer);
+            // console.log("*** State.geometries:", State.geometries);
+
+            // 1) ForEach asset in State.assets-> make selection for the newly
+            //    activated layer:
+            DataService.assets.forEach(function (asset) {
+              initializeRasterSelections(asset, 'asset');
+            });
+
+            // 2) ForEach Point geometry in State.geometries -> make selection
+            //    for the newly activated layer:
+            State.geometries.forEach(function (geom) {
+              if (geom.geometry.type === 'Point') {
+                initializeRasterSelections(geom, 'geom');
+              }
+            });
+          }
+        }
+      });
     };
 
     return {
@@ -327,6 +532,8 @@ angular.module('global-state')
       initializeGeomEventseriesSelections: initializeGeomEventseriesSelections,
       getMetaDataFunction: getMetaData,
       dbSupportedData: dbSupportedData,
-      toggle: toggleSelection
+      toggle: toggleSelection,
+      updateForLayerActivity: updateForLayerActivity,
+      getMetadata: getMetadata
     };
   }]);

@@ -17,13 +17,17 @@ angular.module('map')
   'UtilService',
   'State',
   '$timeout',
+  'SelectionService',
+  'ChartCompositionService',
   function (
     MapService,
     DataService,
     ClickFeedbackService,
     UtilService,
     State,
-    $timeout
+    $timeout,
+    SelectionService,
+    ChartCompositionService
   ) {
 
     var link = function (scope, element, attrs) {
@@ -195,7 +199,43 @@ angular.module('map')
         }, 0);
       };
 
-      scope.$watch('state.layers', function () {
+      scope.$watch('state.layers', function (n, o) {
+        if (n !== o) {
+          SelectionService.updateForLayerActivity(n, o);
+        }
+
+
+        // console.log("*** n:", n);
+        // console.log("*** o:", o);
+
+        // var key,
+        //     newSelections = [];
+
+        // State.selections.forEach(function (selection) {
+        //   console.log("****** inspecting selection:", selection);
+        //   if (selection.type === 'raster') {
+        //     key = 'raster$' + selection.raster;
+        //     console.log("****** Got key:", key);
+        //     if (n.active.indexOf(key) > -1) {
+        //       // It is still active XOR it just became active: both cases need
+        //       // no further actions (..or do they!?)
+        //       console.log("****** Keeping (raster) selection");
+        //       newSelections.push(selection);
+        //     } else {
+        //       // It is still inactive XOR it just became inactive: the latter
+        //       // case requires us to delete the related selections:
+        //       console.log("****** Throwing away (raster) selection!");
+        //       ChartCompositionService.removeSelection(selection.uuid);
+        //     }
+        //   } else {
+        //     // TODO...
+        //     console.log("****** Keeping (non-raster) selection (TODO..)");
+        //     newSelections.push(selection);
+        //   }
+        // });
+
+        // State.selections = newSelections;
+
         MapService.updateLayers(scope.state.layers);
       }, true);
 

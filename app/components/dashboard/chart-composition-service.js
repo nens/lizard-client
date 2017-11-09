@@ -30,6 +30,10 @@ angular.module('dashboard')
   this.addSelection = function (chartIndex, selectionUuid) {
     // Returns the index of the chart that selectionUuid was inserted into.
 
+    if (this.getChartIndexForSelection(selectionUuid) !== -1) {
+      console.error("[E] Tried to add selection that is already present!");
+    }
+
     var result;
     if (chartIndex === undefined || chartIndex === null || chartIndex < 0 ||
         chartIndex >= service.composedCharts.length) {

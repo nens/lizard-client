@@ -78,7 +78,6 @@ function (EventAggregateService,  State,  ChartCompositionService) {
         if (graphs[order]) {
           // Check if timeseries is already in the plot, if so replace data.
           var partOfContent =_.find(graphs[order].content, { id: ts.id });
-
           if (partOfContent) {
             partOfContent.data = ts.data;
             partOfContent.color = selection.color;

@@ -5,15 +5,19 @@ angular.module('omnibox')
   'DataService',
   'SelectionService',
   'DragService',
+  '$timeout',
   function (
       State,
       DBCardsService,
       DataService,
       SelectionService,
-      DragService) {
+      DragService,
+      $timeout) {
     // TODO: This whole directive is a copy of parts of the asset-card-directive
     return {
       link: function (scope, element) {
+
+        console.log("[F] LINK");
 
         scope.state = State;
         scope.noData = true;
@@ -40,6 +44,28 @@ angular.module('omnibox')
           } else {
             scope.openColorPicker(selectionUuid);
           }
+        };
+
+        scope.getIterableSelections = function () {
+          // Filter State.selections based on whether they are for temporal rasters:
+          var selection,
+              dataLayer,
+              wantedSelections = [];
+
+          for (var i = 0; i < State.selections.length; i++) {
+            selection = State.selections[i];
+            if (!selection.raster) {
+              // Skip selection if it doesn't relate to a raster
+              continue;
+            } else {
+              // OK, selection is for a raster; but is it a temporal raster?
+              dataLayer = _.find(DataService.dataLayers, { uuid: selection.raster });
+              if (dataLayer && dataLayer.temporal) {
+                wantedSelections.push(selection);
+              }
+            }
+          }
+          return wantedSelections;
         };
 
         /**
@@ -70,6 +96,10 @@ angular.module('omnibox')
         }, true);
 
         scope.toggleSelection = SelectionService.toggle;
+
+        // scope.getMetaDataType = function getMetaDataType (selection) {
+
+        // };
 
         DragService.addDraggableContainer(element.find('#drag-container'));
       },
