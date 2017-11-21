@@ -27,19 +27,7 @@ angular.module('omnibox')
           return asset;
         });
       });
-
-      scope.$on('$destroy', function () {
-        nestedAssets.forEach(function (asset) {
-          var assetId = asset.entity_name + '$' + asset.id;
-          var i = State.assets.indexOf(assetId);
-          if (i !== -1) {
-            State.assets.removeAsset(assetId);
-          }
-        });
-      });
-
     };
-
 
     return {
       link: link,

@@ -2,28 +2,30 @@
  * Service to handle timeseries retrieval.
  */
 angular.module('data-menu')
-  .service("AssetService", ['State', '$q', '$http',
-    function (State, $q, $http) {
+  .service("AssetService", ['ChartCompositionService', 'State', '$q', '$http',
+    function (ChartCompositionService, State, $q, $http) {
 
       this.NESTED_ASSET_PREFIXES = ['pump', 'filter', 'monitoring_well'];
 
-      /**
-       * Removes all the selections of the asset. It should not be
-       * possible to select timeseries or asset selections that belong to this
-       * asset.
-       *
-       * @param  {object} asset
-       */
       var removeAssetSelections = function (asset) {
-        State.selections = _.differenceWith(
-          State.selections,
-          asset.timeseries,
-          function(selectionTs, assetTs) {
-            return selectionTs.timeseries === assetTs.uuid;}
-        );
-        State.selections = _.filter(State.selections, function(selection) {
-            return selection.asset !== asset.entity_name + "$" + asset.id;
-        });
+        var keepSelections = [];
+
+        for (var i = 0; i < State.selections.length; i++) {
+          var selection = State.selections[i];
+
+          var timeseriesInAsset = (asset.timeseries || []).map(
+            function (ts) { return ts.uuid; }
+          ).indexOf(selection.timeseries) !== -1;
+
+          if (timeseriesInAsset || selection.asset === asset.entity_name + "$" + asset.id) {
+            // Remove
+            ChartCompositionService.removeSelection(selection.uuid);
+          } else {
+            // Keep
+            keepSelections.push(selection);
+          }
+        }
+        State.selections = keepSelections;
       };
 
       /**
@@ -90,5 +92,9 @@ angular.module('data-menu')
         return _.difference(State.assets,
           this.getAllNestedAssetNames());
       };
+
+      this.isNestedAsset = function (entityName) {
+        return this.NESTED_ASSET_PREFIXES.indexOf(entityName) !== -1;
+      }
   }
 ]);
