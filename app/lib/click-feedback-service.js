@@ -1,4 +1,3 @@
-
 /**
  * Service to draw click feedback. The map uses it too draw a line when user is
  * using line tool mode and the omnibox uses it to display geometries and assets
@@ -24,6 +23,8 @@ angular.module('lizard-nxt')
 
         this.clickedPoints = [];
 
+        this.labelsLayer = LeafletService.geoJson(null);
+
         this.clickLayer = LeafletService.geoJson(null, {
           style: function (feature) {
             return {
@@ -48,10 +49,12 @@ angular.module('lizard-nxt')
           }
         );
 
+        mapState.addLeafletLayer(this.labelsLayer);
         mapState.addLeafletLayer(this.clickLayer);
       };
 
       this.remove = function () {
+        this.labelsLayer = null;
         this.clickLayer = null;
       };
 
@@ -91,6 +94,24 @@ angular.module('lizard-nxt')
         }
         return selection;
       };
+
+
+      this.drawFeatureAsLabel = function(geojson, asset) {
+        this.labelsLayer.addData(geojson);
+
+        var divIcon = L.divIcon({
+          className: 'selected',
+          iconAnchor: [150, 20],
+          html: '<div class="assetLabel"><div class="triangle"></div><div class="labelText">' + asset.name + '<div></div>'
+        });
+
+        this.labelsLayer.options.pointToLayer = function (feature, latlng) {
+          return L.marker(latlng, {
+            icon: divIcon,
+            clickable: false
+          });
+        };
+      }
 
       /**
        * @description add data to the clicklayer
@@ -269,6 +290,7 @@ angular.module('lizard-nxt')
         updateCircle,
         drawArrow,
         drawLine,
+        drawLabel,
         drawGeometry,
         startVibration,
         vibrateOnce,
@@ -284,6 +306,7 @@ angular.module('lizard-nxt')
       if (clickLayer.clickLayer
         && toBeRemovedClick in clickLayer.clickLayer._layers) {
         clickLayer.clickLayer.removeLayer(toBeRemovedClick);
+        clickLayer.labelsLayer.removeLayer(toBeRemovedClick);
       }
     };
 
@@ -333,6 +356,12 @@ angular.module('lizard-nxt')
     removeLeafletLayerWithId = function (mapState, id) {
       var layer = mapState.getLeafletLayer(id);
       mapState.removeLeafletLayer(layer);
+    };
+
+
+
+    drawLabel = function (mapState, geometry, asset) {
+      return clickLayer.drawFeatureAsLabel(geometry, asset);
     };
 
     drawGeometry = function (mapState, geometry, entityName) {
@@ -387,10 +416,12 @@ angular.module('lizard-nxt')
 
     removeLayer = function () {
       clickLayer.remove();
+      labelsLayer.remove();
     };
 
     return {
       emptyClickLayer: emptyClickLayer,
+      drawLabel: drawLabel,
       drawArrow: drawArrow,
       drawCircle: drawCircle,
       drawGeometry: drawGeometry,
