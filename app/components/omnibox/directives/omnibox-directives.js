@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module("omnibox")
-.directive("omnibox", ['$window', '$document', 'State', 'user', '$timeout', 'TimeseriesService', 'RelativeToSurfaceLevelService', 'ChartCompositionService', 'AssetService',
-  function ($window, $document, State, user, $timeout, TimeseriesService, RTSLService, ChartCompositionService, AssetService) { return {
+.directive("omnibox", ['$window', '$document', 'State', 'user', '$timeout', 'TimeseriesService', 'RelativeToSurfaceLevelService', 'ChartCompositionService', 'AssetService', 'SelectionService',
+  function ($window, $document, State, user, $timeout, TimeseriesService, RTSLService, ChartCompositionService, AssetService, SelectionService) { return {
 
     /**
      * Keeps omnibox size in check and creates and maintains a scrollbar.
@@ -80,12 +80,12 @@ angular.module("omnibox")
 
         var newTabIndex = parseInt($target.attr('tabindex')) + tabIncrement;
         if (newTabIndex > resultCount) {
-            newTabIndex = 1;
+          newTabIndex = 1;
         } else if (newTabIndex < 1) {
-            newTabIndex = resultCount;
+          newTabIndex = resultCount;
         }
 
-          $timeout(function() { $('[tabindex=' + newTabIndex + ']').focus(); });
+        $timeout(function() { $('[tabindex=' + newTabIndex + ']').focus(); });
       };
 
       scope.showAnnotations = function () {
@@ -144,6 +144,54 @@ angular.module("omnibox")
             selection.active = nextIdx !== -1;
           });
         }
+      });
+
+      scope.$watch(State.toString('geometries'), function (n, o) {
+        n = JSON.parse(n).map(JSON.stringify);
+        o = JSON.parse(o).map(JSON.stringify);
+
+        ///////////////////////////////////////////////////////////////////////
+        // 1) Check whether we need to delete selections/composedCharts based on
+        //    the new value for State.geometries:
+        //
+        //    => ForEach geom that is in "o" and not in "n" we need to remove
+        //       the corresponding selections AND composedCharts
+
+        var removedGeomObj,
+            addedGeomObj,
+            coordString,
+            keepSelections = [];
+
+        o.forEach(function (str) {
+          if (n.indexOf(str) === -1) {
+            removedGeomObj = JSON.parse(str);
+            coordString = removedGeomObj.geometry.coordinates[0]
+              + ","
+              + removedGeomObj.geometry.coordinates[1];
+            // We throw away selections for the old/discarded geometry, and also
+            // remove them from the ChartComposition:
+            State.selections.forEach(function (selection) {
+              if (selection.geom === coordString) {
+                ChartCompositionService.removeSelection(selection.uuid);
+              } else {
+                keepSelections.push(selection);
+              }
+            });
+            State.selections = keepSelections;
+          }
+        });
+
+        ///////////////////////////////////////////////////////////////////////
+        // 2) Adding geometries - For the detected new geom, we need to add a
+        //    raster-selection for each active temporal raster. This can be done
+        //    via the SelectionService.
+
+        n.forEach(function (str) {
+          if (o.indexOf(str) === -1) {
+            addedGeomObj = JSON.parse(str);
+            SelectionService.initializeRaster(addedGeomObj, "geom");
+          }
+        });
       });
 
       // Cancel throttled function and rm scroll bar.

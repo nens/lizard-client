@@ -25,6 +25,7 @@ angular.module('data-menu')
             keepSelections.push(selection);
           }
         }
+
         State.selections = keepSelections;
       };
 

@@ -1,5 +1,6 @@
 <div>
 
+  <!-- cards for assets -->
   <db-asset-card
     timeseries
     time-state="omnibox.state.temporal"
@@ -25,7 +26,7 @@
 
         <div class="nested-card-header-txt raster-card-header-txt">
           <div class="nested-asset-title">
-            {{getGeomCardHeader(geom)}}
+            {{'Point @ ' + getGeomCardHeader(geom)}}
           </div>
           <div class="nested-asset-ts-count" translate>
             {{countRasters(geom)}} {{ 'TEMPORAL ' + (countRasters(geom) === 1 ? 'RASTER' : 'RASTERS') }}
@@ -33,14 +34,45 @@
         </div>
       </div>
     </header>
-
     <db-geometry-cards
       ng-if="geom && geom.geometry.type === 'Point'"
       time-state="state.temporal"
       geom="geom"
       header="true">
     </db-geometry-cards>
+  </div>
 
+  <div
+    class="card db-card active animate-repeat"
+    ng-repeat="geom in omnibox.data.assets"
+    ng-if="countRasters(geom) > 0">
+
+    <header class="card-header geom-card-header"
+            ng-if="geom && geom.geometry.type === 'Point'">
+      <div class="card-header-center">
+        <close-card geometry="geom"></close-card>
+
+        <span class="icons fa-stack fa-lg">
+          <i class="fa fa-circle fa-stack-2x iconcircle"></i>
+          <i class="fa fa-map-marker raster-icon"></i>
+        </span>
+
+        <div class="nested-card-header-txt raster-card-header-txt">
+          <div class="nested-asset-title">
+            {{'Asset @ ' +  getGeomCardHeader(geom)}}
+          </div>
+          <div class="nested-asset-ts-count" translate>
+            {{countRasters(geom)}} {{ 'TEMPORAL ' + (countRasters(geom) === 1 ? 'RASTER' : 'RASTERS') }}
+          </div>
+        </div>
+      </div>
+    </header>
+    <db-geometry-cards
+      ng-if="geom && geom.geometry.type === 'Point'"
+      time-state="state.temporal"
+      geom="geom"
+      header="true">
+    </db-geometry-cards>
   </div>
 
 </div>

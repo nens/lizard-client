@@ -42,6 +42,27 @@ angular.module('omnibox')
           }
         };
 
+        scope.getIterableSelections = function () {
+          // Filter State.selections based on whether they are for temporal rasters:
+          var selection,
+              dataLayer,
+              wantedSelections = [];
+          for (var i = 0; i < State.selections.length; i++) {
+            selection = State.selections[i];
+            if (!selection.raster) {
+              // Skip selection if it doesn't relate to a raster
+              continue;
+            } else {
+              // OK, selection is for a raster; but is it a temporal raster?
+              dataLayer = _.find(DataService.dataLayers, { uuid: selection.raster });
+              if (dataLayer && dataLayer.temporal) {
+                wantedSelections.push(selection);
+              }
+            }
+          }
+          return wantedSelections;
+        };
+
         /**
          * Properties are asynchronous so watch it to set noData when added.
          */
