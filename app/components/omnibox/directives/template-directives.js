@@ -11,13 +11,14 @@
  */
 
 angular.module('omnibox')
-  .directive('assetCards', ['ClickFeedbackService', 'MapService', 'user',
-    function (ClickFeedbackService, MapService, user) {
+  .directive('assetCards', ['ClickFeedbackService', 'MapService', 'State', 'user',
+    function (ClickFeedbackService, MapService, State, user) {
   return {
     link: function (scope, element) {
 
       scope.assetType = 'asset';
       scope.user = user;
+      scope.isRainyLayer = State.isRainyLayer;
 
       var clickId;
 
@@ -309,7 +310,8 @@ angular.module('omnibox')
         scope.graphContent = [{
           data: scope.rain.data,
           keys: {x: 0, y: 1},
-          labels: {y: 'mm'}
+          labels: {y: 'mm'},
+          unit: "mm",
         }];
       };
 
