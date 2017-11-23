@@ -17,7 +17,21 @@
 
 */
 
+
 module.exports = function (grunt) {
+
+  var proxyHost =  grunt.option('proxyhost') ? grunt.option('proxyhost') : "http://localhost:8000";
+
+  function authorizeWithHeaders() {
+    return function authorizeWithHeaders(req, res, next) {
+      if (grunt.option('sso_username') || process.env.SSO_USERNAME) {
+        req.headers.username = grunt.option('sso_username') || process.env.SSO_USERNAME;
+        req.headers.password = grunt.option('sso_password') || process.env.SSO_PASSWORD;
+      }
+      next();
+    }
+  }
+
   var modRewrite = require('connect-modrewrite');
 
   // Load tasks used by grunt watch
@@ -106,13 +120,16 @@ module.exports = function (grunt) {
           open: true,
           middleware: function (connect, options) {
             return [
+              connect().use(
+                authorizeWithHeaders()
+              ),
               modRewrite([
                 '!\\\/api|\\\/accounts|\\\/bootstrap|\\\/about|\\\/proxy|\\\/scripts\/|\\.html|\\.js|\\.svg|\\.css|\\.woff|\\.png$ /index.html [L]',
-                '^/about/ http://localhost:8000/about/ [P]',
-                '^/api/ http://localhost:8000/api/ [P]',
-                '^/proxy/ http://localhost:8000/proxy/ [P]',
-                '^/bootstrap/ http://localhost:8000/bootstrap/ [P]',
-                '^/accounts/ http://localhost:8000/accounts/ [P]',
+                '^/about/ ' + proxyHost + '/about/ [P]',
+                '^/api/ ' + proxyHost + '/api/ [P]',
+                '^/proxy/ ' + proxyHost + '/proxy/ [P]',
+                '^/bootstrap/ ' + proxyHost + '/bootstrap/ [P]',
+                '^/accounts/ ' + proxyHost + '/accounts/ [P]',
                 ]),
               connect.static('.tmp'),
               connect().use(
