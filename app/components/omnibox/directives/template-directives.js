@@ -58,7 +58,6 @@ angular.module('omnibox')
       var cancelAssetWatch = scope.$watch('asset', setAsset);
 
       element.on('$destroy', function () {
-        console.log("$destroy 1");
         if (clickId) {
           removeAsset(clickId);
         }
@@ -114,7 +113,6 @@ angular.module('omnibox')
       var clickId = 0;
       var destroy = function () {
         if (clickId) {
-          console.log("$destroy 2");
           ClickFeedbackService.removeClickFromClickLayer(clickId);
         }
       };
@@ -256,7 +254,6 @@ angular.module('omnibox')
                 function (ts) { return ts.uuid; }).indexOf(selection.timeseries) !== -1) {
 
             if (State.context === 'map') {
-              // console.log("!!! Deactivating selection - poss. #3");
               selection.active = false;
             } else {
               ChartCompositionService.deactivateSelection(selection);
@@ -278,20 +275,12 @@ angular.module('omnibox')
       };
 
       scope.$on('$destroy', function () {
-        // console.log("$destroy 3");
-        // console.log("*** State.selections (pre):", State.selections);
-
         // Either the 'X' in the omnibox was clicked, or we're switching to the Dashboard.
         // If we are switching to dashboard, we want to keep the selected timeseries.
 
         if (State.context === 'map') {
-          // console.log("*** ctx=map");
           scope.list.forEach(function (asset) { removeTSofAsset(asset); });
-        } else {
-          // console.log("*** ctx=db");
         }
-
-        // console.log("*** State.selections (post):", State.selections);
       });
     },
     restrict: 'E',

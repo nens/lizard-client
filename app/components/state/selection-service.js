@@ -150,14 +150,12 @@ angular.module('global-state')
      *                  to the geometry.
      */
     var toggleSelection = function (selection) {
-      // console.log("[F] toggleSelection; selection =", selection);
       if (!selection.active) {
         // Always add selection to a new chart.
         selection.order = ChartCompositionService.addSelection(null, selection.uuid);
         selection.active = true;
       } else {
         ChartCompositionService.removeSelection(selection.uuid);
-        // console.log("!!! Deactivating selection - poss. #2");
         selection.active = false;
         selection.order = -1;
       }
@@ -208,9 +206,6 @@ angular.module('global-state')
      * @return {object} asset or geometry data.
      */
     var initializeAssetSelections = function (asset) {
-      // console.log("!!! Deactivating selection - poss. #4");
-      // console.log("*** State.selections (pre):", State.selections);
-
       var colors = UtilService.GRAPH_COLORS;
       State.selections = _.unionWith(
         State.selections,
@@ -227,7 +222,7 @@ angular.module('global-state')
         }),
         _timeseriesComparator
       );
-      // console.log("*** State.selections (post):", State.selections);
+
       return asset;
     };
 
@@ -271,8 +266,6 @@ angular.module('global-state')
      * @return {object} asset or geometry data.
      */
     var initializeRasterSelections = function (geomObject, geomType) {
-      // console.log("[F] initializeRasterSelections");
-      // console.log("*** geomObject:", geomObject);
       if (geomType === 'asset' && AssetService.isNestedAsset(geomObject.entity_name)) {
         // Do not care about raster intersections of nested assets, their parent
         // already does that.
@@ -315,30 +308,23 @@ angular.module('global-state')
       var finalUUIDs = _.sortBy(State.selections.map(function (s) { return s.uuid }));
 
       var removedSelections = _.difference(initialUUIDs, finalUUIDs);
-      // console.log("*** var removedSelections:", removedSelections);
 
       var addedSelections = _.difference(finalUUIDs, initialUUIDs);
-      // console.log("*** var addedSelections:", addedSelections);
 
       if (removedSelections.length === 0 && addedSelections.length === 0) {
-        // console.log("*** OK, selections didn't change");
+        ;
       } else {
-        // console.log("*** selections changed => update ComposedCharts");
-
         if (removedSelections.length !== 0 && addedSelections.length !== 0) {
           console.log("THIS SHOULD NEVER PRINT xD");
         } else if (addedSelections.length > 0) {
-          // console.log("****** We go *add* UUIDs to the ComposedCharts (" + addedSelections.length + "x)");
           addedSelections.forEach(function (uuid) {
             ChartCompositionService.addSelection(null, uuid);
           });
         } else if (removedSelections.length > 0) {
-          // console.log("****** We go *remove* UUIDs from the ComposedCharts (" + removedSelections.length + "x)");
           removedSelections.forEach(ChartCompositionService.removeSelection);
         }
       }
 
-      // console.log("*** State.selections (post):", State.selections);
       return geomObject;
     };
 
@@ -396,15 +382,10 @@ angular.module('global-state')
     };
 
     var updateForLayerActivity = function (newStateLayers, oldStateLayers) {
-      // console.log("[F] updateForLayerActivity");
-      // console.log("*** newStateLayers:", newStateLayers);
-      // console.log("*** oldStateLayers:", oldStateLayers);
-
       newStateLayers.forEach(function (layer) {
         var oldStateLayer = _.find(oldStateLayers, { uuid: layer.uuid });
         if (!layer.active) {
           if (oldStateLayer && oldStateLayer.active) {
-            // console.log("[!] Found deactivated layer:", layer);
             if (layer.type === 'raster') {
               // We remove all raster selections for the deactivated layer:
               var newSelections = [];
@@ -440,9 +421,6 @@ angular.module('global-state')
           }
         } else {
           if (oldStateLayer && !oldStateLayer.active) {
-            // console.log("[!] Found activated layer:", layer);
-            // console.log("*** State.geometries:", State.geometries);
-
             // 1) ForEach asset in State.assets-> make selection for the newly
             //    activated layer:
             DataService.assets.forEach(function (asset) {

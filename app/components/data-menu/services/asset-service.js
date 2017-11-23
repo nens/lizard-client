@@ -8,7 +8,6 @@ angular.module('data-menu')
       this.NESTED_ASSET_PREFIXES = ['pump', 'filter', 'monitoring_well'];
 
       var removeAssetSelections = function (asset) {
-        // console.log("[F] removeAssetSelections");
         var keepSelections = [];
 
         for (var i = 0; i < State.selections.length; i++) {
@@ -26,8 +25,6 @@ angular.module('data-menu')
             keepSelections.push(selection);
           }
         }
-        // console.log("*** State.selections (pre):", State.selections);
-        // console.log("*** State.selections (post):", keepSelections);
 
         State.selections = keepSelections;
       };

@@ -209,7 +209,6 @@ angular.module('omnibox')
             order = selectionOrder;
           }
 
-          //console.log("!!! Deactivating selection - poss. #1");
           selection.active = false;
         } else {
           if (chartCompositionDragResult.mustActivateSelection) {
@@ -234,7 +233,6 @@ angular.module('omnibox')
       });
 
       scope.mustShowGeomCard = function (geom) {
-        console.log("[F] mustShowGeomCard");
         var activeRasters = _.filter(State.layers, function (layer) {
           return layer.active && layer.type === "raster";
         });

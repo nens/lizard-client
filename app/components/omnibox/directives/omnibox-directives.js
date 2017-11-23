@@ -138,28 +138,15 @@ angular.module("omnibox")
       scope.$watch(throttled);
 
       scope.$watch(State.toString('context'), function (n) {
-        console.log("[W] State.context changed");
-        // console.log("*** State.selections:", State.selections);
-
-        // var countPre = _.filter(State.selections, { active: true }).length;
-        // console.log("*** countPre:", countPre);
-
         if (n === "dashboard") {
-          // console.log("*** ctx=db");
           State.selections.forEach(function (selection) {
             var nextIdx = ChartCompositionService.getChartIndexForSelection(selection.uuid);
             selection.active = nextIdx !== -1;
           });
-        } else {
-          // console.log("*** ctx=map");
         }
-        // var countPost = _.filter(State.selections, { active: true }).length;
-        // console.log("*** countPost:", countPost);
       });
 
       scope.$watch(State.toString('geometries'), function (n, o) {
-        console.log("[W] State.geometries changed");
-
         n = JSON.parse(n).map(JSON.stringify);
         o = JSON.parse(o).map(JSON.stringify);
 
