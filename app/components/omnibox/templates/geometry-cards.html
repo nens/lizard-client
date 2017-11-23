@@ -39,14 +39,14 @@
   <div ng-repeat="(uuid, properties) in geom.properties">
 
     <rain
-      ng-if="properties.slug === 'rain' && (geom.id || geom.geometry.type !== 'Polygon')"
+      ng-if="isRainyLayer(properties) && (geom.id || geom.geometry.type !== 'Polygon')"
       rain="properties"
       geometry="geom.geometry"
       time-state="timeState">
     </rain>
 
     <defaultpoint
-      ng-if="geom.geometry.type === 'Point' && properties.slug !== 'rain' && uuid !== 'annotations'"
+      ng-if="geom.geometry.type === 'Point' && !isRainyLayer(properties) && uuid !== 'annotations'"
       content="properties"
       name="uuid"
       time-state="timeState">

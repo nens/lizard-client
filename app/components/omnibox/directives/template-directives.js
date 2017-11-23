@@ -78,17 +78,18 @@ angular.module('omnibox')
     replace: true,
     templateUrl: 'omnibox/templates/asset-cards.html'
   };
-}]);
+    }]);
 
 
 angular.module('omnibox')
-  .directive('geometryCards', ['MapService', 'ClickFeedbackService', 'CSVService', 'user',
-    function (MapService, ClickFeedbackService, CSVService, user) {
+.directive('geometryCards', ['MapService', 'ClickFeedbackService', 'State', 'CSVService', 'user',
+function (MapService, ClickFeedbackService, State, CSVService, user) {
   return {
     link: function (scope, element) {
 
       scope.user = user;
       scope.showNoData = false;
+      scope.isRainyLayer = State.isRainyLayer;
 
       // expose CSV functions for export
       scope.formatLineCSV = CSVService.formatLineCSV;
