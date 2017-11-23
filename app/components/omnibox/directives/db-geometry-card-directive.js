@@ -3,13 +3,13 @@ angular.module('omnibox')
   'State',
   'DBCardsService',
   'DataService',
-  'SelectionService',
+  'DashboardChartService',
   'DragService',
   function (
       State,
       DBCardsService,
       DataService,
-      SelectionService,
+      DashboardChartService,
       DragService) {
     // TODO: This whole directive is a copy of parts of the asset-card-directive
     return {
@@ -22,7 +22,7 @@ angular.module('omnibox')
         scope.openColorPicker = DBCardsService.openColorPicker;
         scope.closeColorPicker = DBCardsService.closeColorPicker;
 
-        scope.getSelectionMetaData = SelectionService.getMetaDataFunction(
+        scope.getSelectionMetaData = DashboardChartService.getMetaDataFunction(
           scope.geom);
 
         // Make sure all event series data etc gets updated on geo.
@@ -31,7 +31,7 @@ angular.module('omnibox')
         });
 
         scope.$watch('geom', function () {
-          SelectionService.initializeRaster(scope.geom, "geom");
+          DashboardChartService.initializeRaster(scope.geom, "geom");
         });
 
         scope.toggleColorPicker = function (selectionUuid) {
@@ -67,14 +67,14 @@ angular.module('omnibox')
          * Properties are asynchronous so watch it to set noData when added.
          */
         scope.$watch('geom.properties', function (n, o) {
-          scope.geomSelections = SelectionService.initializeGeomEventseriesSelections(scope.geom);
+          scope.geomSelections = DashboardChartService.initializeGeomEventseriesSelections(scope.geom);
 
           _.forEach(scope.geom.properties, function (property, uuid) {
             var selection = _.find(State.selections, function(s) {
               return s.geom === scope.geom.geometry.coordinates.toString() && s.raster === uuid;
             });
             if (selection && !selection.active
-              && SelectionService.dbSupportedData(
+              && DashboardChartService.dbSupportedData(
                 scope.geom.geometry.type,
                 property
               )) {
@@ -90,7 +90,7 @@ angular.module('omnibox')
           scope.noData = noRasterData && scope.geom.entity_name === undefined;
         }, true);
 
-        scope.toggleSelection = SelectionService.toggle;
+        scope.toggleSelection = DashboardChartService.toggle;
 
         DragService.addDraggableContainer(element.find('#drag-container'));
       },

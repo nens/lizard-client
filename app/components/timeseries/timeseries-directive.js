@@ -9,7 +9,7 @@ angular.module('timeseries')
   'gettextCatalog',
   'notie',
   'ChartCompositionService',
-  'SelectionService',
+  'DashboardChartService',
   'State',
   'TimeseriesService',
   function (
@@ -17,7 +17,7 @@ angular.module('timeseries')
     gettextCatalog,
     notie,
     ChartCompositionService,
-    SelectionService,
+    DashboardChartService,
     State,
     TimeseriesService
   ) {
@@ -35,12 +35,12 @@ angular.module('timeseries')
         selectionType = 'geom';
       }
       scope.$watch('state.layers', function () { // TODO: There is a better place for this.
-        SelectionService.initializeRaster(selectionObject, selectionType);
+        DashboardChartService.initializeRaster(selectionObject, selectionType);
       });
 
       scope.$watch(selectionType, function (a, b) {
-        SelectionService.initializeAsset(scope.asset);
-        SelectionService.initializeRaster(selectionObject, selectionType);
+        DashboardChartService.initializeAsset(scope.asset);
+        DashboardChartService.initializeRaster(selectionObject, selectionType);
         if (State.context === 'map') {
           scope.timeseries.change();
         }

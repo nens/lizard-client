@@ -17,7 +17,7 @@ angular.module('map')
   'UtilService',
   'State',
   '$timeout',
-  'SelectionService',
+  'DashboardChartService',
   'ChartCompositionService',
   function (
     MapService,
@@ -26,7 +26,7 @@ angular.module('map')
     UtilService,
     State,
     $timeout,
-    SelectionService,
+    DashboardChartService,
     ChartCompositionService
   ) {
 
@@ -201,7 +201,7 @@ angular.module('map')
 
       scope.$watch('state.layers', function (n, o) {
         if (n !== o) {
-          SelectionService.updateForLayerActivity(n, o);
+          DashboardChartService.updateForLayerActivity(n, o);
         }
 
         MapService.updateLayers(scope.state.layers);

@@ -3,7 +3,7 @@ angular.module('omnibox').directive('dbAssetCard', [
   'DataService',
   'DragService',
   'DBCardsService',
-  'SelectionService',
+  'DashboardChartService',
   'TimeseriesService',
   'RelativeToSurfaceLevelService',
   'getNestedAssets',
@@ -14,7 +14,7 @@ angular.module('omnibox').directive('dbAssetCard', [
     DataService,
     DragService,
     DBCardsService,
-    SelectionService,
+    DashboardChartService,
     TimeseriesService,
     RTSLService,
     getNestedAssets,
@@ -47,7 +47,7 @@ angular.module('omnibox').directive('dbAssetCard', [
           TimeseriesService.syncTime();
         };
 
-        scope.getSelectionMetaData = SelectionService.getMetaDataFunction(
+        scope.getSelectionMetaData = DashboardChartService.getMetaDataFunction(
           scope.asset);
 
         scope.assetHasChildren = function (asset) {
@@ -56,7 +56,7 @@ angular.module('omnibox').directive('dbAssetCard', [
 
         scope.state = State;
 
-        scope.toggleSelection = SelectionService.toggle;
+        scope.toggleSelection = DashboardChartService.toggle;
 
         scope.getTsDisplayName = function (selection) {
           var metaData = scope.getSelectionMetaData(selection);

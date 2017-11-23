@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module("omnibox")
-.directive("omnibox", ['$window', '$document', 'State', 'user', '$timeout', 'TimeseriesService', 'RelativeToSurfaceLevelService', 'ChartCompositionService', 'AssetService', 'SelectionService',
-  function ($window, $document, State, user, $timeout, TimeseriesService, RTSLService, ChartCompositionService, AssetService, SelectionService) { return {
+.directive("omnibox", ['$window', '$document', 'State', 'user', '$timeout', 'TimeseriesService', 'RelativeToSurfaceLevelService', 'ChartCompositionService', 'AssetService', 'DashboardChartService',
+  function ($window, $document, State, user, $timeout, TimeseriesService, RTSLService, ChartCompositionService, AssetService, DashboardChartService) { return {
 
     /**
      * Keeps omnibox size in check and creates and maintains a scrollbar.
@@ -184,12 +184,12 @@ angular.module("omnibox")
         ///////////////////////////////////////////////////////////////////////
         // 2) Adding geometries - For the detected new geom, we need to add a
         //    raster-selection for each active temporal raster. This can be done
-        //    via the SelectionService.
+        //    via the DashboardChartService.
 
         n.forEach(function (str) {
           if (o.indexOf(str) === -1) {
             addedGeomObj = JSON.parse(str);
-            SelectionService.initializeRaster(addedGeomObj, "geom");
+            DashboardChartService.initializeRaster(addedGeomObj, "geom");
           }
         });
       });

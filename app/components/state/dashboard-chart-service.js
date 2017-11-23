@@ -3,7 +3,7 @@
  * Lizard-client global state selections.
  */
 angular.module('global-state')
-  .service('SelectionService', [
+  .service('DashboardChartService', [
     'AssetService',
     'DataService',
     'DBCardsService',

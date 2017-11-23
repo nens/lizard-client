@@ -2,7 +2,7 @@
 angular.module('omnibox')
   .directive('dbCards', [
     'State',
-    'SelectionService',
+    'DashboardChartService',
     'DragService',
     'gettextCatalog',
     'notie',
@@ -14,7 +14,7 @@ angular.module('omnibox')
     'DataService',
     function (
       State,
-      SelectionService,
+      DashboardChartService,
       DragService,
       gettextCatalog,
       notie,
@@ -121,9 +121,9 @@ angular.module('omnibox')
           return;
         }
 
-        var tsMetaData = SelectionService.timeseriesMetaData(
+        var tsMetaData = DashboardChartService.timeseriesMetaData(
             TimeseriesService.timeseries, selection);
-        var otherGraphTsMetaData = SelectionService.timeseriesMetaData(
+        var otherGraphTsMetaData = DashboardChartService.timeseriesMetaData(
             TimeseriesService.timeseries, otherGraphSelections);
         var srcMeasureScale = selection.measureScale;
         var targetSelectionUuids = ChartCompositionService.composedCharts[order];
