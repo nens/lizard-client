@@ -201,10 +201,12 @@ angular.module('lizard-nxt')
               timelineLayers.eventseries.push(dataLayer);
             }
             else if (dataLayer && layer.type === "raster" && State.context !== 'dashboard') {
-              if (dataLayer.slug !== "rain") {
-                timelineLayers.rasters.push(dataLayer);
-              } else if (dataLayer.slug === "rain") {
+              if (State.isRainyLayer(dataLayer) && !timelineLayers.rain) {
+                // Show rain bars
                 timelineLayers.rain = dataLayer;
+              } else {
+                // Show ticks
+                timelineLayers.rasters.push(dataLayer);
               }
             }
           }
