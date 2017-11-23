@@ -34,6 +34,21 @@ Start dev server to test and load app in a browser at `http://localhost:9000`:
 npm start
 ```
 
+
+If you want to proxy to staging or production:
+
+```sh
+export SSO_USERNAME=<your_sso_username>
+export SSO_PASSWORD=<your_sso_password>
+npm start -- --proxyhost=https://nxt.staging.lizard.net
+```
+
+Or without environment variables:
+
+```
+npm start -- --proxyhost=https://nxt.staging.lizard.net --sso_username=<your_sso_username> --sso_password=<your_sso_password>
+```
+
 ## Content
 
 * [`npm start`](#npm-start): starts a dev server with Grunt.
