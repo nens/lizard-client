@@ -62,10 +62,6 @@ angular.module("omnibox").directive("closeCard", [
                 }
               }
             } else {
-              console.log(
-                "ClickFeedbackService.labelsLayer",
-                ClickFeedbackService.labelsLayer
-              );
               ClickFeedbackService.labelsLayer._layers.clearLayers();
             }
             selectedAssets.removeAsset(assetId);
