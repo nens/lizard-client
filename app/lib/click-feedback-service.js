@@ -8,22 +8,24 @@ angular.module("lizard-nxt").service("ClickFeedbackService", [
   "$rootScope",
   "LeafletService",
   function(State, $rootScope, LeafletService) {
+    var labelsLayer = LeafletService.geoJson(null);
+
     var ClickLayer = function() {
-      this.labelsLayer = LeafletService.geoJson(null);
-      window.labelsLayer = this.labelsLayer;
-      this.labelsLayer.options.pointToLayer = function(feature, latlng) {
+      labelsLayer.options.pointToLayer = function(feature, latlng) {
         return L.marker(latlng, {
           icon: L.divIcon({
             className: "selected",
             iconAnchor: [150, 20],
-            html: '<div class="assetLabel"><div class="triangle"></div><div class="labelText">' + feature.name + '<div></div>'
+            html:
+              '<div class="assetLabel"><div class="triangle"></div><div class="labelText">' +
+              feature.name +
+              "<div></div>"
           }),
           clickable: false
         });
       };
 
       // mapState.addLeafletLayer(this.labelsLayer);
-
 
       /**
        * @description Removes clicklayer, adds a new one.
@@ -40,7 +42,7 @@ angular.module("lizard-nxt").service("ClickFeedbackService", [
 
         this.clickedPoints = [];
 
-        mapState.addLeafletLayer(this.labelsLayer);
+        mapState.addLeafletLayer(labelsLayer);
         this.clickLayer = LeafletService.geoJson(null, {
           style: function(feature) {
             return {
@@ -69,7 +71,7 @@ angular.module("lizard-nxt").service("ClickFeedbackService", [
       };
 
       this.remove = function() {
-        this.labelsLayer = null;
+        labelsLayer = null;
         this.clickLayer = null;
       };
 
@@ -112,7 +114,7 @@ angular.module("lizard-nxt").service("ClickFeedbackService", [
 
       this.drawFeatureAsLabel = function(geojson, asset) {
         var _geojson = Object.assign({}, geojson, asset);
-        this.labelsLayer.addData(_geojson);
+        labelsLayer.addData(_geojson);
       };
 
       /**
@@ -320,19 +322,11 @@ angular.module("lizard-nxt").service("ClickFeedbackService", [
      * @params {object} LatLng object
      */
     removeClickFromClickLayer = function(toBeRemovedClick) {
-
       if (
         clickLayer.clickLayer &&
         toBeRemovedClick in clickLayer.clickLayer._layers
       ) {
         clickLayer.clickLayer.removeLayer(toBeRemovedClick);
-      }
-
-      if (
-        clickLayer.labelsLayer &&
-        toBeRemovedClick in clickLayer.labelsLayer._layers
-      ) {
-        clickLayer.labelsLayer.removeLayer(toBeRemovedClick);
       }
     };
 
@@ -382,14 +376,13 @@ angular.module("lizard-nxt").service("ClickFeedbackService", [
     };
 
     drawLabel = function(mapState, geometry, asset) {
-
       if (State.box.type !== "multi-point") {
-        window.labelsLayer.clearLayers();
+        labelsLayer.clearLayers();
       }
 
-      if (!clickLayer.labelsLayer) {
-        clickLayer.emptyClickLayer(mapState);
-      }
+      // if (!clickLayer.labelsLayer) {
+      //   clickLayer.emptyClickLayer(mapState);
+      // }
       return clickLayer.drawFeatureAsLabel(geometry, asset);
     };
 
@@ -459,7 +452,8 @@ angular.module("lizard-nxt").service("ClickFeedbackService", [
       removeLeafletLayerWithId: removeLeafletLayerWithId,
       vibrateOnce: vibrateOnce,
       updateCircle: updateCircle,
-      remove: removeLayer
+      remove: removeLayer,
+      labelsLayer: labelsLayer
     };
   }
 ]);
