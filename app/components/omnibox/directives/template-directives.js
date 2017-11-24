@@ -10,26 +10,17 @@
  *
  */
 
-angular.module("omnibox").directive("assetCards", [
-  "ClickFeedbackService",
-  "MapService",
-  "user",
-  function(ClickFeedbackService, MapService, user) {
-    return {
-      link: function(scope, element) {
-        scope.assetType = "asset";
-        scope.user = user;
+angular.module('omnibox')
+  .directive('assetCards', ['ClickFeedbackService', 'MapService', 'State', 'user',
+    function (ClickFeedbackService, MapService, State, user) {
+  return {
+    link: function (scope, element) {
 
-        var clickId;
+      scope.assetType = 'asset';
+      scope.user = user;
+      scope.isRainyLayer = State.isRainyLayer;
 
-        var removeAsset = function(id) {
-          ClickFeedbackService.removeClickFromClickLayer(id);
-        };
-
-        var setAsset = function(asset) {
-          if (clickId) {
-            removeAsset(clickId);
-          }
+      var clickId;
 
           // Child assets (filters from groundwater stations) do not always have
           // a geometry.
@@ -132,11 +123,98 @@ angular.module("omnibox").directive("geometryCards", [
           }
         });
 
-        scope.$watchCollection("geom.properties", function(newProps, oldProps) {
-          if (newProps) {
-            scope.showNoData = !Object.keys(newProps).length;
-          }
-        });
+          ClickFeedbackService.vibrateOnce(feature, clickId);
+
+        }
+
+        cancelAssetWatch();
+      };
+
+      var cancelAssetWatch = scope.$watch('asset', setAsset);
+
+      element.on('$destroy', function () {
+        if (clickId) {
+          removeAsset(clickId);
+        }
+      });
+
+
+    },
+    restrict: 'E',
+    scope: {
+      asset: '=',
+      timeState: '=',
+      longFormat: '=',
+      showHeader: '=',
+      showTimeseries: '=',
+      showAnnotations: '='
+    },
+    replace: true,
+    templateUrl: 'omnibox/templates/asset-cards.html'
+  };
+    }]);
+
+
+angular.module('omnibox')
+.directive('geometryCards', ['MapService', 'ClickFeedbackService', 'State', 'CSVService', 'user',
+function (MapService, ClickFeedbackService, State, CSVService, user) {
+  return {
+    link: function (scope, element) {
+
+      scope.user = user;
+      scope.showNoData = false;
+      scope.isRainyLayer = State.isRainyLayer;
+
+      // expose CSV functions for export
+      scope.formatLineCSV = CSVService.formatLineCSV;
+      scope.getLineCSVHeaders = CSVService.getLineCSVHeaders;
+
+      scope.getGeomCardHeader = function (geom) {
+        if (geom.geometry.type === 'Point') {
+          var M = 100000;
+          var lon = Math.round(geom.geometry.coordinates[0] * M) / M;
+          var lat = Math.round(geom.geometry.coordinates[1] * M) / M;
+          return '( ' + lat + ', ' + lon + ' )';
+        } else if (geom.geometry.type === 'Polygon' ||
+                   geom.geometry.type === 'MultiPolygon') {
+
+          var name = geom.name;
+          var area = geom.area;
+          return name + ': ' + area / 10000 + ' ha';
+        } else {
+          return geom.geometry.type;
+        }
+      };
+
+      var clickId = 0;
+      var destroy = function () {
+        if (clickId) {
+          ClickFeedbackService.removeClickFromClickLayer(clickId);
+        }
+      };
+
+      scope.$watchCollection('geom.geometry.coordinates', function () {
+        destroy();
+
+        var geom = scope.geom;
+
+        if (scope.header && geom.geometry.type === 'Point') {
+          var latLng = L.latLng(
+            geom.geometry.coordinates[1],
+            geom.geometry.coordinates[0]
+          );
+          clickId = ClickFeedbackService.drawArrow(MapService, latLng);
+        }
+
+        else if (scope.header && geom.geometry.type === 'LineString') {
+          var coords = geom.geometry.coordinates;
+          var start = L.latLng(coords[0][1], coords[0][0]);
+          var end = L.latLng(coords[1][1], coords[1][0]);
+          clickId = ClickFeedbackService.drawLine(
+            MapService,
+            start,
+            end
+          );
 
         element.on("$destroy", function() {
           destroy();
@@ -332,40 +410,86 @@ angular.module("omnibox").directive("rain", [
             getRecurrenceTime();
           }
         });
+      };
 
-        // Gets data directly from raster endpoint of raster RAW_RAIN_RASTER_UUID
-        var RAW_RAIN_RASTER_UUID = "730d6675-35dd-4a35-aa9b-bfb8155f9ca7";
+      scope.$on('$destroy', function () {
+        // Either the 'X' in the omnibox was clicked, or we're switching to the Dashboard.
+        // If we are switching to dashboard, we want to keep the selected timeseries.
 
-        scope.getRawDataUrl = function(event) {
-          var wkt = UtilService.geomToWkt(scope.geometry);
-          // hack to make it testable on staging :( and gets the correct hostname
-          // on production
-          var hostname = window.location.hostname.replace(
-            "nxt.staging",
-            "demo"
-          );
-          return (
-            "https://" +
-            hostname +
-            "/api/v3/rasters/" +
-            RAW_RAIN_RASTER_UUID +
-            "/data/" +
-            "?format=csv" +
-            "&start=" +
-            new Date(State.temporal.start).toISOString().split(".")[0] +
-            "&stop=" +
-            new Date(State.temporal.end).toISOString().split(".")[0] +
-            "&geom=" +
-            wkt +
-            "&srs=EPSG:4326"
-          );
-        };
-        // ENDHACK
+        if (State.context === 'map') {
+          scope.list.forEach(function (asset) { removeTSofAsset(asset); });
+        }
+      });
+    },
+    restrict: 'E',
+    scope: {
+      asset: '=',
+      timeState: '=',
+    },
+    replace: true,
+    templateUrl: 'omnibox/templates/nestedasset.html'
+  };
+}]);
 
-        var getRecurrenceTime = function() {
-          scope.rrc.data = null;
+angular.module('omnibox')
+       .directive('rain', ['State', 'RasterService', 'UtilService',
+                           function (State, RasterService, UtilService) {
+  return {
+    link: function (scope) {
 
-          RasterService.getData({
+      scope.rrc = {
+        active: false
+      };
+
+      scope.rain.MAX_TIME_INTERVAL = 86400000 * 365.2425 / 12; // 1 month
+
+      var setGraphContent = function () {
+        scope.graphContent = [{
+          data: scope.rain.data,
+          keys: {x: 0, y: 1},
+          labels: {y: 'mm'},
+          unit: "mm",
+        }];
+      };
+
+      scope.recurrenceTimeToggle = function () {
+        scope.rrc.active = !scope.rrc.active;
+        if (scope.rrc.active) { getRecurrenceTime(); }
+      };
+
+
+      scope.$watchCollection("rain.data", function (n, o) {
+        setGraphContent();
+        if (scope.rrc.active) {
+          getRecurrenceTime();
+        }
+      });
+
+      // Gets data directly from raster endpoint of raster RAW_RAIN_RASTER_UUID
+      var RAW_RAIN_RASTER_UUID = '730d6675-35dd-4a35-aa9b-bfb8155f9ca7';
+
+      scope.getRawDataUrl = function (event) {
+        var wkt = UtilService.geomToWkt(scope.geometry);
+        // hack to make it testable on staging :( and gets the correct hostname
+        // on production
+        var hostname = window.location.hostname.replace('nxt.staging', 'demo');
+        return 'https://' + hostname + '/api/v3/rasters/' +
+          RAW_RAIN_RASTER_UUID + '/data/' +
+          '?format=csv' +
+          '&start=' +
+          new Date(State.temporal.start).toISOString().split('.')[0] +
+          '&stop=' +
+          new Date(State.temporal.end).toISOString().split('.')[0] +
+          '&geom=' + wkt +
+          '&srs=EPSG:4326';
+      };
+      // ENDHACK
+
+      var getRecurrenceTime = function () {
+        scope.rrc.data = null;
+
+        RasterService.getData(
+          {
             uuid: scope.rain.uuid,
             agg: "rrc",
             geom: scope.geometry,

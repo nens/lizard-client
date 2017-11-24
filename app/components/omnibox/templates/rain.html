@@ -16,8 +16,8 @@
 
         <div
           class="card-tools"
-          ng-class="{hidden: !fullDetails}">
-
+          ng-class="{hidden: !fullDetails}"
+          ng-if="rain.slug === 'rain'">
           <a
             ng-click="recurrenceTimeToggle()"
             ng-class="{ active: rrc.active }"
