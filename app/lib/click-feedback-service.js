@@ -3,10 +3,27 @@
  * using line tool mode and the omnibox uses it to display geometries and assets
  * on the map.
  */
-angular.module('lizard-nxt')
-  .service('ClickFeedbackService', ['$rootScope', 'LeafletService',
-  function ($rootScope, LeafletService) {
-    var ClickLayer = function () {
+angular.module("lizard-nxt").service("ClickFeedbackService", [
+  "State",
+  "$rootScope",
+  "LeafletService",
+  function(State, $rootScope, LeafletService) {
+    var ClickLayer = function() {
+      this.labelsLayer = LeafletService.geoJson(null);
+      window.labelsLayer = this.labelsLayer;
+      this.labelsLayer.options.pointToLayer = function(feature, latlng) {
+        return L.marker(latlng, {
+          icon: L.divIcon({
+            className: "selected",
+            iconAnchor: [150, 20],
+            html: '<div class="assetLabel"><div class="triangle"></div><div class="labelText">' + feature.name + '<div></div>'
+          }),
+          clickable: false
+        });
+      };
+
+      // mapState.addLeafletLayer(this.labelsLayer);
+
 
       /**
        * @description Removes clicklayer, adds a new one.
@@ -14,7 +31,7 @@ angular.module('lizard-nxt')
        *              and a way to transform points.
        * @param {object} mapState
        */
-      this.emptyClickLayer = function (mapState) {
+      this.emptyClickLayer = function(mapState) {
         clearInterval(this._vibration);
 
         if (this.clickLayer) {
@@ -23,18 +40,17 @@ angular.module('lizard-nxt')
 
         this.clickedPoints = [];
 
-        this.labelsLayer = LeafletService.geoJson(null);
-
+        mapState.addLeafletLayer(this.labelsLayer);
         this.clickLayer = LeafletService.geoJson(null, {
-          style: function (feature) {
+          style: function(feature) {
             return {
-              name: 'click',
+              name: "click",
               clickable: true,
-              color: '#c0392b',
-              stroke: '#c0392b',
+              color: "#c0392b",
+              stroke: "#c0392b",
               opacity: 0.8,
-              'stroke-opacity': 0.8,
-              radius: getRadius(feature),
+              "stroke-opacity": 0.8,
+              radius: getRadius(feature)
             };
           }
         });
@@ -44,23 +60,22 @@ angular.module('lizard-nxt')
 
         // Hack to make click on the clicklayer bubble down to the map it is
         // part of.
-        this.clickLayer.on('click', function (e) {
-            this._map.fire('click', e);
-          }
-        );
+        this.clickLayer.on("click", function(e) {
+          this._map.fire("click", e);
+        });
 
-        mapState.addLeafletLayer(this.labelsLayer);
+        // mapState.addLeafletLayer(this.labelsLayer);
         mapState.addLeafletLayer(this.clickLayer);
       };
 
-      this.remove = function () {
+      this.remove = function() {
         this.labelsLayer = null;
         this.clickLayer = null;
       };
 
-      this.drawPointsAsCircleMarker = function (self) {
+      this.drawPointsAsCircleMarker = function(self) {
         // Explain leaflet to draw points as circlemarkers.
-        this.clickLayer.options.pointToLayer = function (feature, latlng) {
+        this.clickLayer.options.pointToLayer = function(feature, latlng) {
           var circleMarker = L.circleMarker(latlng, {
             radius: 0,
             weight: self.strokeWidth,
@@ -79,7 +94,7 @@ angular.module('lizard-nxt')
        * @param  {object} layer
        * @return {object} the svg of the leaflet object layer
        */
-      this._getSelection = function (layer, _id) {
+      this._getSelection = function(layer, _id) {
         // Due to some leaflet obscurity you have to get the first item with an
         // unknown key.
         var _layers = layer._layers;
@@ -95,29 +110,16 @@ angular.module('lizard-nxt')
         return selection;
       };
 
-
       this.drawFeatureAsLabel = function(geojson, asset) {
-        this.labelsLayer.addData(geojson);
-
-        var divIcon = L.divIcon({
-          className: 'selected',
-          iconAnchor: [150, 20],
-          html: '<div class="assetLabel"><div class="triangle"></div><div class="labelText">' + asset.name + '<div></div>'
-        });
-
-        this.labelsLayer.options.pointToLayer = function (feature, latlng) {
-          return L.marker(latlng, {
-            icon: divIcon,
-            clickable: false
-          });
-        };
-      }
+        var _geojson = Object.assign({}, geojson, asset);
+        this.labelsLayer.addData(_geojson);
+      };
 
       /**
        * @description add data to the clicklayer
        * with a small hackery to find out this specific id
        */
-      this.drawFeature = function (geojson, strokeSize) {
+      this.drawFeature = function(geojson, strokeSize) {
         this.strokeWidth = strokeSize || 5;
         var oldIds = Object.keys(this.clickLayer._layers);
 
@@ -127,7 +129,7 @@ angular.module('lizard-nxt')
         // check id.
         var newIds = Object.keys(this.clickLayer._layers);
         var newId;
-        angular.forEach(newIds, function (item) {
+        angular.forEach(newIds, function(item) {
           if (oldIds.indexOf(item) < 0) {
             newId = item;
           }
@@ -147,8 +149,7 @@ angular.module('lizard-nxt')
        * @param  {L.LatLng} second - end of the line
        * @param  {boolean} dashed - when true draws a dashed line
        */
-      this.drawLineElement = function (first, second, dashed) {
-
+      this.drawLineElement = function(first, second, dashed) {
         if (first === undefined || second === undefined) {
           return;
         }
@@ -157,12 +158,11 @@ angular.module('lizard-nxt')
 
         this.strokeWidth = 3;
 
-        var geojsonFeature = { "type": "Feature" };
+        var geojsonFeature = { type: "Feature" };
         geojsonFeature.geometry = {
-          "type": "LineString",
-          "coordinates": [[first.lng, first.lat], [second.lng, second.lat]]
+          type: "LineString",
+          coordinates: [[first.lng, first.lat], [second.lng, second.lat]]
         };
-
 
         if (dashed) {
           this.clickLayer.options.style.dashArray = "5, 5";
@@ -173,12 +173,15 @@ angular.module('lizard-nxt')
         // check id.
         var newIds = Object.keys(this.clickLayer._layers);
         var newId;
-        angular.forEach(newIds, function (item) {
+        angular.forEach(newIds, function(item) {
           if (oldIds.indexOf(item) < 0) {
             newId = item;
           }
         });
-        var sel = this._selection = this._getSelection(this.clickLayer, newId);
+        var sel = (this._selection = this._getSelection(
+          this.clickLayer,
+          newId
+        ));
         this.vibrate(sel);
         return newId;
       };
@@ -186,13 +189,14 @@ angular.module('lizard-nxt')
       /**
        * @description vibrates the features in the clickLayer.
        */
-      this.vibrateFeatures = function (id) {
-        var sel = this._selection = this._getSelection(this.clickLayer, id);
+      this.vibrateFeatures = function(id) {
+        var sel = (this._selection = this._getSelection(this.clickLayer, id));
         clearInterval(this._vibration);
         var vibrate = this.vibrate;
         var self = this;
-        this._vibration = setInterval(
-          function () { vibrate.call(self, sel, false); }, 400);
+        this._vibration = setInterval(function() {
+          vibrate.call(self, sel, false);
+        }, 400);
       };
 
       /**
@@ -201,8 +205,11 @@ angular.module('lizard-nxt')
        * @param  {geojson} geojson if provided draws the features in
        *                           the geojson, vibrates it and removes it.
        */
-      this.vibrateOnce = function (geojson, layerId) {
-        var sel = this._selection = this._getSelection(this.clickLayer, layerId);
+      this.vibrateOnce = function(geojson, layerId) {
+        var sel = (this._selection = this._getSelection(
+          this.clickLayer,
+          layerId
+        ));
         this.vibrate(sel);
       };
 
@@ -213,24 +220,24 @@ angular.module('lizard-nxt')
        * @param {object} mapState nxt mapState
        * @param {L.latLng} latLng location of marker
        */
-      this.addLocationMarker = function (mapState, latLng) {
+      this.addLocationMarker = function(mapState, latLng) {
         var divIcon = L.divIcon({
-          className: 'selected',
+          className: "selected",
           iconAnchor: [10, 48],
-          html: '<svg width=20 height=48><path d="M10,16'
-            + 'c-5.523 0-10 4.477-10 10 0 10 10 22 10 22'
-            + 's10-12 10-22c0-5.523-4.477-10-10-10z M10,32'
-            + ' c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686'
-            + ' 6 6-2.686 6-6 6z"></path></svg>'
+          html:
+            '<svg width=20 height=48><path d="M10,16' +
+            "c-5.523 0-10 4.477-10 10 0 10 10 22 10 22" +
+            "s10-12 10-22c0-5.523-4.477-10-10-10z M10,32" +
+            " c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686" +
+            ' 6 6-2.686 6-6 6z"></path></svg>'
         });
 
-        this.clickLayer.options.pointToLayer = function (feature, latlng) {
+        this.clickLayer.options.pointToLayer = function(feature, latlng) {
           return L.marker(latlng, {
             icon: divIcon,
             clickable: true
           });
         };
-
       };
 
       /**
@@ -239,17 +246,28 @@ angular.module('lizard-nxt')
        * @param  {boolean} remove to remove or not. When true, stroke-width
        *                          is set to 0 at the end the vibration.
        */
-      this.vibrate = function (sel, remove) {
-        if (sel.empty()) { return; } // bail when empty
+      this.vibrate = function(sel, remove) {
+        if (sel.empty()) {
+          return;
+        } // bail when empty
         var width = this.strokeWidth;
 
-        sel.selectAll("path")
+        sel
+          .selectAll("path")
           .classed("vibrator", true)
-          .attr("stroke-width", function () { return width * 2; })
-          .transition().duration(200)
-          .attr("stroke-width", function () { return width * 3; })
-          .transition().duration(200)
-          .attr("stroke-width", function () { return remove ? 0 : width; });
+          .attr("stroke-width", function() {
+            return width * 2;
+          })
+          .transition()
+          .duration(200)
+          .attr("stroke-width", function() {
+            return width * 3;
+          })
+          .transition()
+          .duration(200)
+          .attr("stroke-width", function() {
+            return remove ? 0 : width;
+          });
       };
 
       /**
@@ -259,62 +277,69 @@ angular.module('lizard-nxt')
        *                           water-object
        * @return {int}             radius
        */
-      var getRadius = function (feature) {
+      var getRadius = function(feature) {
         var radius = 0;
 
         if (feature.properties) {
           var entityName = feature.properties.entity_name,
-              entityType = feature.properties.type;
+            entityType = feature.properties.type;
           radius = feature.properties.radius || 0;
           if (entityName) {
             radius = 12;
             if (entityName === "pumpstation" && entityType !== "Rioolgemaal") {
-              radius =  13;
+              radius = 13;
             } else if (entityType === "Rioolgemaal" || entityName === "weir") {
-              radius =  11;
+              radius = 11;
             } else if (entityName === "bridge" || entityName === "manhole") {
-              radius =  14;
+              radius = 14;
             }
           }
         }
 
         return radius;
       };
-
     };
 
     var clickLayer = new ClickLayer(),
-        emptyClickLayer,
-        removeClickFromClickLayer,
-        drawCircle,
-        updateCircle,
-        drawArrow,
-        drawLine,
-        drawLabel,
-        drawGeometry,
-        startVibration,
-        vibrateOnce,
-        removeLayer,
-        removeLeafletLayerWithId;
+      emptyClickLayer,
+      removeClickFromClickLayer,
+      drawCircle,
+      updateCircle,
+      drawArrow,
+      drawLine,
+      drawLabel,
+      drawGeometry,
+      startVibration,
+      vibrateOnce,
+      removeLayer,
+      removeLeafletLayerWithId;
 
     /**
      * @description should remove that exact click that is wanting to be
      * removed from the map
      * @params {object} LatLng object
      */
-    removeClickFromClickLayer = function (toBeRemovedClick) {
-      if (clickLayer.clickLayer
-        && toBeRemovedClick in clickLayer.clickLayer._layers) {
+    removeClickFromClickLayer = function(toBeRemovedClick) {
+
+      if (
+        clickLayer.clickLayer &&
+        toBeRemovedClick in clickLayer.clickLayer._layers
+      ) {
         clickLayer.clickLayer.removeLayer(toBeRemovedClick);
+      }
+
+      if (
+        clickLayer.labelsLayer &&
+        toBeRemovedClick in clickLayer.labelsLayer._layers
+      ) {
         clickLayer.labelsLayer.removeLayer(toBeRemovedClick);
       }
     };
 
-
     /**
      * @description empties the clicklayer.
      */
-    emptyClickLayer = function (mapState) {
+    emptyClickLayer = function(mapState) {
       clickLayer.emptyClickLayer(mapState);
     };
 
@@ -327,14 +352,13 @@ angular.module('lizard-nxt')
      * @param {object} latLng Leaflet object specifying the latitude
      * and longitude of a click
      */
-    drawCircle = function (mapState, latlng, dontEmpty, strokeSize) {
+    drawCircle = function(mapState, latlng, dontEmpty, strokeSize) {
       if (!dontEmpty) {
         clickLayer.emptyClickLayer(mapState);
       }
       var geometry = {
-        "type": "Point",
-        "coordinates":
-          [latlng.lng, latlng.lat]
+        type: "Point",
+        coordinates: [latlng.lng, latlng.lat]
       };
       return clickLayer.drawFeature(geometry, strokeSize);
     };
@@ -342,10 +366,9 @@ angular.module('lizard-nxt')
     /**
      * Updates circle with new position
      */
-    updateCircle = function (mapState, latlng, id) {
+    updateCircle = function(mapState, latlng, id) {
       var layer = mapState.getLeafletLayer(id);
-      d3.select(layer._container).select('path')
-        .attr('stroke-width', 15);
+      d3.select(layer._container).select("path").attr("stroke-width", 15);
       layer._latlng = latlng;
       layer.redraw();
     };
@@ -353,18 +376,24 @@ angular.module('lizard-nxt')
     /**
      * Removes leafletLayer
      */
-    removeLeafletLayerWithId = function (mapState, id) {
+    removeLeafletLayerWithId = function(mapState, id) {
       var layer = mapState.getLeafletLayer(id);
       mapState.removeLeafletLayer(layer);
     };
 
+    drawLabel = function(mapState, geometry, asset) {
 
+      if (State.box.type !== "multi-point") {
+        window.labelsLayer.clearLayers();
+      }
 
-    drawLabel = function (mapState, geometry, asset) {
+      if (!clickLayer.labelsLayer) {
+        clickLayer.emptyClickLayer(mapState);
+      }
       return clickLayer.drawFeatureAsLabel(geometry, asset);
     };
 
-    drawGeometry = function (mapState, geometry, entityName) {
+    drawGeometry = function(mapState, geometry, entityName) {
       if (!clickLayer.clickLayer) {
         clickLayer.emptyClickLayer(mapState);
       }
@@ -382,8 +411,7 @@ angular.module('lizard-nxt')
      * @param {object} mapState - the mapState object, which assumes the key
      *   'here' to be defined.
      */
-    drawArrow = function (mapState, latLng) {
-
+    drawArrow = function(mapState, latLng) {
       if (latLng === undefined) {
         return;
       }
@@ -392,29 +420,29 @@ angular.module('lizard-nxt')
         clickLayer.emptyClickLayer(mapState);
       }
       var geometry = {
-        "type": "Point",
-        "coordinates": [latLng.lng, latLng.lat]
+        type: "Point",
+        coordinates: [latLng.lng, latLng.lat]
       };
       clickLayer.addLocationMarker(mapState, latLng);
       return clickLayer.drawFeature(geometry);
     };
 
-    drawLine = function (mapState, first, second, dashed) {
+    drawLine = function(mapState, first, second, dashed) {
       if (!clickLayer.clickLayer) {
         clickLayer.emptyClickLayer(mapState);
       }
       return clickLayer.drawLineElement(first, second, dashed);
     };
 
-    startVibration = function (id) {
+    startVibration = function(id) {
       clickLayer.vibrateFeatures(id);
     };
 
-    vibrateOnce = function (geojson, id) {
+    vibrateOnce = function(geojson, id) {
       clickLayer.vibrateOnce(geojson, id);
     };
 
-    removeLayer = function () {
+    removeLayer = function() {
       clickLayer.remove();
       labelsLayer.remove();
     };

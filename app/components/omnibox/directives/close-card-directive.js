@@ -43,7 +43,23 @@ angular.module('omnibox')
 
           // Remove the asset itself (for local scope.asset)
           var selectedAssets = State.assets;
+
+          if(selectedAssets.length > 1) {
+            window.labelsLayer.clearLayers();
+          }
           if (selectedAssets.indexOf(assetId) >= 0) {
+            if (State.box.type !== "point") {
+              for(var layer in window.labelsLayer._layers) {
+                if (window.labelsLayer._layers[layer].feature.id === scope.asset.id) {
+                  window.labelsLayer.removeLayer(window.labelsLayer._layers[layer]);
+                }
+              }
+            } else {
+              window.labelsLayer.clearLayers();
+            }
+
+
+
             selectedAssets.removeAsset(assetId);
           }
         }
@@ -64,4 +80,3 @@ angular.module('omnibox')
     };
 
   }]);
-
