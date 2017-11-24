@@ -4,6 +4,7 @@
 angular.module('data-menu')
   .service("AssetService", ['ChartCompositionService', 'State', '$q', '$http',
     function (ChartCompositionService, State, $q, $http) {
+      var service = this;
 
       this.NESTED_ASSET_PREFIXES = ['pump', 'filter', 'monitoring_well'];
 
@@ -55,7 +56,7 @@ angular.module('data-menu')
        */
       this.removeOldAssets = function (selectedAssets, currentAssets) {
         return currentAssets.filter(function (asset) {
-          var assetId = asset.entity_name + '$' + asset.id;
+          var assetId = service.getAssetKey(asset);
           var keep = selectedAssets.indexOf(assetId) !== -1;
           if (!keep) {
             removeAssetSelections(asset);
@@ -96,6 +97,10 @@ angular.module('data-menu')
 
       this.isNestedAsset = function (entityName) {
         return this.NESTED_ASSET_PREFIXES.indexOf(entityName) !== -1;
-      }
+      };
+
+      this.getAssetKey = function(asset) {
+        return asset.entityName + '$' + asset.id;
+      };
   }
 ]);

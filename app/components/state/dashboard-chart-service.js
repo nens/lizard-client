@@ -15,6 +15,128 @@ angular.module('global-state')
       AssetService, DataService, DBCardsService, TimeseriesService,
       UtilService, State, ChartCompositionService) {
 
+      /*
+         Keys are strings like 'asset-<uuid>-timeseries-<uuid>', values
+         are objects that keep track of the chart's color, and so on.
+         The 'uuid' field of the objects is the same as the key.
+         The key is used in ChartCompositionService to track in which chart
+         this dashboardChart is currently shown, if any.
+         Never remove from this! It's nice for users if a color they set at one
+         point is remembered.
+      */
+      var dashboardCharts = {};
+
+      var getDefaultColor = function (i) {
+        var colors = UtilService.GRAPH_COLORS;
+        return colors[i % (colors.length - 1)];
+      };
+
+      var getKeyForAssetTimeseries = function(asset, ts) {
+        return 'asset-' + AssetService.getAssetKey(asset) + '-timeseries-' + ts.uuid;
+      };
+
+      var getKeyForRasterGeometry = function(raster, geometry) {
+        var coordString = geometry.coordinates[0] + "-" + geometry.coordinates[1];
+        return 'raster-' + raster.uuid + '-geometry-' + coordString;
+      };
+
+      var getKeyForRasterAsset = function(raster, asset) {
+        return 'raster-' + raster.uuid + '-asset-' + AssetService.getAssetKey(asset);
+      };
+
+      var timeseriesDashboardCharts = function(activeAssets) {
+        var result = []
+        activeAssets.forEach(function (asset) {
+          asset.timeseries.forEach(function (ts, i) {
+            result.push({
+              uuid: getKeyForAssetTimeseries(asset, ts),
+              type: "timeseries",
+              timeseries: ts.uuid,
+              color: getDefaultColor(i),
+              measureScale: ts.scale
+            });
+          });
+        });
+        return result;
+      };
+
+      var rasterGeometryDashboardCharts = function(rasters, geometries) {
+        var result = [];
+        rasters.forEach(function (raster) {
+          geometries.forEach(function (geometry, i) {
+            console.log('Trying geometry', geometry);
+            geometry = geometry.geometry; // Yes.
+            if (geometry.type !== 'Point') { console.log('Returning.'); return; }
+
+            var key = getKeyForRasterGeometry(raster, geometry);
+            result.push({
+              uuid: key,
+              type: "raster",
+              geometry: geometry.geometry,
+              color: getDefaultColor(i),
+              raster: raster.uuid,
+              measureScale: raster.scale
+            });
+          });
+        });
+        return result;
+      };
+
+      var rasterAssetDashboardCharts = function(rasters, assets) {
+        var result = [];
+        rasters.forEach(function (raster) {
+          assets.forEach(function (asset, i) {
+            var geometry = asset.geometry;
+            if (geometry.type !== 'Point') { return; }
+
+            var key = getKeyForRasterAsset(raster, asset);
+            result.push({
+              uuid: key,
+              type: "raster",
+              geometry: geometry.geometry,
+              asset: AssetService.getAssetKey(asset),
+              color: getDefaultColor(i),
+              raster: raster.uuid,
+              measureScale: raster.scale
+            });
+          });
+        });
+        return result;
+      };
+
+      var updateDashboardCharts = function(
+        activeTemporalRasterLayers, activeAssets, activeGeometries, activeEventseries) {
+        console.log('updateDashboardCharts(',
+                    activeTemporalRasterLayers, activeAssets,
+                    activeGeometries, activeEventseries, ')')
+        /*
+           Generate a list of all dashboardCharts (currentDashboardCharts) related to the
+           current layers, assets, geometries.
+           Any charts in the current ChartCompositionService that are not in that list
+           should be removed from the ChartComposition.
+           Any charts in the list that aren't in dashboardCharts yet should be added.
+         */
+        var currentDashboardCharts = [];
+
+        currentDashboardCharts = currentDashboardCharts.concat(
+          timeseriesDashboardCharts(activeAssets));
+        currentDashboardCharts = currentDashboardCharts.concat(
+          rasterGeometryDashboardCharts(activeTemporalRasterLayers, activeGeometries));
+        currentDashboardCharts = currentDashboardCharts.concat(
+          rasterAssetDashboardCharts(activeTemporalRasterLayers, activeAssets));
+
+        // ChartCompositionService.deleteChartsNotIn(
+        // currentDashboardCharts.map(function (chart) { return chart.uuid; }));
+
+        currentDashboardCharts.forEach(function (chart) {
+          if (!dashboardCharts[chart.uuid]) {
+            dashboardCharts[chart.uuid] = chart;
+          }
+        });
+
+        console.log('dashboardCharts:', dashboardCharts);
+      };
+
     /**
      * Checks whether this datatype is supported for graphs.
      *
@@ -381,64 +503,6 @@ angular.module('global-state')
       );
     };
 
-    var updateForLayerActivity = function (newStateLayers, oldStateLayers) {
-      newStateLayers.forEach(function (layer) {
-        var oldStateLayer = _.find(oldStateLayers, { uuid: layer.uuid });
-        if (!layer.active) {
-          if (oldStateLayer && oldStateLayer.active) {
-            if (layer.type === 'raster') {
-              // We remove all raster selections for the deactivated layer:
-              var newSelections = [];
-              State.selections.forEach(function (selection) {
-                if (selection.raster !== layer.uuid) {
-                  newSelections.push(selection);
-                }
-              });
-              State.selections = newSelections;
-            } else if (layer.type === 'assetgroup') {
-              if (layer.name === 'Water') {
-
-                // We update the ChartComposition, we make it forget all
-                // unwanted selections; i.e. all TS selections are no longer
-                // wanted since the Water layer was "closed"/deactivated.
-                var unwantedSelections = _.filter(State.selections, { type: 'timeseries' });
-                var unwantedSelectionsIDs = unwantedSelections.map(function (selection) {
-                  return selection.uuid;
-                });
-                unwantedSelectionsIDs.map(ChartCompositionService.removeSelection);
-
-                // We update the State object accordingly: i.e. we (i) filter out
-                // all selections based on timeseries and (ii) we clear all assets:
-                State.selections = _.reject(State.selections, { type: 'timeseries' });
-                State.assets = [];
-
-                // We update the DataService accordingly:
-                DataService.assets = [];
-              } else {
-                console.warn("[!] Encountered assetgroup that isn't 'Water'. Selections might not be updated properly.");
-              }
-            }
-          }
-        } else {
-          if (oldStateLayer && !oldStateLayer.active) {
-            // 1) ForEach asset in State.assets-> make selection for the newly
-            //    activated layer:
-            DataService.assets.forEach(function (asset) {
-              initializeRasterSelections(asset, 'asset');
-            });
-
-            // 2) ForEach Point geometry in State.geometries -> make selection
-            //    for the newly activated layer:
-            State.geometries.forEach(function (geom) {
-              if (geom.geometry.type === 'Point') {
-                initializeRasterSelections(geom, 'geom');
-              }
-            });
-          }
-        }
-      });
-    };
-
     return {
       timeseriesMetaData: getTimeseriesMetaData,
       rasterMetaData: getRasterMetaData,
@@ -448,6 +512,6 @@ angular.module('global-state')
       getMetaDataFunction: getMetaData,
       dbSupportedData: dbSupportedData,
       toggle: toggleSelection,
-      updateForLayerActivity: updateForLayerActivity
+      updateDashboardCharts: updateDashboardCharts
     };
   }]);

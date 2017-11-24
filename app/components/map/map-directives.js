@@ -200,10 +200,6 @@ angular.module('map')
       };
 
       scope.$watch('state.layers', function (n, o) {
-        if (n !== o) {
-          DashboardChartService.updateForLayerActivity(n, o);
-        }
-
         MapService.updateLayers(scope.state.layers);
       }, true);
 

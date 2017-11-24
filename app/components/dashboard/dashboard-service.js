@@ -2,8 +2,8 @@
 
 angular.module('dashboard')
 .service('DashboardService', [
-         'EventAggregateService','State','ChartCompositionService',
-function (EventAggregateService,  State,  ChartCompositionService) {
+         'EventAggregateService','State', 'DashboardChartService', 'ChartCompositionService',
+function (EventAggregateService,  State,  DashboardChartService, ChartCompositionService) {
 
   this.GRAPH_PADDING = 13; // Padding around the graph svg. Not to be confused
   // with the padding inside the svg which is used for
@@ -39,6 +39,16 @@ function (EventAggregateService,  State,  ChartCompositionService) {
   this.buildGraphs = function (graphs, timeseries, assets, geometries,
                                selections)
   {
+    console.log('Before filter:', State.layers);
+
+    DashboardChartService.updateDashboardCharts(
+      State.layers.filter(function (layer) {
+        return layer.active && layer.type === 'raster';
+      }),
+      assets,
+      geometries,
+      []);
+
     graphs = this._setAllContentToNotUpdated(graphs);
 
     /**
@@ -176,7 +186,7 @@ function (EventAggregateService,  State,  ChartCompositionService) {
           return theContentElem;
         };
 
-      ChartCompositionService.composedCharts.forEach(function (value, index) {
+    ChartCompositionService.composedCharts.forEach(function (value, index) {
       graph = {
         type: null,
         content: [],
@@ -188,10 +198,10 @@ function (EventAggregateService,  State,  ChartCompositionService) {
           graph.type || getTypeForSelectionUuid(selectionUuid);
 
         graph.dimensions =
-           graph.dimensions || getDimensionsForSelectionUuid(selectionUuid);
+          graph.dimensions || getDimensionsForSelectionUuid(selectionUuid);
 
         var contentElemForSelectionUuid =
-          getContentElemForSelectionUuid(selectionUuid);
+            getContentElemForSelectionUuid(selectionUuid);
 
         if (contentElemForSelectionUuid) {
           contentElemForSelectionUuid.updated = true;

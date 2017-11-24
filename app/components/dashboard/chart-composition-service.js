@@ -172,4 +172,18 @@ angular.module('dashboard')
     selection.active = true;
     service.addSelection(chartIndex, selection.uuid);
   };
+
+  this.deleteChartsNotIn = function (uuids) {
+    // Go through plots backwards so that removing charts doesn't break our loop
+    for (var plot = service.composedCharts.length - 1; plot >= 0; plot--) {
+      for (var chartIdx = service.composedCharts[plot].length - 1; chartIdx >= 0; chartIdx--) {
+        var uuid = service.composedCharts[plot][chartIdx];
+
+        if (uuids.indexOf(uuid) === -1) {
+          // Remove
+          removeSelectionFromSpecificPlot(plot, uuid);
+        }
+      }
+    }
+  };
 }]);
