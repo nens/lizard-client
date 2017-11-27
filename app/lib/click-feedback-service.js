@@ -25,8 +25,6 @@ angular.module("lizard-nxt").service("ClickFeedbackService", [
         });
       };
 
-      // mapState.addLeafletLayer(this.labelsLayer);
-
       /**
        * @description Removes clicklayer, adds a new one.
        *              Clicklayer has a default color, opacity
@@ -66,7 +64,6 @@ angular.module("lizard-nxt").service("ClickFeedbackService", [
           this._map.fire("click", e);
         });
 
-        // mapState.addLeafletLayer(this.labelsLayer);
         mapState.addLeafletLayer(this.clickLayer);
       };
 
@@ -383,7 +380,10 @@ angular.module("lizard-nxt").service("ClickFeedbackService", [
       // if (!clickLayer.labelsLayer) {
       //   clickLayer.emptyClickLayer(mapState);
       // }
-      return clickLayer.drawFeatureAsLabel(geometry, asset);
+      if (State.box.type === "multi-point") {
+        return clickLayer.drawFeatureAsLabel(geometry, asset);
+      }
+      return false;
     };
 
     drawGeometry = function(mapState, geometry, entityName) {
