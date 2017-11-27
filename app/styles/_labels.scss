@@ -23,4 +23,9 @@
 }
 .labelText {
   z-index: 2;
+  width: 95%;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;  
 }
