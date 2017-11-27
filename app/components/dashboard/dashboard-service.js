@@ -39,8 +39,8 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
   this.buildGraphs = function (graphs, timeseries, assets, geometries,
                                selections)
   {
-    console.log('Before filter:', State.layers);
-
+    // XXX This is only here now to remove inactive charts from the ChartComposition.
+    // It can be simpler.
     DashboardChartService.updateDashboardCharts(
       State.layers.filter(function (layer) {
         return layer.active && layer.type === 'raster';

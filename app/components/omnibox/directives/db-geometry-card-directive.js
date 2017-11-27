@@ -79,31 +79,31 @@ angular.module('omnibox')
         /**
          * Properties are asynchronous so watch it to set noData when added.
          */
-        scope.$watch('geom.properties', function (n, o) {
-          scope.geomSelections = DashboardChartService.initializeGeomEventseriesSelections(scope.geom);
+        /* scope.$watch('geom.properties', function (n, o) {
+         *   scope.geomSelections = DashboardChartService.initializeGeomEventseriesSelections(scope.geom);
 
-          _.forEach(scope.geom.properties, function (property, uuid) {
-            var selection = _.find(State.selections, function(s) {
-              return s.geom === scope.geom.geometry.coordinates.toString() && s.raster === uuid;
-            });
-            if (selection && !selection.active
-              && DashboardChartService.dbSupportedData(
-                scope.geom.geometry.type,
-                property
-              )) {
-              scope.toggleSelection(selection);
-            }
-          });
+         *   _.forEach(scope.geom.properties, function (property, uuid) {
+         *     var selection = _.find(State.selections, function(s) {
+         *       return s.geom === scope.geom.geometry.coordinates.toString() && s.raster === uuid;
+         *     });
+         *     if (selection && !selection.active
+         *       && DashboardChartService.dbSupportedData(
+         *         scope.geom.geometry.type,
+         *         property
+         *       )) {
+         *       scope.toggleSelection(selection);
+         *     }
+         *   });
 
-          // No raster data when properties is undefined or when properties is
-          // empty object.
-          var noRasterData = scope.geom.properties
-                           ? !Object.keys(scope.geom.properties).length
-                           : true;
-          scope.noData = noRasterData && scope.geom.entity_name === undefined;
-        }, true);
+         *   // No raster data when properties is undefined or when properties is
+         *   // empty object.
+         *   var noRasterData = scope.geom.properties
+         *                    ? !Object.keys(scope.geom.properties).length
+         *                    : true;
+         *   scope.noData = noRasterData && scope.geom.entity_name === undefined;
+         * }, true);*/
 
-        scope.toggleSelection = DashboardChartService.toggle;
+        scope.toggleChart = DashboardChartService.toggleChart;
 
         DragService.addDraggableContainer(element.find('#drag-container'));
       },

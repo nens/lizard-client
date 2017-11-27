@@ -38,7 +38,7 @@ angular.module('omnibox').directive('dbAssetCard', [
         scope.getKeyForRasterAsset = DashboardChartService.getKeyForRasterAsset;
         scope.chartActive = DashboardChartService.isChartActive;
         scope.toggleChart = DashboardChartService.toggleChart;
-        scope.getChartByKey = DashboardChartService.getChartByKey;
+        scope.getOrCreateChart = DashboardChartService.getOrCreateChart;
 
         scope.toggleColorPicker = function (tsUuid) {
           if (scope.colorPickersSettings[tsUuid]) {

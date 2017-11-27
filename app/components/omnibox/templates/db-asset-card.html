@@ -40,7 +40,7 @@
       class="db-ts-collection">
       <div
         ng-repeat="timeseries in asset.timeseries track by $index"
-        ng-init="key = getKeyForAssetTimeseries(timeseries.uuid); chart = getChartByKey(key)"
+        ng-init="key = getKeyForAssetTimeseries(timeseries.uuid); chart = getOrCreateChart(key)"
         ng-show="(extended || isChartActive(key) || $index < 3)"
         id="{{ key }}"
         data-uuid="{{ key }}"
@@ -70,7 +70,7 @@
 
           <color-picker
               ng-show="colorPickersSettings[key]"
-              chart="{{ chart }}">
+              chart-key="{{ key }}">
           </color-picker>
         </div>
         <!-- asset/nested-asset TS card: END -->

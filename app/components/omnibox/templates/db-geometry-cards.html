@@ -8,7 +8,6 @@
     <div
       ng-repeat="raster in getActiveTemporalRasterLayers()"
       ng-init="key = getKeyForRasterGeometry(raster, geom); chart = getOrCreateChart(key)"
-      data-chart="grr {{ chart }}"
       data-uuid="{{ key }}"
       class="draggable-ts db-ts-collection raster-ts-collection">
       <div

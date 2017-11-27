@@ -61,7 +61,6 @@ angular.module('global-state')
               type: "timeseries",
               timeseries: ts.uuid,
               color: getDefaultColor(),
-              measureScale: ts.scale
             });
           });
         });
@@ -82,7 +81,6 @@ angular.module('global-state')
               geometry: geometry.geometry,
               color: getDefaultColor(),
               raster: raster.uuid,
-              measureScale: raster.scale
             });
           });
         });
@@ -104,7 +102,6 @@ angular.module('global-state')
               asset: AssetService.getAssetKey(asset),
               color: getDefaultColor(),
               raster: raster.uuid,
-              measureScale: raster.scale
             });
           });
         });
@@ -129,19 +126,8 @@ angular.module('global-state')
         currentDashboardCharts = currentDashboardCharts.concat(
           rasterAssetDashboardCharts(activeTemporalRasterLayers, activeAssets));
 
-        // ChartCompositionService.deleteChartsNotIn(
-        // currentDashboardCharts.map(function (chart) { return chart.uuid; }));
-
-        currentDashboardCharts.forEach(function (chart) {
-          if (!dashboardCharts[chart.uuid]) {
-            dashboardCharts[chart.uuid] = chart;
-          }
-        });
-
-      };
-
-      var getChartByKey = function (key) {
-        return dashboardCharts[key];
+        ChartCompositionService.deleteChartsNotIn(
+          currentDashboardCharts.map(function (chart) { return chart.uuid; }));
       };
 
       var createRasterGeometryChart = function(parts) {
@@ -159,7 +145,6 @@ angular.module('global-state')
           geometry: geometry,
           color: getDefaultColor(),
           raster: rasterUuid,
-          measureScale: 'todo'
         };
       };
 
@@ -175,7 +160,6 @@ angular.module('global-state')
           asset: assetKey,
           color: getDefaultColor(),
           raster: rasterUuid,
-          measureScale: 'todo'
         };
       };
 
@@ -188,7 +172,6 @@ angular.module('global-state')
           type: "timeseries",
           timeseries: parts[1],
           color: getDefaultColor(),
-          measureScale: 'todo'
         };
       };
 
@@ -557,7 +540,6 @@ angular.module('global-state')
       getKeyForAssetTimeseries: getKeyForAssetTimeseries,
       getKeyForRasterGeometry: getKeyForRasterGeometry,
       getKeyForRasterAsset: getKeyForRasterAsset,
-      getChartByKey: getChartByKey,
       getOrCreateChart: getOrCreateChart,
       isChartActive: isChartActive
     };
