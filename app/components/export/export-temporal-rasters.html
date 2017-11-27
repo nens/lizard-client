@@ -1,27 +1,30 @@
 <div>
-  <div ng-if="!(isAuthenticated && userCanExportTemporalRasters)" class="modal-body">
+  <div ng-if="!(isAuthenticated && userCanExportTemporalRasters())" class="modal-body">
     <p>
       You are currently not capable of exporting raster data. The reason for this is:
     </p>
-    <p ng-if="!isAuthenticated">
-      You are not currently logged in.
+    <p ng-if="!isAuthenticated" translate>
+      *) You are not currently logged in. Exporting rasters will be made
+         available shortly
     </p>
     <p ng-if="isAuthenticated">
-      <span ng-if="!hasGeoms">
-        You haven't selected any assets/points on the map. This selection
+      <span ng-if="!hasGeoms" translate>
+        *) You haven't selected any assets/points on the map. This selection
         constitutes the geometric part of the spatio-temporal intersection you
-        were planning to export, and without this, you cannot export temporal
-        raster data.
+        were planning to export, and without this - you can't do that.
       </span>
-      <span ng-if="!hasActiveTemporalRasters">
-        You haven't activated any temporal rasters in the layer menu. Without
-        this, you cannot export temporal raster data.
-      </span>
+      <div ng-if="!hasActiveTemporalRasters" translate>
+        *) You haven't activated any temporal rasters in the layer menu. Without
+        this, you cannot export temporal raster data. Without dis, srs.
+      </div>
     </p>
   </div>
 
-  <div ng-if="isAuthenticated && userCanExportTemporalRasters" class="modal-body">
+  <div ng-if="isAuthenticated && userCanExportTemporalRasters()" class="modal-body">
+    OK, you may go-go-go
+  </div>
 
+  <!--
     <p aria-label="Help Text" class="help-text" translate>
       You can select multiple raster intersections to export. Once selected, press the
       <i>"Start Export"</i> button and the exporter will fetch the raster data
@@ -46,10 +49,10 @@
       Pick the raster you would like to export:
     </p>
 
-    <select ng-model="selectedRaster">
+    <select ng-model="data.selectedRaster">
       <option
         ng-repeat="raster in activeTemporalRasters"
-        value="{{ raster.uuid }}">
+        ng-value="raster.uuid">
         {{ raster.slug }}
       </option>
     </select>
@@ -60,22 +63,20 @@
       Pick the selected point/asset:
     </p>
 
-    <select ng-model="selectedGeomIdx">
+    <select ng-model="data.selectedGeomIdx">
       <option
         ng-repeat="formattedGeom in formattedGeoms track by $index"
-        value="{{ $index }}">
+        ng-value="$index">
         {{ formattedGeom.name }}
       </option>
     </select>
 
-    <!--
     <br />
     <br />
     <p translate>
       Debug this bitch
     </p>
     <input type="button" ng-click="dbg()" value="dbg" />
-    -->
 
   </div>
   <div class="modal-footer footer-left">
@@ -86,4 +87,5 @@
       Start Raster Export
     </button>
   </div>
+  -->
 </div>

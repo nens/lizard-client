@@ -7,8 +7,12 @@ function ($http, UtilService, gettextCatalog) {
   var DEFAULT_PARAMS = {
     agg: "sum",
     srs: "EPSG:4326",
-    window: 86400000,
-    format: "xlsx", // TODO: geotiff???
+    // window: 86400000, // DO WE REALLY WANT (NEED) TO SEND THIS?
+    format: "json", // NB! This key will not be used in the backend; i.e, the
+                    // format of the exported file will be JSON no matter what
+                    // you choose here.
+                    ///////////////////////////////////////////////////////////
+                    // TODO Roel/Carsten: raster exports in geotiff format.
     async: true
   };
 
@@ -25,10 +29,9 @@ function ($http, UtilService, gettextCatalog) {
   var formatter = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
 
   service.startExport = function (start, stop, rasterUuid, geometry) {
-    console.log("[F] startExport");
 
     start = formatter(new Date(start));
-    stop  = formatter(new Date(stop));
+    stop = formatter(new Date(stop));
 
     var variableParams = {
       start: start,
