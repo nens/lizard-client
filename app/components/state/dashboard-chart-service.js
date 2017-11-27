@@ -25,19 +25,27 @@ angular.module('global-state')
          point is remembered.
       */
       var dashboardCharts = {};
+      var nextColor = 0;
 
-      var getDefaultColor = function (i) {
+      var getDefaultColor = function () {
         var colors = UtilService.GRAPH_COLORS;
-        return colors[i % (colors.length - 1)];
+        var color = colors[nextColor % (colors.length - 1)];
+        nextColor++;
+        return color;
       };
 
-      var getKeyForAssetTimeseries = function(asset, ts) {
-        return 'asset-' + AssetService.getAssetKey(asset) + '-timeseries-' + ts.uuid;
+      var getKeyForAssetTimeseries = function(tsUuid) {
+        return 'timeseries-' + tsUuid;
       };
 
       var getKeyForRasterGeometry = function(raster, geometry) {
+        if ('geometry' in geometry) {
+          geometry = geometry.geometry;
+        }
+
         var coordString = geometry.coordinates[0] + "-" + geometry.coordinates[1];
-        return 'raster-' + raster.uuid + '-geometry-' + coordString;
+        var key = 'raster-' + raster.uuid + '-geometry-' + coordString;
+        return key;
       };
 
       var getKeyForRasterAsset = function(raster, asset) {
@@ -49,10 +57,10 @@ angular.module('global-state')
         activeAssets.forEach(function (asset) {
           asset.timeseries.forEach(function (ts, i) {
             result.push({
-              uuid: getKeyForAssetTimeseries(asset, ts),
+              uuid: getKeyForAssetTimeseries(ts.uuid),
               type: "timeseries",
               timeseries: ts.uuid,
-              color: getDefaultColor(i),
+              color: getDefaultColor(),
               measureScale: ts.scale
             });
           });
@@ -64,16 +72,15 @@ angular.module('global-state')
         var result = [];
         rasters.forEach(function (raster) {
           geometries.forEach(function (geometry, i) {
-            console.log('Trying geometry', geometry);
             geometry = geometry.geometry; // Yes.
-            if (geometry.type !== 'Point') { console.log('Returning.'); return; }
+            if (geometry.type !== 'Point') { return; }
 
             var key = getKeyForRasterGeometry(raster, geometry);
             result.push({
               uuid: key,
               type: "raster",
               geometry: geometry.geometry,
-              color: getDefaultColor(i),
+              color: getDefaultColor(),
               raster: raster.uuid,
               measureScale: raster.scale
             });
@@ -95,7 +102,7 @@ angular.module('global-state')
               type: "raster",
               geometry: geometry.geometry,
               asset: AssetService.getAssetKey(asset),
-              color: getDefaultColor(i),
+              color: getDefaultColor(),
               raster: raster.uuid,
               measureScale: raster.scale
             });
@@ -106,9 +113,6 @@ angular.module('global-state')
 
       var updateDashboardCharts = function(
         activeTemporalRasterLayers, activeAssets, activeGeometries, activeEventseries) {
-        console.log('updateDashboardCharts(',
-                    activeTemporalRasterLayers, activeAssets,
-                    activeGeometries, activeEventseries, ')')
         /*
            Generate a list of all dashboardCharts (currentDashboardCharts) related to the
            current layers, assets, geometries.
@@ -134,159 +138,199 @@ angular.module('global-state')
           }
         });
 
-        console.log('dashboardCharts:', dashboardCharts);
       };
 
-    /**
-     * Checks whether this datatype is supported for graphs.
-     *
-     * @return {Boolean} datatype support
-     */
-    var dbSupportedData = function (type, property) {
-      var temporal = property.temporal && type === 'Point';
+      var getChartByKey = function (key) {
+        return dashboardCharts[key];
+      };
 
-      var events = property.format === 'Vector' && type !== 'LineString';
+      var createRasterGeometryChart = function(parts) {
+        // Parts is ['raster', '708dcc', 'geometry', '5.6565', '20.000'];
+        var key = parts.join('-');
+        var geometry = {
+          type: 'Point',
+          coordinates: [parseFloat(parts[3]), parseFloat(parts[4])]
+        };
+        var rasterUuid = parts[1];
 
-      var other = type !== 'Point'
-        && property.scale !== 'nominal'
-        && property.scale !== 'ordinal';
+        return {
+          uuid: key,
+          type: "raster",
+          geometry: geometry,
+          color: getDefaultColor(),
+          raster: rasterUuid,
+          measureScale: 'todo'
+        };
+      };
 
-      return temporal || events || other;
-    };
+      var createRasterAssetChart = function(parts) {
+        // Parts is ['raster', '708dcc', 'asset', 'measuringstation$14']
+        var key = parts.join('-');
+        var rasterUuid = parts[1];
+        var assetKey = parts[3];
 
-    /**
-     * Finds metadata for a timeseries selection.
-     * metadata search can be limited to a geometry.
-     *
-     * @param  {object}  geometry   either an asset or a geometry from the
-     *                              State.
-     * @param  {object}  selection  selection from the State.
-     * @return {object} asset, timeseries or geometry metadata, including a
-     *                  match attribute that states whether a selection belongs
-     *                  to the geometry.
-     */
-    var getTimeseriesMetaData = _.curry(function (geometry, selection) {
-      // if no asset is given, iterate over all assets if the asset is a
-      // geometry instead no timeseries are found so this will return undefined
-      var assets = geometry !== undefined ? [geometry] : DataService.assets;
-      var tsMetaData = { match: false };
-      var valueType;
-      _.forEach(assets, function (a) {
-        tsMetaData = _.find(a.timeseries, function (ts) {
-          return ts.uuid === selection.timeseries;
-        });
-        if (tsMetaData === undefined) {
-          tsMetaData = { match: false };
+        return {
+          uuid: key,
+          type: "raster",
+          asset: assetKey,
+          color: getDefaultColor(),
+          raster: rasterUuid,
+          measureScale: 'todo'
+        };
+      };
+
+      var createTimeseriesChart = function(parts) {
+        // Parts is ['timeseries', '32322233221']
+        var key = parts.join('-');
+
+        return {
+          uuid: key,
+          type: "timeseries",
+          timeseries: parts[1],
+          color: getDefaultColor(),
+          measureScale: 'todo'
+        };
+      };
+
+      var createChart = function (key) {
+        var parts = key.split('-');
+        switch (parts[0]) {
+          case 'raster':
+            if (parts[2] == 'geometry') {
+              return createRasterGeometryChart(parts);
+            } else {
+              return createRasterAssetChart(parts);
+            }
+          case 'timeseries':
+            return createTimeseriesChart(parts);
+          default:
+            console.error("Unknown key type!", key);
+        }
+      }
+
+      var getOrCreateChart = function (key) {
+        if (!dashboardCharts[key]) {
+          dashboardCharts[key] = createChart(key);
+        }
+        return dashboardCharts[key];
+      };
+
+      var isChartActive = ChartCompositionService.isKeyActive;
+
+      var toggleChart = function (key) {
+        if (isChartActive(key)) {
+          ChartCompositionService.removeSelection(key);
         } else {
-          tsMetaData.match = true;
+          ChartCompositionService.addSelection(null, key);
         }
-        tsMetaData.type = 'timeseries';
+
+        if (DataService.onChartsChange) {
+          DataService.onChartsChange();
+        }
+        TimeseriesService.syncTime();
+      };
+
+      /**
+       * Checks whether this datatype is supported for graphs.
+       *
+       * @return {Boolean} datatype support
+       */
+      var dbSupportedData = function (type, property) {
+        var temporal = property.temporal && type === 'Point';
+
+        var events = property.format === 'Vector' && type !== 'LineString';
+
+        var other = type !== 'Point'
+                 && property.scale !== 'nominal'
+                 && property.scale !== 'ordinal';
+
+        return temporal || events || other;
+      };
+
+      /**
+       * Finds metadata for a timeseries selection.
+       * metadata search can be limited to a geometry.
+       *
+       * @param  {object}  geometry   either an asset or a geometry from the
+       *                              State.
+       * @param  {object}  selection  selection from the State.
+       * @return {object} asset, timeseries or geometry metadata, including a
+       *                  match attribute that states whether a selection belongs
+       *                  to the geometry.
+       */
+      var getTimeseriesMetaData = _.curry(function (geometry, selection) {
+        // if no asset is given, iterate over all assets if the asset is a
+        // geometry instead no timeseries are found so this will return undefined
+        var assets = geometry !== undefined ? [geometry] : DataService.assets;
+        var tsMetaData = { match: false };
+        var valueType;
+        _.forEach(assets, function (a) {
+          tsMetaData = _.find(a.timeseries, function (ts) {
+            return ts.uuid === selection.timeseries;
+          });
+          if (tsMetaData === undefined) {
+            tsMetaData = { match: false };
+          } else {
+            tsMetaData.match = true;
+          }
+          tsMetaData.type = 'timeseries';
+        });
+        return tsMetaData;
       });
-      return tsMetaData;
-    });
 
-    /**
-     * Finds metadata for a raster selection.
-     * metadata search can be limited to a geometry.
-     *
-     * @param  {object}  geometry   either an asset or a geometry from the
-     *                              State.
-     * @param  {object}  selection  selection from the State.
-     * @return {object} asset, timeseries or geometry metadata, including a
-     *                  match attribute that states whether a selection belongs
-     *                  to the geometry.
-     */
-    var getRasterMetaData = _.curry(function (geometry, selection) {
-      var geomRaster, idGeomFunction, geomType, geomAsset;
-      if (selection.asset) {
-        geomType = "asset";
-        idGeomFunction = function(a) { return a.entity_name + "$" + a.id; };
-        geomRaster = _.find(DataService.assets, function (asset) {
-          geomAsset = asset;
-          return idGeomFunction(geomAsset) === selection.asset;
-        });
-      } else {
-        geomType = "geom";
-        idGeomFunction = function(g) { return g.geometry.coordinates.toString(); };
-        geomRaster = _.find(DataService.geometries, function (geom) {
-          geomAsset = geom;
-          return idGeomFunction(geom) === selection.geom;
-        });
-      }
-      geometry = geometry || geomRaster;
-      var props = { match: false };
-      if (geomRaster && geomRaster.properties) {
-        var assetProps = geomRaster.properties[selection.raster];
-        if (assetProps) {
-          props = assetProps;
-          var assetCode = idGeomFunction(geometry);
-          props.match = selection[geomType] === assetCode &&
-            dbSupportedData(geometry.geometry.type, props);
+      /**
+       * Finds metadata for a raster selection.
+       * metadata search can be limited to a geometry.
+       *
+       * @param  {object}  geometry   either an asset or a geometry from the
+       *                              State.
+       * @param  {object}  selection  selection from the State.
+       * @return {object} asset, timeseries or geometry metadata, including a
+       *                  match attribute that states whether a selection belongs
+       *                  to the geometry.
+       */
+      var getRasterMetaData = _.curry(function (geometry, selection) {
+        var geomRaster, idGeomFunction, geomType, geomAsset;
+        if (selection.asset) {
+          geomType = "asset";
+          idGeomFunction = function(a) { return a.entity_name + "$" + a.id; };
+          geomRaster = _.find(DataService.assets, function (asset) {
+            geomAsset = asset;
+            return idGeomFunction(geomAsset) === selection.asset;
+          });
+        } else {
+          geomType = "geom";
+          idGeomFunction = function(g) { return g.geometry.coordinates.toString(); };
+          geomRaster = _.find(DataService.geometries, function (geom) {
+            geomAsset = geom;
+            return idGeomFunction(geom) === selection.geom;
+          });
         }
-      }
-      return props;
-    });
-
-    var getEventseriesMetaData = function getEventseriesMetaData(geometry, selection) {
-      if (geometry.geometry.coordinates.toString() !== selection.geomType) {
-        return {match: false};
-      }
-
-      return {
-        type: 'eventseries',
-        quantity: selection.quantity,
-        match: true
-      };
-    };
-
-    /**
-     * Returns a function that finds metadata for a selection.
-     * metadata search can be limited to a geometry.
-     *
-     * @param  {object}  geometry   either an asset or a geometry from the
-     *                              State.
-     * @return {function} function that returns either asset or geometry
-     *                    metadata or timeseries metadata.
-     */
-    var getMetaData = function(geometry) {
-      return function(selection) {
-        if (selection.timeseries) {
-          return getTimeseriesMetaData(geometry, selection);
-        } else if (selection.raster) {
-          return getRasterMetaData(geometry, selection);
-        } else if (selection.type === 'eventseries') {
-          return getEventseriesMetaData(geometry, selection);
+        geometry = geometry || geomRaster;
+        var props = { match: false };
+        if (geomRaster && geomRaster.properties) {
+          var assetProps = geomRaster.properties[selection.raster];
+          if (assetProps) {
+            props = assetProps;
+            var assetCode = idGeomFunction(geometry);
+            props.match = selection[geomType] === assetCode &&
+                          dbSupportedData(geometry.geometry.type, props);
+          }
         }
+        return props;
+      });
+
+      var getEventseriesMetaData = function getEventseriesMetaData(geometry, selection) {
+        if (geometry.geometry.coordinates.toString() !== selection.geomType) {
+          return {match: false};
+        }
+
+        return {
+          type: 'eventseries',
+          quantity: selection.quantity,
+          match: true
+        };
       };
-    };
-
-    /**
-     * Toggles selection active state and keeps track of the graph order for
-     * selections.
-     *
-     * @param  {object}  geometry   either an asset or a geometry from the
-     *                              State.
-     * @param  {object}  selection  selection from the State.
-     * @return {object} asset, timeseries or geometry metadata, including a
-     *                  match attribute that states whether a selection belongs
-     *                  to the geometry.
-     */
-    var toggleSelection = function (selection) {
-      if (!selection.active) {
-        // Always add selection to a new chart.
-        selection.order = ChartCompositionService.addSelection(null, selection.uuid);
-        selection.active = true;
-      } else {
-        ChartCompositionService.removeSelection(selection.uuid);
-        selection.active = false;
-        selection.order = -1;
-      }
-
-      if (DataService.onSelectionsChange) {
-        DataService.onSelectionsChange();
-      }
-      TimeseriesService.syncTime();
-    };
 
     var _rasterComparatorFactory = function (comparatorType) {
       return function (existingSelection, newSelection) {
@@ -362,7 +406,6 @@ angular.module('global-state')
           // If so, we GTFO
           if (_.find(State.selections, { type: 'raster', asset: assetKey })) {
             // OK, this geomObject corresponds to an asset that is already present
-            console.log("[!] Skipped making geom-selection(s) since it/they would be redundant");
             return false;
           }
         }
@@ -374,7 +417,6 @@ angular.module('global-state')
         if (_.find(State.selections, { type: 'raster', geom: coordString })) {
           // OK, we already have selection(s) for the point in space corresponding
           // to the asset's geometry
-          console.log("[!] Skipped making asset-selection(s) since it/they would be redundant");
           return false;
         }
       }
@@ -437,7 +479,6 @@ angular.module('global-state')
         ;
       } else {
         if (removedSelections.length !== 0 && addedSelections.length !== 0) {
-          console.log("THIS SHOULD NEVER PRINT xD");
         } else if (addedSelections.length > 0) {
           addedSelections.forEach(function (uuid) {
             ChartCompositionService.addSelection(null, uuid);
@@ -503,15 +544,21 @@ angular.module('global-state')
       );
     };
 
+
     return {
       timeseriesMetaData: getTimeseriesMetaData,
       rasterMetaData: getRasterMetaData,
       initializeAsset: initializeAssetSelections,
       initializeRaster: initializeRasterSelections,
       initializeGeomEventseriesSelections: initializeGeomEventseriesSelections,
-      getMetaDataFunction: getMetaData,
       dbSupportedData: dbSupportedData,
-      toggle: toggleSelection,
-      updateDashboardCharts: updateDashboardCharts
+      toggleChart: toggleChart,
+      updateDashboardCharts: updateDashboardCharts,
+      getKeyForAssetTimeseries: getKeyForAssetTimeseries,
+      getKeyForRasterGeometry: getKeyForRasterGeometry,
+      getKeyForRasterAsset: getKeyForRasterAsset,
+      getChartByKey: getChartByKey,
+      getOrCreateChart: getOrCreateChart,
+      isChartActive: isChartActive
     };
   }]);

@@ -60,7 +60,7 @@ angular.module('dashboard')
         });
       };
 
-      DataService.onSelectionsChange = buildDashboard;
+      DataService.onChartsChange = buildDashboard;
       DataService.onAssetsChange = buildDashboard;
       DataService.onGeometriesChange = buildDashboard;
       TimeseriesService.onTimeseriesChange = buildDashboard;

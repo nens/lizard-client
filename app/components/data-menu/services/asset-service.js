@@ -96,11 +96,11 @@ angular.module('data-menu')
       };
 
       this.isNestedAsset = function (entityName) {
-        return this.NESTED_ASSET_PREFIXES.indexOf(entityName) !== -1;
+        return service.NESTED_ASSET_PREFIXES.indexOf(entityName) !== -1;
       };
 
       this.getAssetKey = function(asset) {
-        return asset.entityName + '$' + asset.id;
+        return asset.entity_name + '$' + asset.id;
       };
   }
 ]);

@@ -39,40 +39,38 @@
       id="drag-container"
       class="db-ts-collection">
       <div
-        ng-repeat="selection in state.selections"
-        ng-init="metaData = getSelectionMetaData(selection)"
-        ng-if="getSelectionMetaData(selection).match"
-        ng-show="metaData.type === 'timeseries' && (extended || selection.active || isOneOfFirstThree(selection.uuid))"
-        id="{{ selection.uuid }}"
-        data-uuid="{{ selection.uuid }}"
+        ng-repeat="timeseries in asset.timeseries track by $index"
+        ng-init="key = getKeyForAssetTimeseries(timeseries.uuid); chart = getChartByKey(key)"
+        ng-show="(extended || isChartActive(key) || $index < 3)"
+        id="{{ key }}"
+        data-uuid="{{ key }}"
         class="draggable-ts db-card-single-ts"
         ng-class="{
-          'color-picker-is-open': colorPickersSettings[selection.timeseries],
-          'active': selection.active
+          'color-picker-is-open': colorPickersSettings[key],
+          'active': isChartActive(key)
         }">
 
         <!-- asset/nested-asset TS card: START -->
         <div
-          ng-if="metaData.type === 'timeseries'"
-          id="{{ 'clickable-' + selection.uuid }}"
-          ng-click="toggleSelection(selection);">
+          id="{{ 'clickable-' + key }}"
+          ng-click="toggleChart(key);">
 
           <div
             class="db-card-color-picker-btn"
-            ng-style="{'background-color': selection.color}"
-            ng-click="toggleColorPicker(selection.timeseries); $event.stopPropagation();">
+            ng-style="{'background-color': chart.color}"
+            ng-click="toggleColorPicker(key); $event.stopPropagation();">
           </div>
 
           <div
             class="db-card-single-ts-name"
-            title="{{ metaData.location }}, {{ metaData.uuid }}, {{ metaData.parameter }}"
+            title="XXX {{ metaData.location }}, {{ metaData.uuid }}, {{ metaData.parameter }}"
             ng-init="displayName = getTsDisplayName(selection)">
-            {{ displayName | truncate: 42 }}
+            Hmm {{ displayName | truncate: 42 }}
           </div>
 
           <color-picker
-              ng-show="colorPickersSettings[selection.timeseries]"
-              index="{{selection.timeseries}}">
+              ng-show="colorPickersSettings[key]"
+              chart="{{ chart }}">
           </color-picker>
         </div>
         <!-- asset/nested-asset TS card: END -->

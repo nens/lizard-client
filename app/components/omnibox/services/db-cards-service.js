@@ -6,18 +6,18 @@ angular.module('omnibox')
 
   colorPickersSettings = {}
 
-  var openColorPicker = function (tsUuid) {
+  var openColorPicker = function (key) {
     closeAllColorPickers();
-    colorPickersSettings[tsUuid] = true;
+    colorPickersSettings[key] = true;
   }
 
-  var closeColorPicker = function (tsUuid) {
-    colorPickersSettings[tsUuid] = false;
+  var closeColorPicker = function (key) {
+    colorPickersSettings[key] = false;
   }
 
   var closeAllColorPickers = function () {
-    for (var tsUuid in colorPickersSettings) {
-      colorPickersSettings[tsUuid] = false;
+    for (var key in colorPickersSettings) {
+      colorPickersSettings[key] = false;
     }
   }
 

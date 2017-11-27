@@ -11,6 +11,7 @@ angular.module('omnibox')
     'DBCardsService',
     'ChartCompositionService',
     '$timeout',
+    'AssetService',
     'DataService',
     function (
       State,
@@ -23,6 +24,7 @@ angular.module('omnibox')
       DBCardsService,
       ChartCompositionService,
       $timeout,
+      AssetService,
       DataService) {
   return {
     link: function (scope, element) {
@@ -34,26 +36,7 @@ angular.module('omnibox')
         clickableElem.click();
       };
 
-      scope.$watch('omnibox.data.assets', function () {
-        // get rid of dupes with nested assets
-        var nestedAssets = [];
-        scope.omnibox.data.assets.forEach(function (asset) {
-          nestedAssets = nestedAssets
-          .concat(getNestedAssets(asset)
-            .map(function (nestedAsset) {
-              return nestedAsset.entity_name + '$' + nestedAsset.id;
-            })
-          );
-        });
-
-        // set it locally so it doesn't show all the dupes
-        scope.localAssets = _.filter(scope.omnibox.data.assets, function (asset) {
-          var hasTheSame = nestedAssets.some(function (nesAs) {
-            return asset.entity_name + '$' + asset.id === nesAs;
-          });
-          return !hasTheSame;
-        });
-      });
+      scope.isNestedAsset = AssetService.isNestedAsset;
 
       scope.getGeomCardHeader = function (geom) {
         var M = 100000;

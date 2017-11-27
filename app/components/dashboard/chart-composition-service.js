@@ -27,6 +27,10 @@ angular.module('dashboard')
     return chartIndex;
   };
 
+  this.isKeyActive = function (key) {
+    return service.getChartIndexForSelection(key) !== -1;
+  };
+
   this.addSelection = function (chartIndex, selectionUuid) {
     // Returns the index of the chart that selectionUuid was inserted into.
 

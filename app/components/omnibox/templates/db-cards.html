@@ -6,7 +6,8 @@
     time-state="omnibox.state.temporal"
     asset="asset"
     assets="omnibox.data.assets"
-    ng-repeat="asset in localAssets">
+    ng-repeat="asset in omnibox.data.assets"
+    ng-if="!isNestedAsset(asset.entity_name)">
   </db-asset-card>
 
   <div
