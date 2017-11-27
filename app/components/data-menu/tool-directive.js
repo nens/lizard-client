@@ -14,9 +14,21 @@ angular.module('data-menu')
      * when coming or going to line, region or area.
      */
     scope.changeBoxType = function () {
+
+      var assetLabels = document.getElementsByClassName('assetLabel');
+
       if (scope.type === 'point') {
-        ClickFeedbackService.labelsLayer.clearLayers();
+        _.map(assetLabels, function(label) {
+          label.style.display = "none";
+        });
       }
+      else {
+        _.map(assetLabels, function(label) {
+          label.style.display = "flex";
+        });
+      }
+
+
       if (scope.type === 'point' && scope.boxType === 'multi-point') {
         rmAllButLastAssetAndGeometry();
       }
