@@ -373,7 +373,7 @@ angular.module('data-menu')
         var property = this.findProperty(changedSelection);
         if (property) {
           property.color = changedSelection.color;
-          instance.onSelectionsChange();
+          //          instance.onSelectionsChange();
         }
       };
 

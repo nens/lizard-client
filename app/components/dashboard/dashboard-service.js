@@ -65,7 +65,7 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
         var assetOrGeom;
 
         if (chart.asset) {
-          assetOrGeom = getAssetByKey(chart.uuid);
+          assetOrGeom = getAssetByKey(chart.asset);
         } else {
           assetOrGeom = _.find(geometries, function (geom) {
             geom = geom.geometry;
@@ -74,6 +74,7 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
                     chart.geometry.coordinates[1] == geom.coordinates[1]);
           });
         }
+        console.log('assetOrGeom', assetOrGeom, chart);
         return {
           data: assetOrGeom.properties[chart.raster].data,
           keys: {x: 0, y: 1}

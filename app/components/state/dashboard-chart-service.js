@@ -2,6 +2,9 @@
 /**
  * Lizard-client global state selections.
  */
+
+var KEY_SEP = '+';
+
 angular.module('global-state')
   .service('DashboardChartService', [
     'AssetService',
@@ -34,21 +37,21 @@ angular.module('global-state')
       };
 
       var getKeyForAssetTimeseries = function(tsUuid) {
-        return 'timeseries-' + tsUuid;
+        return 'timeseries' + KEY_SEP + tsUuid;
       };
 
       var getKeyForRasterGeometry = function(raster, geometry) {
-        if ('geometry' in geometry) {
+        if (geometry.geometry) {
           geometry = geometry.geometry;
         }
 
-        var coordString = geometry.coordinates[0] + "-" + geometry.coordinates[1];
-        var key = 'raster-' + raster.uuid + '-geometry-' + coordString;
+        var coordString = geometry.coordinates[0] + KEY_SEP + geometry.coordinates[1];
+        var key = ['raster', raster.uuid, 'geometry', coordString].join(KEY_SEP);
         return key;
       };
 
       var getKeyForRasterAsset = function(raster, asset) {
-        return 'raster-' + raster.uuid + '-asset-' + AssetService.getAssetKey(asset);
+        return ['raster', raster.uuid, 'asset', AssetService.getAssetKey(asset)].join(KEY_SEP);
       };
 
       var timeseriesDashboardKeys = function(activeAssets) {
@@ -108,7 +111,7 @@ angular.module('global-state')
 
       var createRasterGeometryChart = function(parts) {
         // Parts is ['raster', '708dcc', 'geometry', '5.6565', '20.000'];
-        var key = parts.join('-');
+        var key = parts.join(KEY_SEP);
         var geometry = {
           type: 'Point',
           coordinates: [parseFloat(parts[3]), parseFloat(parts[4])]
@@ -130,7 +133,7 @@ angular.module('global-state')
 
       var createRasterAssetChart = function(parts) {
         // Parts is ['raster', '708dcc', 'asset', 'measuringstation$14']
-        var key = parts.join('-');
+        var key = parts.join(KEY_SEP);
         var rasterUuid = parts[1];
         var assetKey = parts[3];
         var rasterDataLayer = DataService.getDataLayer(rasterUuid);
@@ -165,7 +168,7 @@ angular.module('global-state')
 
       var createTimeseriesChart = function(parts) {
         // Parts is ['timeseries', '32322233221']
-        var key = parts.join('-');
+        var key = parts.join(KEY_SEP);
 
         var timeseriesAndAsset = findTimeseriesAndAsset(parts[1]);
         var ts = timeseriesAndAsset.timeseries;
@@ -182,7 +185,7 @@ angular.module('global-state')
       };
 
       var createChart = function (key) {
-        var parts = key.split('-');
+        var parts = key.split(KEY_SEP);
         switch (parts[0]) {
           case 'raster':
             if (parts[2] == 'geometry') {

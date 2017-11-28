@@ -7,7 +7,7 @@
   <div id="drag-container">
     <div
       ng-repeat="raster in getActiveTemporalRasterLayers()"
-      ng-init="key = getKeyForRasterGeometry(raster, geom); chart = getOrCreateChart(key)"
+      ng-init="key = getKey(raster); chart = getOrCreateChart(key)"
       data-uuid="{{ key }}"
       class="draggable-ts db-ts-collection raster-ts-collection">
       <div
@@ -18,7 +18,6 @@
           'color-picker-is-open': colorPickersSettings[key],
           'active': isChartActive(key)
         }">
-
         <div
           class="db-card-color-picker-btn"
           ng-style="{'background-color': chart.color}"
@@ -28,7 +27,7 @@
         <div class="db-card-single-ts-name ">
           <i class="fa fa-line-chart"></i>
           <span>
-            {{ chart.description }}
+            {{ chart.description | truncate: 42 }}
           </span>
         </div>
       </div>
