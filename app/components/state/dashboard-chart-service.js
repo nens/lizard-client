@@ -24,7 +24,6 @@ angular.module('global-state')
          Never remove from this! It's nice for users if a color they set at one
          point is remembered.
       */
-      var dashboardCharts = {};
       var nextColor = 0;
 
       var getDefaultColor = function () {
@@ -58,7 +57,7 @@ angular.module('global-state')
           asset.timeseries.forEach(function (ts, i) {
             result.push(getKeyForAssetTimeseries(ts.uuid));
           });
-        });
+0        });
         return result;
       };
 
@@ -104,7 +103,7 @@ angular.module('global-state')
         currentDashboardKeys = currentDashboardKeys.concat(
           rasterAssetDashboardKeys(activeTemporalRasterLayers, activeAssets));
 
-        // ChartCompositionService.deleteChartsNotIn(currentDashboardKeys);
+        ChartCompositionService.deleteChartsNotIn(currentDashboardKeys);
       };
 
       var createRasterGeometryChart = function(parts) {
@@ -199,10 +198,10 @@ angular.module('global-state')
       }
 
       var getOrCreateChart = function (key) {
-        if (!dashboardCharts[key]) {
-          dashboardCharts[key] = createChart(key);
+        if (!ChartCompositionService.dashboardCharts[key]) {
+          ChartCompositionService.dashboardCharts[key] = createChart(key);
         }
-        return dashboardCharts[key];
+        return ChartCompositionService.dashboardCharts[key];
       };
 
       var isChartActive = ChartCompositionService.isKeyActive;

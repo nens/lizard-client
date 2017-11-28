@@ -7,7 +7,21 @@ angular.module('dashboard')
 
   var service = this;
 
+  // Keeps the actual chart objects. Kept here so that other modules can inject it
+  // to READ from its contents (to go from key to chart object), but
+  // only DashboardChartService is allowed to WRITE this variable.
+  service.dashboardCharts = {};
+
+  // Array of plots that contain chart keys, keeps track of which chart
+  // is in which plot.
+  // If chart key is not present in composedCharts, then it is not active.
   service.composedCharts = [];
+
+  // Only use this function if you are sure the chart key exists -- e.g., if you
+  // got it from the composedCharts.
+  this.getChartByKey = function (key) {
+    return service.dashboardCharts[key];
+  };
 
   // Reset this svc's main data structure
   this.reset = function () {
@@ -25,6 +39,16 @@ angular.module('dashboard')
       }
     });
     return chartIndex;
+  };
+
+  this.getActiveCharts = function () {
+    var charts = [];
+    service.composedCharts.forEach(function (plot) {
+      plot.forEach(function (key) {
+        charts.push(service.dashboardCharts[key]);
+      });
+    });
+    return charts;
   };
 
   this.isKeyActive = function (key) {
@@ -54,7 +78,7 @@ angular.module('dashboard')
       var chart;
       chart = service.composedCharts[chartIndex];
       if (!chart) {
-        console.log(
+        console.error(
           "ERROR IN ADDSELECTION", JSON.stringify(service.composedCharts),
           chartIndex, selectionUuid);
         result = 0;

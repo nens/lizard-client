@@ -9,11 +9,13 @@ angular.module('timeseries').service("TimeseriesService", [
   'UtilService',
   'DataService',
   'TimeseriesUtilService',
+  'ChartCompositionService',
   'RelativeToSurfaceLevelService',
   'gettextCatalog',
   '$timeout',
   function ($q, State, $http, notie, UtilService,
-            DataService, TsUService, RTSLService, gettextCatalog, $timeout) {
+            DataService, TsUService, ChartCompositionService,
+            RTSLService, gettextCatalog, $timeout) {
     // *wrapped* boolean indicating we want the timeseries value (y-axis) to be
     // relative to the asset's "surface_level" value (boolean set to true) or
     // we want it to be the absolute value (boolean set to false);
@@ -88,33 +90,30 @@ angular.module('timeseries').service("TimeseriesService", [
      */
     this.syncTime = function () {
 
-      var groupedSelections = {
-        temporalBars: {timeseries: [], rasters: []},
-        temporalLines: {timeseries: [], rasters: []}
+      var groupedCharts = {
+        temporalBars: [],
+        temporalLines: [],
       };
 
-      _.forEach(State.selections, function(selection){
-        if(selection.active){
-          var scale = selection.measureScale === "ratio" ? "temporalBars" :
-                      "temporalLines";
-          if (selection.timeseries) {
-            groupedSelections[scale].timeseries.push(selection.timeseries);
-          } else if (selection.raster) {
-            groupedSelections[scale].rasters.push(selection.raster);
-          }
+      ChartCompositionService.getActiveCharts().forEach(function (chart) {
+        var scale = chart.measureScale === "ratio" ? "temporalBars" :
+                    "temporalLines";
+
+        if (chart.timeseries) {
+          groupedCharts[scale].push(chart);
         }
       });
 
-      var activeTimeseries = function(actives, minPoints, chartType) {
+      var activeTimeseries = function(charts, minPoints, chartType) {
         // Return empty timeseries when empty selection
         var timeseriesPromise;
-        if (actives.length === 0) {
+        if (charts.length === 0) {
           var defer = $q.defer();
           defer.resolve([]);
           timeseriesPromise = defer.promise;
         } else {
           timeseriesPromise =  service._getTimeseries(
-            actives,
+            charts.map(function (chart) { return chart.timeseries; }),
             State.temporal,
             minPoints && service.minPoints,
             chartType
@@ -125,9 +124,10 @@ angular.module('timeseries').service("TimeseriesService", [
           service.timeseries = _.filter(
             response,
             function (ts) { return _.some(
-              State.selections,
-              function (stateTs) {
-                return ts.id === stateTs.timeseries && stateTs.active;
+              charts,
+              function (chart) {
+                return ts.id.indexOf(chart.timeseries) !== -1 &&
+                       ChartCompositionService.isKeyActive(chart.uuid);
               });
             });
           return service.timeseries;
@@ -142,10 +142,8 @@ angular.module('timeseries').service("TimeseriesService", [
       };
 
       return [
-        activeTimeseries(groupedSelections.temporalLines.timeseries, true,
-                         'lines'),
-        activeTimeseries(groupedSelections.temporalBars.timeseries, false,
-                         'bars')
+        activeTimeseries(groupedCharts.temporalLines, true, 'lines'),
+        activeTimeseries(groupedCharts.temporalBars, false, 'bars')
       ];
     };
 

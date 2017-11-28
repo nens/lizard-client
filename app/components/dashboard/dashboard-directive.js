@@ -47,9 +47,8 @@ angular.module('dashboard')
           scope.dashboard.graphs,
           TimeseriesService.timeseries,
           DataService.assets,
-          DataService.geometries,
-          State.selections
-        );
+          DataService.getAssetByKey,
+          DataService.geometries);
 
         _.forEach(scope.dashboard.graphs, function (graph) {
           graph.dimensions = DashboardService.getDimensions(
