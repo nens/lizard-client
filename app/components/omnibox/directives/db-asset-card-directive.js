@@ -36,7 +36,7 @@ angular.module('omnibox').directive('dbAssetCard', [
 
         scope.getKeyForAssetTimeseries = DashboardChartService.getKeyForAssetTimeseries;
         scope.getKeyForRasterAsset = DashboardChartService.getKeyForRasterAsset;
-        scope.chartActive = DashboardChartService.isChartActive;
+        scope.isChartActive = DashboardChartService.isChartActive;
         scope.toggleChart = DashboardChartService.toggleChart;
         scope.getOrCreateChart = DashboardChartService.getOrCreateChart;
 

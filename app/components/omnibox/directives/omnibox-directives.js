@@ -180,18 +180,6 @@ angular.module("omnibox")
             State.selections = keepSelections;
           }
         });
-
-        ///////////////////////////////////////////////////////////////////////
-        // 2) Adding geometries - For the detected new geom, we need to add a
-        //    raster-selection for each active temporal raster. This can be done
-        //    via the DashboardChartService.
-
-        n.forEach(function (str) {
-          if (o.indexOf(str) === -1) {
-            addedGeomObj = JSON.parse(str);
-            DashboardChartService.initializeRaster(addedGeomObj, "geom");
-          }
-        });
       });
 
       // Cancel throttled function and rm scroll bar.

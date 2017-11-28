@@ -1752,7 +1752,7 @@ angular.module('lizard-nxt')
       return chart.unit === graph._activeUnit;
     });
 
-    // console.log("[!] A PLOT SHOULD BE VISIBLE CONTAINING " + activeCharts.length + " LINES/BAR-SETS");
+    console.log("[!] A PLOT SHOULD BE VISIBLE CONTAINING " + activeCharts.length + " LINES/BAR-SETS");
 
     if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
       var PADDING = 15;

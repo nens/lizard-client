@@ -111,20 +111,8 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
     });
 
     assets.forEach(function (asset) {
-
       var getSelected = findSelection('asset', asset.entity_name + "$" + asset.id);
       graphs = addPropertyData(graphs, asset.properties, getSelected);
-
-      // Specific logic to add crosssections. We could abstract this to all
-      // assets with children that have timeseries.
-      if (asset.entity_name === 'leveecrosssection'
-        && asset.crosssection && asset.crosssection.active) {
-        graphs[asset.crosssection.order] = {
-          'type': 'crosssection',
-          'content': [asset]
-        };
-        graphs[asset.crosssection.order].content[0].updated = true;
-      }
     });
 
     geometries.forEach(function (geometry) {
@@ -155,7 +143,6 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
     var filteredGraphs = this._filterActiveGraphs(graphs);
 
     var graph,
-        endlosung = [],
         getTypeForSelectionUuid = function (selectionUuid) {
           var theType;
           filteredGraphs.forEach(function (g) {
@@ -186,35 +173,42 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
           return theContentElem;
         };
 
+    var Endlösung = [];
+
     ChartCompositionService.composedCharts.forEach(function (value, index) {
-      graph = {
+      var graph = {
         type: null,
         content: [],
         dimensions: null
       };
 
-      value.forEach(function (selectionUuid) {
+      value.forEach(function (chartKey) {
+        var chart = DashboardChartService.getOrCreateChart(chartKey);
+
         graph.type =
-          graph.type || getTypeForSelectionUuid(selectionUuid);
+          graph.type || getTypeForSelectionUuid(chartKey);
 
         graph.dimensions =
-          graph.dimensions || getDimensionsForSelectionUuid(selectionUuid);
+          graph.dimensions || getDimensionsForSelectionUuid(chartKey);
 
-        var contentElemForSelectionUuid =
-            getContentElemForSelectionUuid(selectionUuid);
-
-        if (contentElemForSelectionUuid) {
-          contentElemForSelectionUuid.updated = true;
-          graph.content.push(contentElemForSelectionUuid);
-        }
+        graph.content.push({
+          updated: true,
+          color: chart.color,
+          data: 0,
+          keys: 0,
+          unit: 0,
+          yLabel: 'YLABEL',
+          xLabel: 'XLABEL',
+          id: chartKey,
+        });
       });
 
       if (graph.content.length) {
-        endlosung.push(graph);
+        Endlösung.push(graph);
       }
     });
 
-    return endlosung;
+    return Endlösung;
   };
 
   this._getContentForEventSelection = function (selection) {
@@ -231,7 +225,7 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
       xLabel: '',
       id: selection.url,
       updated: true
-        };
+    };
   };
 
   /**

@@ -52,57 +52,35 @@ angular.module('global-state')
         return 'raster-' + raster.uuid + '-asset-' + AssetService.getAssetKey(asset);
       };
 
-      var timeseriesDashboardCharts = function(activeAssets) {
-        var result = []
+      var timeseriesDashboardKeys = function(activeAssets) {
+        var result = [];
         activeAssets.forEach(function (asset) {
           asset.timeseries.forEach(function (ts, i) {
-            result.push({
-              uuid: getKeyForAssetTimeseries(ts.uuid),
-              type: "timeseries",
-              timeseries: ts.uuid,
-              color: getDefaultColor(),
-            });
+            result.push(getKeyForAssetTimeseries(ts.uuid));
           });
         });
         return result;
       };
 
-      var rasterGeometryDashboardCharts = function(rasters, geometries) {
+      var rasterGeometryDashboardKeys = function(rasters, geometries) {
         var result = [];
         rasters.forEach(function (raster) {
           geometries.forEach(function (geometry, i) {
             geometry = geometry.geometry; // Yes.
             if (geometry.type !== 'Point') { return; }
-
-            var key = getKeyForRasterGeometry(raster, geometry);
-            result.push({
-              uuid: key,
-              type: "raster",
-              geometry: geometry.geometry,
-              color: getDefaultColor(),
-              raster: raster.uuid,
-            });
+            result.push(getKeyForRasterGeometry(raster, geometry));
           });
         });
         return result;
       };
 
-      var rasterAssetDashboardCharts = function(rasters, assets) {
+      var rasterAssetDashboardKeys = function(rasters, assets) {
         var result = [];
         rasters.forEach(function (raster) {
           assets.forEach(function (asset, i) {
             var geometry = asset.geometry;
             if (geometry.type !== 'Point') { return; }
-
-            var key = getKeyForRasterAsset(raster, asset);
-            result.push({
-              uuid: key,
-              type: "raster",
-              geometry: geometry.geometry,
-              asset: AssetService.getAssetKey(asset),
-              color: getDefaultColor(),
-              raster: raster.uuid,
-            });
+            result.push(getKeyForRasterAsset(raster, asset));
           });
         });
         return result;
@@ -111,23 +89,22 @@ angular.module('global-state')
       var updateDashboardCharts = function(
         activeTemporalRasterLayers, activeAssets, activeGeometries, activeEventseries) {
         /*
-           Generate a list of all dashboardCharts (currentDashboardCharts) related to the
+           Generate a list of all dashboard chart keys (currentDashboard keys) related to the
            current layers, assets, geometries.
            Any charts in the current ChartCompositionService that are not in that list
-           should be removed from the ChartComposition.
-           Any charts in the list that aren't in dashboardCharts yet should be added.
+           should be removed from the ChartComposition, apparently some layer or asset was
+           turned off elsewhere.
          */
-        var currentDashboardCharts = [];
+        var currentDashboardKeys = [];
 
-        currentDashboardCharts = currentDashboardCharts.concat(
-          timeseriesDashboardCharts(activeAssets));
-        currentDashboardCharts = currentDashboardCharts.concat(
-          rasterGeometryDashboardCharts(activeTemporalRasterLayers, activeGeometries));
-        currentDashboardCharts = currentDashboardCharts.concat(
-          rasterAssetDashboardCharts(activeTemporalRasterLayers, activeAssets));
+        currentDashboardKeys = currentDashboardKeys.concat(
+          timeseriesDashboardKeys(activeAssets));
+        currentDashboardKeys = currentDashboardKeys.concat(
+          rasterGeometryDashboardKeys(activeTemporalRasterLayers, activeGeometries));
+        currentDashboardKeys = currentDashboardKeys.concat(
+          rasterAssetDashboardKeys(activeTemporalRasterLayers, activeAssets));
 
-        ChartCompositionService.deleteChartsNotIn(
-          currentDashboardCharts.map(function (chart) { return chart.uuid; }));
+        // ChartCompositionService.deleteChartsNotIn(currentDashboardKeys);
       };
 
       var createRasterGeometryChart = function(parts) {
@@ -201,11 +178,14 @@ angular.module('global-state')
       var isChartActive = ChartCompositionService.isKeyActive;
 
       var toggleChart = function (key) {
+        console.log('Toggle Chaaaaaaaaaart', key, isChartActive(key));
         if (isChartActive(key)) {
           ChartCompositionService.removeSelection(key);
         } else {
           ChartCompositionService.addSelection(null, key);
         }
+
+        console.log('Now', isChartActive(key), ChartCompositionService.composedCharts);
 
         if (DataService.onChartsChange) {
           DataService.onChartsChange();
@@ -348,132 +328,6 @@ angular.module('global-state')
       });
     };
 
-    /**
-     * initializes timeseries selections for a certain asset.
-     *
-     * @param  {object} asset   a DataService asset with timeseries.
-     * @return {object} asset or geometry data.
-     */
-    var initializeAssetSelections = function (asset) {
-      var colors = UtilService.GRAPH_COLORS;
-      State.selections = _.unionWith(
-        State.selections,
-        asset.timeseries.map(function (ts, i) {
-          return {
-            uuid: uuidGenerator(),
-            type: "timeseries",
-            timeseries: ts.uuid,
-            active: false,
-            order: 0,
-            color: colors[i % (colors.length - 1)],
-            measureScale: ts.scale
-          };
-        }),
-        _timeseriesComparator
-      );
-
-      return asset;
-    };
-
-    var mayInitializeRasterSelection = function (geomObject, geomType) {
-      // We don't want duplicate selections for a point in space: when creating
-      // a new selection for a geom we check whether we not already have an
-      // equivalent selection for an asset, and vice versa when making a new
-      // selection for an asset:
-      if (geomType === 'geom') {
-        // ..and this geom might correspond to an already present asset
-        if (geomObject.entity_name && geomObject.id) {
-          // OK, this geomObject corresponds to an asset
-          var assetKey = geomObject.entity_name + '$' + geomObject.id;
-          // Do we already have an selection with type='raster' && asset=<assetKey> ???
-          // If so, we GTFO
-          if (_.find(State.selections, { type: 'raster', asset: assetKey })) {
-            // OK, this geomObject corresponds to an asset that is already present
-            return false;
-          }
-        }
-      } else if (geomType === 'asset') {
-        // ..and this asset might correspond to an already present geom
-        var coordString = geomObject.geometry.coordinates[0]
-          + ","
-          + geomObject.geometry.coordinates[1];
-        if (_.find(State.selections, { type: 'raster', geom: coordString })) {
-          // OK, we already have selection(s) for the point in space corresponding
-          // to the asset's geometry
-          return false;
-        }
-      }
-      return true;
-    };
-
-    /**
-     * initializes timeseries selections for a certain asset or geometry.
-     *
-     * @param  {object} asset|geometry  a DataService asset with timeseries.
-     * @return {object} asset or geometry data.
-     */
-    var initializeRasterSelections = function (geomObject, geomType) {
-      if (geomType === 'asset' && AssetService.isNestedAsset(geomObject.entity_name)) {
-        // Do not care about raster intersections of nested assets, their parent
-        // already does that.
-        return geomObject;
-      }
-
-      if (!mayInitializeRasterSelection(geomObject, geomType)) {
-        return geomObject;
-      }
-
-      var geomId = geomType === 'asset'
-        ? geomObject.entity_name + "$" + geomObject.id
-        : geomObject.geometry.coordinates.toString();
-      var colors = UtilService.GRAPH_COLORS;
-
-      var initialUUIDs = _.sortBy(State.selections.map(function (s) { return s.uuid }));
-
-      State.selections = _.unionWith(
-        State.selections,
-        _.filter(State.layers,
-                 function(layer) {
-                   return layer.type === 'raster' && layer.active;
-                 }
-        ).map(function (layer, i) {
-          var rasterSelection  = {
-            uuid: uuidGenerator(),
-            type: "raster",
-            raster: layer.uuid,
-            active: true, // Roolian?
-            order: 0,
-            color: colors[i + 8 % (colors.length - 1)],
-            measureScale: layer.scale
-          };
-          rasterSelection[geomType] = geomId;
-          return rasterSelection;
-        }),
-        _rasterComparatorFactory(geomType)
-      );
-
-      var finalUUIDs = _.sortBy(State.selections.map(function (s) { return s.uuid }));
-
-      var removedSelections = _.difference(initialUUIDs, finalUUIDs);
-
-      var addedSelections = _.difference(finalUUIDs, initialUUIDs);
-
-      if (removedSelections.length === 0 && addedSelections.length === 0) {
-        ;
-      } else {
-        if (removedSelections.length !== 0 && addedSelections.length !== 0) {
-        } else if (addedSelections.length > 0) {
-          addedSelections.forEach(function (uuid) {
-            ChartCompositionService.addSelection(null, uuid);
-          });
-        } else if (removedSelections.length > 0) {
-          removedSelections.forEach(ChartCompositionService.removeSelection);
-        }
-      }
-
-      return geomObject;
-    };
-
     var initializeGeomEventseriesSelections = function (geomObject) {
       if (!geomObject.geometry || geomObject.geometry.type !== 'Point' ||
           !geomObject.properties) {
@@ -531,8 +385,6 @@ angular.module('global-state')
     return {
       timeseriesMetaData: getTimeseriesMetaData,
       rasterMetaData: getRasterMetaData,
-      initializeAsset: initializeAssetSelections,
-      initializeRaster: initializeRasterSelections,
       initializeGeomEventseriesSelections: initializeGeomEventseriesSelections,
       dbSupportedData: dbSupportedData,
       toggleChart: toggleChart,

@@ -8,16 +8,12 @@ angular.module('timeseries')
   '$timeout',
   'gettextCatalog',
   'notie',
-  'ChartCompositionService',
-  'DashboardChartService',
   'State',
   'TimeseriesService',
   function (
     $timeout,
     gettextCatalog,
     notie,
-    ChartCompositionService,
-    DashboardChartService,
     State,
     TimeseriesService
   ) {
@@ -26,36 +22,9 @@ angular.module('timeseries')
       scope.zoomToInterval = TimeseriesService.zoomToInterval;
       scope.state = State; // TODO: only done this to watch state.layers. There is a better place for this.
 
-      var selectionObject, selectionType;
-      if (scope.asset) {
-        selectionObject = scope.asset;
-        selectionType = 'asset';
-      } else if (scope.geom){
-        selectionObject = scope.geom;
-        selectionType = 'geom';
-      }
-      scope.$watch('state.layers', function () { // TODO: There is a better place for this.
-        DashboardChartService.initializeRaster(selectionObject, selectionType);
-      });
-
-      scope.$watch(selectionType, function (a, b) {
-        DashboardChartService.initializeAsset(scope.asset);
-        DashboardChartService.initializeRaster(selectionObject, selectionType);
-        if (State.context === 'map') {
-          scope.timeseries.change();
-        }
-      });
-
       scope.$on('$destroy', function () {
-        if (State.assets.length > 1 && State.context === 'map') {
-          _.forEach(State.selections, function (selection) {
-            // ... omitting selection deactivation ... skip'm!
-            // selection.active = false;
-            // ChartCompositionService.removeSelection(selection.uuid);
-          });
           TimeseriesService.syncTime();
-        }
-      });
+        });
     },
     restrict: 'E', // Timeseries can be an element with single-select or
                     // multi select as an attribute or without in which
