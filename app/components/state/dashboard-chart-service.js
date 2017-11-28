@@ -115,6 +115,7 @@ angular.module('global-state')
           coordinates: [parseFloat(parts[3]), parseFloat(parts[4])]
         };
         var rasterUuid = parts[1];
+        var rasterDataLayer = DataService.getDataLayer(rasterUuid);
 
         return {
           uuid: key,
@@ -122,6 +123,9 @@ angular.module('global-state')
           geometry: geometry,
           color: getDefaultColor(),
           raster: rasterUuid,
+          unit: rasterDataLayer.unit,
+          description: rasterDataLayer.quantity + ' ('+ rasterDataLayer.unit + ')',
+          measureScale: rasterDataLayer.scale
         };
       };
 
@@ -130,6 +134,7 @@ angular.module('global-state')
         var key = parts.join('-');
         var rasterUuid = parts[1];
         var assetKey = parts[3];
+        var rasterDataLayer = DataService.getDataLayer(rasterUuid);
 
         return {
           uuid: key,
@@ -137,18 +142,43 @@ angular.module('global-state')
           asset: assetKey,
           color: getDefaultColor(),
           raster: rasterUuid,
+          unit: rasterDataLayer.unit,
+          description: rasterDataLayer.quantity + ' ('+ rasterDataLayer.unit + ')',
+          measureScale: rasterDataLayer.scale
         };
+      };
+
+      var findTimeseriesAndAsset = function (timeseriesId) {
+        for (var i=0; i < State.assets.length; i++) {
+          var asset = DataService.getAssetByKey(State.assets[i]);
+          if (!asset.timeseries) continue;
+          for (var j=0; j < asset.timeseries.length; j++) {
+            var timeseries = asset.timeseries[j];
+            if (timeseries.uuid.indexOf(timeseriesId) !== -1) {
+              return {
+                timeseries: timeseries,
+                asset: asset
+              };
+            }
+          }
+        }
       };
 
       var createTimeseriesChart = function(parts) {
         // Parts is ['timeseries', '32322233221']
         var key = parts.join('-');
 
+        var timeseriesAndAsset = findTimeseriesAndAsset(parts[1]);
+        var ts = timeseriesAndAsset.timeseries;
+        var asset = timeseriesAndAsset.asset;
         return {
           uuid: key,
           type: "timeseries",
           timeseries: parts[1],
           color: getDefaultColor(),
+          unit: ts.unit,
+          description: asset.name + ', ' + ts.parameter + ' (' + ts.unit + ')',
+          measureScale: ts.scale
         };
       };
 
@@ -178,14 +208,11 @@ angular.module('global-state')
       var isChartActive = ChartCompositionService.isKeyActive;
 
       var toggleChart = function (key) {
-        console.log('Toggle Chaaaaaaaaaart', key, isChartActive(key));
         if (isChartActive(key)) {
           ChartCompositionService.removeSelection(key);
         } else {
           ChartCompositionService.addSelection(null, key);
         }
-
-        console.log('Now', isChartActive(key), ChartCompositionService.composedCharts);
 
         if (DataService.onChartsChange) {
           DataService.onChartsChange();

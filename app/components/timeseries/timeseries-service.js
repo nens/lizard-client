@@ -105,7 +105,7 @@ angular.module('timeseries').service("TimeseriesService", [
         }
       });
 
-      var activeTimeseries = function(actives, minPoints, chartType){
+      var activeTimeseries = function(actives, minPoints, chartType) {
         // Return empty timeseries when empty selection
         var timeseriesPromise;
         if (actives.length === 0) {
@@ -132,10 +132,10 @@ angular.module('timeseries').service("TimeseriesService", [
             });
           return service.timeseries;
         }).then(function (ts) {
-            if (service.onTimeseriesChange) {
-		service.onTimeseriesChange();
-            }
-            return ts;
+          if (service.onTimeseriesChange) {
+	    service.onTimeseriesChange();
+          }
+          return ts;
 	});
 
         return timeseriesPromise;

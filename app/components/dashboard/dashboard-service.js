@@ -173,8 +173,18 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
           return theContentElem;
         };
 
-    var Endlösung = [];
 
+    var getChartData = function(chart) {
+      var result;
+      if (chart.type === 'timeseries') {
+        console.log('In getChartData; timeseries = ', timeseries);
+      } else {
+        var assetOrGeom = 0;
+        // return assetOrGeom.properties[chart.raster].data;
+      }
+    };
+
+    var Endlösung = [];
     ChartCompositionService.composedCharts.forEach(function (value, index) {
       var graph = {
         type: null,
@@ -184,9 +194,8 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
 
       value.forEach(function (chartKey) {
         var chart = DashboardChartService.getOrCreateChart(chartKey);
-
-        graph.type =
-          graph.type || getTypeForSelectionUuid(chartKey);
+        getChartData(chart);
+        graph.type = graph.type || chart.measureScale;
 
         graph.dimensions =
           graph.dimensions || getDimensionsForSelectionUuid(chartKey);
@@ -196,7 +205,7 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
           color: chart.color,
           data: 0,
           keys: 0,
-          unit: 0,
+          unit: chart.unit,
           yLabel: 'YLABEL',
           xLabel: 'XLABEL',
           id: chartKey,
