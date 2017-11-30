@@ -12,6 +12,7 @@ angular.module('lizard-nxt')
   .directive('timeline',
              ["$q",
               "$timeout",
+              "ChartCompositionService",
               "RasterService",
               "UtilService",
               "Timeline",
@@ -21,6 +22,7 @@ angular.module('lizard-nxt')
               "State",
               function ($q,
                         $timeout,
+                        ChartCompositionService,
                         RasterService,
                         UtilService,
                         Timeline,
@@ -451,8 +453,8 @@ angular.module('lizard-nxt')
       function () {
         return JSON.stringify([
           State.layers,
-          State.selections,
-          State.annotations.active
+          State.annotations.active,
+          ChartCompositionService.composedCharts.length
         ]);
       },
       function (n, o) {
@@ -542,9 +544,7 @@ angular.module('lizard-nxt')
     /* Check whether we want to show the timeline in dashboard ctx;
      */
     var needToShowTimelineInDashboard = function () {
-      var check1 = tlNeededBecauseTimeseries(),
-          check2 = tlNeededBecauseEventseries();
-      return !!(check1 || check2);
+      return ChartCompositionService.chartsPresent();
     };
 
     /* Animate the timeline (dis-)appearance:

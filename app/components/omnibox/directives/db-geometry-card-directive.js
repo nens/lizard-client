@@ -26,21 +26,18 @@ angular.module('omnibox')
         scope.isChartActive = DashboardChartService.isChartActive;
 
         var geomOrAsset = function () {
-          console.log('geomOrAsset', scope, attrs);
           return scope.geom || scope.asset;
         };
 
         // Make sure all event series data etc gets updated on geo.
         DataService.getGeomData(geomOrAsset()).then(function (geo) {
-          console.log("Updated geo:", geo, geomOrAsset());
+          // console.log("Updated geo:", geo, geomOrAsset());
         });
 
         scope.getKey = function (raster) {
           if (scope.asset) {
-            console.log("Getting key for raster asset", raster, scope.asset);
             return DashboardChartService.getKeyForRasterAsset(raster, scope.asset);
           } else {
-            console.log("Getting key for raster geometry", raster, scope.geom);
             return DashboardChartService.getKeyForRasterGeometry(raster, scope.geom);
           }
         };

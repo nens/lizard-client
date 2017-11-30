@@ -35,7 +35,7 @@ angular.module('data-menu')
       instance.dataLayers = [];
 
       // This is overwritten by the dashboard directive!!
-      var buildDashboard = function () {};
+      instance.buildDashboard = function () {};
 
       // Callback for when assets are being retrieved from api
       var assetChange = function (asset) {

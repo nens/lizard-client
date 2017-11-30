@@ -23,6 +23,10 @@ angular.module('dashboard')
     return service.dashboardCharts[key];
   };
 
+  this.chartsPresent = function () {
+    return service.composedCharts.length > 0;
+  }
+
   // Reset this svc's main data structure
   this.reset = function () {
     service.composedCharts = [];
