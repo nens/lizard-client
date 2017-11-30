@@ -74,7 +74,7 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
                     chart.geometry.coordinates[1] == geom.coordinates[1]);
           });
         }
-        console.log('assetOrGeom', assetOrGeom, chart);
+
         return {
           data: assetOrGeom.properties[chart.raster].data,
           keys: {x: 0, y: 1}

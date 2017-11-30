@@ -1666,7 +1666,7 @@ angular.module('lizard-nxt')
             graph.transTime
           );
         }
-      });
+      }).append('title').text('Click to cycle through Y axes');
     }
 
     clickRect

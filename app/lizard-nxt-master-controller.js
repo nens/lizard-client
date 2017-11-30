@@ -66,21 +66,7 @@ angular.module('lizard-nxt').controller('MasterCtrl',
         State.box.type = 'multi-point';
       }
     }
-    var overlay = angular.element('#context-transition-overlay')[0];
-    overlay.style.transition = null;
-    overlay.style.minHeight = window.innerHeight + 'px';
     $rootScope.context = State.context;
-    $timeout(function () {
-      overlay.style.transition = 'ease .3s';
-      overlay.style.opacity = 1;
-    }, 10);
-    $timeout(function () {
-      overlay.style.opacity = 0;
-    }, 300);
-    $timeout(function () {
-      overlay.style.transition = null;
-      overlay.style.minHeight = 0;
-    }, 600, true);
   };
 
   $scope.$watch(State.toString('context'), function () {
@@ -97,10 +83,6 @@ angular.module('lizard-nxt').controller('MasterCtrl',
 
   $scope.getContextComplementIcon = function () {
     return $scope.context === 'map' ? 'fa-bar-chart' : 'fa-globe';
-  };
-
-  $scope.toggleVersionVisibility = function () {
-    $('.navbar-version').toggle();
   };
 
   /**

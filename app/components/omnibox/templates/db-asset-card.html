@@ -80,6 +80,7 @@
   <db-nested-asset asset="asset" time-state="timeState"></db-nested-asset>
 
   <db-geometry-cards
+    ng-if="!isNested"
     time-state="state.temporal"
     asset="asset"
     header="true">

@@ -80,6 +80,10 @@ angular.module('global-state')
         var result = [];
         rasters.forEach(function (raster) {
           assets.forEach(function (asset, i) {
+            if (AssetService.isNestedAsset(asset.entity_name)) {
+              return;
+            }
+
             var geometry = asset.geometry;
             if (geometry.type !== 'Point') { return; }
             result.push(getKeyForRasterAsset(raster, asset));
@@ -182,7 +186,7 @@ angular.module('global-state')
           color: getDefaultColor(),
           unit: ts.unit,
           reference_frame: ts.reference_frame,
-          description: asset.name + ', ' + ts.parameter,
+          description: (asset.name || asset.code) + ', ' + ts.parameter,
           measureScale: ts.scale
         };
       };
