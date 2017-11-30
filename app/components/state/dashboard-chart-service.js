@@ -410,7 +410,6 @@ angular.module('global-state')
       );
     };
 
-
     return {
       timeseriesMetaData: getTimeseriesMetaData,
       rasterMetaData: getRasterMetaData,

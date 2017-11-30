@@ -94,125 +94,29 @@ angular.module('omnibox')
           return;
         }
         var order = Number(target.getAttribute('data-order'));
-        var uuid = el.getAttribute('data-uuid');
-        var selection = _.find(State.selections, function (selection) {
-          return selection.uuid === uuid;
-        });
+        if (order === undefined) return; // Dropped somewhere irrelevant.
 
-        if (!selection) {
-          el.parentNode.removeChild(el);
-          return;
-        }
+        var key = el.getAttribute('data-uuid');
 
-        var tsMetaData = DashboardChartService.timeseriesMetaData(
-            TimeseriesService.timeseries, selection);
-        var otherGraphTsMetaData = DashboardChartService.timeseriesMetaData(
-            TimeseriesService.timeseries, otherGraphSelections);
-        var srcMeasureScale = selection.measureScale;
-        var targetSelectionUuids = ChartCompositionService.composedCharts[order];
-        var checkMeasureScale;
-
-        if (targetSelectionUuids) {
-          var firstTargetSelection = _.find(State.selections, { uuid: targetSelectionUuids[0] });
-
-          if (firstTargetSelection) {
-            var firstTargetMeasureScale = firstTargetSelection.measureScale;
-            checkMeasureScale = srcMeasureScale !== firstTargetMeasureScale;
-          }
-        }
-
-        var currentPlotCount = ChartCompositionService.composedCharts.length,
-            chartCompositionDragResult;
-
-        if (selection.raster) {
-          if (currentPlotCount === 0) {
-            emulateClick(uuid);
-          } else {
-            notie.alert(2,
-              gettextCatalog.getString('Whoops, bar charts cannot be combined. Try again!')
-            );
-          }
-          el.parentNode.removeChild(el);
-          return;
-
-        } else if (checkMeasureScale) {
-          if (currentPlotCount === 0) {
-            emulateClick(uuid);
-          } else {
-            notie.alert(2,
-              gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!')
-            );
-          }
-          el.parentNode.removeChild(el);
-          return;
-
-        } else {
-          if (currentPlotCount === 0) {
-            el.parentNode.removeChild(el);
-            emulateClick(uuid);
-            return;
-          } else {
-            chartCompositionDragResult = ChartCompositionService.dragSelection(
-              order, uuid);
-            selection.order = chartCompositionDragResult.finalIndex;
-          }
-          TimeseriesService.syncTime();
-        }
-
-        // Possible other graph in target.
-        var otherGraphSelections = _.find(State.selections, function (selection) {
-          var selectionOrder = ChartCompositionService.getChartIndexForSelection(selection.uuid);
-          return selectionOrder === order && selection.active;
-        });
-
-        if (otherGraphSelections === undefined) {
-          if (chartCompositionDragResult.mustActivateSelection) {
-            if (chartCompositionDragResult.mustEmulateClick) {
-              emulateClick(uuid);
-            } else {
-              TimeseriesService.syncTime();
-            }
-          }
-          el.parentNode.removeChild(el);
-          return;
-        }
-
-        // If ts was already active: first remove and rearrange plots in
-        // dashboard, then continue adding it to the dragged plot.
-        if (selection.active) {
-
-          var selectionOrder = ChartCompositionService.getChartIndexForSelection(
-            selection.uuid);
-          var allSelectionsInCC = ChartCompositionService.composedCharts[selectionOrder];
-          var otherSelectionsInCC = _.filter(allSelectionsInCC, function (uuid) {
-            return uuid !== selection.uuid;
-          });
-
-          if (otherSelectionsInCC.length === 0) {
-            order = selectionOrder;
-          }
-
-          selection.active = false;
-        } else {
-          if (chartCompositionDragResult.mustActivateSelection) {
-            selection.active = true;
-          }
-        }
-
-        if (checkMeasureScale) {
-          notie.alert(2,
-            gettextCatalog.getString('Whoops, the graphs are not the same type. Try again!'));
-        } else if (selection.raster) {
-          notie.alert(2,
-            gettextCatalog.getString('Whoops, bar charts cannot be combined. Try again!'));
-        } else {
-          selection.order = order || 0; // dashboard could be empty
-          selection.active = true;
-          TimeseriesService.syncTime();
-        }
-
-        // Remove drag element.
+        // Hide the thing that was being dragged.
         el.parentNode.removeChild(el);
+
+        if (ChartCompositionService.composedCharts.length === 0) {
+          // Empty.
+          ChartCompositionService.addSelection(null, key);
+        } else {
+          var errorMessage = ChartCompositionService.checkDrag(key, order);
+
+          if (errorMessage) {
+            notie.alert(2, gettextCatalog.getString(errorMessage));
+            return;
+          }
+
+          ChartCompositionService.dragSelection(order, key);
+        }
+
+        // Update charts.
+        TimeseriesService.syncTime();
       });
 
       scope.mustShowGeomCard = function (geom) {

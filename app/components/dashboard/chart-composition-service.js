@@ -28,12 +28,12 @@ angular.module('dashboard')
     service.composedCharts = [];
   };
 
-  this.getChartIndexForSelection = function (selectionUuid) {
+  this.getChartIndexForSelection = function (chartKey) {
     var chartIndex = -1,
         selectionIndex;
 
     service.composedCharts.forEach(function (value, index) {
-      selectionIndex = value.indexOf(selectionUuid);
+      selectionIndex = value.indexOf(chartKey);
       if (selectionIndex > -1) {
         chartIndex = index;
       }
@@ -55,10 +55,10 @@ angular.module('dashboard')
     return service.getChartIndexForSelection(key) !== -1;
   };
 
-  this.addSelection = function (chartIndex, selectionUuid) {
-    // Returns the index of the chart that selectionUuid was inserted into.
+  this.addSelection = function (chartIndex, chartKey) {
+    // Returns the index of the chart that chartKey was inserted into.
 
-    if (this.getChartIndexForSelection(selectionUuid) !== -1) {
+    if (this.getChartIndexForSelection(chartKey) !== -1) {
       console.error("[E] Tried to add selection that is already present!");
     }
 
@@ -66,9 +66,9 @@ angular.module('dashboard')
     if (chartIndex === undefined || chartIndex === null || chartIndex < 0 ||
         chartIndex >= service.composedCharts.length) {
       // This will result in a single new cartesian plane with a single chart:
-      var alreadyPresent = service.getChartIndexForSelection(selectionUuid);
+      var alreadyPresent = service.getChartIndexForSelection(chartKey);
       if (alreadyPresent === -1) {
-        service.composedCharts.push([selectionUuid]);
+        service.composedCharts.push([chartKey]);
         result = service.composedCharts.length - 1;
       } else {
         result = alreadyPresent;
@@ -80,11 +80,11 @@ angular.module('dashboard')
       if (!chart) {
         console.error(
           "ERROR IN ADDSELECTION", JSON.stringify(service.composedCharts),
-          chartIndex, selectionUuid);
+          chartIndex, chartKey);
         result = 0;
       } else {
-        if (chart.indexOf(selectionUuid) === -1) {
-          chart.push(selectionUuid);
+        if (chart.indexOf(chartKey) === -1) {
+          chart.push(chartKey);
         }
         result = chartIndex;
       }
@@ -92,41 +92,25 @@ angular.module('dashboard')
     return result;
   };
 
-  this.dragSelection = function (newChartIndex, selectionUuid) {
-    var oldChartIndex = service.getChartIndexForSelection(selectionUuid);
+  this.dragSelection = function (newChartIndex, chartKey) {
+    var oldChartIndex = service.getChartIndexForSelection(chartKey);
 
-    var result = {
-      finalIndex: -1,
-      changed: false,
-      mustActivateSelection: false,
-      mustEmulateClick: false // If this is true, then selection is added elsewhere!
-    };
-
-    if (service.composedCharts.length === 0) {
-      result.changed = true;
-      result.mustActivateSelection = true;
-      result.mustEmulateClick = true;
-    } else if (oldChartIndex === newChartIndex) {
-      var foo = 'bar'; // Trick the test-suite because it complains about emtpy blocks :/
-      // Do nothing.
-    } else if (oldChartIndex !== -1) {
-      this.addSelection(newChartIndex, selectionUuid);
-      removeSelectionFromSpecificPlot(oldChartIndex, selectionUuid);
-      result.changed = true;
-      result.mustActivateSelection = (newChartIndex === service.composedCharts.length - 1);
-    } else {
-      if (newChartIndex !== undefined) {
-        this.addSelection(newChartIndex, selectionUuid);
-        result.changed = true;
-        result.mustActivateSelection = true;
-      }
+    if (oldChartIndex === newChartIndex) {
+      // NOP.
+      return;
     }
 
-    result.finalIndex = service.getChartIndexForSelection(selectionUuid);
-    return result;
+    if (oldChartIndex === -1) {
+      // New chart.
+      this.addSelection(newChartIndex, chartKey);
+    } else {
+      // First add, then remove, so chart indices don't change between the two.
+      this.addSelection(newChartIndex, chartKey);
+      removeSelectionFromSpecificPlot(oldChartIndex, chartKey);
+    }
   };
 
-  var removeSelectionFromSpecificPlot = function (chartIndex, selectionUuid) {
+  var removeSelectionFromSpecificPlot = function (chartIndex, chartKey) {
     var composedChart = service.composedCharts[chartIndex];
 
     if (composedChart === undefined) {
@@ -134,9 +118,9 @@ angular.module('dashboard')
       return;
     }
 
-    var selectionIndex = composedChart.indexOf(selectionUuid);
+    var selectionIndex = composedChart.indexOf(chartKey);
     if (selectionIndex === -1) {
-      console.error("[E] plot #" + chartIndex + " does not have selection with uuid " + selectionUuid);
+      console.error("[E] plot #" + chartIndex + " does not have selection with uuid " + chartKey);
     } else {
       composedChart.splice(selectionIndex, 1);
       if (composedChart.length === 0) {
@@ -146,10 +130,10 @@ angular.module('dashboard')
     }
   };
 
-  this.removeSelection = function (selectionUuid) {
-    var selectionIndex = service.getChartIndexForSelection(selectionUuid);
+  this.removeSelection = function (chartKey) {
+    var selectionIndex = service.getChartIndexForSelection(chartKey);
     if (selectionIndex !== -1) {
-      removeSelectionFromSpecificPlot(selectionIndex, selectionUuid);
+      removeSelectionFromSpecificPlot(selectionIndex, chartKey);
     }
   };
 
@@ -214,4 +198,21 @@ angular.module('dashboard')
       }
     }
   };
+
+  this.checkDrag = function(chartKey, plotNumber) {
+    // Returns an error message if this drag is not OK, null if it is
+    // Bar charts cannot be combined.
+    if (service.composedCharts[plotNumber] && service.composedCharts[plotNumber].length) {
+      var chart = service.dashboardCharts[chartKey];
+      var existingChartKey = service.composedCharts[plotNumber][0];
+      var existingChart = service.dashboardCharts[existingChartKey];
+
+      if (chart.measureScale === 'ratio' || existingChart.measureScale === 'ratio') {
+        return 'Whoops, bar charts cannot be combined. Try again!';
+      }
+    }
+
+    return null;
+  };
+
 }]);
