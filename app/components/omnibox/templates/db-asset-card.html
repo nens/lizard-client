@@ -62,8 +62,7 @@
 
           <div
             class="db-card-single-ts-name"
-            title="XXX {{ metaData.location }}, {{ metaData.uuid }}, {{ metaData.parameter }}"
-            ng-init="displayName = getTsDisplayName(selection)">
+            title="{{ chart.description }} ({{ chart.unit }}) {{ chart.timeseries }}">
             {{ chart.description | truncate: 42 }}
           </div>
 

@@ -25,19 +25,20 @@ angular.module('lizard-nxt')
    *
    * For now this is a way to keep track of the scales, domains and xy's of the graph
    */
-  function ChartContainer (chartContent) {
-    this.id = chartContent.id;
-    this.keys = chartContent.keys || defaultKeys;
-    this.color = chartContent.color || DEFAULT_GREEN;
-    this.unit = chartContent.unit;
-    this.reference_frame = chartContent.reference_frame;
-    this.thresholds = chartContent.thresholds;
-    this.location = chartContent.location;
-    this.name = chartContent.name;
-    this.labels = chartContent.labels;
-    this.setContentUpdateY(chartContent);
+    function ChartContainer (chartContent) {
+      this.id = chartContent.id;
+      this.keys = chartContent.keys || defaultKeys;
+      this.color = chartContent.color || DEFAULT_GREEN;
+      this.unit = chartContent.unit;
 
-    return;
+      this.reference_frame = chartContent.reference_frame;
+      this.thresholds = chartContent.thresholds;
+      this.description = chartContent.description;
+      this.labels = chartContent.labels;
+
+      this.setContentUpdateY(chartContent);
+
+      return;
   }
 
   ChartContainer.prototype.setContentUpdateY = function (chartContent) {

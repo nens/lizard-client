@@ -24,7 +24,8 @@
           ng-click="toggleColorPicker(key); $event.stopPropagation();">
         </div>
 
-        <div class="db-card-single-ts-name ">
+        <div class="db-card-single-ts-name "
+             title="{{ chart.description }} ({{ chart.unit }}) {{ chart.raster }}">
           <i class="fa fa-line-chart"></i>
           <span>
             {{ chart.description | truncate: 42 }}

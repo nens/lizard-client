@@ -105,7 +105,11 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
           keys: chartData.keys,
           unit: chart.unit,
           xLabel: chart.description,
+          description: chart.description,
           id: chartKey,
+
+          reference_frame: chart.reference_frame,
+          thresholds: [],
         });
       });
 

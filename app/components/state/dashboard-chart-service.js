@@ -126,7 +126,8 @@ angular.module('global-state')
           color: getDefaultColor(),
           raster: rasterUuid,
           unit: rasterDataLayer.unit,
-          description: rasterDataLayer.quantity + ' ('+ rasterDataLayer.unit + ')',
+          reference_frame: rasterDataLayer.reference_frame,
+          description: rasterDataLayer.quantity,
           measureScale: rasterDataLayer.scale
         };
       };
@@ -145,7 +146,8 @@ angular.module('global-state')
           color: getDefaultColor(),
           raster: rasterUuid,
           unit: rasterDataLayer.unit,
-          description: rasterDataLayer.quantity + ' ('+ rasterDataLayer.unit + ')',
+          reference_frame: rasterDataLayer.reference_frame,
+          description: rasterDataLayer.quantity,
           measureScale: rasterDataLayer.scale
         };
       };
@@ -179,7 +181,8 @@ angular.module('global-state')
           timeseries: parts[1],
           color: getDefaultColor(),
           unit: ts.unit,
-          description: asset.name + ', ' + ts.parameter + ' (' + ts.unit + ')',
+          reference_frame: ts.reference_frame,
+          description: asset.name + ', ' + ts.parameter,
           measureScale: ts.scale
         };
       };
