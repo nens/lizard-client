@@ -29,17 +29,9 @@ angular.module('omnibox')
       scope.selectColor = function(color) {
         scope.colorPicker.selectedColor = color;
         chart.color = color;
+        DataService.buildDashboard();
         scope.closeColorPicker(chart.uuid);
       };
-
-      scope.$watch('colorPicker.selectedColor', function() {
-        chart.color = scope.colorPicker.selectedColor;
-        if (chart.timeseries){
-          TimeseriesService.onColorChange(chart);
-        } else {
-          DataService.onColorChange(chart);
-        }
-      });
 
       scope.colorPickersSettings = DBCardsService.colorPickersSettings;
       scope.$watch('colorPickersSettings["' + chart.uuid + '"]', function (n) {

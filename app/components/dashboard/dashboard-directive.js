@@ -39,7 +39,6 @@ angular.module('dashboard')
        * Updates dashboard graphs on the scope when called.
        */
       var buildDashboard = function () {
-
         TimeseriesService.minPoints =
           element.width() - DashboardService.GRAPH_PADDING;
 
@@ -59,10 +58,7 @@ angular.module('dashboard')
         });
       };
 
-      DataService.onChartsChange = buildDashboard;
-      DataService.onAssetsChange = buildDashboard;
-      DataService.onGeometriesChange = buildDashboard;
-      TimeseriesService.onTimeseriesChange = buildDashboard;
+      DataService.buildDashboard = buildDashboard;
 
       /**
        * Update dashboard when timeline has moved.
@@ -81,9 +77,7 @@ angular.module('dashboard')
 
       scope.$on('$destroy', function () {
         window.removeEventListener('resize', applyResize);
-        DataService.onAssetsChange = null;
-        DataService.onGeometriesChange = null;
-        TimeseriesService.onTimeseriesChange = null;
+        DataService.buildDashboard = function () {};
       });
 
       // Make dashboard a dropable element.

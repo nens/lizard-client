@@ -42,9 +42,7 @@ angular.module('timeseries').service("TimeseriesService", [
         } else {
           _lineTimeseries = timeseriesIn;
         }
-        if (service.onTimeseriesChange) {
-          service.onTimeseriesChange();
-        }
+        DataService.buildDashboard();
       }
     };
 
@@ -65,22 +63,6 @@ angular.module('timeseries').service("TimeseriesService", [
       },
       enumerable: true
     });
-
-    /**
-     * Finds timeseries, asset or geometry data for a selection.
-     *
-     * @param  {object}  selection   a selection from State.selections
-     * @return {object} asset or geometry data.
-     */
-    // TODO: THIS IS BAD PRACTICE!
-    this.findProperty = function (selection) {
-      if (selection.timeseries) {
-        return _.find(this.timeseries, function (ts) {
-          return selection.timeseries === ts.id;
-        });
-      }
-      return DataService.findProperty(selection);
-    };
 
     /**
      * Collects timeseries data from the backend.
@@ -132,9 +114,7 @@ angular.module('timeseries').service("TimeseriesService", [
             });
           return service.timeseries;
         }).then(function (ts) {
-          if (service.onTimeseriesChange) {
-	    service.onTimeseriesChange();
-          }
+          DataService.buildDashboard();
           return ts;
 	});
 
@@ -148,25 +128,6 @@ angular.module('timeseries').service("TimeseriesService", [
     };
 
     var localPromise = {lines: {}, bars: {}, crosssections: {}};
-
-    /**
-     * Color is stored with the ts metadata in asset.timeseries of every asset
-     * in DataService.assets. This function searches in the selected timeseries
-     * in timeseriesService.timeseries to update the color.
-     *
-     * @param  {object} changedTS timeseries metadata object
-     */
-    this.onColorChange = function (changedTS) {
-      var ts = _.find(service.timeseries, function (o) {
-        return o.id === changedTS.timeseries;
-      });
-      if (ts) {
-        ts.color = changedTS.color;
-        if (service.onTimeseriesChange) {
-          service.onTimeseriesChange();
-        }
-      }
-    };
 
     /**
      * @function
@@ -304,50 +265,29 @@ angular.module('timeseries').service("TimeseriesService", [
 
           break;
         case 'timesteps_range_all_active':
+          var charts = ChartCompositionService.getActiveCharts();
 
-          var activeTimeseriesUuids = [];
-          var activeTempRasterIds = [];
+          charts.forEach(function (chart) {
+            var chartStart, chartEnd;
 
-          if (State.selections) {
-            State.selections.forEach(function (selection) {
-              if (selection.active) {
-                if (selection.timeseries) {
-                  activeTimeseriesUuids.push(selection.timeseries);
-                } else if (selection.raster) {
-                  activeTempRasterIds.push(selection.raster);
-                }
-              }
-            });
+            if (chart.type === 'raster') {
+              var dataLayer = _.find(DataService.dataLayers, { uuid: chart.raster });
+              chartStart = dataLayer.firstValueTimestamp;
+              chartEnd = dataLayer.lastValueTimestamp;
+            } else if (chart.type === 'timeseries') {
+              var ts = _.find(service.timeseries, { id: chart.timeseries });
+              chartStart = ts.start;
+              chartEnd = ts.end;
+            }
 
-            var ts;
-            activeTimeseriesUuids.forEach(function (tsUuid) {
-              ts = _.find(service.timeseries, { id: tsUuid });
-              if (ts.start && (!start || ts.start < start)) {
-                start = ts.start;
-              }
-              if (ts.end && (!end || ts.end > end)) {
-                end = ts.end;
-              }
-            });
-
-            var dataLayer, rasterTsStart, rasterTsEnd;
-            activeTempRasterIds.forEach(function (rasterId) {
-              dataLayer = _.find(DataService.dataLayers, { uuid: rasterId });
-              rasterTsStart = dataLayer.firstValueTimestamp;
-              rasterTsEnd = dataLayer.lastValueTimestamp;
-              if (rasterTsStart && (!start || rasterTsStart < start)) {
-                start = rasterTsStart;
-              }
-              if (rasterTsStart && (!end || rasterTsEnd > end)) {
-                end = rasterTsEnd;
-              }
-            });
-          }
-
-
+            if (chartStart && chartEnd) {
+              start = start ? Math.min(start, chartStart) : chartStart;
+              end = end ? Math.max(end, chartEnd) : chartEnd;
+            }
+          });
           break;
         default:
-          console.error(
+         console.error(
             "Unknown interval '" +
             intervalText +
             "' for temporal zoom; allowed values are " +

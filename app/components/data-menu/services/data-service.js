@@ -32,29 +32,10 @@ angular.module('data-menu')
 
       var instance = this;
 
-      /**
-       * Finds asset or geometry data for a selection.
-       *
-       * @param  {object}  selection   a selection from State.selections
-       * @return {object} asset or geometry data.
-       */
-      this.findProperty = function (selection) {
-        if (selection.asset) {
-          return _.find(
-            instance.assets, function(asset) {
-              return selection.asset === asset.entity_name + "$" + asset.id;
-            }
-          );
-        } else if (selection.geom) {
-          return _.find(
-            instance.geometries, function(geom) {
-              return selection.geom === geom.geometry.coordinates.toString();
-            }
-          );
-        }
-      };
-
       instance.dataLayers = [];
+
+      // This is overwritten by the dashboard directive!!
+      var buildDashboard = function () {};
 
       // Callback for when assets are being retrieved from api
       var assetChange = function (asset) {
@@ -91,10 +72,7 @@ angular.module('data-menu')
 
         // instantes
         instance.getGeomDataForAssets(instance.oldAssets, instance.assets);
-
-        if (instance.onAssetsChange) {
-          instance.onAssetsChange();
-        }
+        instance.buildDashboard();
       };
 
       // Define assets on State and update DataService.assets.
@@ -180,15 +158,13 @@ angular.module('data-menu')
         var geometries = _.uniqWith(geometriesIn, isDuplicateGeometry);
 
         instance._updateGeometries(_geometries, angular.copy(geometries))
-        .forEach(function (promise) {
-          promise.then(function (geometries) {
-            // Dedupe instance.geometries asynchronous.
-            instance.geometries = _.uniqWith(geometries, isDuplicateGeometry);
-            if (instance.onGeometriesChange) {
-              instance.onGeometriesChange();
-            }
-          });
-        });
+                .forEach(function (promise) {
+                  promise.then(function (geometries) {
+                    // Dedupe instance.geometries asynchronous.
+                    instance.geometries = _.uniqWith(geometries, isDuplicateGeometry);
+                    instance.buildDashboard();
+                  });
+                });
 
         _geometries = geometries;
         State.geometries.addGeometry = addGeometry;
@@ -223,8 +199,8 @@ angular.module('data-menu')
         var index = -1;
         _geometries.forEach(function(geom, i) {
           if (geom.geometry.coordinates[0] === geometry.geometry.coordinates[0]
-          && geom.geometry.coordinates[1] === geometry.geometry.coordinates[1]
-          && geom.geometry.coordinates[2] === geometry.geometry.coordinates[2]) {
+              && geom.geometry.coordinates[1] === geometry.geometry.coordinates[1]
+              && geom.geometry.coordinates[2] === geometry.geometry.coordinates[2]) {
             index = i;
           }
         });
@@ -358,23 +334,6 @@ angular.module('data-menu')
           promises.push(defer.promise);
         }
         return promises;
-      };
-
-      /**
-       * Color is stored with the asset or geom metadata
-       * This function searches in the selected object
-       * in to update the color.
-       *
-       * @param  {object} changedSelection selection object
-       */
-      this.onColorChange = function (changedSelection) {
-        // TODO: bad practice: color should imho be defined in the state and
-        // the state alone.
-        var property = this.findProperty(changedSelection);
-        if (property) {
-          property.color = changedSelection.color;
-          //          instance.onSelectionsChange();
-        }
       };
 
       this.getGeomDataForAssets = function (oldAssets, assets) {
@@ -523,7 +482,7 @@ angular.module('data-menu')
         });
       };
 
-      this.getPropFromAssetOrParent = function getAssetByKey(asset, property) {
+      this.getPropFromAssetOrParent = function (asset, property) {
         if (property in asset && asset[property] !== undefined) {
           return asset[property];
         } else if (asset.parentAsset) {

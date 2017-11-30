@@ -216,9 +216,7 @@ angular.module('global-state')
           ChartCompositionService.addSelection(null, key);
         }
 
-        if (DataService.onChartsChange) {
-          DataService.onChartsChange();
-        }
+        DataService.buildDashboard();
         TimeseriesService.syncTime();
       };
 
