@@ -190,7 +190,7 @@ angular.module('data-menu')
             keepSelections.push(selection);
           } else {
             // Remove
-            ChartCompositionService.removeSelection(selection.uuid);
+            ChartCompositionService.removeChart(selection.uuid);
           }
         }
         State.selections = keepSelections;

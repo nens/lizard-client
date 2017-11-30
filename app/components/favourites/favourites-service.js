@@ -225,14 +225,6 @@ angular.module('favourites')
           });
         }
 
-        // Restore selections
-        if (typeof favourite.state.selections !== 'undefined') {
-          State.selections = favourite.state.selections;
-
-          // rebuild composedCharts:
-          ChartCompositionService.setMultipleSelections(State.selections);
-        }
-
         // Specific attributes
         var ATTRIBUTES = [
           'context',

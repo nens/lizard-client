@@ -454,6 +454,7 @@ angular.module('lizard-nxt')
         return JSON.stringify([
           State.layers,
           State.annotations.active,
+          DataService.assets,
           ChartCompositionService.composedCharts.length
         ]);
       },
@@ -494,7 +495,11 @@ angular.module('lizard-nxt')
      * of timeseries:
      */
     var tlNeededBecauseTimeseries = function () {
-      return State.selections && State.selections.length;
+      for (var i=0; i < State.assets.length; i++) {
+        var asset = DataService.getAssetByKey(State.assets[i]);
+        if (asset && asset.timeseries && asset.timeseries.length) return true;
+      }
+      return false;
     };
 
     /**

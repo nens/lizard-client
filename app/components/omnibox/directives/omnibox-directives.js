@@ -137,51 +137,6 @@ angular.module("omnibox")
        */
       scope.$watch(throttled);
 
-      scope.$watch(State.toString('context'), function (n) {
-        if (n === "dashboard") {
-          State.selections.forEach(function (selection) {
-            var nextIdx = ChartCompositionService.getChartIndexForSelection(selection.uuid);
-            selection.active = nextIdx !== -1;
-          });
-        }
-      });
-
-      scope.$watch(State.toString('geometries'), function (n, o) {
-        n = JSON.parse(n).map(JSON.stringify);
-        o = JSON.parse(o).map(JSON.stringify);
-
-        ///////////////////////////////////////////////////////////////////////
-        // 1) Check whether we need to delete selections/composedCharts based on
-        //    the new value for State.geometries:
-        //
-        //    => ForEach geom that is in "o" and not in "n" we need to remove
-        //       the corresponding selections AND composedCharts
-
-        var removedGeomObj,
-            addedGeomObj,
-            coordString,
-            keepSelections = [];
-
-        o.forEach(function (str) {
-          if (n.indexOf(str) === -1) {
-            removedGeomObj = JSON.parse(str);
-            coordString = removedGeomObj.geometry.coordinates[0]
-              + ","
-              + removedGeomObj.geometry.coordinates[1];
-            // We throw away selections for the old/discarded geometry, and also
-            // remove them from the ChartComposition:
-            State.selections.forEach(function (selection) {
-              if (selection.geom === coordString) {
-                ChartCompositionService.removeSelection(selection.uuid);
-              } else {
-                keepSelections.push(selection);
-              }
-            });
-            State.selections = keepSelections;
-          }
-        });
-      });
-
       // Cancel throttled function and rm scroll bar.
       scope.$on('$destroy', function () {
         throttled.cancel();

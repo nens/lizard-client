@@ -20,7 +20,7 @@ angular.module('data-menu')
 
           if (timeseriesInAsset || selection.asset === asset.entity_name + "$" + asset.id) {
             // Remove
-            ChartCompositionService.removeSelection(selection.uuid);
+            ChartCompositionService.removeChart(selection.uuid);
           } else {
             // Keep
             keepSelections.push(selection);

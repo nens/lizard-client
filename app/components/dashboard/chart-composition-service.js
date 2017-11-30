@@ -32,18 +32,13 @@ angular.module('dashboard')
     service.composedCharts = [];
   };
 
-  this.getChartIndexForSelection = function (chartKey) {
-    var chartIndex = -1,
-        selectionIndex;
-
-    service.composedCharts.forEach(function (value, index) {
-      selectionIndex = value.indexOf(chartKey);
-      if (selectionIndex > -1) {
-        chartIndex = index;
-      }
-    });
-    return chartIndex;
-  };
+  this.getChartIndex = function (chartKey) {
+    for (var plot=0; plot < service.composedCharts.length; plot++) {
+      var idx = service.composedCharts[plot].indexOf(chartKey);
+      if (idx !== -1) return idx;
+    }
+    return -1;
+  }
 
   this.getActiveCharts = function () {
     var charts = [];
@@ -56,21 +51,21 @@ angular.module('dashboard')
   };
 
   this.isKeyActive = function (key) {
-    return service.getChartIndexForSelection(key) !== -1;
+    return service.getChartIndex(key) !== -1;
   };
 
-  this.addSelection = function (chartIndex, chartKey) {
+  this.addChart = function (chartIndex, chartKey) {
     // Returns the index of the chart that chartKey was inserted into.
 
-    if (this.getChartIndexForSelection(chartKey) !== -1) {
-      console.error("[E] Tried to add selection that is already present!");
+    if (this.getChartIndex(chartKey) !== -1) {
+      console.error("[E] Tried to add chart that is already present!");
     }
 
     var result;
     if (chartIndex === undefined || chartIndex === null || chartIndex < 0 ||
         chartIndex >= service.composedCharts.length) {
       // This will result in a single new cartesian plane with a single chart:
-      var alreadyPresent = service.getChartIndexForSelection(chartKey);
+      var alreadyPresent = service.getChartIndex(chartKey);
       if (alreadyPresent === -1) {
         service.composedCharts.push([chartKey]);
         result = service.composedCharts.length - 1;
@@ -83,7 +78,7 @@ angular.module('dashboard')
       chart = service.composedCharts[chartIndex];
       if (!chart) {
         console.error(
-          "ERROR IN ADDSELECTION", JSON.stringify(service.composedCharts),
+          "ERROR IN ADDCHART", JSON.stringify(service.composedCharts),
           chartIndex, chartKey);
         result = 0;
       } else {
@@ -96,8 +91,8 @@ angular.module('dashboard')
     return result;
   };
 
-  this.dragSelection = function (newChartIndex, chartKey) {
-    var oldChartIndex = service.getChartIndexForSelection(chartKey);
+  this.dragChart = function (newChartIndex, chartKey) {
+    var oldChartIndex = service.getChartIndex(chartKey);
 
     if (oldChartIndex === newChartIndex) {
       // NOP.
@@ -106,15 +101,15 @@ angular.module('dashboard')
 
     if (oldChartIndex === -1) {
       // New chart.
-      this.addSelection(newChartIndex, chartKey);
+      this.addChart(newChartIndex, chartKey);
     } else {
       // First add, then remove, so chart indices don't change between the two.
-      this.addSelection(newChartIndex, chartKey);
-      removeSelectionFromSpecificPlot(oldChartIndex, chartKey);
+      this.addChart(newChartIndex, chartKey);
+      removeChartFromSpecificPlot(oldChartIndex, chartKey);
     }
   };
 
-  var removeSelectionFromSpecificPlot = function (chartIndex, chartKey) {
+  var removeChartFromSpecificPlot = function (chartIndex, chartKey) {
     var composedChart = service.composedCharts[chartIndex];
 
     if (composedChart === undefined) {
@@ -122,11 +117,11 @@ angular.module('dashboard')
       return;
     }
 
-    var selectionIndex = composedChart.indexOf(chartKey);
-    if (selectionIndex === -1) {
-      console.error("[E] plot #" + chartIndex + " does not have selection with uuid " + chartKey);
+    var idx = composedChart.indexOf(chartKey);
+    if (idx === -1) {
+      console.error("[E] plot #" + chartIndex + " does not have chart with key " + chartKey);
     } else {
-      composedChart.splice(selectionIndex, 1);
+      composedChart.splice(idx, 1);
       if (composedChart.length === 0) {
         // Remove from array.
         service.composedCharts.splice(chartIndex, 1);
@@ -134,59 +129,11 @@ angular.module('dashboard')
     }
   };
 
-  this.removeSelection = function (chartKey) {
-    var selectionIndex = service.getChartIndexForSelection(chartKey);
-    if (selectionIndex !== -1) {
-      removeSelectionFromSpecificPlot(selectionIndex, chartKey);
+  this.removeChart = function (chartKey) {
+    var idx = service.getChartIndex(chartKey);
+    if (idx !== -1) {
+      removeChartFromSpecificPlot(idx, chartKey);
     }
-  };
-
-  this.setMultipleSelections = function (selections) {
-    this.reset();
-    // Copy here so that we don't sort the global State.selections unnecessarily.
-    selections = selections.slice();
-    var selectionsWithIndex = selections.map(function (selection, index) {
-      return [selection, index];
-    });
-
-    // Sort them by 'order' so that we insert the ones with the lowest order first.
-    // If orders are equal, sort by index to have a stable sort.
-    selectionsWithIndex.sort(function (a, b) {
-      if (a[0].order === b[0].order) {
-        // Sort by index.
-        return a[1] - b[1];
-      } else {
-        // Sort by order.
-        return a[0].order - b[0].order;
-      }
-    });
-
-    var lastIndex = -1; // Chart index at which the selection will be inserted
-    var lastOrder = -1; // Last order seen, to check if this one has a different order
-    selectionsWithIndex.forEach(function (selectionWithIndex) {
-      var selection = selectionWithIndex[0];
-      if (selection.active) {
-        // Deal correctly with missing orders; e.g. if there are two selections, both
-        // with order 2, insert both at index 0.
-        if (selection.order !== lastOrder) {
-          // Order changed, start the next chart.
-          lastOrder = selection.order;
-          lastIndex++;
-        }
-        selection.order = service.addSelection(lastIndex, selection.uuid);
-      }
-    });
-  };
-
-  this.deactivateSelection = function(selection) {
-    selection.active = false;
-    service.removeSelection(selection.uuid);
-  };
-
-  this.activateSelection = function(selection, chartIndex) {
-    chartIndex = chartIndex || null;
-    selection.active = true;
-    service.addSelection(chartIndex, selection.uuid);
   };
 
   this.deleteChartsNotIn = function (uuids) {
@@ -197,7 +144,7 @@ angular.module('dashboard')
 
         if (uuids.indexOf(uuid) === -1) {
           // Remove
-          removeSelectionFromSpecificPlot(plot, uuid);
+          removeChartFromSpecificPlot(plot, uuid);
         }
       }
     }

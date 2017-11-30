@@ -218,9 +218,9 @@ angular.module('global-state')
 
       var toggleChart = function (key) {
         if (isChartActive(key)) {
-          ChartCompositionService.removeSelection(key);
+          ChartCompositionService.removeChart(key);
         } else {
-          ChartCompositionService.addSelection(null, key);
+          ChartCompositionService.addChart(null, key);
         }
 
         DataService.buildDashboard();

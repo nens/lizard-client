@@ -103,7 +103,7 @@ angular.module('omnibox')
 
         if (ChartCompositionService.composedCharts.length === 0) {
           // Empty.
-          ChartCompositionService.addSelection(null, key);
+          ChartCompositionService.addChart(null, key);
         } else {
           var errorMessage = ChartCompositionService.checkDrag(key, order);
 
@@ -112,7 +112,7 @@ angular.module('omnibox')
             return;
           }
 
-          ChartCompositionService.dragSelection(order, key);
+          ChartCompositionService.dragChart(order, key);
         }
 
         // Update charts.
