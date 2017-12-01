@@ -49,7 +49,10 @@ angular.module("omnibox")
       };
 
       scope.doShowTimeseries = function () {
-        return State.assets.length + State.geometries.length <= 1;
+        return (
+          State.assets.filter(function (asset) {
+            return !AssetService.isNestedAsset(asset)
+          }).length + State.geometries.length <= 1);
       };
 
       scope.onKeydown = function($event) {

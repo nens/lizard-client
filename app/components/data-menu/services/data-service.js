@@ -178,34 +178,11 @@ angular.module('data-menu')
       };
 
       var removeGeometry = function (geometry) {
-        var keepSelections = []
-
-        var geomString = geometry.geometry.coordinates.toString();
-
-        for (var i = 0; i < State.selections.length; i++) {
-          var selection = State.selections[i];
-
-          if (selection.geom !== geomString) {
-            // Keep
-            keepSelections.push(selection);
-          } else {
-            // Remove
-            ChartCompositionService.removeChart(selection.uuid);
-          }
-        }
-        State.selections = keepSelections;
-
-        var newGeometries = angular.copy(_geometries);
-        var index = -1;
-        _geometries.forEach(function(geom, i) {
-          if (geom.geometry.coordinates[0] === geometry.geometry.coordinates[0]
-              && geom.geometry.coordinates[1] === geometry.geometry.coordinates[1]
-              && geom.geometry.coordinates[2] === geometry.geometry.coordinates[2]) {
-            index = i;
-          }
-        });
-        newGeometries.splice(index, 1);
-        setGeometries(newGeometries);
+        setGeometries(_geometries.filter(function (geom) {
+          return !(geom.geometry.coordinates[0] === geometry.geometry.coordinates[0]
+                && geom.geometry.coordinates[1] === geometry.geometry.coordinates[1]
+                && geom.geometry.coordinates[2] === geometry.geometry.coordinates[2]);
+        }));
       };
 
       instance.geometries = [];

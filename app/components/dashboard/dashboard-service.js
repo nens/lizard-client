@@ -33,7 +33,6 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
    * @param  {array} timeseries Data source timeseries from timseriesService.
    * @param  {array} assets     Data source DataService.assets.
    * @param  {array} geometries Data source DataService.geometries.
-   * @param  {array} selections State.selections.
    * @return {array} graph
    */
   this.buildGraphs = function (graphs, timeseries, assets, getAssetByKey, geometries)
@@ -121,22 +120,22 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
     return Endlösung;
   };
 
-  this._getContentForEventSelection = function (selection) {
-    return {
-      data: selection.data.map(function (event) {
-        return {
-          x: event.properties.timestamp_start,
-          y: parseFloat(event.properties.value)
-        };
-      }),
-      keys: {x: 'x', y: 'y'},
-      unit: '',
-      color: selection.color,
-      xLabel: '',
-      id: selection.url,
-      updated: true
-    };
-  };
+  /* this._getContentForEventSelection = function (selection) {
+   *   return {
+   *     data: selection.data.map(function (event) {
+   *       return {
+   *         x: event.properties.timestamp_start,
+   *         y: parseFloat(event.properties.value)
+   *       };
+   *     }),
+   *     keys: {x: 'x', y: 'y'},
+   *     unit: '',
+   *     color: selection.color,
+   *     xLabel: '',
+   *     id: selection.url,
+   *     updated: true
+   *   };
+   * };*/
 
   /**
    * Remove all graphs that have not been updated or are empty.
@@ -244,33 +243,6 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
       type = 'event';
     }
     return {type: type, content: [item]};
-  };
-
-  /**
-   * Adds DataService.[assets|geometries].properties to dashboard graphs object.
-   *
-   * @param {array} graphs         Currently plotted graphs.
-   * @param {object} properties     asset or geometries properties.
-   * @param {function} getSelected function that returns the selection
-   *                                are also selected.
-   */
-  var addPropertyData = function (graphs, properties, getSelected) {
-    _.forEach(properties, function (property, rasterID) {
-      var selection = getSelected(rasterID);
-      if(selection && selection.active){
-        property.color = selection.color;
-        var graph = graphs[selection.order];
-        var typeContent = typeContentFromProperty(property);
-        if (graph && typeContent.type === graph.type) {
-          graph.content.push(typeContent.content[0]);
-        } else {
-          graphs[selection.order] = typeContent;
-        }
-        var indexOflast = graphs[selection.order].content.length - 1;
-        graphs[selection.order].content[indexOflast].updated = true;
-        graphs[selection.order].content[indexOflast].selectionUuid = selection.uuid;
-    }});
-    return graphs;
   };
 
   var getGraphHeight = function (element, nGraphs) {

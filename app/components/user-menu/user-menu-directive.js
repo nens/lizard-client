@@ -195,8 +195,7 @@ angular.module('user-menu')
       var poll = requestAnimationFrame.bind(null, function () {
         $http.get('/api/v3/inbox/')
         .then(
-          function (response) { scope.inbox = response.data; },
-          function (response) { console.error(response.data); }
+          function (response) { scope.inbox = response.data; }
         );
       });
 

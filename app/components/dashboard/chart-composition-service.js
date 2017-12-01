@@ -35,7 +35,7 @@ angular.module('dashboard')
   this.getChartIndex = function (chartKey) {
     for (var plot=0; plot < service.composedCharts.length; plot++) {
       var idx = service.composedCharts[plot].indexOf(chartKey);
-      if (idx !== -1) return idx;
+      if (idx !== -1) return plot;
     }
     return -1;
   }
@@ -56,10 +56,6 @@ angular.module('dashboard')
 
   this.addChart = function (chartIndex, chartKey) {
     // Returns the index of the chart that chartKey was inserted into.
-
-    if (this.getChartIndex(chartKey) !== -1) {
-      console.error("[E] Tried to add chart that is already present!");
-    }
 
     var result;
     if (chartIndex === undefined || chartIndex === null || chartIndex < 0 ||

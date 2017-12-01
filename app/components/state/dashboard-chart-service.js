@@ -155,7 +155,7 @@ angular.module('global-state')
       var findTimeseriesAndAsset = function (timeseriesId) {
         for (var i=0; i < State.assets.length; i++) {
           var asset = DataService.getAssetByKey(State.assets[i]);
-          if (!asset.timeseries) continue;
+          if (!asset || !asset.timeseries) continue;
           for (var j=0; j < asset.timeseries.length; j++) {
             var timeseries = asset.timeseries[j];
             if (timeseries.uuid.indexOf(timeseriesId) !== -1) {
