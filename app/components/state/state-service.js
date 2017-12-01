@@ -98,6 +98,11 @@ function (UtilService, gettextCatalog, $http) {
   // asset, or reset by calling state.resetObjects()
   state.assets = [];
 
+  // Keys: asset keys (e.g. measuringstation$687), values: objects like
+  // {timeseries: <timeseriesuuid>}. Used to track which things are selected
+  // on the *map* omnibox.
+  state.selectedForAssets = {};
+
   // geojson with points, lines, polygons. Same as
   // asset, is redefined in dataservice. use addGeometry and
   // removegeometry on state.geometries to add or

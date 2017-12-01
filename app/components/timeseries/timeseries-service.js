@@ -42,7 +42,9 @@ angular.module('timeseries').service("TimeseriesService", [
         } else {
           _lineTimeseries = timeseriesIn;
         }
-        DataService.buildDashboard();
+        if (State.context === 'dashboard') {
+          DataService.buildDashboard();
+        }
       }
     };
 
@@ -71,20 +73,47 @@ angular.module('timeseries').service("TimeseriesService", [
      *                 the second one for bars (data with a ratio scale).
      */
     this.syncTime = function () {
+      var isDashboard = State.context === 'dashboard';
 
       var groupedCharts = {
         temporalBars: [],
         temporalLines: [],
       };
 
-      ChartCompositionService.getActiveCharts().forEach(function (chart) {
-        var scale = chart.measureScale === "ratio" ? "temporalBars" :
-                    "temporalLines";
 
-        if (chart.timeseries) {
-          groupedCharts[scale].push(chart);
-        }
-      });
+      if (isDashboard) {
+        ChartCompositionService.getActiveCharts().forEach(function (chart) {
+          var scale = chart.measureScale === "ratio" ? "temporalBars" :
+                      "temporalLines";
+
+          if (chart.timeseries) {
+            groupedCharts[scale].push({
+              timeseries: chart.timeseries,
+              isActive: function () {
+                return ChartCompositionService.isKeyActive(chart.uuid);
+              }
+            });
+          }
+        });
+      } else {
+        State.assets.forEach(function (assetKey) {
+          if (State.selectedForAssets[assetKey] && State.selectedForAssets[assetKey].timeseries) {
+            var ts = State.selectedForAssets[assetKey].timeseries;
+            var scale = ts.scale === "ratio" ? "temporalBars" : "temporalLines";
+
+            groupedCharts[scale].push({
+              timeseries: ts.uuid,
+              isActive: function () {
+                // Return true if asset is still in State.assets and this timeseries
+                // is still selected.
+                return (
+                  State.assets.indexOf(assetKey) !== -1 &&
+                  State.selectedForAssets[assetKey].timeseries.uuid === ts.uuid);
+              }
+            });
+          }
+        });
+      }
 
       var activeTimeseries = function(charts, minPoints, chartType) {
         // Return empty timeseries when empty selection
@@ -105,11 +134,9 @@ angular.module('timeseries').service("TimeseriesService", [
         timeseriesPromise.then(function (response) {
           service.timeseries = _.filter(
             response,
-            function (ts) { return _.some(
-              charts,
-              function (chart) {
-                return ts.id.indexOf(chart.timeseries) !== -1 &&
-                       ChartCompositionService.isKeyActive(chart.uuid);
+            function (ts) {
+              return _.some(charts, function (chart) {
+                return chart.isActive();
               });
             });
           return service.timeseries;
@@ -230,7 +257,7 @@ angular.module('timeseries').service("TimeseriesService", [
     };
 
 
-    this.zoomToInterval = function (value_type, intervalText) {
+    this.zoomToInterval = function (intervalText, selectedTimeseries) {
       var now = (new Date()).getTime();
       var start, end, intervalMs;
       switch(intervalText) {
@@ -250,15 +277,9 @@ angular.module('timeseries').service("TimeseriesService", [
           start = end - intervalMs;
           break;
         case "timesteps_range":
+          var activeTs = _.find(service.timeseries, { id: selectedTimeseries.uuid });
 
-          var firstActiveSelection = _.find(State.selections, { active: true });
-
-          if (firstActiveSelection) {
-
-            var activeTsUUID = firstActiveSelection.timeseries;
-            var activeTs = _.find(service.timeseries,
-              { id: activeTsUUID });
-
+          if (activeTs) {
             start = activeTs.start;
             end = activeTs.end;
           }

@@ -42,22 +42,22 @@
       <div class="db-omnibox-time-controls">
         <div class="left-controls">
           <div class="dashboard-timeseries-interval-btn dashboard"
-             ng-click="zoomToInterval(timeseries.selected.value_type, 'one_year')"
+             ng-click="zoomToInterval('one_year')"
              translate>
              1Y
           </div>
           <div class="dashboard-timeseries-interval-btn"
-               ng-click="zoomToInterval(timeseries.selected.value_type, 'three_months')"
+               ng-click="zoomToInterval('three_months')"
                translate>
             3M
           </div>
           <div class="dashboard-timeseries-interval-btn"
-               ng-click="zoomToInterval(timeseries.selected.value_type, 'two_weeks')"
+               ng-click="zoomToInterval('two_weeks')"
                translate>
             2W
           </div>
           <div class="dashboard-timeseries-interval-btn"
-             ng-click="zoomToInterval(timeseries.selected.value_type, 'timesteps_range_all_active')"
+             ng-click="zoomToInterval('timesteps_range_all_active')"
              translate>
             ZOOM TO EXTENT
           </div>

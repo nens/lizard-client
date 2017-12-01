@@ -52,12 +52,10 @@ angular.module('timeseries')
     link: function (scope) {
 
       var selectTimeseries = function () {
-        var selectedTimeseriesUuid = scope.timeseries.selected.uuid;
-        State.selections.forEach(function (selection) {
-          if (_.find(scope.asset.timeseries, {uuid: selection.timeseries})) {
-            selection.active = selection.timeseries === selectedTimeseriesUuid;
-          }
-        });
+        var selected = (
+          State.selectedForAssets[scope.asset.entity_name + '$' + scope.asset.id] || {});
+        selected.timeseries = scope.timeseries.selected;
+        State.selectedForAssets[scope.asset.entity_name + '$' + scope.asset.id] = selected;
 
         _.forEach(
           TimeseriesService.syncTime(),
@@ -69,6 +67,8 @@ angular.module('timeseries')
       };
 
       var getContentForAsset = function (timeseries) {
+        // Timeseries contains all still active timeseries events, select
+        // only the one relating to this asset.
         scope.content = timeseries.filter(function (ts) {
           return _.some(scope.asset.timeseries, {uuid: ts.id});
         });
