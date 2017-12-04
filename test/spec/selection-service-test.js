@@ -57,30 +57,30 @@ describe('selection service', function () {
   });
 
 
-  it('should toggle active state in selections', function () {
+  // it('should toggle active state in selections', function () {
 
-    var selectionActive = {
-      uuid: "1234",
-      active: true,
-      geom: "10000.0000,520000.0000",
-      order: 1,
-      type: "raster"
-    };
-    var selectionInActive = {
-      uuid: "5678",
-      active: false,
-      order: 0,
-      timeseries: "66c94920-706e-42e4-8b8c-e0c9e0e2d5db",
-      type: "timeseries"
-    };
+  //   var selectionActive = {
+  //     uuid: "1234",
+  //     active: true,
+  //     geom: "10000.0000,520000.0000",
+  //     order: 1,
+  //     type: "raster"
+  //   };
+  //   var selectionInActive = {
+  //     uuid: "5678",
+  //     active: false,
+  //     order: 0,
+  //     timeseries: "66c94920-706e-42e4-8b8c-e0c9e0e2d5db",
+  //     type: "timeseries"
+  //   };
 
-    SelectionService.toggle(selectionActive);
-    SelectionService.toggle(selectionInActive);
+  //   SelectionService.toggle(selectionActive);
+  //   SelectionService.toggle(selectionInActive);
 
-    expect(SelectionService.toggle).toBeDefined();
-    expect(selectionActive.active).toBe(false);
-    expect(selectionActive.order).toBe(1);
-    expect(selectionInActive.active).toBe(true);
-    expect(selectionInActive.order).toBe(0);
-  });
+  //   expect(SelectionService.toggle).toBeDefined();
+  //   expect(selectionActive.active).toBe(false);
+  //   expect(selectionActive.order).toBe(1);
+  //   expect(selectionInActive.active).toBe(true);
+  //   expect(selectionInActive.order).toBe(0);
+  // });
 });

@@ -11,13 +11,14 @@
  */
 
 angular.module('omnibox')
-  .directive('assetCards', ['ClickFeedbackService', 'MapService', 'user',
-    function (ClickFeedbackService, MapService, user) {
+  .directive('assetCards', ['ClickFeedbackService', 'MapService', 'State', 'user',
+    function (ClickFeedbackService, MapService, State, user) {
   return {
     link: function (scope, element) {
 
       scope.assetType = 'asset';
       scope.user = user;
+      scope.isRainyLayer = State.isRainyLayer;
 
       var clickId;
 
@@ -77,17 +78,18 @@ angular.module('omnibox')
     replace: true,
     templateUrl: 'omnibox/templates/asset-cards.html'
   };
-}]);
+    }]);
 
 
 angular.module('omnibox')
-  .directive('geometryCards', ['MapService', 'ClickFeedbackService', 'CSVService', 'user',
-    function (MapService, ClickFeedbackService, CSVService, user) {
+.directive('geometryCards', ['MapService', 'ClickFeedbackService', 'State', 'CSVService', 'user',
+function (MapService, ClickFeedbackService, State, CSVService, user) {
   return {
     link: function (scope, element) {
 
       scope.user = user;
       scope.showNoData = false;
+      scope.isRainyLayer = State.isRainyLayer;
 
       // expose CSV functions for export
       scope.formatLineCSV = CSVService.formatLineCSV;
@@ -150,6 +152,7 @@ angular.module('omnibox')
       });
 
       element.on('$destroy', function () {
+
         destroy();
       });
 
@@ -222,8 +225,9 @@ angular.module('omnibox')
 
 
 angular.module('omnibox')
-  .directive('nestedasset', ['WantedAttributes', 'DataService', 'State', 'getNestedAssets',
-    function (WantedAttributes, DataService, State, getNestedAssets) {
+       .directive('nestedasset', ['WantedAttributes', 'DataService', 'State', 'getNestedAssets',
+                                  'ChartCompositionService',
+    function (WantedAttributes, DataService, State, getNestedAssets, ChartCompositionService) {
   return {
     link: function (scope) {
 
@@ -244,11 +248,20 @@ angular.module('omnibox')
       });
 
       var removeTSofAsset = function (asset) {
-        State.selections = _.differenceBy(
-          State.selections,
-          asset.timeseries,
-          'timeseries'
-        );
+        State.selections.forEach(function (selection) {
+          if (!selection.active) return; // Already in active
+
+          if (selection.timeseries &&
+              (asset.timeseries || []).map(
+                function (ts) { return ts.uuid; }).indexOf(selection.timeseries) !== -1) {
+
+            if (State.context === 'map') {
+              selection.active = false;
+            } else {
+              ChartCompositionService.deactivateSelection(selection);
+            }
+          }
+        });
       };
 
       scope.selectedAssetChanged = function (newAsset) {
@@ -264,9 +277,13 @@ angular.module('omnibox')
       };
 
       scope.$on('$destroy', function () {
-        scope.list.forEach(function (asset) { removeTSofAsset(asset); });
-      });
+        // Either the 'X' in the omnibox was clicked, or we're switching to the Dashboard.
+        // If we are switching to dashboard, we want to keep the selected timeseries.
 
+        if (State.context === 'map') {
+          scope.list.forEach(function (asset) { removeTSofAsset(asset); });
+        }
+      });
     },
     restrict: 'E',
     scope: {
@@ -294,7 +311,8 @@ angular.module('omnibox')
         scope.graphContent = [{
           data: scope.rain.data,
           keys: {x: 0, y: 1},
-          labels: {y: 'mm'}
+          labels: {y: 'mm'},
+          unit: "mm",
         }];
       };
 

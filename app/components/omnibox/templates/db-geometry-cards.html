@@ -6,7 +6,7 @@
 
   <div id="drag-container">
     <div
-      ng-repeat="selection in state.selections | orderBy : ['-active', '+order']"
+      ng-repeat="selection in getIterableSelections()"
       ng-init="metaData = getSelectionMetaData(selection)"
       ng-if="getSelectionMetaData(selection).match"
       data-uuid="{{ selection.uuid }}"

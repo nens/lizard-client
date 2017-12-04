@@ -17,13 +17,17 @@ angular.module('map')
   'UtilService',
   'State',
   '$timeout',
+  'SelectionService',
+  'ChartCompositionService',
   function (
     MapService,
     DataService,
     ClickFeedbackService,
     UtilService,
     State,
-    $timeout
+    $timeout,
+    SelectionService,
+    ChartCompositionService
   ) {
 
     var link = function (scope, element, attrs) {
@@ -195,7 +199,11 @@ angular.module('map')
         }, 0);
       };
 
-      scope.$watch('state.layers', function () {
+      scope.$watch('state.layers', function (n, o) {
+        if (n !== o) {
+          SelectionService.updateForLayerActivity(n, o);
+        }
+
         MapService.updateLayers(scope.state.layers);
       }, true);
 

@@ -16,9 +16,10 @@
         asset="asset"
         show-header="true"
         show-annotations="showAnnotations()"
-        show-timeseries="(omnibox.data.geometries.length + omnibox.data.assets.length) < 2"
+        show-timeseries="true"
         time-state="omnibox.state.temporal"
-        ng-repeat="asset in omnibox.data.assets track by omnibox.trackAssets(asset)">
+        ng-repeat="asset in omnibox.data.assets track by omnibox.trackAssets(asset)"
+        ng-if="!assetIsNested(asset)">
       </asset-cards>
 
       <geometry-cards

@@ -267,9 +267,16 @@ angular.module('lizard-nxt')
     var graph = this;
 
     var content = barData[0];
+
+    if (!content) {
+      // returning early since we received insufficient data from the backend
+      return;
+    }
+
     graph._activeUnit = content.unit;
 
     var data = content.data;
+
     var keys = content.keys;
     var labels = { x: content.xLabel, y: content.unit };
     var originalKey = keys.y;
@@ -1069,6 +1076,8 @@ angular.module('lizard-nxt')
   var drawVerticalRects = function (svg, dimensions, xy, keys, data, duration,
                                     xDomain, activeUnit, color) {
 
+    if (data.data === null) { return; }
+
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
         x = xy.x,
@@ -1503,8 +1512,8 @@ angular.module('lizard-nxt')
         .attr('x1', 0)
         .attr('x2', x2);
       g.append('line')
-        .attr('y1', height)
-        .attr('y2', y2)
+        .attr('y1', height || 0)
+        .attr('y2', y2 || 0)
         .attr('x1', x2)
         .attr('x2', x2);
 
@@ -1761,7 +1770,9 @@ angular.module('lizard-nxt')
         .attr('cy', function (d, i) {
           var box = label.node().getBBox();
           return -(box.x + box.width) - PADDING - i * PADDING;
-        });
+        })
+        .append('title')
+        .text(activeCharts.length + " active chart(s) for current y-axis");
 
       circles
         .transition()
@@ -1773,7 +1784,13 @@ angular.module('lizard-nxt')
         .attr('cy', function (d, i) {
           var box = label.node().getBBox();
           return -(box.x + box.width) - PADDING - i * PADDING;
-        });
+        })
+        .selectAll('title')
+        .text(activeCharts.length + " active chart(s) for current y-axis");
+
+      circles.exit()
+        .selectAll('title')
+        .text(activeCharts.length + " active chart(s) for current y-axis");
 
       circles.exit()
         .transition()
