@@ -612,25 +612,25 @@ angular.module('lizard-nxt')
       );
   };
 
-  Graph.prototype.drawCircleOnLine = function (xLocation, remove) {
-    var R = 5; // radius of dot.
+    Graph.prototype.drawCircleOnLine = function (xLocation, remove) {
+      var R = 5; // radius of dot.
 
-    var fg = this._svg.select('#feature-group');
+      var fg = this._svg.select('#feature-group');
 
-    // Move listener rectangle to the front
-    var el = this._svg.select('#listeners').node();
-        el.parentNode.appendChild(el);
+      // Move listener rectangle to the front
+      var el = this._svg.select('#listeners').node();
+      el.parentNode.appendChild(el);
 
-    var g = fg.select('.interaction-group');
-    if (remove) {
-      g.selectAll('circle').remove();
-    }
+      var g = fg.select('.interaction-group');
+      if (remove) {
+        g.selectAll('circle').remove();
+      }
 
-    if (!this._containers) { return; }
+      if (!this._containers) { return; }
 
-    var chart = this._containers[0];
+      var chart = this._containers[0];
 
-    if (!chart) { return; }
+      if (!chart || !chart.data || chart.data.data === null) return;
 
     var i = UtilService.bisect(chart.data, chart.keys.x, xLocation);
     var d = chart.data[i];
@@ -1272,8 +1272,10 @@ angular.module('lizard-nxt')
     return x;
   };
 
-  var drawPath = function (svg, pathFn, data, duration, path, color, unit) {
-    if (!path) {
+    var drawPath = function (svg, pathFn, data, duration, path, color, unit) {
+      if (data && data.data === null) return;
+
+      if (!path) {
       var fg = svg.select('g').select('#feature-group');
       // bring to front
       fg.node().parentNode.appendChild(fg.node());

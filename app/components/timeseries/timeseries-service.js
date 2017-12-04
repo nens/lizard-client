@@ -425,8 +425,6 @@ angular.module('timeseries').service('TimeseriesUtilService', [
       var result = [];
 
       timeseries.forEach(function (ts) {
-        var graphTimeseries = angular.copy(graphTimeseriesTemplate);
-
         var graphTimeseries = {
           id: ts.uuid,
           data: ts.events,

@@ -249,27 +249,26 @@ angular.module('data-menu')
           }, this);
 
           this.getGeomData(geom)
-          .then(function(newGeo) {
-            instance.geometries.forEach(function (old, i) {
-              if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
-                instance.geometries[i] = newGeo;
-              }
-            });
-          });
-
+              .then(function(newGeo) {
+                instance.geometries.forEach(function (old, i) {
+                  if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
+                    instance.geometries[i] = newGeo;
+                  }
+                })
+              })
+              .then(instance.buildDashboard);
         }, this);
 
         this.assets.forEach(function (asset) {
-
           this.getGeomData(asset)
-          .then(function(newAsset) {
-            instance.assets.forEach(function (old, i) {
-              if (old.entity_name === newAsset.entity_name && old.id === newAsset.id) {
-                instance.assets[i] = newAsset;
-              }
-            });
-          });
-
+              .then(function(newAsset) {
+                instance.assets.forEach(function (old, i) {
+                  if (old.entity_name === newAsset.entity_name && old.id === newAsset.id) {
+                    instance.assets[i] = newAsset;
+                  }
+                })
+              })
+              .then(instance.buildDashboard);
         }, this);
       };
 
@@ -367,7 +366,7 @@ angular.module('data-menu')
           promises.push(
             dataLayer.getData(options).then(
               function (response) {
-                var newProps = geo.properties ? _.clone(geo.properties) : {};
+                  var newProps = geo.properties ? _.clone(geo.properties) : {};
 
                 // async so remove anything obsolete.
                 if (!newProps[layer.uuid]) {
