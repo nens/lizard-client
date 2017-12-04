@@ -109,12 +109,6 @@ function (UtilService, gettextCatalog, $http) {
   // remove individual geometries or use reset function.
   state.geometries = [];
 
-  // {<uuid>, <active>, <order>, <color>}
-  // Redefined in timeseriesService. mirrored asynchronously
-  // by timeseriesService.timeseries. Array contains all
-  // timeseries of all assets in a flat list.
-  state.selections = [];
-
   state.temporal = {};  // Given values in resetState();
 
   /**
@@ -274,7 +268,6 @@ function (UtilService, gettextCatalog, $http) {
 
     state.assets.length = 0;
     state.geometries.length = 0;
-    state.selections.length = 0;
 
     state.temporal.at = Date.now();
     state.temporal.buffering = false;
@@ -303,7 +296,6 @@ function (UtilService, gettextCatalog, $http) {
     // there may be variables elsewhere that still hold a reference to the old one.
     state.assets.length = 0;
     state.geometries.length = 0;
-    state.selections.length = 0;
   };
 
   state.applyUrlToState = function (urlState) {
@@ -350,6 +342,10 @@ function (UtilService, gettextCatalog, $http) {
 
   state.isRainyLayer = function (layer) {
     return layer.slug === 'rain' || layer.slug.indexOf('harmonie') !== -1;
+  };
+
+  state.getLayerByUuid = function (uuid) {
+    return _.find(state.layers, {uuid: uuid});
   };
 
   return state;

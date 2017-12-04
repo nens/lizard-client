@@ -56,16 +56,6 @@ angular.module('timeseries').service("TimeseriesService", [
 
     this.minPoints = GRAPH_WIDTH; // default
 
-    var _selections = State.selections || [];  // !!! Do not throw away old value!
-    Object.defineProperty(State, 'selections', {
-      get: function () { return _selections; },
-      set: function (selections) {
-        _selections = selections;
-        service.syncTime();
-      },
-      enumerable: true
-    });
-
     /**
      * Collects timeseries data from the backend.
      *

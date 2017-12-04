@@ -74,6 +74,10 @@ angular.module('timeseries')
         });
       };
 
+      var firstTimeseries = (
+        scope.asset.timeseries && scope.asset.timeseries.length ?
+        scope.asset.timeseries[0] : {uuid: 'empty'}
+      );
       scope.timeseries = {
         selected: {uuid: 'empty'},
         change: function () {
@@ -83,32 +87,8 @@ angular.module('timeseries')
 
       scope.$watch('asset', function (aG) {
         if(scope.asset) {
-
-          var setFirstTSAsSelected = function () {
-            scope.timeseries.selected = scope.asset.timeseries[0];
-          };
-
-          var activeSelections = _.find(State.selections, {active: true});
-          if (activeSelections) {
-            var tsInAsset = _.find(
-              scope.asset.timeseries,
-              function (selection) {
-                return selection.timeseries === activeSelections.timeseries;
-              }
-            );
-            if (tsInAsset) {
-              scope.timeseries.selected = tsInAsset;
-            }
-            else {
-              setFirstTSAsSelected();
-            }
-          }
-          else {
-            setFirstTSAsSelected();
-          }
-
+          scope.timeseries.selected = scope.asset.timeseries[0];
           scope.timeseries.change();
-
         }});
 
       /**

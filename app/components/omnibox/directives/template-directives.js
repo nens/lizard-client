@@ -18,6 +18,7 @@ angular.module('omnibox')
 
       scope.assetType = 'asset';
       scope.user = user;
+      scope.getLayerByUuid = State.getLayerByUuid;
       scope.isRainyLayer = State.isRainyLayer;
 
       var clickId;
@@ -27,7 +28,6 @@ angular.module('omnibox')
       };
 
       var setAsset = function (asset) {
-
         if (clickId) {
           removeAsset(clickId);
         }
@@ -89,6 +89,7 @@ function (MapService, ClickFeedbackService, State, CSVService, user) {
 
       scope.user = user;
       scope.showNoData = false;
+      scope.getLayerByUuid = State.getLayerByUuid;
       scope.isRainyLayer = State.isRainyLayer;
 
       // expose CSV functions for export
