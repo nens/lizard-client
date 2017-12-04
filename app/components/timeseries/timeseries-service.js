@@ -345,7 +345,6 @@ angular.module('timeseries').service('TimeseriesUtilService', [
   function (WantedAttributes, DataService, State, RTSLService) {
 
     /**
-     * Looks up timeseries in State.selections and copies color and order.
      * TimeseriesService.timeseries are not persistent when toggled.
      * asset.timeseries is persistent till a user removes it from selection.
      *
@@ -377,11 +376,6 @@ angular.module('timeseries').service('TimeseriesUtilService', [
         graphTimeseries.name = ts.name || EMPTY;
         graphTimeseries.reference_frame = ts.reference_frame;
         graphTimeseries.thresholds = [];
-
-        var tsActive = _.find(State.selections, {'uuid': ts.uuid });
-        if (tsActive && tsActive.active) {
-          assetOfTs.ts = graphTimeseries.ts;
-        }
       }
 
       if (assetOfTs) {
@@ -422,56 +416,27 @@ angular.module('timeseries').service('TimeseriesUtilService', [
         );
       }
 
-      var tsState = _.find(
-        State.selections,
-        { 'timeseries': graphTimeseries.id }
-      );
-
-      // In db with crosssections it is possible to not have state of a ts.
-      if (tsState) {
-        graphTimeseries.color = tsState.color;
-        graphTimeseries.order = tsState.order;
-      }
-
       return graphTimeseries;
     };
 
     var formatTimeseriesForGraph = function (timeseries) {
 
       var yKey = timeseries.field || 'value';
-      var graphTimeseriesTemplate = {
-        id: '', //uuid
-        data: [],
-        unit: '',
-        color: '', // Defined on State.selections
-        order: '', // Defined on State.selections
-        valueType: '',
-        labels: {
-          x: '',
-          y: ''
-        },
-        keys: { x: 'timestamp', y: yKey }
-      };
-
       var result = [];
+
       timeseries.forEach(function (ts) {
-        var tsSelection = _.find(State.selections, function (s) {
-          return s.timeseries === ts.uuid; });
         var graphTimeseries = angular.copy(graphTimeseriesTemplate);
 
-        graphTimeseries.data = ts.events;
-
-        if (tsSelection) {
-          // If not, then We're probably on the map, where these two don't matter.
-          graphTimeseries.order = tsSelection.order;
-          graphTimeseries.color = tsSelection.color;
-        }
-        graphTimeseries.id = ts.uuid;
-        graphTimeseries.valueType = ts.value_type;
-        graphTimeseries.measureScale = ts.observation_type.scale;
-
-        graphTimeseries.start = ts.start;
-        graphTimeseries.end = ts.end;
+        var graphTimeseries = {
+          id: ts.uuid,
+          data: ts.events,
+          measureScale: ts.observation_type.scale,
+          valueType: ts.value_type,
+          color: '#f00',
+          keys: { x: 'timestamp', y: yKey },
+          start: ts.start,
+          end: ts.end
+        };
 
         graphTimeseries = addTimeseriesProperties(graphTimeseries);
         result.push(graphTimeseries);
@@ -480,7 +445,6 @@ angular.module('timeseries').service('TimeseriesUtilService', [
     };
 
     var filterTimeseries = function (results) {
-
       // maximum number of timeseries events, more probably results in a
       // memory error.
       var MAX_NR_TIMESERIES_EVENTS = 25000;
@@ -519,8 +483,7 @@ angular.module('timeseries').service('TimeseriesUtilService', [
 
     return {
       filterTimeseries: filterTimeseries,
-      formatTimeseriesForGraph: formatTimeseriesForGraph,
-      addTimeseriesProperties: addTimeseriesProperties
+      formatTimeseriesForGraph: formatTimeseriesForGraph
     };
   }
 ]);
