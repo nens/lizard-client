@@ -432,7 +432,6 @@ angular.module('timeseries').service('TimeseriesUtilService', [
           data: ts.events,
           measureScale: ts.observation_type.scale,
           valueType: ts.value_type,
-          color: '#f00',
           keys: { x: 'timestamp', y: yKey },
           start: ts.start,
           end: ts.end
