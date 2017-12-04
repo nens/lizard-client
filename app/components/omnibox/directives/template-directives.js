@@ -48,7 +48,7 @@ angular.module('omnibox')
             MapService,
             feature
           );
-
+          ClickFeedbackService.drawLabel(MapService, feature, asset);
           ClickFeedbackService.vibrateOnce(feature, clickId);
 
         }
