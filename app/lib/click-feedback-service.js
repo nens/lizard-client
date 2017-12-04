@@ -5,9 +5,25 @@
  * on the map.
  */
 angular.module('lizard-nxt')
-  .service('ClickFeedbackService', ['$rootScope', 'LeafletService',
-  function ($rootScope, LeafletService) {
+  .service('ClickFeedbackService', ['State', '$rootScope', 'LeafletService',
+  function (State, $rootScope, LeafletService) {
+
+    var labelsLayer = LeafletService.geoJson(null);
+
     var ClickLayer = function () {
+      labelsLayer.options.pointToLayer = function(feature, latlng) {
+        return L.marker(latlng, {
+          icon: L.divIcon({
+            className: "selected",
+            iconAnchor: [150, 20],
+            html:
+              '<div class="assetLabel"><div class="triangle"></div><div class="labelText">' +
+              feature.name +
+              "<div></div>"
+          }),
+          clickable: false
+        });
+      };
 
       /**
        * @description Removes clicklayer, adds a new one.
@@ -21,6 +37,8 @@ angular.module('lizard-nxt')
         if (this.clickLayer) {
           mapState.removeLeafletLayer(this.clickLayer);
         }
+
+        mapState.addLeafletLayer(labelsLayer);
 
         this.clickedPoints = [];
 
@@ -52,6 +70,7 @@ angular.module('lizard-nxt')
       };
 
       this.remove = function () {
+        labelsLayer = null;
         this.clickLayer = null;
       };
 
@@ -90,6 +109,12 @@ angular.module('lizard-nxt')
           }
         }
         return selection;
+      };
+
+
+      this.drawFeatureAsLabel = function(geojson, asset) {
+        var _geojson = Object.assign({}, geojson, asset);
+        labelsLayer.addData(_geojson);
       };
 
       /**
@@ -269,6 +294,7 @@ angular.module('lizard-nxt')
         updateCircle,
         drawArrow,
         drawLine,
+        drawLabel,
         drawGeometry,
         startVibration,
         vibrateOnce,
@@ -335,6 +361,20 @@ angular.module('lizard-nxt')
       mapState.removeLeafletLayer(layer);
     };
 
+
+
+    drawLabel = function(mapState, geometry, asset) {
+      if (State.box.type !== "multi-point") {
+        labelsLayer.clearLayers();
+      }
+
+      if (State.box.type === "multi-point") {
+        return clickLayer.drawFeatureAsLabel(geometry, asset);
+      }
+      return false;
+    };
+
+
     drawGeometry = function (mapState, geometry, entityName) {
       if (!clickLayer.clickLayer) {
         clickLayer.emptyClickLayer(mapState);
@@ -391,6 +431,7 @@ angular.module('lizard-nxt')
 
     return {
       emptyClickLayer: emptyClickLayer,
+      drawLabel: drawLabel,
       drawArrow: drawArrow,
       drawCircle: drawCircle,
       drawGeometry: drawGeometry,
@@ -400,7 +441,8 @@ angular.module('lizard-nxt')
       removeLeafletLayerWithId: removeLeafletLayerWithId,
       vibrateOnce: vibrateOnce,
       updateCircle: updateCircle,
-      remove: removeLayer
+      remove: removeLayer,
+      labelsLayer: labelsLayer
     };
   }
 ]);
