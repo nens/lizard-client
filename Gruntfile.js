@@ -29,7 +29,7 @@ module.exports = function (grunt) {
         req.headers.password = grunt.option('sso_password') || process.env.SSO_PASSWORD;
       }
       next();
-    }
+    };
   }
 
   var modRewrite = require('connect-modrewrite');
@@ -73,16 +73,16 @@ module.exports = function (grunt) {
         files: [
         '<%= yeoman.app %>/<%= yeoman.jsFileDirs %>',
         '!<%= yeoman.app %>/templates.js'
-      ],
-        tasks: ['karma:unit', 'newer:jshint:dev'],
+      ]
+      // ,tasks: ['karma:unit', 'newer:jshint:dev'],
       },
       jstemplates: {
         files: ['<%= yeoman.app %>/<%= yeoman.templateFileDirs %>'],
         tasks: ['html2js']
       },
       jsTest: {
-        files: ['test/spec/{,*/}*.js'],
-        tasks: ['karma:unit', 'newer:jshint:dev'],
+        files: ['test/spec/{,*/}*.js']
+        // tasks: ['karma:unit', 'newer:jshint:dev'], // Tests disabled temporarily
       },
       styles: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.scss'],
