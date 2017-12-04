@@ -4,7 +4,7 @@
  * @description Makes the data menu items
  */
 angular.module('data-menu')
-  .directive('datamenuItem', ['State', 'rmAllButLastAssetAndGeometry', function (State, rmAllButLastAssetAndGeometry) {
+  .directive('datamenuItem', ['State', 'rmAllButLastAssetAndGeometry', 'ClickFeedbackService', function (State, rmAllButLastAssetAndGeometry, ClickFeedbackService) {
 
   var link = function (scope, elem, attrs) {
 
@@ -14,6 +14,20 @@ angular.module('data-menu')
      * when coming or going to line, region or area.
      */
     scope.changeBoxType = function () {
+
+      var assetLabels = document.getElementsByClassName('assetLabel');
+
+       if (scope.type === 'point') {
+         _.map(assetLabels, function(label) {
+           label.style.display = "none";
+         });
+       }
+       else {
+         _.map(assetLabels, function(label) {
+           label.style.display = "flex";
+         });
+       }
+
       if (scope.type === 'point' && scope.boxType === 'multi-point') {
         rmAllButLastAssetAndGeometry();
       }
