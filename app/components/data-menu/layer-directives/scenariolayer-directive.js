@@ -39,6 +39,8 @@ angular.module('data-menu')
         'direct-damage': gettextCatalog.getString('Damage (direct)'),
         'indirect-damage': gettextCatalog.getString('Damage (indirect)'),
         'damage-summary': gettextCatalog.getString('Damage summary (csv)'),
+        'total-damage': gettextCatalog.getString('Total damage'),
+        'dmge-depth': gettextCatalog.getString('Waterdepth (damage)')
       };
 
       scope.state = State;
