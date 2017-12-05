@@ -46,7 +46,6 @@ function (UtilService, gettextCatalog, $http) {
   };
 
   var setActiveLayers = function (layerSlugs) {
-    console.log('setActiveLayers is being called!!', layerSlugs);
     _.forEach(state.layers, { active: false });
     layerSlugs.forEach(function (layerSlug) {
       var type = layerSlug.split('$')[0];
