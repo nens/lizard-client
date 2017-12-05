@@ -44,6 +44,7 @@ angular.module('dashboard')
 
         scope.dashboard.graphs = DashboardService.buildGraphs(
           scope.dashboard.graphs,
+          State.layers,
           TimeseriesService.timeseries,
           DataService.assets,
           DataService.getAssetByKey,

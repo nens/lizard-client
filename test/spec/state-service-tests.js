@@ -12,7 +12,7 @@ describe('Testing State service', function () {
   }));
 
   it('should contain global state spatial, temporal, box, layergroups, ' +
-    'selected and context', function () {
+    'and context', function () {
     expect(State.spatial).toBeDefined();
     expect(State.temporal).toBeDefined();
     expect(State.box).toBeDefined();
@@ -21,7 +21,6 @@ describe('Testing State service', function () {
     expect(State.context).toBeDefined();
     expect(State.assets).toBeDefined();
     expect(State.geometries).toBeDefined();
-    expect(State.selections).toBeDefined();
   });
 
   it('should set temporal.end to the max when set with a futuristic timestamp',

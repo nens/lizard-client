@@ -117,6 +117,8 @@ angular.module('lizard-nxt').controller('MasterCtrl',
   };
 
   window.chartComposition = function () {
-    console.log("The chart composition is:", ChartCompositionService.composedCharts);
+    console.log("The chart composition is:",
+                ChartCompositionService.composedCharts,
+                ChartCompositionService.dashboardCharts);
   };
 }]);

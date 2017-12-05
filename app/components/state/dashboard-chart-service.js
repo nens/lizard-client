@@ -56,7 +56,7 @@ angular.module('global-state')
           asset.timeseries.forEach(function (ts, i) {
             result.push(getKeyForAssetTimeseries(ts.uuid));
           });
-0        });
+        });
         return result;
       };
 
@@ -119,17 +119,31 @@ angular.module('global-state')
         var rasterUuid = parts[1];
         var rasterDataLayer = DataService.getDataLayer(rasterUuid);
 
-        return {
-          uuid: key,
-          type: "raster",
-          geometry: geometry,
-          color: getDefaultColor(),
-          raster: rasterUuid,
-          unit: rasterDataLayer.unit,
-          reference_frame: rasterDataLayer.reference_frame,
-          description: rasterDataLayer.quantity,
-          measureScale: rasterDataLayer.scale
-        };
+        if (!rasterDataLayer) {
+          // XXXV1; Return temporary chart. This is necessary for restoring old
+          // favourites that don't have the async parts of charts in them, can be
+          // removed when V1 favourites are not relevant anymore.
+          return {
+            needsUpdate: true,
+            type: 'raster',
+            uuid: key,
+            geometry: geometry,
+            color: getDefaultColor(),
+            raster: rasterUuid
+          };
+        } else {
+          return {
+            uuid: key,
+            type: "raster",
+            geometry: geometry,
+            color: getDefaultColor(),
+            raster: rasterUuid,
+            unit: rasterDataLayer.unit,
+            reference_frame: rasterDataLayer.reference_frame,
+            description: rasterDataLayer.quantity,
+            measureScale: rasterDataLayer.scale
+          };
+        }
       };
 
       var createRasterAssetChart = function(parts) {
@@ -173,6 +187,18 @@ angular.module('global-state')
         var key = parts.join(KEY_SEP);
 
         var timeseriesAndAsset = findTimeseriesAndAsset(parts[1]);
+        // XXXV1; Return temporary chart. This is necessary for restoring old
+        // favourites that don't have the async parts of charts in them, can be
+        // removed when V1 favourites are not relevant anymore.
+        if (!timeseriesAndAsset) {
+          return {
+            uuid: key,
+            type: "timeseries",
+            needsUpdate: true,
+            color: getDefaultColor()
+          };
+        }
+
         var ts = timeseriesAndAsset.timeseries;
         var asset = timeseriesAndAsset.asset;
         return {
@@ -204,10 +230,23 @@ angular.module('global-state')
       }
 
       var getOrCreateChart = function (key) {
-        if (!ChartCompositionService.dashboardCharts[key]) {
-          ChartCompositionService.dashboardCharts[key] = createChart(key);
+        var chart = ChartCompositionService.dashboardCharts[key];
+
+        if (!chart) {
+          chart = createChart(key);
+        } else if (chart.needsUpdate) {
+          // XXXV1; This is horrible, especially the call to syncTime(). Only needed
+          // for V1 favourites.
+          var newChart = createChart(key);
+          if (!newChart.needsUpdate) {
+            newChart.color = chart.color;
+            chart = newChart;
+            TimeseriesService.syncTime();
+          }
         }
-        return ChartCompositionService.dashboardCharts[key];
+
+        ChartCompositionService.dashboardCharts[key] = chart;
+        return chart;
       };
 
       var isChartActive = ChartCompositionService.isKeyActive;
@@ -223,6 +262,47 @@ angular.module('global-state')
         TimeseriesService.syncTime();
       };
 
+      /* XXXV1: Can be removed when there are no favourites with VERSION = 1 in the
+         database anymore. */
+      var translateSelections = function (selections) {
+        // Keep the active selections only
+        var dashboardCharts = {};
+        selections = selections.filter(function (sel) { return sel.active; });
+        if (!selections.length) return;
+
+        // Order them by 'order'
+        selections.sort(function (a, b) { return a.order - b.order; });
+
+        // Highest order, used to make empty chart composition
+        var maxOrder = selections[selections.length -1].order;
+        var composedCharts = [];
+        for (var i=0; i <= maxOrder; i++) {
+          composedCharts.push([]);
+        }
+
+        selections.forEach(function (selection) {
+          var chart;
+          if (selection.type === 'timeseries') {
+            chart = createTimeseriesChart(['timeseries', selection.timeseries]);
+          } else if (selection.type === 'raster' && selection.geom) {
+            var geomParts = selection.geom.split(',');
+            chart = createRasterGeometryChart(
+              ['raster', selection.raster, 'geometry', geomParts[0], geomParts[1]]);
+          } else {
+            return; // Not a selection we can handle
+          }
+
+          chart.color = selection.color;
+          dashboardCharts[chart.uuid] = chart;
+          composedCharts[selection.order].push(chart.uuid);
+        });
+
+        return {
+          dashboardCharts: dashboardCharts,
+          composedCharts: composedCharts
+        };
+      };
+
       return {
         toggleChart: toggleChart,
         updateDashboardCharts: updateDashboardCharts,
@@ -230,6 +310,7 @@ angular.module('global-state')
         getKeyForRasterGeometry: getKeyForRasterGeometry,
         getKeyForRasterAsset: getKeyForRasterAsset,
         getOrCreateChart: getOrCreateChart,
-        isChartActive: isChartActive
+        isChartActive: isChartActive,
+        translateSelections: translateSelections
       };
     }]);

@@ -35,13 +35,15 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
    * @param  {array} geometries Data source DataService.geometries.
    * @return {array} graph
    */
-  this.buildGraphs = function (graphs, timeseries, assets, getAssetByKey, geometries)
+  this.buildGraphs = function (graphs, layers, timeseries, assets, getAssetByKey, geometries)
   {
-    // XXX This is only here now to remove inactive charts from the ChartComposition.
-    // It can be simpler.
+    if (State.temporal.timelineMoving) return;
+
+    // This is here to remove inactive charts from the ChartComposition.
+    // 'fetching' is set in rasterlayer-directive when fetching raster data async.
     DashboardChartService.updateDashboardCharts(
-      State.layers.filter(function (layer) {
-        return layer.active && layer.type === 'raster';
+      layers.filter(function (layer) {
+        return (layer.active || layer.fetching) && layer.type === 'raster';
       }),
       assets,
       geometries,
@@ -72,6 +74,14 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
                     chart.geometry.coordinates[0] == geom.coordinates[0] &&
                     chart.geometry.coordinates[1] == geom.coordinates[1]);
           });
+        }
+
+        // Sometimes when restoring favourites the data isn't present yet,
+        // just ignored it then. It'll get updated next time buildGraphs is called.
+        if (!assetOrGeom || !assetOrGeom.properties ||
+            !assetOrGeom.properties[chart.raster] ||
+            !assetOrGeom.properties[chart.raster].data) {
+          return null;
         }
 
         return {

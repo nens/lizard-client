@@ -5,15 +5,19 @@ angular.module('global-state').service('State',
 ['UtilService', 'gettextCatalog', '$http',
 function (UtilService, gettextCatalog, $http) {
 
-  var CURRENT_STATE_VERSION = 1;
-  /* State version change log -- if something about State changes, update
-     the version number and document below. Makes it possible to see which
-     state version a favourite was saved with.
+  var CURRENT_STATE_VERSION = 2;
+  /* State version change log -- if something about State changes,
+     update the version number and document below. Makes it possible
+     to see which state version a favourite was saved with.
 
-  1 - First version number, after merging the "improved geom state" PR.
-      Way to recognize that a favourite was saved by the new client or the old
-      one.
-  */
+  1 - First version number, after merging the "improved geom state"
+      PR.  Way to recognize that a favourite was saved by the new
+      client or the old one.
+      Code only for supporting this version is marked 'XXXV1'.
+
+  2 - Selections removed, ChartCompositionService introduced to store
+      the state of dashboard charts. Selections from favourites with
+      version 1 are translated in FavouritesService.  */
 
   /**
     * Checks given temporal state object whether `at` is within extent. If not
@@ -43,17 +47,17 @@ function (UtilService, gettextCatalog, $http) {
 
   var setActiveLayers = function (layerSlugs) {
     _.forEach(state.layers, { active: false });
-      layerSlugs.forEach(function (layerSlug) {
-        var type = layerSlug.split('$')[0];
-        var uuid = layerSlug.split('$')[1];
-        var layer = _.find(state.layers, {uuid: uuid, type: type});
+    layerSlugs.forEach(function (layerSlug) {
+      var type = layerSlug.split('$')[0];
+      var uuid = layerSlug.split('$')[1];
+      var layer = _.find(state.layers, {uuid: uuid, type: type});
 
-        if (layer) {
-          layer.active = true;
-        } else {
-          state.layers.push({uuid: uuid, type: type, active: true});
-        }
-      });
+      if (layer) {
+        layer.active = true;
+      } else {
+        state.layers.push({uuid: uuid, type: type, active: true});
+      }
+    });
   };
 
   var state = {
