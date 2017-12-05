@@ -10,6 +10,7 @@ angular.module('favourites')
     'notie',
     '$window',
     '$timeout',
+    'DashboardChartService',
     'ChartCompositionService',
     function (
         $resource,
@@ -18,7 +19,8 @@ angular.module('favourites')
         UtilService,
         notie,
         $window,
-        $timeout,
+      $timeout,
+      DashboardChartService,
         ChartCompositionService)
     {
 
@@ -141,10 +143,22 @@ angular.module('favourites')
       this.createFavourite = function (name, state, success, error) {
         var data = {
           'name': name,
-          'state': JSON.stringify(state)
+          'state': createJson(state)
         };
 
         return Favourites.save(data, success, error);
+      };
+
+      var createJson = function (state) {
+        var data = _.clone(state);
+        data.chartComposition = {
+          dashboardCharts: ChartCompositionService.dashboardCharts,
+          composedCharts: ChartCompositionService.composedCharts
+        };
+
+        var result = JSON.stringify(data);
+        console.log('FAVOURITE', JSON.parse(result));
+        return result;
       };
 
       /**
@@ -183,8 +197,11 @@ angular.module('favourites')
        *
        * It loops over ATTRIBUTES and replaces State[ATTRIBUTE] with
        * favourite.state[ATTRIBUTE] if defined in favourite.state.
-       * Two exceptions: 1. State.temporal can be restored relative to
-       * Date.now(). 2. State.layers is defined in State-service as an array
+       * Two exceptions:
+       *
+       * 1. State.temporal can be restored relative to Date.now().
+       *
+       * 2. State.layers is defined in State-service as an array
        * with a computed property *active* which will be lost if replaced. So
        * the array is emptied and filled with favourite.state.layers if
        * favourite.state.layers is defined as an array.
@@ -192,11 +209,28 @@ angular.module('favourites')
        * @param {object} favourite - The favourite to apply with a state.
        */
       this.applyFavourite = function (favourite) {
-        // TODO: Because we do not reset the graphs here. The old and new
-        // dasboard-graph 'states' are merged. Which introduces buggy dashboard
-        // favourites. We could fix this by resetting the graphs (and perhaps
-        // also the data service).
+        console.log('FAVOURITE', favourite);
+
         State.resetState();
+
+        // Prevent updates while we're doing it
+        console.log('Setting timelineMoving to true');
+        State.temporal.timelineMoving = true;
+
+        // Reset dashboard charts
+        if (favourite.state.VERSION === 1 &&
+            favourite.state.selections && favourite.state.selections.length) {
+          console.log('Translating');
+          favourite.state.chartComposition = DashboardChartService.translateSelections(
+            favourite.state.selections);
+          console.log('Translated to', JSON.parse(JSON.stringify(favourite.state.chartComposition)));
+        }
+        if (favourite.state.chartComposition) {
+          var composition = favourite.state.chartComposition;
+          console.log('Restoring', composition);
+          ChartCompositionService.dashboardCharts = composition.dashboardCharts;
+          ChartCompositionService.composedCharts = composition.composedCharts;
+        }
 
         if (favourite.state.temporal && favourite.state.temporal.relative) {
           favourite.state.temporal = adhereTemporalStateToInterval(
@@ -225,9 +259,13 @@ angular.module('favourites')
           });
         }
 
+        if (favourite.state.spatial && !_.isUndefined(favourite.state.spatial.bounds)) {
+          State.spatial.bounds = favourite.state.spatial.bounds;
+          State.spatial.bounds.isValid = function () { return true; };
+        }
+
         // Specific attributes
         var ATTRIBUTES = [
-          'context',
           'temporal.start',
           'temporal.end',
           'temporal.at',
@@ -238,7 +276,8 @@ angular.module('favourites')
           'annotations.active',
           'annotations.present',
           'spatial.view',
-          'layers.active'
+          'layers.active',
+          'context'
         ];
 
         ATTRIBUTES.forEach(function (key) {
@@ -248,14 +287,17 @@ angular.module('favourites')
           }
         });
 
-        if (favourite.state.spatial && !_.isUndefined(favourite.state.spatial.bounds)) {
-          State.spatial.bounds = favourite.state.spatial.bounds;
-          State.spatial.bounds.isValid = function () { return true; };
-        }
+        // Set timeline moving to false after digest loop
+        $timeout(
+          function () {
+            console.log('Setting timelineMoving from', State.temporal.timelineMoving, 'to false');
+            State.temporal.timelineMoving = false;
+          },
+          0, // no delay, fire when digest ends
+          true // trigger new digest loop
+        );
 
-        $timeout(function () {
-          UtilService.announceMovedTimeline(State);
-        });
+        State.context = favourite.state.context;
       };
 
       return this;

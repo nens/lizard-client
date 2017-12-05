@@ -35,13 +35,15 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
    * @param  {array} geometries Data source DataService.geometries.
    * @return {array} graph
    */
-  this.buildGraphs = function (graphs, timeseries, assets, getAssetByKey, geometries)
+  this.buildGraphs = function (graphs, layers, timeseries, assets, getAssetByKey, geometries)
   {
+    if (State.temporal.timelineMoving) return;
+
     // XXX This is only here now to remove inactive charts from the ChartComposition.
     // It can be simpler.
     DashboardChartService.updateDashboardCharts(
-      State.layers.filter(function (layer) {
-        return layer.active && layer.type === 'raster';
+      layers.filter(function (layer) {
+        return (layer.active || layer.fetching) && layer.type === 'raster';
       }),
       assets,
       geometries,
@@ -72,6 +74,12 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
                     chart.geometry.coordinates[0] == geom.coordinates[0] &&
                     chart.geometry.coordinates[1] == geom.coordinates[1]);
           });
+        }
+
+        if (!assetOrGeom || !assetOrGeom.properties ||
+            !assetOrGeom.properties[chart.raster] ||
+            !assetOrGeom.properties[chart.raster].data) {
+          return null;
         }
 
         return {

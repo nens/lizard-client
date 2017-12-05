@@ -57,6 +57,10 @@ angular.module('omnibox')
 
           var layers = activeRasterLayers.filter(function (layer) {
             var raster = DataService.getDataLayer(layer.uuid);
+            if (!raster) {
+              // Still fetching it?
+              return true;
+            }
             return raster.temporal;
           });
 

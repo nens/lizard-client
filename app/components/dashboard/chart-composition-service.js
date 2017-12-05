@@ -139,8 +139,12 @@ angular.module('dashboard')
         var uuid = service.composedCharts[plot][chartIdx];
 
         if (uuids.indexOf(uuid) === -1) {
-          // Remove
-          removeChartFromSpecificPlot(plot, uuid);
+          // XXXV1.
+          // Remove unless it has 'needsUpdate', because then it's still in the process
+          // of being added (by an old favourite) and will soon be shown.
+          if (!(service.dashboardCharts[uuid] && service.dashboardCharts[uuid].needsUpdate)) {
+            removeChartFromSpecificPlot(plot, uuid);
+          }
         }
       }
     }

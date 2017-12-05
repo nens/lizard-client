@@ -40,6 +40,8 @@ angular.module('data-menu')
     var cancelFirstActive = scope.$watch('layer.active', function () {
       if (scope.layer.active) {
         scope.layer.active = false;
+        scope.layer.fetching = true;
+
         LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.uuid, scope.layer.name)
         .then(function (response) {
 
@@ -80,6 +82,7 @@ angular.module('data-menu')
           }
 
           scope.layer.active = true;
+          scope.layer.fetching = false;
 
           if (response.rescalable) {
             scope.rescale = MapService.rescaleLayer;
@@ -93,19 +96,19 @@ angular.module('data-menu')
             first: dates[0],
             last: dates[1]
           });
-
         })
         .catch(function () {
           scope.invalid = true;
+          scope.layer.fetching = false;
         });
 
         cancelFirstActive();
       }
     });
 
-
     scope.$on('$destroy', function () {
       scope.layer.active = false;
+      scope.layer.fetching = false;
       MapService.updateLayers([scope.layer]);
       _.pull(DataService.dataLayers, {uuid: scope.layer.uuid });
       _.pull(MapService.mapLayers, {uuid: scope.layer.uuid });
