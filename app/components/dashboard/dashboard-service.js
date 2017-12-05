@@ -39,8 +39,8 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
   {
     if (State.temporal.timelineMoving) return;
 
-    // XXX This is only here now to remove inactive charts from the ChartComposition.
-    // It can be simpler.
+    // This is here to remove inactive charts from the ChartComposition.
+    // 'fetching' is set in rasterlayer-directive when fetching raster data async.
     DashboardChartService.updateDashboardCharts(
       layers.filter(function (layer) {
         return (layer.active || layer.fetching) && layer.type === 'raster';
@@ -76,6 +76,8 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
           });
         }
 
+        // Sometimes when restoring favourites the data isn't present yet,
+        // just ignored it then. It'll get updated next time buildGraphs is called.
         if (!assetOrGeom || !assetOrGeom.properties ||
             !assetOrGeom.properties[chart.raster] ||
             !assetOrGeom.properties[chart.raster].data) {

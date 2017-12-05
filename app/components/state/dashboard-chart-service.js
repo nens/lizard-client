@@ -120,7 +120,9 @@ angular.module('global-state')
         var rasterDataLayer = DataService.getDataLayer(rasterUuid);
 
         if (!rasterDataLayer) {
-          // Return temporary chart
+          // XXXV1; Return temporary chart. This is necessary for restoring old
+          // favourites that don't have the async parts of charts in them, can be
+          // removed when V1 favourites are not relevant anymore.
           return {
             needsUpdate: true,
             type: 'raster',
@@ -185,6 +187,9 @@ angular.module('global-state')
         var key = parts.join(KEY_SEP);
 
         var timeseriesAndAsset = findTimeseriesAndAsset(parts[1]);
+        // XXXV1; Return temporary chart. This is necessary for restoring old
+        // favourites that don't have the async parts of charts in them, can be
+        // removed when V1 favourites are not relevant anymore.
         if (!timeseriesAndAsset) {
           return {
             uuid: key,
@@ -230,7 +235,7 @@ angular.module('global-state')
         if (!chart) {
           chart = createChart(key);
         } else if (chart.needsUpdate) {
-          // This is horrible, especially the call to syncTime(). Only needed
+          // XXXV1; This is horrible, especially the call to syncTime(). Only needed
           // for V1 favourites.
           var newChart = createChart(key);
           if (!newChart.needsUpdate) {
@@ -257,7 +262,7 @@ angular.module('global-state')
         TimeseriesService.syncTime();
       };
 
-      /* LEGACY: Can be removed when there are no favourites with VERSION = 1 in the
+      /* XXXV1: Can be removed when there are no favourites with VERSION = 1 in the
          database anymore. */
       var translateSelections = function (selections) {
         // Keep the active selections only
@@ -275,10 +280,7 @@ angular.module('global-state')
           composedCharts.push([]);
         }
 
-        console.log('maxOrder:', maxOrder, 'composedCharts:', composedCharts);
-
         selections.forEach(function (selection) {
-          console.log('Selection:', selection);
           var chart;
           if (selection.type === 'timeseries') {
             chart = createTimeseriesChart(['timeseries', selection.timeseries]);

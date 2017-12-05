@@ -13,6 +13,7 @@ function (UtilService, gettextCatalog, $http) {
   1 - First version number, after merging the "improved geom state"
       PR.  Way to recognize that a favourite was saved by the new
       client or the old one.
+      Code only for supporting this version is marked 'XXXV1'.
 
   2 - Selections removed, ChartCompositionService introduced to store
       the state of dashboard charts. Selections from favourites with

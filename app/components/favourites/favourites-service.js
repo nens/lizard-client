@@ -150,6 +150,9 @@ angular.module('favourites')
       };
 
       var createJson = function (state) {
+        // Favourite consists of the State-service, plus extras from other
+        // services (currently the dashboard charts).
+
         var data = _.clone(state);
         data.chartComposition = {
           dashboardCharts: ChartCompositionService.dashboardCharts,
@@ -157,7 +160,6 @@ angular.module('favourites')
         };
 
         var result = JSON.stringify(data);
-        console.log('FAVOURITE', JSON.parse(result));
         return result;
       };
 
@@ -209,25 +211,20 @@ angular.module('favourites')
        * @param {object} favourite - The favourite to apply with a state.
        */
       this.applyFavourite = function (favourite) {
-        console.log('FAVOURITE', favourite);
-
         State.resetState();
 
         // Prevent updates while we're doing it
-        console.log('Setting timelineMoving to true');
         State.temporal.timelineMoving = true;
 
         // Reset dashboard charts
         if (favourite.state.VERSION === 1 &&
             favourite.state.selections && favourite.state.selections.length) {
-          console.log('Translating');
+          // XXXV1. Won't be needed anymore when these are gone from the database.
           favourite.state.chartComposition = DashboardChartService.translateSelections(
             favourite.state.selections);
-          console.log('Translated to', JSON.parse(JSON.stringify(favourite.state.chartComposition)));
         }
         if (favourite.state.chartComposition) {
           var composition = favourite.state.chartComposition;
-          console.log('Restoring', composition);
           ChartCompositionService.dashboardCharts = composition.dashboardCharts;
           ChartCompositionService.composedCharts = composition.composedCharts;
         }
@@ -290,14 +287,11 @@ angular.module('favourites')
         // Set timeline moving to false after digest loop
         $timeout(
           function () {
-            console.log('Setting timelineMoving from', State.temporal.timelineMoving, 'to false');
             State.temporal.timelineMoving = false;
           },
           0, // no delay, fire when digest ends
           true // trigger new digest loop
         );
-
-        State.context = favourite.state.context;
       };
 
       return this;
