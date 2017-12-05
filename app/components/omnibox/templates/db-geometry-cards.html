@@ -6,38 +6,37 @@
 
   <div id="drag-container">
     <div
-      ng-repeat="selection in getIterableSelections()"
-      ng-init="metaData = getSelectionMetaData(selection)"
-      ng-if="getSelectionMetaData(selection).match"
-      data-uuid="{{ selection.uuid }}"
+      ng-repeat="raster in getActiveTemporalRasterLayers()"
+      ng-init="key = getKey(raster); chart = getOrCreateChart(key)"
+      data-uuid="{{ key }}"
       class="draggable-ts db-ts-collection raster-ts-collection">
       <div
-        ng-if="metaData.type === 'raster'"
-        id="{{ 'clickable-' + selection.uuid }}"
-        ng-click="toggleSelection(selection)"
+        id="{{ 'clickable-' + key }}"
+        ng-click="toggleChart(key)"
         class="draggable-ts db-card-single-ts raster-ts"
         ng-class="{
-          'color-picker-is-open': colorPickersSettings[selection.uuid],
-          'active': selection.active
+          'color-picker-is-open': colorPickersSettings[key],
+          'active': isChartActive(key)
         }">
-
         <div
           class="db-card-color-picker-btn"
-          ng-style="{'background-color': selection.color}"
-          ng-click="toggleColorPicker(selection.uuid); $event.stopPropagation();">
+          ng-style="{'background-color': chart.color}"
+          ng-click="toggleColorPicker(key); $event.stopPropagation();">
         </div>
 
-        <div class="db-card-single-ts-name ">
+        <div class="db-card-single-ts-name "
+             title="{{ chart.description }} ({{ chart.unit }}) {{ chart.raster }}">
           <i class="fa fa-line-chart"></i>
           <span>
-            {{ metaData.quantity }}, ({{ metaData.unit }})
+            {{ chart.description | truncate: 42 }}
           </span>
         </div>
       </div>
 
+      <!--
       <div
           ng-if="metaData.type === 'eventseries'"
-          ng-class="{active: mouseIsOver}"
+          ng-class="{active: mouseIsOver}";
           ng-mouseover="mouseIsOver = true"
           ng-mouseleave="mouseIsOver = false"
           id="{{ 'clickable-' + selection.uuid }}"
@@ -53,11 +52,12 @@
           {{ metaData.quantity }} events
         </span>
       </div>
+      -->
 
       <div class="color-picker-wrapper">
         <color-picker
-          ng-show="colorPickersSettings[selection.uuid]"
-          index="{{selection.uuid}}">
+          ng-show="colorPickersSettings[key]"
+          chart-key="{{ key }}">
         </color-picker>
       </div>
 

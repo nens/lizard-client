@@ -8,16 +8,12 @@ angular.module('timeseries')
   '$timeout',
   'gettextCatalog',
   'notie',
-  'ChartCompositionService',
-  'SelectionService',
   'State',
   'TimeseriesService',
   function (
     $timeout,
     gettextCatalog,
     notie,
-    ChartCompositionService,
-    SelectionService,
     State,
     TimeseriesService
   ) {
@@ -26,36 +22,9 @@ angular.module('timeseries')
       scope.zoomToInterval = TimeseriesService.zoomToInterval;
       scope.state = State; // TODO: only done this to watch state.layers. There is a better place for this.
 
-      var selectionObject, selectionType;
-      if (scope.asset) {
-        selectionObject = scope.asset;
-        selectionType = 'asset';
-      } else if (scope.geom){
-        selectionObject = scope.geom;
-        selectionType = 'geom';
-      }
-      scope.$watch('state.layers', function () { // TODO: There is a better place for this.
-        SelectionService.initializeRaster(selectionObject, selectionType);
-      });
-
-      scope.$watch(selectionType, function (a, b) {
-        SelectionService.initializeAsset(scope.asset);
-        SelectionService.initializeRaster(selectionObject, selectionType);
-        if (State.context === 'map') {
-          scope.timeseries.change();
-        }
-      });
-
       scope.$on('$destroy', function () {
-        if (State.assets.length > 1 && State.context === 'map') {
-          _.forEach(State.selections, function (selection) {
-            // ... omitting selection deactivation ... skip'm!
-            // selection.active = false;
-            // ChartCompositionService.removeSelection(selection.uuid);
-          });
           TimeseriesService.syncTime();
-        }
-      });
+        });
     },
     restrict: 'E', // Timeseries can be an element with single-select or
                     // multi select as an attribute or without in which
@@ -83,12 +52,10 @@ angular.module('timeseries')
     link: function (scope) {
 
       var selectTimeseries = function () {
-        var selectedTimeseriesUuid = scope.timeseries.selected.uuid;
-        State.selections.forEach(function (selection) {
-          if (_.find(scope.asset.timeseries, {uuid: selection.timeseries})) {
-            selection.active = selection.timeseries === selectedTimeseriesUuid;
-          }
-        });
+        var selected = (
+          State.selectedForAssets[scope.asset.entity_name + '$' + scope.asset.id] || {});
+        selected.timeseries = scope.timeseries.selected;
+        State.selectedForAssets[scope.asset.entity_name + '$' + scope.asset.id] = selected;
 
         _.forEach(
           TimeseriesService.syncTime(),
@@ -100,11 +67,17 @@ angular.module('timeseries')
       };
 
       var getContentForAsset = function (timeseries) {
+        // Timeseries contains all still active timeseries events, select
+        // only the one relating to this asset.
         scope.content = timeseries.filter(function (ts) {
           return _.some(scope.asset.timeseries, {uuid: ts.id});
         });
       };
 
+      var firstTimeseries = (
+        scope.asset.timeseries && scope.asset.timeseries.length ?
+        scope.asset.timeseries[0] : {uuid: 'empty'}
+      );
       scope.timeseries = {
         selected: {uuid: 'empty'},
         change: function () {
@@ -114,32 +87,8 @@ angular.module('timeseries')
 
       scope.$watch('asset', function (aG) {
         if(scope.asset) {
-
-          var setFirstTSAsSelected = function () {
-            scope.timeseries.selected = scope.asset.timeseries[0];
-          };
-
-          var activeSelections = _.find(State.selections, {active: true});
-          if (activeSelections) {
-            var tsInAsset = _.find(
-              scope.asset.timeseries,
-              function (selection) {
-                return selection.timeseries === activeSelections.timeseries;
-              }
-            );
-            if (tsInAsset) {
-              scope.timeseries.selected = tsInAsset;
-            }
-            else {
-              setFirstTSAsSelected();
-            }
-          }
-          else {
-            setFirstTSAsSelected();
-          }
-
+          scope.timeseries.selected = scope.asset.timeseries[0];
           scope.timeseries.change();
-
         }});
 
       /**

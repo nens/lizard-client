@@ -3,99 +3,77 @@ angular.module('omnibox')
   'State',
   'DBCardsService',
   'DataService',
-  'SelectionService',
+  'DashboardChartService',
   'DragService',
   function (
       State,
       DBCardsService,
       DataService,
-      SelectionService,
+      DashboardChartService,
       DragService) {
-    // TODO: This whole directive is a copy of parts of the asset-card-directive
     return {
-      link: function (scope, element) {
+      link: function (scope, element, attrs) {
 
         scope.state = State;
-        scope.noData = true;
+        scope.noData = false;
 
         scope.colorPickersSettings = DBCardsService.colorPickersSettings;
         scope.openColorPicker = DBCardsService.openColorPicker;
         scope.closeColorPicker = DBCardsService.closeColorPicker;
+        scope.getKeyForRasterGeometry = DashboardChartService.getKeyForRasterGeometry;
+        scope.getOrCreateChart = DashboardChartService.getOrCreateChart;
+        scope.toggleChart = DashboardChartService.toggleChart;
+        scope.isChartActive = DashboardChartService.isChartActive;
 
-        scope.getSelectionMetaData = SelectionService.getMetaDataFunction(
-          scope.geom);
+        var geomOrAsset = function () {
+          return scope.geom || scope.asset;
+        };
 
         // Make sure all event series data etc gets updated on geo.
-        DataService.getGeomData(scope.geom).then(function (geo) {
-          console.log("Updated geo:", geo, scope.geom);
+        DataService.getGeomData(geomOrAsset()).then(function (geo) {
+          // console.log("Updated geo:", geo, geomOrAsset());
         });
 
-        scope.$watch('geom', function () {
-          SelectionService.initializeRaster(scope.geom, "geom");
-        });
-
-        scope.toggleColorPicker = function (selectionUuid) {
-          if (scope.colorPickersSettings[selectionUuid]) {
-            scope.closeColorPicker(selectionUuid);
+        scope.getKey = function (raster) {
+          if (scope.asset) {
+            return DashboardChartService.getKeyForRasterAsset(raster, scope.asset);
           } else {
-            scope.openColorPicker(selectionUuid);
+            return DashboardChartService.getKeyForRasterGeometry(raster, scope.geom);
           }
         };
 
-        scope.getIterableSelections = function () {
-          // Filter State.selections based on whether they are for temporal rasters:
-          var selection,
-              dataLayer,
-              wantedSelections = [];
-          for (var i = 0; i < State.selections.length; i++) {
-            selection = State.selections[i];
-            if (!selection.raster) {
-              // Skip selection if it doesn't relate to a raster
-              continue;
-            } else {
-              // OK, selection is for a raster; but is it a temporal raster?
-              dataLayer = _.find(DataService.dataLayers, { uuid: selection.raster });
-              if (dataLayer && dataLayer.temporal) {
-                wantedSelections.push(selection);
-              }
-            }
+        scope.toggleColorPicker = function (key) {
+          if (scope.colorPickersSettings[key]) {
+            scope.closeColorPicker(key);
+          } else {
+            scope.openColorPicker(key);
           }
-          return wantedSelections;
         };
 
-        /**
-         * Properties are asynchronous so watch it to set noData when added.
-         */
-        scope.$watch('geom.properties', function (n, o) {
-          scope.geomSelections = SelectionService.initializeGeomEventseriesSelections(scope.geom);
-
-          _.forEach(scope.geom.properties, function (property, uuid) {
-            var selection = _.find(State.selections, function(s) {
-              return s.geom === scope.geom.geometry.coordinates.toString() && s.raster === uuid;
-            });
-            if (selection && !selection.active
-              && SelectionService.dbSupportedData(
-                scope.geom.geometry.type,
-                property
-              )) {
-              scope.toggleSelection(selection);
-            }
+        scope.getActiveTemporalRasterLayers = function () {
+          var activeRasterLayers = State.layers.filter(function (layer) {
+            return layer.active && layer.type === 'raster';
           });
 
-          // No raster data when properties is undefined or when properties is
-          // empty object.
-          var noRasterData = scope.geom.properties
-                           ? !Object.keys(scope.geom.properties).length
-                           : true;
-          scope.noData = noRasterData && scope.geom.entity_name === undefined;
-        }, true);
+          var layers = activeRasterLayers.filter(function (layer) {
+            var raster = DataService.getDataLayer(layer.uuid);
+            if (!raster) {
+              // Still fetching it?
+              return true;
+            }
+            return raster.temporal;
+          });
 
-        scope.toggleSelection = SelectionService.toggle;
+          return layers;
+        };
+
+        scope.toggleChart = DashboardChartService.toggleChart;
 
         DragService.addDraggableContainer(element.find('#drag-container'));
       },
       restrict: 'E',
       scope: {
+        asset: '=',
         geom: '=',
         timeState: '=',
         header: '='

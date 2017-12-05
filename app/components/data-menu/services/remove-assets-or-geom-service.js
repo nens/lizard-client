@@ -13,16 +13,11 @@ function (State) {
         State.assets.removeAsset(asset);
       }
     });
-    if (State.assets.length === 0) {
-      State.geometries.forEach(function (geom) {
-        if (State.geometries.length > 1) {
-          State.geometries.removeGeometry(geom);
-        }
-      });
-    }
-    else {
-      State.geometries = [];
-    }
+    State.geometries.forEach(function (geom) {
+      if (State.assets.length + State.geometries.length > 1) {
+        State.geometries.removeGeometry(geom);
+      }
+    });
   };
 
 }]);

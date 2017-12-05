@@ -32,29 +32,10 @@ angular.module('data-menu')
 
       var instance = this;
 
-      /**
-       * Finds asset or geometry data for a selection.
-       *
-       * @param  {object}  selection   a selection from State.selections
-       * @return {object} asset or geometry data.
-       */
-      this.findProperty = function (selection) {
-        if (selection.asset) {
-          return _.find(
-            instance.assets, function(asset) {
-              return selection.asset === asset.entity_name + "$" + asset.id;
-            }
-          );
-        } else if (selection.geom) {
-          return _.find(
-            instance.geometries, function(geom) {
-              return selection.geom === geom.geometry.coordinates.toString();
-            }
-          );
-        }
-      };
-
       instance.dataLayers = [];
+
+      // This is overwritten by the dashboard directive!!
+      instance.buildDashboard = function () {};
 
       // Callback for when assets are being retrieved from api
       var assetChange = function (asset) {
@@ -91,10 +72,7 @@ angular.module('data-menu')
 
         // instantes
         instance.getGeomDataForAssets(instance.oldAssets, instance.assets);
-
-        if (instance.onAssetsChange) {
-          instance.onAssetsChange();
-        }
+        instance.buildDashboard();
       };
 
       // Define assets on State and update DataService.assets.
@@ -180,15 +158,13 @@ angular.module('data-menu')
         var geometries = _.uniqWith(geometriesIn, isDuplicateGeometry);
 
         instance._updateGeometries(_geometries, angular.copy(geometries))
-        .forEach(function (promise) {
-          promise.then(function (geometries) {
-            // Dedupe instance.geometries asynchronous.
-            instance.geometries = _.uniqWith(geometries, isDuplicateGeometry);
-            if (instance.onGeometriesChange) {
-              instance.onGeometriesChange();
-            }
-          });
-        });
+                .forEach(function (promise) {
+                  promise.then(function (geometries) {
+                    // Dedupe instance.geometries asynchronous.
+                    instance.geometries = _.uniqWith(geometries, isDuplicateGeometry);
+                    instance.buildDashboard();
+                  });
+                });
 
         _geometries = geometries;
         State.geometries.addGeometry = addGeometry;
@@ -202,34 +178,11 @@ angular.module('data-menu')
       };
 
       var removeGeometry = function (geometry) {
-        var keepSelections = []
-
-        var geomString = geometry.geometry.coordinates.toString();
-
-        for (var i = 0; i < State.selections.length; i++) {
-          var selection = State.selections[i];
-
-          if (selection.geom !== geomString) {
-            // Keep
-            keepSelections.push(selection);
-          } else {
-            // Remove
-            ChartCompositionService.removeSelection(selection.uuid);
-          }
-        }
-        State.selections = keepSelections;
-
-        var newGeometries = angular.copy(_geometries);
-        var index = -1;
-        _geometries.forEach(function(geom, i) {
-          if (geom.geometry.coordinates[0] === geometry.geometry.coordinates[0]
-          && geom.geometry.coordinates[1] === geometry.geometry.coordinates[1]
-          && geom.geometry.coordinates[2] === geometry.geometry.coordinates[2]) {
-            index = i;
-          }
-        });
-        newGeometries.splice(index, 1);
-        setGeometries(newGeometries);
+        setGeometries(_geometries.filter(function (geom) {
+          return !(geom.geometry.coordinates[0] === geometry.geometry.coordinates[0]
+                && geom.geometry.coordinates[1] === geometry.geometry.coordinates[1]
+                && geom.geometry.coordinates[2] === geometry.geometry.coordinates[2]);
+        }));
       };
 
       instance.geometries = [];
@@ -296,27 +249,26 @@ angular.module('data-menu')
           }, this);
 
           this.getGeomData(geom)
-          .then(function(newGeo) {
-            instance.geometries.forEach(function (old, i) {
-              if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
-                instance.geometries[i] = newGeo;
-              }
-            });
-          });
-
+              .then(function(newGeo) {
+                instance.geometries.forEach(function (old, i) {
+                  if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
+                    instance.geometries[i] = newGeo;
+                  }
+                })
+              })
+              .then(instance.buildDashboard);
         }, this);
 
         this.assets.forEach(function (asset) {
-
           this.getGeomData(asset)
-          .then(function(newAsset) {
-            instance.assets.forEach(function (old, i) {
-              if (old.entity_name === newAsset.entity_name && old.id === newAsset.id) {
-                instance.assets[i] = newAsset;
-              }
-            });
-          });
-
+              .then(function(newAsset) {
+                instance.assets.forEach(function (old, i) {
+                  if (old.entity_name === newAsset.entity_name && old.id === newAsset.id) {
+                    instance.assets[i] = newAsset;
+                  }
+                })
+              })
+              .then(instance.buildDashboard);
         }, this);
       };
 
@@ -358,23 +310,6 @@ angular.module('data-menu')
           promises.push(defer.promise);
         }
         return promises;
-      };
-
-      /**
-       * Color is stored with the asset or geom metadata
-       * This function searches in the selected object
-       * in to update the color.
-       *
-       * @param  {object} changedSelection selection object
-       */
-      this.onColorChange = function (changedSelection) {
-        // TODO: bad practice: color should imho be defined in the state and
-        // the state alone.
-        var property = this.findProperty(changedSelection);
-        if (property) {
-          property.color = changedSelection.color;
-          instance.onSelectionsChange();
-        }
       };
 
       this.getGeomDataForAssets = function (oldAssets, assets) {
@@ -431,7 +366,7 @@ angular.module('data-menu')
           promises.push(
             dataLayer.getData(options).then(
               function (response) {
-                var newProps = geo.properties ? _.clone(geo.properties) : {};
+                  var newProps = geo.properties ? _.clone(geo.properties) : {};
 
                 // async so remove anything obsolete.
                 if (!newProps[layer.uuid]) {
@@ -523,7 +458,7 @@ angular.module('data-menu')
         });
       };
 
-      this.getPropFromAssetOrParent = function getAssetByKey(asset, property) {
+      this.getPropFromAssetOrParent = function (asset, property) {
         if (property in asset && asset[property] !== undefined) {
           return asset[property];
         } else if (asset.parentAsset) {

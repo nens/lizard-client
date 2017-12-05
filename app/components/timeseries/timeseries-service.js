@@ -9,11 +9,13 @@ angular.module('timeseries').service("TimeseriesService", [
   'UtilService',
   'DataService',
   'TimeseriesUtilService',
+  'ChartCompositionService',
   'RelativeToSurfaceLevelService',
   'gettextCatalog',
   '$timeout',
   function ($q, State, $http, notie, UtilService,
-            DataService, TsUService, RTSLService, gettextCatalog, $timeout) {
+            DataService, TsUService, ChartCompositionService,
+            RTSLService, gettextCatalog, $timeout) {
     // *wrapped* boolean indicating we want the timeseries value (y-axis) to be
     // relative to the asset's "surface_level" value (boolean set to true) or
     // we want it to be the absolute value (boolean set to false);
@@ -40,8 +42,8 @@ angular.module('timeseries').service("TimeseriesService", [
         } else {
           _lineTimeseries = timeseriesIn;
         }
-        if (service.onTimeseriesChange) {
-          service.onTimeseriesChange();
+        if (State.context === 'dashboard') {
+          DataService.buildDashboard();
         }
       }
     };
@@ -54,32 +56,6 @@ angular.module('timeseries').service("TimeseriesService", [
 
     this.minPoints = GRAPH_WIDTH; // default
 
-    var _selections = State.selections || [];  // !!! Do not throw away old value!
-    Object.defineProperty(State, 'selections', {
-      get: function () { return _selections; },
-      set: function (selections) {
-        _selections = selections;
-        service.syncTime();
-      },
-      enumerable: true
-    });
-
-    /**
-     * Finds timeseries, asset or geometry data for a selection.
-     *
-     * @param  {object}  selection   a selection from State.selections
-     * @return {object} asset or geometry data.
-     */
-    // TODO: THIS IS BAD PRACTICE!
-    this.findProperty = function (selection) {
-      if (selection.timeseries) {
-        return _.find(this.timeseries, function (ts) {
-          return selection.timeseries === ts.id;
-        });
-      }
-      return DataService.findProperty(selection);
-    };
-
     /**
      * Collects timeseries data from the backend.
      *
@@ -87,34 +63,58 @@ angular.module('timeseries').service("TimeseriesService", [
      *                 the second one for bars (data with a ratio scale).
      */
     this.syncTime = function () {
+      var isDashboard = State.context === 'dashboard';
 
-      var groupedSelections = {
-        temporalBars: {timeseries: [], rasters: []},
-        temporalLines: {timeseries: [], rasters: []}
+      var groupedCharts = {
+        temporalBars: [],
+        temporalLines: [],
       };
 
-      _.forEach(State.selections, function(selection){
-        if(selection.active){
-          var scale = selection.measureScale === "ratio" ? "temporalBars" :
-                      "temporalLines";
-          if (selection.timeseries) {
-            groupedSelections[scale].timeseries.push(selection.timeseries);
-          } else if (selection.raster) {
-            groupedSelections[scale].rasters.push(selection.raster);
-          }
-        }
-      });
 
-      var activeTimeseries = function(actives, minPoints, chartType){
+      if (isDashboard) {
+        ChartCompositionService.getActiveCharts().forEach(function (chart) {
+          var scale = chart.measureScale === "ratio" ? "temporalBars" :
+                      "temporalLines";
+
+          if (chart.timeseries) {
+            groupedCharts[scale].push({
+              timeseries: chart.timeseries,
+              isActive: function () {
+                return ChartCompositionService.isKeyActive(chart.uuid);
+              }
+            });
+          }
+        });
+      } else {
+        State.assets.forEach(function (assetKey) {
+          if (State.selectedForAssets[assetKey] && State.selectedForAssets[assetKey].timeseries) {
+            var ts = State.selectedForAssets[assetKey].timeseries;
+            var scale = ts.scale === "ratio" ? "temporalBars" : "temporalLines";
+
+            groupedCharts[scale].push({
+              timeseries: ts.uuid,
+              isActive: function () {
+                // Return true if asset is still in State.assets and this timeseries
+                // is still selected.
+                return (
+                  State.assets.indexOf(assetKey) !== -1 &&
+                  State.selectedForAssets[assetKey].timeseries.uuid === ts.uuid);
+              }
+            });
+          }
+        });
+      }
+
+      var activeTimeseries = function(charts, minPoints, chartType) {
         // Return empty timeseries when empty selection
         var timeseriesPromise;
-        if (actives.length === 0) {
+        if (charts.length === 0) {
           var defer = $q.defer();
           defer.resolve([]);
           timeseriesPromise = defer.promise;
         } else {
           timeseriesPromise =  service._getTimeseries(
-            actives,
+            charts.map(function (chart) { return chart.timeseries; }),
             State.temporal,
             minPoints && service.minPoints,
             chartType
@@ -124,51 +124,27 @@ angular.module('timeseries').service("TimeseriesService", [
         timeseriesPromise.then(function (response) {
           service.timeseries = _.filter(
             response,
-            function (ts) { return _.some(
-              State.selections,
-              function (stateTs) {
-                return ts.id === stateTs.timeseries && stateTs.active;
+            function (ts) {
+              return _.some(charts, function (chart) {
+                return chart.isActive();
               });
             });
           return service.timeseries;
         }).then(function (ts) {
-            if (service.onTimeseriesChange) {
-		service.onTimeseriesChange();
-            }
-            return ts;
+          DataService.buildDashboard();
+          return ts;
 	});
 
         return timeseriesPromise;
       };
 
       return [
-        activeTimeseries(groupedSelections.temporalLines.timeseries, true,
-                         'lines'),
-        activeTimeseries(groupedSelections.temporalBars.timeseries, false,
-                         'bars')
+        activeTimeseries(groupedCharts.temporalLines, true, 'lines'),
+        activeTimeseries(groupedCharts.temporalBars, false, 'bars')
       ];
     };
 
     var localPromise = {lines: {}, bars: {}, crosssections: {}};
-
-    /**
-     * Color is stored with the ts metadata in asset.timeseries of every asset
-     * in DataService.assets. This function searches in the selected timeseries
-     * in timeseriesService.timeseries to update the color.
-     *
-     * @param  {object} changedTS timeseries metadata object
-     */
-    this.onColorChange = function (changedTS) {
-      var ts = _.find(service.timeseries, function (o) {
-        return o.id === changedTS.timeseries;
-      });
-      if (ts) {
-        ts.color = changedTS.color;
-        if (service.onTimeseriesChange) {
-          service.onTimeseriesChange();
-        }
-      }
-    };
 
     /**
      * @function
@@ -271,7 +247,7 @@ angular.module('timeseries').service("TimeseriesService", [
     };
 
 
-    this.zoomToInterval = function (value_type, intervalText) {
+    this.zoomToInterval = function (intervalText, selectedTimeseries) {
       var now = (new Date()).getTime();
       var start, end, intervalMs;
       switch(intervalText) {
@@ -291,65 +267,38 @@ angular.module('timeseries').service("TimeseriesService", [
           start = end - intervalMs;
           break;
         case "timesteps_range":
+          var activeTs = _.find(service.timeseries, { id: selectedTimeseries.uuid });
 
-          var firstActiveSelection = _.find(State.selections, { active: true });
-
-          if (firstActiveSelection) {
-
-            var activeTsUUID = firstActiveSelection.timeseries;
-            var activeTs = _.find(service.timeseries,
-              { id: activeTsUUID });
-
+          if (activeTs) {
             start = activeTs.start;
             end = activeTs.end;
           }
 
           break;
         case 'timesteps_range_all_active':
+          var charts = ChartCompositionService.getActiveCharts();
 
-          var activeTimeseriesUuids = [];
-          var activeTempRasterIds = [];
+          charts.forEach(function (chart) {
+            var chartStart, chartEnd;
 
-          if (State.selections) {
-            State.selections.forEach(function (selection) {
-              if (selection.active) {
-                if (selection.timeseries) {
-                  activeTimeseriesUuids.push(selection.timeseries);
-                } else if (selection.raster) {
-                  activeTempRasterIds.push(selection.raster);
-                }
-              }
-            });
+            if (chart.type === 'raster') {
+              var dataLayer = _.find(DataService.dataLayers, { uuid: chart.raster });
+              chartStart = dataLayer.firstValueTimestamp;
+              chartEnd = dataLayer.lastValueTimestamp;
+            } else if (chart.type === 'timeseries') {
+              var ts = _.find(service.timeseries, { id: chart.timeseries });
+              chartStart = ts.start;
+              chartEnd = ts.end;
+            }
 
-            var ts;
-            activeTimeseriesUuids.forEach(function (tsUuid) {
-              ts = _.find(service.timeseries, { id: tsUuid });
-              if (ts.start && (!start || ts.start < start)) {
-                start = ts.start;
-              }
-              if (ts.end && (!end || ts.end > end)) {
-                end = ts.end;
-              }
-            });
-
-            var dataLayer, rasterTsStart, rasterTsEnd;
-            activeTempRasterIds.forEach(function (rasterId) {
-              dataLayer = _.find(DataService.dataLayers, { uuid: rasterId });
-              rasterTsStart = dataLayer.firstValueTimestamp;
-              rasterTsEnd = dataLayer.lastValueTimestamp;
-              if (rasterTsStart && (!start || rasterTsStart < start)) {
-                start = rasterTsStart;
-              }
-              if (rasterTsStart && (!end || rasterTsEnd > end)) {
-                end = rasterTsEnd;
-              }
-            });
-          }
-
-
+            if (chartStart && chartEnd) {
+              start = start ? Math.min(start, chartStart) : chartStart;
+              end = end ? Math.max(end, chartEnd) : chartEnd;
+            }
+          });
           break;
         default:
-          console.error(
+         console.error(
             "Unknown interval '" +
             intervalText +
             "' for temporal zoom; allowed values are " +
@@ -396,7 +345,6 @@ angular.module('timeseries').service('TimeseriesUtilService', [
   function (WantedAttributes, DataService, State, RTSLService) {
 
     /**
-     * Looks up timeseries in State.selections and copies color and order.
      * TimeseriesService.timeseries are not persistent when toggled.
      * asset.timeseries is persistent till a user removes it from selection.
      *
@@ -428,11 +376,6 @@ angular.module('timeseries').service('TimeseriesUtilService', [
         graphTimeseries.name = ts.name || EMPTY;
         graphTimeseries.reference_frame = ts.reference_frame;
         graphTimeseries.thresholds = [];
-
-        var tsActive = _.find(State.selections, {'uuid': ts.uuid });
-        if (tsActive && tsActive.active) {
-          assetOfTs.ts = graphTimeseries.ts;
-        }
       }
 
       if (assetOfTs) {
@@ -473,56 +416,24 @@ angular.module('timeseries').service('TimeseriesUtilService', [
         );
       }
 
-      var tsState = _.find(
-        State.selections,
-        { 'timeseries': graphTimeseries.id }
-      );
-
-      // In db with crosssections it is possible to not have state of a ts.
-      if (tsState) {
-        graphTimeseries.color = tsState.color;
-        graphTimeseries.order = tsState.order;
-      }
-
       return graphTimeseries;
     };
 
     var formatTimeseriesForGraph = function (timeseries) {
 
       var yKey = timeseries.field || 'value';
-      var graphTimeseriesTemplate = {
-        id: '', //uuid
-        data: [],
-        unit: '',
-        color: '', // Defined on State.selections
-        order: '', // Defined on State.selections
-        valueType: '',
-        labels: {
-          x: '',
-          y: ''
-        },
-        keys: { x: 'timestamp', y: yKey }
-      };
-
       var result = [];
+
       timeseries.forEach(function (ts) {
-        var tsSelection = _.find(State.selections, function (s) {
-          return s.timeseries === ts.uuid; });
-        var graphTimeseries = angular.copy(graphTimeseriesTemplate);
-
-        graphTimeseries.data = ts.events;
-
-        if (tsSelection) {
-          // If not, then We're probably on the map, where these two don't matter.
-          graphTimeseries.order = tsSelection.order;
-          graphTimeseries.color = tsSelection.color;
-        }
-        graphTimeseries.id = ts.uuid;
-        graphTimeseries.valueType = ts.value_type;
-        graphTimeseries.measureScale = ts.observation_type.scale;
-
-        graphTimeseries.start = ts.start;
-        graphTimeseries.end = ts.end;
+        var graphTimeseries = {
+          id: ts.uuid,
+          data: ts.events,
+          measureScale: ts.observation_type.scale,
+          valueType: ts.value_type,
+          keys: { x: 'timestamp', y: yKey },
+          start: ts.start,
+          end: ts.end
+        };
 
         graphTimeseries = addTimeseriesProperties(graphTimeseries);
         result.push(graphTimeseries);
@@ -531,7 +442,6 @@ angular.module('timeseries').service('TimeseriesUtilService', [
     };
 
     var filterTimeseries = function (results) {
-
       // maximum number of timeseries events, more probably results in a
       // memory error.
       var MAX_NR_TIMESERIES_EVENTS = 25000;
@@ -570,8 +480,7 @@ angular.module('timeseries').service('TimeseriesUtilService', [
 
     return {
       filterTimeseries: filterTimeseries,
-      formatTimeseriesForGraph: formatTimeseriesForGraph,
-      addTimeseriesProperties: addTimeseriesProperties
+      formatTimeseriesForGraph: formatTimeseriesForGraph
     };
   }
 ]);

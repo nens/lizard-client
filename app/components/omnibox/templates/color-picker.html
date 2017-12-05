@@ -1,5 +1,4 @@
-<ul class="color-picker animate-repeat"
-    ng-if="colorPicker.enabled">
+<ul class="color-picker animate-repeat">
   <li ng-repeat="color in colorPicker.availableColors"
       ng-class="{selected: (color === colorPicker.selectedColor)}"
       ng-click="selectColor(color); $event.stopPropagation();"

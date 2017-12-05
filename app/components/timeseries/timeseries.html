@@ -72,25 +72,25 @@
       <div class="timeseries-controls-container"
            ng-class="{hidden: !fullDetails}">
         <div class="timeseries-interval-btn"
-             ng-click="zoomToInterval(timeseries.selected.value_type, 'one_year')"
+             ng-click="zoomToInterval('one_year')"
              translate>
           1Y
         </div>
 
         <div class="timeseries-interval-btn"
-             ng-click="zoomToInterval(timeseries.selected.value_type, 'three_months')"
+             ng-click="zoomToInterval('three_months')"
              translate>
           3M
         </div>
 
         <div class="timeseries-interval-btn"
-             ng-click="zoomToInterval(timeseries.selected.value_type, 'two_weeks')"
+             ng-click="zoomToInterval('two_weeks')"
              translate>
           2W
         </div>
 
         <div class="timeseries-interval-btn"
-             ng-click="zoomToInterval(timeseries.selected.value_type, 'timesteps_range')"
+             ng-click="zoomToInterval('timesteps_range', timeseries.selected)"
              translate>
           ZOOM TO EXTENT
         </div>

@@ -17,14 +17,14 @@
 
   <div ng-repeat="(uuid, properties) in asset.properties">
     <rain
-      ng-if="isRainyLayer(properties) && asset.geometry.type === 'Point'"
+      ng-if="getLayerByUuid(properties.uuid).active && isRainyLayer(properties) && asset.geometry.type === 'Point'"
       rain="properties"
       geometry="asset.geometry"
       time-state="timeState">
     </rain>
 
     <defaultpoint
-      ng-if="asset.geometry.type === 'Point' && !isRainyLayer(properties) && uuid !== 'annotations'"
+      ng-if="getLayerByUuid(properties.uuid).active && asset.geometry.type === 'Point' && !isRainyLayer(properties) && uuid !== 'annotations'"
       content="properties"
       name="uuid"
       time-state="timeState">

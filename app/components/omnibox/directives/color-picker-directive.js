@@ -3,14 +3,17 @@
  * @description Directive for a color picker.
  */
 angular.module('omnibox')
-.directive('colorPicker', ['UtilService', 'TimeseriesService', 'DataService', 'DBCardsService',
-  function (UtilService, TimeseriesService, DataService, DBCardsService) {
+.directive('colorPicker',
+           ['UtilService', 'TimeseriesService', 'DataService', 'DBCardsService',
+             'DashboardChartService', function (
+               UtilService, TimeseriesService, DataService, DBCardsService, DashboardChartService) {
 
     var link = function(scope, element, attrs) {
+      var chart = DashboardChartService.getOrCreateChart(attrs.chartKey);
+
       scope.colorPicker = {
-        enabled: false,
         availableColors: UtilService.GRAPH_COLORS,
-        selectedColor: scope.selection.color
+        selectedColor: chart.color
       };
 
       scope.openColorPicker = function (tsUuid) {
@@ -25,20 +28,13 @@ angular.module('omnibox')
 
       scope.selectColor = function(color) {
         scope.colorPicker.selectedColor = color;
-        scope.closeColorPicker(attrs.index);
+        chart.color = color;
+        DataService.buildDashboard();
+        scope.closeColorPicker(chart.uuid);
       };
 
-      scope.$watch('colorPicker.selectedColor', function() {
-        scope.selection.color = scope.colorPicker.selectedColor;
-        if (scope.selection.timeseries){
-          TimeseriesService.onColorChange(scope.selection);
-        } else {
-          DataService.onColorChange(scope.selection);
-        }
-      });
-
       scope.colorPickersSettings = DBCardsService.colorPickersSettings;
-      scope.$watch('colorPickersSettings["' + attrs.index + '"]', function (n) {
+      scope.$watch('colorPickersSettings["' + chart.uuid + '"]', function (n) {
         scope.colorPicker.enabled = n;
       });
     };

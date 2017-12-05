@@ -160,7 +160,7 @@ angular.module('lizard-nxt')
 
       // Create new ones
       else {
-        graph._containers[index] = new ChartContainer(item, temporal);
+        graph._containers[index] = new ChartContainer(item);
       }
 
     });
@@ -612,25 +612,25 @@ angular.module('lizard-nxt')
       );
   };
 
-  Graph.prototype.drawCircleOnLine = function (xLocation, remove) {
-    var R = 5; // radius of dot.
+    Graph.prototype.drawCircleOnLine = function (xLocation, remove) {
+      var R = 5; // radius of dot.
 
-    var fg = this._svg.select('#feature-group');
+      var fg = this._svg.select('#feature-group');
 
-    // Move listener rectangle to the front
-    var el = this._svg.select('#listeners').node();
-        el.parentNode.appendChild(el);
+      // Move listener rectangle to the front
+      var el = this._svg.select('#listeners').node();
+      el.parentNode.appendChild(el);
 
-    var g = fg.select('.interaction-group');
-    if (remove) {
-      g.selectAll('circle').remove();
-    }
+      var g = fg.select('.interaction-group');
+      if (remove) {
+        g.selectAll('circle').remove();
+      }
 
-    if (!this._containers) { return; }
+      if (!this._containers) { return; }
 
-    var chart = this._containers[0];
+      var chart = this._containers[0];
 
-    if (!chart) { return; }
+      if (!chart || !chart.data || chart.data.data === null) return;
 
     var i = UtilService.bisect(chart.data, chart.keys.x, xLocation);
     var d = chart.data[i];
@@ -1272,8 +1272,10 @@ angular.module('lizard-nxt')
     return x;
   };
 
-  var drawPath = function (svg, pathFn, data, duration, path, color, unit) {
-    if (!path) {
+    var drawPath = function (svg, pathFn, data, duration, path, color, unit) {
+      if (data && data.data === null) return;
+
+      if (!path) {
       var fg = svg.select('g').select('#feature-group');
       // bring to front
       fg.node().parentNode.appendChild(fg.node());
@@ -1335,11 +1337,10 @@ angular.module('lizard-nxt')
         values.push({
           x: x2,
           y: y2,
-          location: chart.location,
+          description: chart.description,
           ylabel: chart.labels.y,
           unit: chart.unit,
           reference_frame: chart.reference_frame,
-          name: chart.name,
           value: value,
           color: chart.color
         });
@@ -1402,16 +1403,6 @@ angular.module('lizard-nxt')
             .attr('stroke', 'none')
             .attr('fill', v.color);
 
-        var location = (v.location) ? v.location : '';
-        var name = (v.name) ? ', ' + v.name : '';
-
-        var parameter;
-        try {
-          parameter = content[0].parameter;
-        } catch (e) {
-          parameter = '';
-        }
-
         var unit;
         if (v.ylabel) {
           unit = v.ylabel;
@@ -1419,10 +1410,7 @@ angular.module('lizard-nxt')
           unit = addReferenceFrameToUnit(v.unit, v.reference_frame);
         }
 
-        var boxText = value + ' ' + unit + ' - ' + location;
-        if (parameter !== '') {
-          boxText += ", " + parameter;
-        }
+        var boxText = value + ' ' + unit + ' - ' + v.description;
 
         var tspan = valuebox.select('text')
                             .append('tspan')
@@ -1680,7 +1668,7 @@ angular.module('lizard-nxt')
             graph.transTime
           );
         }
-      });
+      }).append('title').text('Click to cycle through Y axes');
     }
 
     clickRect
@@ -1751,8 +1739,6 @@ angular.module('lizard-nxt')
     var activeCharts = graph._containers.filter(function (chart) {
       return chart.unit === graph._activeUnit;
     });
-
-    // console.log("[!] A PLOT SHOULD BE VISIBLE CONTAINING " + activeCharts.length + " LINES/BAR-SETS");
 
     if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
       var PADDING = 15;

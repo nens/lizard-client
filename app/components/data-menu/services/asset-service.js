@@ -4,30 +4,9 @@
 angular.module('data-menu')
   .service("AssetService", ['ChartCompositionService', 'State', '$q', '$http',
     function (ChartCompositionService, State, $q, $http) {
+      var service = this;
 
       this.NESTED_ASSET_PREFIXES = ['pump', 'filter', 'monitoring_well'];
-
-      var removeAssetSelections = function (asset) {
-        var keepSelections = [];
-
-        for (var i = 0; i < State.selections.length; i++) {
-          var selection = State.selections[i];
-
-          var timeseriesInAsset = (asset.timeseries || []).map(
-            function (ts) { return ts.uuid; }
-          ).indexOf(selection.timeseries) !== -1;
-
-          if (timeseriesInAsset || selection.asset === asset.entity_name + "$" + asset.id) {
-            // Remove
-            ChartCompositionService.removeSelection(selection.uuid);
-          } else {
-            // Keep
-            keepSelections.push(selection);
-          }
-        }
-
-        State.selections = keepSelections;
-      };
 
       /**
        * @param {string} entity - name of the entity
@@ -55,12 +34,8 @@ angular.module('data-menu')
        */
       this.removeOldAssets = function (selectedAssets, currentAssets) {
         return currentAssets.filter(function (asset) {
-          var assetId = asset.entity_name + '$' + asset.id;
-          var keep = selectedAssets.indexOf(assetId) !== -1;
-          if (!keep) {
-            removeAssetSelections(asset);
-          }
-          return keep;
+          var assetId = service.getAssetKey(asset);
+          return selectedAssets.indexOf(assetId) !== -1;
         });
       };
 
@@ -95,7 +70,15 @@ angular.module('data-menu')
       };
 
       this.isNestedAsset = function (entityName) {
-        return this.NESTED_ASSET_PREFIXES.indexOf(entityName) !== -1;
-      }
+        if (entityName.indexOf('$') !== -1) {
+          entityName = entityName.split('$')[0];
+        }
+
+        return service.NESTED_ASSET_PREFIXES.indexOf(entityName) !== -1;
+      };
+
+      this.getAssetKey = function(asset) {
+        return asset.entity_name + '$' + asset.id;
+      };
   }
 ]);

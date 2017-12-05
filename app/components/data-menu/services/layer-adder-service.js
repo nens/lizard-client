@@ -80,10 +80,8 @@ angular.module('data-menu')
     };
 
     this.add = function (searchLayer) {
-      State.layers.push({
-        active: false, // Add layer as non-active to menu. So when users
-                       // activate it they can get a clear message whether
-                       // this succeeds.
+      State.layers.unshift({
+        active: true,
         type: searchLayer.entity_name,
         uuid: searchLayer.entity_uuid.slice(0, 7), // Add layer with short
                                                    // uuid.

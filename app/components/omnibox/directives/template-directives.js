@@ -18,6 +18,7 @@ angular.module('omnibox')
 
       scope.assetType = 'asset';
       scope.user = user;
+      scope.getLayerByUuid = State.getLayerByUuid;
       scope.isRainyLayer = State.isRainyLayer;
 
       var clickId;
@@ -27,7 +28,6 @@ angular.module('omnibox')
       };
 
       var setAsset = function (asset) {
-
         if (clickId) {
           removeAsset(clickId);
         }
@@ -89,6 +89,7 @@ function (MapService, ClickFeedbackService, State, CSVService, user) {
 
       scope.user = user;
       scope.showNoData = false;
+      scope.getLayerByUuid = State.getLayerByUuid;
       scope.isRainyLayer = State.isRainyLayer;
 
       // expose CSV functions for export
@@ -247,43 +248,6 @@ angular.module('omnibox')
         scope.asset.selectedAsset = scope.list[0];
       });
 
-      var removeTSofAsset = function (asset) {
-        State.selections.forEach(function (selection) {
-          if (!selection.active) return; // Already in active
-
-          if (selection.timeseries &&
-              (asset.timeseries || []).map(
-                function (ts) { return ts.uuid; }).indexOf(selection.timeseries) !== -1) {
-
-            if (State.context === 'map') {
-              selection.active = false;
-            } else {
-              ChartCompositionService.deactivateSelection(selection);
-            }
-          }
-        });
-      };
-
-      scope.selectedAssetChanged = function (newAsset) {
-        scope.list.forEach(function (asset) {
-          if (asset.entity_name === newAsset.entity_name
-            && asset.id === newAsset.id) {
-            return;
-          }
-          else {
-            removeTSofAsset(asset);
-          }
-        });
-      };
-
-      scope.$on('$destroy', function () {
-        // Either the 'X' in the omnibox was clicked, or we're switching to the Dashboard.
-        // If we are switching to dashboard, we want to keep the selected timeseries.
-
-        if (State.context === 'map') {
-          scope.list.forEach(function (asset) { removeTSofAsset(asset); });
-        }
-      });
     },
     restrict: 'E',
     scope: {

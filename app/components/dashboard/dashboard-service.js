@@ -2,8 +2,8 @@
 
 angular.module('dashboard')
 .service('DashboardService', [
-         'EventAggregateService','State','ChartCompositionService',
-function (EventAggregateService,  State,  ChartCompositionService) {
+         'EventAggregateService','State', 'DashboardChartService', 'ChartCompositionService',
+function (EventAggregateService,  State,  DashboardChartService, ChartCompositionService) {
 
   this.GRAPH_PADDING = 13; // Padding around the graph svg. Not to be confused
   // with the padding inside the svg which is used for
@@ -33,196 +33,119 @@ function (EventAggregateService,  State,  ChartCompositionService) {
    * @param  {array} timeseries Data source timeseries from timseriesService.
    * @param  {array} assets     Data source DataService.assets.
    * @param  {array} geometries Data source DataService.geometries.
-   * @param  {array} selections State.selections.
    * @return {array} graph
    */
-  this.buildGraphs = function (graphs, timeseries, assets, geometries,
-                               selections)
+  this.buildGraphs = function (graphs, layers, timeseries, assets, getAssetByKey, geometries)
   {
+    if (State.temporal.timelineMoving) return;
+
+    // This is here to remove inactive charts from the ChartComposition.
+    // 'fetching' is set in rasterlayer-directive when fetching raster data async.
+    DashboardChartService.updateDashboardCharts(
+      layers.filter(function (layer) {
+        return (layer.active || layer.fetching) && layer.type === 'raster';
+      }),
+      assets,
+      geometries,
+      []);
+
     graphs = this._setAllContentToNotUpdated(graphs);
 
-    /**
-     * Checks if a selectable data item is in selections and returns it.
-     *
-     * @param  {array} selectiontype  timeseries, geom, asset, ... etc.
-     * @param  {array} selectionId    Data source timeseries from timseriesService.
-     * @param  {array} rasterId       Data source DataService.assets.
-     * @return {function}             returns a function that returns a selection
-     *                                based on a raster uuid or undefined () if
-     *                                no raster is available for that selection
-     *                                type.
-     */
-    var findSelection = function (selectiontype, selectionId) {
-
-      return function (rasterId) {
-        var theSelection = _.find(selections, function(selection){
-          return selection[selectiontype] === selectionId &&
-                 selection.raster === rasterId;
+    var getChartData = function(chart) {
+      var result;
+      if (chart.type === 'timeseries') {
+        var ts = _.find(timeseries, function (ts) {
+          return ts.id.indexOf(chart.timeseries) !== -1;
         });
-        return theSelection;
-      };
+        if (!ts) return null;
+        return {
+          data: ts.data,
+          keys: {x: 'timestamp', y: chart.measureScale === 'ratio' ? 'sum' : 'value'}
+        };
+      } else {
+        var assetOrGeom;
+
+        if (chart.asset) {
+          assetOrGeom = getAssetByKey(chart.asset);
+        } else {
+          assetOrGeom = _.find(geometries, function (geom) {
+            geom = geom.geometry;
+            return (chart.geometry.type === geom.type &&
+                    chart.geometry.coordinates[0] == geom.coordinates[0] &&
+                    chart.geometry.coordinates[1] == geom.coordinates[1]);
+          });
+        }
+
+        // Sometimes when restoring favourites the data isn't present yet,
+        // just ignored it then. It'll get updated next time buildGraphs is called.
+        if (!assetOrGeom || !assetOrGeom.properties ||
+            !assetOrGeom.properties[chart.raster] ||
+            !assetOrGeom.properties[chart.raster].data) {
+          return null;
+        }
+
+        return {
+          data: assetOrGeom.properties[chart.raster].data,
+          keys: {x: 0, y: 1}
+        };
+      }
     };
 
-    timeseries.forEach(function (ts) {
-      if (!ts.unit && ts.reference_frame === undefined && ts.parameter === undefined) {
-        // Timeseries not entirely ready yet, don't draw!
-        return;
-      }
-
-      var selection = (findSelection('timeseries', ts.id)());
-      if (selection && selection.active) {
-        var order = ChartCompositionService.getChartIndexForSelection(selection.uuid);
-        ts.updated = true;
-        ts.color = selection.color;
-        ts.order = order;
-        if (graphs[order]) {
-          // Check if timeseries is already in the plot, if so replace data.
-          var partOfContent =_.find(graphs[order].content, { id: ts.id });
-          if (partOfContent) {
-            partOfContent.data = ts.data;
-            partOfContent.color = selection.color;
-            // Keep this graph
-            partOfContent.updated = true;
-          } else {
-            ts.selectionUuid = selection.uuid;
-            graphs[order].content.push(ts);
-          }
-        }
-        else {
-          ts.selectionUuid = selection.uuid;
-          graphs[order] = { content: [ts] };
-        }
-
-        graphs[order].type = (
-          ts.valueType === 'image' ? 'image' :
-          ts.measureScale === 'ratio'? 'temporalBar': 'temporalLine'
-        );
-      }
-    });
-
-    assets.forEach(function (asset) {
-
-      var getSelected = findSelection('asset', asset.entity_name + "$" + asset.id);
-      graphs = addPropertyData(graphs, asset.properties, getSelected);
-
-      // Specific logic to add crosssections. We could abstract this to all
-      // assets with children that have timeseries.
-      if (asset.entity_name === 'leveecrosssection'
-        && asset.crosssection && asset.crosssection.active) {
-        graphs[asset.crosssection.order] = {
-          'type': 'crosssection',
-          'content': [asset]
-        };
-        graphs[asset.crosssection.order].content[0].updated = true;
-      }
-    });
-
-    geometries.forEach(function (geometry) {
-      var getSelected = findSelection(
-        'geom', geometry.geometry.coordinates.toString());
-      graphs = addPropertyData(graphs, geometry.properties, getSelected);
-    });
-
-    /* Add eventseries graphs from selections. */
-    var eventSelections = _.filter(selections, function (selection) {
-      return selection.type === 'eventseries';
-    });
-    if (eventSelections.length) {
-      // I don't understand ordering, just adding these at the end.
-      graphs.push({
-        'type': 'event',
-        'content': eventSelections.map(this._getContentForEventSelection)
-      });
-    }
-
-    // Add empty graphs for undefined items.
-    _.forEach(graphs, function (graph, i) {
-      if (graph === undefined) {
-        graphs[i] = { type: 'empty', content: [{ updated: true, selectionUuid: null }]};
-      }
-    });
-
-    var filteredGraphs = this._filterActiveGraphs(graphs);
-
-    var graph,
-        endlosung = [],
-        getTypeForSelectionUuid = function (selectionUuid) {
-          var theType;
-          filteredGraphs.forEach(function (g) {
-            if (_.find(g.content, { selectionUuid: selectionUuid })) {
-              theType = g.type;
-            }
-          });
-          return theType;
-        },
-        getDimensionsForSelectionUuid = function (selectionUuid) {
-          var theDimensions;
-          filteredGraphs.forEach(function (g) {
-            if (_.find(g.content, { selectionUuid: selectionUuid })) {
-              theDimensions = g.dimensions;
-            }
-          });
-          return theDimensions;
-        },
-        getContentElemForSelectionUuid = function (selectionUuid) {
-          var potentialContentElem,
-              theContentElem;
-          filteredGraphs.forEach(function (g) {
-            potentialContentElem = _.find(g.content, { selectionUuid: selectionUuid });
-            if (potentialContentElem) {
-              theContentElem = potentialContentElem;
-            }
-          });
-          return theContentElem;
-        };
-
-      ChartCompositionService.composedCharts.forEach(function (value, index) {
-      graph = {
+    var Endlösung = [];
+    ChartCompositionService.composedCharts.forEach(function (value, index) {
+      var graph = {
         type: null,
         content: [],
         dimensions: null
       };
 
-      value.forEach(function (selectionUuid) {
-        graph.type =
-          graph.type || getTypeForSelectionUuid(selectionUuid);
+      value.forEach(function (chartKey) {
+        var chart = DashboardChartService.getOrCreateChart(chartKey);
+        var chartData = getChartData(chart);
+        if (!chartData) return;
 
-        graph.dimensions =
-           graph.dimensions || getDimensionsForSelectionUuid(selectionUuid);
+        graph.type = graph.type || (
+          chart.measureScale === 'ratio' ? 'temporalBar' : 'temporalLine');
 
-        var contentElemForSelectionUuid =
-          getContentElemForSelectionUuid(selectionUuid);
+        graph.content.push({
+          updated: true,
+          color: chart.color,
+          data: chartData.data,
+          keys: chartData.keys,
+          unit: chart.unit,
+          xLabel: chart.description,
+          description: chart.description,
+          id: chartKey,
 
-        if (contentElemForSelectionUuid) {
-          contentElemForSelectionUuid.updated = true;
-          graph.content.push(contentElemForSelectionUuid);
-        }
+          reference_frame: chart.reference_frame,
+          thresholds: [],
+        });
       });
 
       if (graph.content.length) {
-        endlosung.push(graph);
+        Endlösung.push(graph);
       }
     });
 
-    return endlosung;
+    return Endlösung;
   };
 
-  this._getContentForEventSelection = function (selection) {
-    return {
-      data: selection.data.map(function (event) {
-        return {
-          x: event.properties.timestamp_start,
-          y: parseFloat(event.properties.value)
-        };
-      }),
-      keys: {x: 'x', y: 'y'},
-      unit: '',
-      color: selection.color,
-      xLabel: '',
-      id: selection.url,
-      updated: true
-        };
-  };
+  /* this._getContentForEventSelection = function (selection) {
+   *   return {
+   *     data: selection.data.map(function (event) {
+   *       return {
+   *         x: event.properties.timestamp_start,
+   *         y: parseFloat(event.properties.value)
+   *       };
+   *     }),
+   *     keys: {x: 'x', y: 'y'},
+   *     unit: '',
+   *     color: selection.color,
+   *     xLabel: '',
+   *     id: selection.url,
+   *     updated: true
+   *   };
+   * };*/
 
   /**
    * Remove all graphs that have not been updated or are empty.
@@ -330,33 +253,6 @@ function (EventAggregateService,  State,  ChartCompositionService) {
       type = 'event';
     }
     return {type: type, content: [item]};
-  };
-
-  /**
-   * Adds DataService.[assets|geometries].properties to dashboard graphs object.
-   *
-   * @param {array} graphs         Currently plotted graphs.
-   * @param {object} properties     asset or geometries properties.
-   * @param {function} getSelected function that returns the selection
-   *                                are also selected.
-   */
-  var addPropertyData = function (graphs, properties, getSelected) {
-    _.forEach(properties, function (property, rasterID) {
-      var selection = getSelected(rasterID);
-      if(selection && selection.active){
-        property.color = selection.color;
-        var graph = graphs[selection.order];
-        var typeContent = typeContentFromProperty(property);
-        if (graph && typeContent.type === graph.type) {
-          graph.content.push(typeContent.content[0]);
-        } else {
-          graphs[selection.order] = typeContent;
-        }
-        var indexOflast = graphs[selection.order].content.length - 1;
-        graphs[selection.order].content[indexOflast].updated = true;
-        graphs[selection.order].content[indexOflast].selectionUuid = selection.uuid;
-    }});
-    return graphs;
   };
 
   var getGraphHeight = function (element, nGraphs) {

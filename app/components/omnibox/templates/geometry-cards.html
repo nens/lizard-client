@@ -39,21 +39,21 @@
   <div ng-repeat="(uuid, properties) in geom.properties">
 
     <rain
-      ng-if="isRainyLayer(properties) && (geom.id || geom.geometry.type !== 'Polygon')"
+      ng-if="getLayerByUuid(properties.uuid).active && isRainyLayer(properties) && (geom.id || geom.geometry.type !== 'Polygon')"
       rain="properties"
       geometry="geom.geometry"
       time-state="timeState">
     </rain>
 
     <defaultpoint
-      ng-if="geom.geometry.type === 'Point' && !isRainyLayer(properties) && uuid !== 'annotations'"
+      ng-if="getLayerByUuid(properties.uuid).active && geom.geometry.type === 'Point' && !isRainyLayer(properties) && uuid !== 'annotations'"
       content="properties"
       name="uuid"
       time-state="timeState">
     </defaultpoint>
 
     <div
-      ng-if="geom.geometry.type === 'LineString' && (properties.scale === 'interval' || properties.scale === 'ratio')"
+      ng-if="getLayerByUuid(properties.uuid).active && geom.geometry.type === 'LineString' && (properties.scale === 'interval' || properties.scale === 'ratio')"
       class="card active card-content"
       style="margin-top: 10px;">
 

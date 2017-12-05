@@ -3,7 +3,7 @@ angular.module('omnibox').directive('dbAssetCard', [
   'DataService',
   'DragService',
   'DBCardsService',
-  'SelectionService',
+  'DashboardChartService',
   'TimeseriesService',
   'RelativeToSurfaceLevelService',
   'getNestedAssets',
@@ -14,7 +14,7 @@ angular.module('omnibox').directive('dbAssetCard', [
     DataService,
     DragService,
     DBCardsService,
-    SelectionService,
+    DashboardChartService,
     TimeseriesService,
     RTSLService,
     getNestedAssets,
@@ -34,6 +34,12 @@ angular.module('omnibox').directive('dbAssetCard', [
         scope.noData = scope.asset.timeseries.length === 0;
         scope.relativeTimeseries = RTSLService.relativeToSurfaceLevel;
 
+        scope.getKeyForAssetTimeseries = DashboardChartService.getKeyForAssetTimeseries;
+        scope.getKeyForRasterAsset = DashboardChartService.getKeyForRasterAsset;
+        scope.isChartActive = DashboardChartService.isChartActive;
+        scope.toggleChart = DashboardChartService.toggleChart;
+        scope.getOrCreateChart = DashboardChartService.getOrCreateChart;
+
         scope.toggleColorPicker = function (tsUuid) {
           if (scope.colorPickersSettings[tsUuid]) {
             scope.closeColorPicker(tsUuid);
@@ -47,30 +53,11 @@ angular.module('omnibox').directive('dbAssetCard', [
           TimeseriesService.syncTime();
         };
 
-        scope.getSelectionMetaData = SelectionService.getMetaDataFunction(
-          scope.asset);
-
         scope.assetHasChildren = function (asset) {
           return getNestedAssets(asset).length > 0;
         };
 
         scope.state = State;
-
-        scope.toggleSelection = SelectionService.toggle;
-
-        scope.getTsDisplayName = function (selection) {
-          var metaData = scope.getSelectionMetaData(selection);
-          if (metaData.parameter) {
-            var neatParameter = metaData.parameter.split(",").join(", ");
-            if (metaData.location) {
-              return metaData.location + ", " + neatParameter;
-            } else {
-              return neatParameter;
-            }
-          } else {
-            return "...";
-          }
-        };
 
         scope.assetHasSurfaceLevel = function () {
           return ('surface_level' in scope.asset);
@@ -133,41 +120,6 @@ angular.module('omnibox').directive('dbAssetCard', [
         scope.toggleExtended = function () {
           scope.extended = !scope.extended;
         };
-
-        /**
-         * Specific toggle for crosssection
-         *
-         * @param  {object} asset with entity_name crossection and a crossection
-         *                        model.
-         */
-        scope.toggleCrosssection = function (asset) {
-
-          if (!asset.crosssection.active) {
-            var plots = DBCardsService.getActiveCountAndOrder();
-
-            asset.crosssection.order = plots.count > 0
-                                     ? plots.order + 1
-                                     : 0;
-
-            asset.crosssection.active = true;
-
-          } else {
-            asset.crosssection.active = false;
-          }
-
-          if (DataService.onGeometriesChange) {
-            DataService.onGeometriesChange();
-          }
-        };
-
-        // Init crosssection
-        if (scope.asset.entity_name === 'leveecrosssection') {
-          scope.asset.crosssection = {
-            active: false, // set to true by  toggle
-            order: 0
-          };
-          scope.toggleCrosssection(scope.asset);
-        }
 
         $timeout(function () {
           DragService.addDraggableContainer(element.find('#drag-container'));
