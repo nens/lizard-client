@@ -8,6 +8,7 @@ angular.module('lizard-nxt').controller('MasterCtrl',
    '$timeout',
    '$window',
    'CabinetService',
+   'DataService',
    'UtilService',
    'version',
    'State',
@@ -20,6 +21,7 @@ angular.module('lizard-nxt').controller('MasterCtrl',
     $timeout,
     $window,
     CabinetService,
+    DataService,
     UtilService,
     version,
     State,
@@ -121,4 +123,9 @@ angular.module('lizard-nxt').controller('MasterCtrl',
                 ChartCompositionService.composedCharts,
                 ChartCompositionService.dashboardCharts);
   };
+
+    window.dataDebug = function () {
+      console.log("The DataService has: dataLayer", DataService.dataLayers,
+                  "assets", DataService.assets);
+    };
 }]);

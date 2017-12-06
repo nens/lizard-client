@@ -132,14 +132,13 @@ angular.module('dashboard')
     }
   };
 
-  this.deleteChartsNotIn = function (uuids) {
+  this.deleteChartsNotIn = function (allKeys, keepKeys) {
     // Go through plots backwards so that removing charts doesn't break our loop
     for (var plot = service.composedCharts.length - 1; plot >= 0; plot--) {
       for (var chartIdx = service.composedCharts[plot].length - 1; chartIdx >= 0; chartIdx--) {
         var uuid = service.composedCharts[plot][chartIdx];
 
-        if (uuids.indexOf(uuid) === -1) {
-          // XXXV1.
+        if (allKeys.indexOf(uuid) !== -1 && keepKeys.indexOf(uuid) === -1) {
           // Remove unless it has 'needsUpdate', because then it's still in the process
           // of being added (by an old favourite) and will soon be shown.
           if (!(service.dashboardCharts[uuid] && service.dashboardCharts[uuid].needsUpdate)) {

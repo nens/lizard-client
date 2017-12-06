@@ -14,7 +14,8 @@ angular.module('omnibox')
   'DataService',
   'getNestedAssets',
   'TimeseriesService',
-  function (State, DataService, getNestedAssets, TimeseriesService) {
+  'DashboardChartService',
+  function (State, DataService, getNestedAssets, TimeseriesService, DashboardChartService) {
 
     var link = function (scope, element, attrs) {
 
@@ -37,14 +38,18 @@ angular.module('omnibox')
             var assetId = asset.entity_name + '$' + asset.id;
             var i = State.assets.indexOf(assetId);
             if (i !== -1) {
+              DashboardChartService.deleteChartsForAsset(assetId);
               State.assets.removeAsset(assetId);
+              DataService.buildDashboard();
             }
           });
 
           // Remove the asset itself (for local scope.asset)
           var selectedAssets = State.assets;
           if (selectedAssets.indexOf(assetId) >= 0) {
+            DashboardChartService.deleteChartsForAsset(assetId);
             selectedAssets.removeAsset(assetId);
+            DataService.buildDashboard();
           }
         }
       };
@@ -64,4 +69,3 @@ angular.module('omnibox')
     };
 
   }]);
-

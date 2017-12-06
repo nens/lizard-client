@@ -42,9 +42,7 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
     // This is here to remove inactive charts from the ChartComposition.
     // 'fetching' is set in rasterlayer-directive when fetching raster data async.
     DashboardChartService.updateDashboardCharts(
-      layers.filter(function (layer) {
-        return (layer.active || layer.fetching) && layer.type === 'raster';
-      }),
+      layers.filter(function (layer) { return layer.type === 'raster'; }),
       assets,
       geometries,
       []);
