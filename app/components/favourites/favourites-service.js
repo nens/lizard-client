@@ -213,9 +213,6 @@ angular.module('favourites')
       this.applyFavourite = function (favourite) {
         State.resetState();
 
-        // Prevent updates while we're doing it
-        State.temporal.timelineMoving = true;
-
         if (favourite.state.temporal && favourite.state.temporal.relative) {
           favourite.state.temporal = adhereTemporalStateToInterval(
             favourite.state.temporal
@@ -284,14 +281,7 @@ angular.module('favourites')
           }
         });
 
-        // Set timeline moving to false after digest loop
-        $timeout(
-          function () {
-            State.temporal.timelineMoving = false;
-          },
-          0, // no delay, fire when digest ends
-          true // trigger new digest loop
-        );
+        UtilService.announceMovedTimeline(State);
       };
 
       return this;

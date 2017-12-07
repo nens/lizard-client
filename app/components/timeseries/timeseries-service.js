@@ -122,12 +122,14 @@ angular.module('timeseries').service("TimeseriesService", [
         }
 
         timeseriesPromise.then(function (response) {
+          console.log('Setting timeseries to', response);
           service.timeseries = response;
           return service.timeseries;
-        }).then(function (ts) {
-          DataService.buildDashboard();
-          return ts;
-	});
+        });
+                          //.then(function (ts) {
+          // DataService.buildDashboard();
+//          return ts;
+//	});
 
         return timeseriesPromise;
       };
@@ -224,6 +226,7 @@ angular.module('timeseries').service("TimeseriesService", [
     };
 
     var errorFn = function (err) {
+      console.error('errorFn called:', err);
       if (err.status === 420 || err.status === -1) {
         // Cancel normal operations
         return $q.reject(err);
