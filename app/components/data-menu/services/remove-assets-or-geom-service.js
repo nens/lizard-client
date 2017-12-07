@@ -4,12 +4,13 @@
  * geometry, else all geometries. Result, one selected element.
  */
 angular.module('data-menu')
-.service("rmAllButLastAssetAndGeometry", ['State',
-function (State) {
+.service("rmAllButLastAssetAndGeometry", ['State', 'DashboardChartService',
+function (State, DashboardChartService) {
 
   return function () {
     State.assets.forEach(function (asset) {
       if (State.assets.length > 1) {
+        DashboardChartService.deleteChartsForAsset(asset);
         State.assets.removeAsset(asset);
       }
     });
