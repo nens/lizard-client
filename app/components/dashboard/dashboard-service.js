@@ -47,6 +47,8 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
       geometries,
       []);
 
+    console.log('buildGraphs; called updateDashboardCharts, chartComposition =',
+                ChartCompositionService.composedCharts);
     graphs = this._setAllContentToNotUpdated(graphs);
 
     var getChartData = function(chart) {
@@ -100,7 +102,10 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
       value.forEach(function (chartKey) {
         var chart = DashboardChartService.getOrCreateChart(chartKey);
         var chartData = getChartData(chart);
-        if (!chartData) return;
+        if (!chartData) {
+          console.log('buildGraphs: no data for chart', chartKey);
+          return;
+        }
 
         graph.type = graph.type || (
           chart.measureScale === 'ratio' ? 'temporalBar' : 'temporalLine');
@@ -125,6 +130,7 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
       }
     });
 
+    console.log('buildGraphs: Endlösung', JSON.parse(JSON.stringify(Endlösung)));
     return Endlösung;
   };
 

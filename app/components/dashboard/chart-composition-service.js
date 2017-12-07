@@ -165,4 +165,7 @@ angular.module('dashboard')
     return null;
   };
 
+  this.makeEmpty = function () {
+    service.composedCharts = [];
+  };
 }]);

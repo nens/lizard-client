@@ -13,8 +13,11 @@ angular.module('map')
 .service('MapService',
         ['$rootScope', 'CabinetService', 'LeafletService', 'NxtRegionsLayer',
          'UtfGridService', 'baselayer', 'eventseriesMapLayer', 'State',
+         'ChartCompositionService',
   function ($rootScope, CabinetService, LeafletService, NxtRegionsLayer,
-          UtfGridService, baselayer, eventseriesMapLayer, State) {
+            UtfGridService, baselayer, eventseriesMapLayer, State,
+            ChartCompositionService,
+  ) {
 
     var topography = 'https://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa98k8k';
     var satellite = 'https://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa79205';
@@ -212,6 +215,7 @@ angular.module('map')
       },
 
       _setAssetOrGeomFromUtfOnState: function (latLng) {
+        ChartCompositionService.makeEmpty();
         State.assets = [];
         State.geometries = [];
         service.getDataFromUtfLayers(
