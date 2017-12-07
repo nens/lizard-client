@@ -216,19 +216,6 @@ angular.module('favourites')
         // Prevent updates while we're doing it
         State.temporal.timelineMoving = true;
 
-        // Reset dashboard charts
-        if (favourite.state.VERSION === 1 &&
-            favourite.state.selections && favourite.state.selections.length) {
-          // XXXV1. Won't be needed anymore when these are gone from the database.
-          favourite.state.chartComposition = DashboardChartService.translateSelections(
-            favourite.state.selections);
-        }
-        if (favourite.state.chartComposition) {
-          var composition = favourite.state.chartComposition;
-          ChartCompositionService.dashboardCharts = composition.dashboardCharts;
-          ChartCompositionService.composedCharts = composition.composedCharts;
-        }
-
         if (favourite.state.temporal && favourite.state.temporal.relative) {
           favourite.state.temporal = adhereTemporalStateToInterval(
             favourite.state.temporal
@@ -254,6 +241,19 @@ angular.module('favourites')
           favourite.state.geometries.forEach(function (geometry) {
             State.geometries.addGeometry(geometry);
           });
+        }
+
+        // Reset dashboard charts
+        if (favourite.state.VERSION === 1 &&
+            favourite.state.selections && favourite.state.selections.length) {
+          // XXXV1. Won't be needed anymore when these are gone from the database.
+          favourite.state.chartComposition = DashboardChartService.translateSelections(
+            favourite.state.selections);
+        }
+        if (favourite.state.chartComposition) {
+          var composition = favourite.state.chartComposition;
+          ChartCompositionService.dashboardCharts = composition.dashboardCharts;
+          ChartCompositionService.composedCharts = composition.composedCharts;
         }
 
         if (favourite.state.spatial && !_.isUndefined(favourite.state.spatial.bounds)) {

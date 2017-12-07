@@ -35,7 +35,9 @@ angular.module('data-menu')
       this.removeOldAssets = function (selectedAssets, currentAssets) {
         return currentAssets.filter(function (asset) {
           var assetId = service.getAssetKey(asset);
-          return selectedAssets.indexOf(assetId) !== -1;
+          var parentId = asset.parentAsset;
+          return (selectedAssets.indexOf(assetId) !== -1 ||
+                  (parentId && selectedAssets.indexOf(parentId) !== -1));
         });
       };
 

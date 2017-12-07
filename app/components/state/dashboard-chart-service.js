@@ -89,7 +89,7 @@ angular.module('global-state')
       };
 
       var updateDashboardCharts = function(
-        activeTemporalRasterLayers, activeAssets, activeGeometries, activeEventseries) {
+        rasterLayers, assets, activeGeometries, activeEventseries) {
         /*
            Generate a list of all dashboard chart keys (currentDashboard keys) related to the
            current layers, assets, geometries.
@@ -97,19 +97,39 @@ angular.module('global-state')
            should be removed from the ChartComposition, apparently some layer or asset was
            turned off elsewhere.
          */
-        var currentDashboardKeys = [];
+        var allDashboardKeys = [].concat(
+          rasterGeometryDashboardKeys(rasterLayers, activeGeometries),
+          rasterAssetDashboardKeys(rasterLayers, assets)
+        );
 
-        currentDashboardKeys = currentDashboardKeys.concat(
-          timeseriesDashboardKeys(activeAssets));
-        currentDashboardKeys = currentDashboardKeys.concat(
-          rasterGeometryDashboardKeys(activeTemporalRasterLayers, activeGeometries));
-        currentDashboardKeys = currentDashboardKeys.concat(
-          rasterAssetDashboardKeys(activeTemporalRasterLayers, activeAssets));
+        var activeLayers = rasterLayers.filter(function (layer) {
+          return (layer.active || layer.fetching);
+        });
 
-        ChartCompositionService.deleteChartsNotIn(currentDashboardKeys);
+        var activeAssets = assets.filter(function (asset) {
+          return State.assets.indexOf(AssetService.getAssetKey(asset)) !== -1;
+        });
+
+        var currentDashboardKeys = [].concat(
+          rasterGeometryDashboardKeys(rasterLayers, activeGeometries),
+          rasterAssetDashboardKeys(rasterLayers, activeAssets)
+        );
+
+        ChartCompositionService.deleteChartsNotIn(allDashboardKeys, currentDashboardKeys);
       };
 
-      var createRasterGeometryChart = function(parts) {
+      var deleteChartsForAsset = function(assetId) {
+        var asset = DataService.getAssetByKey(assetId);
+        if (!asset) return;
+
+        asset.timeseries.forEach(function (ts) {
+          var uuid = ts.uuid;
+          var key = getKeyForAssetTimeseries(uuid);
+          ChartCompositionService.removeChart(key);
+        });
+      };
+
+      var createRasterGeometryChart = function(parts, allowEmpty) {
         // Parts is ['raster', '708dcc', 'geometry', '5.6565', '20.000'];
         var key = parts.join(KEY_SEP);
         var geometry = {
@@ -123,14 +143,18 @@ angular.module('global-state')
           // XXXV1; Return temporary chart. This is necessary for restoring old
           // favourites that don't have the async parts of charts in them, can be
           // removed when V1 favourites are not relevant anymore.
-          return {
-            needsUpdate: true,
-            type: 'raster',
-            uuid: key,
-            geometry: geometry,
-            color: getDefaultColor(),
-            raster: rasterUuid
-          };
+          if (allowEmpty) {
+            return {
+              needsUpdate: true,
+              type: 'raster',
+              uuid: key,
+              geometry: geometry,
+              color: getDefaultColor(),
+              raster: rasterUuid
+            };
+          } else {
+            return null;
+          }
         } else {
           return {
             uuid: key,
@@ -182,7 +206,7 @@ angular.module('global-state')
         }
       };
 
-      var createTimeseriesChart = function(parts) {
+      var createTimeseriesChart = function(parts, allowEmpty) {
         // Parts is ['timeseries', '32322233221']
         var key = parts.join(KEY_SEP);
 
@@ -191,12 +215,16 @@ angular.module('global-state')
         // favourites that don't have the async parts of charts in them, can be
         // removed when V1 favourites are not relevant anymore.
         if (!timeseriesAndAsset) {
-          return {
-            uuid: key,
-            type: "timeseries",
-            needsUpdate: true,
-            color: getDefaultColor()
-          };
+          if (allowEmpty) {
+            return {
+              uuid: key,
+              type: "timeseries",
+              needsUpdate: true,
+              color: getDefaultColor()
+            };
+          } else {
+            return null;
+          }
         }
 
         var ts = timeseriesAndAsset.timeseries;
@@ -213,17 +241,17 @@ angular.module('global-state')
         };
       };
 
-      var createChart = function (key) {
+      var createChart = function (key, allowEmpty) {
         var parts = key.split(KEY_SEP);
         switch (parts[0]) {
           case 'raster':
             if (parts[2] == 'geometry') {
-              return createRasterGeometryChart(parts);
+              return createRasterGeometryChart(parts, allowEmpty);
             } else {
               return createRasterAssetChart(parts);
             }
           case 'timeseries':
-            return createTimeseriesChart(parts);
+            return createTimeseriesChart(parts, allowEmpty);
           default:
             console.error("Unknown key type!", key);
         }
@@ -237,7 +265,7 @@ angular.module('global-state')
         } else if (chart.needsUpdate) {
           // XXXV1; This is horrible, especially the call to syncTime(). Only needed
           // for V1 favourites.
-          var newChart = createChart(key);
+          var newChart = createChart(key, true);
           if (!newChart.needsUpdate) {
             newChart.color = chart.color;
             chart = newChart;
@@ -283,11 +311,11 @@ angular.module('global-state')
         selections.forEach(function (selection) {
           var chart;
           if (selection.type === 'timeseries') {
-            chart = createTimeseriesChart(['timeseries', selection.timeseries]);
+            chart = createTimeseriesChart(['timeseries', selection.timeseries], true);
           } else if (selection.type === 'raster' && selection.geom) {
             var geomParts = selection.geom.split(',');
             chart = createRasterGeometryChart(
-              ['raster', selection.raster, 'geometry', geomParts[0], geomParts[1]]);
+              ['raster', selection.raster, 'geometry', geomParts[0], geomParts[1]], true);
           } else {
             return; // Not a selection we can handle
           }
@@ -306,6 +334,7 @@ angular.module('global-state')
       return {
         toggleChart: toggleChart,
         updateDashboardCharts: updateDashboardCharts,
+        deleteChartsForAsset: deleteChartsForAsset,
         getKeyForAssetTimeseries: getKeyForAssetTimeseries,
         getKeyForRasterGeometry: getKeyForRasterGeometry,
         getKeyForRasterAsset: getKeyForRasterAsset,

@@ -39,11 +39,8 @@ angular.module('data-menu')
 
       // Callback for when assets are being retrieved from api
       var assetChange = function (asset) {
-
         if (asset) {
-
           asset.parentAsset = null;
-
           _.forEach(AssetService.NESTED_ASSET_PREFIXES, function (prefix) {
 
             var plural = prefix + 's';
@@ -56,7 +53,9 @@ angular.module('data-menu')
               // property with value equal to parentAssetKey
               // (e.g 'groundwater_station$303')
               _.forEach(asset[plural], function (nestedAsset) {
+                nestedAsset.entity_name = prefix;
                 nestedAsset.parentAsset = parentAssetKey;
+                instance.assets.push(nestedAsset);
               });
             }
           });
@@ -70,8 +69,9 @@ angular.module('data-menu')
         // Deduplicate instance.assets asynchronous.
         instance.assets = _.uniqWith(instance.assets, _.isEqual);
 
-        // instantes
+        // instances
         instance.getGeomDataForAssets(instance.oldAssets, instance.assets);
+
         instance.buildDashboard();
       };
 
