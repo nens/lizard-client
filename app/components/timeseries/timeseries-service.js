@@ -122,13 +122,7 @@ angular.module('timeseries').service("TimeseriesService", [
         }
 
         timeseriesPromise.then(function (response) {
-          service.timeseries = _.filter(
-            response,
-            function (ts) {
-              return _.some(charts, function (chart) {
-                return chart.isActive();
-              });
-            });
+          service.timeseries = response;
           return service.timeseries;
         }).then(function (ts) {
           DataService.buildDashboard();
@@ -165,9 +159,11 @@ angular.module('timeseries').service("TimeseriesService", [
 
       // Cancel consecutive calls.
       if (localPromise[chartType].reject) {
+        console.log('Cancelling calls for chartType', chartType);
         localPromise[chartType].resolve({data: {results: []}});
       }
       localPromise[chartType] = $q.defer();
+      console.log('Making promise for chartType', chartType, 'uuids', uuids);
 
       var id = uuids.join(',');
       var params = {
