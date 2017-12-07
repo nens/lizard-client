@@ -211,13 +211,7 @@ angular.module('favourites')
        * @param {object} favourite - The favourite to apply with a state.
        */
       this.applyFavourite = function (favourite) {
-        State.resetState();
-
-        if (favourite.state.temporal && favourite.state.temporal.relative) {
-          favourite.state.temporal = adhereTemporalStateToInterval(
-            favourite.state.temporal
-          );
-        }
+        State.temporal.timelineMoving = true;
 
         // Restore assets
         if (typeof favourite.state.assets !== 'undefined') {
@@ -256,6 +250,12 @@ angular.module('favourites')
         if (favourite.state.spatial && !_.isUndefined(favourite.state.spatial.bounds)) {
           State.spatial.bounds = favourite.state.spatial.bounds;
           State.spatial.bounds.isValid = function () { return true; };
+        }
+
+        if (favourite.state.temporal && favourite.state.temporal.relative) {
+          favourite.state.temporal = adhereTemporalStateToInterval(
+            favourite.state.temporal
+          );
         }
 
         // Specific attributes
