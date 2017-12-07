@@ -118,10 +118,6 @@ angular.module('global-state')
         ChartCompositionService.deleteChartsNotIn(allDashboardKeys, currentDashboardKeys);
       };
 
-      var deleteChartsForGeometry = function(geometry) {
-        //
-      };
-
       var deleteChartsForAsset = function(assetId) {
         var asset = DataService.getAssetByKey(assetId);
         if (!asset) return;

@@ -69,8 +69,9 @@ angular.module('data-menu')
         // Deduplicate instance.assets asynchronous.
         instance.assets = _.uniqWith(instance.assets, _.isEqual);
 
-        // instantes
+        // instances
         instance.getGeomDataForAssets(instance.oldAssets, instance.assets);
+
         instance.buildDashboard();
       };
 

@@ -28,7 +28,6 @@ angular.module('omnibox')
       scope.rmAssetOrGeometry = function () {
         if (scope.geometry) {
           State.geometries.removeGeometry(scope.geometry);
-          // TODO: update composedCharts!
         } else if (scope.asset) {
 
           var assetId = scope.asset.entity_name + '$' + scope.asset.id;
@@ -40,7 +39,6 @@ angular.module('omnibox')
             if (i !== -1) {
               DashboardChartService.deleteChartsForAsset(assetId);
               State.assets.removeAsset(assetId);
-              DataService.buildDashboard();
             }
           });
 
@@ -49,9 +47,10 @@ angular.module('omnibox')
           if (selectedAssets.indexOf(assetId) >= 0) {
             DashboardChartService.deleteChartsForAsset(assetId);
             selectedAssets.removeAsset(assetId);
-            DataService.buildDashboard();
           }
         }
+
+        DataService.buildDashboard();
       };
 
     };
