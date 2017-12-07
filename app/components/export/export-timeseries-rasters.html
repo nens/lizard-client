@@ -1,0 +1,45 @@
+<div>
+  <div class="modal-body">
+
+    <p aria-label="Help Text"
+       class="help-text"
+       ng-if="isAuthenticated"
+       translate>
+      You can select multiple raster-intersections to download. Once selected, press the
+      <i>"Start Export"</i> button and the exporter will fetch the time series
+      behind the scenes.
+    </p>
+
+    <p aria-label="Help Text"
+       class="help-text"
+       ng-if="!isAuthenticated"
+       translate>
+       You are not logged in. You are not economically viable. Save the world and kill yourself.
+    </p>
+
+    <!-- part 1/4: select the wanted raster (=required) -->
+    <div id="export-timeseries-raster-selector-1">
+      <p translate>
+        Please select the raster:
+      </p>
+      <select ng-model="data.selectedTemporalRaster">
+        <option
+          ng-repeat="(slug, uuid) in allTemporalRasters"
+          ng-value="uuid">
+          {{ slug }}
+        </option>
+      </select>
+    </div>
+
+  </div>
+
+  <div class="modal-footer footer-left">
+    <button
+      class="btn btn-primary start-export-button"
+      ng-click="startTimeseriesRasterExport()"
+      translate>
+      Start Export
+    </button>
+  </div>
+
+</div>
