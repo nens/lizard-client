@@ -3,5 +3,58 @@
 }
 
 #datepicker-export {
- margin-bottom: 10px;
+  margin-bottom: 10px;
 }
+
+#export-timeseries-raster-selector-1 {
+  /*background-color: #f00;*/
+  margin-bottom: 16px;
+}
+
+#export-timeseries-raster-selector-2 {
+  /*background-color: #0f0;*/
+  margin-bottom: 16px;
+}
+
+#export-timeseries-raster-selector-3 {
+  /*background-color: #00f;*/
+  min-height: 50px;
+  margin-bottom: 16px;
+}
+
+.html5-datetime-picker {
+  width: 95%;
+}
+
+.html5-datetime-picker#start-selector {
+  float: left;
+}
+
+.html5-datetime-picker#stop-selector {
+  float: right;
+}
+
+.from-to-label-2 {
+  margin-left: 5%;
+}
+
+.from-to-label-1,
+.from-to-label-2 {
+  margin-bottom: 10px;
+}
+
+.start-stop-selector-container-1,
+.start-stop-selector-container-2 {
+  width: 49%;
+}
+
+.start-stop-selector-container-1 {
+  float: left;
+}
+
+.start-stop-selector-container-2 {
+  float: right;
+}
+
+
+
