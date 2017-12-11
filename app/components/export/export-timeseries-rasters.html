@@ -1,5 +1,4 @@
 <div>
-
   <div class="modal-body" ng-if="!(isAuthenticated && hasGOAs() && hasTemporalRasters())">
     <p aria-label="Help Text"
        class="help-text"
@@ -15,8 +14,8 @@
        class="help-text"
        translate>
       You can select multiple raster-intersections to download. Once selected, press the
-      <i>"Start Export"</i> button and the exporter will fetch the timeseries
-      behind the scenes.
+      <i>"Start Export"</i> button and the exporter will fetch the raster data
+      behind the scenes. The exported data will be in CSV format.
     </p>
 
     <!-- part 1/3: select the wanted raster -->
@@ -68,8 +67,6 @@
                id="stop-selector" />
       </div>
     </div>
-
-
   </div>
 
   <div class="modal-footer footer-left">

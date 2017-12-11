@@ -16,9 +16,6 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
   var EXPORT_START_MESSAGE =
     gettextCatalog.getString(
       "Export for raster started, check your inbox.");
-  // var EXPORT_SUCCESS_MESSAGE =
-  //   gettextCatalog.getString(
-  //     "Export for raster finished succesfully.");
   var EXPORT_ERROR_MESSAGE =
     gettextCatalog.getString(
       "Lizard encountered a problem exporting your raster.");
@@ -26,18 +23,15 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
   var formatter = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
 
   var exportCbAuthenticatedUser = function (response) {
-    console.log("[F] exportCbAuthenticatedUser; response =", response);
     angular.element('#MotherModal').modal('hide');
     if (response && response.status === 200) {
-      console.log("*** AAA");
       notie.alert(4, EXPORT_START_MESSAGE, 2);
     } else {
-      console.log("*** BBB");
       notie.alert(3, EXPORT_ERROR_MESSAGE, 3);
     }
   };
 
-  function getTemporalRasters () {
+  function getAllTemporalRasters () {
     var rasterUUIDs = _.map(_.filter(State.layers, { type: 'raster' }), 'uuid');
 
     var dataLayers = _.filter(DataService.dataLayers, function (dataLayer) {
@@ -112,7 +106,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     scope.isAuthenticated = user.authenticated;
     scope.data = {};
 
-    scope.allTemporalRasters = getTemporalRasters();
+    scope.allTemporalRasters = getAllTemporalRasters();
     scope.hasTemporalRasters = function () {
       return !!_.size(scope.allTemporalRasters);
     };

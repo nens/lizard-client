@@ -39,30 +39,29 @@
           </a>
         </li>
 
-        <!--
-        <li role="presentation" ng-if="isAuthenticated">
-          <a href="rasters" aria-controls="profile" role="tab" data-toggle="tab">
-            SRasters
+        <li role="presentation">
+          <a href="#rasters"
+             aria-controls="profile"
+             role="tab"
+             data-toggle="tab"
+             translate>
+            Rasters
           </a>
         </li>
-        -->
       </ul>
 
       <div class="tab-content" style="margin: 0;">
-
-        <!-- tab #1 (content) -->
         <div role="tabpanel" class="tab-pane active" id="timeseries">
           <export-timeseries></export-timeseries>
         </div>
 
-        <!-- tab #2 (content) -->
         <div role="tabpanel" class="tab-pane" id="timeseries-rasters">
           <export-timeseries-rasters />
         </div>
 
-        <!-- TODO: tab #3 (content)
-          <export-je-moeder... >
-        -->
+        <div role="tabpanel" class="tab-pane" id="rasters">
+          <export-rasters />
+        </div>
       </div>
     </div>
   </div>
