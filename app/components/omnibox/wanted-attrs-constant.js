@@ -794,14 +794,14 @@ angular.module('omnibox')
         keyName: gettext("Connected impervious surface mixed"),
         attrName: "connected_impervious_surface_mixed",
         ngBindValue:
-          "waterchain.connected_impervious_surface_mixed * 0.00001 | niceNumberOrEllipsis: 2",
+          "waterchain.connected_impervious_surface_mixed * 0.0001 | niceNumberOrEllipsis: 2",
         valueSuffix: "ha"
       },
       {
         keyName: gettext("Connected impervious surface rainwater"),
         attrName: "connected_impervious_surface_rainwater",
         ngBindValue:
-          "waterchain.connected_impervious_surface_rainwater * 0.00001 | niceNumberOrEllipsis: 2",
+          "waterchain.connected_impervious_surface_rainwater * 0.0001 | niceNumberOrEllipsis: 2",
         valueSuffix: "ha"
       },
       {
