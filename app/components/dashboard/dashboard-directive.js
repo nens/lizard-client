@@ -60,6 +60,7 @@ angular.module('dashboard')
       };
 
       DataService.buildDashboard = buildDashboard;
+      buildDashboard();
 
       /**
        * Update dashboard when timeline has moved.

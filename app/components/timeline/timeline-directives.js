@@ -100,8 +100,8 @@ angular.module('lizard-nxt')
           State.temporal.timelineMoving = true;
           scope.$apply(function () {
             getTimeLineData();
-            State.temporal.timelineMoving = false;
           });
+          State.temporal.timelineMoving = false;
         }
         oldStart = State.temporal.start;
         oldEnd = State.temporal.end;

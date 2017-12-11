@@ -211,8 +211,6 @@ angular.module('favourites')
        * @param {object} favourite - The favourite to apply with a state.
        */
       this.applyFavourite = function (favourite) {
-        State.temporal.timelineMoving = true;
-
         // Restore assets
         if (typeof favourite.state.assets !== 'undefined') {
           favourite.state.assets.forEach(function (asset) {

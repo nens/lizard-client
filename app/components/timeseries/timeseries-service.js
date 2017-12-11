@@ -42,9 +42,7 @@ angular.module('timeseries').service("TimeseriesService", [
         } else {
           _lineTimeseries = timeseriesIn;
         }
-        if (State.context === 'dashboard') {
-          DataService.buildDashboard();
-        }
+        DataService.buildDashboard();
       }
     };
 

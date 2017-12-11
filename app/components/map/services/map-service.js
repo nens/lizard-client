@@ -16,7 +16,7 @@ angular.module('map')
          'ChartCompositionService',
   function ($rootScope, CabinetService, LeafletService, NxtRegionsLayer,
             UtfGridService, baselayer, eventseriesMapLayer, State,
-            ChartCompositionService,
+            ChartCompositionService
   ) {
 
     var topography = 'https://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa98k8k';
