@@ -1,0 +1,15 @@
+<div>
+  <div ng-if="!(isAuthenticated && hasActiveStaticRasters)" class="modal-body">
+    <p>
+      You are currently not capable of exporting raster data. The reason for this is:
+    </p>
+    <p ng-if="!isAuthenticated">
+      You are not currently logged in.
+    </p>
+    <p ng-if="isAuthenticated">
+      <span ng-if="!hasActiveStaticRasters">
+        You haven't activated any static (non-temporal) rasters in the layer
+        menu. Without this, you cannot export the raster data.
+      </span>
+    </p>
+  </div>

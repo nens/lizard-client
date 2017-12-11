@@ -1,0 +1,54 @@
+<div>
+  <div ng-if="!isAuthenticated" class="modal-body" translate>
+    You are not currently logged in. Exporting rasters is not possible.
+  </div>
+  <div ng-if="isAuthenticated" class="modal-body" translate>
+
+    <!-- part 1/4: intro -->
+    <div id="raster-export-intro-text">
+      <p aria-label="Help Text" class="help-text" translate>
+        You can select a raster/raster-intersection to export. When ready, press the
+        <i>"Start Export"</i> button and the exporter will fetch the raster data
+        behind the scenes. You will be notified with a message when the download
+        is ready.
+      </p>
+    </div>
+
+    <!-- part 2/4: select the wanted raster (=required) -->
+    <div id="raster-export-raster-picker">
+      <p translate>
+        Pick the raster you would like to export:
+      </p>
+      <select ng-model="data.selectedRaster">
+        <option
+          ng-repeat="raster in activeTemporalRasters"
+          ng-value="raster.uuid">
+          {{ raster.slug }}
+        </option>
+      </select>
+    </div>
+
+    <!-- part 3/4 select the wanted geometry (required)
+    <div id="raster-export-geometry-picker">
+      <p translate>
+        Pick the selected geometry/asset:
+      </p>
+    </div>
+
+    part 4/4: select the wanted temporal interval (=optional)
+    <div id="raster-export-date-picker">
+      <p translate>
+        Pick the date range:
+      </p>
+
+      <div class="input-daterange input-group" id="datepicker-export-rasters">
+        <input type="text" class="input-sm form-control" name="start" id="datepicker-export-start" />
+        <span class="input-group-addon" translate>to</span>
+        <input type="text" class="input-sm form-control" name="end" id="datepicker-export-end" />
+      </div>
+    </div>
+
+    -->
+
+  </div>
+</div>

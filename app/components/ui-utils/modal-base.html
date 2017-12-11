@@ -12,10 +12,61 @@
           <span aria-hidden="true">&times;</span>
         </button>
         <h4 class="modal-title" translate>
-          Export timeseries
+          Export data
         </h4>
       </div>
-      <export-selector></export-selector>
+
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a href="#timeseries" aria-controls="home" role="tab" data-toggle="tab">
+            Timeseries
+          </a>
+        </li>
+
+        <!--
+        <li role="presentation" ng-if="isAuthenticated">
+          <a href="#temporal-rasters" aria-controls="profile" role="tab" data-toggle="tab">
+            Temporal rasters
+          </a>
+        </li>
+
+        <li role="presentation" ng-if="isAuthenticated">
+          <a href="#static-rasters" aria-controls="profile" role="tab" data-toggle="tab">
+            Static rasters
+          </a>
+        </li>
+        -->
+
+        <li role="presentation" ng-if="isAuthenticated">
+          <a href="#rasters" aria-controls="profile" role="tab" data-toggle="tab">
+            Rasters
+          </a>
+        </li>
+
+      </ul>
+
+      <!-- Tab panes -->
+      <div class="tab-content" style="margin: 0;">
+        <div role="tabpanel" class="tab-pane active" id="timeseries">
+          <export-selector></export-selector>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="rasters">
+          <export-rasters />
+        </div>
+
+        <!--
+        <div role="tabpanel" class="tab-pane" id="temporal-rasters">
+          <export-temporal-rasters />
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="static-rasters">
+          <export-static-rasters />
+        </div>
+        -->
+      </div>
+
+      <!-- <export-selector></export-selector> -->
+
     </div>
   </div>
 </div>
