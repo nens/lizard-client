@@ -74,6 +74,17 @@
         <!-- asset/nested-asset TS card: END -->
 
       </div>
+
+      <div ng-if="showExtender" class="show-less-more-ts-btn">
+        <i ng-if="extended"
+           ng-click="toggleExtended()"
+           class="fa fa-arrow-circle-up"
+           title="{{ 'Show less' | translate }}"/>
+        <i ng-if="!extended"
+           ng-click="toggleExtended()"
+           class="fa fa-arrow-circle-down"
+           title="{{ 'Show more' | translate }}"/>
+      </div>
     </div>
   </div>
 

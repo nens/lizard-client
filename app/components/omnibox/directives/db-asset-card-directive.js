@@ -75,47 +75,13 @@ angular.module('omnibox').directive('dbAssetCard', [
           return parentAsset && ('surface_level' in parentAsset);
         };
 
-        /**
-         * Returns true if selection with uuid is one the first three in the list.
-         *
-         * This is used to bypass ngRepeat which loops over one big list of
-         * selections multiple times, once for each asset. It should draw the
-         * first three of each asset or more if more than three are active.
-         *
-         * @param  {str}  uuid uuid of selection.
-         * @return {Boolean} is in first three of DOM list.
-         */
-        scope.isOneOfFirstThree = function (uuid) {
-          var MAX = 3;
-          var items = element.find('.draggable-ts');
-          if (!items || items.length <= MAX) {
-            return true;
-          } else {
-            var result = false;
-            _.forEach(items, function (item, key) {
-              if (parseInt(key) < MAX) {
-                result = result || item.id === uuid;
-              }
-            });
-            return result;
-          }
-        };
-
         // Extender is the button at the bottom of the timeseries list to show
         // more or less items.
 
-        scope.showExtender = false;
-        scope.extended = true;
-
         var MANY = 3;
 
-        // If there are a few timeseries, show them all and do not show the
-        // extender button.
-        if (scope.asset.timeseries.length < MANY) {
-          scope.showExtender = false;
-        } else {
-          scope.showExtender = true;
-        }
+        scope.showExtender = scope.asset.timeseries.length > MANY;
+        scope.extended = false;
 
         scope.toggleExtended = function () {
           scope.extended = !scope.extended;
