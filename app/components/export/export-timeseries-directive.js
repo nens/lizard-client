@@ -14,13 +14,13 @@
 var ASYNC_FORMAT = 'xlsx';
 
 angular.module('export')
-.directive('exportSelector',
+.directive('exportTimeseries',
 
 ['$http', 'DataService', 'TimeseriesService', 'notie','gettextCatalog',
- 'State', 'RelativeToSurfaceLevelService', 'user', 'ExportService', '$timeout',
+ 'State', 'RelativeToSurfaceLevelService', 'user', 'ExportTimeseriesService', '$timeout',
 
 function ($http, DataService, TimeseriesService, notie, gettextCatalog,
-  State, RTSLService, user, ExportService, $timeout) {
+  State, RTSLService, user, ExportTimeseriesService, $timeout) {
 
   var link = function (scope) {
     // bind the assets with the selected things from the DataService
@@ -135,7 +135,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
        */
       var pollForFile = function (taskResponseData) {
 
-        ExportService.setIsPolling(true);
+        ExportTimeseriesService.setIsPolling(true);
         scope.resultUrl = null;
 
         hideExportButton();
@@ -151,7 +151,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
               // Apparently, the task (=exporting timeseries) resulted in a
               // downloadable file: we need to stop polling the server now.
 
-              ExportService.setIsPolling(false);
+              ExportTimeseriesService.setIsPolling(false);
               clearInterval(poller);
 
               var resultUrl = response.data.result_url;
@@ -283,7 +283,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
   return {
     link: link,
     scope: {},
-    templateUrl: 'export/export-selector.html',
+    templateUrl: 'export/export-timeseries.html',
     replace: true,
     restrict: 'E'
   };

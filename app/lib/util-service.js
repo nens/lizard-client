@@ -740,7 +740,6 @@ angular.module('lizard-nxt')
     }
   };
 
-
   /**
    * @function
    * @description - Get amount of Km^2 in the current spatial extent

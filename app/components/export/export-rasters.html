@@ -1,0 +1,107 @@
+<div>
+  <div class="modal-body" ng-if="!(isAuthenticated && hasRasters())">
+    <p aria-label="Help Text"
+       class="help-text"
+       translate>
+      You are not able to export any rasters. You are either not
+      logged in or you don't have any rasters available.
+    </p>
+  </div>
+
+  <div class="modal-body" ng-if="isAuthenticated && hasRasters()">
+    <p aria-label="Help Text"
+       class="help-text"
+       translate>
+      You can select a (temporal) raster to download. Once selected, press the
+      <i>"Start Export"</i> button and the exporter will fetch the raster data
+      behind the scenes. The exported data will be in geotiff format.
+    </p>
+
+    <!-- part 1/4: select the wanted raster -->
+    <div id="export-raster-selector-1">
+      <p translate>
+        Please select the raster:
+      </p>
+      <select ng-model="data.selectedRaster" class="form-control">
+        <option
+          class="selectedRasterOption"
+          ng-repeat="(slug, uuid) in allRasters track by $index"
+          ng-value="uuid"
+          ng-selected="uuid === data.selectedRaster">
+          {{ slug }}
+        </option>
+      </select>
+    </div>
+
+    <!-- part 2/4: select the point in time -->
+    <div id="export-raster-selector-2">
+      <div class="start-stop-selector-container-1">
+        <div ng-if="selectedRasterIsTemporal()"
+             class="from-to-label-1"
+             translate>
+          Please select the datetime:
+        </div>
+        <div ng-if="!selectedRasterIsTemporal()"
+             class="from-to-label-1"
+             style="color: #aaa"
+             translate>
+          This only applies to temporal rasters.
+        </div>
+        <input type="datetime-local"
+               name="datetime-selector"
+               class="form-control html5-datetime-picker"
+               ng-disabled="!selectedRasterIsTemporal()"
+               id="datetime-selector"
+        />
+      </div>
+    </div>
+
+    <!-- part 3/4 AND 4/4: select the output-projection and the cell-size -->
+    <div id="export-raster-selector-3-and-4">
+      <div id="export-raster-selector-3">
+        <p translate>
+          Please select the target projection:
+        </p>
+        <select ng-model="data.selectedTargetProjection" class="form-control">
+          <option
+            ng-repeat="(key, value) in TARGET_PROJECTIONS track by $index"
+            ng-value="value"
+            ng-selected="value === data.selectedTargetProjection">
+            {{ key }}
+          </option>
+        </select>
+      </div>
+
+      <div id="export-raster-selector-4">
+        <p translate>
+          Please select the cell size:
+        </p>
+        <input type="text"
+               ng-model="data.selectedCellSize"
+               class="form-control"
+        />
+        <p id="cell-size-help-text"
+           ng-if="'EPSG:4326' === data.selectedTargetProjection"
+           translate>
+           Cell size for EPSG:4326 is in meters
+        </p>
+        <p id="cell-size-help-text"
+           ng-if="'EPSG:28992' === data.selectedTargetProjection"
+           translate>
+           Cell size for EPSG:28992 is in degrees
+        </p>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer footer-left">
+    <button
+      class="btn btn-primary start-export-button"
+      ng-disabled="!mayStartExport(data)"
+      ng-click="startRasterExport()"
+      translate>
+      Start Export
+    </button>
+  </div>
+</div>

@@ -3,5 +3,93 @@
 }
 
 #datepicker-export {
- margin-bottom: 10px;
+  margin-bottom: 10px;
 }
+
+/* tab 2/3 "Export 'Timeseries (raster)' */
+
+#export-timeseries-raster-selector-1 {
+  margin-bottom: 16px;
+}
+
+#export-timeseries-raster-selector-2 {
+  margin-bottom: 18px;
+}
+
+#export-timeseries-raster-selector-3 {
+  min-height: 50px;
+  margin-bottom: 16px;
+}
+
+.html5-datetime-picker {
+  width: 95%;
+}
+
+.html5-datetime-picker#start-selector {
+  float: left;
+}
+
+.html5-datetime-picker#stop-selector {
+  float: right;
+}
+
+.from-to-label-1,
+.from-to-label-2 {
+  margin-bottom: 10px;
+}
+
+.from-to-label-2 {
+  margin-left: 5%;
+}
+
+.start-stop-selector-container-1,
+.start-stop-selector-container-2 {
+  width: 49%;
+}
+
+.start-stop-selector-container-1 {
+  float: left;
+}
+
+.start-stop-selector-container-2 {
+  float: right;
+}
+
+/* tab 3/3 "Export 'Raster' */
+
+#export-raster-selector-1 {
+  margin-bottom: 16px;
+}
+
+#export-raster-selector-2 {
+  min-height: 50px;
+  margin-bottom: 31px;
+}
+
+#export-raster-selector-3 {
+  float: left;
+  width: 46.5%;
+  margin-bottom: -20px;
+}
+
+#export-raster-selector-4 {
+  float: right;
+  width: 46.5%;
+  margin-bottom: -20px;
+}
+
+#export-raster-selector-3-and-4 {
+  min-height: 70px;
+}
+
+#cell-size-help-text {
+  margin-top: 10px;
+  color: #666;
+  font-size: 11px;
+}
+
+
+
+
+
+

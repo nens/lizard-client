@@ -1,0 +1,81 @@
+<div>
+  <div class="modal-body" ng-if="!(isAuthenticated && hasGOAs() && hasTemporalRasters())">
+    <p aria-label="Help Text"
+       class="help-text"
+       translate>
+      You are not able to export any raster intersections. You are either not
+      logged in, didn't select any points/assets on the map or you don't have
+      any temporal rasters available.
+    </p>
+  </div>
+
+  <div class="modal-body" ng-if="isAuthenticated && hasGOAs() && hasTemporalRasters()">
+    <p aria-label="Help Text"
+       class="help-text"
+       translate>
+      You can select multiple raster-intersections to download. Once selected, press the
+      <i>"Start Export"</i> button and the exporter will fetch the raster data
+      behind the scenes. The exported data will be in CSV format.
+    </p>
+
+    <!-- part 1/3: select the wanted raster -->
+    <div id="export-timeseries-raster-selector-1">
+      <p translate>
+        Please select the temporal raster:
+      </p>
+      <select ng-model="data.selectedTemporalRaster" class="form-control">
+        <option
+          class="selectedRasterOption"
+          ng-repeat="(slug, uuid) in allTemporalRasters track by $index"
+          ng-value="uuid"
+          ng-selected="uuid === data.selectedTemporalRaster">
+          {{ slug }}
+        </option>
+      </select>
+    </div>
+
+    <!-- part 2/3: select the wanted geometry -->
+    <div id="export-timeseries-raster-selector-2">
+      <p translate>
+        Please select the geometry:
+      </p>
+      <select ng-model="data.selectedGeometry" class="form-control">
+        <option
+          ng-repeat="(key, value) in allGOAs track by $index"
+          ng-value="value"
+          ng-selected="value === data.selectedGeometry">
+          {{ key }}
+        </option>
+      </select>
+    </div>
+
+    <!-- part 3/3: select the temporal interval -->
+    <div id="export-timeseries-raster-selector-3">
+      <div class="start-stop-selector-container-1">
+        <div class="from-to-label-1" translate>From:</div>
+        <input type="datetime-local"
+               name="start-selector"
+               class="form-control html5-datetime-picker"
+               id="start-selector" />
+      </div>
+
+      <div class="start-stop-selector-container-2">
+        <div class="from-to-label-2" translate>To:</div>
+        <input type="datetime-local"
+               name="stop-selector"
+               class="form-control html5-datetime-picker"
+               id="stop-selector" />
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer footer-left">
+    <button
+      class="btn btn-primary start-export-button"
+      ng-disabled="!mayStartExport()"
+      ng-click="startTimeseriesRasterExport()"
+      translate>
+      Start Export
+    </button>
+  </div>
+</div>
