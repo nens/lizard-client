@@ -63,7 +63,6 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
 
     scope.isAuthenticated = user.authenticated;
     scope.data = {};
-
     scope.allRasters = getAllRasters();
     scope.hasRasters = function () { return !!_.size(scope.allRasters) };
 
@@ -102,11 +101,15 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
 
     scope.startRasterExport = function () {
       var variableParams = {
-        time:       getDatetime(),
         geom:       scope.data.theGeometry,
         target_srs: scope.data.selectedTargetProjection,
         cell_size:  scope.data.selectedCellSize
       };
+
+      if (scope.selectedRasterIsTemporal()) {
+        variableParams.time = getDatetime();
+      }
+
       var finalParams = Object.assign({}, DEFAULT_PARAMS, variableParams);
       $http.get(
         '/api/v3/rasters/' + scope.data.selectedRaster + '/data/',
