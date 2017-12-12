@@ -258,7 +258,6 @@ angular.module('timeseries').service("TimeseriesService", [
           break;
         case "timesteps_range":
           var activeTs = _.find(service.timeseries, { id: selectedTimeseries.uuid });
-
           if (activeTs) {
             start = activeTs.start;
             end = activeTs.end;
