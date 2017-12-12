@@ -714,17 +714,8 @@ angular.module('lizard-nxt')
       var thresholds = [];
 
       charts.forEach(function (chart) {
-        if (chart.unit === activeUnit && chart.thresholds) {
+          if (chart.unit === activeUnit && chart.thresholds) {
           chart.thresholds.forEach(function (threshold) {
-            // XXX There is a bug
-            // (https://github.com/nens/lizard-nxt/issues/2215#issuecomment-313606175)
-            // That means relative thresholds *sometimes* aren't drawn. To make this
-            // look better and to avoid confusing users, we *never*
-            // draw them, not even when it would work.
-            if (RTSLService.get() && threshold.reference_frame) {
-              return;
-            }
-
             // If we are looking at heights relative to ground level, we may need
             // to adjust the value here.
             var isRelative = (RTSLService.get() && threshold.reference_frame &&
@@ -1542,6 +1533,15 @@ angular.module('lizard-nxt')
         // expected and the y label a little bit less.
         PIXEL_CORRECTION = 2,
         el = svg.select(y ? '#ylabel': '#xlabel');
+
+    try {
+      // If the graph is still hidden, we can't figure out dimensions for the label
+      // and give up.
+      svg.node().getBBox();
+    } catch (e) {
+      return;
+    }
+
     if (el.empty()) {
       el = svg.append('g')
         .append("text")
@@ -1563,9 +1563,13 @@ angular.module('lizard-nxt')
         .attr('y', dimensions.height);
     }
 
+    var node = el.node();
+    var bbox = node.getBBox();
+
     mv = y
-      ? 0.5 * el.node().getBBox().height + PIXEL_CORRECTION
-      : - 0.5 * el.node().getBBox().height + PIXEL_CORRECTION;
+       ? 0.5 * bbox.height + PIXEL_CORRECTION
+       : -0.5 * box.height + PIXEL_CORRECTION;
+
     el.attr('dy', mv);
     return el;
   };

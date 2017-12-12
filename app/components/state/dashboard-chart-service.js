@@ -237,6 +237,7 @@ angular.module('global-state')
           uuid: key,
           type: "timeseries",
           timeseries: parts[1],
+          asset: AssetService.getAssetKey(asset),
           color: getDefaultColor(),
           unit: ts.unit,
           reference_frame: ts.reference_frame,
