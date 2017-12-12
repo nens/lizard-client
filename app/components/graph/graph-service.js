@@ -714,7 +714,6 @@ angular.module('lizard-nxt')
       var thresholds = [];
 
       charts.forEach(function (chart) {
-        console.log('chart.unit === activeUnit', chart.unit, activeUnit, chart.unit === activeUnit, chart.thresholds);
           if (chart.unit === activeUnit && chart.thresholds) {
           chart.thresholds.forEach(function (threshold) {
             // If we are looking at heights relative to ground level, we may need

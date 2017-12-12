@@ -348,7 +348,7 @@ angular.module('lizard-nxt')
     // to the html, but filtering from the DOM is expensive
     // in angular.
     if (filter) {
-      console.log('TODO: filter label on bar chart');
+      // console.log('TODO: filter label on bar chart');
       // TODO: labels.y = $filter(filter)(labels.y);
     }
 
@@ -358,7 +358,7 @@ angular.module('lizard-nxt')
     // Function to call when data changes
     graphCtrl.updateData = function (content, temporal) {
       if (filter) {
-        console.log('TODO: filter label on bar chart');
+        // console.log('TODO: filter label on bar chart');
         // TODO: labels.y = $filter(filter)(labels.y);
       }
       this.drawBars(content, quantity);

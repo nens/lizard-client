@@ -180,7 +180,6 @@ angular.module('dashboard')
             var chart = DashboardChartService.getOrCreateChart(chartKey);
             var chartData = getChartData(chart);
             if (!chartData) {
-              console.log('buildGraphs: no data for chart', chartKey);
               return;
             }
 
@@ -205,7 +204,6 @@ angular.module('dashboard')
           }
         });
 
-        console.log('buildGraphs: Endlösung', JSON.parse(JSON.stringify(Endlösung)));
         return Endlösung;
       };
 
