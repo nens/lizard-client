@@ -1535,6 +1535,8 @@ angular.module('lizard-nxt')
         el = svg.select(y ? '#ylabel': '#xlabel');
 
     try {
+      // If the graph is still hidden, we can't figure out dimensions for the label
+      // and give up.
       svg.node().getBBox();
     } catch (e) {
       return;
