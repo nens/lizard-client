@@ -472,5 +472,21 @@ angular.module('data-menu')
         // Default
         return undefined;
       };
+
+      this.allActiveAssets = function () {
+        // Return keys of all active assets as in State.assets but also including the nested
+        // assets.
+        var assets = [];
+        for (var i=0; i < this.assets.length; i++) {
+          var asset = this.assets[i];
+          var assetKey = asset.entity_name + '$' + asset.id;
+
+          if (State.assets.indexOf(assetKey) !== -1 ||
+              (asset.parentAsset && State.assets.indexOf(asset.parentAsset) !== -1)) {
+            assets.push(assetKey);
+          }
+        }
+        return assets;
+      }
     }
   ]);

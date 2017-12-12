@@ -1568,7 +1568,7 @@ angular.module('lizard-nxt')
 
     mv = y
        ? 0.5 * bbox.height + PIXEL_CORRECTION
-       : -0.5 * box.height + PIXEL_CORRECTION;
+       : -0.5 * bbox.height + PIXEL_CORRECTION;
 
     el.attr('dy', mv);
     return el;

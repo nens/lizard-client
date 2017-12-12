@@ -454,6 +454,7 @@ angular.module('lizard-nxt')
         return JSON.stringify([
           State.layers,
           State.annotations.active,
+          State.assets,
           DataService.assets,
           ChartCompositionService.composedCharts.length
         ]);
@@ -495,9 +496,15 @@ angular.module('lizard-nxt')
      * of timeseries:
      */
     var tlNeededBecauseTimeseries = function () {
-      for (var i=0; i < State.assets.length; i++) {
-        var asset = DataService.getAssetByKey(State.assets[i]);
-        if (asset && asset.timeseries && asset.timeseries.length) return true;
+      for (var i=0; i < DataService.assets.length; i++) {
+        var asset = DataService.assets[i];
+        var assetKey = asset.entity_name + '$' + asset.id;
+
+        if (asset.timeseries && asset.timeseries.length &&
+            (State.assets.indexOf(assetKey) !== -1 ||
+             (asset.parentAsset && State.assets.indexOf(asset.parentAsset) !== -1))) {
+          return true;
+        }
       }
       return false;
     };
@@ -539,11 +546,11 @@ angular.module('lizard-nxt')
     /* Check whether we want to show the timeline in map ctx;
      */
     var needToShowTimelineInMap = function () {
-      var check1 = tlNeededBecauseTimeseries(),
-          check2 = tlNeededBecauseTemporalRasters(),
-          check3 = tlNeededBecauseEventseries(),
-          check4 = State.annotations.active;
-      return !!(check1 || check2 || check3 || check4);
+      return (
+        tlNeededBecauseTimeseries() ||
+        tlNeededBecauseTemporalRasters() ||
+        tlNeededBecauseEventseries() ||
+        State.annotations.active);
     };
 
     /* Check whether we want to show the timeline in dashboard ctx;

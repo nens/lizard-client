@@ -84,7 +84,7 @@ angular.module('timeseries').service("TimeseriesService", [
           }
         });
       } else {
-        State.assets.forEach(function (assetKey) {
+        DataService.allActiveAssets().forEach(function (assetKey) {
           if (State.selectedForAssets[assetKey] && State.selectedForAssets[assetKey].timeseries) {
             var ts = State.selectedForAssets[assetKey].timeseries;
             var scale = ts.scale === "ratio" ? "temporalBars" : "temporalLines";
