@@ -1534,6 +1534,13 @@ angular.module('lizard-nxt')
         // expected and the y label a little bit less.
         PIXEL_CORRECTION = 2,
         el = svg.select(y ? '#ylabel': '#xlabel');
+
+    try {
+      svg.node().getBBox();
+    } catch (e) {
+      return;
+    }
+
     if (el.empty()) {
       el = svg.append('g')
         .append("text")
@@ -1555,9 +1562,13 @@ angular.module('lizard-nxt')
         .attr('y', dimensions.height);
     }
 
+    var node = el.node();
+    var bbox = node.getBBox();
+
     mv = y
-      ? 0.5 * el.node().getBBox().height + PIXEL_CORRECTION
-      : - 0.5 * el.node().getBBox().height + PIXEL_CORRECTION;
+       ? 0.5 * bbox.height + PIXEL_CORRECTION
+       : -0.5 * box.height + PIXEL_CORRECTION;
+
     el.attr('dy', mv);
     return el;
   };
