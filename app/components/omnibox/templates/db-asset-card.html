@@ -40,7 +40,7 @@
       <div
         ng-repeat="timeseries in asset.timeseries track by $index"
         ng-init="key = getKeyForAssetTimeseries(timeseries.uuid); chart = getOrCreateChart(key)"
-        ng-show="chart.description && (extended || isChartActive(key) || $index < 3)"
+        ng-show="showChart(chart, $index)"
         id="{{ key }}"
         data-uuid="{{ key }}"
         class="draggable-ts db-card-single-ts"

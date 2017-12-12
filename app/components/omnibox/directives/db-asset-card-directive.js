@@ -81,10 +81,31 @@ angular.module('omnibox').directive('dbAssetCard', [
         var MANY = 3;
 
         scope.showExtender = scope.asset.timeseries.length > MANY;
-        scope.extended = false;
+        scope.extended = !scope.showExtender;
 
         scope.toggleExtended = function () {
           scope.extended = !scope.extended;
+        };
+
+        scope.showChart = function(chart, index) {
+          if (!chart.description) return false;
+
+          if (scope.extended || DashboardChartService.isChartActive(chart.uuid)) return true;
+
+          // Scope is not extended and this chart isn't active.
+          if (index >= MANY) return false;
+
+          // First three could be shown, but active charts under it take precedence
+          var activeChartsAfter = 0;
+          scope.asset.timeseries.forEach(function (ts, idx) {
+            var key = DashboardChartService.getKeyForAssetTimeseries(ts.uuid);
+            if (idx > index && DashboardChartService.isChartActive(key)) {
+              activeChartsAfter++;
+            }
+          });
+
+          // Check if chart would be visible if the active charts would be placed before it
+          return (index + activeChartsAfter < MANY);
         };
 
         $timeout(function () {

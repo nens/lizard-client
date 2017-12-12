@@ -124,10 +124,6 @@ angular.module('timeseries').service("TimeseriesService", [
           service.timeseries = response;
           return service.timeseries;
         });
-                          //.then(function (ts) {
-          // DataService.buildDashboard();
-//          return ts;
-//	});
 
         return timeseriesPromise;
       };
