@@ -39,7 +39,7 @@ angular.module('data-menu')
 
       // Callback for when assets are being retrieved from api
       var assetChange = function (asset) {
-        if (asset) {
+        if (asset && !AssetService.isNestedAsset(asset.entity_name)) {
           asset.parentAsset = null;
           _.forEach(AssetService.NESTED_ASSET_PREFIXES, function (prefix) {
 

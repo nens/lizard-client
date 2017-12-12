@@ -714,17 +714,9 @@ angular.module('lizard-nxt')
       var thresholds = [];
 
       charts.forEach(function (chart) {
-        if (chart.unit === activeUnit && chart.thresholds) {
+        console.log('chart.unit === activeUnit', chart.unit, activeUnit, chart.unit === activeUnit, chart.thresholds);
+          if (chart.unit === activeUnit && chart.thresholds) {
           chart.thresholds.forEach(function (threshold) {
-            // XXX There is a bug
-            // (https://github.com/nens/lizard-nxt/issues/2215#issuecomment-313606175)
-            // That means relative thresholds *sometimes* aren't drawn. To make this
-            // look better and to avoid confusing users, we *never*
-            // draw them, not even when it would work.
-            if (RTSLService.get() && threshold.reference_frame) {
-              return;
-            }
-
             // If we are looking at heights relative to ground level, we may need
             // to adjust the value here.
             var isRelative = (RTSLService.get() && threshold.reference_frame &&
