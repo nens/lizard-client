@@ -107,8 +107,7 @@ function (EventAggregateService,  State,  DashboardChartService, ChartCompositio
           return;
         }
 
-        graph.type = graph.type || (
-          chart.measureScale === 'ratio' ? 'temporalBar' : 'temporalLine');
+        graph.type = graph.type || chart.graphType;
 
         graph.content.push({
           updated: true,

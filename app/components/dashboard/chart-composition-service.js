@@ -157,8 +157,8 @@ angular.module('dashboard')
       var existingChartKey = service.composedCharts[plotNumber][0];
       var existingChart = service.dashboardCharts[existingChartKey];
 
-      if (chart.measureScale === 'ratio' || existingChart.measureScale === 'ratio') {
-        return 'Whoops, bar charts cannot be combined. Try again!';
+      if (chart.graphType !== 'temporalLine' || existingChart.graphType !== 'temporalLine') {
+        return 'Whoops, charts cannot be combined. Try again!';
       }
     }
 

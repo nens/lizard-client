@@ -165,7 +165,9 @@ angular.module('global-state')
             unit: rasterDataLayer.unit,
             reference_frame: rasterDataLayer.reference_frame,
             description: rasterDataLayer.quantity,
-            measureScale: rasterDataLayer.scale
+            measureScale: rasterDataLayer.scale,
+            valueType: 'float',
+            graphType: (rasterDataLayer.scale === 'ratio' ? 'temporalBar' : 'temporalLine')
           };
         }
       };
@@ -186,7 +188,9 @@ angular.module('global-state')
           unit: rasterDataLayer.unit,
           reference_frame: rasterDataLayer.reference_frame,
           description: rasterDataLayer.quantity,
-          measureScale: rasterDataLayer.scale
+          measureScale: rasterDataLayer.scale,
+          valueType: 'float',
+          graphType: (rasterDataLayer.scale === 'ratio' ? 'temporalBar' : 'temporalLine')
         };
       };
 
@@ -237,7 +241,11 @@ angular.module('global-state')
           unit: ts.unit,
           reference_frame: ts.reference_frame,
           description: (asset.name || asset.code) + ', ' + ts.parameter,
-          measureScale: ts.scale
+          measureScale: ts.scale,
+          valueType: ts.value_type,
+          graphType: (ts.value_type === 'float' ?
+                      (ts.scale === 'ratio' ? 'temporalBar' : 'temporalLine') :
+                      ts.value_type)
         };
       };
 
