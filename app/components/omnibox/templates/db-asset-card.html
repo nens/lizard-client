@@ -40,7 +40,7 @@
       <div
         ng-repeat="timeseries in asset.timeseries track by $index"
         ng-init="key = getKeyForAssetTimeseries(timeseries.uuid); chart = getOrCreateChart(key)"
-        ng-show="chart.description && (extended || isChartActive(key) || $index < 3)"
+        ng-show="showChart(chart, $index)"
         id="{{ key }}"
         data-uuid="{{ key }}"
         class="draggable-ts db-card-single-ts"
@@ -73,6 +73,17 @@
         </div>
         <!-- asset/nested-asset TS card: END -->
 
+      </div>
+
+      <div ng-if="showExtender" class="show-less-more-ts-btn">
+        <i ng-if="extended"
+           ng-click="toggleExtended()"
+           class="fa fa-arrow-circle-up"
+           title="{{ 'Show less' | translate }}"/>
+        <i ng-if="!extended"
+           ng-click="toggleExtended()"
+           class="fa fa-arrow-circle-down"
+           title="{{ 'Show more' | translate }}"/>
       </div>
     </div>
   </div>
