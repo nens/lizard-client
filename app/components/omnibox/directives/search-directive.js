@@ -16,6 +16,7 @@ angular.module('omnibox')
   var link = function (scope, element, attrs) {
 
     scope.omnibox.searchResults = {};
+    scope.omnibox.mustShowSearchResults = true;
 
     scope.util = UtilService;
     scope.query = '';
@@ -42,6 +43,7 @@ angular.module('omnibox')
      * scope.omnibox.searchResults is used by search-results template.
      */
     scope.search = function () {
+      scope.omnibox.mustShowSearchResults = true;
       scope.omnibox.searchResults = {};
       if (scope.query.length > 0) {
         var results = SearchService.search(scope.query, State);
@@ -68,6 +70,7 @@ angular.module('omnibox')
       SearchService.cancel();
       scope.query = "";
       scope.omnibox.searchResults = {};
+      scope.omnibox.mustShowSearchResults = false;
     };
 
     /**
@@ -133,7 +136,8 @@ angular.module('omnibox')
      * @param  {moment} m moment.js moment with nxtInterval as a moment
      *                              duration.
      */
-    scope.zoomToTemporalResult = function(m) {
+    scope.zoomToTemporalResult = function (m) {
+      scope.omnibox.mustShowSearchResults = false;
       scope.omnibox.searchResults = {};
       scope.query = "";
       State.temporal.start = m.valueOf();
