@@ -172,26 +172,44 @@ angular.module('global-state')
         }
       };
 
-      var createRasterAssetChart = function(parts) {
+      var createRasterAssetChart = function(parts, allowEmpty) {
         // Parts is ['raster', '708dcc', 'asset', 'measuringstation$14']
         var key = parts.join(KEY_SEP);
         var rasterUuid = parts[1];
         var assetKey = parts[3];
         var rasterDataLayer = DataService.getDataLayer(rasterUuid);
 
-        return {
-          uuid: key,
-          type: "raster",
-          asset: assetKey,
-          color: getDefaultColor(),
-          raster: rasterUuid,
-          unit: rasterDataLayer.unit,
-          reference_frame: rasterDataLayer.reference_frame,
-          description: rasterDataLayer.quantity,
-          measureScale: rasterDataLayer.scale,
-          valueType: 'float',
-          graphType: (rasterDataLayer.scale === 'ratio' ? 'temporalBar' : 'temporalLine')
-        };
+        if (!rasterDataLayer) {
+          // XXXV1; Return temporary chart. This is necessary for restoring old
+          // favourites that don't have the async parts of charts in them, can be
+          // removed when V1 favourites are not relevant anymore.
+          if (allowEmpty) {
+            return {
+              needsUpdate: true,
+              type: 'raster',
+              uuid: key,
+              asset: assetKey,
+              color: getDefaultColor(),
+              raster: rasterUuid
+            };
+          } else {
+            return null;
+          }
+        } else {
+          return {
+            uuid: key,
+            type: "raster",
+            asset: assetKey,
+            color: getDefaultColor(),
+            raster: rasterUuid,
+            unit: rasterDataLayer.unit,
+            reference_frame: rasterDataLayer.reference_frame,
+            description: rasterDataLayer.quantity,
+            measureScale: rasterDataLayer.scale,
+            valueType: 'float',
+            graphType: (rasterDataLayer.scale === 'ratio' ? 'temporalBar' : 'temporalLine')
+          };
+        }
       };
 
       var findTimeseriesAndAsset = function (timeseriesId) {
@@ -257,7 +275,7 @@ angular.module('global-state')
             if (parts[2] == 'geometry') {
               return createRasterGeometryChart(parts, allowEmpty);
             } else {
-              return createRasterAssetChart(parts);
+              return createRasterAssetChart(parts, allowEmpty);
             }
           case 'timeseries':
             return createTimeseriesChart(parts, allowEmpty);
@@ -325,6 +343,9 @@ angular.module('global-state')
             var geomParts = selection.geom.split(',');
             chart = createRasterGeometryChart(
               ['raster', selection.raster, 'geometry', geomParts[0], geomParts[1]], true);
+          } else if (selection.type === 'raster' && selection.asset) {
+            chart = createRasterAssetChart(
+              ['raster', selection.raster, 'asset', selection.asset], true);
           } else {
             return; // Not a selection we can handle
           }
