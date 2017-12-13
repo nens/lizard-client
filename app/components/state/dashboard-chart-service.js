@@ -289,6 +289,7 @@ angular.module('global-state')
 
         if (!chart) {
           chart = createChart(key);
+          ChartCompositionService.dashboardCharts[key] = chart;
         } else if (chart.needsUpdate) {
           // XXXV1; This is horrible, especially the call to syncTime(). Only needed
           // for V1 favourites.
@@ -296,11 +297,11 @@ angular.module('global-state')
           if (!newChart.needsUpdate) {
             newChart.color = chart.color;
             chart = newChart;
+            ChartCompositionService.dashboardCharts[key] = chart;
             TimeseriesService.syncTime();
           }
         }
 
-        ChartCompositionService.dashboardCharts[key] = chart;
         return chart;
       };
 
