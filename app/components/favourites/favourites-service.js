@@ -233,7 +233,7 @@ angular.module('favourites')
         }
 
         // Reset dashboard charts
-        if (favourite.state.VERSION === 1 &&
+        if ((favourite.state.VERSION || 0) < 2 &&
             favourite.state.selections && favourite.state.selections.length) {
           // XXXV1. Won't be needed anymore when these are gone from the database.
           favourite.state.chartComposition = DashboardChartService.translateSelections(
