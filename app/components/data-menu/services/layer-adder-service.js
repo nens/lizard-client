@@ -80,7 +80,7 @@ angular.module('data-menu')
     };
 
     this.add = function (searchLayer) {
-      State.layers.unshift({
+      State.layers.push({
         active: true,
         type: searchLayer.entity_name,
         uuid: searchLayer.entity_uuid.slice(0, 7), // Add layer with short
