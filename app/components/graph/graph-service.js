@@ -718,7 +718,7 @@ angular.module('lizard-nxt')
           chart.thresholds.forEach(function (threshold) {
             // If we are looking at heights relative to ground level, we may need
             // to adjust the value here.
-            var isRelative = (RTSLService.get() && threshold.reference_frame &&
+            var isRelative = (RTSLService.get() && threshold.reference_frame === 'NAP' &&
                               !isNaN(threshold.surface_level));
 
             var value = threshold.value;
@@ -859,7 +859,10 @@ angular.module('lizard-nxt')
         maxMin.max = Math.max(chart.yMaxMin.max, unitY.maxMin.max);
       }
 
-      yPerUnit[chart.unit] = {maxMin: maxMin};
+      yPerUnit[chart.unit] = {
+        maxMin: maxMin,
+        reference_frame: chart.reference_frame
+      };
     });
 
     _.forEach(yPerUnit, function (unitY) {
@@ -1707,7 +1710,7 @@ angular.module('lizard-nxt')
     console.log("*** reference_frame..:", reference_frame);
 
     var result;
-    if (unit.toLowerCase() === 'm' && reference_frame.toLowerCase() === 'nap') {
+    if (unit.toLowerCase() === 'm' && (reference_frame || '').toLowerCase() === 'nap') {
       if (RTSLService.get()) {
         return 'm (MV)';
       } else {
@@ -1717,7 +1720,7 @@ angular.module('lizard-nxt')
       return unit;
     }
 
-    return unit;
+    return unit + (reference_frame ? ' (' + reference_frame + ')' : '');
     ///////////////////////////
     // var result;
     // if (!reference_frame) {
@@ -1759,7 +1762,9 @@ angular.module('lizard-nxt')
     var label = drawLabel(
       graph._svg,
       graph.dimensions,
-      addReferenceFrameToUnit(graph._activeUnit, graph._containers[0].reference_frame),
+      addReferenceFrameToUnit(
+        graph._activeUnit,
+        graph._yPerUnit[graph._activeUnit].reference_frame),
       true
     );
 
