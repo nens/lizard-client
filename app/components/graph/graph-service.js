@@ -718,7 +718,7 @@ angular.module('lizard-nxt')
           chart.thresholds.forEach(function (threshold) {
             // If we are looking at heights relative to ground level, we may need
             // to adjust the value here.
-            var isRelative = (RTSLService.get() && threshold.reference_frame &&
+            var isRelative = (RTSLService.get() && threshold.reference_frame === 'NAP' &&
                               !isNaN(threshold.surface_level));
 
             var value = threshold.value;
@@ -859,7 +859,10 @@ angular.module('lizard-nxt')
         maxMin.max = Math.max(chart.yMaxMin.max, unitY.maxMin.max);
       }
 
-      yPerUnit[chart.unit] = {maxMin: maxMin};
+      yPerUnit[chart.unit] = {
+        maxMin: maxMin,
+        reference_frame: chart.reference_frame
+      };
     });
 
     _.forEach(yPerUnit, function (unitY) {
@@ -1515,7 +1518,6 @@ angular.module('lizard-nxt')
     svg.select('#listeners').on('mouseout', function () {
       fg.select('.interaction-group').remove();
     });
-
   };
 
   /**
@@ -1691,22 +1693,23 @@ angular.module('lizard-nxt')
     }
   };
 
-    /* Combine unit and reference frame into a single string, or use
-       "MV" (maaiveld) as reference frame if the graph is relative to
-       ground level.
+  /* Combine unit and reference frame into a single string, or use
+     "MV" (maaiveld) as reference frame if the graph is relative to
+     ground level.
 
-      TODO: The 'MV' string isn't translated yet.
-     */
-    var addReferenceFrameToUnit = function (unit, reference_frame) {
-      if (!reference_frame) {
-        return unit;
-      }
+    TODO: The 'MV' string isn't translated yet.
+   */
+  var addReferenceFrameToUnit = function (unit, reference_frame) {
+    if (unit.toLowerCase() === 'm' && (reference_frame || '').toLowerCase() === 'nap') {
       if (RTSLService.get()) {
-        return unit + ' (MV)'; // TODO: translate this string
+        return 'm (MV)';
       } else {
-        return unit + ' (' + reference_frame + ')';
+        return 'm (NAP)';
       }
-    };
+    }
+
+    return unit + (reference_frame ? ' (' + reference_frame + ')' : '');
+  };
 
 
    /**
@@ -1736,7 +1739,9 @@ angular.module('lizard-nxt')
     var label = drawLabel(
       graph._svg,
       graph.dimensions,
-      addReferenceFrameToUnit(graph._activeUnit, graph._containers[0].reference_frame),
+      addReferenceFrameToUnit(
+        graph._activeUnit,
+        graph._yPerUnit[graph._activeUnit].reference_frame),
       true
     );
 
