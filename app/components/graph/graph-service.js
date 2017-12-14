@@ -1515,7 +1515,6 @@ angular.module('lizard-nxt')
     svg.select('#listeners').on('mouseout', function () {
       fg.select('.interaction-group').remove();
     });
-
   };
 
   /**
@@ -1526,6 +1525,11 @@ angular.module('lizard-nxt')
    * @param  {boolean}      draw on y axis, else x-axis.
    */
   var drawLabel = function (svg, dimensions, label, y) {
+    // console.log("[F] drawLabel");
+    // console.log("*** svg.........:", svg);
+    // console.log("*** dimensions..:", dimensions);
+    // console.log("*** label.......:", label);
+    // console.log("*** y...........:", y);
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
         mv,
@@ -1691,22 +1695,41 @@ angular.module('lizard-nxt')
     }
   };
 
-    /* Combine unit and reference frame into a single string, or use
-       "MV" (maaiveld) as reference frame if the graph is relative to
-       ground level.
+  /* Combine unit and reference frame into a single string, or use
+     "MV" (maaiveld) as reference frame if the graph is relative to
+     ground level.
 
-      TODO: The 'MV' string isn't translated yet.
-     */
-    var addReferenceFrameToUnit = function (unit, reference_frame) {
-      if (!reference_frame) {
-        return unit;
-      }
+    TODO: The 'MV' string isn't translated yet.
+   */
+  var addReferenceFrameToUnit = function (unit, reference_frame) {
+    console.log("[F] addReferenceFrameToUnit");
+    console.log("*** unit.............:", unit);
+    console.log("*** reference_frame..:", reference_frame);
+
+    var result;
+    if (unit.toLowerCase() === 'm' && reference_frame.toLowerCase() === 'nap') {
       if (RTSLService.get()) {
-        return unit + ' (MV)'; // TODO: translate this string
+        return 'm (MV)';
       } else {
-        return unit + ' (' + reference_frame + ')';
+        return 'm (NAP)';
       }
-    };
+    } else {
+      return unit;
+    }
+
+    return unit;
+    ///////////////////////////
+    // var result;
+    // if (!reference_frame) {
+    //   result = unit;
+    // } else if (RTSLService.get()) {
+    //   result = unit + ' (MV)'; // TODO: translate this string
+    // } else {
+    //   result = unit + ' (' + reference_frame + ')';
+    // }
+    // console.log("*** result..........:", result);
+    // return result;
+  };
 
 
    /**
