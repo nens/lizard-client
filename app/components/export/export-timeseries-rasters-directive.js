@@ -48,7 +48,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     ///////////////////////////////////////////////////////////////////////////
     // Part 1/2 -- get geometries for State.geometries:
     pointGeoms = _.filter(State.geometries, function (geom) {
-       return geom.geometry && geom.geometry.type === 'Point';
+      return geom.geometry && geom.geometry.type === 'Point';
     });
 
     _.forEach(pointGeoms, function (geom) {
