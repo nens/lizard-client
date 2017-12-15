@@ -46,7 +46,7 @@ angular.module('data-menu')
       params.page_size = 8;
       return $http.get('api/v3/search/', {
         params: params
-      }).then(success, error)
+      }).then(success, error);
     };
 
     /**
