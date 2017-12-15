@@ -64,7 +64,6 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     ///////////////////////////////////////////////////////////////////////////
     // Part 2/2 -- get geometries for State.assets:
     DataService.assets.map(function (asset) {
-      console.log("*** lets make a human-readbale slug for asset:", asset);
       var assetKey = asset.entity_name + "$" + asset.id;
       var assetName = asset.name;
       if (State.assets.indexOf(assetKey) > -1) {
