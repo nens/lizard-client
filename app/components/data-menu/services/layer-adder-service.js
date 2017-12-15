@@ -42,15 +42,11 @@ angular.module('data-menu')
      *                           GET.
      */
     this.fetchLayers = function (params, success, error) {
-      var finalCB = function () { console.log("FINALLY"); }
-      var success = finalCB;
       params.type = 'assetgroup,eventseries,wmslayer,rasterstore,scenario';
       params.page_size = 8;
       return $http.get('api/v3/search/', {
         params: params
-      })
-      .then(success, error)
-      .then(finalCB);
+      }).then(success, error)
     };
 
     /**
