@@ -3,10 +3,6 @@ angular.module('export')
         ['user', 'DataService', 'State', 'UtilService', '$timeout', 'gettextCatalog', '$http', 'notie',
 function (user,   DataService,   State,   UtilService,   $timeout,   gettextCatalog,   $http,   notie) {
 
-  // LEXUS_URL = https://demo.lizard.net/api/v3/rasters/730d6675-35dd-4a35-aa9b-bfb8155f9ca7/data/?format=csv&start=&stop=&geom=POINT(lon, lat)&srs=EPSG:4326
-
-  var RAIN_UUID = "730d6675-35dd-4a35-aa9b-bfb8155f9ca7";
-
   var DEFAULT_PARAMS = {
     format: "csv",
     srs: "EPSG:4326",
@@ -68,10 +64,12 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     ///////////////////////////////////////////////////////////////////////////
     // Part 2/2 -- get geometries for State.assets:
     DataService.assets.map(function (asset) {
-      key = asset.entity_name + "$" + asset.id;
-      if (State.assets.indexOf(key) > -1) {
+      console.log("*** lets make a human-readbale slug for asset:", asset);
+      var assetKey = asset.entity_name + "$" + asset.id;
+      var assetName = asset.name;
+      if (State.assets.indexOf(assetKey) > -1) {
         value = UtilService.geomToWkt(asset.geometry);
-        totalGeoms[key] = value;
+        totalGeoms[assetName] = value;
       }
      });
 
