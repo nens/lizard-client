@@ -336,6 +336,21 @@ angular.module('map')
         }
       });
 
+      scope.$watchCollection('state.assets', function (n, o) {
+        // We need to detect what asset is gone, so we can delete its label:
+        o.forEach(function (assetKey) {
+          if (n.indexOf(assetKey) === -1) {
+            var htmlId = 'label-' + assetKey;
+            var labelElem = document.getElementById(htmlId);
+            if (!labelElem) {
+              // Cannot remove elem that is not there:
+              return;
+            }
+            labelElem.parentElement.removeChild(labelElem);
+          }
+        });
+      });
+
       scope.$watch('state.box.type', function (n, o) {
         if (n === o) { return true; }
 
