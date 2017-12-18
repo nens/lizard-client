@@ -211,7 +211,7 @@ angular.module('map')
 
         if (n === 'map' &&
             State.box.type === 'multi-point' &&
-            State.assets.length > 1)
+            State.assets.length > 0)
         {
           ClickFeedbackService.initializeLabelsLayer(MapService);
         }
