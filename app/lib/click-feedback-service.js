@@ -75,13 +75,14 @@ angular.module('lizard-nxt')
 
       this.drawPointsAsLabels = function (self) {
         this.labelsLayer.options.pointToLayer = function (feature, latlng) {
-          console.log("### feature:", feature);
           var assetKey = feature.entity_name + "$" + feature.id;
           return L.marker(latlng, {
             icon: L.divIcon({
               className: 'selected',
               iconAnchor: [150, 20],
-              html: '<div class="assetLabel" id="label-' + assetKey + '"><div class="triangle"></div><div class="labelText">'
+              html: '<div class="assetLabel" id="label-'
+                + assetKey
+                + '"><div class="triangle"></div><div class="labelText">'
                 + feature.name
                 + '</div></div>'
             }),
