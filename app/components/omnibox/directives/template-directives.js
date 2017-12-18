@@ -21,7 +21,7 @@ angular.module('omnibox')
       scope.getLayerByUuid = State.getLayerByUuid;
       scope.isRainyLayer = State.isRainyLayer;
 
-      var clickId;
+      var clickId, labelId;
 
       var removeAsset = function (id) {
         ClickFeedbackService.removeClickFromClickLayer(id);
@@ -44,13 +44,21 @@ angular.module('omnibox')
               type: asset.type || ''
             }
           };
+
           clickId = ClickFeedbackService.drawGeometry(
             MapService,
             feature
           );
 
-          ClickFeedbackService.vibrateOnce(feature, clickId);
+          if (State.box.type === 'multi-point') {
+            labelId = ClickFeedbackService.drawLabel(
+              MapService,
+              feature,
+              asset
+            );
+          }
 
+          ClickFeedbackService.vibrateOnce(feature, clickId);
         }
 
         cancelAssetWatch();
@@ -63,7 +71,6 @@ angular.module('omnibox')
           removeAsset(clickId);
         }
       });
-
 
     },
     restrict: 'E',

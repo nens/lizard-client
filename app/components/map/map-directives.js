@@ -203,11 +203,18 @@ angular.module('map')
         MapService.updateLayers(scope.state.layers);
       }, true);
 
-      scope.$watch('state.context', function () {
+      scope.$watch('state.context', function (n) {
         // When switching back into the map ctx, we want to rebuild the TMS
         // layer for 'Water' and other assetgroups
         var assetGroups = _.filter(scope.state.layers, { type: 'assetgroup' });
         MapService.updateAssetGroups(assetGroups);
+
+        if (n === 'map' &&
+            State.box.type === 'multi-point' &&
+            State.assets.length > 1)
+        {
+          ClickFeedbackService.initializeLabelsLayer(MapService);
+        }
       }, true);
 
       scope.$watch('state.baselayer', function () {
@@ -337,26 +344,38 @@ angular.module('map')
           ClickFeedbackService.emptyClickLayer(MapService);
         }
 
+        if (n === 'multi-point') {
+          ClickFeedbackService.initializeLabelsLayer(MapService);
+          if (o === 'point' && State.assets && State.assets.length > 0) {
+            var asset = DataService.getAssetByKey(State.assets[0])
+            if (asset) {
+              ClickFeedbackService.drawLabelForSingleAsset(asset);
+            }
+          }
+        } else if (n !== 'multi-point' && o === 'multi-point') {
+          ClickFeedbackService.removeLabelsLayer(MapService);
+        }
+
         var selector;
         switch (n) {
-        case "point":
-          selector = "";
-          MapService.removeRegions();
-          break;
-        case "multi-point":
-          selector = "";
-          MapService.removeRegions();
-          break;
-        case "line":
-          selector = "#map * {cursor: crosshair;}";
-          MapService.removeRegions();
-          break;
-        case "region":
-          selector = "";
-          MapService.getRegions(State.spatial.bounds);
-          break;
-        default:
-          return;
+          case "point":
+            selector = "";
+            MapService.removeRegions();
+            break;
+          case "multi-point":
+            selector = "";
+            MapService.removeRegions();
+            break;
+          case "line":
+            selector = "#map * {cursor: crosshair;}";
+            MapService.removeRegions();
+            break;
+          case "region":
+            selector = "";
+            MapService.getRegions(State.spatial.bounds);
+            break;
+          default:
+            return;
         }
         UtilService.addNewStyle(selector);
       });
