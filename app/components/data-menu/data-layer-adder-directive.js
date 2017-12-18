@@ -17,6 +17,7 @@ angular.module('data-menu')
 
     var link = function (scope, element, attrs) {
       var isEdge = navigator.appVersion.indexOf("Edge") > -1;
+      scope.availableLayers = [];
 
       /**
        * Throw an alert and error when something went wrong with fetching the
@@ -28,6 +29,7 @@ angular.module('data-menu')
         notie.alert(
           3, gettextCatalog.getString(
             "Oops! Something went wrong while fetching the layers."));
+        scope.availableLayers = [];
         throw new Error(
           httpResponse.status + " - "
           + "Could not retrieve layers:"

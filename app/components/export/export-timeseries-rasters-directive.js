@@ -3,8 +3,6 @@ angular.module('export')
         ['user', 'DataService', 'State', 'UtilService', '$timeout', 'gettextCatalog', '$http', 'notie',
 function (user,   DataService,   State,   UtilService,   $timeout,   gettextCatalog,   $http,   notie) {
 
-  var RAIN_UUID = "730d6675-35dd-4a35-aa9b-bfb8155f9ca7";
-
   var DEFAULT_PARAMS = {
     format: "csv",
     srs: "EPSG:4326",
@@ -50,7 +48,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     ///////////////////////////////////////////////////////////////////////////
     // Part 1/2 -- get geometries for State.geometries:
     pointGeoms = _.filter(State.geometries, function (geom) {
-       return geom.geometry && geom.geometry.type === 'Point';
+      return geom.geometry && geom.geometry.type === 'Point';
     });
 
     _.forEach(pointGeoms, function (geom) {
@@ -66,10 +64,11 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     ///////////////////////////////////////////////////////////////////////////
     // Part 2/2 -- get geometries for State.assets:
     DataService.assets.map(function (asset) {
-      key = asset.entity_name + "$" + asset.id;
-      if (State.assets.indexOf(key) > -1) {
+      var assetKey = asset.entity_name + "$" + asset.id;
+      var assetName = asset.name;
+      if (State.assets.indexOf(assetKey) > -1) {
         value = UtilService.geomToWkt(asset.geometry);
-        totalGeoms[key] = value;
+        totalGeoms[assetName] = value;
       }
      });
 
