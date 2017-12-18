@@ -433,7 +433,7 @@ angular.module('lizard-nxt')
 
     drawLabelForSingleAsset = function (asset) {
       clickLayer.drawFeatureAsLabel(asset.geometry, asset);
-    }
+    };
 
     return {
       emptyClickLayer: emptyClickLayer,
