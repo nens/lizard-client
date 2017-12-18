@@ -36,7 +36,6 @@ angular.module('map')
       // resolution, animation will also move slowly, so there is no need
       // for a big buffer.
       rasterMapLayer._bufferLength = options.frequency >= 3600000 ? 2 : 6;
-      console.log("[dbg] rasterMapLayer._bufferLength:", rasterMapLayer._bufferLength);
 
       // Number of rasters currently underway.
       rasterMapLayer._nLoadingRasters = 0;
@@ -55,50 +54,7 @@ angular.module('map')
         0
       );
 
-      // tmp: dbg only! ////////////////////////
-      window.adbg = function () {
-        console.log("[F] adbg");
-        console.log("*** _nLoadingRasters.......:", rasterMapLayer._nLoadingRasters);
-        console.log("*** _imageOverlays (count).:", rasterMapLayer._imageOverlays.length);
-        console.log("*** _imageOverlays.........:", rasterMapLayer._imageOverlays);
-        console.log("*** _frameLookup (count)...:", Object.keys(rasterMapLayer._frameLookup).length);
-        console.log("*** _frameLookup (keys)....:", rasterMapLayer._frameLookup);
-      };
-      //////////////////////////////////////////
-
       rasterMapLayer.update = function (map, timeState, options) {
-        /*
-          The pattern observed when the error occurs/animation is not shown:
-
-          1) [F] update
-          2) *** BBB
-          3) *** CCC
-
-          The pattern observed when everything is OK:
-
-          ...
-
-          URL example for a single frame (in anim. that doesn't work):
-
-          http://localhost:9000/api/v3/wms/
-            ?SERVICE=WMS
-            &REQUEST=GetMap
-            &VERSION=1.1.1
-            &LAYERS=scenarios:9:depth-dtri
-            &STYLES=Blues:0:0.3
-            &FORMAT=image/png
-            &TRANSPARENT=false
-            &HEIGHT=256
-            &WIDTH=256
-            &TIME=2014-01-01T00:25:00
-            &SRS=EPSG%3A3857&BBOX=480636.03385718825,6790665.592855057,481247.53008346964,6791277.0890813405
-
-
-        */
-        console.log("[F] update");
-        console.log("*** _imageOverlays (count).:", rasterMapLayer._imageOverlays.length);
-        console.log("*** _frameLookup (count)...:", Object.keys(rasterMapLayer._frameLookup).length);
-
         // Wms options might be different for current zoom and aggWindow.
         // Redraw when wms parameters are different for temporal or spatial
         // zoom.
@@ -115,38 +71,29 @@ angular.module('map')
         rasterMapLayer._setOpacity(options.opacity);
 
         if (options.vectorized && !timeState.playing) {
-          // console.log("*** AAA");
           rasterMapLayer.removeWms(map);
           rasterMapLayer.updateVectorizedData(map, timeState.at, options);
           return;
         } else {
-          // console.log("*** BBB");
-          if (options.vectorized) {
-            rasterMapLayer.removeVectorized(map, true);
-          }
+          rasterMapLayer.removeVectorized(map, true);
         }
 
-        if (!map.hasLayer(rasterMapLayer._imageOverlays[0])) {
-          console.log("*** EEE");
-          rasterMapLayer._add(timeState, map, params);
-        }
-
-        else if (rasterMapLayer.temporal && timeState.playing) {
-          // console.log("*** CCC");
+        if (rasterMapLayer.temporal && timeState.playing) {
           rasterMapLayer._syncTime(timeState, map, options, options);
         }
 
         // flattened parameters can be different per zoomlevel in space and time.
         // only update layer when changed to prevent flickering.
         else if (rasterMapLayer.temporal || !_.isEqual(newParams, params)) {
-          // console.log("*** DDD");
           // Keep track of changes to paramaters for next update.
           params = newParams;
           rasterMapLayer.removeWms(map);
           rasterMapLayer._add(timeState, map, params);
         }
 
-
+        else if (!map.hasLayer(rasterMapLayer._imageOverlays[0])) {
+          rasterMapLayer._add(timeState, map, params);
+        }
       };
 
       /**
