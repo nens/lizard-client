@@ -1,21 +1,25 @@
 
+
 /**
  * Service to draw click feedback. The map uses it too draw a line when user is
  * using line tool mode and the omnibox uses it to display geometries and assets
  * on the map.
  */
 angular.module('lizard-nxt')
-  .service('ClickFeedbackService', ['$rootScope', 'LeafletService',
-  function ($rootScope, LeafletService) {
+  .service('ClickFeedbackService', ['$rootScope', 'LeafletService', 'State',
+  function ($rootScope, LeafletService, State) {
     var ClickLayer = function () {
 
       /**
        * @description Removes clicklayer, adds a new one.
        *              Clicklayer has a default color, opacity
-       *              and a way to transform points.
+       *              and a way to transform points. Can be seen as the
+       *              initialization fn for the clickLayer.
+       *
        * @param {object} mapState
        */
       this.emptyClickLayer = function (mapState) {
+
         clearInterval(this._vibration);
 
         if (this.clickLayer) {
@@ -44,9 +48,8 @@ angular.module('lizard-nxt')
         // Hack to make click on the clicklayer bubble down to the map it is
         // part of.
         this.clickLayer.on('click', function (e) {
-            this._map.fire('click', e);
-          }
-        );
+          this._map.fire('click', e);
+        });
 
         mapState.addLeafletLayer(this.clickLayer);
       };
@@ -68,6 +71,29 @@ angular.module('lizard-nxt')
           self._circleMarker = circleMarker;
           return circleMarker;
         };
+      };
+
+      this.drawPointsAsLabels = function (self) {
+        this.labelsLayer.options.pointToLayer = function (feature, latlng) {
+          var assetKey = feature.entity_name + "$" + feature.id;
+          return L.marker(latlng, {
+            icon: L.divIcon({
+              className: 'selected',
+              iconAnchor: [150, 20],
+              html: '<div class="assetLabel" id="label-'
+                + assetKey
+                + '"><div class="triangle"></div><div class="labelText">'
+                + feature.name
+                + '</div></div>'
+            }),
+            clickable: false
+          });
+        }
+      };
+
+      this.drawFeatureAsLabel = function(geojson, asset) {
+        var _geojson = Object.assign({}, geojson, asset);
+        this.labelsLayer.addData(_geojson);
       };
 
       /**
@@ -287,7 +313,6 @@ angular.module('lizard-nxt')
       }
     };
 
-
     /**
      * @description empties the clicklayer.
      */
@@ -343,6 +368,10 @@ angular.module('lizard-nxt')
       return clickLayer.drawFeature(geometry);
     };
 
+    drawLabel = function(mapState, geometry, asset) {
+      return clickLayer.drawFeatureAsLabel(geometry, asset);
+    };
+
     /**
      * @function drawArrow
      * @memberof ClickFeedbackService
@@ -389,18 +418,42 @@ angular.module('lizard-nxt')
       clickLayer.remove();
     };
 
+    removeLabelsLayer = function (mapState) {
+      if (clickLayer.labelsLayer) {
+        mapState.removeLeafletLayer(clickLayer.labelsLayer);
+        clickLayer.labelsLayer = null;
+      }
+    };
+
+    initializeLabelsLayer = function (mapState)  {
+      if (clickLayer.labelsLayer) {
+        mapState.removeLeafletLayer(clickLayer.labelsLayer);
+      }
+      clickLayer.labelsLayer = LeafletService.geoJson(null);
+      clickLayer.drawPointsAsLabels(clickLayer);
+      mapState.addLeafletLayer(clickLayer.labelsLayer);
+    };
+
+    drawLabelForSingleAsset = function (asset) {
+      clickLayer.drawFeatureAsLabel(asset.geometry, asset);
+    };
+
     return {
       emptyClickLayer: emptyClickLayer,
+      initializeLabelsLayer: initializeLabelsLayer,
+      drawLabelForSingleAsset: drawLabelForSingleAsset,
       drawArrow: drawArrow,
       drawCircle: drawCircle,
       drawGeometry: drawGeometry,
+      drawLabel: drawLabel,
       startVibration: startVibration,
       drawLine: drawLine,
       removeClickFromClickLayer: removeClickFromClickLayer,
       removeLeafletLayerWithId: removeLeafletLayerWithId,
       vibrateOnce: vibrateOnce,
       updateCircle: updateCircle,
-      remove: removeLayer
+      remove: removeLayer,
+      removeLabelsLayer: removeLabelsLayer
     };
   }
 ]);
