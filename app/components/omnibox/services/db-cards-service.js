@@ -4,22 +4,22 @@ angular.module('omnibox')
   'DataService',
   function (State, DataService) {
 
-  colorPickersSettings = {}
+  var colorPickersSettings = {};
 
   var openColorPicker = function (key) {
     closeAllColorPickers();
     colorPickersSettings[key] = true;
-  }
+  };
 
   var closeColorPicker = function (key) {
     colorPickersSettings[key] = false;
-  }
+  };
 
   var closeAllColorPickers = function () {
     for (var key in colorPickersSettings) {
       colorPickersSettings[key] = false;
     }
-  }
+  };
 
   return {
     colorPickersSettings: colorPickersSettings,

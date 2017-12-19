@@ -19,7 +19,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
   function getAllRasters () {
     var rasterUUIDs = _.map(_.filter(State.layers, { type: 'raster' }), 'uuid');
     var dataLayers = _.filter(DataService.dataLayers, function (dataLayer) {
-      return rasterUUIDs.indexOf(dataLayer.uuid) > -1
+      return rasterUUIDs.indexOf(dataLayer.uuid) > -1;
     });
     var result = {};
     _.forEach(dataLayers, function (dataLayer) {
@@ -43,7 +43,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     return theDateElem.value + ":00";
   }
 
-  function isNumeric (x) { return !isNaN(parseFloat(x)) && isFinite(x) }
+  function isNumeric (x) { return !isNaN(parseFloat(x)) && isFinite(x); }
 
   function exportCbAuthenticatedUser (response) {
     angular.element('#MotherModal').modal('hide');
@@ -64,7 +64,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     scope.isAuthenticated = user.authenticated;
     scope.data = {};
     scope.allRasters = getAllRasters();
-    scope.hasRasters = function () { return !!_.size(scope.allRasters) };
+    scope.hasRasters = function () { return !!_.size(scope.allRasters); };
 
     $timeout(function () {
       // Initialize selector #1:
@@ -133,5 +133,5 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     restrict: 'E',
     replace: true,
     templateUrl: 'export/export-rasters.html'
-  }
+  };
 }]);

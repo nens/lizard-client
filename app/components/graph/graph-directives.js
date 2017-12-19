@@ -343,24 +343,11 @@ angular.module('lizard-nxt')
         graph = graphCtrl.graph,
         quantity = graphCtrl.quantity;
 
-    // Apply the filter on the ylabel to go from aggWindow
-    // in ms to a nice 'mm/dag' label. This could be migrated
-    // to the html, but filtering from the DOM is expensive
-    // in angular.
-    if (filter) {
-      // console.log('TODO: filter label on bar chart');
-      // TODO: labels.y = $filter(filter)(labels.y);
-    }
-
     graph.drawBars(content, quantity);
     graph.drawNow(graphCtrl.now);
 
     // Function to call when data changes
     graphCtrl.updateData = function (content, temporal) {
-      if (filter) {
-        // console.log('TODO: filter label on bar chart');
-        // TODO: labels.y = $filter(filter)(labels.y);
-      }
       this.drawBars(content, quantity);
     };
 

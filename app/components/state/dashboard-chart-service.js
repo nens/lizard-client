@@ -272,17 +272,18 @@ angular.module('global-state')
         var parts = key.split(KEY_SEP);
         switch (parts[0]) {
           case 'raster':
-            if (parts[2] == 'geometry') {
+            if (parts[2] === 'geometry') {
               return createRasterGeometryChart(parts, allowEmpty);
             } else {
               return createRasterAssetChart(parts, allowEmpty);
             }
+            break; // For jshint
           case 'timeseries':
             return createTimeseriesChart(parts, allowEmpty);
           default:
             console.error("Unknown key type!", key);
         }
-      }
+      };
 
       var getOrCreateChart = function (key) {
         var chart = ChartCompositionService.dashboardCharts[key];

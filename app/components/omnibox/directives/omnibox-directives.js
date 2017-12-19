@@ -51,7 +51,7 @@ angular.module("omnibox")
       scope.doShowTimeseries = function () {
         return (
           State.assets.filter(function (asset) {
-            return !AssetService.isNestedAsset(asset)
+            return !AssetService.isNestedAsset(asset);
           }).length + State.geometries.length <= 1);
       };
 

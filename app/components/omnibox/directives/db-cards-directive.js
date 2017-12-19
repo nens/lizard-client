@@ -74,7 +74,7 @@ angular.module('omnibox')
 
         var activeTemporalRasterProps = _.filter(
           temporalRasterProps,
-          function (prop) { return activeUuids.indexOf(prop.uuid) > -1 }
+          function (prop) { return activeUuids.indexOf(prop.uuid) > -1; }
         );
 
         return activeTemporalRasterProps.length;

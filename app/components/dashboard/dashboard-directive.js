@@ -128,8 +128,8 @@ angular.module('dashboard')
               assetOrGeom = _.find(DataService.geometries, function (geom) {
                 geom = geom.geometry;
                 return (chart.geometry.type === geom.type &&
-                        chart.geometry.coordinates[0] == geom.coordinates[0] &&
-                        chart.geometry.coordinates[1] == geom.coordinates[1]);
+                        chart.geometry.coordinates[0] === geom.coordinates[0] &&
+                        chart.geometry.coordinates[1] === geom.coordinates[1]);
               });
             }
 
@@ -166,7 +166,7 @@ angular.module('dashboard')
               return threshold;
             });
           }
-        }
+        };
 
         var Endlösung = [];
         ChartCompositionService.composedCharts.forEach(function (value, index) {
