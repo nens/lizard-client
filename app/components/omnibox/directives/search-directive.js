@@ -53,6 +53,7 @@ angular.module('omnibox')
       }
     };
 
+    scope._search = _search; // For unit tests
     scope.search = _.debounce(_search, 500);
 
     /**

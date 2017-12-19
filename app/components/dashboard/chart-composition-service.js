@@ -25,7 +25,7 @@ angular.module('dashboard')
 
   this.chartsPresent = function () {
     return service.composedCharts.length > 0;
-  }
+  };
 
   // Reset this svc's main data structure
   this.reset = function () {
@@ -38,7 +38,7 @@ angular.module('dashboard')
       if (idx !== -1) return plot;
     }
     return -1;
-  }
+  };
 
   this.getActiveCharts = function () {
     var charts = [];

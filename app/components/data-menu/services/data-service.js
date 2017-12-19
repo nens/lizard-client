@@ -254,7 +254,7 @@ angular.module('data-menu')
                   if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
                     instance.geometries[i] = newGeo;
                   }
-                })
+                });
               })
               .then(instance.buildDashboard);
         }, this);
@@ -266,7 +266,7 @@ angular.module('data-menu')
                   if (old.entity_name === newAsset.entity_name && old.id === newAsset.id) {
                     instance.assets[i] = newAsset;
                   }
-                })
+                });
               })
               .then(instance.buildDashboard);
         }, this);
@@ -320,7 +320,7 @@ angular.module('data-menu')
         });
 
         newAssets.forEach(function (asset) {
-          this.getGeomData(asset)
+          this.getGeomData(asset);
         }, this);
       };
 
@@ -487,6 +487,6 @@ angular.module('data-menu')
           }
         }
         return assets;
-      }
+      };
     }
   ]);

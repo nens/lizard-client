@@ -47,7 +47,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
 
     ///////////////////////////////////////////////////////////////////////////
     // Part 1/2 -- get geometries for State.geometries:
-    pointGeoms = _.filter(State.geometries, function (geom) {
+    var pointGeoms = _.filter(State.geometries, function (geom) {
       return geom.geometry && geom.geometry.type === 'Point';
     });
 
@@ -146,7 +146,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
       ).then(
         exportCbAuthenticatedUser
       );
-    }
+    };
   };
 
   return {
@@ -155,5 +155,5 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     restrict: 'E',
     replace: true,
     templateUrl: 'export/export-timeseries-rasters.html'
-  }
+  };
 }]);

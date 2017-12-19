@@ -145,7 +145,6 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
         var poller = setInterval(function () {
 
           $http.get(taskResponseData.url).then(function (response) {
-
             if (response.data.task_status === 'SUCCESS') {
 
               // Apparently, the task (=exporting timeseries) resulted in a

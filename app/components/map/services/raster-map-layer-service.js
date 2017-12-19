@@ -610,7 +610,7 @@ angular.module('map')
             return;
           }
         }
-      }
+      };
 
       /**
        * @description Removes old frame by looking for a frame that has an

@@ -362,7 +362,7 @@ angular.module('map')
         if (n === 'multi-point') {
           ClickFeedbackService.initializeLabelsLayer(MapService);
           if (o === 'point' && State.assets && State.assets.length > 0) {
-            var asset = DataService.getAssetByKey(State.assets[0])
+            var asset = DataService.getAssetByKey(State.assets[0]);
             if (asset) {
               ClickFeedbackService.drawLabelForSingleAsset(asset);
             }

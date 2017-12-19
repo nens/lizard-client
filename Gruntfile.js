@@ -29,7 +29,7 @@ module.exports = function (grunt) {
         req.headers.password = grunt.option('sso_password') || process.env.SSO_PASSWORD;
       }
       next();
-    }
+    };
   }
 
   var modRewrite = require('connect-modrewrite');

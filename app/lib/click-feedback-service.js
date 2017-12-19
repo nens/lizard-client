@@ -88,7 +88,7 @@ angular.module('lizard-nxt')
             }),
             clickable: false
           });
-        }
+        };
       };
 
       this.drawFeatureAsLabel = function(geojson, asset) {
@@ -302,11 +302,15 @@ angular.module('lizard-nxt')
         drawCircle,
         updateCircle,
         drawArrow,
+        drawLabel,
         drawLine,
         drawGeometry,
         startVibration,
         vibrateOnce,
         removeLayer,
+        removeLabelsLayer,
+        initializeLabelsLayer,
+        drawLabelForSingleAsset,
         removeLeafletLayerWithId;
 
     /**

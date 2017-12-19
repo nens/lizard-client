@@ -137,6 +137,6 @@ angular.module('lizard-nxt').controller('MasterCtrl',
         result.push(value);
       });
       return result;
-    }
+    };
   }
 }]);
