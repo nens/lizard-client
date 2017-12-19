@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.17.0"></a>
+# [4.17.0](https://github.com/nens/lizard-client/compare/v4.16.31...v4.17.0) (2017-12-19)
+
+
+### Features
+
+* **map:** Layer that labels selected assets ([d9a9e03](https://github.com/nens/lizard-client/commit/d9a9e03))
+
+
+
 <a name="4.16.31"></a>
 ## [4.16.31](https://github.com/nens/lizard-client/compare/v4.16.30...v4.16.31) (2017-12-18)
 
