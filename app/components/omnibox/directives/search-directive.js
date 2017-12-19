@@ -42,7 +42,7 @@ angular.module('omnibox')
      *
      * scope.omnibox.searchResults is used by search-results template.
      */
-    scope.search = function () {
+    var _search = function () {
       scope.omnibox.mustShowSearchResults = true;
       scope.omnibox.searchResults = {};
       if (scope.query.length > 0) {
@@ -52,6 +52,8 @@ angular.module('omnibox')
         scope.cleanInputAndResults();
       }
     };
+
+    scope.search = _.debounce(_search, 500);
 
     /**
      * @description resets input field
