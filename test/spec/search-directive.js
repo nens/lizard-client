@@ -75,7 +75,7 @@ describe('Directives: Search with mocked CabinetService', function () {
     function () {
       scope.query = 'test';
       // Mocked CabinetService will respond whith status 'OVER_QUERY_LIMIT'
-      expect(scope.search).toThrow();
+      expect(scope._search).toThrow();
     }
   );
 
@@ -120,7 +120,7 @@ describe('Directives: Search with real LocationService', function () {
 
   it('should set moment on scope when queried with time', function () {
     scope.query = '23-10-2014';
-    scope.search();
+    scope._search();
     expect(moment.isMoment(scope.omnibox.searchResults.temporal)).toBe(true);
   });
 
@@ -135,7 +135,7 @@ describe('Directives: Search with real LocationService', function () {
 
   it('should zoom to temporal result', function () {
     scope.query = '2014-10-23';
-    scope.search();
+    scope._search();
     var m = scope.omnibox.searchResults.temporal;
     scope.zoomToTemporalResult(m);
     expect(State.temporal.start).toBe(m.valueOf());
