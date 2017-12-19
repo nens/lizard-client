@@ -30,12 +30,12 @@ angular.module('omnibox')
       ) {
 
     this.responseStatus = {
-        OK: 'OK',
-        ZERO_RESULTS: 'ZERO_RESULTS',
-        OVER_QUERY_LIMIT: 'OVER_QUERY_LIMIT',
-        REQUEST_DENIED: 'REQUEST_DENIED',
-        INVALID_REQUEST: 'INVALID_REQUEST',
-        UNKNOWN_ERROR: 'UNKNOWN_ERROR'
+      OK: 'OK',
+      ZERO_RESULTS: 'ZERO_RESULTS',
+      OVER_QUERY_LIMIT: 'OVER_QUERY_LIMIT',
+      REQUEST_DENIED: 'REQUEST_DENIED',
+      INVALID_REQUEST: 'INVALID_REQUEST',
+      UNKNOWN_ERROR: 'UNKNOWN_ERROR'
     };
 
     var localPromise = {};
@@ -56,6 +56,14 @@ angular.module('omnibox')
      *                        promise resolves with response from geocoder.
      */
     this.search = function (searchString, state) {
+
+      var MINIMUM_SEARCH_QUERY_LENGTH = 3;
+
+      if (searchString.length < MINIMUM_SEARCH_QUERY_LENGTH) {
+        localPromise = $q.defer();
+        localPromise.resolve({results: []});
+        return localPromise.promise;
+      }
 
       var getSearch = function (params) {
 

@@ -77,6 +77,7 @@ angular.module('lizard-nxt')
      * @description GET method on rest api
      */
     this.get = function (params, httpOptions) {
+
       var newUrl = self.makeUrl(this.url, this.baseUrl);
       var options = self.buildOptions(newUrl, params, 'GET');
 
