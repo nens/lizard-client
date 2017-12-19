@@ -99,6 +99,8 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
       return scope.data.selectedRaster && isNumeric(scope.data.selectedCellSize);
     };
 
+    scope.initDatetimePicker = initDatetimePicker;
+
     scope.startRasterExport = function () {
       var variableParams = {
         geom:       scope.data.theGeometry,
