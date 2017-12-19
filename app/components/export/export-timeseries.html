@@ -29,18 +29,7 @@
           type="checkbox">
         <span>{{ ts.location }}, {{ ts.parameter }}</span>
       </div>
-      <div ng-repeat="filter in asset.filters" ng-if="isMap">
-        <div ng-repeat="fts in filter.timeseries">
-          <input
-            class="timeseries-checkbox"
-            ng-model="toExport[fts.uuid]"
-            data-uuid="{{fts.uuid}}"
-            type="checkbox">
-          <span>{{ fts.location }}, {{ fts.parameter }}</span>
-        </div>
-      </div>
     </div>
-
     <div ng-if="isPolling"
          class="download-export-message">
       <br />
@@ -49,21 +38,18 @@
   </div>
 
   <div class="modal-footer footer-left">
-
     <button
       class="btn btn-primary start-export-button"
       ng-click="startExport()"
       translate>
       Start Export
     </button>
-
     <button
       class="btn btn-warning download-export-button hide"
       ng-click="downloadFinishedFile()"
       translate>
       Download File
     </button>
-
   </div>
 
 </div>
