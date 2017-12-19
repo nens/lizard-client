@@ -110,10 +110,15 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
         variableParams.time = getDatetime();
       }
 
-      var finalParams = Object.assign({}, DEFAULT_PARAMS, variableParams);
+      // IE doesnt support Object.assign calls....
+      _.forEach(variableParams, function (v, k) {
+        DEFAULT_PARAMS[k] = v;
+      });
+
+      // TODO: POST ipv GET (because async task)
       $http.get(
         '/api/v3/rasters/' + scope.data.selectedRaster + '/data/',
-        { params: finalParams }
+        { params: DEFAULT_PARAMS }
       ).then(
         exportCbAuthenticatedUser
       );

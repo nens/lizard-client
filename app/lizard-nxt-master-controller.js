@@ -124,8 +124,19 @@ angular.module('lizard-nxt').controller('MasterCtrl',
                 ChartCompositionService.dashboardCharts);
   };
 
-    window.dataDebug = function () {
-      console.log("The DataService has: dataLayer", DataService.dataLayers,
-                  "assets", DataService.assets);
-    };
+  window.dataDebug = function () {
+    console.log("The DataService has: dataLayer", DataService.dataLayers,
+                "assets", DataService.assets);
+  };
+
+  if (typeof Object.values !== "function") {
+    console.log("Your browser does not recognize Object.values - let's patch it");
+    Object.values = function (obj) {
+      var result = [];
+      _.forEach(obj, function (value, key) {
+        result.push(value);
+      });
+      return result;
+    }
+  }
 }]);

@@ -134,11 +134,15 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
         stop:  selectedDatetimes[1],
         geom:  scope.data.selectedGeometry
       };
-      var finalParams = Object.assign({}, DEFAULT_PARAMS, variableParams);
+
+      // IE doesn't support Object.assign calls....
+      _.forEach(variableParams, function (v, k) {
+        DEFAULT_PARAMS[k] = v;
+      });
 
       $http.get(
         '/api/v3/rasters/' + scope.data.selectedTemporalRaster + '/data/',
-        { params: finalParams }
+        { params: DEFAULT_PARAMS }
       ).then(
         exportCbAuthenticatedUser
       );
