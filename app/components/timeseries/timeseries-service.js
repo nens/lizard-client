@@ -469,7 +469,8 @@ angular.module('timeseries').service('TimeseriesUtilService', [
 
     return {
       filterTimeseries: filterTimeseries,
-      formatTimeseriesForGraph: formatTimeseriesForGraph
+      formatTimeseriesForGraph: formatTimeseriesForGraph,
+      addTimeseriesProperties: addTimeseriesProperties  // Export so unit test can call it
     };
   }
 ]);
