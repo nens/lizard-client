@@ -92,8 +92,16 @@ angular.module('lizard-nxt')
       };
 
       this.drawFeatureAsLabel = function(geojson, asset) {
-        var _geojson = Object.assign({}, geojson, asset);
-        this.labelsLayer.addData(_geojson);
+        // IE11: We cannot use Object.assign(...) therefore the following
+        // fuglyness:
+        var obj = {};
+        _.forEach(geojson, function (v, k) {
+          obj[k] = v;
+        });
+        _.forEach(asset, function (v, k) {
+          obj[k] = v;
+        });
+        this.labelsLayer.addData(obj);
       };
 
       /**
