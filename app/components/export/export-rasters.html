@@ -22,7 +22,9 @@
       <p translate>
         Please select the raster:
       </p>
-      <select ng-model="data.selectedRaster" class="form-control">
+      <select ng-model="data.selectedRaster"
+              class="form-control"
+              ng-change="initDatetimePicker()">
         <option
           class="selectedRasterOption"
           ng-repeat="(slug, uuid) in allRasters track by $index"
@@ -36,16 +38,9 @@
     <!-- part 2/4: select the point in time -->
     <div id="export-raster-selector-2">
       <div class="start-stop-selector-container-1">
-        <div ng-if="selectedRasterIsTemporal()"
-             class="from-to-label-1"
+        <div class="from-to-label-1"
              translate>
           Please select the datetime:
-        </div>
-        <div ng-if="!selectedRasterIsTemporal()"
-             class="from-to-label-1"
-             style="color: #aaa"
-             translate>
-          This only applies to temporal rasters.
         </div>
         <input type="datetime-local"
                name="datetime-selector"
