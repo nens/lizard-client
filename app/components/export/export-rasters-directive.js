@@ -105,7 +105,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
       var variableParams = {
         geom:       scope.data.theGeometry,
         target_srs: scope.data.selectedTargetProjection,
-        cell_size:  scope.data.selectedCellSize
+        cellsize:   scope.data.selectedCellSize
       };
 
       if (scope.selectedRasterIsTemporal()) {
