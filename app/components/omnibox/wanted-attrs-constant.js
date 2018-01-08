@@ -762,6 +762,7 @@ angular.module('omnibox')
           "waterchain.pump_station.capacity * 3.6 | niceNumberOrEllipsis: 2",
         valueSuffix: "m<sup>3</sup>/h"
       },
+
       {
         keyName: gettext("Inhabitants"),
         attrName: "inhabitants",
@@ -803,6 +804,13 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.connected_impervious_surface_rainwater * 0.0001 | niceNumberOrEllipsis: 2",
         valueSuffix: "ha"
+      },
+      {
+        keyName: gettext("Pump overcapacity"),
+        attrName: "pump_overcapacity",
+        ngBindValue:
+          "waterchain.pump_overcapacity | niceNumberOrEllipsis: 2",
+        valueSuffix: "mm/h"
       },
       {
         keyName: gettext("Water retention capacity"),
