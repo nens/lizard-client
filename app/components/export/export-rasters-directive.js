@@ -58,7 +58,8 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
 
     scope.TARGET_PROJECTIONS = {
       "EPSG:4326 (WGS84)": "EPSG:4326",
-      "EPSG:28992 (RD new)": "EPSG:28992"
+      "EPSG:28992 (RD new)": "EPSG:28992",
+      "EPSG:3857 (Pseudo mercator)": "EPSG:3857"
     };
 
     scope.isAuthenticated = user.authenticated;

@@ -69,7 +69,7 @@
 
       <div id="export-raster-selector-4">
         <p translate>
-          Please select the cell size:
+          Please select the cellsize:
         </p>
         <input type="text"
                ng-model="data.selectedCellSize"
@@ -78,14 +78,18 @@
         <p id="cell-size-help-text"
            ng-if="'EPSG:4326' === data.selectedTargetProjection"
            translate>
-           Cell size for EPSG:4326 is in degrees
+           Cellsize for EPSG:4326 is in degrees
         </p>
         <p id="cell-size-help-text"
            ng-if="'EPSG:28992' === data.selectedTargetProjection"
            translate>
-           Cell size for EPSG:28992 is in meters
+           Cellsize for EPSG:28992 is in meters
         </p>
-
+        <p id="cell-size-help-text"
+           ng-if="'EPSG:3857' === data.selectedTargetProjection"
+           translate>
+           Cellsize for EPSG:3857 is in meters
+        </p>
       </div>
     </div>
   </div>
