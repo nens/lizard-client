@@ -101,6 +101,16 @@ angular.module('lizard-nxt')
         _.forEach(asset, function (v, k) {
           obj[k] = v;
         });
+
+        // W/o this, the geojson can get an invalid 'type' attr: e.g.
+        // "pumpstation" a.o.t "Feature" xor "FeatureSet" (which would crash
+        // Leaflet)
+        obj.type = 'Feature';
+
+        // W/o this, the labels can remain blanco when the 'name' attr was not
+        // configured/filled in @backend:
+        obj.name = obj.name || '...';
+
         this.labelsLayer.addData(obj);
       };
 
