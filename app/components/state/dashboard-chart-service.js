@@ -228,6 +228,14 @@ angular.module('global-state')
         }
       };
 
+      var getTSChartDescription = function (ts, asset) {
+        if (ts.location && ts.parameter) {
+          return ts.location + ', ' + ts.parameter;
+        } else {
+          return (asset.name || asset.code) + (ts.parameter ? ', ' + ts.parameter : '');
+        }
+      };
+
       var createTimeseriesChart = function(parts, allowEmpty) {
         // Parts is ['timeseries', '32322233221']
         var key = parts.join(KEY_SEP);
@@ -251,6 +259,7 @@ angular.module('global-state')
 
         var ts = timeseriesAndAsset.timeseries;
         var asset = timeseriesAndAsset.asset;
+
         return {
           uuid: key,
           type: "timeseries",
@@ -259,7 +268,7 @@ angular.module('global-state')
           color: getDefaultColor(),
           unit: ts.unit,
           reference_frame: ts.reference_frame,
-          description: (asset.name || asset.code) + ', ' + ts.parameter,
+          description: getTSChartDescription(ts, asset),
           measureScale: ts.scale,
           valueType: ts.value_type,
           graphType: (ts.value_type === 'float' ?
