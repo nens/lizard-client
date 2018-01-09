@@ -94,17 +94,18 @@
               </span>
             </span>
           </td>
+
           <td class="col-md-3">
-            <div ng-if="result.result_type.has_attachment">
-              <a target="_blank"
-                 href="{{ result.attachment_url }}"
-                 class="btn btn-default btn-xs pull-right"
-                 title="{{ 'Export scenario data' | translate }}">
-                <i class="fa fa-share-square-o"></i>
-                <span translate>Export</span>
-              </a>
-            </div>
+            <a href="#"
+               ng-if="result.layer && result.layer.active"
+               ng-click="openExportModal()"
+               class="btn btn-default btn-xs pull-right"
+               title="{{ 'Export scenario data' | translate }}">
+              <i class="fa fa-share-square-o"></i>
+              <span translate>Export</span>
+            </a>
           </td>
+
         </tr>
       </table>
     </div>
