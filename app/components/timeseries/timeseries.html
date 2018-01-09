@@ -4,7 +4,7 @@
     <div class="timeseries-header-container">
 
       <i class="omnibox-ts-icon">
-        <img src="/static/client/images/ts-icon-gijs.1ac716c2.png" width="24" height="24">
+        <img src="/static/client/images/ts-icon-gijs.1ac716c2.png" width="24" height="24" />
       </i>
 
       <select
@@ -26,27 +26,34 @@
           + ', '
           + asset.timeseries[0].parameter }}
       </span>
-      <span class="card-title-text placeholder" ng-class="{hidden: fullDetails}" translate>Timeseries</span>
+      <span
+        class="card-title-text placeholder"
+        ng-class="{hidden: fullDetails}"
+        translate>
+        Timeseries
+      </span>
       <full-details></full-details>
     </div>
 
     <div>
       <div ng-if="content[0].valueType !== 'image'">
-        <div class="timeseries-graph-container"
-            ng-class="{hidden: !fullDetails}"
-            ng-if="content[0].measureScale === 'ratio'">
-           <graph
-              bar-chart
-              type="temporal"
-              temporal="timeState"
-              content="content"
-              now="timeState.at">
-            </graph>
+        <div
+          class="timeseries-graph-container"
+          ng-class="{hidden: !fullDetails}"
+          ng-if="content[0].measureScale === 'ratio'">
+          <graph
+            bar-chart
+            type="temporal"
+            temporal="timeState"
+            content="content"
+            now="timeState.at">
+          </graph>
         </div>
 
-        <div class="timeseries-graph-container"
+        <div
+          class="timeseries-graph-container"
           ng-class="{hidden: !fullDetails}"
-            ng-if="content[0].measureScale !== 'ratio'">
+          ng-if="content[0].measureScale !== 'ratio'">
           <graph
             line
             type="temporal"
@@ -96,7 +103,5 @@
         </div>
       </div>
     </div>
-
-
   </div>
 </div>
