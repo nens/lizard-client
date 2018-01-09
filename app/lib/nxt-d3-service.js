@@ -58,9 +58,11 @@ angular.module('lizard-nxt')
      *              explicitly says so, english otherwise.
      */
 
-    _locale: window.location.href.indexOf('/nl/') > -1
-      ? 'nl_NL'
-      : 'en_US',
+    _getLocale: function () {
+      return window.location.href.indexOf('/nl/') > -1
+        ? 'nl_NL'
+        : 'en_US';
+    },
 
     /**
      * @attribute
@@ -101,9 +103,8 @@ angular.module('lizard-nxt')
     },
 
     _getLocaleFormatter: function () {
-      return this._localeFormatter[this._locale];
+      return this._localeFormatter[this._getLocale()];
     },
-
 
     /**
      * @function
