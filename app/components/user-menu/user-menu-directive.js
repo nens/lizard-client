@@ -170,7 +170,7 @@ angular.module('user-menu')
           message, [
           message.message,
           gettextCatalog.getString("Download"),
-          gettextCatalog.getString("Archive Message"),
+          gettextCatalog.getString("Delete message"),
           function () {
             goToMessageUrl(message);
           }, function () {
