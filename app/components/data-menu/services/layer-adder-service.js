@@ -101,7 +101,15 @@ angular.module('data-menu')
       );
       if (this.temporal) {
         State.temporal.start = this.first;
-        State.temporal.end = this.last;
+        if (this.first === this.last) {
+          // If start and end are at the same point in time (i.e. we have a
+          // timeseries with only a single measured value), we "pad" the space
+          // to have decent visualization.
+          var defaultAggWindow = 3600000 * 24 * 7; // 1 week, in ms
+          State.temporal.end = this.first + defaultAggWindow;
+        } else {
+          State.temporal.end = this.last;
+        }
       }
       UtilService.announceMovedTimeline(State);
     };
