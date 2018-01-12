@@ -53,6 +53,12 @@ angular.module('omnibox')
         DataService.buildDashboard();
       };
 
+      if (State.context === 'map' && scope.asset) {
+        scope.assetLayer = _.find(State.layers, { type: 'assetgroup' });
+        scope.$watch('assetLayer.active', function (n, o) {
+          if (!n && o) scope.rmAssetOrGeometry()
+        });
+      }
     };
 
 
