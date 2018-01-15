@@ -185,8 +185,8 @@ angular.module("user-menu").directive("userMenu", [
         notie.confirm.apply(message, [
           message.message,
           gettextCatalog.getString("Download"),
-          gettextCatalog.getString("Archive Message"),
-          function() {
+          gettextCatalog.getString("Delete message"),
+          function () {
             goToMessageUrl(message);
           },
           function() {
