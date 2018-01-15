@@ -74,7 +74,8 @@
             <span translate>Help</span>
           </a>
         </li>
-        <li ng-if="!user.authenticated">
+        <li ng-if="!user.authenticated"
+            ng-style="{'min-width': '133px', 'max-width': '133px'}">
           <a ng-click="logIn()"
              href="/accounts/login/"
              title="{{ tooltips.login }}"
