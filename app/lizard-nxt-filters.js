@@ -405,3 +405,14 @@ angular.module('lizard-nxt-filters')
     }
   };
 });
+
+angular.module('lizard-nxt-filters')
+  .filter('truncate', function () {
+  return function (input, maxLen) {
+    if (input.length > maxLen - 3) {
+      return input.slice(0, maxLen - 3) + "...";
+    } else {
+      return input;
+    }
+  }
+});

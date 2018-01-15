@@ -30,7 +30,7 @@
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
 
-        <li ng-show="showApps">
+        <li ng-show="mustShowAppsButton">
           <a id="lizard-apps-button"
              class="lizard-apps-button"
              title="Apps"
@@ -93,7 +93,9 @@
              aria-haspopup="true"
              aria-expanded="false"
              href="#">
-            <div ng-cloak id="username">
+            <div ng-cloak
+              id="username"
+              ng-style="{'min-width': '133px', 'max-width': '133px'}">
               <i class="fa fa-user"></i>
               <span
                 ng-if="inbox.length > 0"
@@ -101,8 +103,8 @@
                 ng-bind="inbox.length">
               </span>
               <span class="caret" ng-class="{'user-name': inbox.length > 0}"></span>
-              <span ng-bind="user.first_name"></span>
-            </div>
+              <span> {{ (user.first_name || user.username) | truncate:16 }}</span>
+           </div>
           </a>
           <ul class="dropdown-menu">
             <li>
