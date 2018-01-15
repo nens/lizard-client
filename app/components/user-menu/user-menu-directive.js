@@ -72,45 +72,6 @@ angular.module("user-menu").directive("userMenu", [
         }
       });
 
-      // appsButton.onclick = function (e) {
-      //   console.log("[CLICK] appsButton");
-      //   e.preventDefault();
-      //   e.stopPropagation();
-      //   // appsContainer.classList.toggle('hidden');
-      //   var containerClass = State.context === 'map'
-      //     ? CLASS_CONTAINER_ON_MAP
-      //     : CLASS_CONTAINER_ON_DB;
-
-      //   if (showAppsContainer) {
-      //     console.log("AAAA");
-      //     appsContainer.classList.toggle('hidden');
-      //     showAppsContainer = false;
-      //     appsContainer.classList.remove(containerClass);
-      //   } else {
-      //     console.log("BBBB");
-      //     appsContainer.classList.toggle('hidden');
-      //     showAppsContainer = true;
-      //     appsContainer.classList.add(containerClass);
-      //   }
-      // };
-
-      // angular.element("#lizard-apps-button").click(function (e) {
-      //   e.stopPropagation();
-      //   $timeout(function () {
-      //     console.log("aaaaaa");
-      //     var lApps = document.querySelector("#lizard-apps-container");
-      //     if (!lApps.classList.contains("hidden")) {
-      //       lApps.classList.toggle("hidden");
-      //     }
-      //   });
-
-      //   // if (!lApps.classList.contains("hidden")) {
-      //   //   console.log("<Mehkeee");
-      //   //   lApps = document.querySelector("#lizard-apps-container");
-      //   //   lApps.classList.toggle("hidden");
-      //   // }
-      // });
-
       /**
        * Turn off either favourites or apps when click the on or the other
        */
