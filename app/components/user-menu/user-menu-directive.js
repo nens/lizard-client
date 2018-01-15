@@ -66,8 +66,6 @@ angular.module("user-menu").directive("userMenu", [
       });
 
       angular.element(":not(#lizard-apps-button)").click(function (e) {
-        e.preventDefault();
-        e.stopPropagation();
         if (showAppsContainer) {
           appsContainer.classList.toggle('hidden');
           showAppsContainer = false;
