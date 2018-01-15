@@ -414,5 +414,5 @@ angular.module('lizard-nxt-filters')
     } else {
       return input;
     }
-  }
+  };
 });
