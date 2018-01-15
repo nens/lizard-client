@@ -34,7 +34,6 @@ angular.module("user-menu").directive("userMenu", [
       scope.modal = { active: false };
       scope.inbox = [];
 
-      // var appsButton = document.querySelector("#lizard-apps-button");
       var appsContainer = document.querySelector("#lizard-apps-container");
       var showAppsContainer = false;
 
@@ -47,9 +46,9 @@ angular.module("user-menu").directive("userMenu", [
         appsContainer.classList.add(CLASS_CONTAINER_ON_DB);
       }
 
-      scope.state = State;
+      scope._state = State;
 
-      scope.$watch('state.context', function (n, o) {
+      scope.$watch('_state.context', function (n, o) {
         if (n === 'map') {
           appsContainer.classList.remove(CLASS_CONTAINER_ON_DB);
           appsContainer.classList.add(CLASS_CONTAINER_ON_MAP);
@@ -63,6 +62,7 @@ angular.module("user-menu").directive("userMenu", [
         e.preventDefault();
         e.stopPropagation();
         showAppsContainer = !showAppsContainer;
+        scope.favourites.enabled = false;
       });
 
       angular.element(":not(#lizard-apps-button)").click(function (e) {
@@ -71,19 +71,6 @@ angular.module("user-menu").directive("userMenu", [
           showAppsContainer = false;
         }
       });
-
-      /**
-       * Turn off either favourites or apps when click the on or the other
-       */
-      // var toggleDashboardOrApps = function (e) {
-      //   var favs = e === true;
-      //   var lApps = document.querySelector("#lizard-apps-container");
-      //   if (!lApps.classList.contains("hidden") && favs) {
-      //     lApps.classList.toggle("hidden");
-      //   } else if (!favs) {
-      //     scope.favourites.enabled = false;
-      //   }
-      // };
 
       var appsScreenUrl = function() {
         var appsScreenSlug = UtilService.slugify($location.host());
