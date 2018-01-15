@@ -15,6 +15,7 @@ angular.module('lizard-nxt').controller('MasterCtrl',
    'UrlService',
    'AssetService',
    'ChartCompositionService',
+   'notie',
   function (
     $scope,
     $rootScope,
@@ -27,7 +28,8 @@ angular.module('lizard-nxt').controller('MasterCtrl',
     State,
     UrlService,
     AssetService,
-    ChartCompositionService
+    ChartCompositionService,
+    notie
   ) {
 
   // Bind to the global scope
@@ -111,12 +113,14 @@ angular.module('lizard-nxt').controller('MasterCtrl',
     window.loaded = true;
   });
 
-    window.debug = function () {
+  window.debug = function () {
       // The parse / stringify is to turn it into an object without properties,
       // for the Firefox console.
     console.log("Currently, the State object looks like:",
                 JSON.parse(JSON.stringify(State, null, 4)));
   };
+
+  // window.notie = notie;
 
   window.chartComposition = function () {
     console.log("The chart composition is:",

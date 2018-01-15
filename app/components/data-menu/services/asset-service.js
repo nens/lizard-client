@@ -2,8 +2,8 @@
  * Service to handle timeseries retrieval.
  */
 angular.module('data-menu')
-  .service("AssetService", ['ChartCompositionService', 'State', '$q', '$http',
-    function (ChartCompositionService, State, $q, $http) {
+  .service("AssetService", ['ChartCompositionService', 'State', '$q', '$http', 'notie', 'gettextCatalog',
+    function (ChartCompositionService, State, $q, $http, notie, gettextCatalog) {
       var service = this;
 
       this.NESTED_ASSET_PREFIXES = ['pump', 'filter', 'monitoring_well'];
@@ -19,10 +19,25 @@ angular.module('data-menu')
           method: 'GET'
         })
 
-        .then(function (response) {
-          response.data.entity_name = entity;
-          return response.data;
-        });
+        .then(
+          function (response) {
+            response.data.entity_name = entity;
+            return response.data;
+          },
+          function (error) {
+            setTimeout(function () {
+              notie.alert(
+                3,
+                gettextCatalog.getString(
+                  "Could not fetch asset data. You may not have sufficient permissions."
+                )
+              );
+            }, 2000);
+            console.error("Error while restoring state based on favorite:", error);
+
+            State.assets.removeAsset(entity + "$" + id);
+          }
+        )
       };
 
       /**

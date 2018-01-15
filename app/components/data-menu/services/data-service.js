@@ -334,6 +334,7 @@ angular.module('data-menu')
       };
 
       this.updateLayerData = function (geo, layer, options, promises) {
+        console.log("[F] updateLayerData");
         if (!layer.active) {
           return;
         }
@@ -365,6 +366,7 @@ angular.module('data-menu')
 
           promises.push(
             dataLayer.getData(options).then(
+
               function (response) {
                   var newProps = geo.properties ? _.clone(geo.properties) : {};
 
@@ -413,8 +415,10 @@ angular.module('data-menu')
           options.boundary_type = geo.regionType;
         }
 
+        console.log("HIERR (1)");
         // Add promise to promises.
         angular.forEach(State.layers, function (layer) {
+          console.log("HIERR (2)");
           instance.updateLayerData(geo, layer, options, promises);
         });
 
@@ -432,17 +436,19 @@ angular.module('data-menu')
               // property.
               geo.properties[uuid].data = response;
               if (!State.annotations.active && uuid in Object.keys(geo.properties)) {
-                  geo.properties[uuid] = null;
+                geo.properties[uuid] = null;
               }
             })
           );
         }
 
-        $q.all(promises).then(function () {
-          geo.properties = geo.properties || {};
-          defer.resolve(geo);
-          defer = undefined; // Clear the defer
-        });
+        $q.all(promises).then(
+          function () {
+            geo.properties = geo.properties || {};
+            defer.resolve(geo);
+            defer = undefined; // Clear the defer
+          }
+        );
 
         return defer.promise;
       };

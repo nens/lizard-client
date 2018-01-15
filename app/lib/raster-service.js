@@ -17,6 +17,8 @@ angular.module('lizard-nxt')
 
   var getData = function (options) {
 
+    console.log("[F] getData");
+
     var srs = 'EPSG:4326',
         agg = options.agg || '',
         startString,
@@ -75,7 +77,16 @@ angular.module('lizard-nxt')
       requestOptions.geom = UtilService.geomToWkt(options.geom);
     }
 
-    return CabinetService.raster(canceler).get(requestOptions);
+    return CabinetService.raster(canceler).get(requestOptions).then(
+      function (resp) {
+        console.log("raster received OK");
+        return resp
+      },
+      function (err) {
+        console.log("raster received ERROR");
+        alert('Wooooop!');
+      }
+    );
   };
 
   var getTimesteps = function (options) {
