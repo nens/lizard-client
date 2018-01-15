@@ -103,7 +103,7 @@
                 ng-bind="inbox.length">
               </span>
               <span class="caret" ng-class="{'user-name': inbox.length > 0}"></span>
-              <span> {{ user.first_name || 'heeeele lange naam' | truncate:16 }}</span>
+              <span> {{ (user.first_name || user.username) | truncate:16 }}</span>
            </div>
           </a>
           <ul class="dropdown-menu">
