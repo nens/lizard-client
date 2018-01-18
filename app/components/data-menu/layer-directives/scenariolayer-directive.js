@@ -7,8 +7,7 @@ angular.module('data-menu')
   'LayerAdderService',
   'MapService',
   'gettextCatalog',
-  '$timeout',
-  function ($http, State, LayerAdderService, MapService, gettextCatalog, $timeout) {
+  function ($http, State, LayerAdderService, MapService, gettextCatalog) {
     var link = function (scope) {
 
       var RESULT_TYPES = {
@@ -133,15 +132,6 @@ angular.module('data-menu')
         }
 
       });
-
-      scope.openExportModal = function openExportModal () {
-        $timeout(
-          function () {
-            $('#the-export-button').click();
-            $('#export-modal-tab-header-rasters').click();
-          }
-        );
-      };
 
       /**
        * Remove all scenario layers.
