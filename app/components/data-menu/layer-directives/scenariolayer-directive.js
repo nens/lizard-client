@@ -16,6 +16,7 @@ angular.module('data-menu')
         'maxwdepth': gettextCatalog.getString('Max water depth'),
         'depth-first-dtri': gettextCatalog.getString('Arrival times'),
         'depth-max-dtri': gettextCatalog.getString('Max water depth'),
+        's1-max-dtri': gettextCatalog.getString('Max water level'),
         'roads': gettextCatalog.getString('Roads'),
         'vulnerable_buildings':
           gettextCatalog.getString('Vulnerable buildings'),
