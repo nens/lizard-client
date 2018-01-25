@@ -41,6 +41,9 @@ angular.module('map')
       fillOpacity: 0.1
     };
 
+    var addedRegionsGeoJSON = null; // Gets assigned when calling addRegions(...)
+    var addedRegionsClickCb = null; // Gets assigned when calling addRegions(...)
+
     /**
      * Draws regions as a L.geoJson layer on the map. Sets click function. And
      * Fires click if activeRegionId is not falsy.
@@ -49,6 +52,8 @@ angular.module('map')
      * @param  {funciton} clickCb callback fires when layer is clicked.
      */
     var addRegions = function (MapService, regions, clickCb) {
+      addedRegionsGeoJSON = regions;
+      addedRegionsClickCb = clickCb;
       MapService.removeLeafletLayer(regionsLayer);
       regionsLayer = LeafletService.geoJson(regions, {
         // Style function must be included in order to overwrite style on click.
@@ -122,6 +127,11 @@ angular.module('map')
       return activeRegionId;
     };
 
+    var resetActiveRegion = function (mapService) {
+      removeRegions(mapService);
+      addRegions(mapService, addedRegionsGeoJSON, addedRegionsClickCb);
+    };
+
     /**
      * Gets region layer with properties.name === regionName of the currently
      * drawn regions.
@@ -144,7 +154,8 @@ angular.module('map')
       add: addRegions,
       remove: removeRegions,
       setActiveRegion: setActiveRegion,
-      getActiveRegion: getActiveRegion
+      getActiveRegion: getActiveRegion,
+      resetActiveRegion: resetActiveRegion
     };
 
   }]
