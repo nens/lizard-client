@@ -339,7 +339,8 @@ angular.module('lizard-nxt')
         graph._xy,
         keys,
         labels,
-        graph._activeUnit
+        graph._activeUnit,
+        content.color
       );
     }
 
@@ -1175,64 +1176,49 @@ angular.module('lizard-nxt')
 
   };
 
+    var addInteractionToRects = function (svg, dimensions, xy, keys, labels, activeUnit, color) {
+      var unitClass = "unit-" + UtilService.slugify(activeUnit);
+      var height = Graph.prototype._getHeight(dimensions),
+          width = Graph.prototype._getWidth(dimensions),
+          fg = svg.select('#feature-group');
 
-  var addInteractionToRects = function (svg, dimensions, xy, keys, labels, activeUnit) {
-    var unitClass = "unit-" + UtilService.slugify(activeUnit);
-    var height = Graph.prototype._getHeight(dimensions),
-      width = Graph.prototype._getWidth(dimensions),
-        fg = svg.select('#feature-group');
+      var cb = function (d) {
+        removeAllSelection();
+        d3.select(this).attr('class', 'selected bar ' + unitClass);
 
-    var cb = function (d) {
-      removeAllSelection();
-      d3.select(this).attr('class', 'selected bar ' + unitClass);
-      var g = fg.append('g').attr('class', 'interaction-group');
+        var gAndValuebox = getEmptyValueBox(fg, 1);
+        var g = gAndValuebox[0];
+        var valuebox = gAndValuebox[1];
 
+        // Vertical line
+        g.append('line')
+         .attr('y1', 0)
+         .attr('y2', 0)
+         .attr('x1', 0)
+         .attr('x2', 0);
 
-      var text = Math.round(d[keys.y] * 100) / 100 + ' ' + labels.y;
-      text = keys.category !== undefined
-        ? text + ' ' + d[keys.category]
-        : text;
+        var value = d[keys.y].toFixed ? d[keys.y].toFixed(2): '...';
+        var text = value + ' ' + labels.y;
+        text = keys.category !== undefined
+             ? text + ' ' + d[keys.category]
+             : text;
 
-      var t  = g.append('text').text(text);
+        if (labels.x) {
+          text = text + ' - ' + labels.x;
+        }
 
-      var tHeight = t.node().getBBox().height,
-          tWidth = t.node().getBBox().width;
+        setTextInValuebox(valuebox, 0, color, text, 0);
 
-      var BOX_PADDING_WIDTH = 10;
-      var BOX_PADDING_HEIGHT = 5;
-      var TEXY_PADDING_WIDTH = BOX_PADDING_HEIGHT;
+        var x = xy.x.scale(d[keys.x]);
 
-      var bgY = Math.min(
-        height - tHeight - BOX_PADDING_HEIGHT,
-        xy.y.scale(d.y1 || d[keys.y])
-      );
+        g.select('line')
+         .attr('y1', height)
+         .attr('y2', 0)
+         .attr('x1', x)
+         .attr('x2', x);
 
-      var textY = Math.min(
-        height - 0.5 * tHeight,
-        xy.y.scale(d.y1 || d[keys.y]) + tHeight
-      );
-
-      var bgX = Math.min(
-        width - tWidth - BOX_PADDING_WIDTH,
-        xy.x.scale(d[keys.x])
-      );
-
-      var textX = Math.min(
-        width - tWidth,
-        xy.x.scale(d[keys.x]) + TEXY_PADDING_WIDTH
-      );
-
-      g.append('rect')
-        .attr('class', 'tooltip-background')
-        .attr('x', bgX)
-        .attr('y', bgY)
-        .attr('width', tWidth + BOX_PADDING_WIDTH)
-        .attr('height', tHeight + BOX_PADDING_HEIGHT);
-
-      t.attr('x', textX)
-        .attr('y', textY);
-
-      t.node().parentNode.appendChild(t.node());
+        addTextWithBackground(
+          g, new Date(d[keys.x]).toLocaleString(), 'graph-tooltip-x', x, height);
     };
 
     var removeAllSelection = function () {
@@ -1247,104 +1233,75 @@ angular.module('lizard-nxt')
     });
   };
 
-  var createXGraph = function (svg, dimensions, labels, options) {
-    var x = {};
-    if (!options) {
-      options = {
-        scale: 'linear',
-        orientation: 'bottom'
-      };
-    }
-    var width = Graph.prototype._getWidth(dimensions),
-    range = {min: 0, max: width},
-    // Axis should run from zero to 100%
-    domain = {min: 0, max: 1};
-    x.scale = Graph.prototype._makeScale(domain, range, {scale: options.scale});
-    x.axis = Graph.prototype._makeAxis(x.scale, options);
-    drawAxes(svg, x.axis, dimensions, false);
-    drawLabel(svg, dimensions, labels.x, false);
-    return x;
-  };
+    var createXGraph = function (svg, dimensions, labels, options) {
+      var x = {};
+      if (!options) {
+        options = {
+          scale: 'linear',
+          orientation: 'bottom'
+        };
+      }
+      var width = Graph.prototype._getWidth(dimensions),
+          range = {min: 0, max: width},
+          // Axis should run from zero to 100%
+          domain = {min: 0, max: 1};
+      x.scale = Graph.prototype._makeScale(domain, range, {scale: options.scale});
+      x.axis = Graph.prototype._makeAxis(x.scale, options);
+      drawAxes(svg, x.axis, dimensions, false);
+      drawLabel(svg, dimensions, labels.x, false);
+      return x;
+    };
 
     var drawPath = function (svg, pathFn, data, duration, path, color, unit) {
       if (data && data.data === null) return;
 
       if (!path) {
-      var fg = svg.select('g').select('#feature-group');
-      // bring to front
-      fg.node().parentNode.appendChild(fg.node());
-      path = fg.append("path")
-        .attr("class", "line unit-" + UtilService.slugify(unit));
-    }
-    path.datum(data)
-      .style('stroke', color)
-      .transition()
-      .duration(duration)
-      .attr("d", function (d) {
-        // Prevent returning invalid values for d
-        return pathFn(d) || "M0, 0";
-      });
-    return path;
-  };
+        var fg = svg.select('g').select('#feature-group');
+        // bring to front
+        fg.node().parentNode.appendChild(fg.node());
+        path = fg.append("path")
+                 .attr("class", "line unit-" + UtilService.slugify(unit));
+      }
+      path.datum(data)
+          .style('stroke', color)
+          .transition()
+          .duration(duration)
+          .attr("d", function (d) {
+            // Prevent returning invalid values for d
+            return pathFn(d) || "M0, 0";
+          });
+      return path;
+    };
 
-  /**
-   * When hovering show information on the data in the lines in the graph.
-   *
-   * @params {object} - the graph object (all-encompassing, ever-faithful)
-   */
-  var addLineInteraction = function (graph, temporal, content) {
-    var height = graph._getHeight(graph.dimensions),
-        fg = graph._svg.select('#feature-group'),
-        MIN_LABEL_Y = 50,
-        LABEL_PADDING_X = 10,
-        LABEL_PADDING_Y = 10,
-        xy = graph._xy;
+    var addTextWithBackground = function (g, text, klass, x, y) {
+      var PADDING = 10, PADDING_BACKGROUND = 2;
+      var t = g.append('text')
+               .text(text)
+               .attr('class', klass)
+               .attr('x', x + PADDING)
+               .attr('y', y - PADDING);
 
-    var duration = 0.3; // zoing
+      // Let's draw a slightly larger white background behind the text,
+      // for readability in case it overlaps the graph.
+      var tHeight = t.node().getBBox().height,
+          tWidth = t.node().getBBox().width;
 
-    // Move listener rectangle to the front
-    var el = graph._svg.select('#listeners').node();
-        el.parentNode.appendChild(el);
+      g.append('rect')
+      // Tooltip-background makes it white; graph-tooltip-x means it disappears with the label.
+       .attr('class', 'tooltip-background ' + klass)
+       .attr('x', x + PADDING - PADDING_BACKGROUND)
+       .attr('y', y - PADDING - tHeight + PADDING_BACKGROUND)
+       .attr('width', tWidth + 2 * PADDING_BACKGROUND)
+       .attr('height', tHeight + 2 * PADDING_BACKGROUND);
 
-    var cb = function () {
-      var boundingRect = this; // `this` is otherwise lost in foreach
+      // We have to re-draw the text, as we just overwrote it. It can't be done in
+      // in another order as we need to know the text's size before drawing the background.
+      t.node().parentNode.appendChild(t.node());
+    };
 
-      var values = [];
-      var x2, xText; // needed for the time.
-
-      angular.forEach(graph._containers, function (chart, id) {
-        if (chart.data.length === 0) { return true; }
-        var i = UtilService.bisect(chart.data, chart.keys.x, xy.x.scale.invert(d3.mouse(boundingRect)[0]));
-        i = i === chart.data.length ? chart.data.length - 1 : i;
-        var d = chart.data[i];
-        var value = chart.keys.y.hasOwnProperty('y1') ? d[chart.keys.y.y1] : d[chart.keys.y];
-        if (d[chart.keys.x] === null || d[chart.keys.y] === null) { return; }
-
-        x2 = xy.x.scale(d[chart.keys.x]);
-        var y2 = graph._yPerUnit[chart.unit].scale(value);
-        xText = (temporal) ? new Date(chart.data[i][chart.keys.x]).toLocaleString() : chart.data[i][chart.keys.x].toFixed(2);
-
-        if (!chart.labels) {
-          chart.labels = {y:''};
-        }
-
-        values.push({
-          x: x2,
-          y: y2,
-          description: chart.description,
-          ylabel: chart.labels.y,
-          unit: chart.unit,
-          reference_frame: chart.reference_frame,
-          value: value,
-          color: chart.color
-        });
-      });
-
-      if (values.length === 0) { return true; }
-
+    var getEmptyValueBox = function (fg, numValues) {
       var g = fg.select('.interaction-group');
       var valuebox = fg.select('.valuebox');
-      var textLength;
 
       if (!g[0][0]) {
         g = fg.append('g').attr('class', 'interaction-group');
@@ -1363,94 +1320,147 @@ angular.module('lizard-nxt')
         .attr('x', 0)
         .attr('y', 0)
         .attr('width', 100)
-        .attr('height', 20 * values.length - 1);
+        .attr('height', 20 * numValues - 1);
 
-      g.select('line')
-        .attr('y1', height)
-        .attr('y2', 0)
-        .attr('x1', x2)
-        .attr('x2', x2);
-
-      values.forEach(function (v, i) {
-        var value = v.value.toFixed ? v.value.toFixed(2): '...';
-        g.append('circle')
-          .attr('r', 0)
-          .attr('cx', v.x)
-          .attr('cy', v.y)
-          .transition()
-          .ease('easeInOut')
-          .duration(duration)
-          .attr('r', 5);
-          var texty2 = Math.max(v.y - LABEL_PADDING_Y, MIN_LABEL_Y);
-
-        valuebox.select('rect')
-          .attr('fill', 'white')
-          .attr('x', 5)
-          .attr('y', 0)
-          .attr('width', 100)
-          .attr('height', 20 + 15 * i);
-        valuebox
-          .append('circle')
-            .attr('r', 4)
-            .attr('cx', 15)
-            .attr('cy', 10 + 15 * i)
-            .attr('stroke', 'none')
-            .attr('fill', v.color);
-
-        var unit;
-        if (v.ylabel) {
-          unit = v.ylabel;
-        } else {
-          unit = addReferenceFrameToUnit(v.unit, v.reference_frame);
-        }
-
-        var boxText = value + ' ' + unit + ' - ' + v.description;
-
-        var tspan = valuebox.select('text')
-                            .append('tspan')
-                            .text(boxText)
-                            .attr('class', 'graph-tooltip-y')
-                            .attr('x', 25)
-                            .attr('y', 15 + 15 * i);
-
-        textLength = (textLength) ? textLength : 0;
-        textLength = Math.max(tspan[0][0].getComputedTextLength(), textLength);
-        valuebox.select('rect')
-                .attr('width', textLength + 25);
-      });
-      var t = g.append('text')
-               .text(xText)
-               .attr('class', 'graph-tooltip-x')
-               .attr('x', x2 + LABEL_PADDING_X)
-               .attr('y', height - LABEL_PADDING_Y);
-
-      // Let's draw a slightly larger white background behind the text,
-      // for readability in case it overlaps the graph.
-      var PADDING_BACKGROUND = 2;
-      var tHeight = t.node().getBBox().height,
-          tWidth = t.node().getBBox().width;
-
-      g.append('rect')
-      // Tooltip-background makes it white; graph-tooltip-x means it disappears with the label.
-       .attr('class', 'tooltip-background graph-tooltip-x')
-       .attr('x', x2 + LABEL_PADDING_X - PADDING_BACKGROUND)
-       .attr('y', height - LABEL_PADDING_Y - tHeight + PADDING_BACKGROUND)
-       .attr('width', tWidth + 2 * PADDING_BACKGROUND)
-       .attr('height', tHeight + 2 * PADDING_BACKGROUND);
-
-      // We have to re-draw the text, as we just overwrote it. It can't be done in
-      // in another order as we need to know the text's size before drawing the background.
-      t.node().parentNode.appendChild(t.node());
-
+      return [g, valuebox];
     };
 
-    graph._svg.select('#listeners').on('click', cb);
-    graph._svg.select('#listeners').on('mousemove', cb);
-    graph._svg.select('#listeners').on('mouseout', function () {
-      fg.select('.interaction-group').remove();
-    });
+    var setTextInValuebox = function (valuebox, i, color, text, maxTextLengthSoFar) {
+      valuebox.select('rect')
+              .attr('fill', 'white')
+              .attr('x', 5)
+              .attr('y', 0)
+              .attr('width', 100)
+              .attr('height', 20 + 15 * i);
 
-  };
+      valuebox.append('circle')
+              .attr('r', 4)
+              .attr('cx', 15)
+              .attr('cy', 10 + 15 * i)
+              .attr('stroke', 'none')
+              .attr('fill', color);
+
+      var tspan = valuebox.select('text')
+                          .append('tspan')
+                          .text(text)
+                          .attr('class', 'graph-tooltip-y')
+                          .attr('x', 25)
+                          .attr('y', 15 + 15 * i);
+
+      var textLength = tspan[0][0].getComputedTextLength();
+
+      if (textLength > maxTextLengthSoFar) {
+        maxTextLengthSoFar = textLength;
+        valuebox.select('rect')
+                .attr('width', textLength + 25);
+      }
+
+      return maxTextLengthSoFar;
+    };
+
+    /**
+     * When hovering show information on the data in the lines in the graph.
+     *
+     * @params {object} - the graph object (all-encompassing, ever-faithful)
+     */
+    var addLineInteraction = function (graph, temporal, content) {
+      var height = graph._getHeight(graph.dimensions),
+          fg = graph._svg.select('#feature-group'),
+          MIN_LABEL_Y = 50,
+          LABEL_PADDING_X = 10,
+          LABEL_PADDING_Y = 10,
+          xy = graph._xy;
+
+      var duration = 0.3; // zoing
+
+      // Move listener rectangle to the front
+      var el = graph._svg.select('#listeners').node();
+      el.parentNode.appendChild(el);
+
+      var cb = function () {
+        var boundingRect = this; // `this` is otherwise lost in foreach
+
+        var values = [];
+        var x2, xText; // needed for the time.
+
+        angular.forEach(graph._containers, function (chart, id) {
+          if (chart.data.length === 0) { return true; }
+          var i = UtilService.bisect(chart.data, chart.keys.x, xy.x.scale.invert(d3.mouse(boundingRect)[0]));
+          i = i === chart.data.length ? chart.data.length - 1 : i;
+          var d = chart.data[i];
+          var value = chart.keys.y.hasOwnProperty('y1') ? d[chart.keys.y.y1] : d[chart.keys.y];
+          if (d[chart.keys.x] === null || d[chart.keys.y] === null) { return; }
+
+          x2 = xy.x.scale(d[chart.keys.x]);
+          var y2 = graph._yPerUnit[chart.unit].scale(value);
+          xText = (temporal) ? new Date(chart.data[i][chart.keys.x]).toLocaleString() : chart.data[i][chart.keys.x].toFixed(2);
+
+          if (!chart.labels) {
+            chart.labels = {y:''};
+          }
+
+          values.push({
+            x: x2,
+            y: y2,
+            description: chart.description,
+            ylabel: chart.labels.y,
+            unit: chart.unit,
+            reference_frame: chart.reference_frame,
+            value: value,
+            color: chart.color
+          });
+        });
+
+        if (values.length === 0) { return true; }
+
+        var gAndValuebox = getEmptyValueBox(fg, values.length);
+        var g = gAndValuebox[0];
+        var valuebox = gAndValuebox[1];
+        var maxTextLengthSoFar = 0;
+
+        // Vertical line
+        g.select('line')
+         .attr('y1', height)
+         .attr('y2', 0)
+         .attr('x1', x2)
+         .attr('x2', x2);
+
+        values.forEach(function (v, i) {
+          var value = v.value.toFixed ? v.value.toFixed(2): '...';
+
+          var unit;
+          if (v.ylabel) {
+            unit = v.ylabel;
+          } else {
+            unit = addReferenceFrameToUnit(v.unit, v.reference_frame);
+          }
+
+          var boxText = value + ' ' + unit + ' - ' + v.description;
+
+          // Dot on the line
+          g.append('circle')
+           .attr('r', 0)
+           .attr('cx', v.x)
+           .attr('cy', v.y)
+           .transition()
+           .ease('easeInOut')
+           .duration(duration)
+           .attr('r', 5);
+
+          maxTextLengthSoFar = setTextInValuebox(
+            valuebox, i, v.color, boxText, maxTextLengthSoFar);
+        });
+
+        addTextWithBackground(
+          g, xText, 'graph-tooltip-x', x2, height);
+      };
+
+      graph._svg.select('#listeners').on('click', cb);
+      graph._svg.select('#listeners').on('mousemove', cb);
+      graph._svg.select('#listeners').on('mouseout', function () {
+        fg.select('.interaction-group').remove();
+      });
+    };
 
   var addInteractionToPath = function (svg, dimensions, data, keys, labels, path, xy, duration) {
     var bisect = d3.bisector(function (d) { return d[keys.x]; }).right,
