@@ -357,6 +357,10 @@ angular.module('map')
         NxtRegionsLayer.remove(this);
       },
 
+      resetActiveRegion: function () {
+        NxtRegionsLayer.resetActiveRegion(this);
+      },
+
       /**
        * @function
        * @memberOf map.MapService

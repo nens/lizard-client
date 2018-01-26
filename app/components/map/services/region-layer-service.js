@@ -10,126 +10,116 @@ angular.module('map')
 .factory('NxtRegionsLayer', [
   'CabinetService',
   'LeafletService',
-  function (CabinetService, LeafletService) {
+  'State',
+  function (CabinetService, LeafletService, State) {
+
+    var STYLES = {
+
+      // 1/3: default styling for a region:
+      default: {
+        weight: 2,
+        opacity: 0.6,
+        color: '#7f8c8d', // asbestos
+        fillOpacity: 0
+      },
+
+      // 2/3: styling for a region when it is being hovered:
+      mouseOver: {
+        fillColor: '#e74c3c', // alizarin
+        fillOpacity: 0.1,
+        dashArray: '',
+        weight: 2,
+        color: '#7f8c8d', // asbestos
+      },
+
+      // 3/3: styling for a region when it is the selected region:
+      active: {
+        weight: 4,
+        fillColor: '#e74c3c', // alizarin
+        color: '#c0392b', // pomegranate
+        dashArray: '6',
+        fillOpacity: 0.1
+      }
+    };
 
     // Leaflet geojson layer.
-    var regionsLayer;
+    var regionsLayer = null;
 
     // String of feature.properties.name that should be active.
-    var activeRegionId;
+    var activeRegionId = null;
 
-    // ILayer of last region that recieved click.
-    var previousActiveLayer;
+    function addRegions (mapService, regions, clickCb) {
+      if (regionsLayer) {
+        mapService.removeLeafletLayer(regionsLayer);
+      }
 
-    var defaultRegionStyle = {
-      weight: 2,
-      opacity: 0.6,
-      color: '#7f8c8d', // asbestos
-      fillOpacity: 0
-    };
-
-    var mouseOverStyle = {
-      fillColor: '#e74c3c', // alizarin
-      fillOpacity: 0.1
-    };
-
-    var activeRegionStyle = {
-      weight: 4,
-      fillColor: '#e74c3c', // alizarin
-      color: '#c0392b', // pomegranate
-      dashArray: '6',
-      fillOpacity: 0.1
-    };
-
-    /**
-     * Draws regions as a L.geoJson layer on the map. Sets click function. And
-     * Fires click if activeRegionId is not falsy.
-     *
-     * @param  {geojson}  regions
-     * @param  {funciton} clickCb callback fires when layer is clicked.
-     */
-    var addRegions = function (MapService, regions, clickCb) {
-      MapService.removeLeafletLayer(regionsLayer);
       regionsLayer = LeafletService.geoJson(regions, {
-        // Style function must be included in order to overwrite style on click.
-        style: function (feature) {
 
-          return defaultRegionStyle;
+        style: function (feature) {
+          return activeRegionId === feature.id
+            ? STYLES.active
+            : STYLES.default;
         },
+
         onEachFeature: function (d, layer) {
           layer.on({
             mouseover: function (e) {
-              var layer = e.target;
-
-              layer.setStyle(mouseOverStyle);
-
+              if (e.target.feature.id !== activeRegionId) {
+                e.target.setStyle(STYLES.mouseOver);
+              }
             },
             mouseout: function (e) {
-              if (e.target.feature.id !== activeRegionId) {
-                regionsLayer.resetStyle(e.target);
-              }
+              regionsLayer.resetStyle(e.target);
             },
             click: function (e) {
-
-              if (previousActiveLayer) {
-                regionsLayer.resetStyle(previousActiveLayer);
+              if (activeRegionId === e.target.feature.id) {
+                activeRegionId = null;
+                e.target.setStyle(STYLES.mouseOver);
+                // We need to update the State since a geometry got deselected
+                // by re-clicking it:
+                deactivateOldGeometry(e.target.feature.id);
+              } else {
+                activeRegionId = e.target.feature.id;
+                clickCb(this);
+                addRegions(mapService, regions, clickCb);
               }
-
-              var newActiveLayer = e.target;
-              newActiveLayer.setStyle(activeRegionStyle);
-
-              clickCb(this);
-
-              activeRegionId = newActiveLayer.feature.id;
-              previousActiveLayer = newActiveLayer;
             }
           });
         }
       });
-      MapService.addLeafletLayer(regionsLayer);
-      if (activeRegionId) { setActiveRegion(activeRegionId); }
-    };
 
-    /**
-     * Removes the regions from the map and sets activeRegioString to null.
-     */
-    var removeRegions = function (MapService) {
-      activeRegionId = null;
-      MapService.removeLeafletLayer(regionsLayer);
-    };
+      mapService.addLeafletLayer(regionsLayer);
+    }
 
-    /**
-     * Sets the activeRegion, by firing a click when regionsLayer exists, or
-     * sets activeRegionId that triggers a call of this function onload.
-     *
-     * @param {string} region feature.id of region.
-     */
-    var setActiveRegion = function (region) {
-      if (regionsLayer) {
-        var layer = _getRegion(regionsLayer, region);
-        if (layer) {
-          layer.fire('click');
-        }
-        else {
-          activeRegionId = null;
-        }
+    function deactivateOldGeometry (regionId) {
+      var deactivedRegionGeometry = _.find(
+        State.geometries,
+        { id: regionId }
+      );
+      if (deactivedRegionGeometry) {
+        State.geometries.removeGeometry(deactivedRegionGeometry);
       } else {
-        activeRegionId = region;
+        console.error(
+          "[E] Cannot remove geometry for region #"
+          + regionId
+          + " because it is not present in State.geometries!"
+        );
       }
-    };
+    }
 
-    var getActiveRegion = function () {
-      return activeRegionId;
-    };
+    function removeRegions (mapService) {
+      activeRegionId = null;
+      mapService.removeLeafletLayer(regionsLayer);
+    }
 
-    /**
-     * Gets region layer with properties.name === regionName of the currently
-     * drawn regions.
-     *
-     * @param  {L.GeoJson} lGeo        Leaflet L.GeoJson instance.
-     * @param  {string} regionName     Properties.name of region
-     * @return {L.ILayer} Region layer or undefined if not found
-     */
+    function resetActiveRegion (mapService) {
+      var region = _getRegion(regionsLayer, activeRegionId);
+      activeRegionId = null;
+      if (region) {
+        regionsLayer.resetStyle(region);
+      }
+    }
+
     var _getRegion = function (lGeo, regionId) {
       var region;
       lGeo.eachLayer(function (layer) {
@@ -143,9 +133,7 @@ angular.module('map')
     return {
       add: addRegions,
       remove: removeRegions,
-      setActiveRegion: setActiveRegion,
-      getActiveRegion: getActiveRegion
+      resetActiveRegion: resetActiveRegion
     };
-
-  }]
-);
+  }
+]);

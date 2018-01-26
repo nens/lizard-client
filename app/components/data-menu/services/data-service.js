@@ -22,12 +22,16 @@ angular.module('data-menu')
     'LayerAdderService',
     'State',
     'ChartCompositionService',
+    'UtilService',
+    'MapService',
     function (
       $q,
       AssetService,
       LayerAdderService,
       State,
-      ChartCompositionService
+      ChartCompositionService,
+      UtilService,
+      MapService
     ) {
 
       var instance = this;
@@ -178,11 +182,51 @@ angular.module('data-menu')
       };
 
       var removeGeometry = function (geometry) {
-        setGeometries(_geometries.filter(function (geom) {
-          return !(geom.geometry.coordinates[0] === geometry.geometry.coordinates[0]
-                && geom.geometry.coordinates[1] === geometry.geometry.coordinates[1]
-                && geom.geometry.coordinates[2] === geometry.geometry.coordinates[2]);
-        }));
+        var allActualGeometries = _geometries;
+        var allWantedGeometries = null;
+
+        if (geometry.geometry.type === 'LineString') {
+          var startOfRemovedLine = geometry.geometry.coordinates[0];
+          var endOfRemovedLine = geometry.geometry.coordinates[1];
+          // geometry.type ::= 'LineString'
+          allWantedGeometries = _geometries.filter(function (geom) {
+            if (geom.geometry.type !== 'LineString') {
+              return true;
+            } else {
+              var startOfSomeLine = geom.geometry.coordinates[0];
+              var endOfSomeLine = geom.geometry.coordinates[1];
+              return !(startOfRemovedLine[0] === startOfSomeLine[0]
+                && endOfRemovedLine[0] === endOfSomeLine[0]);
+            }
+          });
+        } else if (geometry.geometry.type === 'Point') {
+          // geometry.type ::= 'Point'
+          allWantedGeometries = allActualGeometries.filter(function (geom) {
+            return !(
+              geom.geometry.coordinates[0] === geometry.geometry.coordinates[0]
+              && geom.geometry.coordinates[1] === geometry.geometry.coordinates[1]
+              && geom.geometry.coordinates[2] === geometry.geometry.coordinates[2]
+            );
+          });
+        } else {
+          // geometry.type ::= 'Polygon' | 'MultiPolygon'
+          var wktForSomePolygon,
+              wktForRemovedPolygon = UtilService.geomToWkt(geometry),
+              foundIt = false;
+
+          allWantedGeometries = allActualGeometries.filter(function (geom) {
+            if (foundIt) {
+              return true;
+            } else if (UtilService.geomToWkt(geom) === wktForRemovedPolygon) {
+              foundIt = true;
+              MapService.resetActiveRegion();
+              return false;
+            } else {
+              return true;
+            }
+          });
+        }
+        setGeometries(allWantedGeometries);
       };
 
       instance.geometries = [];
