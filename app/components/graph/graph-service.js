@@ -1218,7 +1218,8 @@ angular.module('lizard-nxt')
          .attr('x2', x);
 
         addTextWithBackground(
-          g, new Date(d[keys.x]).toLocaleString(), 'graph-tooltip-x', x, height);
+          g, UtilService.dateToLocaleDependentString(new Date(d[keys.x])),
+          'graph-tooltip-x', x, height);
     };
 
     var removeAllSelection = function () {
@@ -1393,7 +1394,9 @@ angular.module('lizard-nxt')
 
           x2 = xy.x.scale(d[chart.keys.x]);
           var y2 = graph._yPerUnit[chart.unit].scale(value);
-          xText = (temporal) ? new Date(chart.data[i][chart.keys.x]).toLocaleString() : chart.data[i][chart.keys.x].toFixed(2);
+          xText = (temporal ?
+            UtilService.dateToLocaleDependentString(new Date(chart.data[i][chart.keys.x])) :
+            chart.data[i][chart.keys.x].toFixed(2));
 
           if (!chart.labels) {
             chart.labels = {y:''};
@@ -1486,7 +1489,7 @@ angular.module('lizard-nxt')
 
       var y2 = xy.y.scale(value),
           x2 = xy.x.scale(d[keys.x]),
-          xText = new Date(data[i][keys.x]).toLocaleString();
+          xText = UtilService.dateToLocaleDependentString(new Date(data[i][keys.x]));
 
       var g = fg.append('g').attr('class', 'interaction-group');
 

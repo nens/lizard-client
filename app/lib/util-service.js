@@ -1191,4 +1191,19 @@ angular.module('lizard-nxt')
       return step - offsetInMsec;
     });
   };
+
+    this.dateToLocaleDependentString = function (dateObject) {
+      if (!dateObject) {
+        return '...';
+      }
+
+      var locale = window.navigator.language || window.navigator.browserLanguage;
+
+      if (locale) {
+        return dateObject.toLocaleString(locale);
+      } else {
+        // Can't find it, this uses a default locale (probably en-US)
+        return dateObject.toLocaleString();
+      }
+    };
 }]);
