@@ -38,4 +38,4 @@ deploy/auth.json
 dist
 .DS_Store
 
-nano.save
+nano.save*

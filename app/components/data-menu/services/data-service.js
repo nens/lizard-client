@@ -31,7 +31,7 @@ angular.module('data-menu')
       State,
       ChartCompositionService,
       UtilService,
-      MapService,
+      MapService
     ) {
 
       var instance = this;
@@ -182,11 +182,7 @@ angular.module('data-menu')
       };
 
       var removeGeometry = function (geometry) {
-        console.log("[F] removeGeometry; local arg 'geometry' =", geometry);
-
         var allActualGeometries = _geometries;
-        console.log("*** allActualGeometries =", allActualGeometries);
-
         var allWantedGeometries = null;
 
         if (geometry.geometry.type === 'LineString') {
@@ -213,37 +209,24 @@ angular.module('data-menu')
             );
           });
         } else {
+          console.log("rm geom");
           // geometry.type ::= 'Polygon' | 'MultiPolygon'
           var wktForSomePolygon,
               wktForRemovedPolygon = UtilService.geomToWkt(geometry),
-              mustClearRegionlayer = false,
               foundIt = false;
 
           allWantedGeometries = allActualGeometries.filter(function (geom) {
-            if (foundIt)
+            if (foundIt) {
               return true;
-
-            if (UtilService.geomToWkt(geom) === wktForRemovedPolygon) {
-              console.log("Found polygon to DESTROY!");
+            } else if (UtilService.geomToWkt(geom) === wktForRemovedPolygon) {
               foundIt = true;
-              mustClearRegionlayer = true;
-
-              // var allMapLayers = MapService.mapLayers;
-              // console.log("All mapLayers:", allMapLayers);
-
-              // MapService.removeRegions();
-
               MapService.resetActiveRegion();
-
-
               return false;
             } else {
               return true;
-            };
+            }
           });
         }
-
-        console.log("*** allWantedGeometries =", allWantedGeometries);
         setGeometries(allWantedGeometries);
       };
 

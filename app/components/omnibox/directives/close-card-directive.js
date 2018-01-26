@@ -26,12 +26,9 @@ angular.module('omnibox')
        * Requires entity and id of asset on scope.
        */
       scope.rmAssetOrGeometry = function () {
-        console.log("[F] rmAssetOrGeometry");
         if (scope.geometry) {
-          console.log("*** poss. A");
           State.geometries.removeGeometry(scope.geometry);
         } else if (scope.asset) {
-          console.log("*** poss. B");
 
           var assetId = scope.asset.entity_name + '$' + scope.asset.id;
 
