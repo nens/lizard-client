@@ -16,15 +16,34 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     gettextCatalog.getString(
       "Lizard encountered a problem exporting your raster.");
 
+  function _getKey (dataLayer, stateLayer) {
+    var rasterName = stateLayer.name;
+    if (stateLayer.scenario) {
+      var scenario = _.find(State.layers, { uuid: stateLayer.scenario });
+      var scenarioName = scenario.name;
+      return scenarioName + ":" + rasterName;
+    } else {
+      return rasterName;
+    }
+  }
+
   function getAllRasters () {
-    var rasterUUIDs = _.map(_.filter(State.layers, { type: 'raster' }), 'uuid');
-    var dataLayers = _.filter(DataService.dataLayers, function (dataLayer) {
-      return rasterUUIDs.indexOf(dataLayer.uuid) > -1;
-    });
-    var result = {};
+    var stateLayer,
+        key,
+        result = {},
+        rasterUUIDs = _.map(_.filter(State.layers, { type: 'raster' }), 'uuid'),
+        dataLayers = _.filter(DataService.dataLayers, function (dataLayer) {
+          return rasterUUIDs.indexOf(dataLayer.uuid) > -1;
+        });
     _.forEach(dataLayers, function (dataLayer) {
-      result[dataLayer.slug] = dataLayer.uuid;
+      stateLayer = _.find(State.layers, { uuid: dataLayer.uuid });
+      if (stateLayer.type === 'scenario' || !stateLayer.active) {
+        return;
+      }
+      key = _getKey(dataLayer, stateLayer);
+      result[key] = dataLayer.uuid;
     });
+
     return result;
   }
 
