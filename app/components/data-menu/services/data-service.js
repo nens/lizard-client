@@ -209,7 +209,6 @@ angular.module('data-menu')
             );
           });
         } else {
-          console.log("rm geom");
           // geometry.type ::= 'Polygon' | 'MultiPolygon'
           var wktForSomePolygon,
               wktForRemovedPolygon = UtilService.geomToWkt(geometry),
