@@ -168,7 +168,7 @@ angular.module('dashboard')
           }
         };
 
-        var Endlösung = [];
+        var finalSolution = [];
         ChartCompositionService.composedCharts.forEach(function (value, index) {
           var graph = {
             type: null,
@@ -200,11 +200,11 @@ angular.module('dashboard')
           });
 
           if (graph.content.length) {
-            Endlösung.push(graph);
+            finalSolution.push(graph);
           }
         });
 
-        return Endlösung;
+        return finalSolution;
       };
 
 

@@ -441,9 +441,7 @@ angular.module('map')
      * @description Creates a Leaflet map based on idString or Element.
      */
     var createLeafletMap = function (mapElem, options) { // String or Element.
-
       var leafletMap = LeafletService.map(mapElem, options);
-
       return leafletMap;
     };
 
