@@ -9,6 +9,8 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     async: true
   };
 
+  var DEFAULT_AGG_TYPE = 'sum';
+
   var EXPORT_START_MESSAGE =
     gettextCatalog.getString(
       "Export for raster started, check your inbox.");
@@ -46,7 +48,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     var key, value, totalGeoms = {};
 
     ///////////////////////////////////////////////////////////////////////////
-    // Part 1/2 -- get geometries for State.geometries:
+    // Part 1/n -- get geometries for State.geometries:
     var pointGeoms = _.filter(State.geometries, function (geom) {
       return geom.geometry && geom.geometry.type === 'Point';
     });
@@ -62,7 +64,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     });
 
     ///////////////////////////////////////////////////////////////////////////
-    // Part 2/2 -- get geometries for State.assets:
+    // Part 2/n -- get geometries for State.assets:
     DataService.assets.map(function (asset) {
       var assetKey = asset.entity_name + "$" + asset.id;
       var assetName = asset.name;
@@ -70,8 +72,31 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
         value = UtilService.geomToWkt(asset.geometry);
         totalGeoms[assetName] = value;
       }
-     });
+    });
 
+    ///////////////////////////////////////////////////////////////////////////
+    // Part 3/n -- get LINESTRING geometries for State.assets -> OMITTED!!!!!
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Part 4/n -- get POLYGON geometries for State.geometries:
+
+    var polygonGeoms = _.filter(State.geometries, function (geom) {
+      return geom.geometry && (
+        geom.geometry.type === 'Polygon' ||
+        geom.geometry.type === 'MultiPolygon');
+    });
+
+    _.forEach(polygonGeoms, function (geom, idx) {
+      key = geom.name || '#' + (idx + 1);
+      value = UtilService.geomToWkt(geom.geometry);
+      totalGeoms[key] = value;
+    });
+
+    var extentGeomVal = UtilService.geomToWkt(
+      UtilService.lLatLngBoundsToGJ(State.spatial.bounds)
+    );
+    var extentGeomKey = 'extent'
+    totalGeoms[extentGeomKey] = extentGeomVal;
     return totalGeoms;
   }
 
@@ -98,6 +123,8 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
   }
 
   var link = function (scope) {
+    console.log("[F] LINK");
+
     initDatetimePickers();
 
     scope.isAuthenticated = user.authenticated;
@@ -108,6 +135,9 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
       return !!_.size(scope.allTemporalRasters);
     };
     scope.allGOAs = getGOAs();
+
+    console.log("[*] scope.allGOAs =", scope.allGOAs);
+
     scope.hasGOAs = function () {
       return !!_.size(scope.allGOAs);
     };
@@ -128,12 +158,25 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     };
 
     scope.startTimeseriesRasterExport = function () {
+      console.log("[F] startTimeseriesRasterExport");
+
       var selectedDatetimes = getDatetimes();
+
+      // console.log("***  scope.data.selectedGeometry (wkt?) =", scope.data.selectedGeometry);
+
+      const mustAggregate = scope.data.selectedGeometry.indexOf('POLYGON') > -1;
+
       var variableParams = {
         start: selectedDatetimes[0],
         stop:  selectedDatetimes[1],
         geom:  scope.data.selectedGeometry
       };
+
+      // TRY-OUT!
+      ///////////////////////////
+      if (mustAggregate) {
+        variableParams.agg = DEFAULT_AGG_TYPE;
+      }
 
       // IE doesn't support Object.assign calls....
       _.forEach(variableParams, function (v, k) {
