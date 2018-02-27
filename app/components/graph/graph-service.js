@@ -1549,6 +1549,12 @@ angular.module('lizard-nxt')
         PIXEL_CORRECTION = 2,
         el = svg.select(y ? '#ylabel': '#xlabel');
 
+
+    if (!y) {
+      // We don't want no xAxis labels anymore...
+      return;
+    }
+
     try {
       // If the graph is still hidden, we can't figure out dimensions for the label
       // and give up.
