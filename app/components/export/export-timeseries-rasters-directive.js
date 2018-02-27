@@ -95,7 +95,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     var extentGeomVal = UtilService.geomToWkt(
       UtilService.lLatLngBoundsToGJ(State.spatial.bounds)
     );
-    var extentGeomKey = 'extent'
+    var extentGeomKey = 'extent';
     totalGeoms[extentGeomKey] = extentGeomVal;
     return totalGeoms;
   }
@@ -135,9 +135,6 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
       return !!_.size(scope.allTemporalRasters);
     };
     scope.allGOAs = getGOAs();
-
-    console.log("[*] scope.allGOAs =", scope.allGOAs);
-
     scope.hasGOAs = function () {
       return !!_.size(scope.allGOAs);
     };
@@ -161,10 +158,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
       console.log("[F] startTimeseriesRasterExport");
 
       var selectedDatetimes = getDatetimes();
-
-      // console.log("***  scope.data.selectedGeometry (wkt?) =", scope.data.selectedGeometry);
-
-      const mustAggregate = scope.data.selectedGeometry.indexOf('POLYGON') > -1;
+      var mustAggregate = scope.data.selectedGeometry.indexOf('POLYGON') > -1;
 
       var variableParams = {
         start: selectedDatetimes[0],
@@ -174,8 +168,13 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
 
       // TRY-OUT!
       ///////////////////////////
+      var url;
       if (mustAggregate) {
         variableParams.agg = DEFAULT_AGG_TYPE;
+        variableParams.rasters = scope.data.selectedTemporalRaster;
+        url = '/api/v3/raster-aggregates/';
+      } else {
+        url = '/api/v3/rasters/' + scope.data.selectedTemporalRaster + '/data/';
       }
 
       // IE doesn't support Object.assign calls....
@@ -183,9 +182,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
         DEFAULT_PARAMS[k] = v;
       });
 
-      $http.get(
-        '/api/v3/rasters/' + scope.data.selectedTemporalRaster + '/data/',
-        { params: DEFAULT_PARAMS }
+      $http.get(url, { params: DEFAULT_PARAMS }
       ).then(
         exportCbAuthenticatedUser
       );
