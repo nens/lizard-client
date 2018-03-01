@@ -58,7 +58,10 @@ angular.module('data-menu')
       var getOrCreateLayer = function (layerConf, resultType) {
         var layer = _.find(State.layers, {uuid: layerConf.uuid});
         if (!layer) {
-          layer = {uuid: layerConf.uuid.slice(0, 7), type: 'raster'};
+          layer = {
+            uuid: layerConf.uuid.slice(0, 7),
+            type: 'raster'
+          };
           State.layers.push(layer);
         }
         layer.scenario = scope.layer.uuid;
@@ -83,7 +86,8 @@ angular.module('data-menu')
 
           LayerAdderService.fetchLayer(
             scope.layer.type + 's',
-            scope.layer.uuid, scope.layer.name
+            scope.layer.uuid,
+            scope.layer.name
           )
 
           .then(function (scenario) {
