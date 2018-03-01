@@ -532,5 +532,16 @@ angular.module('data-menu')
         }
         return assets;
       };
+
+      this.layerIntersectsExtent = function (layer) {
+        if (!layer.bounds) {
+          console.error("[E] layer does not have attr 'bounds'. Layer looks like:", layer);
+        }
+        var layerBounds = layer.bounds;
+        var cornerNE = L.latLng(layerBounds.north, layerBounds.east);
+        var cornerSW = L.latLng(layerBounds.south, layerBounds.west);
+        var leafletLayerBounds = L.latLngBounds(cornerNE, cornerSW);
+        return State.spatial.bounds.intersects(leafletLayerBounds);
+      }
     }
   ]);

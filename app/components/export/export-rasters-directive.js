@@ -35,7 +35,16 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
         dataLayers = _.filter(DataService.dataLayers, function (dataLayer) {
           return rasterUUIDs.indexOf(dataLayer.uuid) > -1;
         });
+
+    // We filter out dataLayers which do not have a geometric (2D) intersection
+    // with the current spatial extent of the map:
+
     _.forEach(dataLayers, function (dataLayer) {
+
+      if (!DataService.layerIntersectsExtent(dataLayer)) {
+        return;
+      }
+
       stateLayer = _.find(State.layers, { uuid: dataLayer.uuid });
       if (stateLayer.type === 'scenario' || !stateLayer.active) {
         return;

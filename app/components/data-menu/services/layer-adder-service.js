@@ -71,8 +71,9 @@ angular.module('data-menu')
         url: 'api/v3/' + entity + '/' + id + '/',
         method: 'GET'
         })
-        .then(function (response) { return response.data; })
-        .catch(onError);
+        .then(function (response) {
+          return response.data;
+        }).catch(onError);
     };
 
     this.remove = function (layer) {
