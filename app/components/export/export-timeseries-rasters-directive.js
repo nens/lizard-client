@@ -171,11 +171,11 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
       var url;
       if (mustAggregate) {
         variableParams.agg = DEFAULT_AGG_TYPE;
-        variableParams.rasters = scope.data.selectedTemporalRaster;
-        url = '/api/v3/raster-aggregates/';
-      } else {
-        url = '/api/v3/rasters/' + scope.data.selectedTemporalRaster + '/data/';
+        variableParams.window = 86400000;
+        // variableParams.rasters = scope.data.selectedTemporalRaster;
+        // url = '/api/v3/raster-aggregates/';
       }
+      url = '/api/v3/rasters/' + scope.data.selectedTemporalRaster + '/data/';
 
       // IE doesn't support Object.assign calls....
       _.forEach(variableParams, function (v, k) {
