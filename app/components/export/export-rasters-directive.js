@@ -42,7 +42,6 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     _.forEach(dataLayers, function (dataLayer) {
 
       if (!DataService.layerIntersectsExtent(dataLayer)) {
-        // console.log("[!] Omitted for raster export (because: not in extent):", dataLayer);
         return;
       }
 
