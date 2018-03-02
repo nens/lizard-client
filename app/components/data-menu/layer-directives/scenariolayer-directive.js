@@ -4,10 +4,12 @@ angular.module('data-menu')
 .directive('scenario', [
   '$http',
   'State',
+  'DataService',
   'LayerAdderService',
   'MapService',
   'gettextCatalog',
-  function ($http, State, LayerAdderService, MapService, gettextCatalog) {
+  '$timeout',
+  function ($http, State, DataService, LayerAdderService, MapService, gettextCatalog, $timeout) {
     var link = function (scope) {
 
       var RESULT_TYPES = {
@@ -154,6 +156,24 @@ angular.module('data-menu')
         _.forEach(scenarioLayers, LayerAdderService.remove);
       });
 
+      scope.mustShowExportBtn = function (result) {
+        var shortUuid = result.raster.uuid.slice(0, 7);
+        return DataService.layerIntersectsExtent(shortUuid);
+      };
+
+      scope.launchExportModal = function (result) {
+        var shortUuid = result.raster.uuid.slice(0, 7);
+        var clickableBtn = $('#user-menu-export-btn');
+        $timeout(function () {
+          clickableBtn.trigger('click');
+          $timeout(function () {
+            var tabElem = $('#export-modal-tab-btn-rasters');
+            tabElem.trigger('click');
+            var wantedOpt = $('option[value="' + shortUuid + '"]')
+            wantedOpt.prop('selected', true);
+          });
+        });
+      };
     };
 
     return {

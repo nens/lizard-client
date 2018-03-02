@@ -94,6 +94,8 @@
               </span>
             </span>
           </td>
+
+          <!--
           <td class="col-md-3">
             <div ng-if="result.result_type.has_attachment">
               <a target="_blank"
@@ -105,6 +107,19 @@
               </a>
             </div>
           </td>
+          -->
+          <td class="col-md-3">
+            <div ng-if="mustShowExportBtn(result)">
+              <a href="#"
+                 ng-click="launchExportModal(result)"
+                 class="btn btn-default btn-xs pull-right"
+                 title="{{ 'Export scenario data' | translate }}">
+                <i class="fa fa-share-square-o"></i>
+                <span translate>Export</span>
+              </a>
+            </div>
+          </td>
+
         </tr>
       </table>
     </div>
