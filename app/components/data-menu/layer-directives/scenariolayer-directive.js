@@ -145,9 +145,7 @@ angular.module('data-menu')
       scope.$on('$destroy', function () {
         scope.layer.active = false;
         MapService.updateLayers([scope.layer]);
-
         var scenarioLayers = [];
-
         _.forEach(State.layers, function (layer) {
           if (layer.scenario && layer.scenario === scope.layer.uuid) {
             scenarioLayers.push(layer);
@@ -158,7 +156,9 @@ angular.module('data-menu')
 
       scope.mustShowExportBtn = function (result) {
         var shortUuid = result.raster.uuid.slice(0, 7);
-        return DataService.layerIntersectsExtent(shortUuid);
+        var stateLayer = _.find(State.layers, { uuid: shortUuid });
+        return stateLayer.active &&
+          DataService.layerIntersectsExtent(shortUuid);
       };
 
       scope.launchExportModal = function (result) {
