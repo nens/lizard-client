@@ -155,10 +155,6 @@ angular.module('data-menu')
       });
 
       scope.mustShowExportBtn = function (result) {
-        // var shortUuid = result.raster.uuid.slice(0, 7);
-        // var stateLayer = _.find(State.layers, { uuid: shortUuid });
-        // return stateLayer.active &&
-        //   DataService.layerIntersectsExtent(shortUuid);
         var shortUUID = State.shortenUUID(result.raster.uuid),
             stateLayer = State.findLayer(shortUUID);
         return stateLayer.active &&

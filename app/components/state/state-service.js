@@ -362,7 +362,6 @@ function (UtilService, gettextCatalog, $http) {
   state.findLayer = function (uuid) {
     var shortUUID = state.shortenUUID(uuid),
         stateLayer = _.find(state.layers, { uuid: shortUUID });
-
     if (!stateLayer) {
       console.error("[E] Couldn't find stateLayer with UUID:", shortUUID);
     } else {
