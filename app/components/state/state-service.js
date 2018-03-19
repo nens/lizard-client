@@ -352,5 +352,23 @@ function (UtilService, gettextCatalog, $http) {
     return _.find(state.layers, {uuid: uuid});
   };
 
+  state.shortenUUID = function (uuid) {
+    var SHORT_UUID_LENGTH = 7;
+    return uuid.length > SHORT_UUID_LENGTH
+      ? uuid.slice(0, SHORT_UUID_LENGTH)
+      : uuid;
+  };
+
+  state.findLayer = function (uuid) {
+    var shortUUID = state.shortenUUID(uuid),
+        stateLayer = _.find(state.layers, { uuid: shortUUID });
+
+    if (!stateLayer) {
+      console.error("[E] Couldn't find stateLayer with UUID:", shortUUID);
+    } else {
+      return stateLayer;
+    }
+  };
+
   return state;
 }]);
