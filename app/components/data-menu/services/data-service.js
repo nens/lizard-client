@@ -533,9 +533,13 @@ angular.module('data-menu')
         return assets;
       };
 
-      this.layerIntersectsExtent = function (layer) {
+      this.layerIntersectsExtent = function (layerUuid) {
+        var layer = _.find(this.dataLayers, { uuid: layerUuid });
+        if (!layer) {
+          return false;
+        }
         if (!layer.bounds) {
-          console.error("[E] layer does not have attr 'bounds'. Layer looks like:", layer);
+          console.error("[E] Layer does not have attr 'bounds'. Layer looks like:", layer);
         }
         var layerBounds = layer.bounds;
         var cornerNE = L.latLng(layerBounds.north, layerBounds.east);

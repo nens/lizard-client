@@ -4,10 +4,12 @@ angular.module('data-menu')
 .directive('scenario', [
   '$http',
   'State',
+  'DataService',
   'LayerAdderService',
   'MapService',
   'gettextCatalog',
-  function ($http, State, LayerAdderService, MapService, gettextCatalog) {
+  '$timeout',
+  function ($http, State, DataService, LayerAdderService, MapService, gettextCatalog, $timeout) {
     var link = function (scope) {
 
       var RESULT_TYPES = {
@@ -143,9 +145,7 @@ angular.module('data-menu')
       scope.$on('$destroy', function () {
         scope.layer.active = false;
         MapService.updateLayers([scope.layer]);
-
         var scenarioLayers = [];
-
         _.forEach(State.layers, function (layer) {
           if (layer.scenario && layer.scenario === scope.layer.uuid) {
             scenarioLayers.push(layer);
@@ -154,6 +154,26 @@ angular.module('data-menu')
         _.forEach(scenarioLayers, LayerAdderService.remove);
       });
 
+      scope.mustShowExportBtn = function (result) {
+        var shortUUID = State.shortenUUID(result.raster.uuid),
+            stateLayer = State.findLayer(shortUUID);
+        return stateLayer.active &&
+          DataService.layerIntersectsExtent(shortUUID);
+      };
+
+      scope.launchExportModal = function (result) {
+        var shortUuid = State.shortenUUID(result.raster.uuid);
+        var clickableBtn = $('#user-menu-export-btn');
+        $timeout(function () {
+          clickableBtn.trigger('click');
+          $timeout(function () {
+            var tabElem = $('#export-modal-tab-btn-rasters');
+            tabElem.trigger('click');
+            var wantedOpt = $('option[value="' + shortUuid + '"]');
+            wantedOpt.prop('selected', true);
+          });
+        });
+      };
     };
 
     return {

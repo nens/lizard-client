@@ -41,7 +41,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
 
     _.forEach(dataLayers, function (dataLayer) {
 
-      if (!DataService.layerIntersectsExtent(dataLayer)) {
+      if (!DataService.layerIntersectsExtent(dataLayer.uuid)) {
         return;
       }
 

@@ -1192,18 +1192,18 @@ angular.module('lizard-nxt')
     });
   };
 
-    this.dateToLocaleDependentString = function (dateObject) {
-      if (!dateObject) {
-        return '...';
-      }
+  this.dateToLocaleDependentString = function (dateObject) {
+    if (!dateObject) {
+      return '...';
+    }
 
-      var locale = window.navigator.language || window.navigator.browserLanguage;
+    var locale = window.navigator.language || window.navigator.browserLanguage;
 
-      if (locale) {
-        return dateObject.toLocaleString(locale);
-      } else {
-        // Can't find it, this uses a default locale (probably en-US)
-        return dateObject.toLocaleString();
-      }
-    };
+    if (locale) {
+      return dateObject.toLocaleString(locale);
+    } else {
+      // Can't find it, this uses a default locale (probably en-US)
+      return dateObject.toLocaleString();
+    }
+  };
 }]);
