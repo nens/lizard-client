@@ -12,6 +12,7 @@ angular.module('omnibox')
     [
     '$q',
     '$http',
+    '$rootScope',
     'LeafletService',
     'CabinetService',
     'DateParser',
@@ -21,6 +22,7 @@ angular.module('omnibox')
     function SearchService (
       $q,
       $http,
+      $rootScope,
       LeafletService,
       CabinetService,
       dateParser,
@@ -39,6 +41,21 @@ angular.module('omnibox')
     };
 
     var localPromise = {};
+
+    // Experimental: occasionally, the map doesn't move along when when the
+    // spatial state dates up: THIS MIGHT WORK
+    // var DELAY_BEFORE_MAP_MOVE = 50;
+
+    var conditionalApply = function (zeroPlacePredicateFn) {
+      console.log("[F] conditionalApply");
+      // The single argument is a function which doesn't take any arguments;
+      // i.e. it has already been 'maximally curried'
+      if (!$rootScope.$$phase) {
+        $rootScope.$apply(zeroPlacePredicateFn());
+      } else {
+        zeroPlacePredicateFn();
+      }
+    };
 
     this.cancel = function () {
       if (localPromise.resolve) {
@@ -144,10 +161,13 @@ angular.module('omnibox')
      * @param  {object} result google geocoder result.
      */
     this.zoomToGoogleGeocoderResult = function (result, state) {
-      state.spatial.bounds = LeafletService.latLngBounds(
-        LeafletService.latLng(result.geometry.viewport.southwest),
-        LeafletService.latLng(result.geometry.viewport.northeast)
-      );
+      var updateMapFn = function () {
+        state.spatial.bounds = LeafletService.latLngBounds(
+          LeafletService.latLng(result.geometry.viewport.southwest),
+          LeafletService.latLng(result.geometry.viewport.northeast)
+        );
+      };
+      conditionalApply(updateMapFn);
       return state;
     };
 
@@ -182,12 +202,15 @@ angular.module('omnibox')
         assetLayer.active = true;
       }
 
-      state.spatial.view = {
-        lat: result.view[0],
-        lng: result.view[1],
-        zoom: result.view[2] || ZOOM_FOR_OBJECT
+      var updateMapFn = function () {
+        state.spatial.view = {
+          lat: result.view[0],
+          lng: result.view[1],
+          zoom: result.view[2] || ZOOM_FOR_OBJECT
+        };
       };
 
+      conditionalApply(updateMapFn);
       return state;
     };
 
@@ -205,12 +228,15 @@ angular.module('omnibox')
         state.resetObjects();
       }
 
-      state.spatial.view = {
-        lat: result.view[0],
-        lng: result.view[1],
-        zoom: result.view[2] || ZOOM_FOR_OBJECT
+      var updateMapFn = function () {
+        state.spatial.view = {
+          lat: result.view[0],
+          lng: result.view[1],
+          zoom: result.view[2] || ZOOM_FOR_OBJECT
+        };
       };
 
+      conditionalApply(updateMapFn);
       return state;
     };
   }
