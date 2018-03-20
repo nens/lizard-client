@@ -154,7 +154,7 @@ angular.module('data-menu')
         _.forEach(scenarioLayers, LayerAdderService.remove);
       });
 
-      scope.mustShowExportBtn = function (result) {
+      scope.mustEnableExportBtn = function (result) {
         var shortUUID = State.shortenUUID(result.raster.uuid),
             stateLayer = State.findLayer(shortUUID);
         return stateLayer.active &&

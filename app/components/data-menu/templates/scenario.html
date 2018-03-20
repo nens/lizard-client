@@ -95,11 +95,21 @@
             </span>
           </td>
           <td class="col-md-3">
-            <div ng-if="mustShowExportBtn(result)">
+            <div>
               <a href="#"
                  ng-click="launchExportModal(result)"
                  class="btn btn-default btn-xs pull-right"
-                 title="{{ 'Export scenario data' | translate }}">
+                 title="{{ 'Export scenario data' | translate }}"
+                 ng-if="!mustEnableExportBtn(result)"
+                 disabled>
+                <i class="fa fa-share-square-o"></i>
+                <span translate>Export</span>
+              </a>
+              <a href="#"
+                 ng-click="launchExportModal(result)"
+                 class="btn btn-default btn-xs pull-right"
+                 title="{{ 'Export scenario data' | translate }}"
+                 ng-if="mustEnableExportBtn(result)">
                 <i class="fa fa-share-square-o"></i>
                 <span translate>Export</span>
               </a>
