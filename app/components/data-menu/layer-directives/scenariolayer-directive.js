@@ -155,7 +155,6 @@ angular.module('data-menu')
       });
 
       scope.mustEnableExportBtn = function (result) {
-        // console.log("[F] mustEnableExportButton; result =", result);
         var shortUUID = State.shortenUUID(result.raster.uuid);
         return DataService.layerIntersectsExtent(shortUUID);
       };
@@ -172,19 +171,6 @@ angular.module('data-menu')
             wantedOpt.prop('selected', true);
           });
         });
-      };
-
-      scope.getAttachmentURL = function (result) {
-        console.log("[F] getAttachmentURL; result =", result);
-        if (result.attachment_url === null) {
-          return 'javascript:alert("Cannot find attachment not found");';
-        } else {
-          return result.attachment_url;
-        }
-      };
-
-      scope.dbg = function (result) {
-        console.log("[F] DBG; result =", result);
       };
     };
 
