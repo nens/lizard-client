@@ -155,10 +155,8 @@ angular.module('data-menu')
       });
 
       scope.mustEnableExportBtn = function (result) {
-        var shortUUID = State.shortenUUID(result.raster.uuid),
-            stateLayer = State.findLayer(shortUUID);
-        return stateLayer.active &&
-          DataService.layerIntersectsExtent(shortUUID);
+        var shortUUID = State.shortenUUID(result.raster.uuid);
+        return DataService.layerIntersectsExtent(shortUUID);
       };
 
       scope.launchExportModal = function (result) {

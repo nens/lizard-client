@@ -46,7 +46,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
       }
 
       stateLayer = _.find(State.layers, { uuid: dataLayer.uuid });
-      if (stateLayer.type === 'scenario' || !stateLayer.active) {
+      if (stateLayer.type === 'scenario') {
         return;
       }
       key = _getKey(dataLayer, stateLayer);
@@ -71,7 +71,9 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     return theDateElem.value + ":00";
   }
 
-  function isNumeric (x) { return !isNaN(parseFloat(x)) && isFinite(x); }
+  function isNumeric (x) {
+    return !isNaN(parseFloat(x)) && isFinite(x);
+  }
 
   function exportCbAuthenticatedUser (response) {
     angular.element('#MotherModal').modal('hide');
@@ -141,7 +143,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
         variableParams.time = getDatetime();
       }
 
-      // IE doesnt support Object.assign calls....
+      // IE doesn't support Object.assign calls....
       _.forEach(variableParams, function (v, k) {
         DEFAULT_PARAMS[k] = v;
       });

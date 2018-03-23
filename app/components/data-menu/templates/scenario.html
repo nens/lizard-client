@@ -15,7 +15,6 @@
           </div>
       </label>
     </div>
-
     <opacity-slider title="{{ tooltips.transparency }}" layer="{active: false}"></opacity-slider>
   </div>
 
@@ -94,25 +93,38 @@
               </span>
             </span>
           </td>
+
           <td class="col-md-3">
             <div>
+
               <a href="#"
                  ng-click="launchExportModal(result)"
                  class="btn btn-default btn-xs pull-right"
                  title="{{ 'Export scenario data' | translate }}"
-                 ng-if="!mustEnableExportBtn(result)"
+                 ng-if="result.result_type.has_raster && !mustEnableExportBtn(result)"
                  disabled>
                 <i class="fa fa-share-square-o"></i>
                 <span translate>Export</span>
               </a>
+
               <a href="#"
                  ng-click="launchExportModal(result)"
                  class="btn btn-default btn-xs pull-right"
                  title="{{ 'Export scenario data' | translate }}"
-                 ng-if="mustEnableExportBtn(result)">
+                 ng-if="result.result_type.has_raster && mustEnableExportBtn(result)">
                 <i class="fa fa-share-square-o"></i>
                 <span translate>Export</span>
               </a>
+
+              <a href="{{ result.attachment_url || '#' }}"
+                 class="btn btn-default btn-xs pull-right"
+                 title="{{ 'Export scenario data' | translate }}"
+                 ng-if="!result.result_type.has_raster && result.result_type.has_attachment && result.attachment_url">
+                <i ng-init="dbg(result)"
+                   class="fa fa-share-square-o"></i>
+                <span translate>Export</span>
+              </a>
+
             </div>
           </td>
         </tr>
