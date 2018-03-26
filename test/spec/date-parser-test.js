@@ -60,17 +60,6 @@ describe('Service: DateParser', function () {
     expect(d.calendar()).toBe('14-04-2012');
   });
 
-  // Don't perform this test around the 1st of April it will break ...
-  /////////////////////////////////////////////////////////////////////////////
-  it('should return a valid moment when provided with a month name', function () {
-    var d = dateParser('April');
-    var now = new Date();
-    expect(d.isValid()).toBe(true);
-    if (!(moment(now).dayOfYear() > 90 && moment(now).dayOfYear() < 93)) {
-      expect(d.calendar()).toBe('01-04-' + now.getFullYear());
-    }
-  });
-
   it('should contain a duration as interval to zoom to', function () {
     var d = dateParser('April 4');
     expect(d.nxtInterval.days()).toBe(1);
