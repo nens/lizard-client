@@ -163,14 +163,6 @@
         Close
       </button>
     </div>
-    <script type="text/javascript">
-      console.log("[dbg] Start of 'inline', vanilla JS execution");
-      setTimeout(function () {
-        var linkies = $('.modal-body a');
-        console.log("[dbg] linkies:", linkies);
-        linkies.attr("target", "_blank");
-      }, 500);
-    </script>
   </script>
 
   <div ng-if="modal.active">
