@@ -102,7 +102,7 @@ angular.module("user-menu").directive("userMenu", [
         });
 
         modalInstance.rendered.then(function () {
-          var linkies = $('.modal-body a');
+          var linkies = $(".modal-body a");
           linkies.attr("target", "_blank");
         });
       };
