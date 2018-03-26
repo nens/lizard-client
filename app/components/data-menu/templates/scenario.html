@@ -96,7 +96,6 @@
 
           <td class="col-md-3">
             <div>
-
               <a href="#"
                  ng-click="launchExportModal(result)"
                  class="btn btn-default btn-xs pull-right"
@@ -116,12 +115,13 @@
                 <span translate>Export</span>
               </a>
 
-              <a href="{{ result.attachment_url || '#' }}"
+              <a target="_blank"
+                 href="{{ result.attachment_url || '#' }}"
+                 download="{{ result.attachment_url }}"
                  class="btn btn-default btn-xs pull-right"
                  title="{{ 'Export scenario data' | translate }}"
-                 ng-if="!result.result_type.has_raster && result.result_type.has_attachment && result.attachment_url">
-                <i ng-init="dbg(result)"
-                   class="fa fa-share-square-o"></i>
+                 ng-if="!result.result_type.has_raster && result.result_type.has_attachment">
+                <i class="fa fa-share-square-o"></i>
                 <span translate>Export</span>
               </a>
 
