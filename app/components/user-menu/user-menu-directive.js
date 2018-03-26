@@ -88,8 +88,6 @@ angular.module("user-menu").directive("userMenu", [
         }
       };
 
-      // scope.$watch("favourites.enabled", toggleDashboardOrApps);
-
       document.head.appendChild(script);
 
       scope.openAbout = function(size) {
@@ -101,6 +99,11 @@ angular.module("user-menu").directive("userMenu", [
             this.version = version;
           },
           controllerAs: "about"
+        });
+
+        modalInstance.rendered.then(function () {
+          var linkies = $(".modal-body a");
+          linkies.attr("target", "_blank");
         });
       };
 
