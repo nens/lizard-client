@@ -61,7 +61,13 @@ angular.module('lizard-nxt')
       Y: point.y
     };
 
-    var url = layer.url + '/?';
+    if (!layer.getFeatureInfoUrl) {
+      console.error("[E] Tried to build url for WMS getFeatureInfo call, "
+        + "however, the req. param 'layer.getFeatureInfoUrl' was not present; "
+        + "layer looks like:", layer);
+    }
+
+    var url = layer.getFeatureInfoUrl + '/?';
     for (var key in params) {
       if (url !== "") {
           url += "&";
@@ -69,7 +75,7 @@ angular.module('lizard-nxt')
       url += key + "=" + params[key];
     }
 
-    return CabinetService.wmsGetFeatureInfo.get({url: url});
+    return CabinetService.wmsGetFeatureInfo.get({ url: url });
   };
 
   return {
