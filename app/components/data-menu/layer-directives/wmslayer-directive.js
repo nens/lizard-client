@@ -42,6 +42,7 @@ angular.module('data-menu')
               maxZoom: response.max_zoom,
               complexWmsOptions: response.options,
               url: response.url,
+              getFeatureInfoUrl: response.get_feature_info_url,
               zIndex: LayerAdderService.getZIndex(scope.layer)
             }));
 
@@ -50,7 +51,8 @@ angular.module('data-menu')
                 uuid: scope.layer.uuid,
                 name: scope.layer.name,
                 slug: response.slug,
-                url: response.url
+                url: response.url,
+                getFeatureInfoUrl: response.get_feature_info_url,
               }));
             }
 

@@ -44,6 +44,7 @@ angular.module('map')
      * @return {TileLayer.WMS}
      */
     this.createWmsLayer = function (options) {
+
       var _options = {
         format: 'image/png',
         version: '1.1.1',
