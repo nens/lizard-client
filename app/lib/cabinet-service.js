@@ -27,7 +27,8 @@ angular.module('lizard-nxt')
   var wmsGetFeatureInfo = new Resource.Endpoint('proxy/');
 
   var geocodeResource = function (q) {
-    return new Resource.Endpoint('geocoding/v5/mapbox.places/' + q + '.json')
+    return new Resource.Endpoint('geocoding/v5/mapbox.places/' +
+        q.replace(/[^a-zA-Z0-9-_]/g, '') + '.json')
         .setBaseUrl('https://api.mapbox.com/');
   };
 
