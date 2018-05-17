@@ -8,30 +8,59 @@ describe('Service: SearchService', function () {
   // instantiate service
   var SearchService,
       State,
-      ggResult = {
-        'results' : [
+      gResult = {
+        "type": "FeatureCollection",
+        "query": [
+          "los",
+          "angeles"
+        ],
+        "features": [
           {
-            'formatted_address' : '1600 Amphitheatre Parkway, Mountain View, CA 94043, USA',
-            'geometry' : {
-              'location' : {
-                'lat' : 37.4224764,
-                'lng' : -122.0842499
+            "id": "place.9962989141465270",
+            "type": "Feature",
+            "place_type": [
+              "place"
+            ],
+            "relevance": 0.99,
+            "properties": {
+              "wikidata": "Q65"
+            },
+            "text": "Los Angeles",
+            "place_name": "Los Angeles, California, United States",
+            "bbox": [
+              -118.529221009603,
+              33.901599990108,
+              -118.121099990025,
+              34.1612200099034
+            ],
+            "center": [
+              -118.2439,
+              34.0544
+            ],
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                -118.2439,
+                34.0544
+              ]
+            },
+            "context": [
+              {
+                "id": "region.3591",
+                "short_code": "US-CA",
+                "wikidata": "Q99",
+                "text": "California"
               },
-              'location_type' : 'ROOFTOP',
-              'viewport' : {
-                'northeast' : {
-                  'lat' : 37.4238253802915,
-                  'lng' : -122.0829009197085
-                },
-                'southwest' : {
-                  'lat' : 37.4211274197085,
-                  'lng' : -122.0855988802915
-                }
+              {
+                "id": "country.3145",
+                "short_code": "us",
+                "wikidata": "Q30",
+                "text": "United States"
               }
-            }
+            ]
           }
         ],
-        'status' : 'OK'
+        "attribution": "NOTICE."
       },
       endpointResult = {
         results: [
@@ -85,14 +114,10 @@ describe('Service: SearchService', function () {
     expect(!!result.spatial.then).toBe(true);
   });
 
-  it('should contain the google geocoder statuses', function () {
-    expect(SearchService.responseStatus.OK).toBe('OK');
-  });
-
   it('should set bounds of search result on State', function () {
-    SearchService.zoomToGoogleGeocoderResult(ggResult.results[0], State);
+    SearchService.zoomToGeocoderResult(gResult.features[0], State);
     expect(State.spatial.bounds._southWest.lat)
-      .toBe(ggResult.results[0].geometry.viewport.southwest.lat);
+      .toBe(gResult.features[0].bbox[1]);
   });
 
 });

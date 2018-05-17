@@ -28,11 +28,8 @@ angular.module("omnibox")
 
       scope.onFocus = function(item, $event) {
         item.selected = "selected";
-        if (item.hasOwnProperty('formatted_address')) {
+        if (item.hasOwnProperty('place_name')) {
           scope.zoomToSpatialResultWithoutClearingSeach(item);
-        }
-        if (item.hasOwnProperty('entity_url')) {
-          scope.zoomToSearchResultWithoutClearingSearch(item);
         }
       };
 

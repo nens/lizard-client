@@ -121,7 +121,7 @@ angular.module('omnibox')
      * @param {object} one search result.
      */
     scope.zoomToSpatialResult = function (result) {
-      State = SearchService.zoomToGoogleGeocoderResult(result, State);
+      State = SearchService.zoomToGeocoderResult(result, State);
       scope.cleanInputAndResults();
     };
 
@@ -130,7 +130,7 @@ angular.module('omnibox')
      * @param {object} one search result.
      */
     scope.zoomToSpatialResultWithoutClearingSeach = function (result) {
-      State = SearchService.zoomToGoogleGeocoderResult(result, State);
+      State = SearchService.zoomToGeocoderResult(result, State);
     };
 
     /**
@@ -202,8 +202,6 @@ angular.module('omnibox')
      * promise resolves with response from geocoder.
      */
     var setResultsOnBox = function (results) {
-      var MAX_RESULTS = 3;
-
       if (
         results.temporal.isValid()
         && results.temporal.valueOf() > UtilService.MIN_TIME
@@ -220,20 +218,14 @@ angular.module('omnibox')
             if (scope.omnibox.searchResults === undefined) { return; }
 
             // Either put results on scope or remove model.
-            if (response.status === SearchService.responseStatus.OK) {
-              var results = response.results;
-              // limit to MAX_RESULTS results
-              if (results.length >  MAX_RESULTS) {
-                results = results.splice(0, MAX_RESULTS);
-              }
-              scope.omnibox.searchResults.spatial = results;
+            if ("features" in response) {
+              var features = response.features;
+              scope.omnibox.searchResults.spatial = features;
             }
-            else if (
-              response.status !== SearchService.responseStatus.ZERO_RESULTS
-            ) {
+            else {
               // Throw error so we can find out about it through sentry.
               throw new Error(
-                'Geocoder returned with status: ' + response.status
+                'Mapbox geocoder returned with status: ' + response.message
               );
             }
 
