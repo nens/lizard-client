@@ -121,7 +121,7 @@ angular.module('omnibox')
      * @param {object} one search result.
      */
     scope.zoomToSpatialResult = function (result) {
-      State = SearchService.zoomToGoogleGeocoderResult(result, State);
+      State = SearchService.zoomToGeocoderResult(result, State);
       scope.cleanInputAndResults();
     };
 
@@ -130,7 +130,7 @@ angular.module('omnibox')
      * @param {object} one search result.
      */
     scope.zoomToSpatialResultWithoutClearingSeach = function (result) {
-      State = SearchService.zoomToGoogleGeocoderResult(result, State);
+      State = SearchService.zoomToGeocoderResult(result, State);
     };
 
     /**

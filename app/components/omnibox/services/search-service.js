@@ -137,7 +137,7 @@ angular.module('omnibox')
      *
      * @param  {object} result google geocoder result.
      */
-    this.zoomToGoogleGeocoderResult = function (result, state) {
+    this.zoomToGeocoderResult = function (result, state) {
       state.spatial.bounds = LeafletService.latLngBounds(
         LeafletService.latLng(result.bbox[3], result.bbox[2]),
         LeafletService.latLng(result.bbox[1], result.bbox[0])

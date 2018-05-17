@@ -8,7 +8,7 @@ describe('Service: SearchService', function () {
   // instantiate service
   var SearchService,
       State,
-      ggResult = {
+      gResult = {
         "type": "FeatureCollection",
         "query": [
           "los",
@@ -115,9 +115,9 @@ describe('Service: SearchService', function () {
   });
 
   it('should set bounds of search result on State', function () {
-    SearchService.zoomToGoogleGeocoderResult(ggResult.features[0], State);
+    SearchService.zoomToGeocoderResult(gResult.features[0], State);
     expect(State.spatial.bounds._southWest.lat)
-      .toBe(ggResult.features[0].bbox[1]);
+      .toBe(gResult.features[0].bbox[1]);
   });
 
 });
