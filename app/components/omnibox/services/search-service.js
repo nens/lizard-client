@@ -100,7 +100,6 @@ angular.module('omnibox')
       };
 
       var bounds;
-      var MAX_RESULTS = '3';
       // bounds are not available in the dashboard view.
       if (state.spatial.bounds.getSouth) {
           bounds = // Prefer results from the current viewport
@@ -109,14 +108,11 @@ angular.module('omnibox')
             state.spatial.bounds.getEast() + ',' +
             state.spatial.bounds.getNorth();
       }
-      // TODO: request results in portals language and restrict results based
-      // on portal by adding: components: 'country:NL'.
-      var prom = CabinetService.geocode(searchString).get({
-        access_token: 'pk.eyJ1IjoibmVsZW5zY2h1dXJtYW5zIiwiYSI6ImNqaGE5YmVxbTBveW4zYXFoOXFzbmZjazcifQ.7RlZNff2s2GU0OH4UWtIzA',
-        language: state.language, // Preferred language of search results.
+
+      var prom = CabinetService.geocode.get({
+        q: searchString,
         bounds: bounds,
-        limit: MAX_RESULTS,
-        autocomplete: 'false'
+        limit: 3  // NB: language is determined from the session by django
       });
 
       var moment = dateParser(searchString);
