@@ -30,6 +30,7 @@ angular.module('lizard-bootstrap', ['favourites'])
      * only set username and backend version.
      */
     var getBootstrap = function (mustApplyState, urlData) {
+      var isInitialLoad = !urlData.context;
       $http.get('bootstrap/lizard/', {})
       .then(
         function (response) {
@@ -39,6 +40,13 @@ angular.module('lizard-bootstrap', ['favourites'])
           version.full = bootstrap.version;
           version.revision = bootstrap.revision;
           if (mustApplyState) {
+            if (!isInitialLoad) {
+              var bsLayerKey;
+              bootstrap.state.layers.forEach(function (bsLayer) {
+                bsLayerKey = bsLayer.type + '$' + bsLayer.uuid;
+                bsLayer.active = urlData.activeLayers.indexOf(bsLayerKey) > -1;
+              });
+            }
             FavouritesService.applyFavourite(bootstrap);
             State.applyUrlToState(urlData);
           }

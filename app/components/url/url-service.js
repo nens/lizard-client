@@ -580,7 +580,6 @@ angular.module('lizard-nxt')
           boxType: getBoxType(),
           annotationsActive: !!(getAnnotations()),
           view: getView(),
-
           activeLayers: getActiveLayers(),
           temporal: getTemporal(),
           assets: selected.assets,
