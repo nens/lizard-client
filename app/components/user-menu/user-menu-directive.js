@@ -42,7 +42,7 @@ angular.module("user-menu").directive("userMenu", [
 
       if (State.context === 'map') {
         appsContainer.classList.add(CLASS_CONTAINER_ON_MAP);
-      } else if (State.context === 'dashboard') {
+      } else if (State.context === 'charts') {
         appsContainer.classList.add(CLASS_CONTAINER_ON_DB);
       }
 
@@ -52,7 +52,7 @@ angular.module("user-menu").directive("userMenu", [
         if (n === 'map') {
           appsContainer.classList.remove(CLASS_CONTAINER_ON_DB);
           appsContainer.classList.add(CLASS_CONTAINER_ON_MAP);
-        } else if (n === 'dashboard') {
+        } else if (n === 'charts') {
           appsContainer.classList.remove(CLASS_CONTAINER_ON_MAP);
           appsContainer.classList.add(CLASS_CONTAINER_ON_DB);
         }

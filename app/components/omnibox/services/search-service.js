@@ -158,7 +158,7 @@ angular.module('omnibox')
 
       var ZOOM_FOR_OBJECT = 19;
 
-      if (state.box.type !== 'multi-point' && state.context !== 'dashboard') {
+      if (state.box.type !== 'multi-point' && state.context !== 'charts') {
         state.resetObjects();
       }
 
@@ -195,7 +195,7 @@ angular.module('omnibox')
     this.zoomToSearchResultWithoutSelecting = function (result, state) {
       var ZOOM_FOR_OBJECT = 19;
 
-      if (state.box.type !== 'multi-point' && state.context !== 'dashboard') {
+      if (state.box.type !== 'multi-point' && state.context !== 'charts') {
         state.resetObjects();
       }
 

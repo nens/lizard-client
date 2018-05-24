@@ -825,7 +825,7 @@ angular.module('lizard-nxt')
   this.getLeftMargin = function (context) {
     var leftMargin = this.TIMELINE_LEFT_MARGIN;
 
-    if (context === 'dashboard') {
+    if (context === 'charts') {
       leftMargin += this.OMNIBOX_WIDTH;
     }
 

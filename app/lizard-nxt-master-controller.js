@@ -76,11 +76,11 @@ angular.module('lizard-nxt').controller('MasterCtrl',
   });
 
   $scope.toggleDashboard = function () {
-    $scope.transitionToContext(($scope.context === 'map') ? 'dashboard' : 'map');
+    $scope.transitionToContext(($scope.context === 'map') ? 'charts' : 'map');
   };
 
   $scope.getContextComplement = function () {
-    return $scope.context === 'map' ? 'Dashboard' : 'Map';
+    return $scope.context === 'map' ? 'Charts' : 'Map';
   };
 
   $scope.getContextComplementIcon = function () {
