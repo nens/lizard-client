@@ -573,7 +573,9 @@ angular.module('lizard-nxt')
 
       getDataForState: function () {
         var selected = getSelected();
-        return {
+        var activeLayers = getActiveLayers();
+        // var inactiveLayers = getInactiveLayers(activeLayers);
+        var dataForState = {
           language: getLanguage(),
           baselayer: getBaseLayer(),
           context: getContext(),
@@ -581,11 +583,15 @@ angular.module('lizard-nxt')
           annotationsActive: !!(getAnnotations()),
           view: getView(),
 
-          activeLayers: getActiveLayers(),
+          activeLayers: activeLayers,
+          // inactiveLayers: inactiveLayers,
+
           temporal: getTemporal(),
           assets: selected.assets,
           geometries: selected.geometries
         };
+        // console.log("[dbg] dataForState:", dataForState);
+        return dataForState;
       },
 
       getFavourite: function () {
