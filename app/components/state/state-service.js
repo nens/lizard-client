@@ -143,7 +143,8 @@ function (UtilService, gettextCatalog, $http) {
 
   // State.context is a property and restricted to a few values.
   var _context = 'map'; // Set on init from url or defaults to map.
-  var CONTEXT_VALUES = ['map', 'dashboard', 'scenarios'];
+  // var CONTEXT_VALUES = ['map', 'scenarios', 'dashboard'];
+  var CONTEXT_VALUES = ['map', 'scenarios', 'charts'];
   Object.defineProperty(state, 'context', {
     get: function () { return _context; },
     set: function (context) {
@@ -212,7 +213,7 @@ function (UtilService, gettextCatalog, $http) {
   Object.defineProperty(state.temporal, 'aggWindow', {
     get: function () {
       var drawingWidth = 320;
-      if (state.context === 'dashboard') {
+      if (state.context === 'charts') {
         drawingWidth = angular.element('.dashboard-wrapper').width();
       }
 

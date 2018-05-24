@@ -61,7 +61,7 @@ angular.module('timeseries').service("TimeseriesService", [
      *                 the second one for bars (data with a ratio scale).
      */
     this.syncTime = function () {
-      var isDashboard = State.context === 'dashboard';
+      var isDashboard = State.context === 'charts';
 
       var groupedCharts = {
         temporalBars: [],

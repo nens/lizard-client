@@ -8,7 +8,7 @@
 
   <div id="cards"
        class="pullDown cardbox"
-       ng-class="{'map-ctx': omnibox.context === 'map', 'db-ctx': omnibox.context === 'dashboard'}">
+       ng-class="{'map-ctx': omnibox.context === 'map', 'db-ctx': omnibox.context === 'charts'}">
 
     <div ng-if="omnibox.context === 'map'">
 
@@ -35,7 +35,7 @@
 
     </div>
 
-    <div ng-if="omnibox.context === 'dashboard'" class="db-omnibox">
+    <div ng-if="omnibox.context === 'charts'" class="db-omnibox">
 
       <db-cards></db-cards>
 

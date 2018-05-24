@@ -195,14 +195,14 @@ angular.module('lizard-nxt')
                             rasters: [],
                             rain: undefined};
 
-      if (State.context !== 'dashboard') {
+      if (State.context !== 'charts') {
         angular.forEach(layers, function (layer) {
           if (layer.active) {
             var dataLayer = _.find(DataService.dataLayers, {uuid: layer.uuid});
             if (dataLayer && layer.type === 'eventseries') {
               timelineLayers.eventseries.push(dataLayer);
             }
-            else if (dataLayer && layer.type === "raster" && State.context !== 'dashboard') {
+            else if (dataLayer && layer.type === "raster" && State.context !== 'charts') {
               if (State.isRainyLayer(dataLayer) && !timelineLayers.rain) {
                 // Show rain bars
                 timelineLayers.rain = dataLayer;
@@ -382,7 +382,7 @@ angular.module('lizard-nxt')
 
     scope.timeline.toggleTimeCtx = function () {
       scope.timeline.toggleTimelineVisiblity();
-      scope.transitionToContext(State.context === 'map' ? 'dashboard' : 'map');
+      scope.transitionToContext(State.context === 'map' ? 'charts' : 'map');
     };
 
     // WATCHES
@@ -461,7 +461,7 @@ angular.module('lizard-nxt')
       },
       function (n, o) {
         var showTemporalData;
-        if (State.context === 'dashboard') {
+        if (State.context === 'charts') {
           showTemporalData = needToShowTimelineInDashboard();
         } else {
           showTemporalData = needToShowTimelineInMap();
@@ -476,14 +476,14 @@ angular.module('lizard-nxt')
 
     /**
      * Decide whether we show the timeline after switching context (i.e.
-     * when switching: State.context="map" <=> State.context="dashboard")
+     * when switching: State.context="map" <=> State.context="charts")
      *
      * This depends on the presence of active temporal layers and on
      * on selected assets with timeseries.
      */
 
     scope.$watch(State.context, function (n, o) {
-      if (State.context === 'dashboard') {
+      if (State.context === 'charts') {
         State.temporal.showingTemporalData = needToShowTimelineInDashboard();
       } else {
         State.temporal.showingTemporalData = needToShowTimelineInMap();

@@ -14,7 +14,7 @@ angular.module('image-carousel')
             maxHeight: '400px'
           };
         }
-        else if (scope.context === 'dashboard') {
+        else if (scope.context === 'charts') {
           scope.$watch('graphDims', function () {
             var d = scope.graphDims;
             scope.dimensions = {
