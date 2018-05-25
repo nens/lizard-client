@@ -338,13 +338,10 @@ angular.module('lizard-nxt')
       },
 
       parseSelection: function (geom) {
-        console.log("[F] parseSelection; geom =", geom);
         if (!geom) { return; }
         var selection = {assets: [], geometries: []};
         var selections = geom.split('+');
-        console.log("*** looping through 'selections':");
         selections.forEach(function (selected) {
-          console.log("****** selected =", selected);
           if (selected.split('$').length === 2)
           {
             selection.assets.push(selected);
@@ -355,15 +352,12 @@ angular.module('lizard-nxt')
                 coordinates;
 
             if (selected.split('_').length > 1) {
-              console.log("****** Detected lineString geom in URL");
-
               geometry = {
                 geometry: {
                   type: 'LineString'
                 }
               };
               coordinates = [];
-
               // Line
               var points = selected.split('_');
               angular.forEach(points, function (pointStr) {
@@ -377,14 +371,11 @@ angular.module('lizard-nxt')
               selection.geometries.push(geometry);
 
             } else if (selected.split(',').length > 1) {
-              console.log("****** Detected point geom in URL");
-
               if (selected.split(',').length === 3) {
                 console.warn("[W] Detected coord in <x,y,z> format;\n"
                   + "what were you thinking!? It will be parsed as <x,y>, "
                   + "obviously.");
               }
-
               geometry = {
                 geometry: {
                   type: 'Point'
@@ -401,8 +392,6 @@ angular.module('lizard-nxt')
                 selection.geometries.push(geometry);
               }
             }
-
-            console.log(">>>>>> result geometry Object:", geometry);
           }
         });
 
