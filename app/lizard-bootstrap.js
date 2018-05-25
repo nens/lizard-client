@@ -30,7 +30,7 @@ angular.module('lizard-bootstrap', ['favourites'])
      * only set username and backend version.
      */
     var getBootstrap = function (mustApplyState, urlData) {
-      var isInitialLoad = !urlData.context;
+      var isInitialLoad = !urlData || !urlData.context;
       $http.get('bootstrap/lizard/', {})
       .then(
         function (response) {
