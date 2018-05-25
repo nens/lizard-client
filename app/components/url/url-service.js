@@ -174,13 +174,13 @@ angular.module('lizard-nxt')
           );
         } else {
           var startDateString = startDate.toDateString()
-          .slice(4) // Cut off day name
-          .split(' ') // Replace spaces by hyphens
-          .join(',');
+            .slice(4) // Cut off day name
+            .split(' ') // Replace spaces by hyphens
+            .join(',');
           var endDateString = endDate.toDateString()
-          .slice(4) // Cut off day name
-          .split(' ') // Replace spaces by hyphens
-          .join(',');
+            .slice(4) // Cut off day name
+            .split(' ') // Replace spaces by hyphens
+            .join(',');
           LocationGetterSetter.setUrlValue(
           state.timeState.part,
           state.timeState.index,
@@ -239,7 +239,7 @@ angular.module('lizard-nxt')
               });
               points.push(point.join(','));
             });
-            newHash.push(points.join('-'));
+            newHash.push(points.join('_'));
           }
           if (geom.geometry.type === 'Polygon' && geom.id) {
             newHash.push(geom.id);
@@ -338,25 +338,34 @@ angular.module('lizard-nxt')
       },
 
       parseSelection: function (geom) {
+        console.log("[F] parseSelection; geom =", geom);
         if (!geom) { return; }
         var selection = {assets: [], geometries: []};
         var selections = geom.split('+');
+        console.log("*** looping through 'selections':");
         selections.forEach(function (selected) {
-          if (selected.split('$').length === 2) {
+          console.log("****** selected =", selected);
+          if (selected.split('$').length === 2)
+          {
             selection.assets.push(selected);
           }
+          else
+          {
+            var geometry,
+                coordinates;
 
-          else {
-            var geometry = {
-              geometry: {
-                type: 'LineString'
-              }
-            };
-            var coordinates = [];
+            if (selected.split('_').length > 1) {
+              console.log("****** Detected lineString geom in URL");
 
-            if (selected.split('-').length > 1) {
+              geometry = {
+                geometry: {
+                  type: 'LineString'
+                }
+              };
+              coordinates = [];
+
               // Line
-              var points = selected.split('-');
+              var points = selected.split('_');
               angular.forEach(points, function (pointStr) {
                 var point = pointStr.split(',');
                 if (parseFloat(point[0]) &&
@@ -366,14 +375,24 @@ angular.module('lizard-nxt')
               });
               geometry.geometry.coordinates = coordinates;
               selection.geometries.push(geometry);
-            }
 
-            else if (selected.split(',').length > 1) {
+            } else if (selected.split(',').length > 1) {
+              console.log("****** Detected point geom in URL");
+
+              if (selected.split(',').length === 3) {
+                console.warn("[W] Detected coord in <x,y,z> format;\n"
+                  + "what were you thinking!? It will be parsed as <x,y>, "
+                  + "obviously.");
+              }
+
               geometry = {
                 geometry: {
                   type: 'Point'
                 }
               };
+              coordinates = [];
+
+              // Point
               var point = selected.split(',');
               if (parseFloat(point[0]) &&
                   parseFloat(point[1])) {
@@ -383,6 +402,7 @@ angular.module('lizard-nxt')
               }
             }
 
+            console.log(">>>>>> result geometry Object:", geometry);
           }
         });
 

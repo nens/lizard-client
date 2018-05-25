@@ -29,13 +29,10 @@ app/translations.js
 #ctags
 .tags*
 
-# ansible host files
-deploy/hosts
-deploy/production_hosts
-deploy/auth.json
-
 #dist
 dist
 .DS_Store
 
 nano.save*
+deploy/*
+deploy
