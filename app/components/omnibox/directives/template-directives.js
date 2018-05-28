@@ -160,11 +160,8 @@ function (MapService, ClickFeedbackService, State, CSVService, user) {
       });
 
       element.on('$destroy', function () {
-
         destroy();
       });
-
-
     },
     restrict: 'E',
     scope: {
