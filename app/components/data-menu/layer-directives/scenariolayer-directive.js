@@ -59,13 +59,21 @@ angular.module('data-menu')
       }
 
       var getOrCreateLayer = function (layerConf, resultType) {
-        var layer = _.find(State.layers, {uuid: layerConf.uuid});
+        var shortUuid = layerConf.uuid.slice(0, 7);
+        var layer = _.find(State.layers, { uuid: shortUuid });
+
         if (!layer) {
+          // This implies the layer (for a scenario) was NOT found in the URL
           layer = {
-            uuid: layerConf.uuid.slice(0, 7),
+            uuid: shortUuid,
             type: 'raster'
           };
           State.layers.push(layer);
+        } else {
+          // This implies the layer (for a scenario) was found in the URL, which
+          // can only happen when it was previously activated; we need to set it
+          // to active=true
+          layer.active = true;
         }
         layer.scenario = scope.layer.uuid;
         layer.name = RESULT_TYPES[resultType];
@@ -121,7 +129,6 @@ angular.module('data-menu')
                 return -1;
               }
             });
-
           })
 
           .catch(function () {
