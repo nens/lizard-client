@@ -23,8 +23,7 @@ angular.module('data-menu')
           function (response) {
             response.data.entity_name = entity;
             return response.data;
-          }
-          ,
+          },
           function (error) {
             setTimeout(function () {
               notie.alert(
