@@ -127,8 +127,10 @@ angular.module('lizard-nxt')
 
       this.reference_frame = chartContent.reference_frame;
 
-      var newThresholds = addSurfaceLevelToThresholds(chartContent.thresholds);
-      this.thresholds = mergeOverlappingThresholds(newThresholds);
+      if (chartContent.thresholds) {
+        var newThresholds = addSurfaceLevelToThresholds(chartContent.thresholds);
+        this.thresholds = mergeOverlappingThresholds(newThresholds);
+      }
 
       this.description = chartContent.description;
       this.labels = chartContent.labels;

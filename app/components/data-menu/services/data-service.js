@@ -546,6 +546,6 @@ angular.module('data-menu')
         var cornerSW = L.latLng(layerBounds.south, layerBounds.west);
         var leafletLayerBounds = L.latLngBounds(cornerNE, cornerSW);
         return State.spatial.bounds.intersects(leafletLayerBounds);
-      }
+      };
     }
   ]);
