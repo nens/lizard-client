@@ -52,7 +52,16 @@
              accesskey="d"
              href="">
             <i class="fa {{ getContextComplementIcon() }}"></i>
-            <span translate>{{ getContextComplement() }}</span>
+            <span
+              ng-if="'Map' === getContextComplement()"
+              translate>
+                Map
+            </span>
+            <span
+              ng-if="'Map' !== getContextComplement()"
+              translate>
+                Charts
+            </span>
           </a>
         </li>
         <li ng-if="user.authenticated"
@@ -169,6 +178,4 @@
     <ui-modal active="modal.active"></ui-modal>
   </div>
 
-  <span style="display: none" translate>charts</span>
-  <span style="display: none" translate>map</span>
 </nav>
