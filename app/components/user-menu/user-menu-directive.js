@@ -201,7 +201,11 @@ angular.module("user-menu").directive("userMenu", [
        */
       var poll = requestAnimationFrame.bind(null, function() {
         $http.get("/api/v3/inbox/").then(function(response) {
-          scope.inbox = response.data;
+          scope.inbox = (
+            (response.data && response.data.results) ?
+              response.data.results :
+              []
+          );
         });
       });
 
