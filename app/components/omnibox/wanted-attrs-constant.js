@@ -876,6 +876,12 @@ angular.module('omnibox')
         valueSuffix: ""
       },
       {
+        keyName: gettext("Type"),
+        attrName: "type",
+        ngBindValue: "waterchain.type",
+        valueSuffix: ""
+      },
+      {
         keyName: gettext("Width"),
         attrName: "crest_width",
         ngBindValue:
@@ -889,6 +895,14 @@ angular.module('omnibox')
         ngBindValue:
           "waterchain.crest_level | niceNumberOrEllipsis: 2",
         valueSuffix: "m (NAP)"
+      },
+      {
+        /// Overlaattype
+        keyName: gettext("Crest Type"),
+        attrName: "crest_type",
+        ngBindValue:
+          "waterchain.crest_type",
+        valueSuffix: ""
       },
       {
         /// Bediening
