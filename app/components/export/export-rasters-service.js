@@ -11,7 +11,7 @@ angular.module('export').service('ExportRastersService', function () {
   };
 
   this.hasSelectedRaster = function () {
-    return _selected.raster !== null;
+    return !!_selected.raster;
   };
 
   this.getSelectedRaster = function () {
