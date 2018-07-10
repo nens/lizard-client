@@ -7,9 +7,10 @@ angular.module('data-menu')
   'DataService',
   'LayerAdderService',
   'MapService',
+  'ExportRastersService',
   'gettextCatalog',
   '$timeout',
-  function ($http, State, DataService, LayerAdderService, MapService, gettextCatalog, $timeout) {
+  function ($http, State, DataService, LayerAdderService, MapService, ExportRastersService, gettextCatalog, $timeout) {
     var link = function (scope) {
 
       var RESULT_TYPES = {
@@ -167,24 +168,16 @@ angular.module('data-menu')
       };
 
       scope.launchExportModal = function (result) {
-        alert("temporarily disabled!");
-        // var shortUuid = State.shortenUUID(result.raster.uuid);
-        // var clickableBtn = $('#user-menu-export-btn');
-        // $timeout(function () {
-        //   clickableBtn.trigger('click');
-        //   $timeout(function () {
-        //     var tabElem = $('#export-modal-tab-btn-rasters');
-        //     tabElem.trigger('click');
-        //     var selectElem = $('#rasterExportSelector');
-        //     // First, deselect any previously selected options (if any):
-        //     var unwantedOpts = selectElem.find('option');
-        //     console.log("[dbg] unwantedOpts =", unwantedOpts);
-        //     unwantedOpts.prop('selected', false);
-        //     // Now we can select the correct option:
-        //     var wantedOpt = selectElem.find('option[value="' + shortUuid + '"]');
-        //     wantedOpt.prop('selected', true);
-        //   });
-        // });
+        var shortUuid = State.shortenUUID(result.raster.uuid);
+        $timeout(function () {
+          var clickableBtnElem = $('#user-menu-export-btn');
+          clickableBtnElem.trigger('click');
+          var tabElem = $('#export-modal-tab-btn-rasters');
+          tabElem.trigger('click');
+          $timeout(function () {
+            ExportRastersService.setSelectedRaster(shortUuid);
+          });
+        });
       };
     };
 
