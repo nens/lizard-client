@@ -142,7 +142,6 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
         isNumeric(scope.data.selectedCellSize);
     };
 
-    // scope.initDatetimePicker = initDatetimePicker;
     scope.handleSelectBoxChange = function () {
       initDatetimePicker();
       $timeout(function () {
