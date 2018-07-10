@@ -97,18 +97,13 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     scope.hasRasters = function () { return !!_.size(scope.allRasters); };
     scope.getSelectedRaster = ExportRastersService.getSelectedRaster;
 
-    scope.$watch('data.selectBoxRaster', function (n, o) {
-      if (n === o) return;
-      ExportRastersService.setSelectedRaster(n);
-    });
-
     scope.$on('$destroy', ExportRastersService.resetSelectedRaster);
 
     $timeout(function () {
       // Initialize selector #1:
       if (scope.hasRasters) {
         var firstRaster = Object.values(scope.allRasters)[0];
-        scope.data.selectBoxRaster = firstRaster;
+        ExportRastersService.setSelectedRaster(firstRaster);
       }
 
       // Initialize selector #2:
