@@ -85,9 +85,6 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
   }
 
   function link (scope) {
-
-    console.log("[F] LINK");
-
     scope.TARGET_PROJECTIONS = {
       "EPSG:4326 (WGS84)": "EPSG:4326",
       "EPSG:28992 (RD new)": "EPSG:28992",
