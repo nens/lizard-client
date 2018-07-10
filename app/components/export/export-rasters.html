@@ -18,19 +18,39 @@
       behind the scenes. The exported data will be in geotiff format.
     </p>
 
-    <!-- part 1/4: select the wanted raster -->
+    <!-- part 1/4: select the wanted raster
     <div id="export-raster-selector-1">
       <p translate>
         Please select the raster:
       </p>
-      <select ng-model="data.selectedRaster"
+      <select id="rasterExportSelector"
+              ng-model="data.selectBoxRaster"
               class="form-control"
               ng-change="initDatetimePicker()">
         <option
           class="selectedRasterOption"
           ng-repeat="(slug, uuid) in allRasters track by $index"
           ng-value="uuid"
-          ng-selected="uuid === data.selectedRaster">
+          ng-selected="uuid === getSelectedRaster()">
+          {{ slug }}
+        </option>
+      </select>
+    </div>
+    -->
+
+    <div id="export-raster-selector-1">
+      <p translate>
+        Please select the raster:
+      </p>
+      <select id="rasterExportSelector"
+              class="form-control"
+              ng-model="data.dummyRequiredForNgChange"
+              ng-change="handleSelectBoxChange()">
+        <option
+          class="selectedRasterOption"
+          ng-repeat="(slug, uuid) in allRasters track by $index"
+          ng-value="uuid"
+          ng-selected="uuid === getSelectedRaster()">
           {{ slug }}
         </option>
       </select>

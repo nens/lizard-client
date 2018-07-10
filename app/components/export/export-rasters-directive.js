@@ -1,7 +1,7 @@
 angular.module('export')
 .directive('exportRasters',
-        ['user', 'DataService', 'State', 'UtilService', '$timeout', 'gettextCatalog', '$http', 'notie',
-function (user,   DataService,   State,   UtilService,   $timeout,   gettextCatalog,   $http,   notie) {
+        ['user', 'DataService', 'State', 'UtilService', '$timeout', 'gettextCatalog', '$http', 'notie', 'ExportRastersService',
+function (user,   DataService,   State,   UtilService,   $timeout,   gettextCatalog,   $http,   notie,   ExportRastersService) {
 
   var DEFAULT_PARAMS = {
     format: "geotiff",
@@ -86,6 +86,8 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
 
   function link (scope) {
 
+    console.log("[F] LINK");
+
     scope.TARGET_PROJECTIONS = {
       "EPSG:4326 (WGS84)": "EPSG:4326",
       "EPSG:28992 (RD new)": "EPSG:28992",
@@ -96,11 +98,28 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     scope.data = {};
     scope.allRasters = getAllRasters();
     scope.hasRasters = function () { return !!_.size(scope.allRasters); };
+    scope.getSelectedRaster = ExportRastersService.getSelectedRaster;
+
+    scope.$watch('data.selectBoxRaster', function (n, o) {
+      console.log("[W] data.selectBoxRaster (n===o ??? ", n === o, ")");
+      if (n === o) return;
+      ExportRastersService.setSelectedRaster(n);
+    });
+
+    scope.$on('$destroy', ExportRastersService.resetSelectedRaster);
 
     $timeout(function () {
       // Initialize selector #1:
       if (scope.hasRasters) {
-        scope.data.selectedRaster = Object.values(scope.allRasters)[0];
+        console.log("[dbg 2] No raster was previously selected; we'll use the 1st available");
+        // scope.data.selectedRaster = Object.values(scope.allRasters)[0];
+
+        // ExportRastersService.setSelectedRaster(
+        //   Object.values(scope.allRasters)[0]
+        // );
+        // scope.data.selectBoxRaster = ExportRastersService.getSelectedRaster();
+        var firstRaster = Object.values(scope.allRasters)[0];
+        scope.data.selectBoxRaster = firstRaster;
       }
 
       // Initialize selector #2:
@@ -117,20 +136,35 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     });
 
     scope.selectedRasterIsTemporal = function () {
-      if (!scope.data.selectedRaster) {
+      var selectedRaster = ExportRastersService.getSelectedRaster();
+      if (!selectedRaster) {
         return false;
       } else {
-        var dataLayer = _.find(DataService.dataLayers,
-          { uuid: scope.data.selectedRaster });
+        var dataLayer = _.find(DataService.dataLayers, { uuid: selectedRaster });
         return !!dataLayer.temporal;
       }
     };
 
     scope.mayStartExport = function () {
-      return scope.data.selectedRaster && isNumeric(scope.data.selectedCellSize);
+      // return scope.data.selectedRaster && isNumeric(scope.data.selectedCellSize);
+      return ExportRastersService.hasSelectedRaster() &&
+        isNumeric(scope.data.selectedCellSize);
     };
 
-    scope.initDatetimePicker = initDatetimePicker;
+    // scope.initDatetimePicker = initDatetimePicker;
+    scope.handleSelectBoxChange = function () {
+      console.log("[F] handleSelectBoxChange");
+      initDatetimePicker();
+      // 1) Detect what option is the newly selected one:
+      $timeout(function () {
+        var selectedOption = $("#rasterExportSelector").find("option:selected")[0];
+        console.log("[dbg] the newly selected option", selectedOption);
+        var newUuid = selectedOption.value;
+        console.log("[dbg] the new uuid:", newUuid);
+        // 2) Write the new UUID to muh service:
+        ExportRastersService.setSelectedRaster(newUuid);
+      });
+    };
 
     scope.startRasterExport = function () {
       var variableParams = {
@@ -148,10 +182,15 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
         DEFAULT_PARAMS[k] = v;
       });
 
-      // TODO: POST ipv GET (because async task)
-      $http.get(
-        '/api/v3/rasters/' + scope.data.selectedRaster + '/data/',
-        { params: DEFAULT_PARAMS }
+      if (!ExportRastersService.getSelectedRaster()) {
+        console.error("[E] unexpected falsy value for: ExportRastersService.getSelectedRaster()");
+      }
+
+      var url = '/api/v3/rasters/' + ExportRastersService.getSelectedRaster() + '/data/';
+
+      console.log("[dbg] About to export raster via URL:", url);
+
+      $http.get(url, { params: DEFAULT_PARAMS }
       ).then(
         exportCbAuthenticatedUser
       );
