@@ -164,7 +164,8 @@ angular.module('data-menu')
 
       scope.mustEnableExportBtn = function (result) {
         var shortUUID = State.shortenUUID(result.raster.uuid);
-        return DataService.layerIntersectsExtent(shortUUID);
+        return result.layer.active
+          && DataService.layerIntersectsExtent(shortUUID);
       };
 
       scope.launchExportModal = function (result) {

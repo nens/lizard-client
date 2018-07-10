@@ -100,17 +100,8 @@
                  ng-click="launchExportModal(result)"
                  class="btn btn-default btn-xs pull-right"
                  title="{{ 'Export scenario data' | translate }}"
-                 ng-if="result.result_type.has_raster && !mustEnableExportBtn(result)"
-                 disabled>
-                <i class="fa fa-share-square-o"></i>
-                <span translate>Export</span>
-              </a>
-
-              <a href="#"
-                 ng-click="launchExportModal(result)"
-                 class="btn btn-default btn-xs pull-right"
-                 title="{{ 'Export scenario data' | translate }}"
-                 ng-if="result.result_type.has_raster && mustEnableExportBtn(result)">
+                 ng-if="result.result_type.has_raster"
+                 ng-disabled="!mustEnableExportBtn(result)">
                 <i class="fa fa-share-square-o"></i>
                 <span translate>Export</span>
               </a>
