@@ -101,7 +101,6 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     scope.getSelectedRaster = ExportRastersService.getSelectedRaster;
 
     scope.$watch('data.selectBoxRaster', function (n, o) {
-      console.log("[W] data.selectBoxRaster (n===o ??? ", n === o, ")");
       if (n === o) return;
       ExportRastersService.setSelectedRaster(n);
     });
@@ -111,13 +110,6 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     $timeout(function () {
       // Initialize selector #1:
       if (scope.hasRasters) {
-        console.log("[dbg 2] No raster was previously selected; we'll use the 1st available");
-        // scope.data.selectedRaster = Object.values(scope.allRasters)[0];
-
-        // ExportRastersService.setSelectedRaster(
-        //   Object.values(scope.allRasters)[0]
-        // );
-        // scope.data.selectBoxRaster = ExportRastersService.getSelectedRaster();
         var firstRaster = Object.values(scope.allRasters)[0];
         scope.data.selectBoxRaster = firstRaster;
       }
@@ -146,22 +138,17 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     };
 
     scope.mayStartExport = function () {
-      // return scope.data.selectedRaster && isNumeric(scope.data.selectedCellSize);
       return ExportRastersService.hasSelectedRaster() &&
         isNumeric(scope.data.selectedCellSize);
     };
 
     // scope.initDatetimePicker = initDatetimePicker;
     scope.handleSelectBoxChange = function () {
-      console.log("[F] handleSelectBoxChange");
       initDatetimePicker();
-      // 1) Detect what option is the newly selected one:
       $timeout(function () {
-        var selectedOption = $("#rasterExportSelector").find("option:selected")[0];
-        console.log("[dbg] the newly selected option", selectedOption);
+        var selectedOption = $("#rasterExportSelector").find(
+          "option:selected")[0];
         var newUuid = selectedOption.value;
-        console.log("[dbg] the new uuid:", newUuid);
-        // 2) Write the new UUID to muh service:
         ExportRastersService.setSelectedRaster(newUuid);
       });
     };
@@ -183,13 +170,11 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
       });
 
       if (!ExportRastersService.getSelectedRaster()) {
-        console.error("[E] unexpected falsy value for: ExportRastersService.getSelectedRaster()");
+        console.error("[E] unexpected falsy value for: "
+          + "ExportRastersService.getSelectedRaster()");
       }
 
       var url = '/api/v3/rasters/' + ExportRastersService.getSelectedRaster() + '/data/';
-
-      console.log("[dbg] About to export raster via URL:", url);
-
       $http.get(url, { params: DEFAULT_PARAMS }
       ).then(
         exportCbAuthenticatedUser
