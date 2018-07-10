@@ -31,7 +31,10 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     var stateLayer,
         key,
         result = {},
-        rasterUUIDs = _.map(_.filter(State.layers, { type: 'raster' }), 'uuid'),
+        activeRasterLayers = _.filter(
+          State.layers, { type: 'raster', active: true }
+        ),
+        rasterUUIDs = _.map(activeRasterLayers, 'uuid'),
         dataLayers = _.filter(DataService.dataLayers, function (dataLayer) {
           return rasterUUIDs.indexOf(dataLayer.uuid) > -1;
         });
@@ -77,6 +80,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
 
   function exportCbAuthenticatedUser (response) {
     angular.element('#MotherModal').modal('hide');
+    ExportRastersService.resetSelectedRaster();
     if (response && response.status === 200) {
       notie.alert(4, EXPORT_START_MESSAGE, 2);
     } else {
