@@ -100,7 +100,6 @@ angular.module('data-menu')
             scope.layer.uuid,
             scope.layer.name
           )
-
           .then(function (scenario) {
             scope.layer.active = true;
 
@@ -168,17 +167,24 @@ angular.module('data-menu')
       };
 
       scope.launchExportModal = function (result) {
-        var shortUuid = State.shortenUUID(result.raster.uuid);
-        var clickableBtn = $('#user-menu-export-btn');
-        $timeout(function () {
-          clickableBtn.trigger('click');
-          $timeout(function () {
-            var tabElem = $('#export-modal-tab-btn-rasters');
-            tabElem.trigger('click');
-            var wantedOpt = $('option[value="' + shortUuid + '"]');
-            wantedOpt.prop('selected', true);
-          });
-        });
+        alert("temporarily disabled!");
+        // var shortUuid = State.shortenUUID(result.raster.uuid);
+        // var clickableBtn = $('#user-menu-export-btn');
+        // $timeout(function () {
+        //   clickableBtn.trigger('click');
+        //   $timeout(function () {
+        //     var tabElem = $('#export-modal-tab-btn-rasters');
+        //     tabElem.trigger('click');
+        //     var selectElem = $('#rasterExportSelector');
+        //     // First, deselect any previously selected options (if any):
+        //     var unwantedOpts = selectElem.find('option');
+        //     console.log("[dbg] unwantedOpts =", unwantedOpts);
+        //     unwantedOpts.prop('selected', false);
+        //     // Now we can select the correct option:
+        //     var wantedOpt = selectElem.find('option[value="' + shortUuid + '"]');
+        //     wantedOpt.prop('selected', true);
+        //   });
+        // });
       };
     };
 
