@@ -61,6 +61,7 @@ angular.module('map')
     };
 
     this.createMarkerClusterLayer = function (options) {
+      console.log("[F] createMarkerClusterLayer; options =", JSON.stringify(options));
       var opts = {
         layer: options,
         color: options.color,
