@@ -7,9 +7,10 @@ angular.module('data-menu')
   'DataService',
   'LayerAdderService',
   'MapService',
+  'ExportRastersService',
   'gettextCatalog',
   '$timeout',
-  function ($http, State, DataService, LayerAdderService, MapService, gettextCatalog, $timeout) {
+  function ($http, State, DataService, LayerAdderService, MapService, ExportRastersService, gettextCatalog, $timeout) {
     var link = function (scope) {
 
       var RESULT_TYPES = {
@@ -100,7 +101,6 @@ angular.module('data-menu')
             scope.layer.uuid,
             scope.layer.name
           )
-
           .then(function (scenario) {
             scope.layer.active = true;
 
@@ -164,19 +164,19 @@ angular.module('data-menu')
 
       scope.mustEnableExportBtn = function (result) {
         var shortUUID = State.shortenUUID(result.raster.uuid);
-        return DataService.layerIntersectsExtent(shortUUID);
+        return result.layer.active
+          && DataService.layerIntersectsExtent(shortUUID);
       };
 
       scope.launchExportModal = function (result) {
         var shortUuid = State.shortenUUID(result.raster.uuid);
-        var clickableBtn = $('#user-menu-export-btn');
         $timeout(function () {
-          clickableBtn.trigger('click');
+          var clickableBtnElem = $('#user-menu-export-btn');
+          clickableBtnElem.trigger('click');
+          var tabElem = $('#export-modal-tab-btn-rasters');
+          tabElem.trigger('click');
           $timeout(function () {
-            var tabElem = $('#export-modal-tab-btn-rasters');
-            tabElem.trigger('click');
-            var wantedOpt = $('option[value="' + shortUuid + '"]');
-            wantedOpt.prop('selected', true);
+            ExportRastersService.setSelectedRaster(shortUuid);
           });
         });
       };
