@@ -278,6 +278,7 @@ angular.module('lizard-nxt')
      * @description get data for event layers and update timeline.
      */
     var getEventData = function (eventseries) {
+      console.log("[F] getEventData");
       // create context for callback function, reset eventOrder to 1.
       var context = {
         eventOrder: 1,
@@ -488,7 +489,14 @@ angular.module('lizard-nxt')
       } else {
         State.temporal.showingTemporalData = needToShowTimelineInMap();
       }
-      $(document).ready(function () { toggleTimeline(); });
+
+      $(document).ready(function () {
+        toggleTimeline();
+        if (State.temporal.showingTemporalData) {
+          $timeout(getTimeLineData);
+        }
+
+      });
     });
 
     /**
