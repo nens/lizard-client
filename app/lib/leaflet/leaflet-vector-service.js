@@ -23,7 +23,6 @@ angular.module('lizard-nxt')
      * of Leaflet.
      */
     onAdd: function (map) {
-      console.log("[dbg] onAdd");
       LeafletService.MarkerClusterGroup.prototype.onAdd.call(this, map);
 
       this._map = map;
@@ -53,7 +52,6 @@ angular.module('lizard-nxt')
     },
 
     addData: function () {
-      console.log("[dbg] addData");
       var color = this.options.color,
           layer = this;
 

@@ -191,10 +191,11 @@ angular.module('lizard-nxt')
      * @returns {object} with: events (list of layers) and rain (nxtLayer).
      */
     var getTimelineLayers = function (layers) {
-      // console.log("[F] getTimelineLayers");
-      var timelineLayers = {eventseries: [],
-                            rasters: [],
-                            rain: undefined};
+      var timelineLayers = {
+        eventseries: [],
+        rasters: [],
+        rain: undefined
+      };
 
       angular.forEach(layers, function (layer) {
         if (layer.active) {
@@ -213,7 +214,6 @@ angular.module('lizard-nxt')
         }
       });
 
-      // console.log("*** timelineLayers =", timelineLayers);
       return timelineLayers;
     };
 
@@ -228,7 +228,6 @@ angular.module('lizard-nxt')
      * That will change later when we set data.
      */
     var getTimeLineData = function () {
-      // console.log("[F] getTimelineData");
       // NOTE: remember which layers *were* active? So we can do stuff with
       // turning off data (eg tickmarks).
       var timelineLayers = getTimelineLayers(State.layers),
@@ -509,7 +508,6 @@ angular.module('lizard-nxt')
         if (State.temporal.showingTemporalData) {
           $timeout(getTimeLineData);
         }
-
       });
     });
 
