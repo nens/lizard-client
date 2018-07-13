@@ -8,8 +8,8 @@
  * Additional methods used to extend nxtLayer with leaflet/map specific methods.
  */
 angular.module('map')
-.factory('eventseriesMapLayer', ['$q', 'LeafletService', 'MapLayerService',
-  function ($q, LeafletService, MapLayerService) {
+.factory('eventseriesMapLayer', ['$q', 'LeafletService', 'MapLayerService', 'State',
+  function ($q, LeafletService, MapLayerService, State) {
 
     return function (options) {
 
@@ -24,7 +24,7 @@ angular.module('map')
 
         eventseriesMapLayer.cml.syncTime(timeState);
 
-        if (!map.hasLayer(eventseriesMapLayer.cml)) {
+        if (State.context === 'map' && !map.hasLayer(eventseriesMapLayer.cml)) {
           map.addLayer(eventseriesMapLayer.cml);
         }
 

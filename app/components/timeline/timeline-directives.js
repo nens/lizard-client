@@ -191,29 +191,28 @@ angular.module('lizard-nxt')
      * @returns {object} with: events (list of layers) and rain (nxtLayer).
      */
     var getTimelineLayers = function (layers) {
-      var timelineLayers = {eventseries: [],
-                            rasters: [],
-                            rain: undefined};
+      var timelineLayers = {
+        eventseries: [],
+        rasters: [],
+        rain: undefined
+      };
 
-      if (State.context !== 'charts') {
-        angular.forEach(layers, function (layer) {
-          if (layer.active) {
-            var dataLayer = _.find(DataService.dataLayers, {uuid: layer.uuid});
-            if (dataLayer && layer.type === 'eventseries') {
-              timelineLayers.eventseries.push(dataLayer);
-            }
-            else if (dataLayer && layer.type === "raster" && State.context !== 'charts') {
-              if (State.isRainyLayer(dataLayer) && !timelineLayers.rain) {
-                // Show rain bars
-                timelineLayers.rain = dataLayer;
-              } else {
-                // Show ticks
-                timelineLayers.rasters.push(dataLayer);
-              }
+      angular.forEach(layers, function (layer) {
+        if (layer.active) {
+          var dataLayer = _.find(DataService.dataLayers, {uuid: layer.uuid});
+          if (dataLayer && layer.type === 'eventseries') {
+            timelineLayers.eventseries.push(dataLayer);
+          } else if (State.context === 'map' && dataLayer && layer.type === "raster") {
+            if (State.isRainyLayer(dataLayer) && !timelineLayers.rain) {
+              // Show rain bars
+              timelineLayers.rain = dataLayer;
+            } else {
+              // Show ticks
+              timelineLayers.rasters.push(dataLayer);
             }
           }
-        });
-      }
+        }
+      });
 
       return timelineLayers;
     };
@@ -237,7 +236,6 @@ angular.module('lizard-nxt')
 
       if (timelineLayers.eventseries.length > 0 &&
         State.spatial.bounds.isValid()) {
-
         // update inactive groups with nodata so update function is called
         // appropriately.
         angular.forEach(events.uuids, function (uuid) {
@@ -488,7 +486,13 @@ angular.module('lizard-nxt')
       } else {
         State.temporal.showingTemporalData = needToShowTimelineInMap();
       }
-      $(document).ready(function () { toggleTimeline(); });
+
+      $(document).ready(function () {
+        toggleTimeline();
+        if (State.temporal.showingTemporalData) {
+          $timeout(getTimeLineData);
+        }
+      });
     });
 
     /**
@@ -556,7 +560,8 @@ angular.module('lizard-nxt')
     /* Check whether we want to show the timeline in dashboard ctx;
      */
     var needToShowTimelineInDashboard = function () {
-      return ChartCompositionService.chartsPresent();
+      return tlNeededBecauseEventseries() ||
+        ChartCompositionService.chartsPresent();
     };
 
     /* Animate the timeline (dis-)appearance:

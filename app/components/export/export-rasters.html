@@ -23,14 +23,15 @@
       <p translate>
         Please select the raster:
       </p>
-      <select ng-model="data.selectedRaster"
+      <select id="rasterExportSelector"
               class="form-control"
-              ng-change="initDatetimePicker()">
+              ng-model="data.dummyRequiredForNgChange"
+              ng-change="handleSelectBoxChange()">
         <option
           class="selectedRasterOption"
           ng-repeat="(slug, uuid) in allRasters track by $index"
           ng-value="uuid"
-          ng-selected="uuid === data.selectedRaster">
+          ng-selected="uuid === getSelectedRaster()">
           {{ slug }}
         </option>
       </select>
@@ -98,7 +99,7 @@
   <div class="modal-footer footer-left">
     <button
       class="btn btn-primary start-export-button"
-      ng-disabled="!mayStartExport(data)"
+      ng-disabled="!mayStartExport()"
       ng-click="startRasterExport()"
       translate>
       Start Export

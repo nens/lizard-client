@@ -52,7 +52,6 @@ angular.module('lizard-nxt')
     },
 
     addData: function () {
-
       var color = this.options.color,
           layer = this;
 
@@ -154,10 +153,12 @@ angular.module('lizard-nxt')
       }
 
       if (this.markers && this.markers.length > 0) {
-        var start = this.timeState.playing ? this.timeState.at : this.timeState.start,
+        var start = this.timeState.playing
+              ? this.timeState.at
+              : this.timeState.start,
             end = this.timeState.playing
-            ? this.timeState.at + this.timeState.aggWindow
-            : this.timeState.end,
+              ? this.timeState.at + this.timeState.aggWindow
+              : this.timeState.end,
           markerTimeObject,
           mustRemoveMarker;
 
