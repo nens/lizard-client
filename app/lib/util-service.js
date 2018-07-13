@@ -360,19 +360,25 @@ angular.module('lizard-nxt')
   };
 
   this.lLatLngBoundsToGJ = function (bounds) {
+    var w = bounds._southWest.lng,
+        s = bounds._southWest.lat,
+        e = bounds._northEast.lng,
+        n = bounds._northEast.lat;
+
     return {
       'type': 'Polygon',
       'coordinates': [
         [
-          [bounds.getWest(), bounds.getNorth()],
-          [bounds.getEast(), bounds.getNorth()],
-          [bounds.getEast(), bounds.getSouth()],
-          [bounds.getWest(), bounds.getSouth()],
-          [bounds.getWest(), bounds.getNorth()]
+          [w, n],
+          [e, n],
+          [e, s],
+          [w, s],
+          [w, n]
         ]
       ]
     };
   };
+
 
   this.lLatLngToGJ = function (latLng) {
     return {

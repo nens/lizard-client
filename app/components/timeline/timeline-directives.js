@@ -303,23 +303,7 @@ angular.module('lizard-nxt')
         }
       };
 
-      var w = State.spatial.bounds._southWest.lng,
-          s = State.spatial.bounds._southWest.lat,
-          e = State.spatial.bounds._northEast.lng,
-          n = State.spatial.bounds._northEast.lat;
-
-      var boundsGj = {
-        'type': 'Polygon',
-        'coordinates': [
-          [
-            [w, n],
-            [e, n],
-            [e, s],
-            [w, s],
-            [w, n]
-          ]
-        ]
-      };
+      var boundsGj = UtilService.lLatLngBoundsToGJ(State.spatial.bounds);
 
       angular.forEach(eventseries, function (_eventseries) {
         // Get data with type === 'eventseries'
