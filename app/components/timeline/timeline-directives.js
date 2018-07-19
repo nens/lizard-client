@@ -616,18 +616,15 @@ angular.module('lizard-nxt')
     });
 
     // END WATCHES
-
   };
 
   var WIDTH_OFFSET_FOR_DASHBOARD_TL = 32;
 
   var getRequiredTimelineWidth = function(elem) {
     var rawWidth = UtilService.getCurrentWidth(elem);
-    if (State.context === 'map') {
-      return rawWidth;
-    } else {
-      return rawWidth - WIDTH_OFFSET_FOR_DASHBOARD_TL;
-    }
+    return State.context === 'map'
+      ? rawWidth
+      : rawWidth - WIDTH_OFFSET_FOR_DASHBOARD_TL;
   };
 
   return {
