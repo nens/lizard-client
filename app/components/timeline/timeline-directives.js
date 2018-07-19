@@ -622,9 +622,10 @@ angular.module('lizard-nxt')
 
   var getRequiredTimelineWidth = function(elem) {
     var rawWidth = UtilService.getCurrentWidth(elem);
-    return State.context === 'map'
+    var adjustedWidth = State.context === 'map'
       ? rawWidth
       : rawWidth - WIDTH_OFFSET_FOR_DASHBOARD_TL;
+    return Math.max(0, adjustedWidth);
   };
 
   return {
