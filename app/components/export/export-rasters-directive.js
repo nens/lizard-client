@@ -90,11 +90,12 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
 
   function link (scope) {
     scope.TARGET_PROJECTIONS = {
-      "EPSG:4326 (WGS84)": "EPSG:4326",
       "EPSG:28992 (RD new)": "EPSG:28992",
+      "EPSG:4326 (WGS84)": "EPSG:4326",
       "EPSG:3857 (Pseudo mercator)": "EPSG:3857"
     };
 
+    scope.context = State.context;
     scope.isAuthenticated = user.authenticated;
     scope.data = {};
     scope.allRasters = getAllRasters();
@@ -114,7 +115,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
       initDatetimePicker();
 
       // Initialize selector #3:
-      scope.data.selectedTargetProjection = "EPSG:4326";
+      scope.data.selectedTargetProjection = "EPSG:28992";
 
       // Initialize selector #4:
       scope.data.selectedCellSize = 1;
