@@ -50,7 +50,7 @@ angular.module('omnibox')
             feature
           );
 
-          if (State.box.type === 'multi-point') {
+          if (State.box.type.indexOf('point' > -1)) {
             labelId = ClickFeedbackService.drawLabel(
               MapService,
               feature,
