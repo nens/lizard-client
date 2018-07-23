@@ -209,9 +209,9 @@ angular.module('map')
         var assetGroups = _.filter(scope.state.layers, { type: 'assetgroup' });
         MapService.updateAssetGroups(assetGroups);
 
-        if (n === 'map' &&
-            State.box.type === 'multi-point' &&
-            State.assets.length > 0)
+        if (n === 'map'
+            && State.box.type.indexOf('point') > -1
+            && State.assets.length > 0)
         {
           ClickFeedbackService.initializeLabelsLayer(MapService);
         }
@@ -352,22 +352,28 @@ angular.module('map')
       });
 
       scope.$watch('state.box.type', function (n, o) {
-        if (n === o) { return true; }
-
         if (n !== 'line' && o === 'line') {
           lineCleanup();
           ClickFeedbackService.emptyClickLayer(MapService);
         }
 
-        if (n === 'multi-point') {
+        if (n.indexOf('point' > -1)) {
+
           ClickFeedbackService.initializeLabelsLayer(MapService);
-          if (o === 'point' && State.assets && State.assets.length > 0) {
-            var asset = DataService.getAssetByKey(State.assets[0]);
-            if (asset) {
-              ClickFeedbackService.drawLabelForSingleAsset(asset);
+          if (State.assets && State.assets.length > 0) {
+            if  (
+                  (n === 'multi-point' && o === 'point') ||
+                  (n === 'point' && o === 'multi-point')
+                )
+            {
+              var asset = DataService.getAssetByKey(State.assets[0]);
+              if (asset) {
+                ClickFeedbackService.drawLabelForSingleAsset(asset);
+              }
             }
           }
-        } else if (n !== 'multi-point' && o === 'multi-point') {
+
+        } else if (n.indexOf('point' === -1) && o.indexOf('point' > -1)) {
           ClickFeedbackService.removeLabelsLayer(MapService);
         }
 

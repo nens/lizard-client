@@ -38,9 +38,8 @@ angular.module('lizard-nxt')
 
         showTimeline = true, // Is set by user clicking data label, when true
                               // timeline is shown.
-
         dimensions = {
-          width: UtilService.getCurrentWidth(element),
+          width: getRequiredTimelineWidth(element),
           height: 45,
           events: 35,
           bars: 35,
@@ -589,11 +588,10 @@ angular.module('lizard-nxt')
     window.addEventListener('load', getTimeLineData);
 
     var resize = function () {
-
-      var newWidth = UtilService.getCurrentWidth(element);
+      var newWidth = getRequiredTimelineWidth(element);
+      timeline.dimensions.width = newWidth;
 
       scope.$apply(function () {
-        timeline.dimensions.width = newWidth;
         timeline.resize(
           timeline.dimensions,
           State.temporal.at,
@@ -618,7 +616,16 @@ angular.module('lizard-nxt')
     });
 
     // END WATCHES
+  };
 
+  var WIDTH_OFFSET_FOR_DASHBOARD_TL = 32;
+
+  var getRequiredTimelineWidth = function(elem) {
+    var rawWidth = UtilService.getCurrentWidth(elem);
+    var adjustedWidth = State.context === 'map'
+      ? rawWidth
+      : rawWidth - WIDTH_OFFSET_FOR_DASHBOARD_TL;
+    return Math.max(0, adjustedWidth);
   };
 
   return {

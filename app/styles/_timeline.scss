@@ -34,6 +34,14 @@
     }
 }
 
+.timeline-dashboard {
+    .timeline-svg-wrapper {
+        svg {
+            left: 84px;
+        }
+    }
+}
+
 .timeline-wrapper {
     position: relative;
 }
