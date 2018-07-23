@@ -204,9 +204,6 @@ angular.module('map')
       }, true);
 
       scope.$watch('state.context', function (n) {
-        console.log("[W] state.context; n =", n);
-        console.log("*** State.box.type =", State.box.type);
-        console.log("*** State.assets =", State.assets);
         // When switching back into the map ctx, we want to rebuild the TMS
         // layer for 'Water' and other assetgroups
         var assetGroups = _.filter(scope.state.layers, { type: 'assetgroup' });
@@ -357,12 +354,6 @@ angular.module('map')
       });
 
       scope.$watch('state.box.type', function (n, o) {
-        console.log("[W] state.box.type =", n);
-        // if (n === o) {
-        //   console.log("...early return!");
-        //   return true;
-        // }
-
         if (n !== 'line' && o === 'line') {
           lineCleanup();
           ClickFeedbackService.emptyClickLayer(MapService);
@@ -373,7 +364,7 @@ angular.module('map')
 
           ClickFeedbackService.initializeLabelsLayer(MapService);
           if (State.assets && State.assets.length > 0) {
-            if (
+            if  (
                   (n === 'multi-point' && o === 'point') ||
                   (n === 'point' && o === 'multi-point')
                 )

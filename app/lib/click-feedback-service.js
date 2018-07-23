@@ -74,7 +74,6 @@ angular.module('lizard-nxt')
       };
 
       this.drawPointsAsLabels = function (self) {
-        console.log("[F] drawPointsAsLabel; this.labelsLayer.options =", this.labelsLayer.options);
         this.labelsLayer.options.pointToLayer = function (feature, latlng) {
           var assetKey = feature.entity_name + "$" + feature.id;
           return L.marker(latlng, {
@@ -442,7 +441,6 @@ angular.module('lizard-nxt')
     };
 
     removeLabelsLayer = function (mapState) {
-      console.log("[F] removeLabelsLayer");
       if (clickLayer.labelsLayer) {
         mapState.removeLeafletLayer(clickLayer.labelsLayer);
         clickLayer.labelsLayer = null;
@@ -450,7 +448,6 @@ angular.module('lizard-nxt')
     };
 
     initializeLabelsLayer = function (mapState)  {
-      console.log("[F] initializeLabelsLayer");
       if (clickLayer.labelsLayer) {
         mapState.removeLeafletLayer(clickLayer.labelsLayer);
       }
