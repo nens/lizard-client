@@ -204,14 +204,19 @@ angular.module('map')
       }, true);
 
       scope.$watch('state.context', function (n) {
+        console.log("[W] state.context; n =", n);
+        console.log("*** State.box.type =", State.box.type);
+        console.log("*** State.assets =", State.assets);
         // When switching back into the map ctx, we want to rebuild the TMS
         // layer for 'Water' and other assetgroups
         var assetGroups = _.filter(scope.state.layers, { type: 'assetgroup' });
         MapService.updateAssetGroups(assetGroups);
 
-        if (n === 'map' &&
-            State.box.type === 'multi-point' &&
-            State.assets.length > 0)
+        if (n === 'map'
+            && (
+              State.box.type === 'point' ||
+              State.box.type === 'multi-point')
+            && State.assets.length > 0)
         {
           ClickFeedbackService.initializeLabelsLayer(MapService);
         }
@@ -352,22 +357,35 @@ angular.module('map')
       });
 
       scope.$watch('state.box.type', function (n, o) {
-        if (n === o) { return true; }
+        console.log("[W] state.box.type =", n);
+        // if (n === o) {
+        //   console.log("...early return!");
+        //   return true;
+        // }
 
         if (n !== 'line' && o === 'line') {
           lineCleanup();
           ClickFeedbackService.emptyClickLayer(MapService);
         }
 
-        if (n === 'multi-point') {
+        // if (n === 'multi-point' || n === 'point') {
+        if (n.indexOf('point' > -1)) {
+
           ClickFeedbackService.initializeLabelsLayer(MapService);
-          if (o === 'point' && State.assets && State.assets.length > 0) {
-            var asset = DataService.getAssetByKey(State.assets[0]);
-            if (asset) {
-              ClickFeedbackService.drawLabelForSingleAsset(asset);
+          if (State.assets && State.assets.length > 0) {
+            if (
+                  (n === 'multi-point' && o === 'point') ||
+                  (n === 'point' && o === 'multi-point')
+                )
+            {
+              var asset = DataService.getAssetByKey(State.assets[0]);
+              if (asset) {
+                ClickFeedbackService.drawLabelForSingleAsset(asset);
+              }
             }
           }
-        } else if (n !== 'multi-point' && o === 'multi-point') {
+
+        } else if (n.indexOf('point' === -1) && o.indexOf('point' > -1)) {
           ClickFeedbackService.removeLabelsLayer(MapService);
         }
 
