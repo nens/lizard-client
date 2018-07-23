@@ -210,9 +210,7 @@ angular.module('map')
         MapService.updateAssetGroups(assetGroups);
 
         if (n === 'map'
-            && (
-              State.box.type === 'point' ||
-              State.box.type === 'multi-point')
+            && State.box.type.indexOf('point') > -1
             && State.assets.length > 0)
         {
           ClickFeedbackService.initializeLabelsLayer(MapService);
@@ -359,7 +357,6 @@ angular.module('map')
           ClickFeedbackService.emptyClickLayer(MapService);
         }
 
-        // if (n === 'multi-point' || n === 'point') {
         if (n.indexOf('point' > -1)) {
 
           ClickFeedbackService.initializeLabelsLayer(MapService);
