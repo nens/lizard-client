@@ -93,13 +93,11 @@ angular.module('data-menu')
             scope.rescale = MapService.rescaleLayer;
           }
 
-          var dates = UtilService.subtractOffsetUTC(
-            [response.first_value_timestamp, response.last_value_timestamp]);
           scope.zoomToBounds = LayerAdderService.zoomToBounds.bind({
             bounds: response.spatial_bounds,
             temporal: response.temporal,
-            first: dates[0],
-            last: dates[1]
+            first: response.first_value_timestamp,
+            last: response.last_value_timestamp
           });
         })
         .catch(function () {
