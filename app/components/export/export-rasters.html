@@ -1,15 +1,16 @@
 <div>
-  <div class="modal-body" ng-if="!(isAuthenticated && hasRasters())">
+  <div class="modal-body" ng-if="!(isAuthenticated && hasRasters() && context === 'map')">
     <p aria-label="Help Text"
        class="help-text"
        translate>
       You are not able to export any rasters. You are either not
-      logged in, you don't have any rasters available/the available rasters do
-      not intersect with the current spatial extent of the map.
+      logged in, you are not currently seeing the map, you don't have any rasters
+      available or the available rasters dont intersect with the current
+      spatial extent of the map.
     </p>
   </div>
 
-  <div class="modal-body" ng-if="isAuthenticated && hasRasters()">
+  <div class="modal-body" ng-if="isAuthenticated && hasRasters() && context === 'map'">
     <p aria-label="Help Text"
        class="help-text"
        translate>
