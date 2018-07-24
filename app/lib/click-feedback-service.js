@@ -106,10 +106,7 @@ angular.module('lizard-nxt')
         // "Rioolgemaal", a.o.t "Feature" xor "FeatureSet" (only the latter two
         // will *not* crash Leaflet)
         obj.type = 'Feature';
-
-        // W/o this, the labels can remain blanco when the 'name' attr was not
-        // configured/filled in @backend:
-        obj.name = obj.name || '...';
+        obj.name = obj.name || obj.code || '...';
 
         this.labelsLayer.addData(obj);
       };
