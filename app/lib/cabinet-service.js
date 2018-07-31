@@ -26,11 +26,7 @@ angular.module('lizard-nxt')
   // Wms getFeatureInfo goes through a proxy. Specify url as a param.
   var wmsGetFeatureInfo = new Resource.Endpoint('proxy/');
 
-  var geocodeResource = function (q) {
-    return new Resource.Endpoint('geocoding/v5/mapbox.places/' +
-        q.replace(/[^a-zA-Z0-9-_]/g, '') + '.json')
-        .setBaseUrl('https://api.mapbox.com/');
-  };
+  var geocodeResource = new Resource.Endpoint('api/v3/geocode/');
 
   /**
    * Raster resource, last stop to the server
