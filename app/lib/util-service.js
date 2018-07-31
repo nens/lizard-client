@@ -661,6 +661,8 @@ angular.module('lizard-nxt')
             return "lz lz-radar-image";
           case 10:
             return "lz lz-inclinometer";
+          case 11:
+            return "lz lz-flow-meter";
           default:
             return "lz lz-measuringstation";
         }
@@ -688,8 +690,14 @@ angular.module('lizard-nxt')
             return "lz lz-pumpstation";
         }
       }
-    }
-    else {
+    } else if (str === "weir") {
+      switch(asset_type) {
+        case "schuif":
+          return "lz lz-weir-controlable";
+        default:
+          return "lz lz-weir";
+      }
+    } else {
       switch (str) {
         case 'filter':
           return 'fa fa-filter';
