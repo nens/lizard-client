@@ -121,6 +121,7 @@ angular.module('data-menu')
       var removeAsset = function (asset) {
         var newAssets = angular.copy(_assets);
         newAssets.splice(_assets.indexOf(asset), 1);
+        delete State.selectedForAssets[asset];
         setAssets(newAssets);
       };
 
