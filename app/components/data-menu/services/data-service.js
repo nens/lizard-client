@@ -81,6 +81,7 @@ angular.module('data-menu')
 
       // Define assets on State and update DataService.assets.
       var setAssets = function (assetsIn) {
+        console.log('[F] setAssets ', assetsIn);
         // Dedupe assets in selection synchronous.
         var assets = _.uniq(assetsIn);
         instance.oldAssets = angular.copy(instance.assets);
@@ -113,12 +114,14 @@ angular.module('data-menu')
       };
 
       var addAsset = function (asset) {
+        console.log('[F] addAsset ', asset);
         var newAssets = angular.copy(_assets);
         newAssets.push(asset);
         setAssets(newAssets);
       };
 
       var removeAsset = function (asset) {
+        console.log('[F] removeAsset ', asset);
         var newAssets = angular.copy(_assets);
         newAssets.splice(_assets.indexOf(asset), 1);
         delete State.selectedForAssets[asset];

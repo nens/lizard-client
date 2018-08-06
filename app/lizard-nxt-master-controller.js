@@ -111,11 +111,14 @@ angular.module('lizard-nxt').controller('MasterCtrl',
     window.loaded = true;
   });
 
-    window.debug = function () {
-      // The parse / stringify is to turn it into an object without properties,
-      // for the Firefox console.
-    console.log("Currently, the State object looks like:",
-                JSON.parse(JSON.stringify(State, null, 4)));
+  window.debug = function () {
+    // The parse / stringify is to turn it into an object without properties,
+    // for the Firefox console.
+    console.log(
+      "Currently, the State object looks like:",
+      JSON.parse(JSON.stringify(State, null, 4))
+    );
+    return State;
   };
 
   window.chartComposition = function () {
