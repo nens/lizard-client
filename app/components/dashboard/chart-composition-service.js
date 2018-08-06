@@ -56,7 +56,6 @@ angular.module('dashboard')
 
   this.addChart = function (chartIndex, chartKey) {
     // Returns the index of the chart that chartKey was inserted into.
-
     var result;
     if (chartIndex === undefined || chartIndex === null || chartIndex < 0 ||
         chartIndex >= service.composedCharts.length) {

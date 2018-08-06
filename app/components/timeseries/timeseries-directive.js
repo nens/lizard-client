@@ -46,16 +46,16 @@ angular.module('timeseries')
 
 
 .directive('timeseriesSingleSelect', ['$http', 'State', 'TimeseriesService',
-  'gettextCatalog', 'notie', 'ChartCompositionService',
-  function ($http, State, TimeseriesService, gettextCatalog, notie, ChartCompositionService) {
+  'gettextCatalog', 'notie', 'ChartCompositionService', 'AssetService',
+  function ($http, State, TimeseriesService, gettextCatalog, notie, ChartCompositionService, AssetService) {
   return {
     link: function (scope) {
-
       var selectTimeseries = function () {
+        var assetKey = AssetService.getAssetKey(scope.asset);
         var selected = (
-          State.selectedForAssets[scope.asset.entity_name + '$' + scope.asset.id] || {});
+          State.selectedForAssets[assetKey] || {});
         selected.timeseries = scope.timeseries.selected;
-        State.selectedForAssets[scope.asset.entity_name + '$' + scope.asset.id] = selected;
+        State.selectedForAssets[assetKey] = selected;
 
         _.forEach(
           TimeseriesService.syncTime(),

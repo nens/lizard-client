@@ -8,6 +8,7 @@ angular.module('omnibox').directive('dbAssetCard', [
   'RelativeToSurfaceLevelService',
   'getNestedAssets',
   'UtilService',
+  'AssetService',
   '$timeout',
   function (
     State,
@@ -19,6 +20,7 @@ angular.module('omnibox').directive('dbAssetCard', [
     RTSLService,
     getNestedAssets,
     UtilService,
+    AssetService,
     $timeout
   ) {
     return {
@@ -39,6 +41,8 @@ angular.module('omnibox').directive('dbAssetCard', [
         scope.isChartActive = DashboardChartService.isChartActive;
         scope.toggleChart = DashboardChartService.toggleChart;
         scope.getOrCreateChart = DashboardChartService.getOrCreateChart;
+
+        this.showTimeseriesSelectedInStateSelectedForAsset(scope);
 
         scope.toggleColorPicker = function (tsUuid) {
           if (scope.colorPickersSettings[tsUuid]) {
@@ -112,6 +116,32 @@ angular.module('omnibox').directive('dbAssetCard', [
           DragService.addDraggableContainer(element.find('#drag-container'));
         });
       },
+
+
+      // function to select the timeseries that is also in selectedForAsset state variable.
+      // When a user switches from map to charts context then the timeseries for the chart will immedeatly be shown.
+      // The right timeseries is selected based on state.selectedForAsset[assetKey].timeseries in the global state object
+      // previously the user had to perform an additional click to select this timeseries after changing from the chart context.
+      // the parameter 'scope' is the scope also passed to the link function.
+      showTimeseriesSelectedInStateSelectedForAsset: function (scope) {
+         // clear all charts for this assetCard:
+         var allUuidsForAsset = _.map(scope.asset.timeseries, 'uuid');
+         allUuidsForAsset.forEach(function (uuid) {
+           var chartKey = 'timeseries+' + uuid;
+           if (DashboardChartService.isChartActive(chartKey)) {
+             DashboardChartService.toggleChart(chartKey);
+           }
+         });
+ 
+         // Get the key via the AssetSvc fn:
+         var assetKeyForCurrentCard = AssetService.getAssetKey(scope.asset);
+         if (State.selectedForAssets[assetKeyForCurrentCard] !== undefined) {
+           var chartKey = 'timeseries+' + 
+             State.selectedForAssets[assetKeyForCurrentCard].timeseries.uuid;
+           DashboardChartService.toggleChart(chartKey);
+         }
+      },
+
       restrict: 'E',
       scope: {
         asset: '=',
