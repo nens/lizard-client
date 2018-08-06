@@ -1,3 +1,4 @@
 [submodule "deploy"]
 	path = deploy
 	url = git@github.com:nens/client-deployment.git
+	ignore = all
