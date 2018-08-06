@@ -48,12 +48,29 @@ angular.module('data-menu')
        * @return {array}                 Updated DataService.assets.
        */
       this.removeOldAssets = function (selectedAssets, currentAssets) {
-        return currentAssets.filter(function (asset) {
+        var assetsToKeep = currentAssets.filter(function (asset) {
           var assetId = service.getAssetKey(asset);
           var parentId = asset.parentAsset;
           return (selectedAssets.indexOf(assetId) !== -1 ||
                   (parentId && selectedAssets.indexOf(parentId) !== -1));
         });
+
+        // 1) find assets that are not kept:
+        var that = this;
+        var assetsToKeepKeys = assetsToKeep.map(function(asset){
+          return that.getAssetKey(asset);
+        });
+        var currentAssetsKeys = currentAssets.map(function(asset){
+          return that.getAssetKey(asset);
+        });
+        var assetsToRemoveKeys = currentAssetsKeys.filter(function(currentKey){
+            return !_.includes(assetsToKeepKeys, currentKey);
+        });
+        // 2) for each of those: 'delete State.selectedForAssets[asset];'
+        assetsToRemoveKeys.forEach(function(assetKey){
+          delete State.selectedForAssets[assetKey];
+        });
+        return assetsToKeep;
       };
 
       /**
