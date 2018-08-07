@@ -118,7 +118,7 @@ angular.module('lizard-nxt').controller('MasterCtrl',
       "Currently, the State object looks like:",
       JSON.parse(JSON.stringify(State, null, 4))
     );
-    return State;
+    // return State;
   };
 
   window.chartComposition = function () {
