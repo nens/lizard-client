@@ -60,26 +60,7 @@ angular.module("user-menu").directive("userMenu", [
         }
       });
 
-      // angular.element("#lizard-apps-button").click(function (e) {
-      //   e.preventDefault();
-      //   e.stopPropagation();
-      //   //showAppsContainer = !showAppsContainer;
-      //   //scope.favourites.enabled = false;
-      // });
-
-      angular.element(":not(#lizard-apps-button)").click(function (e) {
-        //if (showAppsContainer) {
-        if (scope.menuState.apps!=false) {
-          appsContainer.classList.toggle('hidden');
-          if (!appsContainer.classList.contains('hidden')) {
-            // OK
-            appsContainer.classList.add('hidden');
-            scope.menuState.apps=false;
-          }
-          // showAppsContainer = false;
-          
-        }
-      });
+      
 
       var appsScreenUrl = function() {
         var appsScreenSlug = UtilService.slugify($location.host());
@@ -250,6 +231,41 @@ angular.module("user-menu").directive("userMenu", [
         'favs': false,
         'user': false
       };
+
+      scope.hideOtherDropDowns = function (e) {
+        var dummieEvent = {
+          preventDefault: function(){},
+          stopPropagation: function(){}
+        }
+        
+        console.log("[F] hideOtherDropdowns", scope.menuState);
+        //e.preventDefault();
+        //e.stopPropagation();
+
+        scope.hideAppsContainer(dummieEvent);
+        scope.hideFavsContainer(dummieEvent);
+      }
+
+      // angular.element("#lizard-apps-button").click(function (e) {
+      //   e.preventDefault();
+      //   e.stopPropagation();
+      //   //showAppsContainer = !showAppsContainer;
+      //   //scope.favourites.enabled = false;
+      // });
+
+      angular.element(":not(#lizard-apps-button)").click(function (e) {
+        //if (showAppsContainer) {
+        if (scope.menuState.apps!=false) {
+          appsContainer.classList.toggle('hidden');
+          if (!appsContainer.classList.contains('hidden')) {
+            // OK
+            appsContainer.classList.add('hidden');
+            scope.menuState.apps=false;
+          }
+          // showAppsContainer = false;
+          
+        }
+      });
 
       scope.showAppsContainer = function (e) {
         console.log("[F] showAppsContainer", scope.menuState);
