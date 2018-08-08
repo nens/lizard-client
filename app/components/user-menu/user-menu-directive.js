@@ -254,9 +254,27 @@ angular.module("user-menu").directive("userMenu", [
       // });
 
       angular.element(":not(#lizard-apps-button)").click(function (e) {
+        console.log(':not(#lizard-apps-button onclick', e);
+        
+
+        for (
+          var htmlElementIndex = 0; 
+          htmlElementIndex < e.currentTarget.childNodes.length; 
+          htmlElementIndex++
+        ) {
+          if (e.currentTarget.childNodes[htmlElementIndex].id === 'lizard-apps-button') {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+          }
+        }
+        e.currentTarget.childNodes.forEach(function(element){
+          console.log(element.id);
+        })
+
         //if (showAppsContainer) {
         if (scope.menuState.apps!=false) {
-          appsContainer.classList.toggle('hidden');
+          //appsContainer.classList.toggle('hidden');
           if (!appsContainer.classList.contains('hidden')) {
             // OK
             appsContainer.classList.add('hidden');
@@ -269,8 +287,8 @@ angular.module("user-menu").directive("userMenu", [
 
       scope.showAppsContainer = function (e) {
         console.log("[F] showAppsContainer", scope.menuState);
-        e.preventDefault();
-        e.stopPropagation();
+        // e.preventDefault();
+        // e.stopPropagation();
 
         if (scope.menuState.favs)
           scope.hideFavsContainer(e);
