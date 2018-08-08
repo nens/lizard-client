@@ -3,13 +3,19 @@
  * @description Show favourites menu.
  */
 angular.module('favourites')
-  .directive('favourites', ['FavouriteService', function (FavouriteService) {
+  .directive('favourites', ['$rootScope','FavouritesService', function ($rootScope, FavouritesService) {
 
   var link = function (scope, element, attrs) {
 
     scope.favourites = {
-      isEnabled: FavouriteService.isShowingFavsContainer
+      isEnabled: FavouritesService.isShowingFavsContainer
     };
+
+    // function
+    scope.enabled = function () {
+      console.log('calling function');
+      FavouritesService.isShowingFavsContainer();
+    }
 
     /**
      * Toggle the favourites.
@@ -23,24 +29,52 @@ angular.module('favourites')
     /**
      * Collapse favourites on click outside the box.
      */
-    scope.$watch('favourites.enabled', function () {
+    
+    // use rootscope to watch state inside service
+    // https://stackoverflow.com/questions/17806600/watch-inside-a-service
+    $rootScope.$watch(function() {
+      return FavouritesService.isShowingFavsContainer();
+    }, function watchCallback(newValue, oldValue) {
+      console.log("[W] favourites.enabled", newValue, oldValue);
+      if (newValue===oldValue) {
+        return false;
+      }
+      scope.favourites.isEnabled = newValue;
 
-      console.log("[W] favourites.enabled");
-      if (scope.favourites.enabled === true) {
+      if (newValue===true) {
         $(document).bind('click', function(event){
           var isClickedElementChildOfPopup = element
             .find(event.target)
             .length > 0;
-
+  
           if (!isClickedElementChildOfPopup) {
             scope.$apply( function () {
-              scope.favourites.enabled = false;
+              // scope.favourites.enabled = false;
+              scope.favourites.isEnabled = false;
             });
           }
         });
       }
     });
-  };
+
+  // scope.$watch('favourites.enabled', function () {
+
+  //   console.log("[W] favourites.enabled");
+  //   if (scope.favourites.enabled === true) {
+  //     $(document).bind('click', function(event){
+  //       var isClickedElementChildOfPopup = element
+  //         .find(event.target)
+  //         .length > 0;
+
+  //       if (!isClickedElementChildOfPopup) {
+  //         scope.$apply( function () {
+  //           scope.favourites.enabled = false;
+  //         });
+  //       }
+  //     });
+  //   }
+  // });
+};
 
   return {
     restrict: 'E',
