@@ -3,27 +3,29 @@
  * @description Show favourites menu.
  */
 angular.module('favourites')
-  .directive('favourites', [function () {
+  .directive('favourites', ['FavouriteService', function (FavouriteService) {
 
   var link = function (scope, element, attrs) {
 
     scope.favourites = {
-      enabled: false
+      isEnabled: FavouriteService.isShowingFavsContainer
     };
 
     /**
      * Toggle the favourites.
      * @param {object} $event - Click event object.
      */
-    scope.toggleFavourites = function($event) {
-      $event.stopPropagation();
-      scope.favourites.enabled = !scope.favourites.enabled;
-    };
+    // scope.toggleFavourites = function($event) {
+    //   $event.stopPropagation();
+    //   scope.favourites.enabled = !scope.favourites.enabled;
+    // };
 
     /**
      * Collapse favourites on click outside the box.
      */
     scope.$watch('favourites.enabled', function () {
+
+      console.log("[W] favourites.enabled");
       if (scope.favourites.enabled === true) {
         $(document).bind('click', function(event){
           var isClickedElementChildOfPopup = element

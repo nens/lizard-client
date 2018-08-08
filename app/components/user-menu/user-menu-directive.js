@@ -14,6 +14,7 @@ angular.module("user-menu").directive("userMenu", [
   "gettextCatalog",
   'State',
   '$timeout',
+  'FavouritesService',
   function(
     $http,
     UtilService,
@@ -25,7 +26,8 @@ angular.module("user-menu").directive("userMenu", [
     notie,
     gettextCatalog,
     State,
-    $timeout
+    $timeout,
+    FavouritesService
   ) {
     var link = function(scope, element, attrs) {
 
@@ -82,9 +84,13 @@ angular.module("user-menu").directive("userMenu", [
       script.onload = function() {
         if (typeof window.Lizard.startPlugins === "function") {
           window.Lizard.startPlugins(); // jshint ignore:line
+
           scope.mustShowAppsButton =
             element.find("#lizard-apps-button").children().length > 0;
           scope.$digest();
+
+          // Preventy injected clickhandler for button:
+          document.getElementById('lizard-apps-button').onclick = null;
         }
       };
 
@@ -231,6 +237,81 @@ angular.module("user-menu").directive("userMenu", [
       // Bind mapservice functions for zoom buttons;
       scope.zoomIn = MapService.zoomIn;
       scope.zoomOut = MapService.zoomOut;
+
+      scope.menuState = {
+        'apps': false,
+        'favs': false,
+        'user': false
+      };
+
+      scope.showAppsContainer = function (e) {
+        // console.log("[F] showAppsContainer");
+
+        if (scope.menuState.favs)
+          scope.hideFavsContainer(e);
+
+        if (scope.menuState.user)
+          scope.hideUserContainer(e);
+
+        if (!scope.menuState.apps) {
+          if (appsContainer.classList.contains('hidden')) {
+            // OK
+            appsContainer.classList.remove('hidden');
+            scope.menuState.apps = true;
+          } else {
+            // Inconsistency detected!
+            console.error("[E] Tried to *show* appsContainer but classList doesn't contain 'hidden'!");
+          }
+        } else {
+          // Inconsistency detected!
+          console.error("[E] Tried to *show* appsContainer when local state already says it should be shown!");
+        }
+      };
+
+      scope.hideAppsContainer = function (e) {
+        // console.log("[F] hideAppsContainer");
+
+        if (scope.menuState.apps) {
+          if (!appsContainer.classList.contains('hidden')) {
+            // OK
+            appsContainer.classList.add('hidden');
+            scope.menuState.apps = false;
+          } else {
+            // Inconsistency detected!
+            console.error("[E] Tried to *hide* appsContainer but classList already contains 'hidden'!");
+          }
+        } else {
+          console.error("[E] Tried to *hide* appsContainer when local state already says it should be hidden!");
+        }
+      };
+
+      scope.showFavsContainer = function (e) {
+        console.log("[F] showFavsContainer");
+        // scope.toggleFavourites(e);
+
+
+        if(!scope.menuState.favs) {
+          FavouritesService.showFavsContainer();
+          scope.menuState.favs = true;
+        } else
+          console.error("[E] Tried to *show* favsContainer when local state already says it should be shown!");
+
+        if (scope.menuState.apps)
+          scope.hideAppsContainer(e);
+
+        if (scope.menuState.user)
+          scope.hideUserContainer(e);
+      };
+
+      scope.hideFavsContainer = function (e) {
+        console.log("[F] hideFavsContainer");
+        if(scope.menuState.favs) {
+          FavouritesService.hideFavsContainer();
+          scope.menuState.favs = false;
+        } else
+          console.error("[E] Tried to *hide* favsContainer when local state already says it should be already hidden");
+
+      };
     };
 
     return {

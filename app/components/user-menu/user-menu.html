@@ -34,6 +34,7 @@
           <a id="lizard-apps-button"
              class="lizard-apps-button"
              title="Apps"
+             ng-click="menuState.apps ? hideAppsContainer($event) : showAppsContainer($event)"
              href="">
           </a>
         </li>
@@ -65,10 +66,10 @@
           </a>
         </li>
         <li ng-if="user.authenticated"
-            ng-class="{'open': favourites.enabled}">
+            ng-class="{'open': menuState.favs }">
           <a title="{{ 'Favourites' | translate }}"
              href=""
-             ng-click="toggleFavourites($event)">
+             ng-click="menuState.favs ? hideFavsContainer($event) : showFavsContainer($event)">
             <i class="fa fa-star"></i>
             <span translate>Favourites</span>
           </a>

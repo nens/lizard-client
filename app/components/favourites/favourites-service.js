@@ -19,10 +19,30 @@ angular.module('favourites')
         UtilService,
         notie,
         $window,
-      $timeout,
-      DashboardChartService,
+        $timeout,
+        DashboardChartService,
         ChartCompositionService)
     {
+
+      var _favsContainerEnabled = false;
+
+      this.isShowingFavsContainer = function () {
+        return _favsContainerEnabled;
+      };
+
+      this.showFavsContainer = function  () {
+        if (!_favsContainerEnabled)
+          _favsContainerEnabled = true;
+        else
+          console.error("[E] Tried to *show* fav container via svc, but svc state is inconsistent!");
+      };
+
+      this.hideFavsContainer = function  () {
+        if (_favsContainerEnabled)
+          _favsContainerEnabled = false;
+        else
+          console.error("[E] Tried to *hide* fav container via svc, but svc state is inconsistent!");
+      };
 
       /* Create a resource for interacting with the favourites endpoint of the
        * API.
