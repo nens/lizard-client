@@ -3,7 +3,7 @@
  * @description Show favourites menu.
  */
 angular.module('favourites')
-  .directive('favourites', ['$rootScope','FavouritesService', function ($rootScope, FavouritesService) {
+  .directive('favourites', ['$rootScope','$timeout','FavouritesService', function ($rootScope, $timeout, FavouritesService) {
 
   var link = function (scope, element, attrs) {
 
@@ -12,10 +12,11 @@ angular.module('favourites')
     };
 
     // function
-    scope.enabled = function () {
-      console.log('calling function');
-      FavouritesService.isShowingFavsContainer();
-    }
+    // scope.enabled = function () {
+    //   console.log('calling function');
+    //   FavouritesService.isShowingFavsContainer();
+    // }
+    scope.favsContainerEnabled = FavouritesService.favsContainerEnabled;
 
     /**
      * Toggle the favourites.
@@ -30,32 +31,57 @@ angular.module('favourites')
      * Collapse favourites on click outside the box.
      */
     
+// scope.$watch('favsContainerEnabled.value', function (newValue, oldValue){
+//   console.log('watch on scope.favsContainerEnabled.value triggered', newValue, oldValue);
+//   if (newValue===true) {
+//     // $timeout(function(){
+//     //   //the code which needs to run after dom rendering
+//     //   $(document).bind('click', function(event){
+//     //     var isClickedElementChildOfPopup = element
+//     //       .find(event.target)
+//     //       .length > 0;
+  
+//     //     if (!isClickedElementChildOfPopup) {
+  
+//     //       scope.$apply( function () {
+//     //         // scope.favourites.enabled = false;
+//     //         // scope.favourites.isEnabled = false;
+//     //         FavouritesService.hideFavsContainer();
+//     //       });
+//     //     }
+//     //   });
+//     // })
+    
+    
+//   }
+// })
+
     // use rootscope to watch state inside service
     // https://stackoverflow.com/questions/17806600/watch-inside-a-service
-    $rootScope.$watch(function() {
-      return FavouritesService.isShowingFavsContainer();
-    }, function watchCallback(newValue, oldValue) {
-      console.log("[W] favourites.enabled", newValue, oldValue);
-      if (newValue===oldValue) {
-        return false;
-      }
-      scope.favourites.isEnabled = newValue;
+    // $rootScope.$watch(function() {
+    //   return FavouritesService.isShowingFavsContainer();
+    // }, function watchCallback(newValue, oldValue) {
+    //   console.log("[W] favourites.enabled", newValue, oldValue);
+    //   if (newValue===oldValue) {
+    //     return false;
+    //   }
+    //   scope.favourites.isEnabled = newValue;
 
-      if (newValue===true) {
-        $(document).bind('click', function(event){
-          var isClickedElementChildOfPopup = element
-            .find(event.target)
-            .length > 0;
+    //   if (newValue===true) {
+    //     $(document).bind('click', function(event){
+    //       var isClickedElementChildOfPopup = element
+    //         .find(event.target)
+    //         .length > 0;
   
-          if (!isClickedElementChildOfPopup) {
-            scope.$apply( function () {
-              // scope.favourites.enabled = false;
-              scope.favourites.isEnabled = false;
-            });
-          }
-        });
-      }
-    });
+    //       if (!isClickedElementChildOfPopup) {
+    //         scope.$apply( function () {
+    //           // scope.favourites.enabled = false;
+    //           scope.favourites.isEnabled = false;
+    //         });
+    //       }
+    //     });
+    //   }
+    // });
 
   // scope.$watch('favourites.enabled', function () {
 

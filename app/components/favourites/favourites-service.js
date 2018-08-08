@@ -24,22 +24,42 @@ angular.module('favourites')
         ChartCompositionService)
     {
 
-      var _favsContainerEnabled = false;
+      this.favsContainerEnabled = {value: false};
 
-      this.isShowingFavsContainer = function () {
-        return _favsContainerEnabled;
-      };
+      
+
+      // this.isShowingFavsContainer = function () {
+      //   return _favsContainerEnabled;
+      // };
 
       this.showFavsContainer = function  () {
-        if (!_favsContainerEnabled)
-          _favsContainerEnabled = true;
+        var favsContainer = document.querySelector("#lizard-favs-container");
+        if (!this.favsContainerEnabled.value) {
+          this.favsContainerEnabled.value = true;
+          if (favsContainer.classList.contains('hidden')) {
+            // OK
+            favsContainer.classList.remove('hidden');
+          } else {
+            // Inconsistency detected!
+            console.error("[E] Tried to *show* favsContainer but classList does not contain 'hidden'!");
+          }
+        }
         else
           console.error("[E] Tried to *show* fav container via svc, but svc state is inconsistent!");
       };
 
       this.hideFavsContainer = function  () {
-        if (_favsContainerEnabled)
-          _favsContainerEnabled = false;
+        var favsContainer = document.querySelector("#lizard-favs-container");
+        if (this.favsContainerEnabled.value) {
+          this.favsContainerEnabled.value = false;
+          if (!favsContainer.classList.contains('hidden')) {
+            // OK
+            favsContainer.classList.add('hidden');
+          } else {
+            // Inconsistency detected!
+            console.error("[E] Tried to *hide* favsContainer but classList already contains 'hidden'!");
+          }
+        }
         else
           console.error("[E] Tried to *hide* fav container via svc, but svc state is inconsistent!");
       };

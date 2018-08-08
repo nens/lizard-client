@@ -60,17 +60,24 @@ angular.module("user-menu").directive("userMenu", [
         }
       });
 
-      angular.element("#lizard-apps-button").click(function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        showAppsContainer = !showAppsContainer;
-        scope.favourites.enabled = false;
-      });
+      // angular.element("#lizard-apps-button").click(function (e) {
+      //   e.preventDefault();
+      //   e.stopPropagation();
+      //   //showAppsContainer = !showAppsContainer;
+      //   //scope.favourites.enabled = false;
+      // });
 
       angular.element(":not(#lizard-apps-button)").click(function (e) {
-        if (showAppsContainer) {
+        //if (showAppsContainer) {
+        if (scope.menuState.apps!=false) {
           appsContainer.classList.toggle('hidden');
-          showAppsContainer = false;
+          if (!appsContainer.classList.contains('hidden')) {
+            // OK
+            appsContainer.classList.add('hidden');
+            scope.menuState.apps=false;
+          }
+          // showAppsContainer = false;
+          
         }
       });
 
@@ -245,7 +252,9 @@ angular.module("user-menu").directive("userMenu", [
       };
 
       scope.showAppsContainer = function (e) {
-        // console.log("[F] showAppsContainer");
+        console.log("[F] showAppsContainer", scope.menuState);
+        e.preventDefault();
+        e.stopPropagation();
 
         if (scope.menuState.favs)
           scope.hideFavsContainer(e);
@@ -269,13 +278,16 @@ angular.module("user-menu").directive("userMenu", [
       };
 
       scope.hideAppsContainer = function (e) {
-        // console.log("[F] hideAppsContainer");
+        console.log("[F] hideAppsContainer", scope.menuState);
+        e.preventDefault();
+        e.stopPropagation();
 
         if (scope.menuState.apps) {
           if (!appsContainer.classList.contains('hidden')) {
             // OK
             appsContainer.classList.add('hidden');
             scope.menuState.apps = false;
+            console.log('[F] hideAppsContainer 2');
           } else {
             // Inconsistency detected!
             console.error("[E] Tried to *hide* appsContainer but classList already contains 'hidden'!");
@@ -286,7 +298,7 @@ angular.module("user-menu").directive("userMenu", [
       };
 
       scope.showFavsContainer = function (e) {
-        console.log("[F] showFavsContainer");
+        console.log("[F] showFavsContainer", scope.menuState);
         // scope.toggleFavourites(e);
 
 
@@ -296,15 +308,18 @@ angular.module("user-menu").directive("userMenu", [
         } else
           console.error("[E] Tried to *show* favsContainer when local state already says it should be shown!");
 
-        if (scope.menuState.apps)
-          scope.hideAppsContainer(e);
+        if (scope.menuState.apps) {
+          // scope.hideAppsContainer(e);
+          console.log('if statement showFavsContainer');
+        }
+          
 
-        if (scope.menuState.user)
-          scope.hideUserContainer(e);
+        // if (scope.menuState.user)
+        //   scope.hideUserContainer(e);
       };
 
       scope.hideFavsContainer = function (e) {
-        console.log("[F] hideFavsContainer");
+        console.log("[F] hideFavsContainer", scope.menuState);
         if(scope.menuState.favs) {
           FavouritesService.hideFavsContainer();
           scope.menuState.favs = false;
