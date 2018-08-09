@@ -68,8 +68,9 @@
         <li ng-if="user.authenticated"
             ng-class="{'open': menuState.favs }">
           <a title="{{ 'Favourites' | translate }}"
+             id="favs-menu-button"
              href=""
-             ng-click="menuState.favs ? hideFavsContainer($event) : showFavsContainer($event)">
+             ng-click="menuState.favs ? hideFavsContainer($event) : showFavsContainer($event, true)">
             <i class="fa fa-star"></i>
             <span translate>Favourites</span>
           </a>
@@ -96,16 +97,19 @@
             </div>
           </a>
         </li>
-        <li class="dropdown" ng-if="user.authenticated">
+        <li class="dropdown" id="user-menu-dropdown" ng-if="user.authenticated">
           <a title="{{ tooltips.profile }}"
+             id="user-menu-button"
              class="dropdown-toggle"
              data-toggle="dropdown"
              role="button"
              aria-haspopup="true"
              aria-expanded="false"
              href="#"
-             ng-click="hideOtherDropDowns($event)">
-            <div ng-cloak
+             ng-click="menuState.user ? hideUserContainer($event, true, true) : showUserContainer($event, true, true)"
+            >
+            <div
+              ng-cloak
               id="username"
               ng-style="{'min-width': '133px', 'max-width': '133px'}">
               <i class="fa fa-user"></i>
@@ -124,7 +128,10 @@
                  class="clickable"
                  ng-click="showMessage(inbox[0])">
                 <i class="fa fa-envelope"></i>
-                <span translate>Messages <span class="badge" ng-bind="inbox.length"></span></span>
+                <span translate>
+                  Messages
+                  <span class="badge" ng-bind="inbox.length"></span>
+                </span>
               </a>
             </li>
             <li>

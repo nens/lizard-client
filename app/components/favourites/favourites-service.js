@@ -24,25 +24,14 @@ angular.module('favourites')
         ChartCompositionService)
     {
 
-      this.favsContainerEnabled = {value: false};
-
-      
-
-      // this.isShowingFavsContainer = function () {
-      //   return _favsContainerEnabled;
-      // };
+      this.favsContainerEnabled = { value: false };
 
       this.showFavsContainer = function  () {
         var favsContainer = document.querySelector("#lizard-favs-container");
         if (!this.favsContainerEnabled.value) {
           this.favsContainerEnabled.value = true;
-          if (favsContainer.classList.contains('hidden')) {
-            // OK
+          if (favsContainer.classList.contains('hidden'))
             favsContainer.classList.remove('hidden');
-          } else {
-            // Inconsistency detected!
-            console.error("[E] Tried to *show* favsContainer but classList does not contain 'hidden'!");
-          }
         }
         else
           console.error("[E] Tried to *show* fav container via svc, but svc state is inconsistent!");

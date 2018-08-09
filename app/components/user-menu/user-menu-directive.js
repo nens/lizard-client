@@ -60,8 +60,6 @@ angular.module("user-menu").directive("userMenu", [
         }
       });
 
-      
-
       var appsScreenUrl = function() {
         var appsScreenSlug = UtilService.slugify($location.host());
         return "//apps.lizard.net/screens/" + appsScreenSlug + ".js";
@@ -232,58 +230,96 @@ angular.module("user-menu").directive("userMenu", [
         'user': false
       };
 
-      scope.hideOtherDropDowns = function (e) {
-        var dummieEvent = {
-          preventDefault: function(){},
-          stopPropagation: function(){}
-        }
-        
-        console.log("[F] hideOtherDropdowns", scope.menuState);
-        //e.preventDefault();
-        //e.stopPropagation();
+      // scope.hideOtherDropDowns = function (e) {
+      //   console.log("[F] hideOtherDropdowns", scope.menuState);
+      //   var dummieEvent = {
+      //     preventDefault: function(){},
+      //     stopPropagation: function(){}
+      //   };
 
-        scope.hideAppsContainer(dummieEvent);
-        scope.hideFavsContainer(dummieEvent);
-      }
+      //   //e.preventDefault();
+      //   //e.stopPropagation();
 
-      // angular.element("#lizard-apps-button").click(function (e) {
+      //   scope.hideAppsContainer(dummieEvent);
+      //   scope.hideFavsContainer(dummieEvent);
+      // };
+
+      angular.element("#lizard-apps-button").click(function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+      angular.element(":not(#lizard-apps-button)").click(function (e) {
+        if (scope.menuState.apps)
+          scope.hideAppsContainer(e);
+      });
+
+      // angular.element("#favs-menu-button").click(function (e) {
+      //   // e.preventDefault();
+      //   // e.stopPropagation();
+      // });
+      angular.element(":not(#favs-menu-button)").click(function (e) {
+        // console.log("[C] Clicked something else than favs-button!");
+        if (scope.menuState.favs)
+          scope.hideFavsContainer(e);
+      });
+
+
+      // angular.element("#user-menu-button").click(function (e) {
+      //   console.log("[C] clicked on user-menu-button");
       //   e.preventDefault();
       //   e.stopPropagation();
-      //   //showAppsContainer = !showAppsContainer;
-      //   //scope.favourites.enabled = false;
+      // });
+      // angular.element(":not(#user-menu-button)").click(function (e) {
+      //   console.log("[C] clicked, but not on user-menu-button");
+      //   if (scope.menuState.user)
+      //     scope.hideUserContainer(e);
       // });
 
-      angular.element(":not(#lizard-apps-button)").click(function (e) {
-        console.log(':not(#lizard-apps-button onclick', e);
-        
+      // angular.element(":not(#lizard-apps-button)").click(function (e) {
+      //   console.log(':not(#lizard-apps-button onclick', e);
+      //   for (
+      //     var htmlElementIndex = 0;
+      //     htmlElementIndex < e.currentTarget.childNodes.length;
+      //     htmlElementIndex++
+      //   ) {
+      //     if (e.currentTarget.childNodes[htmlElementIndex].id === 'lizard-apps-button') {
+      //       e.preventDefault();
+      //       e.stopPropagation();
+      //       return;
+      //     }
+      //   }
+      //   e.currentTarget.childNodes.forEach(function(element){
+      //     console.log(element.id);
+      //   });
 
-        for (
-          var htmlElementIndex = 0; 
-          htmlElementIndex < e.currentTarget.childNodes.length; 
-          htmlElementIndex++
-        ) {
-          if (e.currentTarget.childNodes[htmlElementIndex].id === 'lizard-apps-button') {
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-          }
-        }
-        e.currentTarget.childNodes.forEach(function(element){
-          console.log(element.id);
-        })
+      //   //if (showAppsContainer) {
+      //   if (scope.menuState.apps!=false) {
+      //     //appsContainer.classList.toggle('hidden');
+      //     if (!appsContainer.classList.contains('hidden')) {
+      //       // OK
+      //       appsContainer.classList.add('hidden');
+      //       scope.menuState.apps=false;
+      //     }
+      //     // showAppsContainer = false;
 
-        //if (showAppsContainer) {
-        if (scope.menuState.apps!=false) {
-          //appsContainer.classList.toggle('hidden');
-          if (!appsContainer.classList.contains('hidden')) {
-            // OK
-            appsContainer.classList.add('hidden');
-            scope.menuState.apps=false;
-          }
-          // showAppsContainer = false;
-          
-        }
-      });
+      //   }
+      // });
+
+      // var selector = ":not(#lizard-apps-button),:not(#user-menu-button),:not(#favs-menu-button)";
+      // var elems = document.querySelectorAll(selector);
+      // var handler = function (e) {
+      //   e.preventDefault();
+      //   e.stopPropagation();
+      //   console.log("[!] Clicked on something else than the 3 buttons!");
+      // };
+
+      // for (var i = 0; i < elems.length; i++) {
+      //   elems[i].addEventListener('click', handler)
+      // }
+
+      // ).onclick(function () {
+      //   console.log("[!] Clicked on something else than the 3 buttons!");
+      // });
 
       scope.showAppsContainer = function (e) {
         console.log("[F] showAppsContainer", scope.menuState);
@@ -311,17 +347,19 @@ angular.module("user-menu").directive("userMenu", [
         }
       };
 
-      scope.hideAppsContainer = function (e) {
+      scope.hideAppsContainer = function (e, mustPreventBubbling) {
         console.log("[F] hideAppsContainer", scope.menuState);
-        e.preventDefault();
-        e.stopPropagation();
+
+        if (mustPreventBubbling) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
 
         if (scope.menuState.apps) {
           if (!appsContainer.classList.contains('hidden')) {
             // OK
             appsContainer.classList.add('hidden');
             scope.menuState.apps = false;
-            console.log('[F] hideAppsContainer 2');
           } else {
             // Inconsistency detected!
             console.error("[E] Tried to *hide* appsContainer but classList already contains 'hidden'!");
@@ -331,25 +369,25 @@ angular.module("user-menu").directive("userMenu", [
         }
       };
 
-      scope.showFavsContainer = function (e) {
+      scope.showFavsContainer = function (e, mustPreventBubbling) {
         console.log("[F] showFavsContainer", scope.menuState);
-        // scope.toggleFavourites(e);
 
+        if (mustPreventBubbling) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
 
         if(!scope.menuState.favs) {
-          FavouritesService.showFavsContainer();
+          FavouritesService.showFavsContainer(); // !!!!
           scope.menuState.favs = true;
         } else
           console.error("[E] Tried to *show* favsContainer when local state already says it should be shown!");
 
-        if (scope.menuState.apps) {
-          // scope.hideAppsContainer(e);
-          console.log('if statement showFavsContainer');
-        }
-          
+        if (scope.menuState.apps)
+          scope.hideAppsContainer(e);
 
-        // if (scope.menuState.user)
-        //   scope.hideUserContainer(e);
+        if (scope.menuState.user)
+          scope.hideUserContainer(e);
       };
 
       scope.hideFavsContainer = function (e) {
@@ -359,8 +397,66 @@ angular.module("user-menu").directive("userMenu", [
           scope.menuState.favs = false;
         } else
           console.error("[E] Tried to *hide* favsContainer when local state already says it should be already hidden");
-
       };
+
+      // The ":not(#user-menu-button)" click handler
+      angular.element(":not(#user-menu-button)").click(function (e) {
+        if (scope.menuState.user) {
+          scope.hideUserContainer(e);
+        }
+      });
+
+      scope.showUserContainer = function (e, mustPreventDefault, mustPreventPropagation) {
+        console.log("[F] showUserContainer", scope.menuState);
+
+        // Prevent page-reload (since the button is an <a>-tag):
+        if (mustPreventDefault)
+          e.preventDefault();
+
+        // Prevent the ":not(#user-menu-button)" click handler from triggering:
+        if (mustPreventPropagation)
+          e.stopPropagation();
+
+        if (scope.menuState.apps)
+          scope.hideAppsContainer(e, false);
+
+        if(scope.menuState.favs)
+          scope.hideFavsContainer(e);
+
+        if (scope.menuState.user)
+          console.error("[E] Tried to *show* user-container when local state already says it should be shown!");
+        else {
+          scope.menuState.user = true;
+          var domElem = document.getElementById('user-menu-dropdown');
+          if (domElem.classList.contains('open')) {
+            console.error("[E] Tried to *show* user-container but it already has class 'open'");
+          } else
+            domElem.classList.add('open');
+        }
+      };
+
+      scope.hideUserContainer = function (e, mustPreventDefault, mustPreventPropagation) {
+        console.log("[F] hideUserContainer", scope.menuState);
+
+        // Prevent page-reload (since the button is an <a>-tag):
+        if (mustPreventDefault)
+          e.preventDefault();
+
+        // Prevent the ":not(#user-menu-button)" click handler from triggering
+        if (mustPreventPropagation)
+          e.stopPropagation();
+
+        if (scope.menuState.user) {
+          scope.menuState.user = false;
+          var domElem = document.getElementById('user-menu-dropdown');
+          if (domElem.classList.contains('open')) {
+            domElem.classList.remove('open');
+          } else
+            console.error("[E] Tried to *hide* user-container but it didn't have class 'open'");
+        } else
+          console.error("[E] Tried to *hide* user-container when local state says it already should be hidden!");
+      };
+
     };
 
     return {
