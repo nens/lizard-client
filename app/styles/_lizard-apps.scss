@@ -9,9 +9,11 @@
   svg {
     width: 11px;
     height: 11px;
-    margin-right: 0.25em;
-    margin-top: 0.1em;
+    margin-right: 0.5em;
+    margin-top: 0.3em;
     fill: white;
+
+    float: left;
   }
 }
 
@@ -25,11 +27,11 @@
 }
 
 .lizard-apps-container-on-map {
-  right: 288px;
+  right: 278px;
 }
 
 .lizard-apps-container-on-db {
-  right: 244px;
+  right: 254px;
 }
 
 .lizard-apps {

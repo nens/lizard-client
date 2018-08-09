@@ -19,10 +19,39 @@ angular.module('favourites')
         UtilService,
         notie,
         $window,
-      $timeout,
-      DashboardChartService,
+        $timeout,
+        DashboardChartService,
         ChartCompositionService)
     {
+
+      this.favsContainerEnabled = { value: false };
+
+      this.showFavsContainer = function  () {
+        var favsContainer = document.querySelector("#lizard-favs-container");
+        if (!this.favsContainerEnabled.value) {
+          this.favsContainerEnabled.value = true;
+          if (favsContainer.classList.contains('hidden'))
+            favsContainer.classList.remove('hidden');
+        }
+        else
+          console.error("[E] Tried to *show* fav container via svc, but svc state is inconsistent!");
+      };
+
+      this.hideFavsContainer = function  () {
+        var favsContainer = document.querySelector("#lizard-favs-container");
+        if (this.favsContainerEnabled.value) {
+          this.favsContainerEnabled.value = false;
+          if (!favsContainer.classList.contains('hidden')) {
+            // OK
+            favsContainer.classList.add('hidden');
+          } else {
+            // Inconsistency detected!
+            console.error("[E] Tried to *hide* favsContainer but classList already contains 'hidden'!");
+          }
+        }
+        else
+          console.error("[E] Tried to *hide* fav container via svc, but svc state is inconsistent!");
+      };
 
       /* Create a resource for interacting with the favourites endpoint of the
        * API.
