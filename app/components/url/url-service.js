@@ -89,13 +89,13 @@ angular.module('lizard-nxt')
       if (!pathPart) {
         pathPart = '';
       }
-      // 3): remove if first character slash
+      // 3): remove if first character /
       if (pathPart.slice(0, 1) === '/') {
         pathPart = pathPart.slice(1)
       }
-      // 4): remove if last character slash
-      if (pathPart.slice(-1) === '/') {
-        pathPart = pathPart.slice(0, -1);
+      // 4): add / if last character not /
+      if (pathPart.slice(-1) !== '/' && part === 'path') {
+        pathPart = pathPart + '/';
       }
       return pathPart;
     };
