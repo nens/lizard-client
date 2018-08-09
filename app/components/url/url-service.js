@@ -50,9 +50,10 @@ angular.module('lizard-nxt')
         var halfPath, otherHalf, parts = _getPathParts(part);
         if (!value && parts.length - 1 === index) {
           parts.splice(index, 1); // remove if no value and index is last one.
-        } else {
+        } else if (value !== '') {
           parts[index] = value; //replace
         }
+
         halfPath = parts.join('/');
         if (part === 'path') {
           otherHalf = _getPath('at') ? '@' + _getPath('at') : '';
@@ -75,11 +76,27 @@ angular.module('lizard-nxt')
     var _getPath = function (part) {
 
       var path = $location.path();
-
-      var paths = path.split('@'); //splits path in two at the @.
-      var pathPart = paths[part === 'path' ? 0 : 1] || ''; //gets before @ when 'path' after when 'at'
-      // we do not want the first slash
-      pathPart = part === 'path' ? pathPart.slice(1) : pathPart;
+      var pathPart = '';     
+      // 1): get part of path corresponding to 'path' or 'at'
+      if (part === 'path') {
+        // get part before @
+        pathPart = path.split('@')[0];
+      } else { // we assume part === 'at'
+        // get part after @
+        pathPart = path.split('@')[1];
+      }
+      // 2): if pathPart = falsy use empty string ''
+      if (!pathPart) {
+        pathPart = '';
+      }
+      // 3): remove if first character slash
+      if (pathPart.slice(0, 1) === '/') {
+        pathPart = pathPart.slice(1)
+      }
+      // 4): remove if last character slash
+      if (pathPart.slice(-1) === '/') {
+        pathPart = pathPart.slice(0, -1);
+      }
       return pathPart;
     };
 
