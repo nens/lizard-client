@@ -42,10 +42,8 @@ angular.module('data-menu')
      *                           GET.
      */
     this.fetchLayers = function (params, success, error) {
-      console.log('[F] fetchLayers 4', params)
       params.type = 'assetgroup,eventseries,wmslayer,rasterstore,scenario';
       params.page_size = 8;
-      console.log('[F] fetchLayers 5', params)
       return $http.get('api/v3/search/', {
         params: params
       }).then(success, error);

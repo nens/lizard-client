@@ -91,16 +91,10 @@ angular.module('data-menu')
        *                         with query parameters for the API request.
        */
       var fetchLayers = function (query) {
-        console.log('[F] fetchLayers ', query);
         if (typeof query === "undefined") {
           query = {};
         }
-        console.log('[F] 2 fetchLayers ', query);
-
         query.exclude = _.map(scope.state.layers, 'uuid').join(',');
-
-        console.log('[F] 3 fetchLayers ', query);
-
         LayerAdderService.fetchLayers(
           query,
           fetchLayersSuccess,
