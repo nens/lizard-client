@@ -34,7 +34,7 @@
           <a id="lizard-apps-button"
              class="lizard-apps-button"
              title="Apps"
-             ng-click="menuState.apps ? hideAppsContainer($event) : showAppsContainer($event)"
+             ng-click="menuState.apps ? hideAppsContainer($event, true) : showAppsContainer($event, true)"
              href="">
           </a>
         </li>
@@ -123,7 +123,7 @@
            </div>
           </a>
           <ul class="dropdown-menu">
-            <li>
+            <li ng-if="inbox.length">
               <a title="{{ 'Show Messages' | translate }}"
                  class="clickable"
                  ng-click="showMessage(inbox[0])">
