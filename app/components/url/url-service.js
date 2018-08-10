@@ -53,7 +53,6 @@ angular.module('lizard-nxt')
         } else if (value !== '') {
           parts[index] = value; //replace
         }
-
         halfPath = parts.join('/');
         if (part === 'path') {
           otherHalf = _getPath('at') ? '@' + _getPath('at') : '';
@@ -90,8 +89,8 @@ angular.module('lizard-nxt')
         pathPart = '';
       }
       // 3): remove if first character /
-      if (pathPart.slice(0, 1) === '/') {
-        pathPart = pathPart.slice(1)
+      if (pathPart.slice(0, 1) === '/' && part === 'path') {
+        pathPart = pathPart.slice(1);
       }
       // 4): add / if last character not /
       if (pathPart.slice(-1) !== '/' && part === 'path') {
