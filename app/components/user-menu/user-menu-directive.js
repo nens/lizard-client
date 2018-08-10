@@ -237,6 +237,12 @@ angular.module("user-menu").directive("userMenu", [
           scope.hideAppsContainer(e);
       });
       angular.element(":not(#favs-menu-button)").click(function (e) {
+        // if the click was on the favourites dropdown then abort hiding the dropdown,
+        // because it may be that someone is trying to create edit a favourites
+        if (e.currentTarget.id === 'favourites_angularjs_component') {
+          e.stopPropagation();
+          return;
+        }
         if (scope.menuState.favs)
           scope.hideFavsContainer(e);
       });
