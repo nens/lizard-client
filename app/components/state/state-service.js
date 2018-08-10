@@ -112,7 +112,6 @@ function (UtilService, gettextCatalog, $http) {
   // removegeometry on state.geometries to add or
   // remove individual geometries or use reset function.
   state.geometries = [];
-
   state.temporal = {};  // Given values in resetState();
 
   /**
@@ -228,7 +227,9 @@ function (UtilService, gettextCatalog, $http) {
   // State.temporal.start must be higher than MIN_TIME_FOR_EXTENT
   var _start = state.temporal.at - 2 * UtilService.day;
   Object.defineProperty(state.temporal, 'start', {
-    get: function () { return _start; },
+    get: function () {
+      return _start; 
+    },
     set: function (start) {
       _start = UtilService.getMinTime(start);
       state.temporal.at = _moveAtInTemporalExtent(state.temporal);

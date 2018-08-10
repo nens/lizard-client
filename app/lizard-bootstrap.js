@@ -47,7 +47,7 @@ angular.module('lizard-bootstrap', ['favourites'])
                 bsLayer.active = urlData.activeLayers.indexOf(bsLayerKey) > -1;
               });
             }
-            FavouritesService.applyFavourite(bootstrap);
+            FavouritesService.applyFavourite(bootstrap, true);
             State.applyUrlToState(urlData);
           }
         },
