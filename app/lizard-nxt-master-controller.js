@@ -42,9 +42,6 @@ angular.module('lizard-nxt').controller('MasterCtrl',
   $scope.state = State;
 
   $scope.$watch('state', function (n, o) {
-    console.log("[W] state;");
-    console.log("*** state.temporal.start (o) =", o && o.temporal && o.temporal.start);
-    console.log("*** state.temporal.start (n) =", n && n.temporal && n.temporal.start);
     UrlService.setUrl(n);
   }, true);
 
