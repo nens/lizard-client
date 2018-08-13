@@ -90,7 +90,6 @@ describe('Testing UrlService', function () {
       '-2Days0Hours+0Days2Hours';
     service.setUrl(State);
     expect($location.path()).toEqual(url);
-    //expect(true).toEqual(true);
   });
 
   it('should get the state', function () {
