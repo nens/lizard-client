@@ -50,7 +50,7 @@ angular.module('lizard-nxt')
         var halfPath, otherHalf, parts = _getPathParts(part);
         if (!value && parts.length - 1 === index) {
           parts.splice(index, 1); // remove if no value and index is last one.
-        } else {
+        } else if (value !== '') {
           parts[index] = value; //replace
         }
         halfPath = parts.join('/');
@@ -75,11 +75,27 @@ angular.module('lizard-nxt')
     var _getPath = function (part) {
 
       var path = $location.path();
-
-      var paths = path.split('@'); //splits path in two at the @.
-      var pathPart = paths[part === 'path' ? 0 : 1] || ''; //gets before @ when 'path' after when 'at'
-      // we do not want the first slash
-      pathPart = part === 'path' ? pathPart.slice(1) : pathPart;
+      var pathPart = '';     
+      // 1): get part of path corresponding to 'path' or 'at'
+      if (part === 'path') {
+        // get part before @
+        pathPart = path.split('@')[0];
+      } else { // we assume part === 'at'
+        // get part after @
+        pathPart = path.split('@')[1];
+      }
+      // 2): if pathPart = falsy use empty string ''
+      if (!pathPart) {
+        pathPart = '';
+      }
+      // 3): remove if first character /
+      if (pathPart.slice(0, 1) === '/' && part === 'path') {
+        pathPart = pathPart.slice(1);
+      }
+      // 4): add / if last character not /
+      if (pathPart.slice(-1) !== '/' && part === 'path') {
+        pathPart = pathPart + '/';
+      }
       return pathPart;
     };
 
@@ -154,23 +170,24 @@ angular.module('lizard-nxt')
 
         if (relative) {
           var now = Date.now(),
-              past = now - start,
-              future = now - end;
+              t1,
+              t2;
 
-          past = UtilService.getTimeIntervalAsText(start, now);
-          future = UtilService.getTimeIntervalAsText(now, end);
 
-          var pastString = '-' + past.days + 'Days' + past.hours + 'Hours';
-          var futureString = '';
+          t1 = UtilService.getTimeIntervalAsText(start, now);
+          t2 = UtilService.getTimeIntervalAsText(now, end);
 
-          if (future.days !== '' && future.hours !== '') {
-            futureString = '+' + future.days + 'Days' + future.hours + 'Hours';
+          var t1String = '-' + t1.days + 'Days' + t1.hours + 'Hours';
+          var t2String = '';
+
+          if (t2.days !== '' && t2.hours !== '') {
+            t2String = '+' + t2.days + 'Days' + t2.hours + 'Hours';
           }
 
           LocationGetterSetter.setUrlValue(
             state.timeState.part,
             state.timeState.index,
-            pastString + futureString
+            t1String + t2String
           );
         } else {
           var startDateString = startDate.toDateString()
@@ -287,11 +304,11 @@ angular.module('lizard-nxt')
         var times, msStartTime, msEndTime;
         if (time.split('Days').length > 1) {
           times = time.split('-')[1].split('+');
-          var past = times[0];
-          var future = times[1];
+          var t1 = times[0];
+          var t2 = times[1];
 
-          msStartTime = UtilService.parseDaysHours(past);
-          msEndTime = UtilService.parseDaysHours(future);
+          msStartTime = UtilService.parseDaysHours(t1);
+          msEndTime = UtilService.parseDaysHours(t2);
 
           timeState.start = Date.now() - msStartTime;
           timeState.end = Date.now() + msEndTime;
@@ -529,11 +546,13 @@ angular.module('lizard-nxt')
     };
 
     var getTemporal = function () {
+      
       var time = LocationGetterSetter.getUrlValue(
         config.timeState.part,
         config.timeState.index
       );
-      return UrlState.parseTimeState(time);
+      var result = UrlState.parseTimeState(time);
+      return result;
     };
 
     return {

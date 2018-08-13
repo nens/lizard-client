@@ -11,19 +11,19 @@ describe('Testing LocationGetterSetter', function () {
   }));
 
   it('should return the relevant part of the path', function () {
-    $location.path('/first/second@1234,5678/november-18');
+    $location.path('/first/second/@1234,5678/november-18');
     expect(service.getUrlValue('path', 1)).toBe('second');
     expect(service.getUrlValue('at', 1)).toBe('november-18');
     expect(service.getUrlValue('path', 0)).toBe('first');
   });
 
   it('should return undefined when the index in the path is not set', function () {
-    $location.path('/first/second@1234,5678/november-18');
+    $location.path('/first/second/@1234,5678/november-18');
     expect(service.getUrlValue('path', 3)).toBeUndefined();
   });
 
   it('should throw an error when requesting non-supported parts', function () {
-    $location.path('/first/second@1234,5678/november-18');
+    $location.path('/first/second/@1234,5678/november-18');
     var part = 'hash';
     expect(function () {
       service.getUrlValue(part, 1);
@@ -31,7 +31,7 @@ describe('Testing LocationGetterSetter', function () {
   });
 
   it('should set values on the relevant part of the url', function () {
-    $location.path('/first/second@1234,5678/november-18');
+    $location.path('/first/second/@1234,5678/november-18');
     var value = 3;
     service.setUrlValue('path', 1, value);
     expect(service.getUrlValue('path', 1)).toBe(String(value));
@@ -40,19 +40,19 @@ describe('Testing LocationGetterSetter', function () {
   });
 
   it('should return undefined between set and non-set indexes', function () {
-    $location.path('/first/second@1234,5678/november-18');
+    $location.path('/first/second/@1234,5678/november-18');
     var value = 3;
     service.setUrlValue('path', 3, value);
     expect(service.getUrlValue('path', 2)).toBeUndefined();
   });
 
   it('should set empty values on the url when provided undefined', function () {
-    $location.path('/first/second@1234,5678/november-18');
+    $location.path('/first/second/@1234,5678/november-18');
     var value = undefined;
     service.setUrlValue('path', 0, value);
-    expect($location.path()).toEqual('//second@1234,5678/november-18');
+    expect($location.path()).toEqual('//second/@1234,5678/november-18');
     service.setUrlValue('at', 1, value);
-    expect($location.path()).toEqual('//second@1234,5678');
+    expect($location.path()).toEqual('//second/@1234,5678');
   });
 
 });

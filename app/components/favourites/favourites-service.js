@@ -239,7 +239,7 @@ angular.module('favourites')
        *
        * @param {object} favourite - The favourite to apply with a state.
        */
-      this.applyFavourite = function (favourite) {
+      this.applyFavourite = function (favourite, isApplyingBootstrap) {
         // Restore assets
         if (typeof favourite.state.assets !== 'undefined') {
           favourite.state.assets.forEach(function (asset) {
@@ -287,10 +287,6 @@ angular.module('favourites')
 
         // Specific attributes
         var ATTRIBUTES = [
-          'temporal.start',
-          'temporal.end',
-          'temporal.at',
-          'temporal.playing',
           'box.type',
           'language',
           'baselayer',
@@ -300,6 +296,12 @@ angular.module('favourites')
           'layers.active',
           'context'
         ];
+
+        if (!isApplyingBootstrap) {
+          ATTRIBUTES = ATTRIBUTES.concat(
+            ['temporal.start', 'temporal.end', 'temporal.at', 'temporal.playing']
+          );
+        }
 
         ATTRIBUTES.forEach(function (key) {
           var favState = _.get(favourite.state, key);
