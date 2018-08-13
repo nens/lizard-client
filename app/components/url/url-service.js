@@ -165,36 +165,69 @@ angular.module('lizard-nxt')
       * @param {bool} relative time or absolute
       */
       setTimeStateUrl: function (state, start, end, relative) {
-        var startDate = new Date(start);
-        var endDate = new Date(end);
+        console.log("[F] setTimeStateUrl");
+
+        console.log("*** relative =", relative);
+        console.log("*** new Date(start) =", new Date(start))
+        console.log("*** new Date(end) =", new Date (end));
 
         if (relative) {
-          var now = Date.now(),
-              t1,
-              t2;
 
+          var interval1,
+              interval2,
+              symbol1,
+              symbol2,
+              now = Date.now();
 
-          t1 = UtilService.getTimeIntervalAsText(start, now);
-          t2 = UtilService.getTimeIntervalAsText(now, end);
+          if (start <= now && now <= end) {
+            console.log("*** case 1: start <= now && now <= end (around now)");
+            interval1 = [start, now];
+            interval2 = [now, end];
+            symbol1 = '-';
+            symbol2 = '+';
+          } else if (start <= end && end <= now) {
+            console.log("*** case 2: start <= end && end <= now (PAST)");
+            interval1 = [start, now];
+            interval2 = [end, now];
+            symbol1 = '-';
+            symbol2 = '-';
+          } else if (now <= start && start <= end) {
+            console.log("*** case 3: now <= start && start <= end (FUTURE)");
+            interval1 = [now, start];
+            interval2 = [now, end];
+            symbol1 = '+';
+            symbol2 = '+';
+          } else {
+            console.error("[E] Impossible relative temp. interval! start/now/end =", start, now, end);
+          }
 
-          var t1String = '-' + t1.days + 'Days' + t1.hours + 'Hours';
+          var t1 = UtilService.getTimeIntervalAsText(interval1[0], interval1[1]);
+          var t2 = UtilService.getTimeIntervalAsText(interval2[0], interval2[1]);
+
+          console.log("*** t1 =", t1);
+          console.log("*** t2 =", t2);
+
+          var t1String = symbol1 + t1.days + 'Days' + t1.hours + 'Hours';
           var t2String = '';
 
           if (t2.days !== '' && t2.hours !== '') {
-            t2String = '+' + t2.days + 'Days' + t2.hours + 'Hours';
+            t2String = symbol2 + t2.days + 'Days' + t2.hours + 'Hours';
           }
+
+          var tString = t1String + t2String;
+          console.log("*** tString:", tString);
 
           LocationGetterSetter.setUrlValue(
             state.timeState.part,
             state.timeState.index,
-            t1String + t2String
+            tString 
           );
         } else {
-          var startDateString = startDate.toDateString()
+          var startDateString = (new Date(start)).toDateString()
             .slice(4) // Cut off day name
             .split(' ') // Replace spaces by hyphens
             .join(',');
-          var endDateString = endDate.toDateString()
+          var endDateString = (new Date(end)).toDateString()
             .slice(4) // Cut off day name
             .split(' ') // Replace spaces by hyphens
             .join(',');
@@ -290,6 +323,15 @@ angular.module('lizard-nxt')
           layers.join(',')
         );
       },
+      getStartOfRelativeInterval: function (timeStr) {
+        var result = timeStr.split('Hours')[0] + 'Hours';
+        if (result[0] !== '-' && result[0] !== '+')
+          result = '+' + result;
+        return result;
+      },
+      getEndOfRelativeInterval: function (timeStr) {
+        return timeStr.split('Hours')[1] + 'Hours';
+      },
       /**
        * @function
        * @memberOf UrlState
@@ -299,19 +341,48 @@ angular.module('lizard-nxt')
        * @return {object} nxt timeState
        */
       parseTimeState: function (time) {
-        if (!time) { return; }
+        console.log("[F] parseTiemState", time);
+        if (!time) {
+          console.log("*** ... but returning early! Why arg 'time' is falsy!?");
+          return; 
+        }
+        console.trace();
         var timeState = {};
         var times, msStartTime, msEndTime;
+
         if (time.split('Days').length > 1) {
-          times = time.split('-')[1].split('+');
-          var t1 = times[0];
-          var t2 = times[1];
+
+          var t1 = this.getStartOfRelativeInterval(time);
+          var t2 = this.getEndOfRelativeInterval(time);
+
+          //times = time.split('-')[1].split('+'); // !!!!
+
+          // Case 1: around now
+          // if (time[0] === '-' && time.indexOf('+') > 0) {
+          //   times = time.split('-')[1].split('+');
+          // }
+
+          // // Case 2: fully past
+          // if (time[0] === '-' && time.slice(1).indexOf('-') > 0) {
+          //   times = time.split('-')[1].split('-');
+          // }
+
+          // // Case 3: fully future
+          // if (time[0] === '+' && time.slice(1).indexOf('+') > 0) {
+          //   times = time.split('+')[1].split('+');
+          // }
+
+          //var t1 = times[0];
+          //var t2 = times[1];
 
           msStartTime = UtilService.parseDaysHours(t1);
           msEndTime = UtilService.parseDaysHours(t2);
+          console.log('*** ', msStartTime, msEndTime);
 
-          timeState.start = Date.now() - msStartTime;
-          timeState.end = Date.now() + msEndTime;
+          var now = Date.now();
+
+          timeState.start = now + msStartTime;
+          timeState.end = now + msEndTime;
         } else {
           // Browser independent. IE requires datestrings in a certain format.
           times = time.replace(/,/g, ' ').split('-');
