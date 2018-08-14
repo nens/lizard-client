@@ -70,7 +70,6 @@ angular.module('lizard-nxt')
        * @param {object}  scale D3 xScale.
        */
       zoomFn: function (scale) {
-
         scope.$apply(function () {
           timelineSetsTime = true;
           State.temporal.timelineMoving = true;
@@ -94,7 +93,7 @@ angular.module('lizard-nxt')
       zoomEndFn: function () {
         if (
           State.temporal.start !== oldStart
-          && State.temporal.end !== oldEnd
+          || State.temporal.end !== oldEnd
         ) {
           State.temporal.timelineMoving = true;
           scope.$apply(function () {
