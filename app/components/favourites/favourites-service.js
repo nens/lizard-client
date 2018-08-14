@@ -250,7 +250,8 @@ angular.module('favourites')
         // Restore layers
         if (typeof favourite.state.layers !== 'undefined') {
           favourite.state.layers.forEach(function (layer) {
-            State.layers.push(layer);
+            if (!layer.scenario || layer.active)
+              State.layers.push(layer);
           });
         }
 
