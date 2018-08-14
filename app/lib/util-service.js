@@ -236,23 +236,27 @@ angular.module('lizard-nxt')
    * @return {int} milliseconds representation
    */
   this.parseDaysHours = function (timeString) {
-    if (timeString === undefined) {
+    if (timeString === undefined) 
       return 0;
-    }
 
-    var days = parseInt(timeString.split('Days')[0]);
+    var negativeTime = timeString[0] === '-';
+    var days = Math.abs(parseInt(timeString.split('Days')[0]));
     var hours = parseInt(timeString.split('Days')[1].split('Hours')[0]);
-
     var totalMS = 0;
-    if (!isNaN(days)) {
-      totalMS += parseInt(days) * this.day;
-    }
 
-    if (!isNaN(hours)) {
-      totalMS += parseInt(hours) * this.hour;
-    }
+    if (!isNaN(days))
+      totalMS += days * this.day;
+    else
+      console.error("[E] Couldn't parse amt. of days:", days, "(type = " + (typeof days) + ")");
 
-    return totalMS;
+    if (!isNaN(hours))
+      totalMS += hours * this.hour;
+    else
+      console.error("[E] Couldn't parse amt. of hours:", hours, "(type = " + (typeof hours) + ")");
+
+    return negativeTime
+      ? -1 * totalMS
+      : totalMS;  
   };
 
   /**
@@ -262,14 +266,18 @@ angular.module('lizard-nxt')
    * @return {string} Difference in format of: 7 days 3 hours
    */
   this.getTimeIntervalAsText = function (start, end) {
-    var days = '',
-        hours = '';
 
-    // only calculate if the end is larger than start
-    if (end > start) {
-      var interval = end - start;
-      days = Math.floor(interval / this.day);
-      hours = Math.floor((interval % this.day) / this.hour);
+    var days = '', hours = '';
+
+    // only calculate if the end is gte than start
+    if (end >= start) {
+      var totalHours, 
+          interval = end - start;
+      totalHours = Math.round(interval / this.hour);
+      days = Math.floor(totalHours / 24);
+      hours = Math.floor(totalHours - days * 24);
+    } else {
+      console.error("[E] end < start");
     }
     return {
       days: days,

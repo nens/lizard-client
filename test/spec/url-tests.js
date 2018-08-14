@@ -87,7 +87,7 @@ describe('Testing UrlService', function () {
 
   it('should set the url', function () {
     var url = '/en/map/topography,assetgroup$0037b5f/point/@0.0000,0.0000,0/' +
-      '-2Days0Hours+0Days2Hours';
+      '-2Days0Hours+0Days3Hours';
     service.setUrl(State);
     expect($location.path()).toEqual(url);
   });
