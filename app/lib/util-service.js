@@ -235,26 +235,6 @@ angular.module('lizard-nxt')
    * @param {string} 0Days3Hours string
    * @return {int} milliseconds representation
    */
-  // this.parseDaysHours = function (timeString) {
-  //   if (timeString === undefined) {
-  //     return 0;
-  //   }
-
-  //   var days = parseInt(timeString.split('Days')[0]);
-  //   var hours = parseInt(timeString.split('Days')[1].split('Hours')[0]);
-
-  //   var totalMS = 0;
-  //   if (!isNaN(days)) {
-  //     totalMS += parseInt(days) * this.day;
-  //   }
-
-  //   if (!isNaN(hours)) {
-  //     totalMS += parseInt(hours) * this.hour;
-  //   }
-
-  //   return totalMS;
-  // };
-
   this.parseDaysHours = function (timeString) {
     if (timeString === undefined) 
       return 0;
