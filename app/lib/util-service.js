@@ -267,17 +267,17 @@ angular.module('lizard-nxt')
     if (!isNaN(days))
       totalMS += days * this.day;
     else
-      console.error("[E] Couldn't parse amt. of days:", days, "(type =" (typeof days) + ")");
+      console.error("[E] Couldn't parse amt. of days:", days, "(type = " + (typeof days) + ")");
 
     if (!isNaN(hours))
       totalMS += hours * this.hour;
     else
-      console.error("[E] Couldn't parse amt. of hours:", hours, "(type =" (typeof hours) + ")");
+      console.error("[E] Couldn't parse amt. of hours:", hours, "(type = " + (typeof hours) + ")");
 
     return negativeTime
       ? -1 * totalMS
       : totalMS;  
-  },
+  };
 
   /**
    * @function getTimeIntervalAsText
@@ -293,14 +293,9 @@ angular.module('lizard-nxt')
     if (end >= start) {
       var totalHours, 
           interval = end - start;
-
-      // totalHours = Math.floor(interval / this.hour);
-      // days = Math.floor(totalHours / 24);
-      // hours = Math.floor(totalHours - days * this.day);
-      days = Math.floor(interval / this.day);
-      hours = Math.round((interval % this.day)/this.hour);
-
-
+      totalHours = Math.round(interval / this.hour);
+      days = Math.floor(totalHours / 24);
+      hours = Math.floor(totalHours - days * 24);
     } else {
       console.error("[E] end < start");
     }
