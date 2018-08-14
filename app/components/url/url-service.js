@@ -603,7 +603,8 @@ angular.module('lizard-nxt')
         );
 
         if (!state.temporal.timelineMoving) {
-          if (Date.now() - state.temporal.start > 7 * UtilService.day) {
+          var intervalInMs = state.temporal.end - state.temporal.start;
+          if (intervalInMs > 7 * UtilService.day) {
             state.temporal.relative = false;
           } else {
             state.temporal.relative = true;
