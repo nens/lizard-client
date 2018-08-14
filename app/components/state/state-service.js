@@ -46,7 +46,7 @@ function (UtilService, gettextCatalog, $http) {
   };
 
   var setActiveLayers = function (layerSlugs) {
-    _.forEach(state.layers, { active: false });
+    _.forEach(state.layers, { active: false }); 
     layerSlugs.forEach(function (layerSlug) {
       var type = layerSlug.split('$')[0];
       var uuid = layerSlug.split('$')[1];
@@ -369,6 +369,18 @@ function (UtilService, gettextCatalog, $http) {
     } else {
       return stateLayer;
     }
+  };
+
+  state.setLayersViaFavourite = function (fav) {
+    fav.state.layers.forEach(function (favLayer) {
+      var stateLayer = _.find(state.layers, { uuid: favLayer.uuid })
+      if (stateLayer) {
+        stateLayer.active = favLayer.active;
+      } else {
+        var clonedFavLayer = JSON.parse(JSON.stringify(favLayer));
+        state.layers.push(clonedFavLayer);
+      }
+    });
   };
 
   return state;
