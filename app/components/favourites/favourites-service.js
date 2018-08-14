@@ -298,6 +298,7 @@ angular.module('favourites')
           'annotations.active',
           'annotations.present',
           'spatial.view',
+          'layers.active',
           'context'
         ];
 
@@ -310,21 +311,23 @@ angular.module('favourites')
 
           // NIET GOED:
           // var layerSlugs = [];
+          // console.warn("*** Before for Each", favourite.state.layers);
           // favourite.state.layers.forEach(function (layer) {
           //   if (layer.active) {
           //     var layerSlug = layer.type + "$" + layer.uuid;
-          //     console.log("*** Got active layerSlug:", layerSlug);
+          //     console.warn("*** Got active layerSlug:", layerSlug);
           //     layerSlugs.push(layerSlug)
           //   }
           // })
           // _.set(State, "layers.active", layerSlugs); // werk niet
 
           // HOPELIJK WEL GOED:
-          State.setLayersViaFavourite(favourite);
+          // State.setLayersViaFavourite(favourite);
 
-        } else {
-          ATTRIBUTES = ATTRIBUTES.concat(['layers.active']);
-        }
+        } 
+        // else {
+        //   ATTRIBUTES = ATTRIBUTES.concat(['layers.active']);
+        // }
 
         ATTRIBUTES.forEach(function (key) {
           // var chk = key === 'layers.active';
