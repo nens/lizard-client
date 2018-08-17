@@ -10,9 +10,9 @@ angular.module('data-menu')
   'ExportRastersService',
   'gettextCatalog',
   '$timeout',
-  function ($http, State, DataService, LayerAdderService, MapService, ExportRastersService, gettextCatalog, $timeout) {
+  'FavouritesService',
+  function ($http, State, DataService, LayerAdderService, MapService, ExportRastersService, gettextCatalog, $timeout, FavouritesService) {
     var link = function (scope) {
-
       var RESULT_TYPES = {
         'arrival': gettextCatalog.getString('Arrival times'),
         'maxwdepth': gettextCatalog.getString('Max water depth'),
@@ -71,10 +71,22 @@ angular.module('data-menu')
           };
           State.layers.push(layer);
         } else {
-          // This implies the layer (for a scenario) was found in the URL, which
-          // can only happen when it was previously activated; we need to set it
-          // to active=true
-          layer.active = true;
+          var appliedFavourite = FavouritesService.getAppliedFavourite();
+          if (appliedFavourite) {
+            // This implies the layer (for a scenario) was found in a favourite,
+            // and the (State-) layer's activation depends on the activation of
+            // the layer when it was saved to the favourite:
+            var favLayer = _.find(
+              appliedFavourite.state.layers,
+              { uuid: layer.uuid }
+            );
+            layer.active = !!favLayer.active;
+          } else {
+            // This implies the layer (for a scenario) was found in the URL, which
+            // can only happen when it was previously activated; we need to set it
+            // to active=true
+            layer.active = true;
+          }
         }
         layer.scenario = scope.layer.uuid;
         layer.name = RESULT_TYPES[resultType];
@@ -144,7 +156,6 @@ angular.module('data-menu')
             }
           });
         }
-
       });
 
       /**

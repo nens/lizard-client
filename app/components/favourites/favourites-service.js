@@ -23,6 +23,8 @@ angular.module('favourites')
         DashboardChartService,
         ChartCompositionService)
     {
+      var _appliedFavourite = null;
+      this.getAppliedFavourite = function () { return _appliedFavourite; };
 
       this.favsContainerEnabled = { value: false };
 
@@ -240,6 +242,8 @@ angular.module('favourites')
        * @param {object} favourite - The favourite to apply with a state.
        */
       this.applyFavourite = function (favourite, isApplyingBootstrap) {
+        if (!isApplyingBootstrap)
+          _appliedFavourite = JSON.parse(JSON.stringify(favourite));
         // Restore assets
         if (typeof favourite.state.assets !== 'undefined') {
           favourite.state.assets.forEach(function (asset) {
