@@ -74,8 +74,8 @@ angular.module('data-menu')
           var appliedFavourite = FavouritesService.getAppliedFavourite();
           if (appliedFavourite) {
             // This implies the layer (for a scenario) was found in a favourite,
-            // and the (State-) layer's activation depends on the activation of
-            // the layer when it was saved to the favourite:
+            // and the (State-) layer's activation depends on whether the layer
+            // was activated when it was saved to the favourite:
             var favLayer = _.find(
               appliedFavourite.state.layers,
               { uuid: layer.uuid }
