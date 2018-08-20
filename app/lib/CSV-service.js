@@ -131,10 +131,10 @@ angular.module('lizard-nxt')
 
     var _getStoreResolution = function (layerUUID) {
       var dlyr = DataService.getDataLayer(layerUUID);
-      if (dlyr === undefined || !dlyr.temporalResolution) {
+      if (dlyr === undefined || !dlyr.frequency) {
         _throwDataLayerError(layerUUID);
       }
-      return dlyr.temporalResolution;
+      return dlyr.frequency;
     };
 
     /**
@@ -192,7 +192,6 @@ angular.module('lizard-nxt')
      * @return {number[][]} - the formatted data
      */
     var _formatLineCSVNonTemporal = function (data) {
-
       var i,
           datum,
           result = [],
