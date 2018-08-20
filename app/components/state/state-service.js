@@ -228,7 +228,7 @@ function (UtilService, gettextCatalog, $http) {
   var _start = state.temporal.at - 2 * UtilService.day;
   Object.defineProperty(state.temporal, 'start', {
     get: function () {
-      return _start; 
+      return _start;
     },
     set: function (start) {
       _start = UtilService.getMinTime(start);

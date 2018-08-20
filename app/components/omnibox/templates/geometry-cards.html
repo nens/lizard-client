@@ -60,12 +60,15 @@
       <graph
         line
         mouseloc="mouseloc"
-        data="properties.data"
+        data="getDataLayer(properties.uuid).temporal ? getDataForSinglePointInTime(properties.data) : properties.data"
         ylabel="properties.quantity + ' [' + properties.unit + ']'"
         xlabel="'Afstand in [m]'">
       </graph>
 
-      <div class="card-tools">
+      <div
+        class="card-tools"
+        ng-if="!getDataLayer(properties.uuid).temporal"
+      >
         <a
            class="btn btn-default btn-xs"
            title="{{ 'Export info card data' | translate }}"
