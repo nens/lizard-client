@@ -89,8 +89,8 @@ angular.module('omnibox')
 
 
 angular.module('omnibox')
-.directive('geometryCards', ['MapService', 'ClickFeedbackService', 'State', 'CSVService', 'user',
-function (MapService, ClickFeedbackService, State, CSVService, user) {
+.directive('geometryCards', ['MapService', 'ClickFeedbackService', 'State', 'CSVService', 'user', 'DataService',
+function (MapService, ClickFeedbackService, State, CSVService, user, DataService) {
   return {
     link: function (scope, element) {
 
@@ -138,9 +138,8 @@ function (MapService, ClickFeedbackService, State, CSVService, user) {
             geom.geometry.coordinates[0]
           );
           clickId = ClickFeedbackService.drawArrow(MapService, latLng);
-        }
 
-        else if (scope.header && geom.geometry.type === 'LineString') {
+        } else if (scope.header && geom.geometry.type === 'LineString') {
           var coords = geom.geometry.coordinates;
           var start = L.latLng(coords[0][1], coords[0][0]);
           var end = L.latLng(coords[1][1], coords[1][0]);
@@ -149,7 +148,6 @@ function (MapService, ClickFeedbackService, State, CSVService, user) {
             start,
             end
           );
-
         }
       });
 
@@ -162,6 +160,26 @@ function (MapService, ClickFeedbackService, State, CSVService, user) {
       element.on('$destroy', function () {
         destroy();
       });
+
+      scope.getDataLayer = DataService.getDataLayer;
+
+      scope.getDataForSinglePointInTime = function (data) {
+        var dataTimestepStart,
+          dataTimestepEnd,
+          dataWanted;
+
+        for (var i = 0; i < data.length - 1; i++) {
+          dataTimestepStart = data[i][0];
+          dataTimestepEnd = data[i + 1][0];
+          if (dataTimestepStart <= State.temporal.at
+            && dataTimestepEnd >= State.temporal.at) {
+            dataWanted = data[i][1];
+            break;
+          }
+        }
+
+        return dataWanted;
+      };
     },
     restrict: 'E',
     scope: {
