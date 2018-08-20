@@ -65,7 +65,10 @@
         xlabel="'Afstand in [m]'">
       </graph>
 
-      <div class="card-tools">
+      <div
+        class="card-tools"
+        ng-if="!getDataLayer(properties.uuid).temporal"
+      >
         <a
            class="btn btn-default btn-xs"
            title="{{ 'Export info card data' | translate }}"
