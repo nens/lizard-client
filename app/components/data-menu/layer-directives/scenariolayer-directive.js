@@ -74,8 +74,7 @@ angular.module('data-menu')
           // This implies the layer (for a scenario) was found in the URL, which
           // can only happen when it was previously activated; we need to set it
           // to active=true
-          console.log('scenarioLayerDirective layer.active=true');
-          // layer.active = true;
+          layer.active = true;
         }
         layer.scenario = scope.layer.uuid;
         layer.name = RESULT_TYPES[resultType];
@@ -95,8 +94,7 @@ angular.module('data-menu')
       scope.$watch('layer.active', function () {
         if (scope.layer.active && first) {
           first = false;
-          console.log('scenarioLayerDirective layer.active=false');
-          //scope.layer.active = false;
+          scope.layer.active = false;
 
           LayerAdderService.fetchLayer(
             scope.layer.type + 's',

@@ -43,7 +43,6 @@ angular.module('data-menu')
         // false, the graphs belonging to it are immediately removed from the dashboard.
         // Hence the 'fetching' variable was introduced; these layers aren't removed.
         // See dashboard-service.
-        
         scope.layer.active = false;
         scope.layer.fetching = true;
 

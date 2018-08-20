@@ -250,11 +250,6 @@ angular.module('favourites')
         // Restore layers
         if (typeof favourite.state.layers !== 'undefined') {
           favourite.state.layers.forEach(function (layer) {
-            // NB! We selectively add layers from favorite to the state here, i.e.
-            //     we omit inactive scenario-rasters to prevent them from being 
-            //     activated (=hack)
-            ////////////////////////////////////////////////
-            // if (!layer.scenario || layer.active)
             State.layers.push(layer);
           });
         }
@@ -306,31 +301,9 @@ angular.module('favourites')
           ATTRIBUTES = ATTRIBUTES.concat(
             ['temporal.start', 'temporal.end', 'temporal.at', 'temporal.playing']
           );
-          // Handle 'active.layers' seperately since that cannot be read literally 
-          // from the favourite JSON:
-
-          // NIET GOED:
-          // var layerSlugs = [];
-          // console.warn("*** Before for Each", favourite.state.layers);
-          // favourite.state.layers.forEach(function (layer) {
-          //   if (layer.active) {
-          //     var layerSlug = layer.type + "$" + layer.uuid;
-          //     console.warn("*** Got active layerSlug:", layerSlug);
-          //     layerSlugs.push(layerSlug)
-          //   }
-          // })
-          // _.set(State, "layers.active", layerSlugs); // werk niet
-
-          // HOPELIJK WEL GOED:
-          // State.setLayersViaFavourite(favourite);
-
         } 
-        // else {
-        //   ATTRIBUTES = ATTRIBUTES.concat(['layers.active']);
-        // }
 
         ATTRIBUTES.forEach(function (key) {
-          // var chk = key === 'layers.active';
           var favState = _.get(favourite.state, key);
           
           if (!_.isUndefined(favState)) {
@@ -339,7 +312,7 @@ angular.module('favourites')
           }
         });
 
-        // UtilService.announceMovedTimeline(State);
+        UtilService.announceMovedTimeline(State);
       };
 
       return this;

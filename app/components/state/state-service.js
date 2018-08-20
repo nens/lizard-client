@@ -371,17 +371,5 @@ function (UtilService, gettextCatalog, $http) {
     }
   };
 
-  state.setLayersViaFavourite = function (fav) {
-    fav.state.layers.forEach(function (favLayer) {
-      var stateLayer = _.find(state.layers, { uuid: favLayer.uuid })
-      if (stateLayer) {
-        stateLayer.active = favLayer.active;
-      } else {
-        var clonedFavLayer = JSON.parse(JSON.stringify(favLayer));
-        state.layers.push(clonedFavLayer);
-      }
-    });
-  };
-
   return state;
 }]);
