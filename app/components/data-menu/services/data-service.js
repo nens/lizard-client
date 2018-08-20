@@ -384,10 +384,6 @@ angular.module('data-menu')
 
         var dataLayer = this.getDataLayer(layer.uuid);
 
-        // if (dataLayer
-        //   && !(dataLayer.temporal && geo.geometry && geo.geometry.type === 'LineString')
-        // ) {
-
         if (dataLayer) {
           if (dataLayer.scale === 'nominal' || dataLayer.scale === 'ordinal') {
             // Request data for point in time when discrete.
