@@ -171,6 +171,28 @@ angular.module('favourites')
         httpResponse.status + " - " + "Could not create favourite.");
     };
 
+    /*
+    if a favourite is typed into the new favourites input then it returns true if
+    the name of this new favourite is unique (not already used by an existing favourite)
+    */
+    scope.isNameUniqueAmongFavourites = function () {
+      if (!scope.favourite) {
+        return true;
+      } else {
+        return scope.favourites.data.map(function(e){return e.name;})
+          .indexOf(scope.favourite.name) === -1;
+      }
+    };
+
+    /*
+    Decide if + (new) button should be disabled
+    */
+    scope.createNewButtonShouldBeDisabled = function () {
+      return (!scope.isNameUniqueAmongFavourites()) || scope.favouritesForm.$invalid;
+    };
+
+
+
     /**
      * Create a new favourite with the current portal state.
      */

@@ -17,8 +17,8 @@
                  required
                  ng:model="favourite.name"
                  placeholder="{{ 'New favourite name...'|translate }}" />
-          <div
-            ng-show="favouritesForm.favourite.name.$dirty && favouritesForm.favourite.name.$invalid">
+          <div>
+          <!-- <div ng-show="favouritesForm.favourite.name.$dirty && (favouritesForm.favourite.name.$invalid || !isNameUniqueAmongFavourites())"> -->
             <small
               class="text-danger"
               ng-show="favouritesForm.favourite.name.$error.required"
@@ -31,12 +31,18 @@
               translate>
               Favourite name cannot be longer than 256 characters.
             </small>
+            <small
+              class="text-danger"
+              ng-show="!isNameUniqueAmongFavourites()"
+              translate>
+              Favourite name must be unique.
+            </small>
           </div>
         </td>
         <td>
           <button
             class="btn btn-link"
-            ng-disabled="favouritesForm.$invalid"
+            ng-disabled="createNewButtonShouldBeDisabled()"
             ng-click="createFavourite()">
             <i class="fa fa-plus text-primary"></i>
           </button>
