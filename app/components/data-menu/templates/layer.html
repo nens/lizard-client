@@ -21,12 +21,16 @@
         <i ng-if="zoomToBounds"
           ng-click="zoomToBounds(); $event.stopPropagation()"
           ng-show="layer.active"
-          class="fa fa-crosshairs">
+          class="fa fa-crosshairs"
+          title="{{ 'Zoom to the spatio-temporal extent' | translate }}">
+          <!-- Translation for title needs to be implemented. -->
         </i>
         <i class="fa fa-{{ layer.vectorized ? 'star' : 'star-o' }}"
            ng-show="layer.active"
            ng-if="rasterLayerIsVectorizable(layer)"
-           ng-click="toggleVectorModus(layer); $event.stopPropagation()">
+           ng-click="toggleVectorModus(layer); $event.stopPropagation()"
+           title="{{ 'Toggle region analysis tool' | translate }}"/>
+          <!-- Translation for title needs to be implemented. -->
         </i>
       </div>
   </label>

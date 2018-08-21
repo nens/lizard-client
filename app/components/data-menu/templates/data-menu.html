@@ -12,7 +12,8 @@
           'fa-caret-left': !menu.state.gettingData && !menu.enabled,
           'fa-caret-right': !menu.state.gettingData && menu.enabled
         }"
-        title="{{ menu.enabled ? tooltips.closeMenu : tooltips.openMenu }}">
+        title="{{ menu.enabled ? 'Close data layers menu' : 'Open data layers menu' }}">
+        <!-- Translation for title needs to be implemented. -->
       </span>
     </div>
     <datamenu-item
