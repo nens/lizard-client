@@ -155,6 +155,10 @@ angular.module('favourites')
      */
     var createFavouriteSuccess = function(favourite, responseHeaders){
       scope.favourites.data.splice(0, 0, favourite);
+      // after creating new favourite is succesfull empty form
+      if (scope.favourite.name === favourite.name) {
+        scope.resetForm();
+      }
     };
 
     /**
