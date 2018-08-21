@@ -306,3 +306,9 @@
   transform: translateY(+100px);
 }
 
+#timeline-svg-wrapper rect#listeners {
+  fill: #ecf0f1;
+  opacity: 0.4;
+  cursor: col-resize;
+}
+
