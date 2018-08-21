@@ -831,12 +831,13 @@ angular.module('lizard-nxt')
   })();
 
   this.MIN_TIME = (new Date("Jan 01, 1900")).getTime();
-  this.MAX_TIME = (new Date()).getTime() + 20 * 24 * 60 * 60 * 1000; // 20 Days
+  // this.MAX_TIME = (new Date()).getTime() + 20 * 24 * 60 * 60 * 1000; // 20 Days
+  this.MAX_TIME = (new Date("Jan 01, 2100")).getTime();
   this.TIMELINE_LEFT_MARGIN = 60;
   this.TIMELINE_RIGHT_MARGIN = 40;
   this.OMNIBOX_WIDTH = 420;
 
-  var RESTRICT_TEMPORAL_BOUNDS = false;
+  var RESTRICT_TEMPORAL_BOUNDS = true;
 
   this.getMinTime = function (currentTime) {
     return RESTRICT_TEMPORAL_BOUNDS
