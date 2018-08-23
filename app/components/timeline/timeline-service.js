@@ -25,25 +25,26 @@ angular.module('lizard-nxt')
   // Timeline
   var initialHeight,
 
-  // D3 components
-  xScale, // The d3 scale for placement on the x axis within the whole
-          // timeline. Is only updated when zoomTo is called, or the window
-          // resizes.
-  ordinalYScale, // Scale used to place events in circles for each type
+      // D3 components
+      xScale, // The d3 scale for placement on the x axis within the whole
+              // timeline. Is only updated when zoomTo is called, or the window
+              // resizes.
+      ordinalYScale, // Scale used to place events in circles for each type
 
-  // Interaction functions
-  clicked = null,
-  zoomed = null,
-  zoomend = null,
+      // Interaction functions
+      clicked = null,
+      zoomed = null,
+      zoomend = null,
 
-  // Timeline elements
-  futureIndicator,
-  aggWindow, // aggregation window
-  circles, // events start - end
-  bars, // rain intensity
-  tickmarks,
-  TICKMARK_HEIGHT = 5, // data availability indicators
-  MAX_CIRCLE_SIZE = 16;
+      // Timeline elements
+      futureIndicator,
+      aggWindow, // aggregation window
+      circles, // events start - end
+      bars, // rain intensity
+      tickmarks,
+      TICKMARK_HEIGHT = 5, // data availability indicators
+      MAX_CIRCLE_SIZE = 16,
+      HEADER_HEIGHT = 20;
 
   /**
    * @constructor
@@ -80,6 +81,14 @@ angular.module('lizard-nxt')
   Timeline.prototype = Object.create(NxtD3.prototype, {
 
     constructor: Timeline,
+
+    _getHeight: {
+      value: function (dims) {
+        var nxtD3Height = NxtD3.prototype._getHeight(dims),
+            timelineHeight = nxtD3Height - HEADER_HEIGHT;
+        return timelineHeight;
+      }
+    },
 
     /**
      * @attribute
@@ -162,10 +171,9 @@ angular.module('lizard-nxt')
      */
     drawAggWindow: {
       value: function (timestamp, interval, oldDimensions) {
-        var height;
+        var height = this._getHeight(this.dimensions);
 
         if (this._svg.select('#feature-group').select(".agg-window-group").empty()) {
-          height = this._getHeight(this.dimensions);
           aggWindow = this._svg.select('#feature-group').append("g")
             .attr('class', 'agg-window-group');
           aggWindow
@@ -567,8 +575,10 @@ angular.module('lizard-nxt')
    *  @param {object} newDims - new dimensions, same structure as oldDims.
    */
   var resizeTimelineCanvas = function (svg, oldDims, newDims) {
+    console.log("[F] resizeTimelineCanvas");
     var width = Timeline.prototype._getWidth(newDims),
     height = Timeline.prototype._getHeight(newDims);
+    console.log("*** height =", height);
     if (newDims.height < oldDims.height) {
       svg.transition()
         .delay(Timeline.prototype.transTime)
@@ -705,7 +715,10 @@ angular.module('lizard-nxt')
 
 
     var getBarHeight = function (d) {
-      return d[1] ? yScale(d[1]) : 0;
+      console.log("[F] getBarHeight");
+      var barHeight = d[1] ? yScale(d[1]) : 0;
+      console.log("*** barHeight =", barHeight);
+      return barHeight;
     };
 
     // UPDATE
@@ -785,6 +798,7 @@ angular.module('lizard-nxt')
        .attr('height', height);
     }
   };
+
   var updateTickmarks = function (tickmarks, dimensions, oldDimensions) {
     var height = Timeline.prototype._getHeight(dimensions),
         TICKMARK_HEIGHT = 5;

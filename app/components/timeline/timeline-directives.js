@@ -33,6 +33,7 @@ angular.module('lizard-nxt')
 
   var link = function (scope, element, attrs, timelineCtrl) {
 
+
     var timelineSetsTime = false,
         timelineSetsAt = false,
 
@@ -40,7 +41,7 @@ angular.module('lizard-nxt')
                               // timeline is shown.
         dimensions = {
           width: getRequiredTimelineWidth(element),
-          height: 45,
+          height: 65,
           events: 35,
           bars: 35,
           padding: {
@@ -60,6 +61,9 @@ angular.module('lizard-nxt')
     // and triggers a digest loop if they changed.
     var oldStart = State.temporal.start;
     var oldEnd = State.temporal.end;
+
+    scope.humanReadableStart = UtilService.formatDate(start, true);
+    scope.humanReadableEnd = UtilService.formatDate(end, true);
 
     var interaction = {
 
@@ -162,6 +166,8 @@ angular.module('lizard-nxt')
       if (showTimeline) {
         element[0].style.height = newDim.height + 5 + 'px'; // 5px margins
       }
+
+      console.log("*** height (new):", newDim.height);
 
       timeline.resize(
         newDim,
@@ -428,6 +434,14 @@ angular.module('lizard-nxt')
       timelineSetsAt = false;
     });
 
+    scope.$watch(State.toString('temporal.start'), function (n, o) {
+      scope.humanReadableStart = UtilService.formatDate(n, true);
+    });
+
+    scope.$watch(State.toString('temporal.end'), function (n, o) {
+      scope.humanReadableEnd = UtilService.formatDate(n, true);
+    });
+
     /**
      * Round timeState.at when animation stops.
      */
@@ -588,6 +602,7 @@ angular.module('lizard-nxt')
     window.addEventListener('load', getTimeLineData);
 
     var resize = function () {
+      console.log("[F] resize");
       var newWidth = getRequiredTimelineWidth(element);
       timeline.dimensions.width = newWidth;
 
