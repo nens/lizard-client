@@ -93,11 +93,29 @@ angular.module('lizard-nxt')
 
     var graphUpdateHelper = function () {
       if (scope.content) {
+        console.log('[F] graphUpdateHelper scope.content', scope.content);
         graphCtrl.setData(scope);
       }
       else if (scope.data) {
+        console.log('[F] graphUpdateHelper scope.data', scope.data);
         graphCtrl.setFormattedContent(scope);
       }
+      
+      // if no data is available in specified timeframe, then 
+      // the user should see text appear in the charts;
+      // "No data available i this timeframe"
+      // See Jira:
+      // https://nelen-schuurmans.atlassian.net/browse/PROJ-471
+      // we assume that when no data is available the data is an empty array
+      
+      // always remove previous text
+      graphCtrl.graph.setDisplayTextChartBody("");
+      if (
+        (scope.content && !graphCtrl.graph.hasContentToDisplay(scope.content)) ||
+        (scope.data && scope.data.length === 0)
+      ) {
+        graphCtrl.graph.setDisplayTextChartBody("No data available in this timeframe");
+      } 
 
       // UpdateData is called with temporal.timelineMoving to draw subset for
       // performance reasons.

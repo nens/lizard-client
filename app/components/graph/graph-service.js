@@ -86,7 +86,7 @@ angular.module('lizard-nxt')
    *                        Currently only a linear scale on the x-axis is
    *                        supported.
    */
-    Graph.prototype.drawLine = function (content, temporal, transitioning) {
+  Graph.prototype.drawLine = function (content, temporal, transitioning) {
     if (!content) { return; }
 
     var graph = this;
@@ -241,6 +241,60 @@ angular.module('lizard-nxt')
   /**
    * @function
    * @memberOf Graph
+   * @param {object} content - array: [{data:[{}]},{data:[]}, {}]
+   *                           array that contains 0 or more objects that each may contain a field called "data" that is itself an array of zero or more objects
+   *                           if any of those data fields have one or more items in the array return true (see description)
+   * @returns  - boolean
+   * @description           checks if content (from graph-directive scope.content) contains data.
+                            returns true if any of the objects in the content array contain a field data that is an array with 1 or more items
+                            otherwise returns false
+   */
+  
+  Graph.prototype.hasContentToDisplay = function (content) {
+    if (!content.length) {
+      // content is no array
+      return false;
+    }
+    var filledContent = content.filter(function (element){
+      if (element.data && element.data.length > 0)   
+        return true;
+      else
+        return false;
+    });
+    return filledContent.length > 0;
+  };
+
+  /**
+   * @function
+   * @memberOf Graph
+   * @param {object} text - string
+   * @description           displays text in the body of this chart. when no text shall be displayed pass empty string ''
+   */
+  Graph.prototype.setDisplayTextChartBody = function (text) {
+    var classNameText = "display_text_class";
+    var svg = this._svg;
+
+    // always remove previous text
+    svg.selectAll("text."+ classNameText).remove();
+
+    // if text to display is not empty string, then add text element with d3
+    if (text !== '') {
+      var fg = svg.select('g').select('#feature-group');
+        // bring to front
+        fg.node().parentNode.appendChild(fg.node());
+        path = fg.append("text")
+                 .attr('class', classNameText)
+                 .attr("x", "50%")
+                 .attr("y", "50%")
+                 .append("tspan")
+                 .attr("text-anchor", "middle")
+                 .text(text);
+    } 
+  };
+
+  /**
+   * @function
+   * @memberOf Graph
    * @param {object} barData - Object or Array with data, keys and labels
    *
    *         data   Currently supports arrays of arrays or objects
@@ -375,7 +429,7 @@ angular.module('lizard-nxt')
    *                        label and sets up a mousemove listener.
    *                        It draws the rectangles.
    */
-    Graph.prototype.drawHorizontalStack = function (content) {
+  Graph.prototype.drawHorizontalStack = function (content) {
       var data = content[0].data,
           keys = content[0].keys,
           labels = { x: content.xLabel, y: content.unit };
@@ -613,7 +667,7 @@ angular.module('lizard-nxt')
       );
   };
 
-    Graph.prototype.drawCircleOnLine = function (xLocation, remove) {
+  Graph.prototype.drawCircleOnLine = function (xLocation, remove) {
       var R = 5; // radius of dot.
 
       var fg = this._svg.select('#feature-group');
@@ -1176,7 +1230,7 @@ angular.module('lizard-nxt')
 
   };
 
-    var addInteractionToRects = function (svg, dimensions, xy, keys, labels, activeUnit, color) {
+  var addInteractionToRects = function (svg, dimensions, xy, keys, labels, activeUnit, color) {
       var unitClass = "unit-" + UtilService.slugify(activeUnit);
       var height = Graph.prototype._getHeight(dimensions),
           width = Graph.prototype._getWidth(dimensions),
