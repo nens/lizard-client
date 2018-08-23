@@ -93,11 +93,9 @@ angular.module('lizard-nxt')
 
     var graphUpdateHelper = function () {
       if (scope.content) {
-        console.log('[F] graphUpdateHelper scope.content', scope.content);
         graphCtrl.setData(scope);
       }
       else if (scope.data) {
-        console.log('[F] graphUpdateHelper scope.data', scope.data);
         graphCtrl.setFormattedContent(scope);
       }
       
@@ -110,8 +108,12 @@ angular.module('lizard-nxt')
       
       // always remove previous text
       graphCtrl.graph.setDisplayTextChartBody("");
+      
+      // in case of scope.content first check if content has indeed a length, 
+      // because content will be empty for a moment after dragging timeline.
+      // during this brief moment it is not desired to show the "no data .." message
       if (
-        (scope.content && !graphCtrl.graph.hasContentToDisplay(scope.content)) ||
+        (scope.content && scope.content.length && !graphCtrl.graph.contentContainsDataToDisplay(scope.content)) ||
         (scope.data && scope.data.length === 0)
       ) {
         graphCtrl.graph.setDisplayTextChartBody("No data available in this timeframe");

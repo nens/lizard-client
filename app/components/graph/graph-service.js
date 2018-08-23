@@ -250,11 +250,7 @@ angular.module('lizard-nxt')
                             otherwise returns false
    */
   
-  Graph.prototype.hasContentToDisplay = function (content) {
-    if (!content.length) {
-      // content is no array
-      return false;
-    }
+  Graph.prototype.contentContainsDataToDisplay = function (content) {
     var filledContent = content.filter(function (element){
       if (element.data && element.data.length > 0)   
         return true;
