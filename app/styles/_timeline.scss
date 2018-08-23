@@ -8,7 +8,6 @@
 }
 
 .timeline {
-    background-color: rgba($silver, 0.9);
     transition:.3s;
     margin-bottom: 0;
 
@@ -27,6 +26,7 @@
 }
 
 .timeline-svg-wrapper {
+    background-color: rgba($silver, 0.9);
     margin-top: 2px;
     svg {
         position: relative;
@@ -47,7 +47,7 @@
 }
 
 .time-controls {
-    bottom: -4px;
+    bottom: 12px;
     position: absolute;
     float: left;
     z-index: 999;
@@ -56,7 +56,7 @@
 .time-controls-right {
     position: absolute;
     right: 0;
-    bottom: 0;
+    bottom: 20px;
 
     .btn-group-vertical {
     }
@@ -306,9 +306,39 @@
   transform: translateY(+100px);
 }
 
+<<<<<<< HEAD
 #timeline-svg-wrapper rect#listeners {
   fill: #ecf0f1;
   opacity: 0.4;
   cursor: col-resize;
 }
 
+=======
+#timeline-header {
+  height: 20px;
+  background-color: rgba(0,0,0,0);
+
+  display: flex;
+  justify-content: space-between;
+}
+
+.timeline-header-indicator {
+  background-color: rgba($silver, 0.9);
+  width: 140px;
+  line-height: 24px;
+  font-size: 12px;
+  margin-bottom: -2px;
+  color: #2c3e50;
+  text-align: center;
+}
+
+#timeline-header-start-indicator {
+  border-radius: 0 5px 0 0;
+}
+
+#timeline-header-end-indicator {
+  border-radius: 5px 0 0 0;
+}
+
+
+>>>>>>> eed3bbda4bde831f7ad8e9e17e420200341b65df

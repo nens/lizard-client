@@ -213,10 +213,12 @@ angular.module('lizard-nxt')
             .slice(4) // Cut off day name
             .split(' ') // Replace spaces by hyphens
             .join(',');
+          var intervalString = startDateString + '-' + endDateString
           LocationGetterSetter.setUrlValue(
-          state.timeState.part,
-          state.timeState.index,
-          startDateString + '-' + endDateString);
+            state.timeState.part,
+            state.timeState.index,
+            intervalString
+          );
         }
       },
 
@@ -603,7 +605,8 @@ angular.module('lizard-nxt')
         );
 
         if (!state.temporal.timelineMoving) {
-          if (Date.now() - state.temporal.start > 7 * UtilService.day) {
+          var intervalInMs = state.temporal.end - state.temporal.start;
+          if (intervalInMs > 7 * UtilService.day) {
             state.temporal.relative = false;
           } else {
             state.temporal.relative = true;
@@ -624,7 +627,6 @@ angular.module('lizard-nxt')
         );
 
         UrlState.setlayersUrl(config, state);
-
       },
 
       getDataForState: function () {

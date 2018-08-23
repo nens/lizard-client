@@ -984,15 +984,23 @@ angular.module('lizard-nxt')
    * @param {integer} epoch - time in ms since 1970.
    * @returns {string} formatted date.
    */
-  this.formatDate = function (epoch) {
-    var d = new Date(parseInt(epoch, 10));
-    return [
-      [d.getDate(), d.getMonth() + 1,
-       d.getFullYear()].join('-'),
-      [d.getHours() || "00",
-       d.getMinutes() || "00",
-       d.getSeconds() || "00"].join(':')
-    ];
+  this.formatDate = function (epoch, mustPadWithZeroes) {
+
+    function padWithZeroes (n) { return n < 10 ? "0" + n : "" + n; }
+
+    var d = new Date(parseInt(epoch, 10)),
+        datestampParts = [d.getDate(), d.getMonth() + 1, d.getFullYear()],
+        timestampParts = [d.getHours(), d.getMinutes(), d.getSeconds()];
+
+    if (mustPadWithZeroes) {
+      datestampParts[0] = padWithZeroes(datestampParts[0]);
+      datestampParts[1] = padWithZeroes(datestampParts[1]);
+      timestampParts[0] = padWithZeroes(timestampParts[0]);
+      timestampParts[1] = padWithZeroes(timestampParts[1]);
+      timestampParts[2] = padWithZeroes(timestampParts[2]);
+    }
+
+    return [datestampParts.join('-'), timestampParts.join(':')];
   };
 
   /**
@@ -1011,7 +1019,7 @@ angular.module('lizard-nxt')
 
     for (i = 0; i < data.length; i++) {
 
-      formattedDateTime = this.formatDate(data[i].timestamp || data[i][0]);
+      formattedDateTime = this.formatDate(data[i].timestamp || data[i][0], true);
 
       var formattedDatum = [
         this.formatNumber(latLng.lat, 0, 0, true),
