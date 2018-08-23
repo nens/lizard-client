@@ -33,16 +33,15 @@ angular.module('lizard-nxt')
 
   var link = function (scope, element, attrs, timelineCtrl) {
 
-    var HEADER_HEIGHT = 20,
 
-        timelineSetsTime = false,
+    var timelineSetsTime = false,
         timelineSetsAt = false,
 
         showTimeline = true, // Is set by user clicking data label, when true
                               // timeline is shown.
         dimensions = {
           width: getRequiredTimelineWidth(element),
-          height: 45 + HEADER_HEIGHT,
+          height: 65,
           events: 35,
           bars: 35,
           padding: {
@@ -62,6 +61,9 @@ angular.module('lizard-nxt')
     // and triggers a digest loop if they changed.
     var oldStart = State.temporal.start;
     var oldEnd = State.temporal.end;
+
+    scope.humanReadableStart = UtilService.formatDate(start, true);
+    scope.humanReadableEnd = UtilService.formatDate(end, true);
 
     var interaction = {
 
@@ -148,10 +150,8 @@ angular.module('lizard-nxt')
      * @param {int} nEventTypes - number of event types (event series).
      */
     var updateTimelineSize = function (nEventTypes) {
-      console.log("[F] updateTimelineSize");
       var eventHeight,
           newDim = angular.copy(timeline.dimensions);
-      console.log("*** height (old):", timeline.dimensions.height);
 
       newDim.height = dimensions.padding.bottom
         + dimensions.padding.top
@@ -432,6 +432,14 @@ angular.module('lizard-nxt')
         timeline.drawAggWindow(State.temporal.at, State.temporal.aggWindow);
       }
       timelineSetsAt = false;
+    });
+
+    scope.$watch(State.toString('temporal.start'), function (n, o) {
+      scope.humanReadableStart = UtilService.formatDate(n, true);
+    });
+
+    scope.$watch(State.toString('temporal.end'), function (n, o) {
+      scope.humanReadableEnd = UtilService.formatDate(n, true);
     });
 
     /**

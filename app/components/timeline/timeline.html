@@ -4,18 +4,16 @@
      ng-controller="TimeCtrl as timeline">
 
   <div id="timeline-header">
-    <!--
     <div
       class="timeline-header-indicator"
-      id="timeline-header-start-indicator">
-      Start info
+      id="timeline-header-start-indicator"
+      ng-bind="humanReadableStart">
     </div>
      <div
       class="timeline-header-indicator"
-      id="timeline-header-end-indicator">
-      End info
+      id="timeline-header-end-indicator"
+      ng-bind="humanReadableEnd">
     </div>
-    -->
   </div>
 
   <div class="timeline-wrapper">

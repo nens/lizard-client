@@ -236,7 +236,7 @@ angular.module('lizard-nxt')
    * @return {int} milliseconds representation
    */
   this.parseDaysHours = function (timeString) {
-    if (timeString === undefined) 
+    if (timeString === undefined)
       return 0;
 
     var negativeTime = timeString[0] === '-';
@@ -256,7 +256,7 @@ angular.module('lizard-nxt')
 
     return negativeTime
       ? -1 * totalMS
-      : totalMS;  
+      : totalMS;
   };
 
   /**
@@ -271,7 +271,7 @@ angular.module('lizard-nxt')
 
     // only calculate if the end is gte than start
     if (end >= start) {
-      var totalHours, 
+      var totalHours,
           interval = end - start;
       totalHours = Math.round(interval / this.hour);
       days = Math.floor(totalHours / 24);
@@ -978,15 +978,23 @@ angular.module('lizard-nxt')
    * @param {integer} epoch - time in ms since 1970.
    * @returns {string} formatted date.
    */
-  this.formatDate = function (epoch) {
-    var d = new Date(parseInt(epoch, 10));
-    return [
-      [d.getDate(), d.getMonth() + 1,
-       d.getFullYear()].join('-'),
-      [d.getHours() || "00",
-       d.getMinutes() || "00",
-       d.getSeconds() || "00"].join(':')
-    ];
+  this.formatDate = function (epoch, mustPadWithZeroes) {
+
+    function padWithZeroes (n) { return n < 10 ? "0" + n : "" + n; }
+
+    var d = new Date(parseInt(epoch, 10)),
+        datestampParts = [d.getDate(), d.getMonth() + 1, d.getFullYear()],
+        timestampParts = [d.getHours(), d.getMinutes(), d.getSeconds()];
+
+    if (mustPadWithZeroes) {
+      datestampParts[0] = padWithZeroes(datestampParts[0]);
+      datestampParts[1] = padWithZeroes(datestampParts[1]);
+      timestampParts[0] = padWithZeroes(timestampParts[0]);
+      timestampParts[1] = padWithZeroes(timestampParts[1]);
+      timestampParts[2] = padWithZeroes(timestampParts[2]);
+    }
+
+    return datestampParts.join('-') + " * " + timestampParts.join(':');
   };
 
   /**

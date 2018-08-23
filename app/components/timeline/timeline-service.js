@@ -76,7 +76,6 @@ angular.module('lizard-nxt')
     drawTimelineAxes(this._svg, xScale, dimensions);
     this.addFutureIndicator();
     this.addInteraction(interaction);
-    this.HEADER_HEIGHT = HEADER_HEIGHT;
   }
 
   Timeline.prototype = Object.create(NxtD3.prototype, {
