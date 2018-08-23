@@ -91,24 +91,16 @@ angular.module('lizard-nxt')
    */
   var link = function (scope, element, attrs, graphCtrl) {
 
-    var graphUpdateHelper = function () {
-      if (scope.content) {
-        graphCtrl.setData(scope);
-      }
-      else if (scope.data) {
-        graphCtrl.setFormattedContent(scope);
-      }
-      
-      // if no data is available in specified timeframe, then 
-      // the user should see text appear in the charts;
-      // "No data available i this timeframe"
-      // See Jira:
-      // https://nelen-schuurmans.atlassian.net/browse/PROJ-471
-      // we assume that when no data is available the data is an empty array
-      
+
+    // if no data is available in specified timeframe, then 
+    // the user should see text appear in the charts;
+    // "No data available i this timeframe"
+    // See Jira:
+    // https://nelen-schuurmans.atlassian.net/browse/PROJ-471
+    // we assume that when no data is available the data is an empty array
+    var addOrRemoveNoDataAvailableText = function () {
       // always remove previous text
       graphCtrl.graph.setDisplayTextChartBody("");
-      
       // in case of scope.content first check if content has indeed a length, 
       // because content will be empty for a moment after dragging timeline.
       // during this brief moment it is not desired to show the "no data .." message
@@ -118,6 +110,18 @@ angular.module('lizard-nxt')
       ) {
         graphCtrl.graph.setDisplayTextChartBody("No data available in this timeframe");
       } 
+    };
+    
+    var graphUpdateHelper = function () {
+      if (scope.content) {
+        graphCtrl.setData(scope);
+      }
+      else if (scope.data) {
+        graphCtrl.setFormattedContent(scope);
+      }
+      
+      addOrRemoveNoDataAvailableText();
+      
 
       // UpdateData is called with temporal.timelineMoving to draw subset for
       // performance reasons.
