@@ -23,12 +23,12 @@ describe('Testing State service', function () {
     expect(State.geometries).toBeDefined();
   });
 
-  it('should set temporal.end to the max when set with a futuristic timestamp',
+  it('should NOT set temporal.end to the max when set with a futuristic timestamp',
     function () {
       var theVeryFarFuture = new Date();
       theVeryFarFuture.setYear(3050);
       State.temporal.end = theVeryFarFuture.getTime();
-      expect(State.temporal.end).toEqual(UtilService.MAX_TIME);
+      expect(State.temporal.end).not.toEqual(UtilService.MAX_TIME);
     }
   );
 

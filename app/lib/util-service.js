@@ -836,12 +836,18 @@ angular.module('lizard-nxt')
   this.TIMELINE_RIGHT_MARGIN = 40;
   this.OMNIBOX_WIDTH = 420;
 
+  var RESTRICT_TEMPORAL_BOUNDS = false;
+
   this.getMinTime = function (currentTime) {
-    return Math.max(this.MIN_TIME, currentTime);
+    return RESTRICT_TEMPORAL_BOUNDS
+      ? Math.max(this.MIN_TIME, currentTime)
+      : currentTime;
   };
 
   this.getMaxTime = function (currentTime) {
-    return Math.min(this.MAX_TIME, currentTime);
+    return RESTRICT_TEMPORAL_BOUNDS
+      ? Math.min(this.MAX_TIME, currentTime)
+      : currentTime;
   };
 
   this.getLeftMargin = function (context) {

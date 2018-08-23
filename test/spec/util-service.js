@@ -107,10 +107,10 @@ describe('Testing util-service functions', function () {
     expect(result).toEqual(expectedResult);
   });
 
-  it('should return MIN_TIME for times earlier than MIN_TIME', function () {
+  it('should not return MIN_TIME for times earlier than MIN_TIME', function () {
     var early = UtilService.MIN_TIME - 1;
     var min = UtilService.getMinTime(early);
-    expect(min).toBe(UtilService.MIN_TIME);
+    expect(min).not.toBe(UtilService.MIN_TIME);
   });
 
   it('should identify urls', function () {

@@ -121,7 +121,7 @@ angular.module('lizard-nxt')
           .attr("id", "nodata")
           .attr("x", xScale(Date.now()))
           .attr("opacity", 0.8)
-          .style("fill", "#DDD");
+          .style("fill", "#34495e");
       }
     },
 
