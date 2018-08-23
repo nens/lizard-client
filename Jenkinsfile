@@ -19,16 +19,13 @@ pipeline {
                 sh "npm test"
             }
         }
-        if (env.BRANCH_NAME == "master") {
-            stage("Install transifex tools") {
-                steps {
-                    sh "npm install --optional=true"
-                }
+        stage("Transifex") {
+            when {
+                expression {env.BRANCH_NAME == "master"}
             }
-            stage("Transifex") {
-                steps {
-                    sh "npm run transifex"
-                }
+            steps {
+                sh "npm install --optional=true"
+                sh "npm run transifex"
             }
         }
     }
