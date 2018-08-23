@@ -73,24 +73,28 @@
            ng-class="{hidden: !fullDetails}">
         <div class="timeseries-interval-btn"
              ng-click="zoomToInterval('one_year')"
+             title="Zoom to a one year interval"
              translate>
           1Y
         </div>
 
         <div class="timeseries-interval-btn"
              ng-click="zoomToInterval('three_months')"
+             title="Zoom to a 3 months interval"
              translate>
           3M
         </div>
 
         <div class="timeseries-interval-btn"
              ng-click="zoomToInterval('two_weeks')"
+             title="Zoom to a 2 weeks interval"
              translate>
           2W
         </div>
 
         <div class="timeseries-interval-btn"
              ng-click="zoomToInterval('timesteps_range', timeseries.selected)"
+             title="Zoom to the temporal extent"
              translate>
           ZOOM TO EXTENT
         </div>
