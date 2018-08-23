@@ -33,14 +33,16 @@ angular.module('lizard-nxt')
 
   var link = function (scope, element, attrs, timelineCtrl) {
 
-    var timelineSetsTime = false,
+    var HEADER_HEIGHT = 20,
+
+        timelineSetsTime = false,
         timelineSetsAt = false,
 
         showTimeline = true, // Is set by user clicking data label, when true
                               // timeline is shown.
         dimensions = {
           width: getRequiredTimelineWidth(element),
-          height: 45,
+          height: 45 + HEADER_HEIGHT,
           events: 35,
           bars: 35,
           padding: {
@@ -146,8 +148,10 @@ angular.module('lizard-nxt')
      * @param {int} nEventTypes - number of event types (event series).
      */
     var updateTimelineSize = function (nEventTypes) {
+      console.log("[F] updateTimelineSize");
       var eventHeight,
           newDim = angular.copy(timeline.dimensions);
+      console.log("*** height (old):", timeline.dimensions.height);
 
       newDim.height = dimensions.padding.bottom
         + dimensions.padding.top
@@ -162,6 +166,8 @@ angular.module('lizard-nxt')
       if (showTimeline) {
         element[0].style.height = newDim.height + 5 + 'px'; // 5px margins
       }
+
+      console.log("*** height (new):", newDim.height);
 
       timeline.resize(
         newDim,
@@ -588,6 +594,7 @@ angular.module('lizard-nxt')
     window.addEventListener('load', getTimeLineData);
 
     var resize = function () {
+      console.log("[F] resize");
       var newWidth = getRequiredTimelineWidth(element);
       timeline.dimensions.width = newWidth;
 
