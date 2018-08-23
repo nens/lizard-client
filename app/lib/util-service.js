@@ -994,7 +994,7 @@ angular.module('lizard-nxt')
       timestampParts[2] = padWithZeroes(timestampParts[2]);
     }
 
-    return datestampParts.join('-') + " * " + timestampParts.join(':');
+    return [datestampParts.join('-'), timestampParts.join(':')];
   };
 
   /**
