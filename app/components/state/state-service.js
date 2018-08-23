@@ -46,7 +46,7 @@ function (UtilService, gettextCatalog, $http) {
   };
 
   var setActiveLayers = function (layerSlugs) {
-    _.forEach(state.layers, { active: false });
+    _.forEach(state.layers, { active: false }); 
     layerSlugs.forEach(function (layerSlug) {
       var type = layerSlug.split('$')[0];
       var uuid = layerSlug.split('$')[1];

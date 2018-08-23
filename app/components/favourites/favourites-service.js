@@ -305,12 +305,14 @@ angular.module('favourites')
           ATTRIBUTES = ATTRIBUTES.concat(
             ['temporal.start', 'temporal.end', 'temporal.at', 'temporal.playing']
           );
-        }
+        } 
 
         ATTRIBUTES.forEach(function (key) {
           var favState = _.get(favourite.state, key);
+          
           if (!_.isUndefined(favState)) {
-            _.set(State, key, favState);
+            
+              _.set(State, key, favState);
           }
         });
 
