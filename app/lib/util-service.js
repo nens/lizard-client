@@ -1013,7 +1013,7 @@ angular.module('lizard-nxt')
 
     for (i = 0; i < data.length; i++) {
 
-      formattedDateTime = this.formatDate(data[i].timestamp || data[i][0]);
+      formattedDateTime = this.formatDate(data[i].timestamp || data[i][0], true);
 
       var formattedDatum = [
         this.formatNumber(latLng.lat, 0, 0, true),
