@@ -251,12 +251,14 @@ angular.module('lizard-nxt')
    */
   
   Graph.prototype.contentContainsDataToDisplay = function (content) {
+    // filter out elements with no or empty data
     var filledContent = content.filter(function (element){
       if (element.data && element.data.length > 0)   
         return true;
       else
         return false;
     });
+    // return true if array still contains elements
     return filledContent.length > 0;
   };
 
@@ -275,16 +277,14 @@ angular.module('lizard-nxt')
 
     // if text to display is not empty string, then add text element with d3
     if (text !== '') {
-      var fg = svg.select('g').select('#feature-group');
-        // bring to front
-        fg.node().parentNode.appendChild(fg.node());
-        path = fg.append("text")
-                 .attr('class', classNameText)
-                 .attr("x", "50%")
-                 .attr("y", "50%")
-                 .append("tspan")
-                 .attr("text-anchor", "middle")
-                 .text(text);
+      // add text to top svg element so layout is not impacted by tranformations of <g> layers
+      svg.append("text")
+        // add class so the text can also be removed safely
+        .attr('class', classNameText)
+        .attr("x", "50%")
+        .attr("y", "50%")
+        .attr("text-anchor", "middle")
+        .text(text);
     } 
   };
 
