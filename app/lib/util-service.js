@@ -236,23 +236,27 @@ angular.module('lizard-nxt')
    * @return {int} milliseconds representation
    */
   this.parseDaysHours = function (timeString) {
-    if (timeString === undefined) {
+    if (timeString === undefined)
       return 0;
-    }
 
-    var days = parseInt(timeString.split('Days')[0]);
+    var negativeTime = timeString[0] === '-';
+    var days = Math.abs(parseInt(timeString.split('Days')[0]));
     var hours = parseInt(timeString.split('Days')[1].split('Hours')[0]);
-
     var totalMS = 0;
-    if (!isNaN(days)) {
-      totalMS += parseInt(days) * this.day;
-    }
 
-    if (!isNaN(hours)) {
-      totalMS += parseInt(hours) * this.hour;
-    }
+    if (!isNaN(days))
+      totalMS += days * this.day;
+    else
+      console.error("[E] Couldn't parse amt. of days:", days, "(type = " + (typeof days) + ")");
 
-    return totalMS;
+    if (!isNaN(hours))
+      totalMS += hours * this.hour;
+    else
+      console.error("[E] Couldn't parse amt. of hours:", hours, "(type = " + (typeof hours) + ")");
+
+    return negativeTime
+      ? -1 * totalMS
+      : totalMS;
   };
 
   /**
@@ -262,14 +266,18 @@ angular.module('lizard-nxt')
    * @return {string} Difference in format of: 7 days 3 hours
    */
   this.getTimeIntervalAsText = function (start, end) {
-    var days = '',
-        hours = '';
 
-    // only calculate if the end is larger than start
-    if (end > start) {
-      var interval = end - start;
-      days = Math.floor(interval / this.day);
-      hours = Math.floor((interval % this.day) / this.hour);
+    var days = '', hours = '';
+
+    // only calculate if the end is gte than start
+    if (end >= start) {
+      var totalHours,
+          interval = end - start;
+      totalHours = Math.round(interval / this.hour);
+      days = Math.floor(totalHours / 24);
+      hours = Math.floor(totalHours - days * 24);
+    } else {
+      console.error("[E] end < start");
     }
     return {
       days: days,
@@ -828,12 +836,18 @@ angular.module('lizard-nxt')
   this.TIMELINE_RIGHT_MARGIN = 40;
   this.OMNIBOX_WIDTH = 420;
 
+  var RESTRICT_TEMPORAL_BOUNDS = false;
+
   this.getMinTime = function (currentTime) {
-    return Math.max(this.MIN_TIME, currentTime);
+    return RESTRICT_TEMPORAL_BOUNDS
+      ? Math.max(this.MIN_TIME, currentTime)
+      : currentTime;
   };
 
   this.getMaxTime = function (currentTime) {
-    return Math.min(this.MAX_TIME, currentTime);
+    return RESTRICT_TEMPORAL_BOUNDS
+      ? Math.min(this.MAX_TIME, currentTime)
+      : currentTime;
   };
 
   this.getLeftMargin = function (context) {
@@ -970,15 +984,23 @@ angular.module('lizard-nxt')
    * @param {integer} epoch - time in ms since 1970.
    * @returns {string} formatted date.
    */
-  this.formatDate = function (epoch) {
-    var d = new Date(parseInt(epoch, 10));
-    return [
-      [d.getDate(), d.getMonth() + 1,
-       d.getFullYear()].join('-'),
-      [d.getHours() || "00",
-       d.getMinutes() || "00",
-       d.getSeconds() || "00"].join(':')
-    ];
+  this.formatDate = function (epoch, mustPadWithZeroes) {
+
+    function padWithZeroes (n) { return n < 10 ? "0" + n : "" + n; }
+
+    var d = new Date(parseInt(epoch, 10)),
+        datestampParts = [d.getDate(), d.getMonth() + 1, d.getFullYear()],
+        timestampParts = [d.getHours(), d.getMinutes(), d.getSeconds()];
+
+    if (mustPadWithZeroes) {
+      datestampParts[0] = padWithZeroes(datestampParts[0]);
+      datestampParts[1] = padWithZeroes(datestampParts[1]);
+      timestampParts[0] = padWithZeroes(timestampParts[0]);
+      timestampParts[1] = padWithZeroes(timestampParts[1]);
+      timestampParts[2] = padWithZeroes(timestampParts[2]);
+    }
+
+    return [datestampParts.join('-'), timestampParts.join(':')];
   };
 
   /**
@@ -997,7 +1019,7 @@ angular.module('lizard-nxt')
 
     for (i = 0; i < data.length; i++) {
 
-      formattedDateTime = this.formatDate(data[i].timestamp || data[i][0]);
+      formattedDateTime = this.formatDate(data[i].timestamp || data[i][0], true);
 
       var formattedDatum = [
         this.formatNumber(latLng.lat, 0, 0, true),

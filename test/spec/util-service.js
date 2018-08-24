@@ -39,8 +39,8 @@ describe('Testing util-service functions', function () {
 
     var inputData = [[1420070400000, 0.58], [1420149600000, 8.2354]],
         coords = [5.2, 52.7],
-        expectedResult = [[ '52,7', '5,2', '1-1-2015', '1:00:00', '0,58' ],
-                          [ '52,7', '5,2', '1-1-2015', '23:00:00', '8,24' ]];
+        expectedResult = [[ '52,7', '5,2', '01-01-2015', '01:00:00', '0,58' ],
+                          [ '52,7', '5,2', '01-01-2015', '23:00:00', '8,24' ]];
 
     var result = UtilService.formatCSVColumns(inputData, coords);
     expect(result).toEqual(expectedResult);
@@ -61,8 +61,8 @@ describe('Testing util-service functions', function () {
     ],
     coords = [5.2, 52.7],
     expectedResult = [
-      [ '52,7', '5,2', '1-1-2015', '1:00:00', '0,58', '0,59' ],
-      [ '52,7', '5,2', '1-1-2015', '23:00:00', '8,24', '8,24' ]
+      [ '52,7', '5,2', '01-01-2015', '01:00:00', '0,58', '0,59' ],
+      [ '52,7', '5,2', '01-01-2015', '23:00:00', '8,24', '8,24' ]
     ];
 
     var result = UtilService.formatCSVColumns(inputData, coords);
@@ -73,9 +73,9 @@ describe('Testing util-service functions', function () {
      " epoch timestamp in ms", function () {
 
     var epoch = 1420070400000,
-        expectedResult = ['1-1-2015', '1:00:00'];
+        expectedResult = ['01-01-2015', '01:00:00'];
 
-    var result = UtilService.formatDate(epoch);
+    var result = UtilService.formatDate(epoch, true);
     expect(result).toEqual(expectedResult);
   });
 
@@ -107,10 +107,10 @@ describe('Testing util-service functions', function () {
     expect(result).toEqual(expectedResult);
   });
 
-  it('should return MIN_TIME for times earlier than MIN_TIME', function () {
+  it('should not return MIN_TIME for times earlier than MIN_TIME', function () {
     var early = UtilService.MIN_TIME - 1;
     var min = UtilService.getMinTime(early);
-    expect(min).toBe(UtilService.MIN_TIME);
+    expect(min).not.toBe(UtilService.MIN_TIME);
   });
 
   it('should identify urls', function () {

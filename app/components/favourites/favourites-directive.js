@@ -3,42 +3,16 @@
  * @description Show favourites menu.
  */
 angular.module('favourites')
-  .directive('favourites', [function () {
+  .directive('favourites', ['$rootScope','$timeout','FavouritesService', function ($rootScope, $timeout, FavouritesService) {
 
   var link = function (scope, element, attrs) {
 
     scope.favourites = {
-      enabled: false
+      isEnabled: FavouritesService.isShowingFavsContainer
     };
 
-    /**
-     * Toggle the favourites.
-     * @param {object} $event - Click event object.
-     */
-    scope.toggleFavourites = function($event) {
-      $event.stopPropagation();
-      scope.favourites.enabled = !scope.favourites.enabled;
-    };
-
-    /**
-     * Collapse favourites on click outside the box.
-     */
-    scope.$watch('favourites.enabled', function () {
-      if (scope.favourites.enabled === true) {
-        $(document).bind('click', function(event){
-          var isClickedElementChildOfPopup = element
-            .find(event.target)
-            .length > 0;
-
-          if (!isClickedElementChildOfPopup) {
-            scope.$apply( function () {
-              scope.favourites.enabled = false;
-            });
-          }
-        });
-      }
-    });
-  };
+    scope.favsContainerEnabled = FavouritesService.favsContainerEnabled;
+};
 
   return {
     restrict: 'E',
@@ -181,6 +155,10 @@ angular.module('favourites')
      */
     var createFavouriteSuccess = function(favourite, responseHeaders){
       scope.favourites.data.splice(0, 0, favourite);
+      // after creating new favourite is succesfull empty form
+      if (scope.favourite.name === favourite.name) {
+        scope.resetForm();
+      }
     };
 
     /**
@@ -196,6 +174,28 @@ angular.module('favourites')
       throw new Error(
         httpResponse.status + " - " + "Could not create favourite.");
     };
+
+    /*
+    if a favourite is typed into the new favourites input then it returns true if
+    the name of this new favourite is unique (not already used by an existing favourite)
+    */
+    scope.isNameUniqueAmongFavourites = function () {
+      if (!scope.favourite) {
+        return true;
+      } else {
+        return scope.favourites.data.map(function(e){return e.name;})
+          .indexOf(scope.favourite.name) === -1;
+      }
+    };
+
+    /*
+    Decide if + (new) button should be disabled
+    */
+    scope.createNewButtonShouldBeDisabled = function () {
+      return (!scope.isNameUniqueAmongFavourites()) || scope.favouritesForm.$invalid;
+    };
+
+
 
     /**
      * Create a new favourite with the current portal state.

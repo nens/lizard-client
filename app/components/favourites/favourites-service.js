@@ -19,10 +19,41 @@ angular.module('favourites')
         UtilService,
         notie,
         $window,
-      $timeout,
-      DashboardChartService,
+        $timeout,
+        DashboardChartService,
         ChartCompositionService)
     {
+      var _appliedFavourite = null;
+      this.getAppliedFavourite = function () { return _appliedFavourite; };
+
+      this.favsContainerEnabled = { value: false };
+
+      this.showFavsContainer = function  () {
+        var favsContainer = document.querySelector("#lizard-favs-container");
+        if (!this.favsContainerEnabled.value) {
+          this.favsContainerEnabled.value = true;
+          if (favsContainer.classList.contains('hidden'))
+            favsContainer.classList.remove('hidden');
+        }
+        else
+          console.error("[E] Tried to *show* fav container via svc, but svc state is inconsistent!");
+      };
+
+      this.hideFavsContainer = function  () {
+        var favsContainer = document.querySelector("#lizard-favs-container");
+        if (this.favsContainerEnabled.value) {
+          this.favsContainerEnabled.value = false;
+          if (!favsContainer.classList.contains('hidden')) {
+            // OK
+            favsContainer.classList.add('hidden');
+          } else {
+            // Inconsistency detected!
+            console.error("[E] Tried to *hide* favsContainer but classList already contains 'hidden'!");
+          }
+        }
+        else
+          console.error("[E] Tried to *hide* fav container via svc, but svc state is inconsistent!");
+      };
 
       /* Create a resource for interacting with the favourites endpoint of the
        * API.
@@ -210,7 +241,9 @@ angular.module('favourites')
        *
        * @param {object} favourite - The favourite to apply with a state.
        */
-      this.applyFavourite = function (favourite) {
+      this.applyFavourite = function (favourite, isApplyingBootstrap) {
+        if (!isApplyingBootstrap)
+          _appliedFavourite = JSON.parse(JSON.stringify(favourite));
         // Restore assets
         if (typeof favourite.state.assets !== 'undefined') {
           favourite.state.assets.forEach(function (asset) {
@@ -258,10 +291,6 @@ angular.module('favourites')
 
         // Specific attributes
         var ATTRIBUTES = [
-          'temporal.start',
-          'temporal.end',
-          'temporal.at',
-          'temporal.playing',
           'box.type',
           'language',
           'baselayer',
@@ -272,10 +301,18 @@ angular.module('favourites')
           'context'
         ];
 
+        if (!isApplyingBootstrap) {
+          ATTRIBUTES = ATTRIBUTES.concat(
+            ['temporal.start', 'temporal.end', 'temporal.at', 'temporal.playing']
+          );
+        } 
+
         ATTRIBUTES.forEach(function (key) {
           var favState = _.get(favourite.state, key);
+          
           if (!_.isUndefined(favState)) {
-            _.set(State, key, favState);
+            
+              _.set(State, key, favState);
           }
         });
 

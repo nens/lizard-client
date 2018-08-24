@@ -41,8 +41,8 @@ angular.module('lizard-nxt').controller('MasterCtrl',
 
   $scope.state = State;
 
-  $scope.$watch('state', function () {
-    UrlService.setUrl($scope.state);
+  $scope.$watch('state', function (n, o) {
+    UrlService.setUrl(n);
   }, true);
 
   /**

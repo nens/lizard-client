@@ -50,7 +50,7 @@ angular.module('lizard-nxt')
         var halfPath, otherHalf, parts = _getPathParts(part);
         if (!value && parts.length - 1 === index) {
           parts.splice(index, 1); // remove if no value and index is last one.
-        } else {
+        } else if (value !== '') {
           parts[index] = value; //replace
         }
         halfPath = parts.join('/');
@@ -75,11 +75,27 @@ angular.module('lizard-nxt')
     var _getPath = function (part) {
 
       var path = $location.path();
-
-      var paths = path.split('@'); //splits path in two at the @.
-      var pathPart = paths[part === 'path' ? 0 : 1] || ''; //gets before @ when 'path' after when 'at'
-      // we do not want the first slash
-      pathPart = part === 'path' ? pathPart.slice(1) : pathPart;
+      var pathPart = '';     
+      // 1): get part of path corresponding to 'path' or 'at'
+      if (part === 'path') {
+        // get part before @
+        pathPart = path.split('@')[0];
+      } else { // we assume part === 'at'
+        // get part after @
+        pathPart = path.split('@')[1];
+      }
+      // 2): if pathPart = falsy use empty string ''
+      if (!pathPart) {
+        pathPart = '';
+      }
+      // 3): remove if first character /
+      if (pathPart.slice(0, 1) === '/' && part === 'path') {
+        pathPart = pathPart.slice(1);
+      }
+      // 4): add / if last character not /
+      if (pathPart.slice(-1) !== '/' && part === 'path') {
+        pathPart = pathPart + '/';
+      }
       return pathPart;
     };
 
@@ -149,42 +165,60 @@ angular.module('lizard-nxt')
       * @param {bool} relative time or absolute
       */
       setTimeStateUrl: function (state, start, end, relative) {
-        var startDate = new Date(start);
-        var endDate = new Date(end);
-
         if (relative) {
-          var now = Date.now(),
-              past = now - start,
-              future = now - end;
 
-          past = UtilService.getTimeIntervalAsText(start, now);
-          future = UtilService.getTimeIntervalAsText(now, end);
+          var interval1,
+              interval2,
+              symbol1,
+              symbol2,
+              now = Date.now();
 
-          var pastString = '-' + past.days + 'Days' + past.hours + 'Hours';
-          var futureString = '';
-
-          if (future.days !== '' && future.hours !== '') {
-            futureString = '+' + future.days + 'Days' + future.hours + 'Hours';
+          if (start <= now && now <= end) {
+            interval1 = [start, now];
+            interval2 = [now, end];
+            symbol1 = '-';
+            symbol2 = '+';
+          } else if (start <= end && end <= now) {
+            interval1 = [start, now];
+            interval2 = [end, now];
+            symbol1 = symbol2 = '-';
+          } else if (now <= start && start <= end) {
+            interval1 = [now, start];
+            interval2 = [now, end];
+            symbol1 = symbol2 = '+';
+          } else {
+            console.error("[E] Impossible relative temp. interval! start/now/end =", start, now, end);
           }
+
+          var t1 = UtilService.getTimeIntervalAsText(interval1[0], interval1[1]);
+          var t2 = UtilService.getTimeIntervalAsText(interval2[0], interval2[1]);
+
+          var t1String = symbol1 + t1.days + 'Days' + t1.hours + 'Hours';
+          var t2String = '';
+
+          if (t2.days !== '' && t2.hours !== '')
+            t2String = symbol2 + t2.days + 'Days' + t2.hours + 'Hours';
 
           LocationGetterSetter.setUrlValue(
             state.timeState.part,
             state.timeState.index,
-            pastString + futureString
+            t1String + t2String
           );
         } else {
-          var startDateString = startDate.toDateString()
+          var startDateString = (new Date(start)).toDateString()
             .slice(4) // Cut off day name
             .split(' ') // Replace spaces by hyphens
             .join(',');
-          var endDateString = endDate.toDateString()
+          var endDateString = (new Date(end)).toDateString()
             .slice(4) // Cut off day name
             .split(' ') // Replace spaces by hyphens
             .join(',');
+          var intervalString = startDateString + '-' + endDateString
           LocationGetterSetter.setUrlValue(
-          state.timeState.part,
-          state.timeState.index,
-          startDateString + '-' + endDateString);
+            state.timeState.part,
+            state.timeState.index,
+            intervalString
+          );
         }
       },
 
@@ -273,6 +307,16 @@ angular.module('lizard-nxt')
           layers.join(',')
         );
       },
+      getStartOfRelativeInterval: function (timeStr) {
+        var result = timeStr.split('Hours')[0] + 'Hours';
+        // Prepend '+' symbol for rel. timestamp in the future (=more consistent):
+        if (result[0] !== '-' && result[0] !== '+')
+          result = '+' + result;
+        return result;
+      },
+      getEndOfRelativeInterval: function (timeStr) {
+        return timeStr.split('Hours')[1] + 'Hours';
+      },
       /**
        * @function
        * @memberOf UrlState
@@ -282,22 +326,25 @@ angular.module('lizard-nxt')
        * @return {object} nxt timeState
        */
       parseTimeState: function (time) {
-        if (!time) { return; }
+        if (!time) return; 
+
         var timeState = {};
-        var times, msStartTime, msEndTime;
+        var msStartTime, msEndTime;
+
         if (time.split('Days').length > 1) {
-          times = time.split('-')[1].split('+');
-          var past = times[0];
-          var future = times[1];
 
-          msStartTime = UtilService.parseDaysHours(past);
-          msEndTime = UtilService.parseDaysHours(future);
+          var now = Date.now(),
+              t1 = this.getStartOfRelativeInterval(time),
+              t2 = this.getEndOfRelativeInterval(time);
 
-          timeState.start = Date.now() - msStartTime;
-          timeState.end = Date.now() + msEndTime;
+          msStartTime = UtilService.parseDaysHours(t1);
+          msEndTime = UtilService.parseDaysHours(t2);
+
+          timeState.start = now + msStartTime;
+          timeState.end = now + msEndTime;
         } else {
           // Browser independent. IE requires datestrings in a certain format.
-          times = time.replace(/,/g, ' ').split('-');
+          var times = time.replace(/,/g, ' ').split('-');
           msStartTime = Date.parse(times[0]);
           // bail if time is not parsable, but return timeState
           if (isNaN(msStartTime)) { return timeState; }
@@ -529,11 +576,13 @@ angular.module('lizard-nxt')
     };
 
     var getTemporal = function () {
+      
       var time = LocationGetterSetter.getUrlValue(
         config.timeState.part,
         config.timeState.index
       );
-      return UrlState.parseTimeState(time);
+      var result = UrlState.parseTimeState(time);
+      return result;
     };
 
     return {
@@ -556,7 +605,8 @@ angular.module('lizard-nxt')
         );
 
         if (!state.temporal.timelineMoving) {
-          if (Date.now() - state.temporal.start > 7 * UtilService.day) {
+          var intervalInMs = state.temporal.end - state.temporal.start;
+          if (intervalInMs > 7 * UtilService.day) {
             state.temporal.relative = false;
           } else {
             state.temporal.relative = true;
@@ -577,7 +627,6 @@ angular.module('lizard-nxt')
         );
 
         UrlState.setlayersUrl(config, state);
-
       },
 
       getDataForState: function () {
