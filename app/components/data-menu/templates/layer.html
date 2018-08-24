@@ -16,7 +16,9 @@
         <i class="fa fa-close"
            ng-hide="closebutton === false"
            ng-click="remove(layer);
-                     $event.stopPropagation()">
+                     $event.stopPropagation()"
+           title="{{ 'Remove the layer' | translate }}">
+          <!-- Translation for title needs to be implemented. -->
         </i>
         <i ng-if="zoomToBounds"
           ng-click="zoomToBounds(); $event.stopPropagation()"
