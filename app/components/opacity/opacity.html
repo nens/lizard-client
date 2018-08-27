@@ -1,5 +1,7 @@
 <div class="ng-class: {inactive: !layer.active || layer.type === 'eventseries' || layer.type === 'annotations'}; progress"
-	ng-click="adjustOpacity($event)" ng-touch="adjustOpacity($event)" title="Click to change the opacity of the layer" translate>
+	ng-click="adjustOpacity($event)"
+	ng-touch="adjustOpacity($event)"
+	title="{{ 'Click to change the opacity of the layer' | translate }}">
     <div class="progress-bar" role="progressbar" ng-style="{ 'width': getWidth(layer.opacity) }">
       <span class="sr-only"></span>
     </div>
