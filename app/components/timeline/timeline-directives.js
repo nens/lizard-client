@@ -166,8 +166,6 @@ angular.module('lizard-nxt')
         element[0].style.height = newDim.height + 5 + 'px'; // 5px margins
       }
 
-      console.log("*** height (new):", newDim.height);
-
       timeline.resize(
         newDim,
         State.temporal.at,
