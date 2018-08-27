@@ -195,8 +195,6 @@ angular.module('favourites')
       return (!scope.isNameUniqueAmongFavourites()) || scope.favouritesForm.$invalid;
     };
 
-
-
     /**
      * Create a new favourite with the current portal state.
      */

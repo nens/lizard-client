@@ -176,7 +176,6 @@ angular.module('favourites')
           'name': name,
           'state': createJson(state)
         };
-
         return Favourites.save(data, success, error);
       };
 
@@ -189,9 +188,11 @@ angular.module('favourites')
           dashboardCharts: ChartCompositionService.dashboardCharts,
           composedCharts: ChartCompositionService.composedCharts
         };
+        data.layerKeys = _.map(state.layers, function (layer) {
+          return layer.type + "$" + layer.uuid;
+        });
 
-        var result = JSON.stringify(data);
-        return result;
+        return JSON.stringify(data);
       };
 
       /**
@@ -305,13 +306,13 @@ angular.module('favourites')
           ATTRIBUTES = ATTRIBUTES.concat(
             ['temporal.start', 'temporal.end', 'temporal.at', 'temporal.playing']
           );
-        } 
+        }
 
         ATTRIBUTES.forEach(function (key) {
           var favState = _.get(favourite.state, key);
-          
+
           if (!_.isUndefined(favState)) {
-            
+
               _.set(State, key, favState);
           }
         });
