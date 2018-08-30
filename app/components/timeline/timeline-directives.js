@@ -161,7 +161,6 @@ angular.module('lizard-nxt')
       }
 
       newDim.height = Math.max(newDim.height, dimensions.height);
-
       if (showTimeline) {
         element[0].style.height = newDim.height + 5 + 'px'; // 5px margins
       }
@@ -176,7 +175,6 @@ angular.module('lizard-nxt')
       if (Timeline.onresize) {
         Timeline.onresize(newDim);
       }
-
     };
 
     /**
