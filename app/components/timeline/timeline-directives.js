@@ -55,13 +55,28 @@ angular.module('lizard-nxt')
         end = State.temporal.end,
         el = element.find('svg');
     
-    var datetimePickerStart = $('#timeline-header-datetimepicker-start').datetimepicker({
-      date: moment(start),
+    $('#timeline-header-datetimepicker-start').datetimepicker({
+      date: moment(State.temporal.start),
+      locale: navigator.language || navigator.userLanguage,
     });
-    var datetimePickerEnd = $('#timeline-header-datetimepicker-end').datetimepicker({
-      date: moment(end),
+    $('#timeline-header-datetimepicker-end').datetimepicker({
+      date: moment(State.temporal.end),
+      locale: navigator.language || navigator.userLanguage,
     });
-        
+    // scope.changeTimelineInputStart = function (e) {
+    //   console.log('[F] changeTimelineInputStart ', e)
+    // }
+
+
+    $("#timeline-header-datetimepicker-start").on("dp.change", function(e) {
+      var newTimestamp = (new Date(e.date)).getTime();
+      State.temporal.start = newTimestamp;
+    });
+    $("#timeline-header-datetimepicker-end").on("dp.change", function(e) {
+      var newTimestamp = (new Date(e.date)).getTime();
+      State.temporal.end = newTimestamp;
+    });
+
     // D3 fires zoomEnd on click event and clicks on zoom events. The clicks on
     // zoomEnd are prevented by the timeline. ZoomEnd callback keeps track of
     // changes to temporal.start and temporal.end and only sets timelineMoving
@@ -442,10 +457,12 @@ angular.module('lizard-nxt')
 
     scope.$watch(State.toString('temporal.start'), function (n, o) {
       scope.humanReadableStart = UtilService.formatDate(n, true);
+      $('#timeline-header-datetimepicker-start').data("DateTimePicker").date(moment(parseInt(n)));
     });
 
     scope.$watch(State.toString('temporal.end'), function (n, o) {
       scope.humanReadableEnd = UtilService.formatDate(n, true);
+      $('#timeline-header-datetimepicker-end').data("DateTimePicker").date(moment(parseInt(n)));
     });
 
     /**
