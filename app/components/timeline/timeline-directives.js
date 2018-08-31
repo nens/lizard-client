@@ -54,7 +54,11 @@ angular.module('lizard-nxt')
         start = State.temporal.start,
         end = State.temporal.end,
         el = element.find('svg');
-
+    
+    $(function () {
+      $('#timeline-header-datetimepicker-start').datetimepicker();
+    });
+        
     // D3 fires zoomEnd on click event and clicks on zoom events. The clicks on
     // zoomEnd are prevented by the timeline. ZoomEnd callback keeps track of
     // changes to temporal.start and temporal.end and only sets timelineMoving

@@ -43,6 +43,7 @@ module.exports = function(config) {
       'vendor/notie/dist/notie.js',
       'vendor/perfect-scrollbar/js/perfect-scrollbar.js',
       'vendor/raven-js/dist/raven.js',
+      'vendor/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
       // endbower
 
       'vendor/moment/locale/nl.js',
