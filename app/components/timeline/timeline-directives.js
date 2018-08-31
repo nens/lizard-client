@@ -55,8 +55,11 @@ angular.module('lizard-nxt')
         end = State.temporal.end,
         el = element.find('svg');
     
-    $(function () {
-      $('#timeline-header-datetimepicker-start').datetimepicker();
+    var datetimePickerStart = $('#timeline-header-datetimepicker-start').datetimepicker({
+      date: moment(start),
+    });
+    var datetimePickerEnd = $('#timeline-header-datetimepicker-end').datetimepicker({
+      date: moment(end),
     });
         
     // D3 fires zoomEnd on click event and clicks on zoom events. The clicks on
