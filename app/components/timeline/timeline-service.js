@@ -575,10 +575,8 @@ angular.module('lizard-nxt')
    *  @param {object} newDims - new dimensions, same structure as oldDims.
    */
   var resizeTimelineCanvas = function (svg, oldDims, newDims) {
-    console.log("[F] resizeTimelineCanvas");
     var width = Timeline.prototype._getWidth(newDims),
     height = Timeline.prototype._getHeight(newDims);
-    console.log("*** height =", height);
     if (newDims.height < oldDims.height) {
       svg.transition()
         .delay(Timeline.prototype.transTime)

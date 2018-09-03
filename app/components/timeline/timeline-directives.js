@@ -19,6 +19,7 @@ angular.module('lizard-nxt')
               "VectorService",
               "DataService",
               "EventAggregateService",
+              "UrlService",
               "State",
               function ($q,
                         $timeout,
@@ -29,6 +30,7 @@ angular.module('lizard-nxt')
                         VectorService,
                         DataService,
                         EventAggregateService,
+                        UrlService,
                         State) {
 
   var link = function (scope, element, attrs, timelineCtrl) {
@@ -54,24 +56,6 @@ angular.module('lizard-nxt')
         start = State.temporal.start,
         end = State.temporal.end,
         el = element.find('svg');
-    
-    $('#timeline-header-datetimepicker-start').datetimepicker({
-      date: moment(State.temporal.start),
-      locale: navigator.language || navigator.userLanguage,
-    });
-    $('#timeline-header-datetimepicker-end').datetimepicker({
-      date: moment(State.temporal.end),
-      locale: navigator.language || navigator.userLanguage,
-    });
-
-    $("#timeline-header-datetimepicker-start").on("dp.change", function(e) {
-      var newTimestamp = (new Date(e.date)).getTime();
-      State.temporal.start = newTimestamp;
-    });
-    $("#timeline-header-datetimepicker-end").on("dp.change", function(e) {
-      var newTimestamp = (new Date(e.date)).getTime();
-      State.temporal.end = newTimestamp;
-    });
 
     // D3 fires zoomEnd on click event and clicks on zoom events. The clicks on
     // zoomEnd are prevented by the timeline. ZoomEnd callback keeps track of
@@ -79,9 +63,6 @@ angular.module('lizard-nxt')
     // and triggers a digest loop if they changed.
     var oldStart = State.temporal.start;
     var oldEnd = State.temporal.end;
-
-    scope.humanReadableStart = UtilService.formatDate(start, true);
-    scope.humanReadableEnd = UtilService.formatDate(end, true);
 
     var interaction = {
 
@@ -183,8 +164,6 @@ angular.module('lizard-nxt')
       if (showTimeline) {
         element[0].style.height = newDim.height + 5 + 'px'; // 5px margins
       }
-
-      console.log("*** height (new):", newDim.height);
 
       timeline.resize(
         newDim,
@@ -451,15 +430,49 @@ angular.module('lizard-nxt')
       timelineSetsAt = false;
     });
 
-    scope.$watch(State.toString('temporal.start'), function (n, o) {
-      scope.humanReadableStart = UtilService.formatDate(n, true);
-      $('#timeline-header-datetimepicker-start').data("DateTimePicker").date(moment(parseInt(n)));
-    });
+    // anonymous immedeatly called function for.. 
+    // all that has to do with the date-time picker
+    // I (Tom de Boer) did not factor this out as a function because it would isolate the watches from the other watches
+    // My ex collegues did put all the watches together and I do not break this pattern
+    (function () {
+      // translate url-language-code to language-code needed for date-time_pickers in time-line start end:
+      // for example "en" -> "en_GB"    
+      var urlLanguage = UrlService.getDataForState().language;
+      var LanguageLookup = {
+        nl: "nl_NL",
+        en: "en_GB", 
+      };
+      var defaultLanguageCode = "en_GB";
+      var languageCode = LanguageLookup[urlLanguage] || defaultLanguageCode;
+      console.log('[F]=link languageCode ', languageCode)
 
-    scope.$watch(State.toString('temporal.end'), function (n, o) {
-      scope.humanReadableEnd = UtilService.formatDate(n, true);
-      $('#timeline-header-datetimepicker-end').data("DateTimePicker").date(moment(parseInt(n)));
-    });
+
+      $('#timeline-header-datetimepicker-start').datetimepicker({
+        date: moment(State.temporal.start),
+        locale: languageCode,
+      });
+      $('#timeline-header-datetimepicker-end').datetimepicker({
+        date: moment(State.temporal.end),
+        locale: languageCode,
+      });
+
+      $("#timeline-header-datetimepicker-start").on("dp.change", function(e) {
+        var newTimestamp = (new Date(e.date)).getTime();
+        State.temporal.start = newTimestamp;
+      });
+      $("#timeline-header-datetimepicker-end").on("dp.change", function(e) {
+        var newTimestamp = (new Date(e.date)).getTime();
+        State.temporal.end = newTimestamp;
+      });
+
+      scope.$watch(State.toString('temporal.start'), function (n, o) {
+        $('#timeline-header-datetimepicker-start').data("DateTimePicker").date(moment(parseInt(n)));
+      });
+
+      scope.$watch(State.toString('temporal.end'), function (n, o) {
+        $('#timeline-header-datetimepicker-end').data("DateTimePicker").date(moment(parseInt(n)));
+      });
+    }());
 
     /**
      * Round timeState.at when animation stops.
