@@ -111,6 +111,20 @@ angular.module('favourites')
         $window.location = loginUrl.join('/');
       };
 
+      var areExpectedLayersPresent = function (response) {
+        var expectedLayerKeys = response.state.layerKeys;
+        if (expectedLayerKeys !== undefined) {
+          var receivedLayerKeys = _.map(response.state.layers, function (layer) {
+            return layer.type + "$" + layer.uuid;
+          });
+          return _.every(expectedLayerKeys, function (layerKey) {
+            return receivedLayerKeys.indexOf(layerKey) > -1;
+          });
+        } else {
+          return true;
+        }
+      };
+
       this.getFavourite = function(uuid, success, error) {
         // Bind login function tot uuid here, otherwise it is done
         // asynchronously to the last requested favourite.
@@ -119,44 +133,53 @@ angular.module('favourites')
         return Favourites.get(
           {'uuid': uuid},
           function (response) {
-            notie.alert(
-              4,
-              gettextCatalog.getString('Restoring favourite ') +
-              response.name,
-              3
-            );
+            // Check whether all expected layers are actually present in the
+            // favourite (this is not the case when the fav contains layers
+            // the current user isn't authorized to see):
+            if (areExpectedLayersPresent(response)) {
+              notie.alert(
+                4,
+                gettextCatalog.getString('OK, restoring favourite ') + response.name,
+                3
+              );
+            } else {
+              notie.alert(
+                3,
+                gettextCatalog.getString(
+                  "Warning: the favourite has layers that you're not authorized to see"),
+                3
+              );
+            }
             success(response);
           },
           function (err) {
-          if (err.status === 404) { // Removed.
-            notie.alert(
-              3,
-              gettextCatalog.getString('Whoops: favourite has been removed'),
-              3
-            );
-            error();
-          }
-          else if (err.status === 401) { // Not authenticated.
-            notie.confirm(
-              gettextCatalog.getString('You need to be logged in for this' +
-                ' favourite, do you want to log in now?'
-              ),
-              gettextCatalog.getString('Yes'),
-              gettextCatalog.getString('Never mind'),
-              confirmCb,
-              error()
-            );
-          }
-          else {
-            notie.alert( // Something else.
-              3,
-              gettextCatalog.getString(
-                'Ay ay: Lizard could not retrieve your favourite'
-              ),
-              3
-            );
-            error();
-          }
+            if (err.status === 404) { // Removed.
+              notie.alert(
+                3,
+                gettextCatalog.getString('Whoops: favourite has been removed'),
+                3
+              );
+              error();
+            } else if (err.status === 401) { // Not authenticated.
+              notie.confirm(
+                gettextCatalog.getString('You need to be logged in for this' +
+                  ' favourite, do you want to log in now?'
+                ),
+                gettextCatalog.getString('Yes'),
+                gettextCatalog.getString('Never mind'),
+                confirmCb,
+                error()
+              );
+            } else {
+              notie.alert( // Something else.
+                3,
+                gettextCatalog.getString(
+                  'Ay ay: Lizard could not retrieve your favourite'
+                ),
+                3
+              );
+              error();
+            }
         });
       };
 
@@ -176,7 +199,6 @@ angular.module('favourites')
           'name': name,
           'state': createJson(state)
         };
-
         return Favourites.save(data, success, error);
       };
 
@@ -189,9 +211,11 @@ angular.module('favourites')
           dashboardCharts: ChartCompositionService.dashboardCharts,
           composedCharts: ChartCompositionService.composedCharts
         };
+        data.layerKeys = _.map(state.layers, function (layer) {
+          return layer.type + "$" + layer.uuid;
+        });
 
-        var result = JSON.stringify(data);
-        return result;
+        return JSON.stringify(data);
       };
 
       /**
@@ -242,8 +266,9 @@ angular.module('favourites')
        * @param {object} favourite - The favourite to apply with a state.
        */
       this.applyFavourite = function (favourite, isApplyingBootstrap) {
-        if (!isApplyingBootstrap)
+        if (!isApplyingBootstrap) {
           _appliedFavourite = JSON.parse(JSON.stringify(favourite));
+        }
         // Restore assets
         if (typeof favourite.state.assets !== 'undefined') {
           favourite.state.assets.forEach(function (asset) {
@@ -305,13 +330,13 @@ angular.module('favourites')
           ATTRIBUTES = ATTRIBUTES.concat(
             ['temporal.start', 'temporal.end', 'temporal.at', 'temporal.playing']
           );
-        } 
+        }
 
         ATTRIBUTES.forEach(function (key) {
           var favState = _.get(favourite.state, key);
-          
+
           if (!_.isUndefined(favState)) {
-            
+
               _.set(State, key, favState);
           }
         });

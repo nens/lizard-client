@@ -5,14 +5,14 @@
 
   <div class="button-list-container">
     <div class="button-list-item compass"
-     ng-click="menu.enabled = !menu.enabled">
+     ng-click="menu.enabled = !menu.enabled"
+     title="{{ menu.enabled ? 'Close data layers menu' : 'Open data layers menu' | translate }}">
       <span class="fa"
         ng-class="{
           'fa-spinner fa-spin': menu.state.gettingData,
           'fa-caret-left': !menu.state.gettingData && !menu.enabled,
           'fa-caret-right': !menu.state.gettingData && menu.enabled
-        }"
-        title="{{ menu.enabled ? tooltips.closeMenu : tooltips.openMenu }}">
+        }">
       </span>
     </div>
     <datamenu-item
