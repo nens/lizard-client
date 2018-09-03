@@ -4,32 +4,18 @@
      ng-controller="TimeCtrl as timeline">
 
   <div id="timeline-header">
-    <!-- <div style="position:relative;top:-500px"> -->
     <div class='input-group date timeline-header-datetimepicker' id='timeline-header-datetimepicker-start'>
         <input type='text' class="form-control" ng-model="start" ng-change="changeTimelineInputStart()" />
         <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar"></span>
         </span>
     </div>
-    <!-- </div> -->
-    <!-- <div
-      class="timeline-header-indicator"
-      id="timeline-header-start-indicator"
-      ng-bind="humanReadableStart">
-    </div>
-     <div
-      class="timeline-header-indicator"
-      id="timeline-header-end-indicator"
-      ng-bind="humanReadableEnd">
-    </div>  -->
-    <!-- <div style="position:relative;top:-500px"> -->
     <div class='input-group date timeline-header-datetimepicker' id='timeline-header-datetimepicker-end'>
         <input type='text' class="form-control" />
         <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar"></span>
         </span>
     </div>
-    <!-- </div> -->
 </div>
 
   <div class="timeline-wrapper">

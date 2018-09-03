@@ -63,10 +63,6 @@ angular.module('lizard-nxt')
       date: moment(State.temporal.end),
       locale: navigator.language || navigator.userLanguage,
     });
-    // scope.changeTimelineInputStart = function (e) {
-    //   console.log('[F] changeTimelineInputStart ', e)
-    // }
-
 
     $("#timeline-header-datetimepicker-start").on("dp.change", function(e) {
       var newTimestamp = (new Date(e.date)).getTime();
