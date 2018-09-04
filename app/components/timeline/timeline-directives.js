@@ -433,9 +433,11 @@ angular.module('lizard-nxt')
     // I (Tom de Boer) did not factor this out as a function because it would isolate the watches from the other watches
     // My collegues did put all the watches together and I do not intend to break this pattern
     (function () {
-      // translate url-language-code to language-code needed for date-time_pickers in time-line start end:
-      // for example "en" -> "en_GB"    
+      
+      // attachs the date-time-pickers at start + end of the timeframe
       function attachDateTimePickers () {
+        // translate url-language-code to language-code needed for date-time_pickers in time-line start end:
+        // for example "en" -> "en_GB" 
         var urlLanguage = UrlService.getDataForState().language;
         var LanguageLookup = {
           nl: "nl_NL",
@@ -455,7 +457,7 @@ angular.module('lizard-nxt')
       }
       attachDateTimePickers();
      
-
+      // when language changes the date-time-picker should be removed and added again
       scope.$watch(State.toString('language'), function (n, o) {
         $('#timeline-header-datetimepicker-start').data('DateTimePicker').destroy();
         $('#timeline-header-datetimepicker-end').data('DateTimePicker').destroy();
