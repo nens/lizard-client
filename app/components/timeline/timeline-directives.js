@@ -429,9 +429,9 @@ angular.module('lizard-nxt')
     });
 
     // anonymous immedeatly called function for.. 
-    // all that has to do with the date-time picker
+    // all that has to do with the date-time picker min timeline
     // I (Tom de Boer) did not factor this out as a function because it would isolate the watches from the other watches
-    // My ex collegues did put all the watches together and I do not break this pattern
+    // My collegues did put all the watches together and I do not intend to break this pattern
     (function () {
       // translate url-language-code to language-code needed for date-time_pickers in time-line start end:
       // for example "en" -> "en_GB"    
@@ -442,8 +442,6 @@ angular.module('lizard-nxt')
       };
       var defaultLanguageCode = "en_GB";
       var languageCode = LanguageLookup[urlLanguage] || defaultLanguageCode;
-      console.log('[F]=link languageCode ', languageCode)
-
 
       $('#timeline-header-datetimepicker-start').datetimepicker({
         date: moment(State.temporal.start),
@@ -492,7 +490,7 @@ angular.module('lizard-nxt')
         }
         // now update the endTime 
         State.temporal.end = newEndTime;
-        // now update the startTime 
+
         // make sure the timline is updated. 
         // At this time I don't know if this is the best way..
         // or if all the if statements are needed..

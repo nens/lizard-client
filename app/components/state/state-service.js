@@ -252,6 +252,7 @@ function (UtilService, UrlService, gettextCatalog, $http) {
     // Because of the defined properties, don't assign new objects
     // to variables, but mutate the existing ones.
     state.context = 'map';
+    // Tom de Boer added "UrlService.getDataForState().language" here so url will not change to "nl for a brief moment
     state.language = UrlService.getDataForState().language ||'nl';
     state.baselayer = 'topography';
     state.annotations.present = false;
