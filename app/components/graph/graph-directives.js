@@ -108,7 +108,8 @@ angular.module('lizard-nxt')
         (scope.content && scope.content.length && !graphCtrl.graph.contentContainsDataToDisplay(scope.content)) ||
         (scope.data && scope.data.length === 0)
       ) {
-        graphCtrl.graph.setDisplayTextChartBody("No data available in this timeframe");
+        var noDataInTimeFrameString = angular.element('#translation_no_data_avalable_timeframe').text();
+        graphCtrl.graph.setDisplayTextChartBody(noDataInTimeFrameString);
       } 
     };
     

@@ -1,4 +1,19 @@
 <div class="graph-svg-wrapper">
   <span ng-bind="title" ng-style="{'left': 10 + dimensions.padding.left + 'px'}"></span>
   <svg></svg>
+  
+  <!-- 
+    Following span is needed for transiflex to mine all strings to be translated.
+    Since this string is dynamicly set inside the svg with d3 it would normally not be translated
+    This string is alo retrieved from here after it is translated with angular.element('#translation_no_data_avalable_timeframe')
+    to be used with d3.
+    In short: this span below should never be visible during runtime, but will be used to retrieve the translation both during build and runtime. 
+-->
+  <span 
+    id="translation_no_data_avalable_timeframe" 
+    style="display:none;" 
+    translate 
+  >
+    No data available in this timeframe
+  </span>
 </div>
