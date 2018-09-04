@@ -2,8 +2,8 @@
  * Lizard-client global state object.
  */
 angular.module('global-state').service('State',
-['UtilService', 'gettextCatalog', '$http',
-function (UtilService, gettextCatalog, $http) {
+['UtilService', 'UrlService', 'gettextCatalog', '$http',
+function (UtilService, UrlService, gettextCatalog, $http) {
 
   var CURRENT_STATE_VERSION = 2;
   /* State version change log -- if something about State changes,
@@ -252,7 +252,8 @@ function (UtilService, gettextCatalog, $http) {
     // Because of the defined properties, don't assign new objects
     // to variables, but mutate the existing ones.
     state.context = 'map';
-    state.language = 'nl';
+    // Tom de Boer added "UrlService.getDataForState().language" here so url will not change to "nl for a brief moment
+    state.language = UrlService.getDataForState().language ||'en';
     state.baselayer = 'topography';
     state.annotations.present = false;
     state.annotations.active = false;

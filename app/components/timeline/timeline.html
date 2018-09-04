@@ -4,17 +4,19 @@
      ng-controller="TimeCtrl as timeline">
 
   <div id="timeline-header">
-    <div
-      class="timeline-header-indicator"
-      id="timeline-header-start-indicator"
-      ng-bind="humanReadableStart">
+    <div class='input-group date timeline-header-datetimepicker' id='timeline-header-datetimepicker-start'>
+        <input type='text' class="form-control"/>
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+        </span>
     </div>
-     <div
-      class="timeline-header-indicator"
-      id="timeline-header-end-indicator"
-      ng-bind="humanReadableEnd">
+    <div class='input-group date timeline-header-datetimepicker' id='timeline-header-datetimepicker-end'>
+        <input type='text' class="form-control" />
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+        </span>
     </div>
-  </div>
+</div>
 
   <div class="timeline-wrapper">
     <div class="time-controls" id="time-controls" ng-if="timeline.animatable">

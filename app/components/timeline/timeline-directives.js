@@ -19,6 +19,7 @@ angular.module('lizard-nxt')
               "VectorService",
               "DataService",
               "EventAggregateService",
+              "UrlService",
               "State",
               function ($q,
                         $timeout,
@@ -29,6 +30,7 @@ angular.module('lizard-nxt')
                         VectorService,
                         DataService,
                         EventAggregateService,
+                        UrlService,
                         State) {
 
   var link = function (scope, element, attrs, timelineCtrl) {
@@ -61,9 +63,6 @@ angular.module('lizard-nxt')
     // and triggers a digest loop if they changed.
     var oldStart = State.temporal.start;
     var oldEnd = State.temporal.end;
-
-    scope.humanReadableStart = UtilService.formatDate(start, true);
-    scope.humanReadableEnd = UtilService.formatDate(end, true);
 
     var interaction = {
 
@@ -429,13 +428,106 @@ angular.module('lizard-nxt')
       timelineSetsAt = false;
     });
 
-    scope.$watch(State.toString('temporal.start'), function (n, o) {
-      scope.humanReadableStart = UtilService.formatDate(n, true);
-    });
+    // anonymous immedeatly called function for.. 
+    // all that has to do with the date-time picker min timeline
+    // I (Tom de Boer) did not factor this out as a function because it would isolate the watches from the other watches
+    // My collegues did put all the watches together and I do not intend to break this pattern
+    (function () {
+      
+      // attachs the date-time-pickers at start + end of the timeframe
+      function attachDateTimePickers () {
+        // translate url-language-code to language-code needed for date-time_pickers in time-line start end:
+        // for example "en" -> "en_GB" 
+        var urlLanguage = UrlService.getDataForState().language;
+        var LanguageLookup = {
+          nl: "nl_NL",
+          en: "en_GB", 
+        };
+        var defaultLanguageCode = "en_GB";
+        var languageCode = LanguageLookup[urlLanguage] || defaultLanguageCode;
+  
+        $('#timeline-header-datetimepicker-start').datetimepicker({
+          date: moment(State.temporal.start),
+          locale: languageCode,
+        });
+        $('#timeline-header-datetimepicker-end').datetimepicker({
+          date: moment(State.temporal.end),
+          locale: languageCode,
+        });
+      }
+      attachDateTimePickers();
+     
+      // when language changes the date-time-picker should be removed and added again
+      scope.$watch(State.toString('language'), function (n, o) {
+        $('#timeline-header-datetimepicker-start').data('DateTimePicker').destroy();
+        $('#timeline-header-datetimepicker-end').data('DateTimePicker').destroy();
+        attachDateTimePickers();
+      });
 
-    scope.$watch(State.toString('temporal.end'), function (n, o) {
-      scope.humanReadableEnd = UtilService.formatDate(n, true);
-    });
+      $("#timeline-header-datetimepicker-start").on("dp.change", function(e) {
+        var newStartTime = (new Date(e.date)).getTime();
+
+        // if the new startTime is after the end time then also change the endtime:
+        // in that case keep the difference between start and endtime to the same value as it was before 
+        if (newStartTime > State.temporal.end) {
+          var originalDifferenceBetweenStartEnd = State.temporal.end - State.temporal.start;
+          State.temporal.end = newStartTime + originalDifferenceBetweenStartEnd;
+        }
+        // now update the startTime 
+        State.temporal.start = newStartTime;
+
+        // make sure the timline is updated. 
+        // At this time I don't know if this is the best way..
+        // or if all the if statements are needed..
+        // I just noticed that timeline did not get rerendered.. 
+        // and thus copied this code from the watcher temporal.timelineMoving
+        if (!timelineSetsTime) {
+          timeline.zoomTo(
+            State.temporal.start,
+            State.temporal.end,
+            State.temporal.aggWindow
+          );
+          getTimeLineData();
+        }
+        timelineSetsTime = false;
+      });
+      $("#timeline-header-datetimepicker-end").on("dp.change", function(e) {
+        var newEndTime = (new Date(e.date)).getTime();
+        
+        // if the new endTime is before the start time then also change the starttime:
+        // in that case keep the difference between start and endtime to the same value as it was before 
+        if (newEndTime < State.temporal.start) {
+          var originalDifferenceBetweenStartEnd = State.temporal.end - State.temporal.start;
+          State.temporal.start = newEndTime - originalDifferenceBetweenStartEnd;
+        }
+        // now update the endTime 
+        State.temporal.end = newEndTime;
+
+        // make sure the timline is updated. 
+        // At this time I don't know if this is the best way..
+        // or if all the if statements are needed..
+        // I just noticed that timeline did not get rerendered.. 
+        // and thus copied this code from the watcher temporal.timelineMoving
+        if (!timelineSetsTime) {
+          timeline.zoomTo(
+            State.temporal.start,
+            State.temporal.end,
+            State.temporal.aggWindow
+          );
+          getTimeLineData();
+        }
+        timelineSetsTime = false;
+      });
+
+      scope.$watch(State.toString('temporal.start'), function (n, o) {
+        $('#timeline-header-datetimepicker-start').data("DateTimePicker").date(moment(parseInt(n)));
+      });
+
+      scope.$watch(State.toString('temporal.end'), function (n, o) {
+        $('#timeline-header-datetimepicker-end').data("DateTimePicker").date(moment(parseInt(n)));
+      });
+      
+    }());
 
     /**
      * Round timeState.at when animation stops.
