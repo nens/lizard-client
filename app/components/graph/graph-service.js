@@ -284,7 +284,6 @@ angular.module('lizard-nxt')
         .attr("x", "50%")
         .attr("y", "50%")
         .attr("text-anchor", "middle")
-        .attr("translate", "")
         .text(text);
     } 
   };
