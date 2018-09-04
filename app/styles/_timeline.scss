@@ -321,22 +321,23 @@
   justify-content: space-between;
 }
 
-.timeline-header-indicator {
-  background-color: rgba($silver, 0.9);
-  width: 140px;
-  line-height: 24px;
-  font-size: 12px;
-  margin-bottom: -2px;
-  color: #2c3e50;
-  text-align: center;
+.timeline-header-datetimepicker {
+  width: 266px;
+  position: relative;
+  bottom: 12px;
 }
 
-#timeline-header-start-indicator {
-  border-radius: 0 5px 0 0;
+#timeline-header-datetimepicker-start input {
+  border-radius: 0px;
 }
-
-#timeline-header-end-indicator {
-  border-radius: 5px 0 0 0;
+#timeline-header-datetimepicker-start span {
+  border-radius: 0px;
+  border-top-right-radius: 5px;
 }
-
-
+#timeline-header-datetimepicker-end input {
+  border-radius: 0px;
+  border-top-left-radius: 5px;
+}
+#timeline-header-datetimepicker-end span {
+  border-radius: 0px;
+}

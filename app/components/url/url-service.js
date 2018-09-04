@@ -213,7 +213,7 @@ angular.module('lizard-nxt')
             .slice(4) // Cut off day name
             .split(' ') // Replace spaces by hyphens
             .join(',');
-          var intervalString = startDateString + '-' + endDateString
+          var intervalString = startDateString + '-' + endDateString;
           LocationGetterSetter.setUrlValue(
             state.timeState.part,
             state.timeState.index,

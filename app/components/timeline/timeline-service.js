@@ -713,9 +713,7 @@ angular.module('lizard-nxt')
 
 
     var getBarHeight = function (d) {
-      console.log("[F] getBarHeight");
       var barHeight = d[1] ? yScale(d[1]) : 0;
-      console.log("*** barHeight =", barHeight);
       return barHeight;
     };
 
