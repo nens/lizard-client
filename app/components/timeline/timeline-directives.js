@@ -435,21 +435,31 @@ angular.module('lizard-nxt')
     (function () {
       // translate url-language-code to language-code needed for date-time_pickers in time-line start end:
       // for example "en" -> "en_GB"    
-      var urlLanguage = UrlService.getDataForState().language;
-      var LanguageLookup = {
-        nl: "nl_NL",
-        en: "en_GB", 
-      };
-      var defaultLanguageCode = "en_GB";
-      var languageCode = LanguageLookup[urlLanguage] || defaultLanguageCode;
+      function attachDateTimePickers () {
+        var urlLanguage = UrlService.getDataForState().language;
+        var LanguageLookup = {
+          nl: "nl_NL",
+          en: "en_GB", 
+        };
+        var defaultLanguageCode = "en_GB";
+        var languageCode = LanguageLookup[urlLanguage] || defaultLanguageCode;
+  
+        $('#timeline-header-datetimepicker-start').datetimepicker({
+          date: moment(State.temporal.start),
+          locale: languageCode,
+        });
+        $('#timeline-header-datetimepicker-end').datetimepicker({
+          date: moment(State.temporal.end),
+          locale: languageCode,
+        });
+      }
+      attachDateTimePickers();
+     
 
-      $('#timeline-header-datetimepicker-start').datetimepicker({
-        date: moment(State.temporal.start),
-        locale: languageCode,
-      });
-      $('#timeline-header-datetimepicker-end').datetimepicker({
-        date: moment(State.temporal.end),
-        locale: languageCode,
+      scope.$watch(State.toString('language'), function (n, o) {
+        $('#timeline-header-datetimepicker-start').data('DateTimePicker').destroy();
+        $('#timeline-header-datetimepicker-end').data('DateTimePicker').destroy();
+        attachDateTimePickers();
       });
 
       $("#timeline-header-datetimepicker-start").on("dp.change", function(e) {
@@ -514,6 +524,7 @@ angular.module('lizard-nxt')
       scope.$watch(State.toString('temporal.end'), function (n, o) {
         $('#timeline-header-datetimepicker-end').data("DateTimePicker").date(moment(parseInt(n)));
       });
+      
     }());
 
     /**
