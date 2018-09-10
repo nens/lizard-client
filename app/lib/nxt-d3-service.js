@@ -586,7 +586,7 @@ angular.module('lizard-nxt')
 
   createElementForAxis = function (svg, id, dimensions, y) {
     var className = y ? 'y axis': 'x axis',
-    transform = y ? 0: NxtD3.prototype._getHeight(dimensions);// + 20;
+    transform = y ? 0: NxtD3.prototype._getHeight(dimensions);
     return svg.select('g').append('g')
       .attr('class', className)
       .attr('id', id)
