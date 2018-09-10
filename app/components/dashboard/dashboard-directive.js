@@ -67,7 +67,8 @@ angular.module('dashboard')
       };
 
       var getGraphHeight = function (element, nGraphs) {
-        return (element.height() - ROW_BOTTOM_MARGIN * nGraphs) / nGraphs;
+        // substract 30 from the element.height to give space to the date-timepickers left and right of the timeline
+        return ((element.height()- 30 ) - ROW_BOTTOM_MARGIN * nGraphs) / nGraphs;
       };
 
       /**

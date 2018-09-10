@@ -36,8 +36,6 @@ angular.module('lizard-nxt')
    * @param {object} xDomain - override the domain for the graphs.
    */
   function Graph(element, dimensions, xDomain) {
-    console.log('[F] Graph');
-    dimensions.height = dimensions.height - 30;
     NxtD3.call(this, element, dimensions, xDomain);
     this._svg = this._createDrawingArea();
     this._containers = [];
@@ -48,8 +46,6 @@ angular.module('lizard-nxt')
   });
 
   Graph.prototype.resize = function (newDim) {
-    console.log('[F] Graph.prototype.resize ');
-    newDim.height = newDim.height - 30;
     NxtD3.prototype.resize.call(this, newDim);
     this._svg = this._createDrawingArea();
     this._svg.selectAll('.axis').remove();
