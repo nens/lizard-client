@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.18.0"></a>
+# [4.18.0](https://github.com/nens/lizard-client/compare/v4.17.33...v4.18.0) (2018-09-18)
+
+
+### Bug Fixes
+
+* **selected for asset:** remove selected for asset if asset gets deselected ([f3a75a0](https://github.com/nens/lizard-client/commit/f3a75a0))
+* **url:** url does not flicker slash on zoom ([180b587](https://github.com/nens/lizard-client/commit/180b587))
+
+
+### Features
+
+* **favourites:** disable new fav button if name not unique ([b034fd1](https://github.com/nens/lizard-client/commit/b034fd1))
+* **tooltips hidden features:** added tooltips for hidden features. ([bc658f4](https://github.com/nens/lizard-client/commit/bc658f4))
+
+
+
 <a name="4.17.33"></a>
 ## [4.17.33](https://github.com/nens/lizard-client/compare/v4.17.30...v4.17.33) (2018-08-02)
 
