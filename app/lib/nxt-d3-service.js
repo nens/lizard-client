@@ -36,7 +36,7 @@ angular.module('lizard-nxt')
   function NxtD3(element, dimensions, xDomain) {
     this.dimensions = angular.copy(dimensions);
     this._xDomain = xDomain;
-    this._svg = createCanvas(element, this.dimensions);
+    this._svg = createCanvas(this, element, this.dimensions);
   }
 
   NxtD3.prototype = {
@@ -255,7 +255,7 @@ angular.module('lizard-nxt')
      */
     resize: function (dimensions) {
       this.dimensions = angular.extend(this.dimensions, dimensions);
-      this._svg = resizeCanvas(this._svg, this.dimensions);
+      this._svg = resizeCanvas(this, this._svg, this.dimensions);
       this._svg = this._createDrawingArea(this._svg, this.dimensions);
     },
 
@@ -550,10 +550,9 @@ angular.module('lizard-nxt')
    *                              values in px.
    * @return {object} svg         svg.
    */
-  createCanvas = function (element, dimensions) {
-
+  createCanvas = function (thisCurrentObj, element, dimensions) {
     var width = NxtD3.prototype._getWidth(dimensions),
-        height = NxtD3.prototype._getHeight(dimensions),
+        height = thisCurrentObj._getHeight(dimensions),
         svg = d3.select(element);
 
     // Create the svg as big as the dimensions
@@ -570,9 +569,9 @@ angular.module('lizard-nxt')
     return svg;
   };
 
-  resizeCanvas = function (svg, dimensions) {
+  resizeCanvas = function (thisCurrentObj, svg, dimensions) {
     var width = NxtD3.prototype._getWidth(dimensions),
-    height = NxtD3.prototype._getHeight(dimensions);
+      height = thisCurrentObj._getHeight(dimensions);
     // Create the svg as big as the dimensions
     svg.attr('width', dimensions.width)
       .attr('height', dimensions.height)

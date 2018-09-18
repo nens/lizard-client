@@ -229,8 +229,11 @@ angular.module('lizard-nxt')
     resize: {
       value: function (newDimensions, timestamp, interval, nEvents) {
         var oldDimensions = angular.copy(this.dimensions);
+        // resize is also specified upon the ancestor #inheritage hell
+        // inside NxtD3.prototype.resize this.dimensions will be set from newDimensions
+        NxtD3.prototype.resize.call(this, newDimensions);
         this.updateElements(oldDimensions, timestamp, interval);
-        this._svg = resizeTimelineCanvas(this._svg, oldDimensions, this.dimensions);
+        this._svg = resizeTimelineCanvas(this, this._svg, oldDimensions, this.dimensions);        
         ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
         xScale.range([0, newDimensions.width - newDimensions.padding.right]);
         drawTimelineAxes(this._svg, xScale, newDimensions);
@@ -574,9 +577,9 @@ angular.module('lizard-nxt')
    *  bottom, left and right padding. All values in px.
    *  @param {object} newDims - new dimensions, same structure as oldDims.
    */
-  var resizeTimelineCanvas = function (svg, oldDims, newDims) {
+  var resizeTimelineCanvas = function (thisCurrentObj, svg, oldDims, newDims) {
     var width = Timeline.prototype._getWidth(newDims),
-    height = Timeline.prototype._getHeight(newDims);
+    height = thisCurrentObj._getHeight(newDims);
     if (newDims.height < oldDims.height) {
       svg.transition()
         .delay(Timeline.prototype.transTime)

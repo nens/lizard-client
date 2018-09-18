@@ -446,11 +446,11 @@ angular.module('lizard-nxt')
         var defaultLanguageCode = "en_GB";
         var languageCode = LanguageLookup[urlLanguage] || defaultLanguageCode;
   
-        $('#timeline-header-datetimepicker-start').datetimepicker({
+        $('#timeline-header-datetimepicker-start', element).datetimepicker({
           date: moment(State.temporal.start),
           locale: languageCode,
         });
-        $('#timeline-header-datetimepicker-end').datetimepicker({
+        $('#timeline-header-datetimepicker-end', element).datetimepicker({
           date: moment(State.temporal.end),
           locale: languageCode,
         });
@@ -459,12 +459,12 @@ angular.module('lizard-nxt')
      
       // when language changes the date-time-picker should be removed and added again
       scope.$watch(State.toString('language'), function (n, o) {
-        $('#timeline-header-datetimepicker-start').data('DateTimePicker').destroy();
-        $('#timeline-header-datetimepicker-end').data('DateTimePicker').destroy();
+        $('#timeline-header-datetimepicker-start', element).data('DateTimePicker').destroy();
+        $('#timeline-header-datetimepicker-end', element).data('DateTimePicker').destroy();
         attachDateTimePickers();
       });
 
-      $("#timeline-header-datetimepicker-start").on("dp.change", function(e) {
+      $("#timeline-header-datetimepicker-start", element).on("dp.change", function(e) {
         var newStartTime = (new Date(e.date)).getTime();
 
         // if the new startTime is after the end time then also change the endtime:
@@ -491,7 +491,7 @@ angular.module('lizard-nxt')
         }
         timelineSetsTime = false;
       });
-      $("#timeline-header-datetimepicker-end").on("dp.change", function(e) {
+      $("#timeline-header-datetimepicker-end", element).on("dp.change", function(e) {
         var newEndTime = (new Date(e.date)).getTime();
         
         // if the new endTime is before the start time then also change the starttime:
@@ -520,11 +520,11 @@ angular.module('lizard-nxt')
       });
 
       scope.$watch(State.toString('temporal.start'), function (n, o) {
-        $('#timeline-header-datetimepicker-start').data("DateTimePicker").date(moment(parseInt(n)));
+        $('#timeline-header-datetimepicker-start', element).data("DateTimePicker").date(moment(parseInt(n)));
       });
 
       scope.$watch(State.toString('temporal.end'), function (n, o) {
-        $('#timeline-header-datetimepicker-end').data("DateTimePicker").date(moment(parseInt(n)));
+        $('#timeline-header-datetimepicker-end', element).data("DateTimePicker").date(moment(parseInt(n)));
       });
       
     }());
@@ -689,7 +689,6 @@ angular.module('lizard-nxt')
     window.addEventListener('load', getTimeLineData);
 
     var resize = function () {
-      console.log("[F] resize");
       var newWidth = getRequiredTimelineWidth(element);
       timeline.dimensions.width = newWidth;
 
