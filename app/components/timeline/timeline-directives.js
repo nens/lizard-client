@@ -448,13 +448,11 @@ angular.module('lizard-nxt')
   
         $('#timeline-header-datetimepicker-start', element).datetimepicker({
           date: moment(State.temporal.start),
-          //locale: languageCode,
-          locale: "en_GB",
+          locale: languageCode,
         });
         $('#timeline-header-datetimepicker-end', element).datetimepicker({
           date: moment(State.temporal.end),
-          // locale: languageCode,
-          locale: "en_GB",
+          locale: languageCode,
         });
       }
       attachDateTimePickers();
