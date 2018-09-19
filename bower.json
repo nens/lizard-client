@@ -51,6 +51,9 @@
   "overrides": {
     "leaflet.markercluster": {
       "main": "dist/leaflet.markercluster.js"
+    },
+    "moment": {
+      "main": "min/moment-with-locales.js"
     }
   },
   "appPath": "app",

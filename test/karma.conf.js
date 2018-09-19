@@ -38,7 +38,7 @@ module.exports = function(config) {
       'vendor/leaflet/dist/leaflet-src.js',
       'vendor/leaflet.markercluster/dist/leaflet.markercluster.js',
       'vendor/lodash/lodash.js',
-      'vendor/moment/moment.js',
+      'vendor/moment/min/moment-with-locales.js',
       'vendor/ng-csv/build/ng-csv.min.js',
       'vendor/notie/dist/notie.js',
       'vendor/perfect-scrollbar/js/perfect-scrollbar.js',
