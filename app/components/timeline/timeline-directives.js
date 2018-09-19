@@ -449,11 +449,28 @@ angular.module('lizard-nxt')
         $('#timeline-header-datetimepicker-start', element).datetimepicker({
           date: moment(State.temporal.start),
           locale: languageCode,
+          ignoreReadonly: true,
+          allowInputToggle: true,
         });
+        $("#timeline-header-datetimepicker-start input", element).attr( 'readOnly' , 'true' );
+        // following code doesnot work because
+        // toggle does not open the datepicker
+        // show and hide work but there is no way to know when to show and when to hide
+        // a workaround would be to save the state in a javascript variable, but this will probably go out of sync
+        // For now we thus use the allowInputToggle property but this only opens the datepicker when clicking on the input field, it does not hide it
+        // $('#timeline-header-datetimepicker-start input').click(function(event){
+        //   //$('#timeline-header-datetimepicker-start ').data("DateTimePicker").show();
+        //   // $('#timeline-header-datetimepicker-start ').data("DateTimePicker").toggle();
+        //   $('#timeline-header-datetimepicker-start ').data("DateTimePicker").hide();
+        // });
+
         $('#timeline-header-datetimepicker-end', element).datetimepicker({
           date: moment(State.temporal.end),
           locale: languageCode,
+          ignoreReadonly: true,
+          allowInputToggle: true,
         });
+        $("#timeline-header-datetimepicker-end input", element).attr( 'readOnly' , 'true' );
       }
       attachDateTimePickers();
      
