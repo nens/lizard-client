@@ -22,7 +22,8 @@
 #omnibox,
 .layer-menu-container,
 .ribbon {
-    z-index: 0;
+    // commented out on 2018-sept-20 to make sure time picker of timeline goes to top, assuming nobody uses IE below 9
+    // z-index: 0;
 }
 
 #mymodal {
