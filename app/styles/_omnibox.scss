@@ -639,6 +639,7 @@
   /* float: right; not sure what's wrong but stuff's weird on staging*/
   position: relative;
   top: -1px;
+  // commented out on 2018-sept-20 to make sure time picker of timeline goes to top z-index seems not needed
   // z-index: 9999;
   margin-bottom: 5px;
 }
