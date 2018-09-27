@@ -42,7 +42,7 @@ angular.module('omnibox').directive('dbAssetCard', [
         scope.toggleChart = DashboardChartService.toggleChart;
         scope.getOrCreateChart = DashboardChartService.getOrCreateChart;
 
-        this.showTimeseriesSelectedInStateSelectedForAsset(scope);
+        // this.showTimeseriesSelectedInStateSelectedForAsset(scope);
 
         scope.toggleColorPicker = function (tsUuid) {
           if (scope.colorPickersSettings[tsUuid]) {
