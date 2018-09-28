@@ -42,7 +42,9 @@ angular.module('omnibox').directive('dbAssetCard', [
         scope.toggleChart = DashboardChartService.toggleChart;
         scope.getOrCreateChart = DashboardChartService.getOrCreateChart;
 
-        this.showTimeseriesSelectedInStateSelectedForAsset(scope);
+        // this is for now commented out because of issue:
+        //  https://nelen-schuurmans.atlassian.net/secure/RapidBoard.jspa?rapidView=16&projectKey=PROJ&modal=detail&selectedIssue=PROJ-601 
+        // this.showTimeseriesSelectedInStateSelectedForAsset(scope);
 
         scope.toggleColorPicker = function (tsUuid) {
           if (scope.colorPickersSettings[tsUuid]) {
@@ -117,7 +119,8 @@ angular.module('omnibox').directive('dbAssetCard', [
         });
       },
 
-
+      // the call to this function is for now commented out because:
+      // https://nelen-schuurmans.atlassian.net/secure/RapidBoard.jspa?rapidView=16&projectKey=PROJ&modal=detail&selectedIssue=PROJ-601
       // function to select the timeseries that is also in selectedForAsset state variable.
       // When a user switches from map to charts context then the timeseries for the chart will immedeatly be shown.
       // The right timeseries is selected based on state.selectedForAsset[assetKey].timeseries in the global state object
