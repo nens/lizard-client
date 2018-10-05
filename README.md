@@ -214,13 +214,13 @@ Adjust the variables to reflect your layout. E.g. fill in build_user: `build_use
 Deploy to staging:
 
 ```sh
-ansible-playbook -i deploy/hosts --limit=staging -K deploy/deploy.yml --extra-vars="sitename=staging.nxt.lizard.net version=v2.7.1"
+ansible-playbook -i deploy/hosts --limit=staging deploy/deploy.yml --extra-vars="sitename=staging.nxt.lizard.net version=v2.7.1"
 ```
 
 Deploy to production:
 
 ```sh
-ansible-playbook -i deploy/production_hosts -K deploy/deploy.yml --extra-vars="sitename=nxt.lizard.net version=v2.7.1"
+ansible-playbook -i deploy/production_hosts --limit=webservers deploy/deploy.yml --extra-vars="sitename=nxt.lizard.net version=v2.7.1"
 ```
 
 _NOTE: When deploying to a remote server for the first time it is required to
