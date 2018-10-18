@@ -37,7 +37,7 @@
     "grunt-autoprefixer": "^3.0.3",
     "grunt-cli": "^1.2.0",
     "grunt-contrib-jshint": "^0.10.0",
-    "grunt-html2js": "~0.2.9",
+    "grunt-html2js": "^0.5.1",
     "grunt-karma": "~0.12",
     "grunt-newer": "^0.7.0",
     "grunt-sass": "^2.0.0",
@@ -51,7 +51,8 @@
     "karma-phantomjs-launcher": "~1.0.0",
     "load-grunt-tasks": "^0.4.0",
     "mime": "^2.3.1",
-    "phantomjs-prebuilt": "2.1.13"
+    "phantomjs-prebuilt": "^2.1.16",
+    "request": "^2.88.0"
   },
   "optionalDependencies": {
     "chalk": "^1.1.1",
@@ -71,8 +72,7 @@
     "grunt-text-replace": "~0.3.12",
     "grunt-tx-source-upload": "^1.0.1",
     "grunt-usemin": "^2.1.1",
-    "prompt": "^1.0.0",
-    "request": "^2.63.0"
+    "prompt": "^1.0.0"
   },
   "engines": {
     "node": ">=0.10.0"
