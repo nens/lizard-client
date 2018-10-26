@@ -42,7 +42,28 @@ angular.module('map')
         if (service.annotationsLayer) {
           service.annotationsLayer.remove(service._map);
         }
-        service._map.remove();
+
+        // https://nelen-schuurmans.atlassian.net/browse/PROJ-662
+        // the error is that both the charts and map button in the header menu are shown 
+        // when toggling between them really fast.
+        // often the charts button is shown a many times.
+        // Pausing the browser on exceptions and following the trace shows 
+        // that leaflet could not remove the map since it was not there.
+        // unclear why map is not there. Maybe app is to slow?
+        // Anyway, since the app raises error and crashes "service._map.remove();"
+        // wrapping the call in try catch block resolves the error of showing charts button many times:
+        // it is now removed by the remaining execution of the program.
+        // But now what seems to be the root cause becomes visible:
+        // the map is sometimes not shown when toggling very fast from map to chart.
+        // Good part is that toggling once more now does resolve this issue.
+        // This try catch block is thus an improvement but no 100% fix
+        try {
+          service._map.remove();
+        }
+        catch(err) {
+          console.error('[E] error while removing leaflet map', err);
+        }
+        // service._map.remove();
       },
 
       mapLayers: [],
