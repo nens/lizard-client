@@ -49,7 +49,7 @@
         <li>
           <a ng-click="transitionToContext('map')"
              ng-if="'Map' === getContextComplement()"
-             title="{{ 'Switch to ' + getContextComplement() | translate }}"
+             title="{{ 'Switch to Map' | translate }}"
              target="_blank"
              accesskey="d"
              href="">
@@ -62,8 +62,8 @@
         </li>
         <li>
           <a ng-click="transitionToContext('charts')"
-             ng-if="'Map' !== getContextComplement()"
-             title="{{ 'Switch to ' + getContextComplement() | translate }}"
+             ng-if="'Charts' === getContextComplement()"
+             title="{{ 'Switch to Charts' | translate }}"
              target="_blank"
              accesskey="d"
              href="">
