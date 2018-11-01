@@ -90,7 +90,8 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
         start: timeState.start.getTime(),
         end: timeState.end.getTime(),
         format: ASYNC_FORMAT,
-        async: 'true'
+        async: 'true',
+	interactive: true
       };
 
       if (RTSLService.get()) {

@@ -6,7 +6,8 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
   var DEFAULT_PARAMS = {
     format: "csv",
     srs: "EPSG:4326",
-    async: true
+    async: true,
+    interactive: true
   };
 
   var EXPORT_START_MESSAGE =
