@@ -109,8 +109,6 @@ angular.module('map')
             },
             function () {
               State.assets = [];
-              // TODO: this now gives an error if there are no assets on
-              // the new lalng.
               MapService._setGeomFromUtfToState(e.latlng);
             }
           );
