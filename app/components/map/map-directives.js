@@ -93,27 +93,8 @@ angular.module('map')
         * @param  {event}  e Leaflet event object
         */
       var _clicked = function (e) {
-        if (State.box.type === 'point') {
-          // Only update the state for point, instead of redrawing the label
-          // This makes sure that no extra label will be drawn if the user
-          // clicked on the same asset twice (or even more often) in a row.
-          // Changing the state (clicking on ANOTHER point)
-          // will remove the current label and add a new label on the new point.
-          MapService.getDataFromUtfLayers(
-            e.latlng,
-            function (data) {
-              // Create one entry in state.assets.
-              var assetId = data.entity_name + '$' + data.id;
-              State.assets = [assetId];
-              State.geometries = [];
-            },
-            function () {
-              State.assets = [];
-              MapService._setGeomFromUtfToState(e.latlng);
-            }
-          );
-        }
-        if (State.box.type === 'multi-point'
+        if (State.box.type === 'point'
+          ||State.box.type === 'multi-point'
           || State.box.type === 'line') {
           MapService.spatialSelect(e.latlng);
         }
