@@ -51,16 +51,16 @@ angular.module('omnibox')
           );
 
           if (State.box.type.indexOf('point' > -1)) {
-            // Remove old label before adding a new label.
-            // This is done to make sure that when a user clicks multiple
-            // times on a feature in single select ('point'), the previous
-            // drawn label will be removed.
-            removeOldLabel = ClickFeedbackService.removeLabel(asset);
-            labelId = ClickFeedbackService.drawLabel(
-              MapService,
-              feature,
-              asset
-            );
+            // Only draw a new label if the asset clicked on in point mode
+            // is not already drawn.
+            var assetKey = asset.entity_name + '$' + asset.id;
+            if (!document.getElementById('label-' + assetKey)) {
+              labelId = ClickFeedbackService.drawLabel(
+                MapService,
+                feature,
+                asset
+              );
+            }
           }
 
           ClickFeedbackService.vibrateOnce(feature, clickId);
