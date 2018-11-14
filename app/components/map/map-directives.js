@@ -94,7 +94,7 @@ angular.module('map')
         */
       var _clicked = function (e) {
         if (State.box.type === 'point'
-          ||State.box.type === 'multi-point'
+          || State.box.type === 'multi-point'
           || State.box.type === 'line') {
           MapService.spatialSelect(e.latlng);
         }
