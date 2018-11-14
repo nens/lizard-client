@@ -21,7 +21,7 @@ angular.module('omnibox')
       scope.getLayerByUuid = State.getLayerByUuid;
       scope.isRainyLayer = State.isRainyLayer;
 
-      var clickId, labelId;
+      var clickId, labelId, removeOldLabel;
 
       var removeAsset = function (id) {
         ClickFeedbackService.removeClickFromClickLayer(id);
@@ -51,6 +51,11 @@ angular.module('omnibox')
           );
 
           if (State.box.type.indexOf('point' > -1)) {
+            // Remove old label before adding a new label.
+            // This is done to make sure that when a user clicks multiple
+            // times on a feature in single select ('point'), the previous
+            // drawn label will be removed.
+            removeOldLabel = ClickFeedbackService.removeLabel(asset);
             labelId = ClickFeedbackService.drawLabel(
               MapService,
               feature,

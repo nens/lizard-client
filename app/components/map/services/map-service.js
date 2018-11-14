@@ -216,11 +216,7 @@ angular.module('map')
 
       _setAssetOrGeomFromUtfOnState: function (latLng) {
         ChartCompositionService.makeEmpty();
-        // Don't reset the State.assets. Labels for single point will not be
-        // removed when this is done. This results in multiple labels being
-        // drawn over each other when a user clicks on the same asset
-        // multiple times.
-        // State.assets = [];
+        State.assets = [];
         State.geometries = [];
         service.getDataFromUtfLayers(
           latLng,
