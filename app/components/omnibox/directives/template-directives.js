@@ -51,8 +51,8 @@ angular.module('omnibox')
           );
 
           if (State.box.type.indexOf('point' > -1)) {
-            // Only draw a new label if the asset clicked on in point mode
-            // is not already drawn.
+            // Only draw a new label if the asset clicked on
+            // does not already have a label.
             var assetKey = asset.entity_name + '$' + asset.id;
             if (!document.getElementById('label-' + assetKey)) {
               labelId = ClickFeedbackService.drawLabel(
