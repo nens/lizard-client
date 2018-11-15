@@ -21,7 +21,7 @@ angular.module('omnibox')
       scope.getLayerByUuid = State.getLayerByUuid;
       scope.isRainyLayer = State.isRainyLayer;
 
-      var clickId, labelId, removeOldLabel;
+      var clickId, labelId;
 
       var removeAsset = function (id) {
         ClickFeedbackService.removeClickFromClickLayer(id);
