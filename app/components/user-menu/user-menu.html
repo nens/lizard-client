@@ -47,19 +47,28 @@
           </a>
         </li>
         <li>
-          <a ng-click="toggleDashboard()"
-             title="{{ 'Switch to ' + getContextComplement() | translate }}"
+          <a ng-click="transitionToContext('map')"
+             ng-if="'Map' === getContextComplement()"
+             title="{{ 'Switch to Map' | translate }}"
              target="_blank"
              accesskey="d"
              href="">
             <i class="fa {{ getContextComplementIcon() }}"></i>
             <span
-              ng-if="'Map' === getContextComplement()"
               translate>
                 Map
             </span>
+          </a>
+        </li>
+        <li>
+          <a ng-click="transitionToContext('charts')"
+             ng-if="'Charts' === getContextComplement()"
+             title="{{ 'Switch to Charts' | translate }}"
+             target="_blank"
+             accesskey="d"
+             href="">
+            <i class="fa {{ getContextComplementIcon() }}"></i>
             <span
-              ng-if="'Map' !== getContextComplement()"
               translate>
                 Charts
             </span>
