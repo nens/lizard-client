@@ -457,6 +457,15 @@ angular.module('lizard-nxt')
       clickLayer.drawFeatureAsLabel(asset.geometry, asset);
     };
 
+    removeLabel = function(assetKey) {
+      var labelElem = document.getElementById('label-' + assetKey);
+      if (!labelElem) {
+        // Cannot remove elem that is not there:
+        return;
+      }
+      labelElem.parentElement.removeChild(labelElem);
+    }
+
     return {
       emptyClickLayer: emptyClickLayer,
       initializeLabelsLayer: initializeLabelsLayer,
@@ -465,6 +474,7 @@ angular.module('lizard-nxt')
       drawCircle: drawCircle,
       drawGeometry: drawGeometry,
       drawLabel: drawLabel,
+      removeLabel: removeLabel,
       startVibration: startVibration,
       drawLine: drawLine,
       removeClickFromClickLayer: removeClickFromClickLayer,

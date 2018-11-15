@@ -51,11 +51,16 @@ angular.module('omnibox')
           );
 
           if (State.box.type.indexOf('point' > -1)) {
-            labelId = ClickFeedbackService.drawLabel(
-              MapService,
-              feature,
-              asset
-            );
+            // Only draw a new label if the asset clicked on
+            // does not already have a label.
+            var assetKey = asset.entity_name + '$' + asset.id;
+            if (!document.getElementById('label-' + assetKey)) {
+              labelId = ClickFeedbackService.drawLabel(
+                MapService,
+                feature,
+                asset
+              );
+            }
           }
 
           ClickFeedbackService.vibrateOnce(feature, clickId);

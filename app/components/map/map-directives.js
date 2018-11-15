@@ -340,13 +340,7 @@ angular.module('map')
         // We need to detect what asset is gone, so we can delete its label:
         o.forEach(function (assetKey) {
           if (n.indexOf(assetKey) === -1) {
-            var htmlId = 'label-' + assetKey;
-            var labelElem = document.getElementById(htmlId);
-            if (!labelElem) {
-              // Cannot remove elem that is not there:
-              return;
-            }
-            labelElem.parentElement.removeChild(labelElem);
+            ClickFeedbackService.removeLabel(assetKey);
           }
         });
       });
