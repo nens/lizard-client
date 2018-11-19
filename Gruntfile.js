@@ -337,7 +337,7 @@ module.exports = function (grunt) {
     // tags to point to /static/client
     replace: {
       dist: {
-        src: ['dist/*.html'],
+        src: ['dist/*.html','dist/scripts/*.js'],
         overwrite: true,                 // overwrite matched source files
         replacements: [{
           from: '/styles/',
