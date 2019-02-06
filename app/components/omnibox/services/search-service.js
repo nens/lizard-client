@@ -18,6 +18,7 @@ angular.module('omnibox')
     'DataService',
     'notie',
     'gettextCatalog',
+    'MapService',
     function SearchService (
       $q,
       $http,
@@ -26,7 +27,8 @@ angular.module('omnibox')
       dateParser,
       DataService,
       notie,
-      gettextCatalog
+      gettextCatalog,
+      MapService
       ) {
 
     var localPromise = {};
@@ -134,10 +136,17 @@ angular.module('omnibox')
      * @param  {object} result google geocoder result.
      */
     this.zoomToGeocoderResult = function (result, state) {
-      state.spatial.bounds = LeafletService.latLngBounds(
-        LeafletService.latLng(result.bbox[3], result.bbox[2]),
-        LeafletService.latLng(result.bbox[1], result.bbox[0])
-      );
+      if (result.bbox) {
+        state.spatial.bounds = LeafletService.latLngBounds(
+          LeafletService.latLng(result.bbox[3], result.bbox[2]),
+          LeafletService.latLng(result.bbox[1], result.bbox[0])
+        );
+      } else if (result.center) {
+        MapService._map.panTo(new L.LatLng(result.center[1], result.center[0]));
+      }  else if (result.geometry && result.geometry.coordinates) {
+        MapService._map.panTo(new L.LatLng(result.geometry.coordinates[1], result.geometry.coordinates[0]));
+      }
+      
       return state;
     };
 
