@@ -53,6 +53,7 @@ angular.module("omnibox")
       };
 
       scope.onKeydown = function($event) {
+        console.log('scope.onKeydown event: ', $event);
         var e = $event;
         var $target = $(e.target);
         var tabIncrement;

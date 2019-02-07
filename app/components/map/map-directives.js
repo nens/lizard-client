@@ -269,7 +269,9 @@ angular.module('map')
        * Watch bounds of state and update map bounds when state is changed.
        */
       scope.$watch('state.spatial.bounds', function (newBounds, oldBounds) {
+        console.log('scope.$watch(state.spatial.bounds triggered 1', oldBounds, newBounds);
         if (newBounds !== oldBounds) {
+          console.log('scope.$watch(state.spatial.bounds triggered 2', oldBounds, newBounds);
           updateMapViewOrBounds(scope.state.spatial.view, newBounds);
           if (State.box.type === 'region') {
             MapService.getRegions(newBounds);

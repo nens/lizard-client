@@ -214,7 +214,8 @@ angular.module('legend')
       LegendService.updateLegendData(
         n,
         scope.state.geometries,
-        scope.state.layers);
+        scope.state.layers
+      );
     });
 
     scope.$watch('state.temporal.at', function (n, o) {

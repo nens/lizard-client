@@ -157,19 +157,23 @@ angular.module('omnibox')
     scope.searchKeyPress = function ($event) {
 
       if ($event.target.id === "searchboxinput") {
+        console.log('$event.target.id === "searchboxinput"');
         // Intercept keyPresses *within* searchbox,do xor prevent animation
         // from happening when typing.
 
         if ($event.which === KEYPRESS.ESC) {
+          console.log('$event.target.id === "searchboxinput" esc');
           scope.cleanInputAndResults();
         }
 
         else if ($event.which === KEYPRESS.SPACE) {
+          console.log('$event.target.id === "searchboxinput" space');
           // prevent anim. start/stop
           $event.originalEvent.stopPropagation();
         }
 
         else if ($event.which === KEYPRESS.ENTER) {
+          console.log('$event.target.id === "searchboxinput" enter');
           var results = scope.omnibox.searchResults;
           if (results.temporal || results.spatial || results.api) {
             if (results.temporal) {

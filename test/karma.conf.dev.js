@@ -31,6 +31,7 @@ module.exports = function(config) {
       'vendor/bootstrap/dist/js/bootstrap.js',
       'vendor/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
       'vendor/classList.js/classList.min.js',
+      'vendor/cheap-ruler/index.js',
       'vendor/chromath/dist/chromath.min.js',
       'vendor/d3/d3.js',
       'vendor/d3-comparator/d3-comparator.js',

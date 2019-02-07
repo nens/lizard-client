@@ -19,6 +19,8 @@ angular.module('omnibox')
     'notie',
     'gettextCatalog',
     'MapService',
+    '$timeout',
+    '$rootScope',
     function SearchService (
       $q,
       $http,
@@ -28,7 +30,9 @@ angular.module('omnibox')
       DataService,
       notie,
       gettextCatalog,
-      MapService
+      MapService,
+      $timeout,
+      $rootScope
       ) {
 
     var localPromise = {};
@@ -135,16 +139,55 @@ angular.module('omnibox')
      *
      * @param  {object} result google geocoder result.
      */
+
+    this.getBounds = function (center) {
+      var ruler = cheapRuler(center[0], 'meters');
+      var bbox = ruler.bufferPoint(center, 1000);
+      console.log('bbox', bbox);
+      // const p1 = L.latLng(bbox[0], bbox[1]);
+      // const p2 = L.latLng(bbox[2], bbox[3]);
+      var p1 = L.latLng(bbox[1], bbox[0]);
+      var p2 = L.latLng(bbox[3], bbox[2]);
+    
+      return L.latLngBounds(p1, p2);
+    };
+
     this.zoomToGeocoderResult = function (result, state) {
+      console.log('zoomToGeocoderResult', result);
       if (result.bbox) {
+        console.log('result.bbox', result.bbox);
+        console.log('result.bbox 0', JSON.stringify(state.spatial.bounds));
         state.spatial.bounds = LeafletService.latLngBounds(
           LeafletService.latLng(result.bbox[3], result.bbox[2]),
           LeafletService.latLng(result.bbox[1], result.bbox[0])
         );
+        console.log('result.bbox 1', JSON.stringify(state.spatial.bounds));
+        // MapService._map.panTo(new L.LatLng(result.center[1], result.center[0]));
+        // state.spatial.bounds = MapService._map.getBounds();
+        // console.log('map.getBounds()', MapService._map.getBounds());
+        // console.log('state.spatial.bounds', state.spatial.bounds);
+        // debugger;
       } else if (result.center) {
-        MapService._map.panTo(new L.LatLng(result.center[1], result.center[0]));
+        console.log('result.center 0', JSON.stringify(state.spatial.bounds), result.center);
+        // MapService._map.panTo(new L.LatLng(result.center[1], result.center[0]));
+        // // $rootScope.$apply()
+        // // $timeout(function(){
+        //   console.log('result.center 1', JSON.stringify(state.spatial.bounds));
+        //   state.spatial.bounds = MapService._map.getBounds();
+        //   console.log('result.center 2', JSON.stringify(state.spatial.bounds));
+        // // });
+        var bounds = this.getBounds(result.center);
+        console.log('boundsbounds', bounds);
+        state.spatial.bounds = bounds;
       }  else if (result.geometry && result.geometry.coordinates) {
+        console.log('result.geometry.coordinates 0', JSON.stringify(state.spatial.bounds));
         MapService._map.panTo(new L.LatLng(result.geometry.coordinates[1], result.geometry.coordinates[0]));
+        $timeout(function(){
+          console.log('result.geometry.coordinates 1', JSON.stringify(state.spatial.bounds));
+          state.spatial.bounds = MapService._map.getBounds();
+          console.log('result.geometry.coordinates 2', JSON.stringify(state.spatial.bounds));
+        });
+        
       }
       
       return state;
