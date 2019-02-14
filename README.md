@@ -178,56 +178,9 @@ The `CHANGELOG.md` would have to be merged with master after the release, which 
 
 
 ## Deployment
-For the deployment of frontend repositories we make use of the client
-deployment repository https://github.com/nens/client-deployment. It is already
-included as a git submodule in this repo.
-
-Init the git submodule if you haven't done `clone --recursive`  or ran this command earlier:
-
-```sh
-git submodule init
-```
-
-To update the git submodule:
-
-```sh
-git pull --recurse-submodules
-git submodule update --remote
-```
-
-Deployment is done with `ansible`. Make sure to install ansible with eg:
-
-```sh
-pip install ansible
-```
-
-Copy `deploy/hosts.example` to `deploy/hosts` and `deploy/production_hosts.example` to `deploy/production_hosts` and edit to match your server layout. Also copy the `deploy/group_vars\all.example` to `deploy/group_vars/all`:
-
-```sh
-cp deploy/hosts.example deploy/hosts
-cp deploy/production_hosts.example deploy/production_hosts
-cp deploy/group_vars/all.example deploy/group_vars/all
-```
-
-Adjust the variables to reflect your layout. E.g. fill in build_user: `build_user: 'jeanjacquesmarieantoinette'`
-
-Deploy to staging:
-
-```sh
-ansible-playbook -i deploy/hosts --limit=staging deploy/deploy.yml --extra-vars="sitename=staging.nxt.lizard.net version=v2.7.1"
-```
-
-Deploy to production:
-
-```sh
-ansible-playbook -i deploy/production_hosts --limit=webservers deploy/deploy.yml --extra-vars="sitename=nxt.lizard.net version=v2.7.1"
-```
-
-_NOTE: When deploying to a remote server for the first time it is required to
-either (i) provide the remote server with with your public SSH key (locally
-generated with `$ ssh-keygen`, transferable to each server with
-`$ ssh-copy-id <REMOTE_USERNAME>@<HOSTNAME>`), or (ii) use the -k flag to have
-Ansible launch an interactive prompt._
+For the deployment of frontend repositories we make use of an Ansible script in the lizard-nxt repository.
+More information is provided in the readme file of lizard-nxt: https://github.com/nens/lizard-nxt/blob/master/README.rst
+Look below the heading "Deployment clients". 
 
 
 ## Commit Message Convention, at a Glance
