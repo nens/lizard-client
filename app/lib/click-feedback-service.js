@@ -92,6 +92,15 @@ angular.module('lizard-nxt')
       };
 
       this.drawFeatureAsLabel = function(geojson, asset) {
+        // BEGIN FIX for TICKET:
+        // https://nelen-schuurmans.atlassian.net/browse/PROJ-782
+        // TODO: below fix disables labels on polygons because they break single point select: thus to do is to fix labels on polygons
+        // labels on polygon make assets that fall within it un clickable. Therefore we do not draw a label for a polygon.
+        if (geojson.geometry.type === 'MultiPolygon') {
+          return;
+        }
+        // END FIX
+
         // IE11: We cannot use Object.assign(...) therefore the following
         // fuglyness:
         var obj = {};
@@ -108,6 +117,7 @@ angular.module('lizard-nxt')
         obj.type = 'Feature';
         obj.name = obj.name || obj.code || '...';
 
+        console.log('this.labelsLayer.addData', this.labelsLayer.addData + '', this.labelsLayer.addData);
         this.labelsLayer.addData(obj);
       };
 
@@ -318,6 +328,7 @@ angular.module('lizard-nxt')
         removeLabelsLayer,
         initializeLabelsLayer,
         drawLabelForSingleAsset,
+        removeLabel,
         removeLeafletLayerWithId;
 
     /**
@@ -464,7 +475,7 @@ angular.module('lizard-nxt')
         return;
       }
       labelElem.parentElement.removeChild(labelElem);
-    }
+    };
 
     return {
       emptyClickLayer: emptyClickLayer,
