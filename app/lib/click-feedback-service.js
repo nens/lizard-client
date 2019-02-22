@@ -92,10 +92,12 @@ angular.module('lizard-nxt')
       };
 
       this.drawFeatureAsLabel = function(geojson, asset) {
-        // BEGIN FIX for TICKET:
-        // https://nelen-schuurmans.atlassian.net/browse/PROJ-782
-        // TODO: below fix disables labels on polygons because they break single point select: thus to do is to fix labels on polygons
-        // labels on polygon make assets that fall within it un clickable. Therefore we do not draw a label for a polygon.
+        // BEGIN FIX for TICKET: https://nelen-schuurmans.atlassian.net/browse/PROJ-782
+        // below fix disables labels on polygons because they break single point select. 
+        // TODO: fix labels on polygons
+        // labels on polygon make assets that fall within it un-clickable. 
+        // Therefore hotfix is to not draw a label for a polygon.
+        // in case of polygon we exit early from function
         if (geojson.geometry.type === 'MultiPolygon') {
           return;
         }
@@ -117,7 +119,6 @@ angular.module('lizard-nxt')
         obj.type = 'Feature';
         obj.name = obj.name || obj.code || '...';
 
-        console.log('this.labelsLayer.addData', this.labelsLayer.addData + '', this.labelsLayer.addData);
         this.labelsLayer.addData(obj);
       };
 
