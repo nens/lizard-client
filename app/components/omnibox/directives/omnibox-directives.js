@@ -34,13 +34,27 @@ angular.module("omnibox")
       };
 
       scope.selectItem = function($event, result, spatialOrSearchMode) {
+        console.log(
+          'scope.selectItem',
+          $event,
+          result,
+          spatialOrSearchMode
+        );
         var e = $event;
         switch (e.keyCode) {
           case KeyCodes.RETURNKEY:
             if (spatialOrSearchMode === 'spatial') {
               scope.zoomToSpatialResult(result);
+              console.log(
+                'scope.selectItem',
+                "spatialOrSearchMode === 'spatial'"
+              );
             } else {
               scope.zoomToSearchResult(result);
+              console.log(
+                'scope.selectItem',
+                "else spatialOrSearchMode === 'spatial'"
+              );
             }
         }
       };
@@ -89,6 +103,7 @@ angular.module("omnibox")
         } else if (newTabIndex < 1) {
           newTabIndex = resultCount;
         }
+        console.log('newTabIndex', newTabIndex)
 
         $timeout(function() { $('[tabindex=' + newTabIndex + ']').focus(); });
       };
