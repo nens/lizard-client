@@ -234,6 +234,8 @@ angular.module('map')
       var updateMapViewOrBounds = function (view, bounds) {
         // Do not set map bounds when state bounds change because map bounds
         // change.
+        
+        //____________________________________
         if (!mapSetsViewOrBounds) {
           var oldView = MapService.getView();
 
@@ -247,6 +249,12 @@ angular.module('map')
             && view.zoom === oldView.zoom
           ) {
             MapService.fitBounds(State.spatial.bounds, {animate: true});
+            // console.log('view1', MapService.getView());
+            // $timeout(function(){
+            //   //console.log('view1', MapService.getView(), JSON.stringify(State, null, ' '));
+            //   State.spatial.view = MapService.getView();
+            //   //console.log('view2', MapService.getView(), State);
+            // }, 500)
             State.spatial.view = MapService.getView();
           }
           else {
@@ -254,6 +262,7 @@ angular.module('map')
             State.spatial.bounds = MapService.getBounds();
           }
         }
+        //_________________________
       };
 
       /**
@@ -269,7 +278,7 @@ angular.module('map')
        * Watch bounds of state and update map bounds when state is changed.
        */
       scope.$watch('state.spatial.bounds', function (newBounds, oldBounds) {
-        console.log('scope.$watch(state.spatial.bounds triggered 1', oldBounds, newBounds);
+        console.log('scope.$watch(state.spatial.bounds triggered 1');
         if (newBounds !== oldBounds) {
           console.log('scope.$watch(state.spatial.bounds triggered 2', oldBounds, newBounds);
           updateMapViewOrBounds(scope.state.spatial.view, newBounds);

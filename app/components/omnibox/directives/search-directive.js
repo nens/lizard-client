@@ -47,6 +47,7 @@ angular.module('omnibox')
       scope.omnibox.searchResults = {};
       if (scope.query.length > 0) {
         var results = SearchService.search(scope.query, State);
+        console.log ('SearchService.search', results)
         setResultsOnBox(results);
       } else {
         scope.cleanInputAndResults();
@@ -104,8 +105,12 @@ angular.module('omnibox')
      * @param {object} one search result.
      */
     scope.zoomToSearchResult = function (result) {
+      // console.log('directive scope.zoomToSearchResult');
       State = SearchService.zoomToSearchResult(result, State);
+      // console.log('zoomToSearchResult', State);
+      // debugger;
       scope.cleanInputAndResults();
+      // debugger;
     };
 
         /**
@@ -130,7 +135,11 @@ angular.module('omnibox')
      * @param {object} one search result.
      */
     scope.zoomToSpatialResultWithoutClearingSeach = function (result) {
-      State = SearchService.zoomToGeocoderResult(result, State);
+      //State = 
+      console.log('zoomToSpatialResultWithoutClearingSeach', State.spatial.bounds._northEast);
+      SearchService.zoomToGeocoderResult(result, State);
+      
+      // debugger;
     };
 
     /**
@@ -157,23 +166,23 @@ angular.module('omnibox')
     scope.searchKeyPress = function ($event) {
 
       if ($event.target.id === "searchboxinput") {
-        console.log('$event.target.id === "searchboxinput"');
+        // console.log('$event.target.id === "searchboxinput"');
         // Intercept keyPresses *within* searchbox,do xor prevent animation
         // from happening when typing.
 
         if ($event.which === KEYPRESS.ESC) {
-          console.log('$event.target.id === "searchboxinput" esc');
+          // console.log('$event.target.id === "searchboxinput" esc');
           scope.cleanInputAndResults();
         }
 
         else if ($event.which === KEYPRESS.SPACE) {
-          console.log('$event.target.id === "searchboxinput" space');
+          // console.log('$event.target.id === "searchboxinput" space');
           // prevent anim. start/stop
           $event.originalEvent.stopPropagation();
         }
 
         else if ($event.which === KEYPRESS.ENTER) {
-          console.log('$event.target.id === "searchboxinput" enter');
+          // console.log('$event.target.id === "searchboxinput" enter');
           var results = scope.omnibox.searchResults;
           if (results.temporal || results.spatial || results.api) {
             if (results.temporal) {
@@ -224,7 +233,7 @@ angular.module('omnibox')
             // Either put results on scope or remove model.
             if ("features" in response) {
               var features = response.features;
-              scope.omnibox.searchResults.spatial = features;
+              scope.omnibox.searchResults.spatial = features.filter(function(e){return e.bbox});
             }
             else {
               // Throw error so we can find out about it through sentry.

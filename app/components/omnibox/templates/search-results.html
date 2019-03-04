@@ -1,8 +1,7 @@
 <div class="card active" ng-if="omnibox.mustShowSearchResults">
 
   <div class="search-results material-shadow"
-       ng-keydown="onKeydown($event)"
-       ng-focus="onFocus(item)">
+       ng-focus="onFocus(item, 'parent')">
 
     <h3 ng-if="omnibox.searchResults.temporal" translate>Time</h3>
     <div
@@ -21,10 +20,11 @@
       <span translate>Locations</span>&nbsp;({{ omnibox.searchResults.spatial.length }})
     </h3>
     <ul>
-      <li ng-cloak
+      <li
+        ng-cloak
         ng-repeat="result in omnibox.searchResults.spatial"
         tabindex="{{ $index + 1 }}"
-        ng-focus="onFocus(result)"
+        ng-focus="onFocus(result, 'location')"
         ng-keydown="selectItem($event, result, 'spatial')"
         class="cluster location">
         <i class="fa fa-location-arrow">&nbsp;</i>
@@ -40,10 +40,11 @@
       <span translate>Assets</span>&nbsp;({{ omnibox.searchResults.api.length }})
     </h3>
     <ul>
-      <li ng-cloak
+      <li
+        ng-cloak
         ng-repeat="result in omnibox.searchResults.api"
         tabindex="{{ $index + omnibox.searchResults.spatial.length + 1 }}"
-        ng-focus="onFocus(result)"
+        ng-focus="onFocus(result, 'asset')"
         ng-keydown="selectItem($event, result)"
         class="cluster location">
         <a ng-click="zoomToSearchResult(result)"

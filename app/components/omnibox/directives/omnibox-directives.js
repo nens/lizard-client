@@ -26,35 +26,39 @@ angular.module("omnibox")
         TimeseriesService.syncTime();
       };
 
-      scope.onFocus = function(item, $event) {
+      scope.onFocus = function(item, test, $event) {
+        console.log('scope.onFocus', test);
         item.selected = "selected";
         if (item.hasOwnProperty('place_name')) {
+          // console.log("item.hasOwnProperty('place_name')", item);
           scope.zoomToSpatialResultWithoutClearingSeach(item);
+        } else {
+          console.log ("item.hasOwnProperty('place_name') item has no", item);
         }
       };
 
       scope.selectItem = function($event, result, spatialOrSearchMode) {
-        console.log(
-          'scope.selectItem',
-          $event,
-          result,
-          spatialOrSearchMode
-        );
+        // console.log(
+        //   'scope.selectItem',
+        //   $event,
+        //   result,
+        //   spatialOrSearchMode
+        // );
         var e = $event;
         switch (e.keyCode) {
           case KeyCodes.RETURNKEY:
             if (spatialOrSearchMode === 'spatial') {
               scope.zoomToSpatialResult(result);
-              console.log(
-                'scope.selectItem',
-                "spatialOrSearchMode === 'spatial'"
-              );
+              // console.log(
+              //   'scope.selectItem',
+              //   "spatialOrSearchMode === 'spatial'"
+              // );
             } else {
               scope.zoomToSearchResult(result);
-              console.log(
-                'scope.selectItem',
-                "else spatialOrSearchMode === 'spatial'"
-              );
+              // console.log(
+              //   'scope.selectItem',
+              //   "else spatialOrSearchMode === 'spatial'"
+              // );
             }
         }
       };
@@ -66,8 +70,8 @@ angular.module("omnibox")
           }).length + State.geometries.length <= 1);
       };
 
-      scope.onKeydown = function($event) {
-        console.log('scope.onKeydown event: ', $event);
+      scope.onKeydown = function($event, test) {
+        console.log('scope.onKeydown event: ', test);
         var e = $event;
         var $target = $(e.target);
         var tabIncrement;
