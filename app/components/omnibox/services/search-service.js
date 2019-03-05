@@ -18,9 +18,6 @@ angular.module('omnibox')
     'DataService',
     'notie',
     'gettextCatalog',
-    'MapService',
-    '$timeout',
-    '$rootScope',
     function SearchService (
       $q,
       $http,
@@ -29,10 +26,7 @@ angular.module('omnibox')
       dateParser,
       DataService,
       notie,
-      gettextCatalog,
-      MapService,
-      $timeout,
-      $rootScope
+      gettextCatalog
       ) {
 
     var localPromise = {};
@@ -118,7 +112,7 @@ angular.module('omnibox')
       var prom = CabinetService.geocode.get({
         q: searchString,
         bounds: bounds,
-        limit: 20 // NB: language is determined from the session by django
+        limit: 3 // NB: language is determined from the session by django
       });
 
       var moment = dateParser(searchString);
@@ -139,67 +133,11 @@ angular.module('omnibox')
      *
      * @param  {object} result google geocoder result.
      */
-
-    this.getBounds = function (center) {
-      var ruler = cheapRuler(center[0], 'meters');
-      var bbox = ruler.bufferPoint(center, 1000);
-      // console.log('bbox', bbox);
-      // const p1 = L.latLng(bbox[0], bbox[1]);
-      // const p2 = L.latLng(bbox[2], bbox[3]);
-      var p1 = L.latLng(bbox[1], bbox[0]);
-      var p2 = L.latLng(bbox[3], bbox[2]);
-    
-      return L.latLngBounds(p1, p2);
-    };
-
     this.zoomToGeocoderResult = function (result, state) {
-      console.log('zoomToGeocoderResult');
-      // if (result.bbox) {
-        // console.log('result.bbox', result.bbox);
-        // console.log('result.bbox 0', JSON.stringify(state.spatial.bounds));
         state.spatial.bounds = LeafletService.latLngBounds(
           LeafletService.latLng(result.bbox[3], result.bbox[2]),
           LeafletService.latLng(result.bbox[1], result.bbox[0])
         );
-      //   console.log(
-      //     "bbox bounds",
-      //     LeafletService.latLngBounds(
-      //       LeafletService.latLng(result.bbox[3], result.bbox[2]),
-      //       LeafletService.latLng(result.bbox[1], result.bbox[0])
-      //     )
-      //   );
-      //   // console.log('result.bbox 1', JSON.stringify(state.spatial.bounds));
-      //   // MapService._map.panTo(new L.LatLng(result.center[1], result.center[0]));
-      //   // state.spatial.bounds = MapService._map.getBounds();
-      //   // console.log('map.getBounds()', MapService._map.getBounds());
-      //   // console.log('state.spatial.bounds', state.spatial.bounds);
-      //   // debugger;
-      // } else if (result.center) {
-      //   // console.log('result.center 0', JSON.stringify(state.spatial.bounds), result.center);
-      //   // MapService._map.panTo(new L.LatLng(result.center[1], result.center[0]));
-      //   // // $rootScope.$apply()
-      //   // // $timeout(function(){
-      //   //   console.log('result.center 1', JSON.stringify(state.spatial.bounds));
-      //   //   state.spatial.bounds = MapService._map.getBounds();
-      //   //   console.log('result.center 2', JSON.stringify(state.spatial.bounds));
-      //   // // });
-      //   var bounds = this.getBounds(result.center);
-      //   // console.log('boundsbounds', bounds);
-      //   state.spatial.bounds = bounds;
-      //   console.log(
-      //     "center bounds",
-      //     bounds
-      //   );
-      // }  else if (result.geometry && result.geometry.coordinates) {
-      //   // console.log('result.geometry.coordinates 0', JSON.stringify(state.spatial.bounds));
-      //   // MapService._map.panTo(new L.LatLng(result.geometry.coordinates[1], result.geometry.coordinates[0]));
-      //   // $timeout(function(){
-      //   //   // console.log('result.geometry.coordinates 1', JSON.stringify(state.spatial.bounds));
-      //   //   state.spatial.bounds = MapService._map.getBounds();
-      //   //   // console.log('result.geometry.coordinates 2', JSON.stringify(state.spatial.bounds));
-      //   // });
-        
-      // }
       
       return state;
     };
@@ -214,7 +152,6 @@ angular.module('omnibox')
      * @return {object} state: the new state.
      */
     this.zoomToSearchResult = function (result, state) {
-      console.log('service scope.zoomToSearchResult');
 
       var ZOOM_FOR_OBJECT = 19;
 
