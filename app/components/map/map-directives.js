@@ -249,13 +249,18 @@ angular.module('map')
             && view.zoom === oldView.zoom
           ) {
             MapService.fitBounds(State.spatial.bounds, {animate: true});
+            // MapService.fitBounds(State.spatial.bounds, {animate: false});
             // console.log('view1', MapService.getView());
             // $timeout(function(){
             //   //console.log('view1', MapService.getView(), JSON.stringify(State, null, ' '));
             //   State.spatial.view = MapService.getView();
             //   //console.log('view2', MapService.getView(), State);
             // }, 500)
-            State.spatial.view = MapService.getView();
+            MapService._map.once('moveend', function (e) { 
+              console.log("'MapService._map.on('moveend', function'");
+              State.spatial.view = MapService.getView();
+            });
+            // State.spatial.view = MapService.getView();
           }
           else {
             MapService.setView(State.spatial.view, {animate: true});
