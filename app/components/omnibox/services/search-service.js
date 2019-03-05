@@ -112,7 +112,7 @@ angular.module('omnibox')
       var prom = CabinetService.geocode.get({
         q: searchString,
         bounds: bounds,
-        limit: 3 // NB: language is determined from the session by django
+        limit: 3  // NB: language is determined from the session by django
       });
 
       var moment = dateParser(searchString);
@@ -134,10 +134,10 @@ angular.module('omnibox')
      * @param  {object} result google geocoder result.
      */
     this.zoomToGeocoderResult = function (result, state) {
-        state.spatial.bounds = LeafletService.latLngBounds(
-          LeafletService.latLng(result.bbox[3], result.bbox[2]),
-          LeafletService.latLng(result.bbox[1], result.bbox[0])
-        );
+      state.spatial.bounds = LeafletService.latLngBounds(
+        LeafletService.latLng(result.bbox[3], result.bbox[2]),
+        LeafletService.latLng(result.bbox[1], result.bbox[0])
+      );
       
       return state;
     };
