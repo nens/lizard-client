@@ -47,7 +47,6 @@ angular.module('omnibox')
       scope.omnibox.searchResults = {};
       if (scope.query.length > 0) {
         var results = SearchService.search(scope.query, State);
-        console.log ('SearchService.search', results)
         setResultsOnBox(results);
       } else {
         scope.cleanInputAndResults();
@@ -105,12 +104,8 @@ angular.module('omnibox')
      * @param {object} one search result.
      */
     scope.zoomToSearchResult = function (result) {
-      // console.log('directive scope.zoomToSearchResult');
       State = SearchService.zoomToSearchResult(result, State);
-      // console.log('zoomToSearchResult', State);
-      // debugger;
       scope.cleanInputAndResults();
-      // debugger;
     };
 
         /**
