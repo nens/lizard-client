@@ -247,7 +247,9 @@ angular.module('map')
             && view.zoom === oldView.zoom
           ) {
             MapService.fitBounds(State.spatial.bounds, {animate: true});
-            State.spatial.view = MapService.getView();
+            MapService._map.once('moveend', function (e) { 
+              State.spatial.view = MapService.getView();
+            });
           }
           else {
             MapService.setView(State.spatial.view, {animate: true});

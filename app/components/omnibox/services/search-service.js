@@ -138,6 +138,7 @@ angular.module('omnibox')
         LeafletService.latLng(result.bbox[3], result.bbox[2]),
         LeafletService.latLng(result.bbox[1], result.bbox[0])
       );
+      
       return state;
     };
 

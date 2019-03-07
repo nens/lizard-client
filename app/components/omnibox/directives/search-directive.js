@@ -186,6 +186,24 @@ angular.module('omnibox')
       }
     };
 
+    // converts center (format as from geocoder endpoint) to bbox as (format as from geocoder endpoint)
+    // function used to convert items from geocode server that do not have a bbox, but do have a center
+    var centerToBbox = function (center) {
+      var ruler = cheapRuler(center[0], 'meters');
+      // set default buffer of 1000 meters
+      var bbox = ruler.bufferPoint(center, 1000);
+      // for some reason bbox array should be swapped
+      // probably only because function zoomToGeocoderResult in search-service needs it like that
+      var swapBbox = [];
+      swapBbox[0] = bbox[2];
+      swapBbox[1] = bbox[3];
+      swapBbox[2] = bbox[0];
+      swapBbox[3] = bbox[1];
+      return swapBbox;
+    };
+
+    
+
 
     /**
      * Contains the logic to go through search result and puts relevant parts on
@@ -220,7 +238,18 @@ angular.module('omnibox')
             // Either put results on scope or remove model.
             if ("features" in response) {
               var features = response.features;
-              scope.omnibox.searchResults.spatial = features;
+              // make sure all features have a bbox,
+              scope.omnibox.searchResults.spatial = features.map(function(e){
+                if (!e.bbox && e.center) {
+                  e.bbox = centerToBbox(e.center);
+                } else if (!e.bbox && e.geometry && e.geometry.type === 'Point' && e.geometry.coordinates) {
+                  e.bbox = centerToBbox(e.geometry.coordinates);
+                }
+                return e;
+              }).filter(function(e){
+                return e.bbox;
+              });
+              
             }
             else {
               // Throw error so we can find out about it through sentry.
