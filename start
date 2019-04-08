@@ -4,8 +4,9 @@ import getpass
 import sys
 import os
 
-NPM_OR_YARN = 'npm'
-CMD_TEMPLATE = ' PROXY_USERNAME=%s PROXY_PASSWORD=%s ' + NPM_OR_YARN
+PROXY_HOST = 'https://nxt3.staging.lizard.net/'
+CMD_TEMPLATE = ' npm start -- --proxyhost=%s --sso_username=%s --sso_password=%s'
+
 
 def get_username():
     try:
@@ -42,6 +43,6 @@ if __name__ == '__main__':
     username = get_username()
     password = get_password()
     os.system(
-        ' PROXY_USERNAME=%s PROXY_PASSWORD=%s npm start' % \
-        (username, password)
+        CMD_TEMPLATE % \
+        (PROXY_HOST, username, password)
     )
