@@ -1060,7 +1060,13 @@ angular.module('lizard-nxt')
       .attr('width', function (d) { return scale(d[keys.x]); });
       // append tooltip
       rects.append("title")
-        .text(function(d, i) { return d.label});
+        .text(function(d, i) { 
+          if (d.label === -1 ) {
+            return "other";
+          } else {
+            return d.label;
+          }
+        });
 
     // EXIT
     // Remove old elements as needed. First transition to width = 0
