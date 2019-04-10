@@ -16,12 +16,17 @@ angular.module('map')
     this.createTmsLayer = function (options) {
       var layerUrl = options.url + '/{z}/{x}/{y}.png';
 
+      var derivedOptions = {
+        minZoom: 0,
+        maxZoom: options.maxZoom,
+        zIndex: options.zIndex,
+      }
+      if (options.tms === true) {
+        derivedOptions.tms = true;
+      }
+
       return LeafletService.tileLayer(
-        layerUrl, {
-          minZoom: 0,
-          maxZoom: options.maxZoom,
-          zIndex: options.zIndex
-        }
+        layerUrl, derivedOptions
       );
     };
 
