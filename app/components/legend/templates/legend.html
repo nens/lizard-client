@@ -13,13 +13,6 @@
             {{ legend.uuidMapping[uuid] }}
             &nbsp;
           </a>
-          <i 
-            class="{{ rasterIsVectorized(uuid) ? 'fa fa-star' : 'fa fa-star-o' }}"
-            ng-click="toggleVectorModus(uuid); $event.stopPropagation();"
-            title="{{ 'Toggle regio analysis mode' | translate }}"
-            
-          >
-          </i>
           <i ng-show="legend.data.discrete[uuid].length > 0">
             <span ng-if="hasMoreCategoriesAvailableThanDefault(uuid)">
 
@@ -33,6 +26,22 @@
               </a>
             </span>
           </i>
+          <button
+            class="timeseries-interval-btn"
+            style="padding-top:0px; padding-bottom:0px; position:initial;float:right;margin-right:5px;"
+            ng-click="toggleVectorModus(uuid); $event.stopPropagation();"
+            title="{{ 'Aggregates values per regio.' | translate }}"
+          >
+            <i 
+              class="{{ rasterIsVectorized(uuid) ? 'fa fa-star' : 'fa fa-star-o' }}"
+            >
+            </i>
+            <span>
+              Region analysis tool
+            </span>
+          </button>
+          
+          
         </div>
 
         <div
