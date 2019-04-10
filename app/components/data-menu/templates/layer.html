@@ -25,7 +25,7 @@
           class="fa fa-crosshairs"
           title="{{ 'Zoom to the spatio-temporal extent' | translate }}">
         </i>
-        <i class=" {{ layer.vectorized ? 'fa fa-star' : 'fa fa-star-o' }}"
+        <i class=" {{ layer.vectorized ? 'fa fa-map' : 'fa fa-map-o' }}"
            ng-show="layer.active"
            ng-if="rasterLayerIsVectorizable(layer)"
            ng-click="toggleVectorModus(layer); $event.stopPropagation()"
