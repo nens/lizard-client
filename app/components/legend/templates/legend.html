@@ -12,10 +12,14 @@
              title="{{ 'Switch selected legend' | translate }}">
             {{ legend.uuidMapping[uuid] }}
             &nbsp;
-            <i class="fa fa-star"
-               ng-if="rasterIsVectorized(uuid)">
-            </i>
           </a>
+          <i 
+            class="{{ rasterIsVectorized(uuid) ? 'fa fa-star' : 'fa fa-star-o' }}"
+            ng-click="toggleVectorModus(uuid); $event.stopPropagation();"
+            title="{{ 'Toggle regio analysis mode' | translate }}"
+            
+          >
+          </i>
           <i ng-show="legend.data.discrete[uuid].length > 0">
             <span ng-if="hasMoreCategoriesAvailableThanDefault(uuid)">
 
