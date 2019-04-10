@@ -1048,7 +1048,7 @@ angular.module('lizard-nxt')
       .attr("x", function (d) { return scale(d.start); })
       .attr('width', function (d) { return scale(d[keys.x]); });
     // ENTER
-    // Create new elements as needed.
+    // Create new elements as needed.    
     rects.enter().append("rect")
       .style("fill", function (d) { return d.color || DEFAULT_BAR_COLOR; })
       .attr("x", function (d) { return scale(d.start); })
@@ -1058,6 +1058,16 @@ angular.module('lizard-nxt')
       .transition()
       .duration(duration)
       .attr('width', function (d) { return scale(d[keys.x]); });
+      // append tooltip
+      rects.append("title")
+        .text(function(d, i) { 
+          if (d.label === -1 ) {
+            return "other";
+          } else {
+            return d.label;
+          }
+        });
+
     // EXIT
     // Remove old elements as needed. First transition to width = 0
     // and then remove.
