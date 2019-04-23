@@ -36,3 +36,6 @@ dist
 nano.save*
 deploy/*
 deploy
+
+# visual studio code specific config
+.vscode/
