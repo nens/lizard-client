@@ -22,6 +22,15 @@ Run npm install to install development dependencies:
 npm install
 ```
 
+If you encounter the following error:
+`fatal error: sass/context.h: No such file or directory compilation terminated.`
+This could be because the libsass souces code is not there during the build,
+which results in no node-sass folder in the node_modules folder after `npm install`.
+In that case, use this instead of `npm install`:
+```sh
+LIBSASS_EXT="no" npm install
+```
+
 Install vendor browser packages:
 
 ```sh
@@ -36,6 +45,16 @@ npm start
 
 
 If you want to proxy to staging or production:
+
+```sh
+./start
+```
+
+This starts the start script that will proxy to staging.
+If you want to proxy to production, you just have to change the PROXY_HOST in
+the start script to the production url.
+
+Previous ways to do this were:
 
 ```sh
 export SSO_USERNAME=<your_sso_username>
