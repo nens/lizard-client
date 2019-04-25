@@ -23,9 +23,10 @@ npm install
 ```
 
 If you encounter the following error:
-`fatal error: sass/context.h: No such file or directory compilation terminated.`
-This could be because the libsass souces code is not there during the build,
-which results in no node-sass folder in the node_modules folder after `npm install`.
+`fatal error: sass/context.h: No such file or directory compilation
+terminated.`, this could be because the libsass souces code is not there
+during the build. This which results in no node-sass folder in the
+node_modules folder after `npm install`.
 In that case, use this instead of `npm install`:
 ```sh
 LIBSASS_EXT="no" npm install
