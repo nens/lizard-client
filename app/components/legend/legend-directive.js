@@ -1,5 +1,5 @@
 angular.module('legend')
-.directive('legend', ["LegendService", function(LegendService) {
+.directive('legend', ["MapService", "LegendService", function(MapService, LegendService) {
 
   var link = function (scope, element, attrs) {
 
@@ -19,6 +19,12 @@ angular.module('legend')
     var getBorderStyle = function (datum) {
       return datum.label === -1 ? "1px solid #ccc" : "0";
     };
+
+    scope.toggleVectorModus = function (uuid) {
+      var layer = _.find(scope.state.layers, {uuid: uuid});
+      layer.vectorized = !layer.vectorized;
+      MapService.updateLayers([layer]);
+    }
 
     scope.totalCategoryCount = function (uuid) {
       return scope.legend.data.discrete[uuid].length;

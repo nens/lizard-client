@@ -6,29 +6,32 @@
           ng-if="mustShowDiscreteLegend(uuid)">
 
       <div class="single-discrete-legend">
-        <div class="legend-header">
+        <div
+          class="legend-header"
+          style="margin-bottom:20px"
+        >
           <a href="#"
              ng-click="switchSelectedRaster(uuid)"
              title="{{ 'Switch selected legend' | translate }}">
             {{ legend.uuidMapping[uuid] }}
             &nbsp;
-            <i class="fa fa-star"
-               ng-if="rasterIsVectorized(uuid)">
-            </i>
           </a>
-          <i ng-show="legend.data.discrete[uuid].length > 0">
-            <span ng-if="hasMoreCategoriesAvailableThanDefault(uuid)">
-
-              <a href=""
-                 ng-click="toggleShowAllCategories(uuid)"
-                 class="toggle-categories-shown">
-                <i ng-if="!showingAllCategories(uuid)"
-                   class="fa fa-lg fa-caret-left"></i>
-                <i ng-if="showingAllCategories(uuid)"
-                   class="fa fa-lg fa-caret-down"></i>
-              </a>
+          <button
+            class="timeseries-interval-btn"
+            style="padding-top:0px; padding-bottom:0px; position:initial;float:right;margin-right:5px;"
+            ng-click="toggleVectorModus(uuid); $event.stopPropagation();"
+            title="{{ 'Aggregates values per region.' | translate }}"
+          >
+            <i 
+              class="{{ rasterIsVectorized(uuid) ? 'fa fa-map' : 'fa fa-map-o' }}"
+            >
+            </i>
+            <span translate>
+              Region analysis tool
             </span>
-          </i>
+          </button>
+          
+          
         </div>
 
         <div
@@ -50,6 +53,23 @@
           </div>
 
           <div class="discrete-legend-area" ng-if="datum.areaHa != null">{{ datum.areaHa | number }} ha</div>
+        </div>
+        <div
+          style="display:flex;justify-content: center"
+        >
+          <i ng-show="legend.data.discrete[uuid].length > 0">
+            <span ng-if="hasMoreCategoriesAvailableThanDefault(uuid)">
+              <a href=""
+                ng-click="toggleShowAllCategories(uuid)"
+                style="outline:none;font-size: 15px;color:#7f8c8d;"
+              >
+                <i ng-if="!showingAllCategories(uuid)"
+                  class="fa fa-lg fa-caret-down"></i>
+                <i ng-if="showingAllCategories(uuid)"
+                  class="fa fa-lg fa-caret-up"></i>
+              </a>
+            </span>
+          </i>
         </div>
       </div>
     </div>
