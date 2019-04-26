@@ -20,13 +20,13 @@
             class="timeseries-interval-btn"
             style="padding-top:0px; padding-bottom:0px; position:initial;float:right;margin-right:5px;"
             ng-click="toggleVectorModus(uuid); $event.stopPropagation();"
-            title="{{ 'Aggregates values per regio.' | translate }}"
+            title="{{ 'Aggregates values per region.' | translate }}"
           >
             <i 
               class="{{ rasterIsVectorized(uuid) ? 'fa fa-map' : 'fa fa-map-o' }}"
             >
             </i>
-            <span>
+            <span translate>
               Region analysis tool
             </span>
           </button>
