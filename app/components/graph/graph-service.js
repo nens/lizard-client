@@ -21,7 +21,7 @@ angular.module('lizard-nxt')
     "RelativeToSurfaceLevelService",
   function ($timeout, NxtD3, ChartContainer, UtilService, State, $filter, RTSLService) {
 
-  var MIN_WIDTH_INTERACTIVE_GRAPHS = 400; // Only graphs bigger get mouseover
+  var MIN_WIDTH_INTERACTIVE_GRAPHS = 0; // Only graphs bigger get mouseover
                                           // and click interaction.
 
   /**
