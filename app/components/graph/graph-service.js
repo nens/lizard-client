@@ -702,7 +702,6 @@ angular.module('lizard-nxt')
 
     console.log("x,y on graph: "+ d);
     console.log("x on graph: "+ d[0]);
-    var height = d[1];
     console.log("y on graph: "+ d[1]);
 
     var x = this._xy.x.scale(d[chart.keys.x]);
@@ -719,18 +718,12 @@ angular.module('lizard-nxt')
     var g = gAndValuebox[0];
     var valuebox = gAndValuebox[1];
 
-    // Vertical line
-    g.append('line')
-     .attr('y1', 0)
-     .attr('y2', 0)
-     .attr('x1', 0)
-     .attr('x2', 0);
 
     var value = d[1].toFixed ? d[1].toFixed(2): '...';
     var text = value;
     text = d[chart.keys.category] !== undefined
-         ? d[1]
-         // ? text + ' ' + d[chart.keys.category]
+         // ? d[1]
+         ? text + ' ' + d[chart.keys.category]
          : text;
 
     // if (x) {
@@ -739,44 +732,16 @@ angular.module('lizard-nxt')
 
     setTextInValuebox(valuebox, 0, "#16A085", text, 0);
 
-    // var x = d[0];
-    // var x = xy.x.scale(d[chart.keys.x]);
-
-    g.select('line')
-     .attr('y1', 0)
-     .attr('y2', 0)
-     .attr('x1', 0)
-     .attr('x2', 0);
-
-    addTextWithBackground(
-      g, UtilService.dateToLocaleDependentString(new Date(d[chart.keys.x])),
-      'graph-tooltip-x', d[0], height);
-
-    // var value = d[keys.y].toFixed ? d[keys.y].toFixed(2): '...';
-    // var text = value + ' ' + labels.y;
-    // text = d[keys.category] !== undefined
-    //      ? text + ' ' + d[keys.category]
-    //      : text;
-
-    // if (labels.x) {
-    //   text = text + ' - ' + labels.x;
-    // }
-
-    // setTextInValuebox(valuebox, 0, color, text, 0);
-    // // addInteractionToRects(
-    // //   chart._svg,
-    // //   [d[0], d[1]],
-    // //   this._xy, // dimensions
-    // //   d[chart.keys],
-    // //   1,  // labels
-    // //   chart._activeUnit,
-    // //   content.color
-    // // );
+    // Show text on dot in graph
+    // addTextWithBackground(
+    //   g, UtilService.dateToLocaleDependentString(new Date(d[chart.keys.x])),
+    //   'graph-tooltip-x', d[0], d[1]);
 
     if (!g[0][0]) {
       g = fg.append('g').attr('class', 'interaction-group');
     } else {
       g.selectAll('circle').remove();
+      g.selectAll('line').remove();
     }
 
     g.append('circle')
@@ -787,6 +752,11 @@ angular.module('lizard-nxt')
       .ease('easeInOut')
       .duration(100)
       .attr('r', 3);
+    g.append('line')
+     .attr('y1', 300)
+     .attr('y2', 0)
+     .attr('x1', x)
+     .attr('x2', x);
   };
 
   /**
