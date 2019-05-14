@@ -732,10 +732,6 @@ angular.module('lizard-nxt')
 
     setTextInValuebox(valuebox, 0, "#16A085", text, 0);
 
-    // Show text on dot in graph
-    // addTextWithBackground(
-    //   g, UtilService.dateToLocaleDependentString(new Date(d[chart.keys.x])),
-    //   'graph-tooltip-x', d[0], d[1]);
 
     if (!g[0][0]) {
       g = fg.append('g').attr('class', 'interaction-group');
@@ -744,6 +740,8 @@ angular.module('lizard-nxt')
       g.selectAll('line').remove();
     }
 
+    // Show the dot (circle) in the omnibox graph on the same place where it
+    // is on the line selection
     g.append('circle')
       .attr('r', R)
       .attr('cx', x)
@@ -752,11 +750,17 @@ angular.module('lizard-nxt')
       .ease('easeInOut')
       .duration(100)
       .attr('r', 3);
+    // Show the vertical line on the dot in the omnibox graph
     g.append('line')
      .attr('y1', 300)
      .attr('y2', 0)
      .attr('x1', x)
      .attr('x2', x);
+
+    // Show the x value besides the dot in the omnibox graph
+    addTextWithBackground(
+      g, UtilService.dateToLocaleDependentString(x),
+      'graph-tooltip-x', x, y);
   };
 
   /**
