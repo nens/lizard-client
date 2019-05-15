@@ -672,28 +672,23 @@ angular.module('lizard-nxt')
   };
 
   Graph.prototype.drawCircleOnLine = function (xLocation, remove) {
-      // console.log("x on graph: " + xLocation);
-      // Add option in this function to show the y-value in the chart
-      var R = 5; // radius of dot.
+    // console.log("x on graph: " + xLocation);
+    // Add option in this function to show the y-value in the chart
+    var R = 5; // radius of dot.
 
-      var fg = this._svg.select('#feature-group');
+    var fg = this._svg.select('#feature-group');
 
-      // Move listener rectangle to the front
-      var el = this._svg.select('#listeners').node();
-      el.parentNode.appendChild(el);
+    // Move listener rectangle to the front
+    var el = this._svg.select('#listeners').node();
+    el.parentNode.appendChild(el);
 
-      var g = fg.select('.interaction-group');
-      if (remove) {
-        g.selectAll('circle').remove();
-      }
+    if (!this._containers) { return; }
 
-      if (!this._containers) { return; }
+    var chart = this._containers[0];
 
-      var chart = this._containers[0];
+    if (!chart || !chart.data || chart.data.data === null) return;
 
-      if (!chart || !chart.data || chart.data.data === null) return;
-
-      console.log(chart);
+    console.log(chart);
 
     var i = UtilService.bisect(chart.data, chart.keys.x, xLocation);
     var d = chart.data[i];
@@ -718,20 +713,15 @@ angular.module('lizard-nxt')
     var g = gAndValuebox[0];
     var valuebox = gAndValuebox[1];
 
-
     var value = d[1].toFixed ? d[1].toFixed(2): '...';
     var text = value;
+    // To do: Also show circle in legend when hoovering over line select
+    // circle in ascii https://www.alt-codes.net/circle-symbols
     text = d[chart.keys.category] !== undefined
-         // ? d[1]
          ? text + ' ' + d[chart.keys.category]
          : text;
 
-    // if (x) {
-    //   text = text + ' - ' + x;
-    // }
-
     setTextInValuebox(valuebox, 0, "#16A085", text, 0);
-
 
     if (!g[0][0]) {
       g = fg.append('g').attr('class', 'interaction-group');
@@ -758,9 +748,10 @@ angular.module('lizard-nxt')
      .attr('x2', x);
 
     // Show the x value besides the dot in the omnibox graph
+    var height = Graph.prototype._getHeight(this.dimensions);
     addTextWithBackground(
       g, UtilService.dateToLocaleDependentString(x),
-      'graph-tooltip-x', x, y);
+      'graph-tooltip-x', x, height);
   };
 
   /**
