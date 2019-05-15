@@ -682,10 +682,10 @@ angular.module('lizard-nxt')
     var el = this._svg.select('#listeners').node();
     el.parentNode.appendChild(el);
 
-    // var g = fg.select('.interaction-group');
-    // if (remove) {
-    //   g.selectAll('circle').remove();
-    // }
+    var g = fg.select('.interaction-group');
+    if (remove) {
+      g.selectAll('circle').remove();
+    }
 
     if (!this._containers) { return; }
 
@@ -693,16 +693,11 @@ angular.module('lizard-nxt')
 
     if (!chart || !chart.data || chart.data.data === null) return;
 
-    console.log(chart);
-
     var i = UtilService.bisect(chart.data, chart.keys.x, xLocation);
     var d = chart.data[i];
 
     if (!d) { return; }
 
-    console.log("x,y on graph: "+ d);
-    console.log("x on graph: "+ d[0]);
-    console.log("y on graph: "+ d[1]);
     console.log("this:");
     console.log(this);
     console.log("chart:");
@@ -735,7 +730,6 @@ angular.module('lizard-nxt')
     if (!g[0][0]) {
       g = fg.append('g').attr('class', 'interaction-group');
     } else {
-      g.selectAll('circle').remove();
       g.selectAll('line').remove();
     }
 
@@ -749,8 +743,6 @@ angular.module('lizard-nxt')
       .ease('easeInOut')
       .duration(100)
       .attr('r', 3);
-    console.log(chart.yMaxMin.max);
-    console.log(chart.yMaxMin.min);
     // Show the vertical line on the dot in the omnibox graph
     g.append('line')
      // Make the line the same size as the graph in the omnibox
