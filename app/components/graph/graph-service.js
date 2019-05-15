@@ -21,7 +21,7 @@ angular.module('lizard-nxt')
     "RelativeToSurfaceLevelService",
   function ($timeout, NxtD3, ChartContainer, UtilService, State, $filter, RTSLService) {
 
-  var MIN_WIDTH_INTERACTIVE_GRAPHS = 0; // Only graphs bigger get mouseover
+  var MIN_WIDTH_INTERACTIVE_GRAPHS = 400; // Only graphs bigger get mouseover
                                           // and click interaction.
 
   /**
@@ -233,9 +233,9 @@ angular.module('lizard-nxt')
     // Draw one of the y axis
     drawMultipleAxes(graph);
 
-    if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
-      addLineInteraction(graph, temporal, content);
-    }
+    // Add line interaction also to smaller graphs in the omnibox.
+    // This used to be if(graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS)
+    addLineInteraction(graph, temporal, content);
   };
 
   /**
@@ -382,7 +382,7 @@ angular.module('lizard-nxt')
       content.color
     );
 
-    if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+    if (graph.dimensions.width) {
       addInteractionToRects(
         graph._svg,
         graph.dimensions,
@@ -575,10 +575,6 @@ angular.module('lizard-nxt')
       this._xy,
       className
     );
-    // // add interaction to graph?
-    // if (this.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
-    //   addLineInteraction(this._svg, false, content);
-    // }
 
     addPointsToGraph(this._svg, transTime, content.points, this._xy);
 
@@ -593,10 +589,6 @@ angular.module('lizard-nxt')
       this._xy,
       className
     );
-    // // add interaction to graph?
-    // if (this.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
-    //   addLineInteraction(this._svg, false, content);
-    // }
   };
 
   /**
