@@ -682,6 +682,11 @@ angular.module('lizard-nxt')
     var el = this._svg.select('#listeners').node();
     el.parentNode.appendChild(el);
 
+    // var g = fg.select('.interaction-group');
+    // if (remove) {
+    //   g.selectAll('circle').remove();
+    // }
+
     if (!this._containers) { return; }
 
     var chart = this._containers[0];
@@ -698,6 +703,10 @@ angular.module('lizard-nxt')
     console.log("x,y on graph: "+ d);
     console.log("x on graph: "+ d[0]);
     console.log("y on graph: "+ d[1]);
+    console.log("this:");
+    console.log(this);
+    console.log("chart:");
+    console.log(chart);
 
     var x = this._xy.x.scale(d[chart.keys.x]);
     var y;
@@ -716,10 +725,14 @@ angular.module('lizard-nxt')
     var value = d[1].toFixed ? d[1].toFixed(2): '...';
     var text = value;
     // To do: Also show circle in legend when hoovering over line select
-    // circle in ascii https://www.alt-codes.net/circle-symbols
-    text = d[chart.keys.category] !== undefined
-         ? text + ' ' + d[chart.keys.category]
+    // Show unit after y-value in legend in omnibox
+    text = this._activeUnit !== undefined
+         ? text + ' ' + this._activeUnit
          : text;
+
+    // if (x) {
+    //   text = text + ' - ' + x;
+    // }
 
     setTextInValuebox(valuebox, 0, "#16A085", text, 0);
 
