@@ -713,18 +713,24 @@ angular.module('lizard-nxt')
       y = this._xy.y.scale.range()[0] - R;
     }
 
+    // If there is no x or y value, don't show a new (empty) legend
+    if (!d[0] || !d[1]) {
+      // Remove the old circle on the omnibox graph
+      g.selectAll('circle').remove();
+      // Remove the old line on the omnibox graph
+      g.selectAll('line').remove();
+      return;
+    }
+
     var gAndValuebox = getEmptyValueBox(fg, 1);
     var g = gAndValuebox[0];
     var valuebox = gAndValuebox[1];
 
-    var value = d[1].toFixed ? d[1].toFixed(2): '...';
-    var textY = value;
-    // To do: Also show circle in legend when hoovering over line select
+    var textY = d[1].toFixed ? d[1].toFixed(2): '...';
     // Show unit after y-value in legend in omnibox
     textY = this._activeUnit !== undefined
          ? textY + ' ' + this._activeUnit
          : textY;
-
     setTextInValuebox(valuebox, 0, "#16A085", textY, 0);
 
     if (!g[0][0]) {
