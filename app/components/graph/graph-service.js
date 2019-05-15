@@ -750,7 +750,7 @@ angular.module('lizard-nxt')
     // Show the x value besides the dot in the omnibox graph
     var height = Graph.prototype._getHeight(this.dimensions);
     addTextWithBackground(
-      g, UtilService.dateToLocaleDependentString(x),
+      g, UtilService.dateToLocaleDependentString(d[0].toFixed(2)),
       'graph-tooltip-x', x, height);
   };
 
