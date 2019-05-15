@@ -713,14 +713,8 @@ angular.module('lizard-nxt')
       y = this._xy.y.scale.range()[0] - R;
     }
 
-    // If there is no x or y value, don't show a new (empty) legend
-    if (!d[0] || !d[1]) {
-      // Remove the old circle on the omnibox graph
-      g.selectAll('circle').remove();
-      // Remove the old line on the omnibox graph
-      g.selectAll('line').remove();
-      return;
-    }
+    // Return if there is no x or y value
+    if (!d[0] || !d[1]) { return; }
 
     var gAndValuebox = getEmptyValueBox(fg, 1);
     var g = gAndValuebox[0];
