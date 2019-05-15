@@ -723,18 +723,14 @@ angular.module('lizard-nxt')
     var valuebox = gAndValuebox[1];
 
     var value = d[1].toFixed ? d[1].toFixed(2): '...';
-    var text = value;
+    var textY = value;
     // To do: Also show circle in legend when hoovering over line select
     // Show unit after y-value in legend in omnibox
-    text = this._activeUnit !== undefined
-         ? text + ' ' + this._activeUnit
-         : text;
+    textY = this._activeUnit !== undefined
+         ? textY + ' ' + this._activeUnit
+         : textY;
 
-    // if (x) {
-    //   text = text + ' - ' + x;
-    // }
-
-    setTextInValuebox(valuebox, 0, "#16A085", text, 0);
+    setTextInValuebox(valuebox, 0, "#16A085", textY, 0);
 
     if (!g[0][0]) {
       g = fg.append('g').attr('class', 'interaction-group');
@@ -753,17 +749,25 @@ angular.module('lizard-nxt')
       .ease('easeInOut')
       .duration(100)
       .attr('r', 3);
+    console.log(chart.yMaxMin.max);
+    console.log(chart.yMaxMin.min);
     // Show the vertical line on the dot in the omnibox graph
     g.append('line')
-     .attr('y1', 300)
+     // Make the line the same size as the graph in the omnibox
+     .attr('y1', this._yPerUnit[this._activeUnit].range.min)
      .attr('y2', 0)
      .attr('x1', x)
      .attr('x2', x);
 
     // Show the x value besides the dot in the omnibox graph
+    // Show the unit if x has any
+    var textX = d[0].toFixed(2);
+    if (this._xDomain !== undefined) {
+      textX = textX + ' - ' + this._xDomain;
+    }
     var height = Graph.prototype._getHeight(this.dimensions);
     addTextWithBackground(
-      g, UtilService.dateToLocaleDependentString(d[0].toFixed(2)),
+      g, UtilService.dateToLocaleDependentString(textX),
       'graph-tooltip-x', x, height);
   };
 
