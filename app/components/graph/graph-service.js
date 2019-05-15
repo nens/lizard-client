@@ -755,7 +755,7 @@ angular.module('lizard-nxt')
     g.append('line')
      // Make the line the same size as the graph in the omnibox
      .attr('y1', this._yPerUnit[this._activeUnit].range.min)
-     .attr('y2', 0)
+     .attr('y2', this._yPerUnit[this._activeUnit].range.max)
      .attr('x1', x)
      .attr('x2', x);
 
