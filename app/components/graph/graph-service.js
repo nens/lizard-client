@@ -234,7 +234,8 @@ angular.module('lizard-nxt')
     drawMultipleAxes(graph);
 
     // Add line interaction also to smaller graphs in the omnibox.
-    // This used to be if(graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS)
+    // This used to be if(graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+    //  addLineInteraction(graph, temporal, content); }
     addLineInteraction(graph, temporal, content);
   };
 
@@ -717,11 +718,16 @@ angular.module('lizard-nxt')
     textY = this._activeUnit !== undefined
          ? textY + ' ' + this._activeUnit
          : textY;
-    setTextInValuebox(valuebox, 0, "#16A085", textY, 0);
+    // The color for setTextInValuebox is the color of the circle in the
+    // legend in the omnibox graph.
+    var color = chart.color;
+    setTextInValuebox(valuebox, 0, color, textY, 0);
 
     if (!g[0][0]) {
       g = fg.append('g').attr('class', 'interaction-group');
     } else {
+      // Make sure that there is only 1 vertical line on the omnibox graph
+      // at any time when the circle is moving over the omnibox graph.
       g.selectAll('line').remove();
     }
 
@@ -1304,6 +1310,7 @@ angular.module('lizard-nxt')
              ? text + ' ' + d[keys.category]
              : text;
 
+        console.log(labels.x);
         if (labels.x) {
           text = text + ' - ' + labels.x;
         }
