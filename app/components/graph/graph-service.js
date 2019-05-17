@@ -1304,7 +1304,6 @@ angular.module('lizard-nxt')
              ? text + ' ' + d[keys.category]
              : text;
 
-        console.log(labels.x);
         if (labels.x) {
           text = text + ' - ' + labels.x;
         }
