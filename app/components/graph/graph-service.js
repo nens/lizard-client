@@ -665,7 +665,6 @@ angular.module('lizard-nxt')
   };
 
   Graph.prototype.drawCircleOnLine = function (xLocation, remove) {
-    // console.log("x on graph: " + xLocation);
     // Add option in this function to show the y-value in the chart
     var R = 5; // radius of dot.
 
@@ -690,11 +689,6 @@ angular.module('lizard-nxt')
     var d = chart.data[i];
 
     if (!d) { return; }
-
-    console.log("this:");
-    console.log(this);
-    console.log("chart:");
-    console.log(chart);
 
     var x = this._xy.x.scale(d[chart.keys.x]);
     var y;
@@ -1306,13 +1300,10 @@ angular.module('lizard-nxt')
 
         var value = d[keys.y].toFixed ? d[keys.y].toFixed(2): '...';
         var text = value + ' ' + labels.y;
-        console.log(keys.category);
-        console.log(d[keys.category]);
         text = keys.category !== undefined
              ? text + ' ' + d[keys.category]
              : text;
 
-        console.log(labels.x);
         if (labels.x) {
           text = text + ' - ' + labels.x;
         }
