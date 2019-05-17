@@ -1306,6 +1306,8 @@ angular.module('lizard-nxt')
 
         var value = d[keys.y].toFixed ? d[keys.y].toFixed(2): '...';
         var text = value + ' ' + labels.y;
+        console.log(keys.category);
+        console.log(d[keys.category]);
         text = keys.category !== undefined
              ? text + ' ' + d[keys.category]
              : text;
@@ -1546,7 +1548,10 @@ angular.module('lizard-nxt')
             unit = addReferenceFrameToUnit(v.unit, v.reference_frame);
           }
 
-          var boxText = value + ' ' + unit + ' - ' + v.description;
+          var boxText = value + ' ' + unit;
+          if (v.description) {
+            boxText += ' - ' + v.description;
+          }
 
           // Dot on the line
           g.append('circle')
