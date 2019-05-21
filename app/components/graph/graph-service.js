@@ -1101,11 +1101,13 @@ angular.module('lizard-nxt')
       .attr('width', function (d) { return scale(d[keys.x]); });
       // append tooltip
       rects.append("title")
-        .text(function(d, i) { 
+        .text(function(d, i) {
+          // Show percentage of legend item with one decimal
+          var percentageOfLegendItem = (Math.round(d[keys.x]*100*10)/10).toFixed(1);
           if (d.label === -1 ) {
-            return "other";
+            return percentageOfLegendItem + "% other";
           } else {
-            return d.label;
+            return percentageOfLegendItem + "% " + d.label;
           }
         });
 
@@ -1122,11 +1124,13 @@ angular.module('lizard-nxt')
     rects.on('mousemove', function (d) {
       var label;
       var labelstr = d.label;
+      // Show percentage of legend item with one decimal
+      var percentageOfLegendItem = (Math.round(d[keys.x]*100*10)/10).toFixed(1);
       if (d.label === -1 || d.label.split === undefined) {
-        label = Math.round(d[keys.x] * 100) + "% overig";
+        label = percentageOfLegendItem + "% overig";
       } else {
         labelstr = d.label.split('-');
-        label = Math.round(d[keys.x] * 100) + '% ' + labelstr[labelstr.length - 1];
+        label = percentageOfLegendItem + '% ' + labelstr[labelstr.length - 1];
       }
 
       if (d.extraLabel) {
