@@ -233,9 +233,10 @@ angular.module('lizard-nxt')
     // Draw one of the y axis
     drawMultipleAxes(graph);
 
-    if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
-      addLineInteraction(graph, temporal, content);
-    }
+    // Add line interaction also to smaller graphs in the omnibox.
+    // This used to be if(graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+    //  addLineInteraction(graph, temporal, content); }
+    addLineInteraction(graph, temporal, content);
   };
 
   /**
@@ -382,7 +383,7 @@ angular.module('lizard-nxt')
       content.color
     );
 
-    if (graph.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+    if (graph.dimensions.width) {
       addInteractionToRects(
         graph._svg,
         graph.dimensions,
@@ -664,24 +665,25 @@ angular.module('lizard-nxt')
   };
 
   Graph.prototype.drawCircleOnLine = function (xLocation, remove) {
-      var R = 5; // radius of dot.
+    // Add option in this function to show the y-value in the chart
+    var R = 5; // radius of dot.
 
-      var fg = this._svg.select('#feature-group');
+    var fg = this._svg.select('#feature-group');
 
-      // Move listener rectangle to the front
-      var el = this._svg.select('#listeners').node();
-      el.parentNode.appendChild(el);
+    // Move listener rectangle to the front
+    var el = this._svg.select('#listeners').node();
+    el.parentNode.appendChild(el);
 
-      var g = fg.select('.interaction-group');
-      if (remove) {
-        g.selectAll('circle').remove();
-      }
+    var g = fg.select('.interaction-group');
+    if (remove) {
+      g.selectAll('circle').remove();
+    }
 
-      if (!this._containers) { return; }
+    if (!this._containers) { return; }
 
-      var chart = this._containers[0];
+    var chart = this._containers[0];
 
-      if (!chart || !chart.data || chart.data.data === null) return;
+    if (!chart || !chart.data || chart.data.data === null) return;
 
     var i = UtilService.bisect(chart.data, chart.keys.x, xLocation);
     var d = chart.data[i];
@@ -698,12 +700,33 @@ angular.module('lizard-nxt')
       y = this._xy.y.scale.range()[0] - R;
     }
 
+    // Return if there is no x or y value
+    if (!d[0] || !d[1]) { return; }
+
+    var gAndValuebox = getEmptyValueBox(fg, 1);
+    var g = gAndValuebox[0];
+    var valuebox = gAndValuebox[1];
+
+    var textY = d[1].toFixed ? d[1].toFixed(2): '...';
+    // Show unit after y-value in legend in omnibox
+    textY = this._activeUnit !== undefined
+         ? textY + ' ' + this._activeUnit
+         : textY;
+    // The color for setTextInValuebox is the color of the circle in the
+    // legend in the omnibox graph.
+    var color = chart.color;
+    setTextInValuebox(valuebox, 0, color, textY, 0);
+
     if (!g[0][0]) {
       g = fg.append('g').attr('class', 'interaction-group');
     } else {
-      g.selectAll('circle').remove();
+      // Make sure that there is only 1 vertical line on the omnibox graph
+      // at any time when the circle is moving over the omnibox graph.
+      g.selectAll('line').remove();
     }
 
+    // Show the dot (circle) in the omnibox graph on the same place where it
+    // is on the line selection
     g.append('circle')
       .attr('r', R)
       .attr('cx', x)
@@ -712,6 +735,24 @@ angular.module('lizard-nxt')
       .ease('easeInOut')
       .duration(100)
       .attr('r', 3);
+    // Show the vertical line on the dot in the omnibox graph
+    g.append('line')
+     // Make the line the same size as the graph in the omnibox
+     .attr('y1', this._yPerUnit[this._activeUnit].range.min)
+     .attr('y2', this._yPerUnit[this._activeUnit].range.max)
+     .attr('x1', x)
+     .attr('x2', x);
+
+    // Show the x value besides the dot in the omnibox graph
+    // Show the unit if x has any
+    var textX = d[0].toFixed(2);
+    if (this._xDomain !== undefined) {
+      textX = textX + ' - ' + this._xDomain;
+    }
+    var height = Graph.prototype._getHeight(this.dimensions);
+    addTextWithBackground(
+      g, UtilService.dateToLocaleDependentString(textX),
+      'graph-tooltip-x', x, height);
   };
 
   /**
@@ -1498,7 +1539,10 @@ angular.module('lizard-nxt')
             unit = addReferenceFrameToUnit(v.unit, v.reference_frame);
           }
 
-          var boxText = value + ' ' + unit + ' - ' + v.description;
+          var boxText = value + ' ' + unit;
+          if (v.description) {
+            boxText += ' - ' + v.description;
+          }
 
           // Dot on the line
           g.append('circle')
