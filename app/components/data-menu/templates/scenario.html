@@ -46,9 +46,8 @@
             <span translate>Start (simulation time)</span>
           </td>
           <td colspan="2">
-            <!-- white-space:initial is done to remove ellipsis and instead wrap to newline from text that is too big for container -->
-            <span style="white-space:initial" ng-if="scenario.start_time_sim">
-              {{ (scenario.start_time_sim | date: 'M/d/y HH:mm:ss') + ' ' + timezoneStringAbbrevated}}
+            <span ng-if="scenario.start_time_sim">
+              {{ formattedStartTime }}
             </span>
             <span ng-if="!scenario.start_time_sim">
               --/--/---- --:--:--
@@ -60,9 +59,8 @@
             <span translate>End (simulation time)</span>
           </td>
           <td colspan="2">
-            <!-- white-space:initial is done to remove ellipsis and instead wrap to newline from text that is too big for container -->
-            <span style="white-space:initial" ng-if="scenario.start_time_sim">
-                {{ (scenario.end_time_sim | date: 'M/d/y HH:mm:ss') + ' ' + timezoneStringAbbrevated}}
+            <span ng-if="scenario.start_time_sim">
+                {{ formattedEndTime }}
             </span>
             <span ng-if="!scenario.end_time_sim">
               --/--/---- --:--:--

@@ -124,12 +124,19 @@ angular.module('data-menu')
 
             scope.scenario = scenario;
             if (scope.scenario.start_time_sim) {
-              scope.timezoneString = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; // in case of ie11 this doesnt work and will thus become empty string ''
-              if (scope.timezoneString !== '') {
-                scope.timezoneStringAbbrevated = moment.tz(scope.scenario.start_time_sim, (scope.timezoneString)).format('z');
-              } else {
-                scope.timezoneStringAbbrevated = '';
-              }
+              
+              scope.formattedStartTime = moment(scope.scenario.start_time_sim).format('l') + ' ' + 
+                moment(scope.scenario.start_time_sim).format('LTS');
+              
+              scope.formattedEndTime = moment(scope.scenario.end_time_sim).format('l') + ' ' + 
+                moment(scope.scenario.end_time_sim).format('LTS');
+              
+              var timezoneString = Intl.DateTimeFormat().resolvedOptions().timeZone
+              if (timezoneString) {
+                var timezoneStringAbbrevated = moment.tz(scope.scenario.start_time_sim, timezoneString).format('z');
+                scope.formattedStartTime = scope.formattedStartTime + ' ' + timezoneStringAbbrevated;
+                scope.formattedEndTime = scope.formattedEndTime + ' ' + timezoneStringAbbrevated;
+              } 
             }
            
 
