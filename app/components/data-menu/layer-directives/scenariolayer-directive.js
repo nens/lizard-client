@@ -123,6 +123,7 @@ angular.module('data-menu')
             }
 
             scope.scenario = scenario;
+            scope.timezoneString = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; // in case of ie11 this doesnt work and will thus become empty string ''
 
             scenario.result_set.forEach(function (result) {
               if (result.raster) {
