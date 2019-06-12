@@ -45,6 +45,7 @@ module.exports = function(config) {
       'vendor/perfect-scrollbar/js/perfect-scrollbar.js',
       'vendor/raven-js/dist/raven.js',
       'vendor/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
+      'vendor/moment-timezone/builds/moment-timezone-with-data-10-year-range.min.js',
       // endbower
 
       'vendor/moment/locale/nl.js',

@@ -47,7 +47,7 @@
           </td>
           <td colspan="2">
             <span ng-if="scenario.start_time_sim">
-              {{ scenario.start_time_sim | date: 'M/d/y HH:mm:ss' }}
+              {{ formattedStartTime }}
             </span>
             <span ng-if="!scenario.start_time_sim">
               --/--/---- --:--:--
@@ -60,7 +60,7 @@
           </td>
           <td colspan="2">
             <span ng-if="scenario.start_time_sim">
-              {{ scenario.end_time_sim | date: 'M/d/y HH:mm:ss' }}
+                {{ formattedEndTime }}
             </span>
             <span ng-if="!scenario.end_time_sim">
               --/--/---- --:--:--
