@@ -47,7 +47,8 @@
     "notie": "~3.2.0",
     "perfect-scrollbar": "~0.6.11",
     "raven-js": "~1.1.16",
-    "eonasdan-bootstrap-datetimepicker": "^4.17.47"
+    "eonasdan-bootstrap-datetimepicker": "^4.17.47",
+    "moment-timezone": "^0.5.25"
   },
   "overrides": {
     "leaflet.markercluster": {

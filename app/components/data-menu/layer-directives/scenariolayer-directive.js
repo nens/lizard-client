@@ -123,7 +123,15 @@ angular.module('data-menu')
             }
 
             scope.scenario = scenario;
-            scope.timezoneString = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; // in case of ie11 this doesnt work and will thus become empty string ''
+            if (scope.scenario.start_time_sim) {
+              scope.timezoneString = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; // in case of ie11 this doesnt work and will thus become empty string ''
+              if (scope.timezoneString !== '') {
+                scope.timezoneStringAbbrevated = moment.tz(scope.scenario.start_time_sim, (scope.timezoneString)).format('z');
+              } else {
+                scope.timezoneStringAbbrevated = '';
+              }
+            }
+           
 
             scenario.result_set.forEach(function (result) {
               if (result.raster) {
