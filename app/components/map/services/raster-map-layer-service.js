@@ -326,7 +326,7 @@ angular.module('map')
         // for elevation, but is a problematic solution.
         if (!rasterMapLayer.temporal) {
           var url = rasterMapLayer._imageUrlBase +
-            '?request=getlimits&layers=' +
+            '?request=getlimits&version=1.1.1&layers=' +
             rasterMapLayer.slug +
             '&width=16&height=16&srs=epsg:4326&bbox=' +
             bounds.toBBoxString();
