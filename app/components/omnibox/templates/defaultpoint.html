@@ -6,9 +6,9 @@
         <table ng-if="content.scale === 'interval' || content.scale === 'ratio' "
           class="table table-condensed table-hover single-row-table">
           <thead>
-            <td class="col-md-4">{{ content.quantity }} </td>
+            <td class="col-md-4" title="uuid: {{ content.uuid }}">{{ content.quantity }} </td>
             <td class="col-md-4">{{ content.data[0] ? content.data[0].toPrecision(3) : content.data[0] }} {{ content.unit }}</td>
-            <td class="col-md-4"></td>
+            <td class="col-md-4" title="{{ content.slug }}" style="white-space: normal">{{ content.slug }}</td>
           </thead>
         </table>
 
