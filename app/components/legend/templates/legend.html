@@ -77,9 +77,7 @@
 
   <div class="card-like legend-continuous">
 
-      <div ng-repeat="(uuid, rasterData) in legend.data.continuous"
-           ng-if="mustShowContinuousLegend(uuid)"
-      >
+      <div ng-repeat="(uuid, rasterData) in legend.data.continuous">
         <div class="single-continuous-legend">
 
           <div class="legend-header">
@@ -91,7 +89,7 @@
           </div>
 
           <div class="gradient-bar"
-               ng-style="{{ getGradient(uuid) }}">
+              ng-style="getGradient(uuid)">
           </div>
 
           <div class="continuous-raster-numeric-data">
