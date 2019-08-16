@@ -10,12 +10,9 @@
           class="legend-header"
           style="margin-bottom:20px"
         >
-          <a href="#"
-             ng-click="switchSelectedRaster(uuid)"
-             title="{{ 'Switch selected legend' | translate }}">
+         
             {{ legend.uuidMapping[uuid] }}
             &nbsp;
-          </a>
           <button
             class="timeseries-interval-btn"
             style="padding-top:0px; padding-bottom:0px; position:initial;float:right;margin-right:5px;"
@@ -81,11 +78,8 @@
         <div class="single-continuous-legend">
 
           <div class="legend-header">
-            <a href="#"
-               ng-click="switchSelectedRaster(uuid)"
-               title="{{ 'Switch selected legend' | translate }}">
+            
               {{ legend.uuidMapping[uuid] }}
-            </a>
           </div>
 
           <div class="gradient-bar"
