@@ -1,7 +1,21 @@
 
 <div class="container-for-both-legends">
+    <div
+      class="card-header"
+      style="padding:23px;"
+      ng-if="hasData()"
+    >
+      <span
+        style="font-weight:lighter; font-size: 16px; color:white;"
+      >
+        LEGENDS
+      </span>
+    </div>
 
-  <div class="card legend-discrete">
+  <div 
+    class="card legend-discrete"
+    style="background-color:transparent;"
+  >
     <div  ng-repeat="(uuid, rasterData) in legend.data.discrete"
           >
 
