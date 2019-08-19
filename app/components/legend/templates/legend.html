@@ -12,6 +12,8 @@
         >
          
             {{ legend.uuidMapping[uuid] }}
+            {{ " - "}}
+            {{ uuidOrganisationMapping[uuid] }}
             &nbsp;
           <button
             class="timeseries-interval-btn"
@@ -79,7 +81,9 @@
 
           <div class="legend-header">
             
-              {{ legend.uuidMapping[uuid] }}
+            {{ legend.uuidMapping[uuid] }}
+            {{ " - "}}
+            {{ uuidOrganisationMapping[uuid] }}
           </div>
 
           <div class="gradient-bar"

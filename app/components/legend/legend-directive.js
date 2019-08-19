@@ -13,8 +13,9 @@ angular.module('legend')
       data: {
         discrete: {},
         continuous: {}
-      }
+      },
     };
+    scope.uuidOrganisationMapping = LegendService.uuidOrganisationMapping;
 
     var getBorderStyle = function (datum) {
       return datum.label === -1 ? "1px solid #ccc" : "0";
