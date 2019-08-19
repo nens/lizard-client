@@ -122,6 +122,10 @@
           </table>
         </div>
 
+        <div>
+          {{ getLayerByUuid(properties.uuid).name }}
+        </div>
+
         <graph
           ng-if="properties.agg === 'curve'"
           line
