@@ -79,7 +79,8 @@ angular.module('data-menu')
             firstValueTimestamp: response.first_value_timestamp,
             lastValueTimestamp: response.last_value_timestamp,
             bounds: response.spatial_bounds,
-            frequency: response.frequency || null
+            frequency: response.frequency || null,
+            organisation: response.organisation,
           }));
 
           // If the layer did not have a name, check if the backend has one.
