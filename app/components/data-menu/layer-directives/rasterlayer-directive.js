@@ -64,6 +64,7 @@ angular.module('data-menu')
           MapService.mapLayers.push(mapLayer);
 
           DataService.dataLayers.push(rasterDataLayer({
+            name: response.name,
             uuid: scope.layer.uuid,
             slug: response.slug,
             temporal: response.temporal,
