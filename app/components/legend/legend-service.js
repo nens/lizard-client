@@ -231,8 +231,7 @@ angular.module('legend')
           dataLayerObj = _.find(DataService.dataLayers, { uuid: uuid });
           if (!dataLayerObj) { return; }
           this.uuidMapping[uuid] = name;
-          var tempRaster = _.find(DataService.dataLayers, { uuid: uuid });
-          this.uuidOrganisationMapping[uuid] =  tempRaster && tempRaster.organisation && tempRaster.organisation.name;
+          this.uuidOrganisationMapping[uuid] =  dataLayerObj.organisation && dataLayerObj.organisation.name;
           if (rasterIsDiscrete(dataLayerObj)) {
             DataService.updateLayerData(geo, layerObj, options, promises);
           } else {
