@@ -385,9 +385,15 @@ angular.module('data-menu')
         var dataLayer = this.getDataLayer(layer.uuid);
 
         if (dataLayer) {
-          if (dataLayer.scale === 'nominal' || dataLayer.scale === 'ordinal') {
+          if (dataLayer.scale === 'nominal') {
             // Request data for point in time when discrete.
             options.at = State.temporal.at;
+          } else if (dataLayer.scale === 'ordinal') { // && options.geom.type === 'Point') {
+            options.at = State.temporal.at;
+            if (options.geom.type === 'Point') {
+              options.start = State.temporal.start;
+              options.end = State.temporal.end;
+            }
           } else {
             // Request data for time interval when continuous.
             options.start = State.temporal.start;
@@ -403,7 +409,6 @@ angular.module('data-menu')
               return;
             }
           }
-
           promises.push(
             dataLayer.getData(options).then(
               function (response) {
