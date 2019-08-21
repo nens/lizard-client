@@ -388,7 +388,7 @@ angular.module('data-menu')
           if (dataLayer.scale === 'nominal') {
             // Request data for point in time when discrete.
             options.at = State.temporal.at;
-          } else if (dataLayer.scale === 'ordinal') { // && options.geom.type === 'Point') {
+          } else if (dataLayer.scale === 'ordinal') { 
             options.at = State.temporal.at;
             if (options.geom.type === 'Point') {
               options.start = State.temporal.start;
