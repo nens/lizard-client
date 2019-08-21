@@ -116,6 +116,7 @@ angular.module('omnibox')
         }
 
         // Update charts.
+        DataService.buildDashboard();
         TimeseriesService.syncTime();
       });
 
