@@ -1,21 +1,34 @@
 
 <div class="container-for-both-legends">
+    <div
+      class="card-header"
+      style="padding:23px;"
+      ng-if="hasData()"
+    >
+      <span
+        style="font-weight:lighter; font-size: 16px; color:white;"
+      >
+        LEGENDS
+      </span>
+    </div>
 
-  <div class="card legend-discrete">
+  <div 
+    class="card legend-discrete"
+    style="background-color:transparent;"
+  >
     <div  ng-repeat="(uuid, rasterData) in legend.data.discrete"
-          ng-if="mustShowDiscreteLegend(uuid)">
+          >
 
       <div class="single-discrete-legend">
         <div
           class="legend-header"
           style="margin-bottom:20px"
         >
-          <a href="#"
-             ng-click="switchSelectedRaster(uuid)"
-             title="{{ 'Switch selected legend' | translate }}">
+         
             {{ legend.uuidMapping[uuid] }}
+            {{ " - "}}
+            {{ uuidOrganisationMapping[uuid] }}
             &nbsp;
-          </a>
           <button
             class="timeseries-interval-btn"
             style="padding-top:0px; padding-bottom:0px; position:initial;float:right;margin-right:5px;"
@@ -77,20 +90,18 @@
 
   <div class="card-like legend-continuous">
 
-      <div ng-repeat="(uuid, rasterData) in legend.data.continuous"
-           ng-if="mustShowContinuousLegend(uuid)">
+      <div ng-repeat="(uuid, rasterData) in legend.data.continuous">
         <div class="single-continuous-legend">
 
           <div class="legend-header">
-            <a href="#"
-               ng-click="switchSelectedRaster(uuid)"
-               title="{{ 'Switch selected legend' | translate }}">
-              {{ legend.uuidMapping[uuid] }}
-            </a>
+            
+            {{ legend.uuidMapping[uuid] }}
+            {{ " - "}}
+            {{ uuidOrganisationMapping[uuid] }}
           </div>
 
           <div class="gradient-bar"
-               ng-style="{{ getGradient(uuid) }}">
+              ng-style="getGradient(uuid)">
           </div>
 
           <div class="continuous-raster-numeric-data">

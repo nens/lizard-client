@@ -13,7 +13,17 @@ angular.module('legend')
       data: {
         discrete: {},
         continuous: {}
+      },
+    };
+    scope.uuidOrganisationMapping = LegendService.uuidOrganisationMapping;
+    scope.hasData = function () {
+      for (var key in scope.legend.data.discrete) {
+        return true;
       }
+      for (var key2 in scope.legend.data.continuous) {
+        return true;
+      }
+      return false;
     };
 
     var getBorderStyle = function (datum) {

@@ -59,6 +59,7 @@ angular.module('legend')
     };
 
     this.uuidMapping = {}; // dict for getting the name when having the uuid
+    this.uuidOrganisationMapping = {};
     var colormaps = {}; // dict for saving colormaps locally
     var COLORMAP_URL; // constant containing the colormap endpoint URL
 
@@ -230,6 +231,7 @@ angular.module('legend')
           dataLayerObj = _.find(DataService.dataLayers, { uuid: uuid });
           if (!dataLayerObj) { return; }
           this.uuidMapping[uuid] = name;
+          this.uuidOrganisationMapping[uuid] =  dataLayerObj.organisation && dataLayerObj.organisation.name;
           if (rasterIsDiscrete(dataLayerObj)) {
             DataService.updateLayerData(geo, layerObj, options, promises);
           } else {
