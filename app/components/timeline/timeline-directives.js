@@ -421,6 +421,7 @@ angular.module('lizard-nxt')
      * Update aggWindow element when timeState.at changes.
      */
     scope.$watch(State.toString('temporal.at'), function (n, o) {
+      console.log('temporal.at');
       if (!timelineSetsAt) {
         // update timeline when time-controller changes temporal.at state
         timeline.drawAggWindow(State.temporal.at, State.temporal.aggWindow);
@@ -465,58 +466,90 @@ angular.module('lizard-nxt')
       });
 
       $("#timeline-header-datetimepicker-start", element).on("dp.change", function(e) {
-        var newStartTime = (new Date(e.date)).getTime();
+        
+        
+        var dateDifferenceInMiliseconds = e.date.valueOf() - (e.oldDate && e.oldDate.valueOf()||0);
+        console.log('der-datetimepicker-start', e.date, e.oldDate, dateDifferenceInMiliseconds);
 
-        // if the new startTime is after the end time then also change the endtime:
-        // in that case keep the difference between start and endtime to the same value as it was before 
-        if (newStartTime > State.temporal.end) {
-          var originalDifferenceBetweenStartEnd = State.temporal.end - State.temporal.start;
-          State.temporal.end = newStartTime + originalDifferenceBetweenStartEnd;
+        if (dateDifferenceInMiliseconds < 10000 && dateDifferenceInMiliseconds > -100000) {
+          return;
         }
-        // now update the startTime 
-        State.temporal.start = newStartTime;
+        console.log('der-datetimepicker-start 2 ', e.date, e.oldDate, e.date.valueOf() - (e.oldDate && e.oldDate.valueOf())||0);
 
-        // make sure the timline is updated. 
-        // At this time I don't know if this is the best way..
-        // or if all the if statements are needed..
-        // I just noticed that timeline did not get rerendered.. 
-        // and thus copied this code from the watcher temporal.timelineMoving
-        if (!timelineSetsTime) {
-          timeline.zoomTo(
-            State.temporal.start,
-            State.temporal.end,
-            State.temporal.aggWindow
-          );
-          getTimeLineData();
-        }
-        timelineSetsTime = false;
+          $timeout(function() {
+            
+              scope.$apply(function () {
+                if (!timelineSetsTime) {
+                var newStartTime = (new Date(e.date)).getTime();
+
+                // if the new startTime is after the end time then also change the endtime:
+                // in that case keep the difference between start and endtime to the same value as it was before 
+                if (newStartTime > State.temporal.end) {
+                  var originalDifferenceBetweenStartEnd = State.temporal.end - State.temporal.start;
+                  var newEndTime = newStartTime + originalDifferenceBetweenStartEnd;
+                  if (newEndTime != State.temporal.end) {
+                    // State.temporal.end = newStartTime + originalDifferenceBetweenStartEnd;
+                  }
+                  
+                }
+                // now update the startTime 
+                if (newStartTime != State.temporal.start) {
+                  console.log('newStartTime' , newStartTime, State.temporal.start)
+                  State.temporal.start = newStartTime;
+                }
+
+                // make sure the timline is updated. 
+                // At this time I don't know if this is the best way..
+                // or if all the if statements are needed..
+                // I just noticed that timeline did not get rerendered.. 
+                // and thus copied this code from the watcher temporal.timelineMoving
+                
+                // if (!timelineSetsTime) {
+                  timeline.zoomTo(
+                    State.temporal.start,
+                    State.temporal.end,
+                    State.temporal.aggWindow
+                  );
+                getTimeLineData();
+                timelineSetsTime = false;
+                }
+              });
+          }, 0);
       });
       $("#timeline-header-datetimepicker-end", element).on("dp.change", function(e) {
-        var newEndTime = (new Date(e.date)).getTime();
+        console.log('$("#timeline-header-datetimepicker-end"');
         
-        // if the new endTime is before the start time then also change the starttime:
-        // in that case keep the difference between start and endtime to the same value as it was before 
-        if (newEndTime < State.temporal.start) {
-          var originalDifferenceBetweenStartEnd = State.temporal.end - State.temporal.start;
-          State.temporal.start = newEndTime - originalDifferenceBetweenStartEnd;
-        }
-        // now update the endTime 
-        State.temporal.end = newEndTime;
+          // $timeout(function() {
+            
+          //     scope.$apply(function () {
+          //       if (!timelineSetsTime) {
+          //       getTimeLineData();
+          //       timelineSetsTime = false;
+          //       var newEndTime = (new Date(e.date)).getTime();
+          
+          //       // if the new endTime is before the start time then also change the starttime:
+          //       // in that case keep the difference between start and endtime to the same value as it was before 
+          //       if (newEndTime < State.temporal.start) {
+          //         var originalDifferenceBetweenStartEnd = State.temporal.end - State.temporal.start;
+          //         // State.temporal.start = newEndTime - originalDifferenceBetweenStartEnd;
+          //       }
+          //       // now update the endTime 
+          //       // State.temporal.end = newEndTime;
 
-        // make sure the timline is updated. 
-        // At this time I don't know if this is the best way..
-        // or if all the if statements are needed..
-        // I just noticed that timeline did not get rerendered.. 
-        // and thus copied this code from the watcher temporal.timelineMoving
-        if (!timelineSetsTime) {
-          timeline.zoomTo(
-            State.temporal.start,
-            State.temporal.end,
-            State.temporal.aggWindow
-          );
-          getTimeLineData();
-        }
-        timelineSetsTime = false;
+          //       // make sure the timline is updated. 
+          //       // At this time I don't know if this is the best way..
+          //       // or if all the if statements are needed..
+          //       // I just noticed that timeline did not get rerendered.. 
+          //       // and thus copied this code from the watcher temporal.timelineMoving
+          //       // if (!timelineSetsTime) {
+          //         timeline.zoomTo(
+          //           State.temporal.start,
+          //           State.temporal.end,
+          //           State.temporal.aggWindow
+          //         );
+          //       }
+          //     });
+          // }, 0);
       });
 
       scope.$watch(State.toString('temporal.start'), function (n, o) {
