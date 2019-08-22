@@ -51,23 +51,28 @@
       <div ng-repeat="layer in filterScenarioRasters(state.layers)">
         <assetlayer
           ng-if="layer.type === 'assetgroup'"
-          layer="layer">
+          layer="layer"
+          title="{{ layer.name }}">
         </assetlayer>
         <rasterlayer
           ng-if="!layer.scenario && layer.type === 'raster'"
-          layer="layer">
+          layer="layer"
+          title="{{ layer.name }}">
         </rasterlayer>
         <wmslayer
           ng-if="!layer.scenario && layer.type === 'wmslayer'"
-          layer="layer">
+          layer="layer"
+          title="{{ layer.name }}">
         </wmslayer>
         <eventseries
           ng-if="!layer.scenario && layer.type === 'eventseries'"
-          layer="layer">
+          layer="layer"
+          title="{{ layer.name }}">
         </eventseries>
         <scenario
           ng-if="layer.type === 'scenario'"
-          layer="layer">
+          layer="layer"
+          title="{{ layer.name }}">
         </scenario>
       </div>
 
