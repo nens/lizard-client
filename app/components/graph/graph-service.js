@@ -1316,6 +1316,9 @@ angular.module('lizard-nxt')
 
         var x = xy.x.scale(d[keys.x]);
 
+        // console.log(dimensions); // x2 0-310
+        // console.log(xy);
+
         g.select('line')
          .attr('y1', height)
          .attr('y2', 0)
@@ -1379,23 +1382,43 @@ angular.module('lizard-nxt')
       return path;
     };
 
-    var addTextWithBackground = function (g, text, klass, x, y) {
+    var addTextWithBackground = function (g, text, klass, x, y) {//0-310 voor x
+      // console.log(g);
+      // console.log(g[0][0]);
+      // of ownerSVGelement
+      // console.log(g[0][0].viewportElement.width);
+      var viewportElementWidth = g[0][0].viewportElement.width.animVal.value;
+      // console.log("g", g[0].viewportElement.clientWidth);
       var PADDING = 10, PADDING_BACKGROUND = 2;
+      var currentLineOnXaxisBackground = x + PADDING;
+      var currentLineOnXaxisText = x + PADDING - PADDING_BACKGROUND;
+      // console.log(x);
+      // console.log(viewportElementWidth);
+      if (x > (0.5 * viewportElementWidth)) {
+        currentLineOnXaxisBackground =  currentLineOnXaxisBackground - 75;
+        currentLineOnXaxisText =  currentLineOnXaxisText - 75;
+      }
+
       var t = g.append('text')
                .text(text)
                .attr('class', klass)
-               .attr('x', x + PADDING)
+               .attr('x', currentLineOnXaxisBackground)
                .attr('y', y - PADDING);
+      // console.log(maxWidthGraphContent);
 
       // Let's draw a slightly larger white background behind the text,
       // for readability in case it overlaps the graph.
       var tHeight = t.node().getBBox().height,
           tWidth = t.node().getBBox().width;
 
+      // console.log("tWidth", tWidth); // 15
+      // console.log("tHeight", tHeight); // 52
+      // console.log("x", x); // kan van alles zijn
+
       g.append('rect')
       // Tooltip-background makes it white; graph-tooltip-x means it disappears with the label.
        .attr('class', 'tooltip-background ' + klass)
-       .attr('x', x + PADDING - PADDING_BACKGROUND)
+       .attr('x', currentLineOnXaxisText)
        .attr('y', y - PADDING - tHeight + PADDING_BACKGROUND)
        .attr('width', tWidth + 2 * PADDING_BACKGROUND)
        .attr('height', tHeight + 2 * PADDING_BACKGROUND);
@@ -1562,6 +1585,16 @@ angular.module('lizard-nxt')
             valuebox, i, v.color, boxText, maxTextLengthSoFar);
         });
 
+        // console.log("cx", v.x);
+        // console.log(graph);
+        // console.log(content);
+        // console.log(dimensions);
+        // console.log(xy);
+        // console.log("x2", x2); //0-310
+
+        // Width of the line part/ content of the graph, without the axes
+        // console.log(graph.dimensions.width); // 375
+        // var maxWidthGraphContent = graph.dimensions.width;
         addTextWithBackground(
           g, xText, 'graph-tooltip-x', x2, height);
       };
