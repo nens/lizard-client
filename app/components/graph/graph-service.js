@@ -1316,9 +1316,6 @@ angular.module('lizard-nxt')
 
         var x = xy.x.scale(d[keys.x]);
 
-        // console.log(dimensions); // x2 0-310
-        // console.log(xy);
-
         g.select('line')
          .attr('y1', height)
          .attr('y2', 0)
@@ -1573,16 +1570,6 @@ angular.module('lizard-nxt')
             valuebox, i, v.color, boxText, maxTextLengthSoFar);
         });
 
-        // console.log("cx", v.x);
-        // console.log(graph);
-        // console.log(content);
-        // console.log(dimensions);
-        // console.log(xy);
-        // console.log("x2", x2); //0-310
-
-        // Width of the line part/ content of the graph, without the axes
-        // console.log(graph.dimensions.width); // 375
-        // var maxWidthGraphContent = graph.dimensions.width;
         addTextWithBackground(
           g, xText, 'graph-tooltip-x', x2, height);
       };
