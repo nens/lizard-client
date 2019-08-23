@@ -1391,9 +1391,10 @@ angular.module('lizard-nxt')
       // Show this text with a background to the left of this line
       // if the mouse is in the right side of the graph (so that the text
       // stays readable and will not fall out of the graph).
+      // How much to the left depends on how long 'text' is.
       if (x > (0.5 * viewportElementWidth)) {
-        currentLineOnXaxisBackground =  currentLineOnXaxisBackground - 75;
-        currentLineOnXaxisText =  currentLineOnXaxisText - 75;
+        currentLineOnXaxisBackground =  currentLineOnXaxisBackground - (text.length * 10);
+        currentLineOnXaxisText =  currentLineOnXaxisText - (text.length * 10);
       }
 
       var t = g.append('text')
