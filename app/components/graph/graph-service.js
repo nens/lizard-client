@@ -1384,32 +1384,31 @@ angular.module('lizard-nxt')
           PADDING_BACKGROUND = 2;
       var viewportElementWidth = g[0][0].viewportElement.width.animVal.value;
 
-      var currentLineOnXaxisBackground = x + PADDING;
-      var currentLineOnXaxisText = x + PADDING - PADDING_BACKGROUND;
       // Interaction with the graph shows a line near the mouse.
       // Text with a background is shown to the right of this line.
+      var currentLineOnXaxisBackground = x + PADDING;
+      var currentLineOnXaxisText = x + PADDING - PADDING_BACKGROUND;
       // Show this text with a background to the left of this line
       // if the mouse is in the right side of the graph (so that the text
       // stays readable and will not fall out of the graph).
-      // How much to the left depends on how long 'text' is.
+      // How much to the left depends on how long 'text' is and which
+      // characters are used.
+      var adjustedTextLength;
+      if (text.length < 6) {
+        // For example a percentage (5 chars).
+        adjustedTextLength = 10;
+      } else if (text.length < 11) {
+        // For example for a line selection of the 'Hoogte' layer.
+        // text.length is 8 characters.
+        adjustedTextLength = 9.5;
+      } else {
+        // For example for a line selection of the 'NDVI anomalies' layer.
+        // text.length is date and time (20 characters).
+        adjustedTextLength = 7;
+      }
       if (x > (0.5 * viewportElementWidth)) {
-        // Text.length is not entirely scalable, because it also depends on
-        // which characters are in the text.
-        if (text.length < 6) {
-          // For example a percentage (5 chars).
-          currentLineOnXaxisBackground =  currentLineOnXaxisBackground - (text.length * 10);
-          currentLineOnXaxisText =  currentLineOnXaxisText - (text.length * 10);
-        } else if (text.length < 11) {
-          // For example for a line selection of the 'Hoogte' layer.
-          // text.length is 8 characters.
-          currentLineOnXaxisBackground =  currentLineOnXaxisBackground - (text.length * 9.5);
-          currentLineOnXaxisText =  currentLineOnXaxisText - (text.length * 9.5);
-        } else {
-          // For example for a line selection of the 'NDVI anomalies' layer.
-          // text.length is date and time (20 characters).
-          currentLineOnXaxisBackground =  currentLineOnXaxisBackground - (text.length * 7);
-          currentLineOnXaxisText =  currentLineOnXaxisText - (text.length * 7);
-        }
+        currentLineOnXaxisBackground =  currentLineOnXaxisBackground - (text.length * adjustedTextLength);
+        currentLineOnXaxisText =  currentLineOnXaxisText - (text.length * adjustedTextLength);
       }
 
       var t = g.append('text')
