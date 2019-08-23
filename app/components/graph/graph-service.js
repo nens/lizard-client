@@ -1401,6 +1401,8 @@ angular.module('lizard-nxt')
         // For example for a line selection of the 'Hoogte' layer.
         // text.length is 8 characters.
         adjustedTextLength = 9.5;
+      } else if (text.length < 16) {
+        adjustedTextLength = 8.5;
       } else {
         // For example for a line selection of the 'NDVI anomalies' layer.
         // text.length is date and time (20 characters).
