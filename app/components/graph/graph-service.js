@@ -1393,8 +1393,23 @@ angular.module('lizard-nxt')
       // stays readable and will not fall out of the graph).
       // How much to the left depends on how long 'text' is.
       if (x > (0.5 * viewportElementWidth)) {
-        currentLineOnXaxisBackground =  currentLineOnXaxisBackground - (text.length * 10);
-        currentLineOnXaxisText =  currentLineOnXaxisText - (text.length * 10);
+        // Text.length is not entirely scalable, because it also depends on
+        // which characters are in the text.
+        if (text.length < 6) {
+          // For example a percentage (5 chars).
+          currentLineOnXaxisBackground =  currentLineOnXaxisBackground - (text.length * 10);
+          currentLineOnXaxisText =  currentLineOnXaxisText - (text.length * 10);
+        } else if (text.length < 11) {
+          // For example for a line selection of the 'Hoogte' layer.
+          // text.length is 8 characters.
+          currentLineOnXaxisBackground =  currentLineOnXaxisBackground - (text.length * 9.5);
+          currentLineOnXaxisText =  currentLineOnXaxisText - (text.length * 9.5);
+        } else {
+          // For example for a line selection of the 'NDVI anomalies' layer.
+          // text.length is date and time (20 characters).
+          currentLineOnXaxisBackground =  currentLineOnXaxisBackground - (text.length * 7);
+          currentLineOnXaxisText =  currentLineOnXaxisText - (text.length * 7);
+        }
       }
 
       var t = g.append('text')
