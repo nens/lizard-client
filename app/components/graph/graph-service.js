@@ -1380,10 +1380,17 @@ angular.module('lizard-nxt')
     };
 
     var addTextWithBackground = function (g, text, klass, x, y) {
+      var PADDING = 10,
+          PADDING_BACKGROUND = 2;
       var viewportElementWidth = g[0][0].viewportElement.width.animVal.value;
-      var PADDING = 10, PADDING_BACKGROUND = 2;
+
       var currentLineOnXaxisBackground = x + PADDING;
       var currentLineOnXaxisText = x + PADDING - PADDING_BACKGROUND;
+      // Interaction with the graph shows a line near the mouse.
+      // Text with a background is shown to the right of this line.
+      // Show this text with a background to the left of this line
+      // if the mouse is in the right side of the graph (so that the text
+      // stays readable and will not fall out of the graph).
       if (x > (0.5 * viewportElementWidth)) {
         currentLineOnXaxisBackground =  currentLineOnXaxisBackground - 75;
         currentLineOnXaxisText =  currentLineOnXaxisText - 75;
