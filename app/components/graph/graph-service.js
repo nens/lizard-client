@@ -1388,7 +1388,7 @@ angular.module('lizard-nxt')
       // Text with a background is shown to the right of this line
       // (text anchor start).
       // Show this text with a background to the left of this line
-      // text-anchor end) if the mouse is in the right side of the graph
+      // (text-anchor end) if the mouse is in the right side of the graph
       // (so that the text stays readable and will not fall out of the graph).
       var textAndBackgroundAnchor = "start";
       // Add padding to text for white background rect.
