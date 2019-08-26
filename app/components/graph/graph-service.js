@@ -1391,7 +1391,8 @@ angular.module('lizard-nxt')
       // (text-anchor end) if the mouse is in the right side of the graph
       // (so that the text stays readable and will not fall out of the graph).
       var textAndBackgroundAnchor = "start";
-      // Add padding to text for white background rect.
+      // Add padding to text so that is nicely centered in the white
+      // background rect.
       var xWithPaddingForText;
       if (x > (0.5 * viewportElementWidth)) {
         textAndBackgroundAnchor = "end";
