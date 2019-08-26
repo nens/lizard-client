@@ -268,7 +268,7 @@ function ($http, DataService, TimeseriesService, notie, gettextCatalog,
     // initialize the datepicker
     var dateEl = $('#datepicker-export.input-daterange');
     dateEl.datepicker({
-      format: 'dd-mm-yyyy'
+      format: 'dd/mm/yyyy'
     });
     // bind the hide event to updateDates
     dateEl.on('hide', updateDates);
