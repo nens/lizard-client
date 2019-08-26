@@ -53,18 +53,22 @@
     <div id="export-timeseries-raster-selector-3">
       <div class="start-stop-selector-container-1">
         <div class="from-to-label-1" translate>From:</div>
-        <input type="datetime-local"
-               name="start-selector"
-               class="form-control html5-datetime-picker"
-               id="start-selector" />
+        <div class="input-group date" id="start-date-time-picker">
+          <input type="text" class="form-control" id="start-selector"/>
+          <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+          </span>
+        </div>
       </div>
 
       <div class="start-stop-selector-container-2">
         <div class="from-to-label-2" translate>To:</div>
-        <input type="datetime-local"
-               name="stop-selector"
-               class="form-control html5-datetime-picker"
-               id="stop-selector" />
+        <div class="input-group date" id="stop-date-time-picker">
+          <input type="text" class="form-control" id="stop-selector"/>
+          <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+          </span>
+        </div>
       </div>
     </div>
   </div>

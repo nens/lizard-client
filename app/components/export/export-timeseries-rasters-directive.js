@@ -1,7 +1,7 @@
 angular.module('export')
 .directive('exportTimeseriesRasters',
-        ['user', 'DataService', 'State', 'UtilService', '$timeout', 'gettextCatalog', '$http', 'notie',
-function (user,   DataService,   State,   UtilService,   $timeout,   gettextCatalog,   $http,   notie) {
+        ['user', 'DataService', 'State', 'UtilService', '$timeout', 'gettextCatalog', '$http', 'notie', 'UrlService',
+function (user,   DataService,   State,   UtilService,   $timeout,   gettextCatalog,   $http,   notie, UrlService) {
 
   var DEFAULT_PARAMS = {
     format: "csv",
@@ -77,18 +77,23 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
   }
 
   function initDatetimePickers () {
-    $timeout(function () {
-      var localFormatter = d3.time.format.utc("%Y-%m-%dT%H:%M");
+    $timeout(function() {
+      var urlLanguage = UrlService.getDataForState().language;
+      var LanguageLookup = {
+        nl: "nl_NL",
+        en: "en_GB",
+      };
+      var defaultLanguageCode = "en_GB";
+      var languageCode = LanguageLookup[urlLanguage] || defaultLanguageCode;
 
-      var startDateElem = document.getElementById("start-selector");
-      if (startDateElem) {
-        startDateElem.value = localFormatter(new Date(State.temporal.start));
-      }
-
-      var stopDateElem = document.getElementById("stop-selector");
-      if (stopDateElem) {
-        stopDateElem.value = localFormatter(new Date(State.temporal.end));
-      }
+      $('#start-date-time-picker').datetimepicker({
+        date: new Date(State.temporal.start),
+        locale: languageCode,
+      });
+      $('#stop-date-time-picker').datetimepicker({
+        date: new Date(State.temporal.end),
+        locale: languageCode,
+      });
     });
   }
 
