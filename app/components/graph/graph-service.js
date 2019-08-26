@@ -1380,25 +1380,54 @@ angular.module('lizard-nxt')
     };
 
     var addTextWithBackground = function (g, text, klass, x, y) {
-      var PADDING = 10, PADDING_BACKGROUND = 2;
+      var PADDING = 10,
+          PADDING_BACKGROUND = 2;
+      var viewportElementWidth = g[0][0].viewportElement.width.animVal.value;
+
+      // Interaction with the graph shows a line near the mouse.
+      // Text with a background is shown to the right of this line
+      // (text anchor start).
+      // Show this text with a background to the left of this line
+      // (text-anchor end) if the mouse is in the right side of the graph
+      // (so that the text stays readable and will not fall out of the graph).
+      var textAndBackgroundAnchor = "start";
+      // Add padding to text so that is nicely centered in the white
+      // background rect.
+      var xWithPaddingForText;
+      if (x > (0.5 * viewportElementWidth)) {
+        textAndBackgroundAnchor = "end";
+        xWithPaddingForText = x - PADDING;
+      } else {
+        xWithPaddingForText = x + PADDING;
+      }
+
       var t = g.append('text')
                .text(text)
                .attr('class', klass)
-               .attr('x', x + PADDING)
-               .attr('y', y - PADDING);
+               .attr('x', xWithPaddingForText)
+               .attr('y', y - PADDING)
+               .attr('text-anchor', textAndBackgroundAnchor);
 
       // Let's draw a slightly larger white background behind the text,
       // for readability in case it overlaps the graph.
+      // You need the tWidth to calculate where the text background should be.
       var tHeight = t.node().getBBox().height,
           tWidth = t.node().getBBox().width;
+      var xWithPaddingForBackground;
+      if (x > (0.5 * viewportElementWidth)) {
+        xWithPaddingForBackground = x - PADDING - tWidth;
+      } else {
+        xWithPaddingForBackground = x + PADDING;
+      }
 
       g.append('rect')
       // Tooltip-background makes it white; graph-tooltip-x means it disappears with the label.
        .attr('class', 'tooltip-background ' + klass)
-       .attr('x', x + PADDING - PADDING_BACKGROUND)
+       .attr('x', xWithPaddingForBackground)
        .attr('y', y - PADDING - tHeight + PADDING_BACKGROUND)
        .attr('width', tWidth + 2 * PADDING_BACKGROUND)
-       .attr('height', tHeight + 2 * PADDING_BACKGROUND);
+       .attr('height', tHeight + 2 * PADDING_BACKGROUND)
+       .attr('text-anchor', textAndBackgroundAnchor);
 
       // We have to re-draw the text, as we just overwrote it. It can't be done in
       // in another order as we need to know the text's size before drawing the background.
