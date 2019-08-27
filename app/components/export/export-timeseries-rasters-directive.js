@@ -100,7 +100,14 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
   function getDatetimes () {
     var startDateElem = document.getElementById("start-selector");
     var stopDateElem = document.getElementById("stop-selector");
-    return [startDateElem.value + ":00", stopDateElem.value + ":00"];
+    // the value of startDateElem and stopDateElem is a string in date format of "DD-MM-YYYY HH:mm"
+    // we would like to have the string in date format of "MM-DD-YYYY HH:mm"
+    // so convert these values to the latter format
+    var startDateArray = startDateElem.value.split("/");
+    var stopDateArray = stopDateElem.value.split("/");
+    var newStartDate = startDateArray[1] + "/" + startDateArray[0] + "/" + startDateArray[2];
+    var newStopDate = stopDateArray[1] + "/" + stopDateArray[0] + "/" + stopDateArray[2];
+    return [newStartDate + ":00", newStopDate + ":00"];
   }
 
   var link = function (scope) {
