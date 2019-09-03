@@ -76,16 +76,16 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     return totalGeoms;
   }
 
+  var urlLanguage = UrlService.getDataForState().language;
+  var LanguageLookup = {
+    nl: "nl_NL",
+    en: "en_GB",
+  };
+  var defaultLanguageCode = "en_GB";
+  var languageCode = LanguageLookup[urlLanguage] || defaultLanguageCode;
+
   function initDatetimePickers () {
     $timeout(function() {
-      var urlLanguage = UrlService.getDataForState().language;
-      var LanguageLookup = {
-        nl: "nl_NL",
-        en: "en_GB",
-      };
-      var defaultLanguageCode = "en_GB";
-      var languageCode = LanguageLookup[urlLanguage] || defaultLanguageCode;
-
       $('#start-date-time-picker').datetimepicker({
         date: new Date(State.temporal.start),
         locale: languageCode,
@@ -101,12 +101,15 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     var startDateElem = document.getElementById("start-selector");
     var stopDateElem = document.getElementById("stop-selector");
     // the value of startDateElem and stopDateElem is a string in date format of "DD-MM-YYYY HH:mm"
+    // for NL language and of "DD/MM/YYYY HH:mm" for EN language
     // we would like to have the string in date format of "MM-DD-YYYY HH:mm"
-    // so convert these values to the latter format
-    var startDateArray = startDateElem.value.split("/");
-    var stopDateArray = stopDateElem.value.split("/");
-    var newStartDate = startDateArray[1] + "/" + startDateArray[0] + "/" + startDateArray[2];
-    var newStopDate = stopDateArray[1] + "/" + stopDateArray[0] + "/" + stopDateArray[2];
+    // so convert these values to the "MM-DD-YYYY HH:mm" format
+    // if selected language is EN then split the date by "/"
+    // otherwise split the date by "-" (NL language)
+    var startDateArray = languageCode === "en_GB" ? startDateElem.value.split("/") : startDateElem.value.split("-");
+    var stopDateArray = languageCode === "en_GB" ? stopDateElem.value.split("/") : stopDateElem.value.split("-");
+    var newStartDate = startDateArray[1] + "-" + startDateArray[0] + "-" + startDateArray[2];
+    var newStopDate = stopDateArray[1] + "-" + stopDateArray[0] + "-" + stopDateArray[2];
     return [newStartDate + ":00", newStopDate + ":00"];
   }
 
