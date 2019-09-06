@@ -34,7 +34,7 @@ angular.module('legend')
       var layer = _.find(scope.state.layers, {uuid: uuid});
       layer.vectorized = !layer.vectorized;
       MapService.updateLayers([layer]);
-    }
+    };
 
     scope.totalCategoryCount = function (uuid) {
       return scope.legend.data.discrete[uuid].length;

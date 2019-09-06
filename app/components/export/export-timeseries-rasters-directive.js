@@ -1,7 +1,7 @@
 angular.module('export')
 .directive('exportTimeseriesRasters',
-        ['user', 'DataService', 'State', 'UtilService', '$timeout', 'gettextCatalog', '$http', 'notie',
-function (user,   DataService,   State,   UtilService,   $timeout,   gettextCatalog,   $http,   notie) {
+        ['user', 'DataService', 'State', 'UtilService', '$timeout', 'gettextCatalog', '$http', 'notie', 'UrlService',
+function (user,   DataService,   State,   UtilService,   $timeout,   gettextCatalog,   $http,   notie, UrlService) {
 
   var DEFAULT_PARAMS = {
     format: "csv",
@@ -76,26 +76,46 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     return totalGeoms;
   }
 
+  var urlLanguage = UrlService.getDataForState().language;
+  var LanguageLookup = {
+    nl: "nl_NL",
+    en: "en_GB",
+  };
+  var defaultLanguageCode = "en_GB";
+  var languageCode = LanguageLookup[urlLanguage] || defaultLanguageCode;
+
   function initDatetimePickers () {
-    $timeout(function () {
+    $timeout(function() {
+      // The api wants the time in UTC.
+      // Use a localFormatter to show the time in the export modal in UTC.
       var localFormatter = d3.time.format.utc("%Y-%m-%dT%H:%M");
-
-      var startDateElem = document.getElementById("start-selector");
-      if (startDateElem) {
-        startDateElem.value = localFormatter(new Date(State.temporal.start));
-      }
-
-      var stopDateElem = document.getElementById("stop-selector");
-      if (stopDateElem) {
-        stopDateElem.value = localFormatter(new Date(State.temporal.end));
-      }
+      var startDateTime = localFormatter(new Date(State.temporal.start));
+      var endDateTime = localFormatter(new Date(State.temporal.end));
+      $('#start-date-time-picker').datetimepicker({
+        date: startDateTime,
+        locale: languageCode,
+      });
+      $('#stop-date-time-picker').datetimepicker({
+        date: endDateTime,
+        locale: languageCode,
+      });
     });
   }
 
   function getDatetimes () {
     var startDateElem = document.getElementById("start-selector");
     var stopDateElem = document.getElementById("stop-selector");
-    return [startDateElem.value + ":00", stopDateElem.value + ":00"];
+    // the value of startDateElem and stopDateElem is a string in date format of "DD-MM-YYYY HH:mm"
+    // for NL language and of "DD/MM/YYYY HH:mm" for EN language
+    // we would like to have the string in date format of "MM-DD-YYYY HH:mm"
+    // so convert these values to the "MM-DD-YYYY HH:mm" format
+    // if selected language is EN then split the date by "/"
+    // otherwise split the date by "-" (NL language)
+    var startDateArray = languageCode === "en_GB" ? startDateElem.value.split("/") : startDateElem.value.split("-");
+    var stopDateArray = languageCode === "en_GB" ? stopDateElem.value.split("/") : stopDateElem.value.split("-");
+    var newStartDate = startDateArray[1] + "-" + startDateArray[0] + "-" + startDateArray[2];
+    var newStopDate = stopDateArray[1] + "-" + stopDateArray[0] + "-" + stopDateArray[2];
+    return [newStartDate + ":00", newStopDate + ":00"];
   }
 
   var link = function (scope) {
