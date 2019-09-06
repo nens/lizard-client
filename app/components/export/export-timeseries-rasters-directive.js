@@ -86,12 +86,17 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
 
   function initDatetimePickers () {
     $timeout(function() {
+      // The api wants the time in UTC.
+      // Use a localFormatter to show the time in the export modal in UTC.
+      var localFormatter = d3.time.format.utc("%Y-%m-%dT%H:%M");
+      var startDateTime = localFormatter(new Date(State.temporal.start));
+      var endDateTime = localFormatter(new Date(State.temporal.end));
       $('#start-date-time-picker').datetimepicker({
-        date: new Date(State.temporal.start),
+        date: startDateTime,
         locale: languageCode,
       });
       $('#stop-date-time-picker').datetimepicker({
-        date: new Date(State.temporal.end),
+        date: endDateTime,
         locale: languageCode,
       });
     });
