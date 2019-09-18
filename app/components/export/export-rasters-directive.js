@@ -81,9 +81,13 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
 
   function getDatetime () {
     var atDateElem = document.getElementById("at-selector");
-    var atDateArray = languageCode === "en_GB" ? atDateElem.value.split("/") : atDateElem.value.split("-");
-    var newAtDate = atDateArray[0] + "-" + atDateArray[1] + "-" + atDateArray[2];
-    return newAtDate + ":00";
+    var [atDate, atTime] = atDateElem.value.split(" ");
+
+    var newAtDate = atDate.replace("/", "-");
+    //Unfortunately, there is no replace all, so I used a second replace.
+    newAtDate = newAtDate.replace("/", "-");
+    new2AtDate = newAtDate.split("-");
+    return new2AtDate[2] + '-' + new2AtDate[1] + '-' + new2AtDate[0] + "T" + atTime + ":00";
   }
 
   function isNumeric (x) {
