@@ -87,6 +87,8 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     //Unfortunately, there is no replace all, so I used a second replace.
     newAtDate = newAtDate.replace("/", "-");
     new2AtDate = newAtDate.split("-");
+    //Switch the order from dd-mm-yyyy in the export modal to
+    //yyyy-mm-dd for the api call.
     return new2AtDate[2] + '-' + new2AtDate[1] + '-' + new2AtDate[0] + "T" + atTime + ":00";
   }
 
