@@ -76,19 +76,14 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
         date: atDateTime,
         locale: languageCode,
       });
-      // var localFormatter = d3.time.format.utc("%Y-%m-%dT%H:%M");
-      // var theDateElem = document.getElementById("datetime-selector");
-      // if (theDateElem) {
-      //   theDateElem.value = localFormatter(new Date(State.temporal.at));
-      // }
     });
   }
 
   function getDatetime () {
     var atDateElem = document.getElementById("at-selector");
     var atDateArray = languageCode === "en_GB" ? atDateElem.value.split("/") : atDateElem.value.split("-");
-    var newAtDate = atDateArray[1] + "-" + atDateArray[0] + "-" + atDateArray[2];
-    return atDateElem.value + ":00";
+    var newAtDate = atDateArray[0] + "-" + atDateArray[1] + "-" + atDateArray[2];
+    return newAtDate + ":00";
   }
 
   function isNumeric (x) {
