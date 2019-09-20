@@ -83,9 +83,7 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     var atDateElem = document.getElementById("at-selector");
     var [atDate, atTime] = atDateElem.value.split(" ");
 
-    var newAtDate = atDate.replace("/", "-");
-    //Unfortunately, there is no replace all, so I used a second replace.
-    newAtDate = newAtDate.replace("/", "-");
+    var newAtDate = atDate.replace(/\//g, "-");
     new2AtDate = newAtDate.split("-");
     //Switch the order from dd-mm-yyyy in the export modal to
     //yyyy-mm-dd for the api call.
