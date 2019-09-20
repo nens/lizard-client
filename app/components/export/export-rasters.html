@@ -45,12 +45,15 @@
              translate>
           Please select the datetime:
         </div>
-        <input type="datetime-local"
-               name="datetime-selector"
-               class="form-control html5-datetime-picker"
-               ng-disabled="!selectedRasterIsTemporal()"
-               id="datetime-selector"
-        />
+        <div class="input-group date" id="at-date-time-picker">
+          <input type="text"
+                 class="form-control"
+                 id="at-selector"
+                 ng-disabled="!selectedRasterIsTemporal()"/>
+          <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+          </span>
+        </div>
       </div>
     </div>
 

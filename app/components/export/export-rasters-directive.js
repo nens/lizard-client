@@ -1,7 +1,7 @@
 angular.module('export')
 .directive('exportRasters',
-        ['user', 'DataService', 'State', 'UtilService', '$timeout', 'gettextCatalog', '$http', 'notie', 'ExportRastersService',
-function (user,   DataService,   State,   UtilService,   $timeout,   gettextCatalog,   $http,   notie,   ExportRastersService) {
+        ['user', 'DataService', 'State', 'UtilService', '$timeout', 'gettextCatalog', '$http', 'notie', 'ExportRastersService','UrlService',
+function (user,   DataService,   State,   UtilService,   $timeout,   gettextCatalog,   $http,   notie,   ExportRastersService, UrlService) {
 
   var DEFAULT_PARAMS = {
     format: "geotiff",
@@ -60,19 +60,34 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
     return result;
   }
 
+  var urlLanguage = UrlService.getDataForState().language;
+  var LanguageLookup = {
+    nl: "nl_NL",
+    en: "en_GB",
+  };
+  var defaultLanguageCode = "en_GB";
+  var languageCode = LanguageLookup[urlLanguage] || defaultLanguageCode;
+
   function initDatetimePicker () {
     $timeout(function () {
       var localFormatter = d3.time.format.utc("%Y-%m-%dT%H:%M");
-      var theDateElem = document.getElementById("datetime-selector");
-      if (theDateElem) {
-        theDateElem.value = localFormatter(new Date(State.temporal.at));
-      }
+      var atDateTime = localFormatter(new Date(State.temporal.at));
+      $('#at-date-time-picker').datetimepicker({
+        date: atDateTime,
+        locale: languageCode,
+      });
     });
   }
 
   function getDatetime () {
-    var theDateElem = document.getElementById("datetime-selector");
-    return theDateElem.value + ":00";
+    var atDateElem = document.getElementById("at-selector");
+    var [atDate, atTime] = atDateElem.value.split(" ");
+
+    var newAtDate = atDate.replace(/\//g, "-");
+    new2AtDate = newAtDate.split("-");
+    //Switch the order from dd-mm-yyyy in the export modal to
+    //yyyy-mm-dd for the api call.
+    return new2AtDate[2] + '-' + new2AtDate[1] + '-' + new2AtDate[0] + "T" + atTime + ":00";
   }
 
   function isNumeric (x) {
