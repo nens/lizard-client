@@ -3,7 +3,7 @@ install:
   - npm install -g bower
   - npm install --optional=false
   - bower install
-  - npm run build
+  - npm run dist
 script:
   - npm test
 
