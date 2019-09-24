@@ -3,7 +3,7 @@ node_js: v11.0.0
 cache: npm
 install:
   - npm install -g bower
-  - npm install
+  - LIBSASS_EXT="no" npm install
   - bower install
 # TODO: get grunt to work later on:
 # - npm run dist
