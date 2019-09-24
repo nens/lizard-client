@@ -3,7 +3,8 @@ install:
   - npm install -g bower
   - npm install
   - bower install
-  - npm run dist
+# TODO: get grunt to work later on:
+# - npm run dist
 script:
   - npm test
 
