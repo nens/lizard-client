@@ -1,5 +1,6 @@
 language: node_js
 install:
+  - npm install -g bower
   - npm install --optional=false
   - bower install
   - docker-compose run web buildout
