@@ -81,10 +81,11 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
 
   function getDatetime () {
     var atDateElem = document.getElementById("at-selector");
-    var [atDate, atTime] = atDateElem.value.split(" ");
+    var atDate = atDateElem.value.split(" ")[0];
+    var atTime = atDateElem.value.split(" ")[1];
 
     var newAtDate = atDate.replace(/\//g, "-");
-    new2AtDate = newAtDate.split("-");
+    var new2AtDate = newAtDate.split("-");
     //Switch the order from dd-mm-yyyy in the export modal to
     //yyyy-mm-dd for the api call.
     return new2AtDate[2] + '-' + new2AtDate[1] + '-' + new2AtDate[0] + "T" + atTime + ":00";

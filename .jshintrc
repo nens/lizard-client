@@ -18,7 +18,9 @@
         "spyOn": false,
         "runs": false,
         "module": true,
-        "inject": true
+        "inject": true,
+        "moment": true,
+        "cheapRuler": true
     },
 
     "node"          : true,
