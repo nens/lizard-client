@@ -9,6 +9,6 @@ install:
 # - npm run dist
 script:
   - echo "npm test fails, but this is just for the test setup PR"
-#  - npm test
+  - npm test
 
 # TODO: after-success "npm run transifex"
