@@ -1,0 +1,15 @@
+language: node_js
+node_js: v11.0.0
+cache: npm
+install:
+  - npm install -g bower
+  - LIBSASS_EXT="no" npm install
+  - bower install
+# TODO: get grunt to work later on:
+# - npm run dist
+# TODO get npm test to run on phantomjs browser
+script:
+  - echo "'npm test' fails, for the time being (or forever) they are commented out"
+#   - npm test
+
+# TODO: after-success "npm run transifex"

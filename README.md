@@ -9,7 +9,7 @@ Angular/leaflet/d3 app that visualizes (geo-)information for the water sector. I
 
 Assuming you have `node~4.4.2`, `npm~2.15.0` and `bower ~1.4.0`. Otherwise see [requirements](#requirements) for the required front-end dev environment. Since lizard-client 4.6.4 it is no longer required to have `grunt-cli` installed globally.
 
-Clone this repo with its submodules:
+Clone this repo:
 
 ```sh
 git clone --recursive git@github.com:nens/lizard-client.git
@@ -201,7 +201,7 @@ The `CHANGELOG.md` would have to be merged with master after the release, which 
 ## Deployment
 For the deployment of frontend repositories we make use of an Ansible script in the lizard-nxt repository.
 More information is provided in the readme file of lizard-nxt: https://github.com/nens/lizard-nxt/blob/master/README.rst
-Look below the heading "Deployment clients". 
+Look below the heading "Deployment clients".
 
 
 ## Commit Message Convention, at a Glance

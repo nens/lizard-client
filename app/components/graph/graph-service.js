@@ -704,7 +704,7 @@ angular.module('lizard-nxt')
     if (!d[0] || !d[1]) { return; }
 
     var gAndValuebox = getEmptyValueBox(fg, 1);
-    var g = gAndValuebox[0];
+    var g2 = gAndValuebox[0];
     var valuebox = gAndValuebox[1];
 
     var textY = d[1].toFixed ? d[1].toFixed(2): '...';
@@ -717,17 +717,17 @@ angular.module('lizard-nxt')
     var color = chart.color;
     setTextInValuebox(valuebox, 0, color, textY, 0);
 
-    if (!g[0][0]) {
-      g = fg.append('g').attr('class', 'interaction-group');
+    if (!g2[0][0]) {
+      g2 = fg.append('g').attr('class', 'interaction-group');
     } else {
       // Make sure that there is only 1 vertical line on the omnibox graph
       // at any time when the circle is moving over the omnibox graph.
-      g.selectAll('line').remove();
+      g2.selectAll('line').remove();
     }
 
     // Show the dot (circle) in the omnibox graph on the same place where it
     // is on the line selection
-    g.append('circle')
+    g2.append('circle')
       .attr('r', R)
       .attr('cx', x)
       .attr('cy', y)
@@ -736,7 +736,7 @@ angular.module('lizard-nxt')
       .duration(100)
       .attr('r', 3);
     // Show the vertical line on the dot in the omnibox graph
-    g.append('line')
+    g2.append('line')
      // Make the line the same size as the graph in the omnibox
      .attr('y1', this._yPerUnit[this._activeUnit].range.min)
      .attr('y2', this._yPerUnit[this._activeUnit].range.max)
@@ -751,7 +751,7 @@ angular.module('lizard-nxt')
     }
     var height = Graph.prototype._getHeight(this.dimensions);
     addTextWithBackground(
-      g, UtilService.dateToLocaleDependentString(textX),
+      g2, UtilService.dateToLocaleDependentString(textX),
       'graph-tooltip-x', x, height);
   };
 

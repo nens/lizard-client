@@ -131,7 +131,7 @@ angular.module('data-menu')
               scope.formattedEndTime = moment(scope.scenario.end_time_sim).format('l') + ' ' + 
                 moment(scope.scenario.end_time_sim).format('LTS');
               
-              var timezoneString = Intl.DateTimeFormat().resolvedOptions().timeZone
+              var timezoneString = Intl.DateTimeFormat().resolvedOptions().timeZone;
               if (timezoneString) {
                 var timezoneStringAbbrevated = moment.tz(scope.scenario.start_time_sim, timezoneString).format('z');
                 scope.formattedStartTime = scope.formattedStartTime + ' ' + timezoneStringAbbrevated;
