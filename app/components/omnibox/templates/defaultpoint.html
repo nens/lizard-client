@@ -1,5 +1,10 @@
 <div class="card active">
   <div ng-switch="content.type">
+    <div
+        style="padding-left: 5px; padding-top: 5px;"
+        title="{{content.name}}">
+      {{content.name}}
+    </div>
 
     <div ng-switch-when="raster">
       <div ng-if="!content.temporal">

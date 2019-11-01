@@ -23,11 +23,14 @@
         <div
           class="legend-header"
           style="margin-bottom:20px"
+          title="{{legend.uuidMapping[uuid]}} - ({{uuidOrganisationMapping[uuid]}})"
         >
          
             {{ legend.uuidMapping[uuid] }}
-            {{ " - "}}
+            {{ " - " }}
+            {{ "(" }}
             {{ uuidOrganisationMapping[uuid] }}
+            {{ ")" }}
             &nbsp;
           <button
             class="timeseries-interval-btn"
@@ -93,11 +96,15 @@
       <div ng-repeat="(uuid, rasterData) in legend.data.continuous">
         <div class="single-continuous-legend">
 
-          <div class="legend-header">
-            
+          <div class="legend-header"
+               title="{{legend.uuidMapping[uuid]}} - ({{uuidOrganisationMapping[uuid]}})"
+          >
+
             {{ legend.uuidMapping[uuid] }}
-            {{ " - "}}
+            {{ " - " }}
+            {{ "(" }}
             {{ uuidOrganisationMapping[uuid] }}
+            {{ ")" }}
           </div>
 
           <div class="gradient-bar"
