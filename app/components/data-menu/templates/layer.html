@@ -15,8 +15,11 @@
       <div class="layer-chooser-tools">
         <i class="fa fa-close"
            ng-hide="closebutton === false"
-           ng-click="remove(layer);
-                     $event.stopPropagation()"
+           ng-click="
+                     layer.active = !layer.active; 
+                     setTimeout(function(){ remove(layer) }, 0);
+                     $event.stopPropagation()
+                     "
            title="{{ 'Remove the layer' | translate }}">
         </i>
         <i ng-if="zoomToBounds"
