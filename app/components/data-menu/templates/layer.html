@@ -16,8 +16,7 @@
         <i class="fa fa-close"
            ng-hide="closebutton === false"
            ng-click="
-                     layer.active = !layer.active; 
-                     setTimeout(function(){ remove(layer) }, 0);
+                     remove(layer);
                      $event.stopPropagation()
                      "
            title="{{ 'Remove the layer' | translate }}">

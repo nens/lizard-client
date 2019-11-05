@@ -16,7 +16,7 @@ angular.module('data-menu')
   ) {
     var link = function (scope) {
 
-      scope.remove = LayerAdderService.remove;
+      scope.remove = window.setTimeout(function() { LayerAdderService.remove }, 0);
 
       // Set defaults.
       if (!scope.layer.opacity) { scope.layer.opacity = 1; }
@@ -73,7 +73,6 @@ angular.module('data-menu')
         _.pull(DataService.dataLayers, {uuid: scope.layer.uuid });
         _.pull(MapService.mapLayers, {uuid: scope.layer.uuid });
       });
-
     };
 
     return {

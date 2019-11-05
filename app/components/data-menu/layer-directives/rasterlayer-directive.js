@@ -9,7 +9,7 @@ angular.module('data-menu')
 
   var link = function (scope) {
 
-    scope.remove = LayerAdderService.remove;
+    scope.remove = window.setTimeout(function() { LayerAdderService.remove }, 0);
 
     var mapLayer;
 
@@ -102,6 +102,7 @@ angular.module('data-menu')
             first: response.first_value_timestamp,
             last: response.last_value_timestamp
           });
+          scope.setTimeout = window.setTimeout;
         })
         .catch(function () {
           scope.invalid = true;
