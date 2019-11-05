@@ -180,13 +180,7 @@ angular.module('legend')
 
     scope.rasterIsVectorized = function (uuid) {
       var layer = _.find(scope.state.layers, {uuid: uuid});
-      // Is below if-else statement necessary?
-      // Solving it this way might cause silencing errors
-      if (layer && layer.vectorized) {
-        return !!layer.vectorized;
-      } else {
-        return false;
-      }
+      return !!layer.vectorized;
     };
 
     scope.switchSelectedRaster = function (uuid) {
