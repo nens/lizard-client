@@ -50,7 +50,10 @@ angular.module('data-menu')
 
       scope.state = State;
 
-      scope.remove = LayerAdderService.remove;
+      scope.remove = function (layer) { 
+        layer.active = !layer.active;
+        window.setTimeout(function() { LayerAdderService.remove(layer); }, 0); 
+      };
 
       scope.scenario = {};
 

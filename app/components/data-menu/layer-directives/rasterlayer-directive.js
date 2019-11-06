@@ -9,7 +9,10 @@ angular.module('data-menu')
 
   var link = function (scope) {
 
-    scope.remove = window.setTimeout(function() { LayerAdderService.remove }, 0);
+    scope.remove = function (layer) { 
+      layer.active = !layer.active;
+      window.setTimeout(function() { LayerAdderService.remove(layer); }, 0); 
+    };
 
     var mapLayer;
 

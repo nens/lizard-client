@@ -5,7 +5,10 @@ angular.module('data-menu')
   function (MapService, LayerAdderService, assetMapLayer) {
     var link = function (scope) {
 
-      scope.remove = LayerAdderService.remove;
+      scope.remove = function (layer) { 
+        layer.active = !layer.active;
+        window.setTimeout(function() { LayerAdderService.remove(layer); }, 0); 
+      };
 
       // Set defaults.
       if (!scope.layer.opacity) { scope.layer.opacity = 1; }
