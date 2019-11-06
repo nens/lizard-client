@@ -105,7 +105,6 @@ angular.module('data-menu')
             first: response.first_value_timestamp,
             last: response.last_value_timestamp
           });
-          scope.setTimeout = window.setTimeout;
         })
         .catch(function () {
           scope.invalid = true;
