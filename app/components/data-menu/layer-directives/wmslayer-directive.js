@@ -76,7 +76,7 @@ angular.module('data-menu')
         _.pull(DataService.dataLayers, {uuid: scope.layer.uuid });
         _.pull(MapService.mapLayers, {uuid: scope.layer.uuid });
       });
-      
+
     };
 
     return {
