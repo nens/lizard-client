@@ -9,7 +9,15 @@ angular.module('data-menu')
 
   var link = function (scope) {
 
-    scope.remove = LayerAdderService.remove;
+    scope.remove = function (layer) { 
+      layer.active = !layer.active;
+      // the following line is in a timeout because the previous line to remove(inactivate) also the legend does otherwise not work.
+      // The timeout has as effect that we first wait untill the entire code execution is finished and only after remove the layer.
+      // Effectively we thus first wait for  the layer to be inactivated before we remove it. 
+      // Inactivating the layer will remove the legend of the layer.
+      // https://nelen-schuurmans.atlassian.net/browse/FRNT-469
+      window.setTimeout(function() { LayerAdderService.remove(layer); }, 0); 
+    };
 
     var mapLayer;
 
