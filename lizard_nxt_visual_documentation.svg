@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.12374369"
-     inkscape:cx="3309.6133"
-     inkscape:cy="-218.95118"
+     inkscape:zoom="0.0875"
+     inkscape:cx="1343.3325"
+     inkscape:cy="-355.75166"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -53,30 +53,28 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <g
-       id="g889"
-       transform="matrix(1.750403,0,0,1.750403,326.67633,-341.08378)">
-      <rect
-         y="43.724903"
-         x="-81.489151"
-         height="154.97025"
-         width="292.55356"
-         id="rect874"
-         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:9.66499996;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-      <flowRoot
-         transform="matrix(0.26458333,0,0,0.26458333,38.553571,59.720238)"
-         style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-         id="flowRoot876"
-         xml:space="preserve"><flowRegion
-           id="flowRegion878"><rect
-             y="173.94824"
-             x="-314.28571"
-             height="585.71429"
-             width="1105.7142"
-             id="rect880" /></flowRegion><flowPara
-           style="font-size:96px"
-           id="flowPara882">lizard django site</flowPara></flowRoot>    </g>
-    <g
+    <rect
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:16.9176445;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect874"
+       width="512.08661"
+       height="271.26038"
+       x="184.03748"
+       y="-264.54758" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot876"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(0.46312745,0,0,0.46312745,462.63111,-264.33694)"><flowRegion
+         id="flowRegion878"><rect
+           id="rect880"
+           width="1105.7142"
+           height="585.71429"
+           x="-314.28571"
+           y="173.94824" /></flowRegion><flowPara
+         id="flowPara882"
+         style="font-size:96px">Lizard-Nxt </flowPara><flowPara
+         style="font-size:96px"
+         id="flowPara1321">django site</flowPara></flowRoot>    <g
        id="g931"
        transform="matrix(1.693337,0,0,1.693337,171.81894,-228.47894)">
       <rect
@@ -122,22 +120,6 @@
              id="rect880-3-2" /></flowRegion><flowPara
            style="font-size:96px"
            id="flowPara882-5-7">API V4</flowPara></flowRoot>    </g>
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 207.34277,6.712804 -121.46198,198.32676"
-       id="path968"
-       inkscape:connector-type="polyline"
-       inkscape:connector-curvature="0"
-       inkscape:connection-start="#g889"
-       inkscape:connection-end="#g931" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 446.88477,6.712804 9.64327,192.228426"
-       id="path970"
-       inkscape:connector-type="polyline"
-       inkscape:connector-curvature="0"
-       inkscape:connection-start="#g889"
-       inkscape:connection-end="#rect874-6-2" />
     <g
        id="g1043"
        transform="translate(0,166.77618)">
@@ -257,5 +239,198 @@
            id="flowPara882-6-0-2-6">Parramatta </flowPara><flowPara
            id="flowPara1161-1"
            style="font-size:96px">Dashboard</flowPara></flowRoot>    </g>
+    <rect
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:9.66499996;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect874-9-8-7-8-9"
+       width="292.55356"
+       height="154.97025"
+       x="1078.8867"
+       y="698.46185" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot876-3-7-5-9-3"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(0.26458333,0,0,0.26458333,1228.9617,700.82081)"><flowRegion
+         id="flowRegion878-6-9-9-7-1"><rect
+           id="rect880-0-2-2-3-9"
+           width="1105.7142"
+           height="585.71429"
+           x="-314.28571"
+           y="173.94824" /></flowRegion><flowPara
+         style="font-size:96px"
+         id="flowPara1276">G4aw </flowPara><flowPara
+         style="font-size:96px"
+         id="flowPara1280">Lizard Client</flowPara></flowRoot>    <rect
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:9.66499996;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect874-9-8-7-8-9-8"
+       width="292.55356"
+       height="154.97025"
+       x="1429.6487"
+       y="698.46185" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot876-3-7-5-9-3-4"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(0.26458333,0,0,0.26458333,1579.7236,700.82082)"><flowRegion
+         id="flowRegion878-6-9-9-7-1-5"><rect
+           id="rect880-0-2-2-3-9-0"
+           width="1105.7142"
+           height="585.71429"
+           x="-314.28571"
+           y="173.94824" /></flowRegion><flowPara
+         style="font-size:96px"
+         id="flowPara1280-6">Crop growth </flowPara><flowPara
+         style="font-size:96px"
+         id="flowPara1314">app</flowPara></flowRoot>    <rect
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:9.66499996;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect874-9-8-7-8-9-8-1"
+       width="292.55356"
+       height="154.97025"
+       x="1782.4445"
+       y="698.46185" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot876-3-7-5-9-3-4-0"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(0.26458333,0,0,0.26458333,1936.8479,714.45719)"><flowRegion
+         id="flowRegion878-6-9-9-7-1-5-6"><rect
+           id="rect880-0-2-2-3-9-0-3"
+           width="1105.7142"
+           height="585.71429"
+           x="-314.28571"
+           y="173.94824" /></flowRegion><flowPara
+         style="font-size:96px"
+         id="flowPara1314-0">Rain Report</flowPara></flowRoot>    <rect
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:9.66499996;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect874-9-8-7-8-9-8-1-6"
+       width="292.55356"
+       height="154.97025"
+       x="-729.8891"
+       y="683.49475" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot876-3-7-5-9-3-4-0-1"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(0.26458333,0,0,0.26458333,-591.55912,701.95195)"><flowRegion
+         id="flowRegion878-6-9-9-7-1-5-6-5"><rect
+           id="rect880-0-2-2-3-9-0-3-5"
+           width="1105.7142"
+           height="585.71429"
+           x="-314.28571"
+           y="173.94824" /></flowRegion><flowPara
+         style="font-size:96px"
+         id="flowPara1314-0-4">KPI dashboard</flowPara></flowRoot>    <rect
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:9.66499996;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect874-9-8-7-8-9-8-1-6-7"
+       width="292.55356"
+       height="154.97025"
+       x="-1074.1322"
+       y="683.49475" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot876-3-7-5-9-3-4-0-1-6"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(0.26458333,0,0,0.26458333,-952.10511,699.49009)"><flowRegion
+         id="flowRegion878-6-9-9-7-1-5-6-5-5"><rect
+           id="rect880-0-2-2-3-9-0-3-5-6"
+           width="1105.7142"
+           height="585.71429"
+           x="-314.28571"
+           y="173.94824" /></flowRegion><flowPara
+         style="font-size:96px"
+         id="flowPara1314-0-4-9">Lizard Catalogue</flowPara></flowRoot>    <rect
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:9.66499996;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect874-9-8-7-8-9-8-1-6-7-3"
+       width="292.55356"
+       height="154.97025"
+       x="-1422.6516"
+       y="683.49475" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot876-3-7-5-9-3-4-0-1-6-7"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(0.26458333,0,0,0.26458333,-1280.1855,683.61509)"><flowRegion
+         id="flowRegion878-6-9-9-7-1-5-6-5-5-4"><rect
+           id="rect880-0-2-2-3-9-0-3-5-6-5"
+           width="1105.7142"
+           height="585.71429"
+           x="-314.28571"
+           y="173.94824" /></flowRegion><flowPara
+         style="font-size:96px"
+         id="flowPara1314-0-4-9-2">Dashboard </flowPara><flowPara
+         style="font-size:96px"
+         id="flowPara1436">Landing page</flowPara></flowRoot>    <g
+       id="g1547">
+      <rect
+         y="245.81027"
+         x="2407.1665"
+         height="265.66516"
+         width="501.52393"
+         id="rect874-6-2-4"
+         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:16.56868744;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <flowRoot
+         transform="matrix(0.45357462,0,0,0.45357462,2663.568,250.23694)"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+         id="flowRoot876-7-9-7"
+         xml:space="preserve"><flowRegion
+           id="flowRegion878-5-1-4"><rect
+             y="173.94824"
+             x="-314.28571"
+             height="585.71429"
+             width="1105.7142"
+             id="rect880-3-2-4" /></flowRegion><flowPara
+           style="font-size:96px"
+           id="flowPara882-5-7-3">Klimaatatlas </flowPara><flowPara
+           style="font-size:96px"
+           id="flowPara1499">Site</flowPara></flowRoot>    </g>
+    <g
+       id="g1539"
+       transform="translate(-43.845238,-49.892857)">
+      <rect
+         y="745.65771"
+         x="2557.0088"
+         height="154.97025"
+         width="292.55356"
+         id="rect874-9-8-7-8-9-8-1-4"
+         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:9.66499996;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <flowRoot
+         transform="matrix(0.26458333,0,0,0.26458333,2698.8858,748.23992)"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+         id="flowRoot876-3-7-5-9-3-4-0-3"
+         xml:space="preserve"><flowRegion
+           id="flowRegion878-6-9-9-7-1-5-6-1"><rect
+             y="173.94824"
+             x="-314.28571"
+             height="585.71429"
+             width="1105.7142"
+             id="rect880-0-2-2-3-9-0-3-4" /></flowRegion><flowPara
+           id="flowPara1314-0-9"
+           style="font-size:96px">Klimaatatlase </flowPara><flowPara
+           id="flowPara1531"
+           style="font-size:96px">Client</flowPara></flowRoot>    </g>
+    <path
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 2658.4374,511.47543 0.7061,184.28943"
+       id="path1549"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g1547"
+       inkscape:connection-end="#g1539" />
+    <path
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 446.88476,6.7127991 456.52804,198.94123"
+       id="path1565"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#rect874"
+       inkscape:connection-end="#g1226" />
+    <path
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 236.57148,6.7127991 -50.939901,198.32676"
+       id="path1572"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#rect874"
+       inkscape:connection-end="#g931" />
   </g>
 </svg>
