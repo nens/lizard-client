@@ -70,7 +70,9 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
 
   function initDatetimePicker () {
     $timeout(function () {
-      var localFormatter = d3.time.format.utc("%Y-%m-%dT%H:%M");
+      // Show the time in export modal in local time
+      // and convert to UTC time later before sending it to backend
+      var localFormatter = d3.time.format("%Y-%m-%dT%H:%M");
       var atDateTime = localFormatter(new Date(State.temporal.at));
       $('#at-date-time-picker').datetimepicker({
         date: atDateTime,
@@ -81,14 +83,19 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
 
   function getDatetime () {
     var atDateElem = document.getElementById("at-selector");
+
     var atDate = atDateElem.value.split(" ")[0];
     var atTime = atDateElem.value.split(" ")[1];
 
     var newAtDate = atDate.replace(/\//g, "-");
     var new2AtDate = newAtDate.split("-");
-    //Switch the order from dd-mm-yyyy in the export modal to
-    //yyyy-mm-dd for the api call.
-    return new2AtDate[2] + '-' + new2AtDate[1] + '-' + new2AtDate[0] + "T" + atTime + ":00";
+
+    // Switch the order from dd-mm-yyyy in the export modal to
+    // yyyy-mm-dd for the api call and convert local time to UTC time
+    var localDateTime = new2AtDate[2] + '-' + new2AtDate[1] + '-' + new2AtDate[0] + "T" + atTime + ":00";
+    var utcDateTime = (new Date(localDateTime)).toISOString();
+
+    return utcDateTime;
   }
 
   function isNumeric (x) {

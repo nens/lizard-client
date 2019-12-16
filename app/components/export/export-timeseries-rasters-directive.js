@@ -87,8 +87,9 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
   function initDatetimePickers () {
     $timeout(function() {
       // The api wants the time in UTC.
-      // Use a localFormatter to show the time in the export modal in UTC.
-      var localFormatter = d3.time.format.utc("%Y-%m-%dT%H:%M");
+      // Show the time in the export modal in local time
+      // and later convert it to UTC time before sending to backend.
+      var localFormatter = d3.time.format("%Y-%m-%dT%H:%M");
       var startDateTime = localFormatter(new Date(State.temporal.start));
       var endDateTime = localFormatter(new Date(State.temporal.end));
       $('#start-date-time-picker').datetimepicker({
@@ -105,17 +106,26 @@ function (user,   DataService,   State,   UtilService,   $timeout,   gettextCata
   function getDatetimes () {
     var startDateElem = document.getElementById("start-selector");
     var stopDateElem = document.getElementById("stop-selector");
-    // the value of startDateElem and stopDateElem is a string in date format of "DD-MM-YYYY HH:mm"
-    // for NL language and of "DD/MM/YYYY HH:mm" for EN language
-    // we would like to have the string in date format of "MM-DD-YYYY HH:mm"
-    // so convert these values to the "MM-DD-YYYY HH:mm" format
-    // if selected language is EN then split the date by "/"
-    // otherwise split the date by "-" (NL language)
-    var startDateArray = languageCode === "en_GB" ? startDateElem.value.split("/") : startDateElem.value.split("-");
-    var stopDateArray = languageCode === "en_GB" ? stopDateElem.value.split("/") : stopDateElem.value.split("-");
-    var newStartDate = startDateArray[1] + "-" + startDateArray[0] + "-" + startDateArray[2];
-    var newStopDate = stopDateArray[1] + "-" + stopDateArray[0] + "-" + stopDateArray[2];
-    return [newStartDate + ":00", newStopDate + ":00"];
+
+    var startDate = startDateElem.value.split(" ")[0];
+    var startTime = startDateElem.value.split(" ")[1];
+
+    var stopDate = stopDateElem.value.split(" ")[0];
+    var stopTime = stopDateElem.value.split(" ")[1];
+
+    var newStartDate = startDate.replace(/\//g, "-").split("-");
+    var newStopDate = stopDate.replace(/\//g, "-").split("-");
+
+    // Switch the order from dd-mm-yyyy in the export modal
+    // to yyyy-mm-dd for the api call
+    var localStartDateTime = newStartDate[2] + '-' + newStartDate[1] + '-' + newStartDate[0] + "T" + startTime + ":00";
+    var localStopDateTime = newStopDate[2] + '-' + newStopDate[1] + '-' + newStopDate[0] + "T" + stopTime + ":00";
+
+    // Convert to UTC time before sending to backend
+    var utcStartDateTime = (new Date(localStartDateTime)).toISOString();
+    var utcStopDateTime = (new Date(localStopDateTime)).toISOString();
+
+    return [utcStartDateTime, utcStopDateTime];
   }
 
   var link = function (scope) {
