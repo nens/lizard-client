@@ -19,9 +19,9 @@ angular.module('map')
             ChartCompositionService
   ) {
 
-    var topography = 'https://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa98k8k';
-    var satellite = 'https://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa79205';
-    var neutral = 'https://{s}.tiles.mapbox.com/v3/nelenschuurmans.l15e647c';
+    var topography = "https://cartocdn-gusc.global.ssl.fastly.net/opmbuilder/api/v1/map/named/opm-mars-basemap-v0-1/all";
+    var satellite = "http://s3-eu-west-1.amazonaws.com/whereonmars.cartodb.net/mola-color";
+    var neutral = "http://s3-eu-west-1.amazonaws.com/whereonmars.cartodb.net/viking_mdim21_global"; 
 
     var service = {
 
@@ -49,8 +49,8 @@ angular.module('map')
 
       baselayers: [
         baselayer({ id: 'topography', url: topography, zIndex: -1 }),
-        baselayer({ id: 'satellite', url: satellite, zIndex: -1 }),
-        baselayer({ id: 'neutral', url: neutral, zIndex: -1 }),
+        baselayer({ id: 'satellite', url: satellite, zIndex: -1 , tms: true}),
+        baselayer({ id: 'neutral', url: neutral, zIndex: -1 , tms: true}),
       ],
 
       /**
