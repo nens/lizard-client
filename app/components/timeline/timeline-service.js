@@ -631,9 +631,9 @@ angular.module('lizard-nxt')
         start = start <= end - ONE_HOUR ? start : end - ONE_HOUR;
       }
 
-      xScale.domain([start, end]);
+      // xScale.domain([start, end]);
 
-      drawTimelineAxes(svg, xScale, dimensions);
+      // drawTimelineAxes(svg, xScale, dimensions);
 
       if (bars) {
         var barData = bars.data();

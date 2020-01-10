@@ -260,7 +260,7 @@ angular.module('lizard-nxt')
       State.temporal.end = UtilService.getMaxTime(
         State.temporal.end - change
       );
-
+      console.log('this.zoom');
       UtilService.announceMovedTimeline(State);
 
     };
