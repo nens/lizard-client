@@ -124,7 +124,9 @@ module.exports = function (grunt) {
                 authorizeWithHeaders()
               ),
               modRewrite([
-                '!\\\/api|\\\/accounts|\\\/bootstrap|\\\/about|\\\/proxy|\\\/scripts\/|\\.html|\\.js|\\.svg|\\.css|\\.woff|\\.png$ /index.html [L]',
+                '!\\\/media|\\\/screens|\\\/api|\\\/accounts|\\\/bootstrap|\\\/about|\\\/proxy|\\\/scripts\/|\\.html|\\.js|\\.svg|\\.css|\\.woff|\\.png$ /index.html [L]',
+                '^/screens/ ' + proxyHost + '/screens/ [P]',
+                '^/media/ ' + proxyHost + '/media/ [P]',
                 '^/about/ ' + proxyHost + '/about/ [P]',
                 '^/api/ ' + proxyHost + '/api/ [P]',
                 '^/proxy/ ' + proxyHost + '/proxy/ [P]',

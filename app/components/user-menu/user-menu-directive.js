@@ -62,7 +62,7 @@ angular.module("user-menu").directive("userMenu", [
 
       var appsScreenUrl = function() {
         var appsScreenSlug = UtilService.slugify($location.host());
-        return "//apps.lizard.net/screens/" + appsScreenSlug + ".js";
+        return "/screens/" + appsScreenSlug + ".js";
       };
 
       var script = document.createElement("script");
