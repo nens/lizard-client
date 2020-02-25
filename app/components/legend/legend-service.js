@@ -37,7 +37,8 @@ angular.module('legend')
       totalAreaOfGeometry: null
     };
 
-    this.rasterData = { continuous: {}, discrete: {} };
+    this.rasterData = { continuous: {}, discrete: {} }; // why is rasterData defined twice?
+    this.wmsData = { wms: {}};
     var activeCategories = {}; // Per discrete raster we keep track of the
                                // selected category, so we can show this for
                                // each legend.
@@ -76,6 +77,12 @@ angular.module('legend')
         max: null,
         unit: unit,
         colormap: null
+      };
+    };
+
+    this.initWmsData = function (uuid, unit) {
+      this.wmsData.wms[uuid] = {
+        legendUrl: ''
       };
     };
 
@@ -143,6 +150,7 @@ angular.module('legend')
       angular.forEach(geoProperties, function (obj, uuid) {
         raster = uuid;
         if (!responseIsEmpty(obj.data)) {
+          console.log(obj.data);// also wms in here? no, just elements in raster legend
           _.orderBy(obj.data, function (datum) {
             return datum.data;
           });
@@ -173,6 +181,7 @@ angular.module('legend')
     this.deleteLegendData = function (uuid) {
       delete this.rasterData.discrete[uuid];
       delete this.rasterData.continuous[uuid];
+      delete this.wmsData[uuid];//?
     };
 
     this.updateLegendData = function (bounds, selectedGeometries, layers) {
@@ -214,6 +223,7 @@ angular.module('legend')
         geometry: boundsGJ
       };
 
+      // console.log(layers); // legendUrl is here
       var uuid,
           name,
           defer = $q.defer(),
@@ -223,8 +233,12 @@ angular.module('legend')
           stylesString,
           styleParts,
           rasterLayers = _.filter(layers, { type: 'raster' });
+          wmsLayers = _.filter(layers, { type: 'wmslayer' });
+      // console.log(rasterLayers);
+      console.log(wmsLayers); // has legendUrl // wmslayer-directive # 39 has legend_url
 
-      angular.forEach(rasterLayers, function (layerObj) {
+      angular.forEach(rasterLayers, function (layerObj) {//how to implement for wms? is other foreach
+        // console.log(layerObj);
         name = layerObj.name;
         uuid = layerObj.uuid;
         if (layerObj.active) {
@@ -264,13 +278,37 @@ angular.module('legend')
         }
       }, this);
 
-      if (promises.length > 0) {
-        $q.all(promises).then(function () {
-          geo.properties = geo.properties || {};
-          defer.resolve(geo);
-          defer = undefined; // Clear the defer
-          this.setDiscreteRasterData(geo.properties);
-        }.bind(this));
-      }
+      angular.forEach(wmsLayers, function (layerObj) {
+        console.log(layerObj);//has legendUrl
+        name = layerObj.name;
+        uuid = layerObj.uuid;
+        legendUrl = layerObj.legendUrl
+        // console.log(legendUrl);//legendUrl
+        // // conso
+        if (layerObj.active) {
+          dataLayerObj = _.find(DataService.dataLayers, { uuid: uuid });
+          console.log(dataLayerObj); // legendUrl
+          if (!dataLayerObj) { return; }
+          // this.uuidMapping[uuid] = name;
+          // this.uuidOrganisationMapping[uuid] =  dataLayerObj.organisation && dataLayerObj.organisation.name;
+        //   // if (rasterIsDiscrete(dataLayerObj)) {
+          // DataService.updateLayerData(geo, layerObj, options, promises);
+          this.wmsData.wms = dataLayerObj;
+        //   // }
+        } else {
+          this.deleteLegendData(uuid);
+        }
+      }, this);
+
+      // Commenting out the if-statement below removes raven messages (errors) in console.log
+      // if (promises.length > 0) {
+      //   $q.all(promises).then(function () {
+      //     geo.properties = geo.properties || {};
+      //     defer.resolve(geo);
+      //     defer = undefined; // Clear the defer
+      //     this.setDiscreteRasterData(geo.properties);
+      //   }.bind(this));
+      // }
+
     };
 }]);

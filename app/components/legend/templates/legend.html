@@ -18,7 +18,6 @@
   >
     <div  ng-repeat="(uuid, rasterData) in legend.data.discrete"
           >
-
       <div class="single-discrete-legend">
         <div
           class="legend-header"
@@ -88,10 +87,19 @@
         </div>
       </div>
     </div>
-    <div style="width:400px;background-color:white;">
+    <div ng-repeat="(uuid, wmsData) in legend.data.wms"
+         style="width:400px;background-color:white;">
+      <div style="padding-left:23px;padding-right:23px;padding-top:23px;color:#777;">
+        {{wmsData.name}}
+      </div>
+      <img src="{{wmsData.legendUrl}}"
+           alt="{{legend.uuidMapping[uuid]}}"
+           style="padding:23px;">
+    </div>
+<!--     <div style="width:400px;background-color:white;">
       <img src="https://geoserver9.lizard.net/geoserver/Almere/wms?request=GetLegendGraphic&format=image%2Fpng&width=20&height=20&layer=Duikers_verv_shapeli" alt="Wms legend"
        style="padding:23px;">
-    </div>
+    </div> -->
   </div>
 
   <div class="card-like legend-continuous">

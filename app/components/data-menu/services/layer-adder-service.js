@@ -81,6 +81,7 @@ angular.module('data-menu')
     };
 
     this.add = function (searchLayer) {
+      console.log(searchLayer);
       State.layers.push({
         active: true,
         type: searchLayer.entity_name,

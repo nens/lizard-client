@@ -4,7 +4,12 @@ angular.module('legend')
   var link = function (scope, element, attrs) {
 
     /* scope variables used for DISCRETE rasters: ****************************/
-
+    if (scope){
+      // console.log(scope);// not really helpful
+      console.log(scope.state.layers);//nr [6]
+    };
+    // console.log(MapService);
+    // console.log(LegendService.uuidMapping);// alleen landfgebruik, geen dwarsprofielen
     scope.legend = {
       MAX_DISCRETE_CATEGORIES_DEFAULT: 5,
       showAllCategoriesForRaster: {},
@@ -12,19 +17,29 @@ angular.module('legend')
       uuidMapping: LegendService.uuidMapping,
       data: {
         discrete: {},
-        continuous: {}
+        continuous: {},
+        wms: {}
       },
     };
+    // if (scope){console.log(scope.legend)}; // undefined
     scope.uuidOrganisationMapping = LegendService.uuidOrganisationMapping;
     scope.hasData = function () {
       for (var key in scope.legend.data.discrete) {
+        console.log(key);
         return true;
       }
       for (var key2 in scope.legend.data.continuous) {
+        console.log(key2);
+        return true;
+      }
+      for (var key3 in scope.legend.data.wms) {
+        console.log(key3);
         return true;
       }
       return false;
     };
+    // console.log(scope);
+    // if (scope){console.log(scope.legend)}; // undefined
 
     var getBorderStyle = function (datum) {
       return datum.label === -1 ? "1px solid #ccc" : "0";
@@ -32,6 +47,7 @@ angular.module('legend')
 
     scope.toggleVectorModus = function (uuid) {
       var layer = _.find(scope.state.layers, {uuid: uuid});
+      // console.log(layer);
       layer.vectorized = !layer.vectorized;
       MapService.updateLayers([layer]);
     };
@@ -63,6 +79,7 @@ angular.module('legend')
     };
 
     scope.mustShowDiscreteLegend = function (uuid) {
+      console.log("mustShowDiscreteLegend");
       var layer = _.find(scope.state.layers, { uuid: uuid });
       if (layer === undefined) {
         if (scope.legend.data.discrete[uuid]) {
@@ -76,21 +93,22 @@ angular.module('legend')
       }
     };
 
-    scope.mustShowContinuousLegend = function (uuid) {
-      var layer = _.find(scope.state.layers, { uuid: uuid });
-      if (layer === undefined) {
-        if (scope.legend.data.continuous[uuid]) {
-          delete scope.legend.data.continuous[uuid];
-          scope.switchSelectedRaster(uuid);
-        }
-        return false;
-      } else {
-        return scope.rasterIsSelected(uuid) &&
-          scope.legend.data.continuous[uuid] !== undefined &&
-          scope.legend.data.continuous[uuid].min !== null &&
-          scope.legend.data.continuous[uuid].max !== null;
-      }
-    };
+    // scope.mustShowContinuousLegend = function (uuid) {
+    //   console.log("mustShowContinuousLegend");
+    //   var layer = _.find(scope.state.layers, { uuid: uuid });
+    //   if (layer === undefined) {
+    //     if (scope.legend.data.continuous[uuid]) {
+    //       delete scope.legend.data.continuous[uuid];
+    //       scope.switchSelectedRaster(uuid);
+    //     }
+    //     return false;
+    //   } else {
+    //     return scope.rasterIsSelected(uuid) &&
+    //       scope.legend.data.continuous[uuid] !== undefined &&
+    //       scope.legend.data.continuous[uuid].min !== null &&
+    //       scope.legend.data.continuous[uuid].max !== null;
+    //   }
+    // };
 
     var _getBrowserType = function () {
       var userAgent = window.navigator.userAgent;
@@ -209,6 +227,7 @@ angular.module('legend')
 
     scope.$watch(scope.state.toString('layers'), function (n, o) {
       if (n === o) { return; }
+      console.log(scope.state.layers); //geen legendUrl
       LegendService.updateLegendData(
         scope.state.spatial.bounds,
         scope.state.geometries,
@@ -248,7 +267,10 @@ angular.module('legend')
         temporalLayers);
     });
 
+    console.log(LegendService.rasterData);
     scope.legend.data = LegendService.rasterData;
+    console.log(LegendService.wmsData);
+    scope.legend.data.wms = LegendService.wmsData;
 
     LegendService.updateLegendData(
       scope.state.spatial.bounds,
