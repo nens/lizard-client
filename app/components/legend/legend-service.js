@@ -181,10 +181,14 @@ angular.module('legend')
     this.deleteLegendData = function (uuid) {
       delete this.rasterData.discrete[uuid];
       delete this.rasterData.continuous[uuid];
-      delete this.wmsData[uuid];//?
+    };
+    this.deleteWmsLegendData = function (uuid) {
+      delete this.wmsData.wms[uuid];//?
     };
 
     this.updateLegendData = function (bounds, selectedGeometries, layers) {
+      // wms layer not properly updated
+      console.log(layers);
       var boundsGJ;
 
       var options = {
@@ -232,7 +236,7 @@ angular.module('legend')
           contRasterData,
           stylesString,
           styleParts,
-          rasterLayers = _.filter(layers, { type: 'raster' });
+          rasterLayers = _.filter(layers, { type: 'raster' }),
           wmsLayers = _.filter(layers, { type: 'wmslayer' });
       // console.log(rasterLayers);
       console.log(wmsLayers); // has legendUrl // wmslayer-directive # 39 has legend_url
@@ -279,24 +283,26 @@ angular.module('legend')
       }, this);
 
       angular.forEach(wmsLayers, function (layerObj) {
-        console.log(layerObj);//has legendUrl
+        // console.log(layerObj);//has legendUrl
         name = layerObj.name;
         uuid = layerObj.uuid;
-        legendUrl = layerObj.legendUrl
+        var legendUrl = layerObj.legendUrl;
         // console.log(legendUrl);//legendUrl
         // // conso
         if (layerObj.active) {
           dataLayerObj = _.find(DataService.dataLayers, { uuid: uuid });
           console.log(dataLayerObj); // legendUrl
+          // if (uuid) {this.deleteWmsLegendData(uuid)};
           if (!dataLayerObj) { return; }
-          // this.uuidMapping[uuid] = name;
-          // this.uuidOrganisationMapping[uuid] =  dataLayerObj.organisation && dataLayerObj.organisation.name;
+          this.uuidMapping[uuid] = name;
+          this.uuidOrganisationMapping[uuid] =  dataLayerObj.organisation && dataLayerObj.organisation.name;
         //   // if (rasterIsDiscrete(dataLayerObj)) {
           // DataService.updateLayerData(geo, layerObj, options, promises);
           this.wmsData.wms = dataLayerObj;
         //   // }
         } else {
-          this.deleteLegendData(uuid);
+          this.deleteWmsLegendData(uuid);
+          this.wmsData.wms = {};
         }
       }, this);
 
