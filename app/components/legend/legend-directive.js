@@ -7,9 +7,9 @@ angular.module('legend')
     if (scope){
       // console.log(scope);// not really helpful
       console.log(scope.state.layers);//nr [6]
-    };
+    }
     // console.log(MapService);
-    // console.log(LegendService.uuidMapping);// alleen landfgebruik, geen dwarsprofielen
+    // console.log(LegendService.uuidMapping);// alleen landgebruik, geen dwarsprofielen
     scope.legend = {
       MAX_DISCRETE_CATEGORIES_DEFAULT: 5,
       showAllCategoriesForRaster: {},
@@ -18,8 +18,8 @@ angular.module('legend')
       data: {
         discrete: {},
         continuous: {},
-        wms: {}
       },
+      wms: {}
     };
     // if (scope){console.log(scope.legend)}; // undefined
     scope.uuidOrganisationMapping = LegendService.uuidOrganisationMapping;
@@ -228,6 +228,9 @@ angular.module('legend')
     scope.$watch(scope.state.toString('layers'), function (n, o) {
       if (n === o) { return; }
       console.log(scope.state.layers); //geen legendUrl
+      console.log("scope.legend in layer watcher ", scope.legend);
+      // Toggle the wms layer in the legend when you toggle the wmslayer
+      scope.legend.wms2 = LegendService.wmsData.wms;
       LegendService.updateLegendData(
         scope.state.spatial.bounds,
         scope.state.geometries,
@@ -267,10 +270,12 @@ angular.module('legend')
         temporalLayers);
     });
 
-    console.log(LegendService.rasterData);
+    console.log("LegendService.wmsData 456", LegendService.rasterData);
     scope.legend.data = LegendService.rasterData;
-    console.log(LegendService.wmsData);
-    scope.legend.data.wms = LegendService.wmsData;
+    console.log("LegendService.wmsData 123", LegendService.wmsData);
+    // Show the wms legend in the omnibox when you refresh the page
+    // or when you add the wms layer.
+    scope.legend.wms2 = LegendService.wmsData.wms;//scope.legend.wmsData
 
     LegendService.updateLegendData(
       scope.state.spatial.bounds,

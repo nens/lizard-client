@@ -298,7 +298,7 @@ angular.module('legend')
           this.uuidOrganisationMapping[uuid] =  dataLayerObj.organisation && dataLayerObj.organisation.name;
         //   // if (rasterIsDiscrete(dataLayerObj)) {
           // DataService.updateLayerData(geo, layerObj, options, promises);
-          this.wmsData.wms = dataLayerObj;
+          this.wmsData.wms[uuid] = dataLayerObj;
         //   // }
         } else {
           this.deleteWmsLegendData(uuid);
@@ -307,14 +307,14 @@ angular.module('legend')
       }, this);
 
       // Commenting out the if-statement below removes raven messages (errors) in console.log
-      // if (promises.length > 0) {
-      //   $q.all(promises).then(function () {
-      //     geo.properties = geo.properties || {};
-      //     defer.resolve(geo);
-      //     defer = undefined; // Clear the defer
-      //     this.setDiscreteRasterData(geo.properties);
-      //   }.bind(this));
-      // }
+      if (promises.length > 0) {
+        $q.all(promises).then(function () {
+          geo.properties = geo.properties || {};
+          defer.resolve(geo);
+          defer = undefined; // Clear the defer
+          this.setDiscreteRasterData(geo.properties);
+        }.bind(this));
+      }
 
     };
 }]);
