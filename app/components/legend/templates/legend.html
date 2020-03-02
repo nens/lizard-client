@@ -1,16 +1,16 @@
 
 <div class="container-for-both-legends">
-    <div
-      class="card-header"
-      style="padding:23px;"
-      ng-if="hasData()"
+  <div
+    class="card-header"
+    style="padding:23px;"
+    ng-if="hasData() || legend.wms2.length !== 0"
+  >
+    <span
+      style="font-weight:lighter; font-size: 16px; color:white;"
     >
-      <span
-        style="font-weight:lighter; font-size: 16px; color:white;"
-      >
-        LEGENDS
-      </span>
-    </div>
+      LEGENDS
+    </span>
+  </div>
 
   <div 
     class="card legend-discrete"
