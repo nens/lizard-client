@@ -32,7 +32,7 @@ angular.module('legend')
         console.log(key2);
         return true;
       }
-      for (var key3 in scope.legend.data.wms) {
+      for (var key3 in scope.legend.wms2) {
         console.log(key3);
         return true;
       }
