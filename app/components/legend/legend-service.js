@@ -283,26 +283,32 @@ angular.module('legend')
       }, this);
 
       angular.forEach(wmsLayers, function (layerObj) {
-        // console.log(layerObj);//has legendUrl
+        console.log("angular.forEach(wmsLayers,", layerObj.active, layerObj);//has legendUrl
         name = layerObj.name;
         uuid = layerObj.uuid;
         var legendUrl = layerObj.legendUrl;
         // console.log(legendUrl);//legendUrl
         // // conso
         if (layerObj.active) {
+          console.log("angular.forEach(wmsLayers, 0.5", layerObj.active, layerObj, DataService.dataLayers, DataService.dataLayers[0] && DataService.dataLayers[0].uuid);//has legendUrl
           dataLayerObj = _.find(DataService.dataLayers, { uuid: uuid });
-          console.log(dataLayerObj); // legendUrl
+          console.log("angular.forEach(wmsLayers, 0.6", dataLayerObj);//has legendUrl
+          // console.log(dataLayerObj); // legendUrl
           // if (uuid) {this.deleteWmsLegendData(uuid)};
           if (!dataLayerObj) { return; }
+          console.log("angular.forEach(wmsLayers, 0.7", dataLayerObj);
           this.uuidMapping[uuid] = name;
           this.uuidOrganisationMapping[uuid] =  dataLayerObj.organisation && dataLayerObj.organisation.name;
         //   // if (rasterIsDiscrete(dataLayerObj)) {
           // DataService.updateLayerData(geo, layerObj, options, promises);
           this.wmsData.wms[uuid] = dataLayerObj;
         //   // }
+          console.log("angular.forEach(wmsLayers, 1", layerObj);//has legendUrl
         } else {
           this.deleteWmsLegendData(uuid);
-          this.wmsData.wms = {};
+          // delete this.wmsData.wms[uuid];
+          console.log("angular.forEach(wmsLayers, 2", layerObj);//has legendUrl
+
         }
       }, this);
 

@@ -1,7 +1,18 @@
 angular.module('legend')
-.directive('legend', ["MapService", "LegendService", function(MapService, LegendService) {
+.directive('legend', ["MapService", "LegendService", "DataService", function(MapService, LegendService, DataService) {
 
   var link = function (scope, element, attrs) {
+
+    scope.dataLayers = DataService.dataLayers;
+    scope.$watch("dataLayers", function (n, o) {
+      if (n === o) { return; }
+      console.log('scope.state.layers 52346', scope.state.layers);
+      LegendService.updateLegendData(
+        scope.state.spatial.bounds,
+        scope.state.geometries,
+        scope.state.layers
+      );
+    }, true);
 
     /* scope variables used for DISCRETE rasters: ****************************/
     if (scope){
