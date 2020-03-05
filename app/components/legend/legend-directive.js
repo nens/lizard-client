@@ -6,7 +6,6 @@ angular.module('legend')
     scope.dataLayers = DataService.dataLayers;
     scope.$watch("dataLayers", function (n, o) {
       if (n === o) { return; }
-      console.log('scope.state.layers 52346', scope.state.layers);
       LegendService.updateLegendData(
         scope.state.spatial.bounds,
         scope.state.geometries,
@@ -15,12 +14,6 @@ angular.module('legend')
     }, true);
 
     /* scope variables used for DISCRETE rasters: ****************************/
-    if (scope){
-      // console.log(scope);// not really helpful
-      console.log(scope.state.layers);//nr [6]
-    }
-    // console.log(MapService);
-    // console.log(LegendService.uuidMapping);// alleen landgebruik, geen dwarsprofielen
     scope.legend = {
       MAX_DISCRETE_CATEGORIES_DEFAULT: 5,
       showAllCategoriesForRaster: {},
@@ -32,7 +25,6 @@ angular.module('legend')
       },
       wms: {}
     };
-    // if (scope){console.log(scope.legend)}; // undefined
     scope.uuidOrganisationMapping = LegendService.uuidOrganisationMapping;
     scope.hasData = function () {
       for (var key in scope.legend.data.discrete) {
@@ -46,8 +38,6 @@ angular.module('legend')
       }
       return false;
     };
-    // console.log(scope);
-    // if (scope){console.log(scope.legend)}; // undefined
 
     var getBorderStyle = function (datum) {
       return datum.label === -1 ? "1px solid #ccc" : "0";
@@ -55,7 +45,6 @@ angular.module('legend')
 
     scope.toggleVectorModus = function (uuid) {
       var layer = _.find(scope.state.layers, {uuid: uuid});
-      // console.log(layer);
       layer.vectorized = !layer.vectorized;
       MapService.updateLayers([layer]);
     };
@@ -87,7 +76,6 @@ angular.module('legend')
     };
 
     scope.mustShowDiscreteLegend = function (uuid) {
-      console.log("mustShowDiscreteLegend");
       var layer = _.find(scope.state.layers, { uuid: uuid });
       if (layer === undefined) {
         if (scope.legend.data.discrete[uuid]) {
@@ -218,8 +206,6 @@ angular.module('legend')
 
     scope.$watch(scope.state.toString('layers'), function (n, o) {
       if (n === o) { return; }
-      console.log(scope.state.layers); //geen legendUrl
-      console.log("scope.legend in layer watcher ", scope.legend);
       // Toggle the wms layer in the legend when you toggle the wmslayer
       scope.legend.wms = LegendService.wmsData.wms;
       LegendService.updateLegendData(
@@ -261,9 +247,7 @@ angular.module('legend')
         temporalLayers);
     });
 
-    console.log("LegendService.wmsData 456", LegendService.rasterData);
     scope.legend.data = LegendService.rasterData;
-    console.log("LegendService.wmsData 123", LegendService.wmsData);
     // Show the wms legend in the omnibox when you refresh the page
     // or when you add the wms layer.
     scope.legend.wms = LegendService.wmsData.wms;//scope.legend.wmsData
