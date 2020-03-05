@@ -13,7 +13,7 @@ angular.module('legend')
       );
     }, true);
 
-    /* scope variables used for DISCRETE rasters: ****************************/
+    /* scope variables used for DISCRETE and CONTINUOUS rasters and WMS: *************/
     scope.legend = {
       MAX_DISCRETE_CATEGORIES_DEFAULT: 5,
       showAllCategoriesForRaster: {},
@@ -73,20 +73,6 @@ angular.module('legend')
     scope.hasMoreCategoriesAvailableThanDefault = function (uuid) {
       return scope.totalCategoryCount(uuid) >
         scope.legend.MAX_DISCRETE_CATEGORIES_DEFAULT;
-    };
-
-    scope.mustShowDiscreteLegend = function (uuid) {
-      var layer = _.find(scope.state.layers, { uuid: uuid });
-      if (layer === undefined) {
-        if (scope.legend.data.discrete[uuid]) {
-          delete scope.legend.data.discrete[uuid];
-          scope.switchSelectedRaster(uuid);
-        }
-        return false;
-      } else {
-        return scope.rasterIsSelected(uuid) &&
-          scope.legend.data.discrete[uuid] !== undefined;
-      }
     };
 
     var _getBrowserType = function () {
@@ -250,7 +236,7 @@ angular.module('legend')
     scope.legend.data = LegendService.rasterData;
     // Show the wms legend in the omnibox when you refresh the page
     // or when you add the wms layer.
-    scope.legend.wms = LegendService.wmsData.wms;//scope.legend.wmsData
+    scope.legend.wms = LegendService.wmsData.wms;
 
     LegendService.updateLegendData(
       scope.state.spatial.bounds,

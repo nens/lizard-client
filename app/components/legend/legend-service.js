@@ -182,7 +182,7 @@ angular.module('legend')
       delete this.rasterData.continuous[uuid];
     };
     this.deleteWmsLegendData = function (uuid) {
-      delete this.wmsData.wms[uuid];//?
+      delete this.wmsData.wms[uuid];
     };
 
     this.updateLegendData = function (bounds, selectedGeometries, layers) {
@@ -236,7 +236,7 @@ angular.module('legend')
           rasterLayers = _.filter(layers, { type: 'raster' }),
           wmsLayers = _.filter(layers, { type: 'wmslayer' });
 
-      angular.forEach(rasterLayers, function (layerObj) {//how to implement for wms? is other foreach
+      angular.forEach(rasterLayers, function (layerObj) {
         name = layerObj.name;
         uuid = layerObj.uuid;
         if (layerObj.active) {
@@ -290,7 +290,6 @@ angular.module('legend')
         }
       }, this);
 
-      // Commenting out the if-statement below removes raven messages (errors) in console.log
       if (promises.length > 0) {
         $q.all(promises).then(function () {
           geo.properties = geo.properties || {};
