@@ -150,7 +150,6 @@ angular.module('legend')
       angular.forEach(geoProperties, function (obj, uuid) {
         raster = uuid;
         if (!responseIsEmpty(obj.data)) {
-          console.log(obj.data);// also wms in here? no, just elements in raster legend
           _.orderBy(obj.data, function (datum) {
             return datum.data;
           });
@@ -188,7 +187,6 @@ angular.module('legend')
 
     this.updateLegendData = function (bounds, selectedGeometries, layers) {
       // wms layer not properly updated
-      console.log(layers);
       var boundsGJ;
 
       var options = {
@@ -227,7 +225,6 @@ angular.module('legend')
         geometry: boundsGJ
       };
 
-      // console.log(layers); // legendUrl is here
       var uuid,
           name,
           defer = $q.defer(),
@@ -238,11 +235,8 @@ angular.module('legend')
           styleParts,
           rasterLayers = _.filter(layers, { type: 'raster' }),
           wmsLayers = _.filter(layers, { type: 'wmslayer' });
-      // console.log(rasterLayers);
-      console.log(wmsLayers); // has legendUrl // wmslayer-directive # 39 has legend_url
 
       angular.forEach(rasterLayers, function (layerObj) {//how to implement for wms? is other foreach
-        // console.log(layerObj);
         name = layerObj.name;
         uuid = layerObj.uuid;
         if (layerObj.active) {
@@ -283,32 +277,16 @@ angular.module('legend')
       }, this);
 
       angular.forEach(wmsLayers, function (layerObj) {
-        console.log("angular.forEach(wmsLayers,", layerObj.active, layerObj);//has legendUrl
         name = layerObj.name;
         uuid = layerObj.uuid;
-        var legendUrl = layerObj.legendUrl;
-        // console.log(legendUrl);//legendUrl
-        // // conso
         if (layerObj.active) {
-          console.log("angular.forEach(wmsLayers, 0.5", layerObj.active, layerObj, DataService.dataLayers, DataService.dataLayers[0] && DataService.dataLayers[0].uuid);//has legendUrl
           dataLayerObj = _.find(DataService.dataLayers, { uuid: uuid });
-          console.log("angular.forEach(wmsLayers, 0.6", dataLayerObj);//has legendUrl
-          // console.log(dataLayerObj); // legendUrl
-          // if (uuid) {this.deleteWmsLegendData(uuid)};
           if (!dataLayerObj) { return; }
-          console.log("angular.forEach(wmsLayers, 0.7", dataLayerObj);
           this.uuidMapping[uuid] = name;
           this.uuidOrganisationMapping[uuid] =  dataLayerObj.organisation && dataLayerObj.organisation.name;
-        //   // if (rasterIsDiscrete(dataLayerObj)) {
-          // DataService.updateLayerData(geo, layerObj, options, promises);
           this.wmsData.wms[uuid] = dataLayerObj;
-        //   // }
-          console.log("angular.forEach(wmsLayers, 1", layerObj);//has legendUrl
         } else {
           this.deleteWmsLegendData(uuid);
-          // delete this.wmsData.wms[uuid];
-          console.log("angular.forEach(wmsLayers, 2", layerObj);//has legendUrl
-
         }
       }, this);
 
