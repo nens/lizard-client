@@ -36,15 +36,12 @@ angular.module('legend')
     scope.uuidOrganisationMapping = LegendService.uuidOrganisationMapping;
     scope.hasData = function () {
       for (var key in scope.legend.data.discrete) {
-        console.log(key);
         return true;
       }
       for (var key2 in scope.legend.data.continuous) {
-        console.log(key2);
         return true;
       }
-      for (var key3 in scope.legend.wms2) {
-        console.log(key3);
+      for (var key3 in scope.legend.wms) {
         return true;
       }
       return false;
@@ -103,23 +100,6 @@ angular.module('legend')
           scope.legend.data.discrete[uuid] !== undefined;
       }
     };
-
-    // scope.mustShowContinuousLegend = function (uuid) {
-    //   console.log("mustShowContinuousLegend");
-    //   var layer = _.find(scope.state.layers, { uuid: uuid });
-    //   if (layer === undefined) {
-    //     if (scope.legend.data.continuous[uuid]) {
-    //       delete scope.legend.data.continuous[uuid];
-    //       scope.switchSelectedRaster(uuid);
-    //     }
-    //     return false;
-    //   } else {
-    //     return scope.rasterIsSelected(uuid) &&
-    //       scope.legend.data.continuous[uuid] !== undefined &&
-    //       scope.legend.data.continuous[uuid].min !== null &&
-    //       scope.legend.data.continuous[uuid].max !== null;
-    //   }
-    // };
 
     var _getBrowserType = function () {
       var userAgent = window.navigator.userAgent;
@@ -241,7 +221,7 @@ angular.module('legend')
       console.log(scope.state.layers); //geen legendUrl
       console.log("scope.legend in layer watcher ", scope.legend);
       // Toggle the wms layer in the legend when you toggle the wmslayer
-      scope.legend.wms2 = LegendService.wmsData.wms;
+      scope.legend.wms = LegendService.wmsData.wms;
       LegendService.updateLegendData(
         scope.state.spatial.bounds,
         scope.state.geometries,
@@ -286,7 +266,7 @@ angular.module('legend')
     console.log("LegendService.wmsData 123", LegendService.wmsData);
     // Show the wms legend in the omnibox when you refresh the page
     // or when you add the wms layer.
-    scope.legend.wms2 = LegendService.wmsData.wms;//scope.legend.wmsData
+    scope.legend.wms = LegendService.wmsData.wms;//scope.legend.wmsData
 
     LegendService.updateLegendData(
       scope.state.spatial.bounds,
