@@ -41,6 +41,7 @@ angular.module('data-menu')
             if (scope.layer.name === scope.layer.type + ' ' + scope.layer.uuid
               && response.name) {
               scope.layer.name = response.name;
+              scope.layer.legendUrl = response.legend_url;// adds legendUrl to legend-service.js #226
             }
 
             MapService.mapLayers.push(wmsMapLayer({
@@ -51,7 +52,8 @@ angular.module('data-menu')
               complexWmsOptions: response.options,
               url: response.url,
               getFeatureInfoUrl: response.get_feature_info_url,
-              zIndex: LayerAdderService.getZIndex(scope.layer)
+              zIndex: LayerAdderService.getZIndex(scope.layer),
+              legendUrl: response.legend_url
             }));
 
             if (response.get_feature_info) {
@@ -61,6 +63,7 @@ angular.module('data-menu')
                 slug: response.slug,
                 url: response.url,
                 getFeatureInfoUrl: response.get_feature_info_url,
+                legendUrl: response.legend_url
               }));
             }
 

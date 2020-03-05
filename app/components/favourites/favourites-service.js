@@ -279,7 +279,9 @@ angular.module('favourites')
         // Restore layers
         if (typeof favourite.state.layers !== 'undefined') {
           favourite.state.layers.forEach(function (layer) {
-            State.layers.push(layer);
+            if (! _.find(State.layers, {uuid: layer.uuid})) {
+              State.layers.push(layer);
+            }
           });
         }
 

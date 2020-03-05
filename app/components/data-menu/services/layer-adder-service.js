@@ -81,18 +81,21 @@ angular.module('data-menu')
     };
 
     this.add = function (searchLayer) {
-      State.layers.push({
-        active: true,
-        type: searchLayer.entity_name,
-        uuid: searchLayer.entity_uuid.slice(0, 7), // Add layer with short
-                                                   // uuid.
-        name: searchLayer.title
-      });
-      notie.alert(
-        4,
-        gettextCatalog.getString("Added layer") + " " + searchLayer.title,
-        2
-      );
+      if (! _.find(State.layers, {uuid: searchLayer.entity_uuid.slice(0, 7)})) {
+        State.layers.push({
+          active: true,
+          type: searchLayer.entity_name,
+          uuid: searchLayer.entity_uuid.slice(0, 7), // Add layer with short
+                                                     // uuid.
+          name: searchLayer.title
+        });
+        notie.alert(
+          4,
+          gettextCatalog.getString("Added layer") + " " + searchLayer.title,
+          2
+        );
+      }
+      
     };
 
     this.zoomToBounds = function () {

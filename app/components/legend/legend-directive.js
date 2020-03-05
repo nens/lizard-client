@@ -1,10 +1,19 @@
 angular.module('legend')
-.directive('legend', ["MapService", "LegendService", function(MapService, LegendService) {
+.directive('legend', ["MapService", "LegendService", "DataService", function(MapService, LegendService, DataService) {
 
   var link = function (scope, element, attrs) {
 
-    /* scope variables used for DISCRETE rasters: ****************************/
+    scope.dataLayers = DataService.dataLayers;
+    scope.$watch("dataLayers", function (n, o) {
+      if (n === o) { return; }
+      LegendService.updateLegendData(
+        scope.state.spatial.bounds,
+        scope.state.geometries,
+        scope.state.layers
+      );
+    }, true);
 
+    /* scope variables used for DISCRETE and CONTINUOUS rasters and WMS: *************/
     scope.legend = {
       MAX_DISCRETE_CATEGORIES_DEFAULT: 5,
       showAllCategoriesForRaster: {},
@@ -12,8 +21,9 @@ angular.module('legend')
       uuidMapping: LegendService.uuidMapping,
       data: {
         discrete: {},
-        continuous: {}
+        continuous: {},
       },
+      wms: {}
     };
     scope.uuidOrganisationMapping = LegendService.uuidOrganisationMapping;
     scope.hasData = function () {
@@ -21,6 +31,9 @@ angular.module('legend')
         return true;
       }
       for (var key2 in scope.legend.data.continuous) {
+        return true;
+      }
+      for (var key3 in scope.legend.wms) {
         return true;
       }
       return false;
@@ -60,36 +73,6 @@ angular.module('legend')
     scope.hasMoreCategoriesAvailableThanDefault = function (uuid) {
       return scope.totalCategoryCount(uuid) >
         scope.legend.MAX_DISCRETE_CATEGORIES_DEFAULT;
-    };
-
-    scope.mustShowDiscreteLegend = function (uuid) {
-      var layer = _.find(scope.state.layers, { uuid: uuid });
-      if (layer === undefined) {
-        if (scope.legend.data.discrete[uuid]) {
-          delete scope.legend.data.discrete[uuid];
-          scope.switchSelectedRaster(uuid);
-        }
-        return false;
-      } else {
-        return scope.rasterIsSelected(uuid) &&
-          scope.legend.data.discrete[uuid] !== undefined;
-      }
-    };
-
-    scope.mustShowContinuousLegend = function (uuid) {
-      var layer = _.find(scope.state.layers, { uuid: uuid });
-      if (layer === undefined) {
-        if (scope.legend.data.continuous[uuid]) {
-          delete scope.legend.data.continuous[uuid];
-          scope.switchSelectedRaster(uuid);
-        }
-        return false;
-      } else {
-        return scope.rasterIsSelected(uuid) &&
-          scope.legend.data.continuous[uuid] !== undefined &&
-          scope.legend.data.continuous[uuid].min !== null &&
-          scope.legend.data.continuous[uuid].max !== null;
-      }
     };
 
     var _getBrowserType = function () {
@@ -209,6 +192,8 @@ angular.module('legend')
 
     scope.$watch(scope.state.toString('layers'), function (n, o) {
       if (n === o) { return; }
+      // Toggle the wms layer in the legend when you toggle the wmslayer
+      scope.legend.wms = LegendService.wmsData.wms;
       LegendService.updateLegendData(
         scope.state.spatial.bounds,
         scope.state.geometries,
@@ -249,6 +234,9 @@ angular.module('legend')
     });
 
     scope.legend.data = LegendService.rasterData;
+    // Show the wms legend in the omnibox when you refresh the page
+    // or when you add the wms layer.
+    scope.legend.wms = LegendService.wmsData.wms;
 
     LegendService.updateLegendData(
       scope.state.spatial.bounds,

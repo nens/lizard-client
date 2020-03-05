@@ -37,7 +37,8 @@ angular.module('legend')
       totalAreaOfGeometry: null
     };
 
-    this.rasterData = { continuous: {}, discrete: {} };
+    this.rasterData = { continuous: {}, discrete: {} }; // why is rasterData defined twice?
+    this.wmsData = { wms: {}};
     var activeCategories = {}; // Per discrete raster we keep track of the
                                // selected category, so we can show this for
                                // each legend.
@@ -76,6 +77,12 @@ angular.module('legend')
         max: null,
         unit: unit,
         colormap: null
+      };
+    };
+
+    this.initWmsData = function (uuid, unit) {
+      this.wmsData.wms[uuid] = {
+        legendUrl: ''
       };
     };
 
@@ -174,6 +181,9 @@ angular.module('legend')
       delete this.rasterData.discrete[uuid];
       delete this.rasterData.continuous[uuid];
     };
+    this.deleteWmsLegendData = function (uuid) {
+      delete this.wmsData.wms[uuid];
+    };
 
     this.updateLegendData = function (bounds, selectedGeometries, layers) {
       var boundsGJ;
@@ -222,7 +232,8 @@ angular.module('legend')
           contRasterData,
           stylesString,
           styleParts,
-          rasterLayers = _.filter(layers, { type: 'raster' });
+          rasterLayers = _.filter(layers, { type: 'raster' }),
+          wmsLayers = _.filter(layers, { type: 'wmslayer' });
 
       angular.forEach(rasterLayers, function (layerObj) {
         name = layerObj.name;
@@ -264,6 +275,20 @@ angular.module('legend')
         }
       }, this);
 
+      angular.forEach(wmsLayers, function (layerObj) {
+        name = layerObj.name;
+        uuid = layerObj.uuid;
+        if (layerObj.active) {
+          dataLayerObj = _.find(DataService.dataLayers, { uuid: uuid });
+          if (!dataLayerObj) { return; }
+          this.uuidMapping[uuid] = name;
+          this.uuidOrganisationMapping[uuid] =  dataLayerObj.organisation && dataLayerObj.organisation.name;
+          this.wmsData.wms[uuid] = dataLayerObj;
+        } else {
+          this.deleteWmsLegendData(uuid);
+        }
+      }, this);
+
       if (promises.length > 0) {
         $q.all(promises).then(function () {
           geo.properties = geo.properties || {};
@@ -272,5 +297,6 @@ angular.module('legend')
           this.setDiscreteRasterData(geo.properties);
         }.bind(this));
       }
+
     };
 }]);
