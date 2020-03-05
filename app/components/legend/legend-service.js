@@ -186,7 +186,6 @@ angular.module('legend')
     };
 
     this.updateLegendData = function (bounds, selectedGeometries, layers) {
-      // wms layer not properly updated
       var boundsGJ;
 
       var options = {
