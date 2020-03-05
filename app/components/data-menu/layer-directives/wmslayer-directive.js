@@ -31,14 +31,11 @@ angular.module('data-menu')
       if (!scope.layer.name) {
         scope.layer.name = scope.layer.type + ' ' + scope.layer.uuid;
       }
-      console.log(scope.layer); // geen url
 
       var cancelFirstActive = scope.$watch('layer.active', function () {
         if (scope.layer.active) {
           LayerAdderService.fetchLayer(scope.layer.type + 's', scope.layer.uuid, scope.layer.name)
           .then(function (response) {
-            // console.log(response);
-            // console.log(response.legend_url);
 
             // If the layer did not have a name, check if the backend has one.
             if (scope.layer.name === scope.layer.type + ' ' + scope.layer.uuid
@@ -58,7 +55,6 @@ angular.module('data-menu')
               zIndex: LayerAdderService.getZIndex(scope.layer),
               legendUrl: response.legend_url
             }));
-            // console.log(MapService.mapLayers);//legendUrl
 
             if (response.get_feature_info) {
               DataService.dataLayers.push(wmsFeatureInfoDataLayer({
@@ -70,7 +66,6 @@ angular.module('data-menu')
                 legendUrl: response.legend_url
               }));
             }
-            // console.log(DataService.dataLayers);//legendUrl
 
             MapService.updateLayers([scope.layer]);
           })
@@ -85,7 +80,6 @@ angular.module('data-menu')
 
       scope.$on('$destroy', function () {
         scope.layer.active = false;
-        console.log(scope.layer);
         MapService.updateLayers([scope.layer]);
         _.pull(DataService.dataLayers, {uuid: scope.layer.uuid });
         _.pull(MapService.mapLayers, {uuid: scope.layer.uuid });

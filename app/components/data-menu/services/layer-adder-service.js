@@ -81,7 +81,6 @@ angular.module('data-menu')
     };
 
     this.add = function (searchLayer) {
-      console.log(searchLayer);
       if (! _.find(State.layers, {uuid: searchLayer.entity_uuid.slice(0, 7)})) {
         State.layers.push({
           active: true,
