@@ -87,18 +87,18 @@
         </div>
       </div>
     </div>
-      <div ng-repeat="(uuid, wmsData) in legend.wms">
-        <div class="single-wms-legend"
-             ng-if="wmsData.legendUrl">
-          <div class="legend-header"
-               title="{{legend.uuidMapping[uuid]}} ({{uuidOrganisationMapping[    uuid]}})"
-          >
-            {{wmsData.name}}
-          </div>
-          <img src="{{wmsData.legendUrl}}"
-               alt="{{legend.uuidMapping[uuid]}}">
+    <div ng-repeat="(uuid, wmsData) in legend.wms">
+      <div class="single-wms-legend"
+           ng-if="wmsData.legendUrl">
+        <div class="legend-header"
+             title="{{legend.uuidMapping[uuid]}} ({{uuidOrganisationMapping[uuid]}})"
+        >
+          {{wmsData.name}}
         </div>
+        <img src="{{wmsData.legendUrl}}"
+             alt="{{legend.uuidMapping[uuid]}}">
       </div>
+    </div>
   </div>
 
   <div class="card-like legend-continuous">
