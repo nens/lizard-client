@@ -87,50 +87,45 @@
         </div>
       </div>
     </div>
-    <div ng-repeat="(uuid, wmsData) in legend.wms"
-         style="width:400px;background-color:white;">
-      <div style="padding-left:23px;padding-right:23px;padding-top:23px;color:#777;">
-        {{wmsData.name}}
+      <div ng-repeat="(uuid, wmsData) in legend.wms">
+        <div class="single-wms-legend"
+             ng-if="wmsData.legendUrl">
+          <div class="legend-header"
+               title="{{legend.uuidMapping[uuid]}} ({{uuidOrganisationMapping[    uuid]}})"
+          >
+            {{wmsData.name}}
+          </div>
+          <img src="{{wmsData.legendUrl}}"
+               alt="{{legend.uuidMapping[uuid]}}">
+        </div>
       </div>
-      <img src="{{wmsData.legendUrl}}"
-           alt="{{legend.uuidMapping[uuid]}}"
-           style="padding:23px;">
-    </div>
   </div>
 
   <div class="card-like legend-continuous">
-
-      <div ng-repeat="(uuid, rasterData) in legend.data.continuous">
-        <div class="single-continuous-legend">
-
-          <div class="legend-header"
-               title="{{legend.uuidMapping[uuid]}} ({{uuidOrganisationMapping[uuid]}})"
-          >
-
-            {{ legend.uuidMapping[uuid] }}
-            {{ "(" }}
-            {{ uuidOrganisationMapping[uuid] }}
-            {{ ")" }}
-          </div>
-
-          <div class="gradient-bar"
-              ng-style="getGradient(uuid)">
-          </div>
-
-          <div class="continuous-raster-numeric-data">
-
-            <div class="continuous-legend-top-row">
-              <span ng-bind="rasterData.max.toPrecision(3)"></span>
-              <span ng-bind="rasterData.unit"></span>
-            <div>
-
-            <div class="continuous-legend-bottom-row">
-              <span ng-bind="rasterData.min.toPrecision(3)"></span>
-              <span ng-bind="rasterData.unit"></span>
-            <div>
-
-          </div>
+    <div ng-repeat="(uuid, rasterData) in legend.data.continuous">
+      <div class="single-continuous-legend">
+        <div class="legend-header"
+             title="{{legend.uuidMapping[uuid]}} ({{uuidOrganisationMapping[uuid]}})"
+        >
+          {{ legend.uuidMapping[uuid] }}
+          {{ "(" }}
+          {{ uuidOrganisationMapping[uuid] }}
+          {{ ")" }}
+        </div>
+        <div class="gradient-bar"
+            ng-style="getGradient(uuid)">
+        </div>
+        <div class="continuous-raster-numeric-data">
+          <div class="continuous-legend-top-row">
+            <span ng-bind="rasterData.max.toPrecision(3)"></span>
+            <span ng-bind="rasterData.unit"></span>
+          <div>
+          <div class="continuous-legend-bottom-row">
+            <span ng-bind="rasterData.min.toPrecision(3)"></span>
+            <span ng-bind="rasterData.unit"></span>
+          <div>
         </div>
       </div>
+    </div>
   </div>
 </div>
