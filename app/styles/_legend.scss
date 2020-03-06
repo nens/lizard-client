@@ -1,11 +1,13 @@
 /** LEGEND (TODO - move this content to: app/styles/_legend.scss) ************/
 
-.legend-discrete {
+.legend-discrete,
+.legend-wms {
   margin-bottom: 0;
 }
 
 .single-discrete-legend,
-.single-continuous-legend {
+.single-continuous-legend,
+.single-wms-legend {
   background-color: white;
   width: 400px;
   margin-bottom: 5px;
@@ -22,6 +24,10 @@
 
 .legend-header a {
   color: #777;
+}
+
+.single-wms-legend img {
+  padding: 23px;
 }
 
 .discrete-legend-datum {

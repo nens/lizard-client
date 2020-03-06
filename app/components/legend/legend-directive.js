@@ -34,7 +34,14 @@ angular.module('legend')
         return true;
       }
       for (var key3 in scope.legend.wms) {
-        return true;
+        // Only make this true if the wms layer has a legendUrl filled in
+        // to show this legendUrl as an image in the legend
+        if (scope.legend.wms[key3].legendUrl &&
+            scope.legend.wms[key3].legendUrl.length > 0) {
+          return true;
+        } else {
+          return false;
+        }
       }
       return false;
     };
