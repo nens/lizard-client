@@ -5,7 +5,7 @@ import sys
 import os
 
 PROXY_HOST = 'https://nxt3.staging.lizard.net/'
-CMD_TEMPLATE = ' npm start -- --proxyhost=%s --sso_username=%s --sso_password=%s'
+CMD_TEMPLATE = ' npm start -- --proxyhost=%s --sso_username=%s --sso_password="%s"'
 
 
 def get_username():
