@@ -346,12 +346,12 @@ module.exports = function (grunt) {
           // we assume that the only 2 styles included with the string "/syles/" in the url are /styles/main/ and /styles/vendor/
           // previously all /styles/ were replaced, but this caused problem with the new mapbox urls that also contain /styles/ 
           {
-            from: '/styles/main/',
-            to: '/static/client/styles/main/'
+            from: '/styles/main',
+            to: '/static/client/styles/main'
           }, 
           {
-            from: '/styles/vendor/',
-            to: '/static/client/styles/vendor/'
+            from: '/styles/vendor',
+            to: '/static/client/styles/vendor'
           }
           ,{
           from: '/scripts/',
