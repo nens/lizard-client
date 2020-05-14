@@ -341,10 +341,19 @@ module.exports = function (grunt) {
       dist: {
         src: ['dist/*.html','dist/scripts/*.js'],
         overwrite: true,                 // overwrite matched source files
-        replacements: [{
-          from: '/styles/',
-          to: '/static/client/styles/'
-        }, {
+        replacements: [
+          
+          // we assume that the only 2 styles included with the string "/syles/" in the url are /styles/main/ and /styles/vendor/
+          // previously all /styles/ were replaced, but this caused problem with the new mapbox urls that also contain /styles/ 
+          {
+            from: '/styles/main/',
+            to: '/static/client/styles/main/'
+          }, 
+          {
+            from: '/styles/vendor/',
+            to: '/static/client/styles/vendor/'
+          }
+          ,{
           from: '/scripts/',
           to: '/static/client/scripts/'
         }, {
