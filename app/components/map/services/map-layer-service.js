@@ -14,7 +14,7 @@ angular.module('map')
     this.MAXZOOMLEVEL = 21;
 
     this.createTmsLayer = function (options) {
-      var layerUrl = options.url;
+      var layerUrl = options.url.indexOf('/{z}/{x}/{y}') > -1 ? options.url : options.url + '/{z}/{x}/{y}.png';
 
       return LeafletService.tileLayer(
         layerUrl, {
