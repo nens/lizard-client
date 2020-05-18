@@ -1,6 +1,6 @@
 {
   "name": "lizard-client",
-  "version": "4.18.37",
+  "version": "4.18.38",
   "scripts": {
     "test": "grunt test",
     "start": "grunt serve",
