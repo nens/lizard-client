@@ -16,6 +16,27 @@ git clone --recursive git@github.com:nens/lizard-client.git
 cd lizard-client
 ```
 
+Install nvm to get the right nodeJS version but without having to reinstall every time.  
+Other clients use newer versions of nodeJS.  
+Swithing back and forward between different nodeJS versions is hell.  
+Nvm eases the pain (slightly).  
+Follow instructions for installing nvm here or google yourself:  
+https://hackernoon.com/how-to-install-node-js-on-ubuntu-16-04-18-04-using-nvm-node-version-manager-668a7166b854
+
+If nvm is correctly installed use nvm to install nodeJS version 8.17.0:  
+
+```sh
+nvm install 8.17.0
+```
+
+You can check your nodeJS installations by doing "nvm ls". Version 8.17.0 should be there.  
+Now tell nvm to use 8.17.0 for now:  
+
+```sh
+nvm use 8.17.0
+```
+
+
 Run npm install to install development dependencies:
 
 ```sh
