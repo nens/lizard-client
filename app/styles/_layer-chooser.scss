@@ -41,11 +41,25 @@
     width: calc(100% - 50px);
     right: -550px;  // Necessary to make the resizing animation smooth.
 
-    input {
-        width: 100%;
-        border: none;
-        height: 40px;
-        padding: 0 10px;
+    .layer-input {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+
+        input {
+            width: 100%;
+            border: none;
+            height: 40px;
+            padding: 0 10px;
+            margin-right: 10px;
+        }
+
+        button {
+            height: 40px;
+            white-space: nowrap;
+        }
     }
 
     table tbody tr {
