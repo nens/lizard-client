@@ -112,9 +112,7 @@ angular.module('data-menu')
        * based on search term entered in the input.
        */
       scope.sendRequest = function() {
-        if (scope.searchLayers) {
-          fetchLayers({'q': scope.searchLayers});
-        }
+        fetchLayers({'q': scope.searchLayers});
       };
 
       /**
@@ -122,20 +120,10 @@ angular.module('data-menu')
        * based on search term entered in the input.
        */
       scope.sendRequestOnEnter = function(keyEvent) {
-        if (keyEvent.which === 13 && scope.searchLayers) {
+        if (keyEvent.which === 13) {
           fetchLayers({'q': scope.searchLayers});
         }
       };
-
-      /**
-       * Automatically fire a layer groups query with empty search
-       * string when the input field is clear.
-       */
-      scope.$watch('searchLayers', function(newValue, oldValue) {
-        if (newValue === '') {
-          fetchLayers({'q': newValue});
-        }
-      });
 
       scope.$watch('layersCurrentPage', function (currentPage) {
         fetchLayers({'q': scope.searchLayers, 'page': currentPage});
