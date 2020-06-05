@@ -11,10 +11,10 @@
            id="layer-adder-edge-fix"
            ng-model="searchLayers"
            placeholder="{{ 'Filter layers...' | translate }}"
-           ng-keypress="sendRequestOnEnter($event)"
+           ng-keypress="searchOnEnter($event)"
            class="material-shadow"
     />
-    <button ng-click="sendRequest()">Send Request</button>
+    <button ng-click="sendSearchRequest()">Search</button>
   </div>
   <table class="table table-hover">
     <tbody>

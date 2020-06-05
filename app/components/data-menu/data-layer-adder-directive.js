@@ -108,10 +108,10 @@ angular.module('data-menu')
       fetchLayers();
 
       /**
-       * Function to send request on sendRequest button click
+       * Function to send request on search button click
        * based on search term entered in the input.
        */
-      scope.sendRequest = function() {
+      scope.sendSearchRequest = function() {
         fetchLayers({'q': scope.searchLayers});
       };
 
@@ -119,7 +119,7 @@ angular.module('data-menu')
        * Function to send request on Enter keypress
        * based on search term entered in the input.
        */
-      scope.sendRequestOnEnter = function(keyEvent) {
+      scope.searchOnEnter = function(keyEvent) {
         if (keyEvent.which === 13) {
           fetchLayers({'q': scope.searchLayers});
         }
