@@ -108,12 +108,22 @@ angular.module('data-menu')
       fetchLayers();
 
       /**
-       * Fire a layer groups query for every key entered in the filter/search
-       * input.
+       * Function to send request on search button click
+       * based on search term entered in the input.
        */
-      scope.$watch('searchLayers', function(newValue, oldValue) {
-        fetchLayers({'q': newValue});
-      });
+      scope.sendSearchRequest = function() {
+        fetchLayers({'q': scope.searchLayers});
+      };
+
+      /**
+       * Function to send request on Enter keypress
+       * based on search term entered in the input.
+       */
+      scope.searchOnEnter = function(keyEvent) {
+        if (keyEvent.which === 13) {
+          fetchLayers({'q': scope.searchLayers});
+        }
+      };
 
       scope.$watch('layersCurrentPage', function (currentPage) {
         fetchLayers({'q': scope.searchLayers, 'page': currentPage});
