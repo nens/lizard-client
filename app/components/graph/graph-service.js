@@ -1858,13 +1858,13 @@ angular.module('lizard-nxt')
   var addReferenceFrameToUnit = function (unit, reference_frame) {
     if (unit.toLowerCase() === 'm' && (reference_frame || '').toLowerCase() === 'nap') {
       if (RTSLService.get()) {
-        return 'm (MV)';
+        return 'mMV';
       } else {
-        return 'm (NAP)';
+        return 'mNAP';
       }
     }
 
-    return unit + (reference_frame ? ' (' + reference_frame + ')' : '');
+    return reference_frame ? (unit + reference_frame) : unit;
   };
 
 
