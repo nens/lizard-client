@@ -53,9 +53,6 @@ angular.module('data-menu')
               url: response.url,
               getFeatureInfoUrl: response.get_feature_info_url,
               zIndex: LayerAdderService.getZIndex(scope.layer),
-              // this line causes problem: https://github.com/nens/lizard-client/issues/1117
-              // was changed for issue: https://nelen-schuurmans.atlassian.net/browse/FRNT-269
-              // legendUrl: response.legend_url
             }));
 
             if (response.get_feature_info) {
