@@ -98,14 +98,13 @@ angular.module('legend')
     this.setColormap = function (uuid, styles) {
 
       if (!COLORMAP_URL) { COLORMAP_URL = getColormapUrl(); }
-
       var styleMin,
           styleMax,
           styleParts,
           stylesString = UtilService.extractStylesString(
             styles, State.temporal.aggWindow),
           colormap,
-          colormapName = UtilService.extractColormapName(stylesString),
+          colormapName = stylesString? UtilService.extractColormapName(stylesString) : "",
           layer,
           contRasterData,
           singleColormapUrl = COLORMAP_URL + colormapName + "/";
@@ -115,9 +114,23 @@ angular.module('legend')
         styleMin = styleParts[1];
         styleMax = styleParts[2];
       }
+      // rasters with normal colormaps have styles, custome colormaps do not
+      if (typeof styles !== "undefined") {
+        $http.get(singleColormapUrl).then(function (result) {
+          colormap = result.data.definition;
+          processColormapAndRetrigger.call(this);
+        }.bind(this));
+      } else {
+        $http.get('/api/v3/rasters/'+uuid).then(function (resultv3) {
+          $http.get('/api/v4/rasters/'+resultv3.data.uuid).then(function (result) {
+            colormap = result.data.colormap;
+            processColormapAndRetrigger.call(this);
+          }.bind(this));
+        }.bind(this));
 
-      $http.get(singleColormapUrl).then(function (result) {
-        colormap = result.data.definition;
+      }
+
+      function processColormapAndRetrigger () {
         colormaps[uuid] = colormap;
         layer = _.find(State.layers, { uuid: uuid });
         if (layer && layer.active) {
@@ -138,7 +151,8 @@ angular.module('legend')
             }
           }
         }
-      }.bind(this));
+      }
+     
     };
 
     var responseIsEmpty = function (data) {
