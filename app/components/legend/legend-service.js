@@ -96,49 +96,108 @@ angular.module('legend')
     };
 
     this.setColormap = function (uuid, styles) {
+      console.log('styles 1');
 
       if (!COLORMAP_URL) { COLORMAP_URL = getColormapUrl(); }
+      console.log('styles 2');
 
       var styleMin,
           styleMax,
           styleParts,
-          stylesString = UtilService.extractStylesString(
-            styles, State.temporal.aggWindow),
+          stylesString,// = UtilService.extractStylesString(
+            //styles, State.temporal.aggWindow),
           colormap,
-          colormapName = UtilService.extractColormapName(stylesString),
+          colormapName,// = UtilService.extractColormapName(stylesString),
           layer,
           contRasterData,
-          singleColormapUrl = COLORMAP_URL + colormapName + "/";
+          singleColormapUrl;// = COLORMAP_URL + colormapName + "/";
+      
+      console.log('styles 2.5');
+      stylesString = UtilService.extractStylesString(
+        styles, State.temporal.aggWindow);
+      console.log('styles 2.6', stylesString);
+      colormapName = stylesString? UtilService.extractColormapName(stylesString) : "";
+      console.log('styles 2.7');
+      singleColormapUrl = COLORMAP_URL + colormapName + "/";
+      console.log('styles 2.8');
+      console.log('styles 2.9');
+
 
       if (UtilService.isCompoundStyles(stylesString)) {
         styleParts = stylesString.split(":");
         styleMin = styleParts[1];
         styleMax = styleParts[2];
       }
+      console.log('styles 3');
+      // rasters with normal colormaps have styles, custome colormaps do not
+      console.log('styles 301', typeof styles);
+      if (typeof styles !== "undefined") {
+        $http.get(singleColormapUrl).then(function (result) {
+          colormap = result.data.definition;
+          colormaps[uuid] = colormap;
+          layer = _.find(State.layers, { uuid: uuid });
+          if (layer && layer.active) {
+            contRasterData = this.rasterData.continuous[uuid];
+            contRasterData.colormap = colormap;
+            if (contRasterData.min === null) {
+              if (styleMin === undefined) {
+                contRasterData.min = _.first(colormap.data)[0];
+              } else {
+                contRasterData.min = parseFloat(styleMin);
+              }
+            }
+            if (contRasterData.max === null) {
+              if (styleMax === undefined) {
+                contRasterData.max = _.last(colormap.data)[0];
+              } else {
+                contRasterData.max = parseFloat(styleMax);
+              }
+            }
+          }
+        }.bind(this));
+      } else {
+        $http.get('/api/v3/rasters/'+uuid).then(function (resultv3) {
+          console.log('raster result 010', resultv3);
+          $http.get('/api/v4/rasters/'+resultv3.data.uuid).then(function (result) {
+            console.log('raster result', result);
+            colormap = result.data.colormap;
+            colormaps[uuid] = colormap;
+            layer = _.find(State.layers, { uuid: uuid });
+            // ///////////////////////////////////////////////////////////////////////////////
+            console.log('layer active 12');
+            if (layer && layer.active) {
+              console.log('layer active 123');
+              contRasterData = this.rasterData.continuous[uuid];
+              console.log('layer active 1234');
+              contRasterData.colormap = colormap;
+              if (contRasterData.min === null) {
+                console.log('layer active 1235');
+                if (styleMin === undefined) {
+                  console.log('layer active 1236');
+                  contRasterData.min = _.first(colormap.data)[0];
+                } else {
+                  contRasterData.min = parseFloat(styleMin);
+                  console.log('layer active 1237');
+                }
+              }
+              console.log('layer active 1238');
+              if (contRasterData.max === null) {
+                console.log('layer active 1239');
+                if (styleMax === undefined) {
+                  contRasterData.max = _.last(colormap.data)[0];
+                  console.log('layer active 12310');
+                } else {
+                  console.log('layer active 113');
+                  contRasterData.max = parseFloat(styleMax);
+                }
+              }
+            }
+            ///////////////////////////////////////////////////////////////////////////
+          }.bind(this));
+        }.bind(this));
 
-      $http.get(singleColormapUrl).then(function (result) {
-        colormap = result.data.definition;
-        colormaps[uuid] = colormap;
-        layer = _.find(State.layers, { uuid: uuid });
-        if (layer && layer.active) {
-          contRasterData = this.rasterData.continuous[uuid];
-          contRasterData.colormap = colormap;
-          if (contRasterData.min === null) {
-            if (styleMin === undefined) {
-              contRasterData.min = _.first(colormap.data)[0];
-            } else {
-              contRasterData.min = parseFloat(styleMin);
-            }
-          }
-          if (contRasterData.max === null) {
-            if (styleMax === undefined) {
-              contRasterData.max = _.last(colormap.data)[0];
-            } else {
-              contRasterData.max = parseFloat(styleMax);
-            }
-          }
-        }
-      }.bind(this));
+      }
+     
     };
 
     var responseIsEmpty = function (data) {
@@ -252,6 +311,7 @@ angular.module('legend')
               contRasterData = this.rasterData.continuous[uuid];
             }
             if (!colormaps[uuid]) {
+              console.log("setColormap dataLayerObj", dataLayerObj, layerObj, uuid);
               this.setColormap(uuid, dataLayerObj.styles);
             } else {
               contRasterData.colormap = colormaps[uuid];
