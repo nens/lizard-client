@@ -266,7 +266,6 @@ angular.module('legend')
               contRasterData = this.rasterData.continuous[uuid];
             }
             if (!colormaps[uuid]) {
-              console.log("setColormap dataLayerObj", dataLayerObj, layerObj, uuid);
               this.setColormap(uuid, dataLayerObj.styles);
             } else {
               contRasterData.colormap = colormaps[uuid];
