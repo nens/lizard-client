@@ -115,7 +115,7 @@ angular.module('legend')
         styleMax = styleParts[2];
       }
       // rasters with normal colormaps have styles, custome colormaps do not
-      if (typeof styles !== "undefined") {
+      if (typeof styles !== "undefined" && ((styles+"").split(":")[0] !== "")) {
         $http.get(singleColormapUrl).then(function (result) {
           colormap = result.data.definition;
           processColormapAndRetrigger.call(this);
