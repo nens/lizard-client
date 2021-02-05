@@ -151,14 +151,18 @@
                 <span translate>Help</span>
               </a>
             </li>
-            <li>
+            <!-- 
+              currently edit profile is not supported since we moved to aws incognito
+              https://github.com/nens/lizard-client/issues/1148 
+            -->
+            <!-- <li>
               <a href="http://sso.lizard.net/edit_profile/"
                  target="_blank"
                  title="{{ 'Edit profile' | translate }}">
                 <i class="fa fa-pencil"></i>
                 <span translate>Edit profile</span>
               </a>
-            </li>
+            </li> -->
             <li role="separator" class="divider"></li>
             <li>
               <a ng-if="user.authenticated"
