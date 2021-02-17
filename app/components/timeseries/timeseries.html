@@ -16,7 +16,7 @@
         ng-options="ts.location
           + ', '
           + ts.parameter
-          for ts in asset.timeseries track by ts.uuid
+          for ts in orderedTimeseries track by ts.uuid 
         ">
       </select>
       <span

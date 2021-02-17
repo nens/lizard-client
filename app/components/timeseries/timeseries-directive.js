@@ -102,7 +102,17 @@ angular.module('timeseries')
           });
           }
       });
-
+      scope.orderedTimeseries = scope.asset.timeseries.sort(function(a,b){
+        var aTotal = (a.location + ', '+ a.parameter).toLowerCase();
+        var bTotal = (b.location + ', '+ b.parameter).toLowerCase();
+        if (aTotal > bTotal) {
+          return 1;
+        } else if (aTotal < bTotal) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
     },
     restrict: 'A',
     templateUrl: 'timeseries/timeseries.html',
