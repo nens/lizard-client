@@ -55,7 +55,11 @@ angular.module('lizard-bootstrap', ['favourites'])
       );
     };
 
+    console.log("url123 how often does this run?");
+
     var urlDataForState = UrlService.getDataForState();
+
+    console.log("url1234 1", urlDataForState);
 
     /**
      * Is undefined or a string containing the uuid of a favourite.
@@ -63,12 +67,14 @@ angular.module('lizard-bootstrap', ['favourites'])
      * @type {string || undefined}
      */
     var urlFavourite = UrlService.getFavourite();
+    console.log("url1234 2", urlFavourite);
 
     if (urlFavourite) {
       var gotFavourite = function (favourite, getResponseHeaders) {
         getBootstrap(false, null);
         FavouritesService.applyFavourite(favourite);
       };
+      console.log("url1234 3", urlFavourite);
 
       /**
        * Favourite might be removed or user's session expired/logged out. Either
@@ -88,6 +94,7 @@ angular.module('lizard-bootstrap', ['favourites'])
       );
     }
     else {
+      console.log("url1234 4", urlFavourite);
       // We are not bootstrapping on the basis of an explicit favourite. Instead
       // bootstrap a portal with overwrites from the url.
       getBootstrap(true, urlDataForState);
