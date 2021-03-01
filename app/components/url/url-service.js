@@ -152,6 +152,8 @@ angular.module('lizard-nxt')
             ? ''
             : here.lat.toFixed(COORD_PRECISION) + ',' + here.lng.toFixed(COORD_PRECISION);
         }
+        // seems initially not used
+        console.log("url123 setgeomUrl");
         LocationGetterSetter.setUrlValue(state.geom.part, state.geom.index, pointsStr);
       },
 
@@ -238,6 +240,7 @@ angular.module('lizard-nxt')
           parseFloat(lng).toFixed(COORD_PRECISION),
           zoom
         ].join(',');
+        console.log("url123 setCoordinatesUrl");
         LocationGetterSetter.setUrlValue(
           state.mapView.part,
           state.mapView.index,
@@ -279,7 +282,7 @@ angular.module('lizard-nxt')
             newHash.push(geom.id);
           }
         });
-
+        console.log("url123 setSelectedUrl");
         LocationGetterSetter.setUrlValue(
           state.geom.part,
           state.geom.index,
@@ -595,11 +598,13 @@ angular.module('lizard-nxt')
         );
 
         UrlState.setSelectedUrl(config, state.assets, state.geometries);
-
+        
+        console.log("url123 setUrl");
         LocationGetterSetter.setUrlValue(
           config.context.part, config.context.index, state.context
         );
-
+        
+        console.log("url123 setUrl 2");
         LocationGetterSetter.setUrlValue(
           config.boxType.part, config.boxType.index, state.box.type
         );
