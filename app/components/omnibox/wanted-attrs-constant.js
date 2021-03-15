@@ -227,15 +227,15 @@ angular.module('omnibox')
       },
       {
         keyName: gettext("Aquifer confinement"),
-        attrName: "aquifer_confiment",
-        ngBindValue: "waterchain.aquifer_confiment",
+        attrName: "aquifer_confinement",
+        ngBindValue: "waterchain.aquifer_confinement",
         valueSuffix: ""
       },
       {
         /// bodemsoort
         keyName: gettext("Lithology"),
-        attrName: "litology",
-        ngBindValue: "waterchain.litology",
+        attrName: "lithology",
+        ngBindValue: "waterchain.lithology",
         valueSuffix: ""
       },
       {
