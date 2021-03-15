@@ -306,8 +306,12 @@ angular.module('favourites')
         }
 
         if (favourite.state.spatial && !_.isUndefined(favourite.state.spatial.bounds)) {
-          State.spatial.bounds = favourite.state.spatial.bounds;
-          State.spatial.bounds.isValid = function () { return true; };
+          // timeout to solve on startup mapextend bug:
+          // https://github.com/nens/lizard-client/issues/1154
+          $timeout(function () {
+            State.spatial.bounds = favourite.state.spatial.bounds;
+            State.spatial.bounds.isValid = function () { return true; };
+          });
         }
 
         if (favourite.state.temporal && favourite.state.temporal.relative) {
