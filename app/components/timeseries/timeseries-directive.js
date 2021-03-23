@@ -89,7 +89,19 @@ angular.module('timeseries')
         if(scope.asset) {
           scope.timeseries.selected = scope.asset.timeseries[0];
           scope.timeseries.change();
-        }});
+        }
+        scope.orderedTimeseries = scope.asset.timeseries.sort(function(a,b){
+          var aTotal = (a.location + ', '+ a.parameter).toLowerCase();
+          var bTotal = (b.location + ', '+ b.parameter).toLowerCase();
+          if (aTotal > bTotal) {
+            return 1;
+          } else if (aTotal < bTotal) {
+            return -1;
+          } else {
+            return 0;
+          }
+        });
+      });
 
       /**
        * Get new ts when time changes
@@ -102,17 +114,7 @@ angular.module('timeseries')
           });
           }
       });
-      scope.orderedTimeseries = scope.asset.timeseries.sort(function(a,b){
-        var aTotal = (a.location + ', '+ a.parameter).toLowerCase();
-        var bTotal = (b.location + ', '+ b.parameter).toLowerCase();
-        if (aTotal > bTotal) {
-          return 1;
-        } else if (aTotal < bTotal) {
-          return -1;
-        } else {
-          return 0;
-        }
-      });
+      
     },
     restrict: 'A',
     templateUrl: 'timeseries/timeseries.html',
