@@ -86,10 +86,6 @@ angular.module('timeseries')
       };
 
       scope.$watch('asset', function (aG) {
-        if(scope.asset) {
-          scope.timeseries.selected = scope.asset.timeseries[0];
-          scope.timeseries.change();
-        }
         scope.orderedTimeseries = scope.asset.timeseries.sort(function(a,b){
           var aTotal = (a.location + ', '+ a.parameter).toLowerCase();
           var bTotal = (b.location + ', '+ b.parameter).toLowerCase();
@@ -101,6 +97,10 @@ angular.module('timeseries')
             return 0;
           }
         });
+        if(scope.asset) {
+          scope.timeseries.selected = scope.orderedTimeseries[0];
+          scope.timeseries.change();
+        }
       });
 
       /**
