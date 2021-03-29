@@ -67,7 +67,7 @@ angular.module('lizard-nxt')
         + "layer looks like:", layer);
     }
 
-    var url = layer.getFeatureInfoUrl + '/?';
+    var url = layer.getFeatureInfoUrl + '?';
     for (var key in params) {
       if (url !== "") {
           url += "&";
