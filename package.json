@@ -1,6 +1,6 @@
 {
   "name": "lizard-client",
-  "homepage": "portal",
+  "homepage": "viewer",
   "version": "4.18.58",
   "scripts": {
     "test": "grunt test",

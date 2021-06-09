@@ -86,14 +86,14 @@ describe('Testing UrlService', function () {
   }));
 
   it('should set the url', function () {
-    var url = '/portal/en/map/topography,assetgroup$0037b5f/point/@0.0000,0.0000,0/' +
+    var url = '/viewer/en/map/topography,assetgroup$0037b5f/point/@0.0000,0.0000,0/' +
       '-2Days0Hours+0Days3Hours';
     service.setUrl(State);
     expect($location.path()).toEqual(url);
   });
 
   it('should get the state', function () {
-    var url = '/portal/vi/dashboard/neutral,annotations,assetgroup$0037b5f/region/@4,6,8/' +
+    var url = '/viewer/vi/dashboard/neutral,annotations,assetgroup$0037b5f/region/@4,6,8/' +
       'Jan,04,2008-Jul,14,2016';
     $location.path(url);
     var expectedUrlState = {

@@ -464,8 +464,8 @@ angular.module('lizard-nxt')
 
     // Configuration object for url state.
     var config = {
-      portal: {
-        value: 'portal',
+      viewer: {
+        value: 'viewer',
         part: 'path',
         index: 0
       },
@@ -594,9 +594,9 @@ angular.module('lizard-nxt')
       setUrl: function (state) {
 
         LocationGetterSetter.setUrlValue(
-          config.portal.part,
-          config.portal.index,
-          config.portal.value
+          config.viewer.part,
+          config.viewer.index,
+          config.viewer.value
         );
         LocationGetterSetter.setUrlValue(
           config.language.part,
