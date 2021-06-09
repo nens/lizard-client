@@ -464,26 +464,31 @@ angular.module('lizard-nxt')
 
     // Configuration object for url state.
     var config = {
-      language: {
+      viewer: {
+        value: 'viewer',
         part: 'path',
         index: 0
+      },
+      language: {
+        part: 'path',
+        index: 1
       },
       context: { // Locally used name for the state
         value: 'map', // default
         part: 'path', // Part of the url where this state is stored,
-        index: 1, // Position of the state in the part
+        index: 2, // Position of the state in the part
       },
       layers: {
         part: 'path',
-        index: 2,
+        index: 3,
       },
       boxType: {
         part: 'path',
-        index: 3,
+        index: 4,
       },
       geom: {
         part: 'path',
-        index: 4,
+        index: 5,
       },
       mapView: {
         part: 'at',
@@ -588,6 +593,11 @@ angular.module('lizard-nxt')
     return {
       setUrl: function (state) {
 
+        LocationGetterSetter.setUrlValue(
+          config.viewer.part,
+          config.viewer.index,
+          config.viewer.value
+        );
         LocationGetterSetter.setUrlValue(
           config.language.part,
           config.language.index,
